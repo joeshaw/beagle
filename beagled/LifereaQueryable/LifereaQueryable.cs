@@ -43,6 +43,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		private static Logger log = Logger.Get ("LifereaQueryable");
 
 		string liferea_dir;
+		internal string icon_dir;
 
 		private XmlSerializer serializer = null;
 		public XmlSerializer Serializer {
@@ -62,6 +63,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		{
 			liferea_dir = Path.Combine (PathFinder.HomeDir, ".liferea");
 			liferea_dir = Path.Combine (liferea_dir, "cache");
+			icon_dir = Path.Combine (liferea_dir, "favicons");
 			liferea_dir = Path.Combine (liferea_dir, "feeds");
 		}
 
@@ -184,6 +186,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 	 */
 	public class FeedIndexableGenerator : IIndexableGenerator {
 		private string feed_file;
+		private string icon_file = null;
 		private LifereaQueryable queryable;
 		
 		private XmlTextReader reader;
@@ -200,6 +203,12 @@ namespace Beagle.Daemon.LifereaQueryable {
 			this.feed_file = feed_file;
 			this.serializer = queryable.Serializer;
 			ReadFeedHeader ();
+
+			// Set icon file
+			string file_name = Path.GetFileNameWithoutExtension (feed_file);
+			this.icon_file = this.queryable.icon_dir;
+			this.icon_file = Path.Combine (icon_file, file_name);
+			this.icon_file = Path.ChangeExtension (icon_file, "png");
 		}
 
 		public void PostFlushHook ()
@@ -331,7 +340,10 @@ namespace Beagle.Daemon.LifereaQueryable {
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_item.Source));
 			indexable.AddProperty (Property.NewKeyword ("dc:source", feed_source));
 			indexable.AddProperty (Property.New ("dc:publisher", publisher));
-				
+
+			if (File.Exists (icon_file))
+				indexable.AddProperty (Property.NewUnsearched ("fixme:cachedimg", icon_file));
+
 			StringReader reader = new StringReader (current_item.Description);
 			indexable.SetTextReader (reader);
 

@@ -162,13 +162,19 @@ namespace Beagle.Daemon.KNotesQueryable {
 
 		internal void RemoveDeletedNotes (Hashtable deleted_notes)
 		{
+			ArrayList to_delete = new ArrayList ();
 			lock (last_modified_table) {
 				foreach (string uid in last_modified_table.Keys) {
 					if (! deleted_notes.Contains (uid) ||
 					    (bool)deleted_notes [uid] == true) {
-						RemoveNote (uid);
+						to_delete.Add (uid);
 					}
 				}
+			}
+
+			foreach (string uid in to_delete) {
+				RemoveNote (uid);
+				last_modified_table.Remove (uid);
 			}
 		}
 

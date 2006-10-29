@@ -215,17 +215,12 @@ namespace Beagle.Daemon {
 
 			// remove initial www
 			int begin_index = (host_parts [0] == "www" ? 1 : 0);
-			// remove final tld
-			// FIXME: any string of form "<alnum> '.')+<alnum>" has type HOST
+			// FIXME: Remove final tld
+			// Any string of form "<alnum> '.')+<alnum>" has type HOST
 			// Removing last token might remove important words from non-host
 			// string of that form. To fix that, we need match against the
 			// huge list of TLDs.
-			int end_index = host_parts.Length - 1;
-
-			if (! Char.IsDigit (host_parts [end_index][0]))
-				end_index --;
-
-			for (int i = begin_index; i <= end_index; ++i)
+			for (int i = begin_index; i < host_parts.Length; ++i)
 				parts.Enqueue (host_parts [i]);
 
 		}

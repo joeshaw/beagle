@@ -163,13 +163,19 @@ namespace Beagle.Daemon.KabcQueryable {
 
 		internal void RemoveDeletedContacts (Hashtable deleted_contacts)
 		{
+			ArrayList to_delete = new ArrayList ();
 			lock (last_modified_table) {
 				foreach (string uid in last_modified_table.Keys) {
 					if (! deleted_contacts.Contains (uid) ||
 					    (bool)deleted_contacts [uid] == true) {
-						RemoveContact (uid);
+						to_delete.Add (uid);
 					}
 				}
+			}
+
+			foreach (string uid in to_delete) {
+				RemoveContact (uid);
+				last_modified_table.Remove (uid);
 			}
 		}
 
