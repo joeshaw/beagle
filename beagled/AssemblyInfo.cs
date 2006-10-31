@@ -61,6 +61,7 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
 	typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
 	typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
+	typeof (Beagle.Daemon.KBookmarkQueryable.KonqBookmarkQueryable),
 	typeof (Beagle.Daemon.KNotesQueryable.KNotesQueryable),
 	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
 	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),

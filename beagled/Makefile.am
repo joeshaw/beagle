@@ -324,6 +324,10 @@ konqhistoryqueryable = $(srcdir)/KonqHistoryQueryable
 KONQHISTORY_QUERYABLE_CSFILES =				\
 	$(konqhistoryqueryable)/KonqQueryable.cs
 
+konqbookmarkqueryable = $(srcdir)/KonqBookmarkQueryable
+KONQBOOKMARK_QUERYABLE_CSFILES =				\
+	$(konqbookmarkqueryable)/KonqBookmarkQueryable.cs
+
 kopetequeryable = $(srcdir)/KopeteQueryable
 KOPETE_QUERYABLE_CSFILES =				\
 	$(kopetequeryable)/KopeteQueryable.cs 	 	\
@@ -353,6 +357,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(LIFEREA_QUERYABLE_CSFILES)				\
 	$(AKREGATOR_QUERYABLE_CSFILES)				\
 	$(KONQHISTORY_QUERYABLE_CSFILES)			\
+	$(KONQBOOKMARK_QUERYABLE_CSFILES)			\
 	$(KNOTES_QUERYABLE_CSFILES)				\
 	$(KABC_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
