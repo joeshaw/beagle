@@ -342,11 +342,11 @@ VERSION:2.0
 					if (dt == old_dt)
 						return null;
 					else {
-						Log.Debug ("Updating last_mod_date [{0}] = {1}", uid, dt);
+						//Log.Debug ("Updating last_mod_date [{0}] = {1}", uid, dt);
 						last_modified_table [uid] = dt;
 					}
 				} else {
-					Log.Debug ("Adding last_mod_date [{0}] = {1}", uid, dt);
+					//Log.Debug ("Adding last_mod_date [{0}] = {1}", uid, dt);
 					last_modified_table [uid] = dt;
 				}
 			}
@@ -367,7 +367,7 @@ VERSION:2.0
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", uid));
 
 			// FIXME: Comment this Debug statement after the backend stabilizes
-			Log.Debug ("Creating {0} from:[{1}]", uri, string_builder.ToString ());
+			//Log.Debug ("Creating {0} from:[{1}]", uri, string_builder.ToString ());
 			StringReader string_reader = new StringReader (string_builder.ToString());
 			indexable.SetTextReader (string_reader);
 

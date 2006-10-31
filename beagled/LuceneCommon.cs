@@ -379,10 +379,17 @@ namespace Beagle.Daemon {
 
 			private char [] buffer = new char [2];
 			private bool strip_extra_property_info = false;
+			private bool tokenize_email_hostname = false;
 
-			public BeagleAnalyzer (bool strip_extra_property_info)
+			public BeagleAnalyzer (bool is_indexing_analyzer)
 			{
-				this.strip_extra_property_info = strip_extra_property_info;
+				if (is_indexing_analyzer) {
+					this.strip_extra_property_info = true;
+					this.tokenize_email_hostname = true;
+				} else {
+					this.strip_extra_property_info = false;
+					this.tokenize_email_hostname = false;
+				}
 			}
 
 			public override TokenStream TokenStream (string fieldName, TextReader reader)
@@ -428,7 +435,7 @@ namespace Beagle.Daemon {
 				    || fieldName == "HotText"
 				    || fieldName == "PropertyText"
 				    || is_text_prop) {
-					outstream = new NoiseEmailHostFilter (outstream);
+					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname);
 					outstream = new PorterStemFilter (outstream);
 				}
 

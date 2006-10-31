@@ -55,7 +55,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		//    for searching for parts of an email address.
 		// 4: Make the flags property mutable, and create a property
 		//    change Indexable when they change for IMAP generators.
-		private const int INDEX_VERSION = 4;
+		// 5: No need for a separate sanitized version of email addresses.
+		private const int INDEX_VERSION = 5;
 
 		public EvolutionMailQueryable () : base ("EvolutionMailIndex", INDEX_VERSION)
 		{

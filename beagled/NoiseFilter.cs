@@ -41,12 +41,15 @@ namespace Beagle.Daemon {
 			
 		static int total_count = 0;
 		static int noise_count = 0;
+		private bool tokenize_email_hostname;
 
 		TokenStream token_stream;
 
-		public NoiseEmailHostFilter (TokenStream input) : base (input)
+		public NoiseEmailHostFilter (TokenStream input, bool tokenize_email_hostname)
+			: base (input)
 		{
-			token_stream = input;
+			this.token_stream = input;
+			this.tokenize_email_hostname = tokenize_email_hostname;
 		}
 
 		// FIXME: we should add some heuristics that are stricter
@@ -140,10 +143,12 @@ namespace Beagle.Daemon {
 			string type = token.Type ();
 
 			if (type == tokentype_email) {
-				ProcessEmailToken (token);
+				if (tokenize_email_hostname)
+					ProcessEmailToken (token);
 				return true;
 			} else if (type == tokentype_host) {
-				ProcessURLToken (token);
+				if (tokenize_email_hostname)
+					ProcessURLToken (token);
 				return true;
 			} else if (type == tokentype_number)
 				// nobody will remember more than 10 digits
@@ -218,7 +223,7 @@ namespace Beagle.Daemon {
 			// FIXME: Remove final tld
 			// Any string of form "<alnum> '.')+<alnum>" has type HOST
 			// Removing last token might remove important words from non-host
-			// string of that form. To fix that, we need match against the
+			// string of that form. To fix that, we need to match against the
 			// huge list of TLDs.
 			for (int i = begin_index; i < host_parts.Length; ++i)
 				parts.Enqueue (host_parts [i]);

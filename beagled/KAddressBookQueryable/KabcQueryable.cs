@@ -334,11 +334,11 @@ namespace Beagle.Daemon.KabcQueryable {
 					if (current_dt == old_dt)
 						return false;
 					else {
-						Log.Debug ("Updating last_mod_date [{0}] = {1}", current_uid, current_dt);
+						//Log.Debug ("Updating last_mod_date [{0}] = {1}", current_uid, current_dt);
 						last_modified_table [current_uid] = current_dt;
 					}
 				} else {
-					Log.Debug ("Adding last_mod_date [{0}] = {1}", current_uid, current_dt);
+					//Log.Debug ("Adding last_mod_date [{0}] = {1}", current_uid, current_dt);
 					last_modified_table [current_uid] = current_dt;
 				}
 			}
@@ -362,7 +362,7 @@ namespace Beagle.Daemon.KabcQueryable {
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", current_uid));
 
 			// FIXME: Comment this Debug statement after the backend stabilizes
-			Log.Debug ("Creating {0} from:[{1}]", uri, string_builder.ToString ());
+			//Log.Debug ("Creating {0} from:[{1}]", uri, string_builder.ToString ());
 			StringReader string_reader = new StringReader (string_builder.ToString());
 			indexable.SetTextReader (string_reader);
 

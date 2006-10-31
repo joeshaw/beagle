@@ -800,10 +800,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group) {
+					if (ia.AddressType != GMime.InternetAddressType.Group)
 						indexable.AddProperty (Property.New ("fixme:to_address", ia.Addr));
-						indexable.AddProperty (Property.New ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-					}
+
 					indexable.AddProperty (Property.New ("fixme:to_name", ia.Name));
 				}
 
@@ -816,10 +815,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group) {
+					if (ia.AddressType != GMime.InternetAddressType.Group)
 						indexable.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-						indexable.AddProperty (Property.New ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-					}
+
 					indexable.AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				}
 
@@ -832,10 +830,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			foreach (GMime.InternetAddress ia in addrs) {
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group) {
+					if (ia.AddressType != GMime.InternetAddressType.Group)
 						indexable.AddProperty (Property.New ("fixme:from_address", ia.Addr));
-						indexable.AddProperty (Property.New ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-					}
+
 					indexable.AddProperty (Property.New ("fixme:from_name", ia.Name));
 				}
 
