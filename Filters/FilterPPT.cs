@@ -575,7 +575,7 @@ namespace Beagle.Filters {
 					}
 				}
 
-			} catch (Exception e) {
+			} catch (Exception) {
 				
 				Logger.Log.Error ("Unable to open OleFile stream of "+info.FullName);
 				Error ();

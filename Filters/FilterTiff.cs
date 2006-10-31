@@ -121,9 +121,9 @@ namespace Beagle.Filters {
 			try {
 				DateTime time = DirectoryEntry.DateTimeFromString (value);
 				filter.AddProperty (Beagle.Property.NewDate (name, time));
-			} catch (ArgumentOutOfRangeException e) {
+			} catch (ArgumentOutOfRangeException) {
 				Logger.Log.Debug ("{0} = '{1}' is invalid.", name, value);
-			} catch (FormatException fe) {
+			} catch (FormatException) {
 				Logger.Log.Debug ("{0} = '{1}' is invalid.", name, value);
 			}
 		}

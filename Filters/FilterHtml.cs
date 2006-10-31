@@ -273,7 +273,7 @@ namespace Beagle.Filters {
 					doc.Load (Stream);
 				else
 					doc.Load (Stream, enc);
-			} catch (NotSupportedException e) {
+			} catch (NotSupportedException) {
 				doc.Load (Stream, Encoding.ASCII);
 			} catch (Exception e) {
 				Log.Debug (e, "Exception while filtering HTML file");

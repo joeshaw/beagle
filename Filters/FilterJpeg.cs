@@ -132,7 +132,7 @@ namespace Beagle.Filters {
 				try {
 					DateTime dt = ExifUtil.DateTimeFromString (str);
 					AddProperty (Beagle.Property.NewDate ("exif:DateTime", dt));
-				} catch (ArgumentOutOfRangeException e) {
+				} catch (ArgumentOutOfRangeException) {
 					Logger.Log.Debug("EXIF DateTime '{0}' is invalid.", str);
 				}
 			}

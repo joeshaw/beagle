@@ -342,7 +342,7 @@ namespace Beagle.Filters {
 				z.ReadByte ();
 				z.Close ();
 				s.Close ();
-			} catch (Exception ex) {
+			} catch (Exception) {
 				is_gzipped = false;
 			}
 

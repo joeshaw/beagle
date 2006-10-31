@@ -506,7 +506,7 @@ namespace Beagle.Filters {
 				if (MimeType.StartsWith ("application/vnd.oasis.opendocument."))
 					odtFormat = true;
 
-			} catch (Exception e) {
+			} catch (Exception) {
 				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.", 
 						  info.FullName);
 				Finished ();

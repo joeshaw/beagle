@@ -189,9 +189,6 @@ namespace Beagle.Filters {
 		{
 			Input sum_stream = null;
 			Input doc_stream = null;
-			string str = null;
-			int childCount = 0;
-			int found = 0;
 			
 			if (file == null) {
 				Finished ();

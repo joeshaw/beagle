@@ -167,7 +167,7 @@ namespace Beagle.Filters {
 					Logger.Log.Error ("Unable to open {0}.", info.FullName);
 					Finished ();
 				}
-			} catch (Exception e) {
+			} catch (Exception) {
 				Logger.Log.Error ("Unable to open {0}.", info.FullName);
 				Finished ();
 			}

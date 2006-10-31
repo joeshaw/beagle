@@ -55,7 +55,7 @@ namespace Beagle.Filters {
 				
 			try {
 				reader = new StreamReader (file.FullName);
-			} catch (Exception e) {
+			} catch (Exception) {
 				Logger.Log.Debug ("Could not open directory meta-data file, not filtering: {0}", dir.FullName);
 				Error ();
 				return;

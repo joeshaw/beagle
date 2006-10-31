@@ -95,7 +95,7 @@ namespace Beagle.Filters {
 					doc.Load (mem_stream);
 				else
 					doc.Load (mem_stream, enc);
-			} catch (NotSupportedException e) {
+			} catch (NotSupportedException) {
 				doc.Load (mem_stream, Encoding.ASCII);
 			} catch (Exception e) {
 				Console.WriteLine (e.Message);

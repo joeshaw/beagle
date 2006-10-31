@@ -102,7 +102,7 @@ namespace Beagle.Filters {
 							desktop_file = installed;
 					}
 				}
-				catch (IOException e) {
+				catch (IOException) {
 					// Mostly likely caused by permission error
 				}
 
