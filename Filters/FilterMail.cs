@@ -53,7 +53,9 @@ namespace Beagle.Filters {
 		{
 			// 1: Make email addresses non-keyword, add sanitized version
 			//    for eaching for parts of an email address.
-			SetVersion (1);
+			// 2: No need to separately add sanitized version of emails.
+			//    BeagleAnalyzer uses a tokenfilter taking care of this.
+			SetVersion (2);
 
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
 		}
@@ -109,10 +111,9 @@ namespace Beagle.Filters {
 			addrs = this.message.GetRecipients (GMime.Message.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group) {
+				if (ia.AddressType != GMime.InternetAddressType.Group)
 					AddProperty (Property.New ("fixme:to_address", ia.Addr));
-					AddProperty (Property.NewUnstored ("fixme:to_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-				}
+
 				AddProperty (Property.New ("fixme:to_name", ia.Name));
 			}
 			addrs.Dispose ();
@@ -120,10 +121,9 @@ namespace Beagle.Filters {
 			addrs = this.message.GetRecipients (GMime.Message.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group) {
+				if (ia.AddressType != GMime.InternetAddressType.Group)
 					AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-					AddProperty (Property.NewUnstored ("fixme:cc_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-				}
+
 				AddProperty (Property.New ("fixme:cc_name", ia.Name));
 			}
 			addrs.Dispose ();
@@ -131,10 +131,9 @@ namespace Beagle.Filters {
 			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (this.message.Sender));
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group) {
+				if (ia.AddressType != GMime.InternetAddressType.Group)
 					AddProperty (Property.New ("fixme:from_address", ia.Addr));
-					AddProperty (Property.NewUnstored ("fixme:from_sanitized", StringFu.SanitizeEmail (ia.Addr)));
-				}
+
 				AddProperty (Property.New ("fixme:from_name", ia.Name));
 			}
 			addrs.Dispose ();

@@ -99,11 +99,11 @@ namespace Beagle.Filters {
 					if (vcpp.param_name == "TYPE" &&
 					    vcpp.param_value == "PREF")
 						// Default email
-						AddProperty (Beagle.Property.NewKeyword (
+						AddProperty (Beagle.Property.New (
 							     "vCard:PREFEMAIL",
 							     prop_value));
 				}
-				AddProperty (Beagle.Property.NewKeyword ("vCard:EMAIL", prop_value));
+				AddProperty (Beagle.Property.New ("vCard:EMAIL", prop_value));
 			}
 		}
 	}
