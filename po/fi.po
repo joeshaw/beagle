@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-15 10:54+0300\n"
-"PO-Revision-Date: 2006-09-15 11:04+0300\n"
+"POT-Creation-Date: 2006-10-31 07:28+0300\n"
+"PO-Revision-Date: 2006-10-31 07:30+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -293,7 +293,7 @@ msgid "State/Province:"
 msgstr "Osavaltio tai lääni:"
 
 #: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
+#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Otsikko:"
@@ -350,14 +350,14 @@ msgstr "Haku"
 msgid "Search for data on your desktop"
 msgstr "Etsi tietoja työpöydältäsi"
 
-#: ../search/Category.cs:109
+#: ../search/Category.cs:132
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} tulos"
 msgstr[1] "{0} tulosta"
 
-#: ../search/Category.cs:111
+#: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} / {2}"
@@ -411,7 +411,7 @@ msgstr ""
 "Hae lauseita lisäämällä lainausmerkit, esimerkiksi <b>\"ollako  vai eikö olla"
 "\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:83
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
 msgstr "Pikavinkit"
 
@@ -435,19 +435,19 @@ msgstr "Hakupalvelu ei ole käynnissä"
 msgid "Start search service"
 msgstr "Käynnistä hakupalvelu"
 
-#: ../search/Search.cs:149
+#: ../search/Search.cs:151
 msgid "_Find:"
 msgstr "_Etsi:"
 
-#: ../search/Search.cs:164
+#: ../search/Search.cs:166
 msgid "Find Now"
 msgstr "Etsi heti"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:214
 msgid "Type in search terms"
 msgstr "Syötä hakuehdot"
 
-#: ../search/Search.cs:211
+#: ../search/Search.cs:215
 msgid "Start searching"
 msgstr "Aloita haku"
 
@@ -495,7 +495,7 @@ msgid "Move to Trash"
 msgstr "Siirrä roskakoriin"
 
 #: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:58
+#: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Viimeksi muokattu:"
 
@@ -666,28 +666,28 @@ msgstr "Uutisvirrat"
 msgid "Archives"
 msgstr "Arkistot"
 
-#: ../search/Tiles/Utils.cs:77 ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
 #: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Eilen"
 
-#: ../search/Tiles/Utils.cs:79 ../search/Tiles/Utils.cs:161
+#: ../search/Tiles/Utils.cs:128 ../search/Tiles/Utils.cs:210
 #: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Tänään"
 
-#: ../search/Tiles/Utils.cs:81 ../search/Tiles/Utils.cs:163
+#: ../search/Tiles/Utils.cs:130 ../search/Tiles/Utils.cs:212
 msgid "Tomorrow"
 msgstr "Huomenna"
 
-#: ../search/Tiles/Utils.cs:179
+#: ../search/Tiles/Utils.cs:228
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} viikko sitten"
 msgstr[1] "{0} viikkoa sitten"
 
-#: ../search/Tiles/Utils.cs:181
+#: ../search/Tiles/Utils.cs:230
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -695,28 +695,28 @@ msgstr[0] "{0} viikon aikana"
 msgstr[1] "{0} viikon aikana"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:183
+#: ../search/Tiles/Utils.cs:232
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} kuukausi sitten"
 msgstr[1] "{0} kuukautta sitten"
 
-#: ../search/Tiles/Utils.cs:185
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0} kuukauden aikana"
 msgstr[1] "{0} kuukauden aikana"
 
-#: ../search/Tiles/Utils.cs:187
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} vuosi sitten"
 msgstr[1] "{0} vuotta sitten"
 
-#: ../search/Tiles/Utils.cs:189
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -928,139 +928,179 @@ msgstr ""
 "henkilö\n"
 "henkilöt"
 
-#: ../search/UIManager.cs:44
+#: ../search/UIManager.cs:50
 msgid "Close Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:49 ../search/UIManager.cs:71
+#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
 msgid "Exit Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:62
 msgid "_Search"
 msgstr "_Haku"
 
-#: ../search/UIManager.cs:59
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "Näytä _luokat"
+
+#: ../search/UIManager.cs:68
 msgid "_Actions"
 msgstr "_Toiminnot"
 
-#: ../search/UIManager.cs:62
-msgid "Sor_t"
-msgstr "Jä_rjestä"
+#: ../search/UIManager.cs:71
+msgid "_View"
+msgstr "_Näytä"
 
-#: ../search/UIManager.cs:65
+#: ../search/UIManager.cs:74
 msgid "_Help"
 msgstr "O_hje"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:83
 msgid "_Contents"
 msgstr "_Sisältö"
 
-#: ../search/UIManager.cs:76
+#: ../search/UIManager.cs:85
 msgid "Help - Table of Contents"
 msgstr "Ohje - sisällysluettelo"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:89
 msgid "About Desktop Search"
 msgstr "Tietoja työpöytähausta"
 
-#: ../search/UIManager.cs:102
-msgid "_Everywhere"
-msgstr "_Mistä tahansa"
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "K_aikki"
 
-#: ../search/UIManager.cs:104
-msgid "Search everywhere"
-msgstr "Hae kaikkialta"
+#: ../search/UIManager.cs:121
+msgid "_None"
+msgstr "_Ei mitään"
 
-#: ../search/UIManager.cs:107
-msgid "_Applications"
+#: ../search/UIManager.cs:135
+msgid "A_pplications"
 msgstr "_Sovellukset"
 
-#: ../search/UIManager.cs:109
+#: ../search/UIManager.cs:137
 msgid "Search applications"
 msgstr "Etsi sovelluksia"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:141
 msgid "_Contacts"
 msgstr "_Yhteystiedot"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:143
 msgid "Search contacts"
 msgstr "Etsi yhteystietoja"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:147
 msgid "Ca_lendar events"
 msgstr "Ka_lenteritapahtumat"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Search calendar events"
 msgstr "Etsi kalenteritapahtumia"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:153
 msgid "_Documents"
 msgstr "_Asiakirjat"
 
-#: ../search/UIManager.cs:124
+#: ../search/UIManager.cs:155
 msgid "Search documents"
 msgstr "Etsi asiakirjoja"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:159
 msgid "Conve_rsations"
 msgstr "Kes_kustelut"
 
-#: ../search/UIManager.cs:129
+#: ../search/UIManager.cs:161
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Etsi sähköposti- ja pikaviestinlokeja"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:165
 msgid "_Images"
 msgstr "_Kuvat"
 
-#: ../search/UIManager.cs:134
+#: ../search/UIManager.cs:167
 msgid "Search images"
 msgstr "Etsi kuvia"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:171
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:139
+#: ../search/UIManager.cs:173
 msgid "Search sound and video files"
 msgstr "Etsi ääni- ja videotiedostoja"
 
-#: ../search/UIManager.cs:146
-msgid "Date _Modified"
-msgstr "Viimeksi _muokattu"
+#: ../search/UIManager.cs:177
+msgid "_Folders"
+msgstr "_Kansiot"
 
-#: ../search/UIManager.cs:147
+#: ../search/UIManager.cs:179
+msgid "Search for folder names"
+msgstr "Etsi kansioiden nimiä"
+
+#: ../search/UIManager.cs:183
+msgid "_Websites"
+msgstr "_WWW-sivut"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Etsi selaimen historiasta"
+
+#: ../search/UIManager.cs:189
+msgid "_News Feeds"
+msgstr "_Uutisvirrat"
+
+#: ../search/UIManager.cs:191
+msgid "Search news feeds"
+msgstr "Etsi uutisvirtoja"
+
+#: ../search/UIManager.cs:195
+msgid "A_rchives"
+msgstr "A_rkistot"
+
+#: ../search/UIManager.cs:197
+msgid "Search files in Archives"
+msgstr "Etsi tiedostoja arkistoista"
+
+#: ../search/UIManager.cs:205
+msgid "Sort by Date _Modified"
+msgstr "Järjestä _muokkauspäivän mukaan"
+
+#: ../search/UIManager.cs:206
 msgid "Sort the most-recently-modified matches first"
 msgstr "Järjestä äskettäin muokatut ensimmäiseksi"
 
-#: ../search/UIManager.cs:150
-msgid "_Name"
-msgstr "_Nimi"
+#: ../search/UIManager.cs:209
+msgid "Sort by _Name"
+msgstr "Järjestä _nimen mukaan"
 
-#: ../search/UIManager.cs:151
+#: ../search/UIManager.cs:210
 msgid "Sort matches by name"
 msgstr "Järjestä nimen mukaan"
 
-#: ../search/UIManager.cs:154
-msgid "_Relevance"
-msgstr "_Asiaankuuluvuus"
+#: ../search/UIManager.cs:213
+msgid "Sort by _Relevance"
+msgstr "Järjestä _asiaankuuluvuuden mukaan"
 
-#: ../search/UIManager.cs:155
+#: ../search/UIManager.cs:214
 msgid "Sort the best matches first"
 msgstr "Järjestä parhaat tulokset ensin"
 
-#: ../search/UIManager.cs:268
+#: ../search/UIManager.cs:221
+msgid "Show Details"
+msgstr "Näytä yksityiskohdat"
+
+#: ../search/UIManager.cs:354
 msgid "Couldn't launch web browser"
 msgstr "WWW-selainta ei voitu käynnistää"
 
-#: ../tools/Settings.cs:226
+#: ../tools/Settings.cs:227
 msgid "Reload configuration"
 msgstr "Lataa asetukset uudestaan"
 
-#: ../tools/Settings.cs:227
+#: ../tools/Settings.cs:228
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1068,15 +1108,15 @@ msgstr ""
 "Asetustiedostoa on muokatto toisesta ohjelmasta. Haluatko unohtaa nyt "
 "näkyvät asetukset ja ladata asetustiedoston uudestan levyltä?"
 
-#: ../tools/Settings.cs:265
+#: ../tools/Settings.cs:266
 msgid "Select Path"
 msgstr "Valitse polku"
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:285
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Valittu polku on jo indeksoitavien listalla eikä sitä lisätty."
 
-#: ../tools/Settings.cs:287
+#: ../tools/Settings.cs:288
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
@@ -1084,15 +1124,15 @@ msgstr ""
 "Valittua polkua lisätty. Olemassaolevassa listassa on kohteita, jotka jo "
 "määrittelevät myös tämän polun ja tieto on jo indeksoitu."
 
-#: ../tools/Settings.cs:298 ../tools/Settings.cs:490
+#: ../tools/Settings.cs:299 ../tools/Settings.cs:491
 msgid "Path not added"
 msgstr "Polkua ei lisätty"
 
-#: ../tools/Settings.cs:307
+#: ../tools/Settings.cs:308
 msgid "Remove obsolete paths"
 msgstr "Poista turhat polut"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:309
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1101,11 +1141,11 @@ msgstr ""
 "Tämän takia aiemmin määritellyt, nyt turhiksi muuttuvat polut, poistetaan. "
 "Haluatko todella lisätä tämän polun?"
 
-#: ../tools/Settings.cs:334
+#: ../tools/Settings.cs:335
 msgid "Remove path"
 msgstr "Poista hakupolku"
 
-#: ../tools/Settings.cs:335
+#: ../tools/Settings.cs:336
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1113,11 +1153,11 @@ msgstr ""
 "Oletko varma että haluat poistaa tämän hakupolun indeksoitavien kansioiden "
 "listalta?"
 
-#: ../tools/Settings.cs:364
+#: ../tools/Settings.cs:365
 msgid "Remove item"
 msgstr "Poista kohta"
 
-#: ../tools/Settings.cs:365
+#: ../tools/Settings.cs:366
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1125,86 +1165,86 @@ msgstr ""
 "Haluatko poistaa tämän kohdan listalta, joka sisältää ne tiedot, joiden "
 "indeksointi on estetty?"
 
-#: ../tools/Settings.cs:408
+#: ../tools/Settings.cs:409
 msgid "Invalid host entry"
 msgstr "Virheellinen isäntänimi"
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:416
 msgid "Remote host already present in the list."
 msgstr "Poista jo listalla oleva isäntänimi."
 
-#: ../tools/Settings.cs:424
+#: ../tools/Settings.cs:425
 msgid "Netbeagle Node not added"
 msgstr "Verkkobeagle solmua ei lisätty"
 
-#: ../tools/Settings.cs:440
+#: ../tools/Settings.cs:441
 msgid "Remove host"
 msgstr "Poista isäntä"
 
-#: ../tools/Settings.cs:441
+#: ../tools/Settings.cs:442
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Haluatko varmasti poistaa tämän isännän listalta?"
 
-#: ../tools/Settings.cs:462
+#: ../tools/Settings.cs:463
 msgid "Select path"
 msgstr "Hakupolku"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:482
 msgid "The selected path is already configured for external access."
 msgstr "Valittu polku on jo määritelty etäkäyttöä varten."
 
-#: ../tools/Settings.cs:505
+#: ../tools/Settings.cs:506
 msgid "Remove public path"
 msgstr "Poista julkinen polku"
 
-#: ../tools/Settings.cs:506
+#: ../tools/Settings.cs:507
 msgid ""
 "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
 "Haluatko varmasti poistaa tämän kohdan julkisten hakupolkujen listalta?"
 
-#: ../tools/Settings.cs:551 ../tools/Settings.cs:640 ../tools/Settings.cs:718
-#: ../tools/Settings.cs:794 ../tools/Settings.cs:1133
+#: ../tools/Settings.cs:552 ../tools/Settings.cs:641 ../tools/Settings.cs:719
+#: ../tools/Settings.cs:795 ../tools/Settings.cs:1134
 msgid "Name"
 msgstr "Nimi"
 
-#: ../tools/Settings.cs:634
+#: ../tools/Settings.cs:635
 msgid "Type"
 msgstr "Tyyppi"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:688
 msgid "Path:"
 msgstr "Polku:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:691
 msgid "Pattern:"
 msgstr "Malli:"
 
-#: ../tools/Settings.cs:693
+#: ../tools/Settings.cs:694
 msgid "Mail folder:"
 msgstr "Sähköpostikansio:"
 
-#: ../tools/Settings.cs:1041
+#: ../tools/Settings.cs:1042
 msgid "Select Folder"
 msgstr "Valitse kansio"
 
-#: ../tools/Settings.cs:1067 ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "P_olku_"
 
-#: ../tools/Settings.cs:1072
+#: ../tools/Settings.cs:1073
 msgid "M_ail folder:"
 msgstr "Sähköposti_kansio:"
 
-#: ../tools/Settings.cs:1077
+#: ../tools/Settings.cs:1078
 msgid "P_attern:"
 msgstr "M_alli:"
 
-#: ../tools/Settings.cs:1101
+#: ../tools/Settings.cs:1102
 msgid "Error adding path"
 msgstr "Virhe lisättäessä polkua"
 
-#: ../tools/Settings.cs:1102
+#: ../tools/Settings.cs:1103
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1212,7 +1252,7 @@ msgstr ""
 "Annettua polkua ei löytynyt eikä sitä voida lisätä indeksoitavien "
 "hakupolkujen listalle."
 
-#: ../tools/Settings.cs:1132
+#: ../tools/Settings.cs:1133
 msgid "Show"
 msgstr "Näytä"
 
@@ -1492,6 +1532,18 @@ msgstr "{0:0.0} kt"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mt"
+
+#~ msgid "Sor_t"
+#~ msgstr "Jä_rjestä"
+
+#~ msgid "_Everywhere"
+#~ msgstr "_Mistä tahansa"
+
+#~ msgid "Search everywhere"
+#~ msgstr "Hae kaikkialta"
+
+#~ msgid "_Applications"
+#~ msgstr "_Sovellukset"
 
 #~ msgid "Image"
 #~ msgstr "Kuva"
