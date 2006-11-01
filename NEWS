@@ -1,4 +1,54 @@
 
+Version 0.2.12
+1 November 2006
+
+Daemon/Infrastructure:
+* Drastically reduce memory usage of beagled and beagled-index-helper
+  at startup by changing how certain pluggable components are
+  detected.  Filter and backend authors, see IMPORTANT NOTE below.
+  (Joe Shaw, Debojyoti Bera, Kevin Kubasik)
+* Don't run Beagle in Mono with the --debug flag unless --mono-debug
+  is passed into beagled.  This saves memory and fixes leaks.  (Joe)
+* Tokenize emails and hostnames when indexing.  (Bera)
+* Add back in Hangul Jamo support to Lucene, which was lost in our
+  upgrade to 1.9.1.  (Young-Ho Cha)
+* If we get an exception handling a message, catch it and wrap it in
+  an ErrorResponse to send to the client.  (Joe)
+* Fix a bug in non-Lucene backends when seeing whether or not it's
+  indexing.  (Joe)
+
+Backends:
+* Fix the Thunderbird backend to index the "Local Folders" account.
+  (Pierre Östlund)
+* Add Konqueror bookmark backend.  (Bera)
+* Generate KAddressbook and KNotes URIs in correct case.  (Bera)
+* Store the Liferea feed icon as a property.  (Max Wiehle)
+* Fix an exception on non-note files in the Tomboy directory.  (Joe)
+* Stop doing unnecessary extra work in the KAddressbook and KNotes
+  backends.  (Bera)
+* Don't deal with email addresses separately in various backend and
+  filters, since they are handled by the tokenizer now.  (Bera)
+
+Tools:
+* Add --disable-directories to beagle-build-index so that directories
+  themselves aren't indexed.  (Joe)
+* Set the default applications and documentation crawl rules to use
+  --disable-directories.  (Joe)
+
+Translations:
+* Updated Finnish translation.  (Ilkka Tuohela)
+* Updated Italian translation.  (Luca Ferretti)
+* Updated Japanese translation.  (Takeshi Aihana)
+
+Everything else:
+* Bump the Firefox extension version number to indicate that it has
+  Firefox 2.0 support.  (Joe)
+* Don't hardcode mcs as the C# compiler.  (Joe)
+* Remove a large number of compile warnings that recent Mono versions
+  started to expose.  (Bera)
+
+------------------------------------------------------
+
 Version 0.2.11
 18 October 2006
 

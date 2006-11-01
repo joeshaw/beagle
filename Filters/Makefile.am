@@ -21,7 +21,7 @@ HAP_CSFILES =						\
 include entagged-sharp/entagged-sharp.sources
 
 CSFILES = 				\
-	AssemblyInfo.cs			\
+	$(srcdir)/AssemblyInfo.cs	\
 	$(ENTAGGED_CSFILES)		\
 	$(HAP_CSFILES)			\
 	$(srcdir)/FilterHtml.cs		\
