@@ -85,30 +85,30 @@ namespace Search.Tiles {
 				set { application = value; }
 			}
 
-			public ApplicationMenuItem (OpenWithMenu menu, MimeApplication mime_application) : base (mime_application.Name)
+			public ApplicationMenuItem (OpenWithMenu menu, MimeApplication ma) : base (ma.Name)
 			{
-				application = mime_application;
+				this.application = ma;
 				
-				if (menu.ShowIcons) {
-					//System.Console.WriteLine ("icon = {0}", mime_application.Icon);
+				if (!menu.ShowIcons)
+					return;
 					
-					if (mime_application.Icon != null) {
-						Gdk.Pixbuf pixbuf = null; 
-						
-						try {
-							if (mime_application.Icon.StartsWith ("/"))
-								pixbuf = new Gdk.Pixbuf (mime_application.Icon, 16, 16);
-							else 
-								pixbuf = IconTheme.Default.LoadIcon (mime_application.Icon,
-												     16, (IconLookupFlags)0);
-						} catch (System.Exception e) {
-							pixbuf = null;
-						}
-						
-						if (pixbuf != null)
-							Image = new Gtk.Image (pixbuf);
-					}
+				if (ma.Icon == null)
+					return;
+
+				Gdk.Pixbuf pixbuf = null; 
+				
+				try {
+					if (ma.Icon.StartsWith ("/"))
+						pixbuf = new Gdk.Pixbuf (ma.Icon, 16, 16);
+					else 
+						pixbuf = IconTheme.Default.LoadIcon (ma.Icon, 16, 
+										     (IconLookupFlags)0);
+				} catch {
+					pixbuf = null;
 				}
+				
+				if (pixbuf != null)
+						Image = new Gtk.Image (pixbuf);
 			}
 		}
 	}

@@ -294,7 +294,7 @@ namespace Search {
 
 				currentQuery.SendAsync ();
 				spinner.Start ();
-			} catch (Beagle.ResponseMessageException e){
+			} catch (Beagle.ResponseMessageException){
 				pages.CurrentPage = pages.PageNum (startdaemon);
 			} catch (Exception e) {
 				Console.WriteLine ("Querying the Beagle daemon failed: {0}", e.Message);

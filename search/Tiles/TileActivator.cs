@@ -91,7 +91,8 @@ namespace Search.Tiles {
 					try {
 						activators.Add ((TileActivator) Activator.CreateInstance (type));
 					} catch (Exception e) {
-						Console.WriteLine ("Caught exception while instantiating tile.");
+						Console.WriteLine ("Caught exception while instantiating tile");
+						Console.WriteLine (e);
 					}
 				}
 			}
