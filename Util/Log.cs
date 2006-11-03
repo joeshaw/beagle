@@ -145,7 +145,7 @@ namespace Beagle.Util {
 					log_date = DateTime.ParseExact (date, "yyyy-MM-dd-HH-mm-ss", null);
 					if (log_date < magic_date)
 						file.Delete ();
-				} catch (Exception e) {	}
+				} catch { }
 			}				
 		}
 

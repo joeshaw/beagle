@@ -106,7 +106,7 @@ namespace Beagle.Util {
 				Remove (path, test_key);
 				return Get (path, test_key) == null;
 
-			} catch (Exception ex) {
+			} catch {
 				return false;
 			}
 		}

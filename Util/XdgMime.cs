@@ -81,7 +81,7 @@ namespace Beagle.Util {
 
 				// FIXME: UTF8 allows control characters in a file.
 				// Should we allow control characters in a text file?
-			} catch (ArgumentException ex) {
+			} catch (ArgumentException) {
 				return false;
 			}
 

@@ -129,7 +129,7 @@ namespace CommandLineFu {
 
 					try {
 						parsed_value = System.Int32.Parse (value);
-					} catch (Exception ex) {
+					} catch {
 						// parsed_value will still be null, so the
 						// "Couldn't parse..." error will be displayed.
 					}
@@ -138,7 +138,7 @@ namespace CommandLineFu {
 
 					try {
 						parsed_value = System.Double.Parse (value);
-					} catch (Exception ex) { }				
+					} catch { }				
 				}
 				
 				if (parsed_value != null) {

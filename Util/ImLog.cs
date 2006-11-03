@@ -170,7 +170,7 @@ namespace Beagle.Util {
 				} else {
 					throw new FormatException ();
 				}
-			} catch (Exception) {
+			} catch {
 				Logger.Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
 				StartTime = DateTime.Now;
 			}
@@ -366,7 +366,7 @@ namespace Beagle.Util {
 						msg_date = DateTime.ParseExact (timestamp,
 										date_format,
 										null);
-					} catch (Exception ex) {
+					} catch {
 						Logger.Log.Error ("Couldn't parse Kopete timestamp: {0}", timestamp);
 						break;
 					}

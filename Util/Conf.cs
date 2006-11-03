@@ -559,7 +559,7 @@ namespace Beagle.Util {
 				ExcludeType type;
 				try {
 					type = (ExcludeType) Enum.Parse (typeof (ExcludeType), args [0], true);
-				} catch (Exception e) {
+				} catch {
 					output = String.Format("Invalid type '{0}'. Valid types: Path, Pattern, MailFolder", args [0]);
 					return false;
 				}
@@ -575,7 +575,7 @@ namespace Beagle.Util {
 				ExcludeType type;
 				try {
 					type = (ExcludeType) Enum.Parse (typeof (ExcludeType), args [0], true);
-				} catch (Exception e) {
+				} catch {
 					output = String.Format("Invalid type '{0}'. Valid types: Path, Pattern, MailFolder", args [0]);
 					return false;
 				}

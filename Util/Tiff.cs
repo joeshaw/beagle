@@ -1039,7 +1039,7 @@ namespace Beagle.Util.Tiff {
 				if (next_directory_offset != 0)
 					next_directory = new ImageDirectory (stream, next_directory_offset, this.endian);
 				
-			} catch (System.Exception e) {
+			} catch {
 				//System.Console.WriteLine ("Error loading directory {0}", e.ToString ());
 				next_directory = null;
 				next_directory_offset = 0;
