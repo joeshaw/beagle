@@ -50,7 +50,7 @@ namespace ContactViewer {
 			ContactManager contact_manager;
 			try {
 				contact_manager = (ContactManager) Enum.Parse (typeof (ContactManager), contact, true);
-			} catch (Exception) {
+			} catch {
 				Console.WriteLine ("ERROR: '{0}' is not a valid contact manager.", contact);
 				Environment.Exit (3);
 				return;
@@ -87,7 +87,7 @@ namespace ContactViewer {
 					} else {
 						try {
 							uri = new Uri (args [i]);
-						} catch (Exception e) {
+						} catch {
 							Console.WriteLine ("ERROR: Invalid URI!");
 							Environment.Exit (1);
 						}

@@ -144,7 +144,7 @@ namespace ContactViewer {
 			try {
 				Match m = Regex.Match (uri.Query, @"\?id=(?<id>[0-9A-Fa-f]+)");	
 				ShowContact (m.Result ("${id}"));
-			} catch (Exception e) {
+			} catch {
 				Gtk.MessageDialog dialog = new MessageDialog (
 					MainWindow,
 					DialogFlags.DestroyWithParent,
@@ -428,7 +428,7 @@ namespace ContactViewer {
 			try {
 				int tmp = Convert.ToInt32 (contact ["PreferMailFormat"]);
 				PreferredType.Active = (tmp >= 0 && tmp <= 2 ? tmp : 0);
-			} catch (Exception e) {
+			} catch {
 				PreferredType.Active = 0;
 			}
 			
