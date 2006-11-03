@@ -286,22 +286,23 @@ namespace Beagle {
 
 					try {
 						File.Delete (contentUri.LocalPath);
-					} catch (Exception ex)
-					{ 
+					} catch { 
 						// It might be gone already, so catch the exception.
 					}
+
 					contentUri = null;
 				}
+
 				if (hotContentUri != null) {
 					if (Debug)
 						Logger.Log.Debug ("Cleaning up {0}", hotContentUri.LocalPath);
 
 					try {
 						File.Delete (hotContentUri.LocalPath);
-					} catch (Exception ex)
-					{
+					} catch {
 						// Ditto
 					}
+
 					hotContentUri = null;
 				}
 			}
