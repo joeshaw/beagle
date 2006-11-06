@@ -36,6 +36,9 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
+	[PropertyKeywordMapping (Keyword="extension", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. extension:jpeg. Use extension: to search in files with no extension.")]
+	[PropertyKeywordMapping (Keyword="ext", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.")]
+
 	public class StaticQueryable : LuceneQueryable 	{
 		
 		protected TextCache text_cache;
@@ -78,7 +81,8 @@ namespace Beagle.Daemon {
 			// FIXME: This is a hack, we need to support parent Uri's in some sane way
 			try {
 				int j = uri.LocalPath.LastIndexOf ('#');
-				return File.Exists ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));
+				string actual_path = ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));
+				return File.Exists (actual_path) || Directory.Exists (actual_path);
 			} catch (Exception e) {
 				Logger.Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
 				return false;
