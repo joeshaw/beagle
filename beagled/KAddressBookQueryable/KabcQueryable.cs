@@ -49,7 +49,10 @@ namespace Beagle.Daemon.KabcQueryable {
 		private string kabc_file;
 		private Hashtable last_modified_table;
 
-		public KabcQueryable () : base ("KAddressBookIndex")
+		// 1: Update KAddressbook filter.
+		const int MINOR_VERSION = 1;
+
+		public KabcQueryable () : base ("KAddressBookIndex", MINOR_VERSION)
 		{
 			kabc_dir = Path.Combine (PathFinder.HomeDir, ".kde");
 			kabc_dir = Path.Combine (kabc_dir, "share");

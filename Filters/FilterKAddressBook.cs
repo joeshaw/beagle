@@ -35,10 +35,13 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
+	[PropertyKeywordMapping (Keyword="email",     PropertyName="vCard:EMAIL",    IsKeyword=false)]
 	public class FilterKAddressBook : Beagle.Filters.FilterKCal {
 
 		public FilterKAddressBook ()
 		{
+			// 1: Store a prefemail as well, store URL as text.
+			SetVersion (1);
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KabcMimeType));
 			SnippetMode = false;
 			if (vCard_property_mapping == null)
@@ -64,9 +67,9 @@ namespace Beagle.Filters {
 			vCard_property_mapping ["REV"] = new KCalProperty ("dc:date", true, false, KCalType.Date);
 			vCard_property_mapping ["CLASS"] = new KCalProperty ("vCard:CLASS", false, true, KCalType.Text);
 			vCard_property_mapping ["UID"] = new KCalProperty ("vCard:UID", false, true, KCalType.Text);
-			vCard_property_mapping ["EMAIL"] = new KCalProperty ("vCard:EMAIL", false, true, KCalType.Special);
+			vCard_property_mapping ["EMAIL"] = new KCalProperty ("vCard:EMAIL", false, false, KCalType.Special);
 			vCard_property_mapping ["TEL"] = new KCalProperty ("vCard:TEL", false, true, KCalType.Text);
-			vCard_property_mapping ["URL"] = new KCalProperty ("vCard:URL", false, true,KCalType.Text);
+			vCard_property_mapping ["URL"] = new KCalProperty ("vCard:URL", false, false, KCalType.Text);
 		}
 
 		override protected string GetPropertyName (string prop_name, ArrayList paramlist)
@@ -90,6 +93,19 @@ namespace Beagle.Filters {
 			return mapped_prop_name;
 		}
 
+		private string pref_email;
+		private bool pref_email_set;
+
+		override protected void DoPullProperties ()
+		{
+			pref_email_set = false;
+			base.DoPullProperties ();
+			if (pref_email != null)
+				AddProperty (Beagle.Property.New (
+						"vCard:PREFEMAIL",
+						pref_email));
+		}
+
 		override protected void ProcessPropertySpecial (string prop_name,
 								ArrayList paramlist,
 								string prop_value)
@@ -97,13 +113,15 @@ namespace Beagle.Filters {
 			if (prop_name == "EMAIL") {
 				foreach (KCalPropertyParameter vcpp in paramlist) {
 					if (vcpp.param_name == "TYPE" &&
-					    vcpp.param_value == "PREF")
+					    vcpp.param_value == "PREF") {
 						// Default email
-						AddProperty (Beagle.Property.New (
-							     "vCard:PREFEMAIL",
-							     prop_value));
+						pref_email = prop_value;
+						pref_email_set = true;
+					}
 				}
 				AddProperty (Beagle.Property.New ("vCard:EMAIL", prop_value));
+				if (! pref_email_set)
+					pref_email = prop_value;
 			}
 		}
 	}
