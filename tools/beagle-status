@@ -9,10 +9,4 @@ else
     CMD="beagle-info"
 fi
 
-while [ 1 ]; do
-    str=`$CMD --status | head -n 20`
-    clear
-    echo "$str"
-    # beagle-info causes a CPU spike, keep the hammering low
-    sleep 5
-done
+watch -n 5 $CMD --status
