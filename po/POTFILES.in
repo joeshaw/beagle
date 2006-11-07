@@ -8,7 +8,7 @@ ContactViewer/contactviewer.glade
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
 ImLogViewer/ImLogWindow.cs
-search/beagle-search.desktop.in
+search/beagle-search.desktop.in.in
 search/Category.cs
 search/ConversationCategory.cs
 search/Entry.cs
@@ -58,7 +58,7 @@ search/UIManager.cs
 tools/Config.cs
 tools/Settings.cs
 tools/settings.glade
-tools/beagle-settings.desktop.in
+tools/beagle-settings.desktop.in.in
 Util/ChmFile.cs
 Util/Conf.cs
 Util/Evolution.cs
