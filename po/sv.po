@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-12 18:09+0200\n"
-"PO-Revision-Date: 2006-09-21 21:03+0100\n"
+"POT-Creation-Date: 2006-11-08 10:13+0100\n"
+"PO-Revision-Date: 2006-11-08 17:05+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -300,7 +300,7 @@ msgstr "Län/Region:"
 #: ../ContactViewer/contactviewer.glade.h:36
 #: ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:124
-#: ../search/Tiles/Note.cs:57
+#: ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:45
 #: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
@@ -350,23 +350,23 @@ msgstr "Konversationer i {0}"
 msgid "Conversations with {0}"
 msgstr "Konversationer med {0}"
 
-#: ../search/beagle-search.desktop.in.h:1
+#: ../search/beagle-search.desktop.in.in.h:1
 #: ../tools/settings.glade.h:28
 msgid "Search"
 msgstr "Sök"
 
-#: ../search/beagle-search.desktop.in.h:2
+#: ../search/beagle-search.desktop.in.in.h:2
 msgid "Search for data on your desktop"
 msgstr "Sök efter data på ditt skrivbord"
 
-#: ../search/Category.cs:109
+#: ../search/Category.cs:132
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} resultat"
 msgstr[1] "{0} resultat"
 
-#: ../search/Category.cs:111
+#: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} av {2}"
@@ -406,7 +406,7 @@ msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr "Vid sökning efter en fras, lägg till citattecken. exempelvis: <b>\"Det finns drakar\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:83
+#: ../search/UIManager.cs:92
 msgid "Quick Tips"
 msgstr "Snabbtips"
 
@@ -426,19 +426,19 @@ msgstr "Söktjänsten kör inte"
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
-#: ../search/Search.cs:149
+#: ../search/Search.cs:151
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Search.cs:164
+#: ../search/Search.cs:166
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:214
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Search.cs:211
+#: ../search/Search.cs:215
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
@@ -488,7 +488,7 @@ msgstr "Flytta till papperskorg"
 
 #: ../search/Tiles/File.cs:125
 #: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:58
+#: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
@@ -662,31 +662,31 @@ msgstr "Nyhetskanaler"
 msgid "Archives"
 msgstr "Arkiv"
 
-#: ../search/Tiles/Utils.cs:77
-#: ../search/Tiles/Utils.cs:159
+#: ../search/Tiles/Utils.cs:126
+#: ../search/Tiles/Utils.cs:208
 #: ../Util/StringFu.cs:79
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../search/Tiles/Utils.cs:79
-#: ../search/Tiles/Utils.cs:161
+#: ../search/Tiles/Utils.cs:128
+#: ../search/Tiles/Utils.cs:210
 #: ../Util/StringFu.cs:77
 msgid "Today"
 msgstr "Idag"
 
-#: ../search/Tiles/Utils.cs:81
-#: ../search/Tiles/Utils.cs:163
+#: ../search/Tiles/Utils.cs:130
+#: ../search/Tiles/Utils.cs:212
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../search/Tiles/Utils.cs:179
+#: ../search/Tiles/Utils.cs:228
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} vecka sedan"
 msgstr[1] "{0} veckor sedan"
 
-#: ../search/Tiles/Utils.cs:181
+#: ../search/Tiles/Utils.cs:230
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -694,28 +694,28 @@ msgstr[0] "Om {0} vecka"
 msgstr[1] "Om {0} veckor"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:183
+#: ../search/Tiles/Utils.cs:232
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} månad sedan"
 msgstr[1] "{0} månader sedan"
 
-#: ../search/Tiles/Utils.cs:185
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} månad"
 msgstr[1] "Om {0} månader"
 
-#: ../search/Tiles/Utils.cs:187
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år sedan"
 msgstr[1] "{0} år sedan"
 
-#: ../search/Tiles/Utils.cs:189
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -952,270 +952,310 @@ msgstr ""
 "person\n"
 "folk"
 
-#: ../search/UIManager.cs:44
+#: ../search/UIManager.cs:50
 msgid "Close Desktop Search"
 msgstr "Stäng skrivbordssökning"
 
-#: ../search/UIManager.cs:49
-#: ../search/UIManager.cs:71
+#: ../search/UIManager.cs:55
+#: ../search/UIManager.cs:80
 msgid "Exit Desktop Search"
 msgstr "Avsluta skrivbordssökning"
 
-#: ../search/UIManager.cs:56
+#: ../search/UIManager.cs:62
 msgid "_Search"
 msgstr "_Sök"
 
-#: ../search/UIManager.cs:59
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "Visa _kategorier"
+
+#: ../search/UIManager.cs:68
 msgid "_Actions"
 msgstr "_Åtgärder"
 
-#: ../search/UIManager.cs:62
-msgid "Sor_t"
-msgstr "Sor_tera"
+#: ../search/UIManager.cs:71
+msgid "_View"
+msgstr "_Visa"
 
-#: ../search/UIManager.cs:65
+#: ../search/UIManager.cs:74
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:83
 msgid "_Contents"
 msgstr "_Innehåll"
 
-#: ../search/UIManager.cs:76
+#: ../search/UIManager.cs:85
 msgid "Help - Table of Contents"
 msgstr "Hjälp - Innehållsförteckning"
 
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:89
 msgid "About Desktop Search"
 msgstr "Om skrivbordssökning"
 
-#: ../search/UIManager.cs:102
-msgid "_Everywhere"
-msgstr "_Överallt"
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "_Alla"
 
-#: ../search/UIManager.cs:104
-msgid "Search everywhere"
-msgstr "Sök överallt"
+#: ../search/UIManager.cs:121
+msgid "_None"
+msgstr "_Ingen"
 
-#: ../search/UIManager.cs:107
-msgid "_Applications"
+#: ../search/UIManager.cs:135
+msgid "A_pplications"
 msgstr "_Program"
 
-#: ../search/UIManager.cs:109
+#: ../search/UIManager.cs:137
 msgid "Search applications"
 msgstr "Sök program"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:141
 msgid "_Contacts"
 msgstr "_Kontakter"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:143
 msgid "Search contacts"
 msgstr "Sök kontakter"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:147
 msgid "Ca_lendar events"
 msgstr "Ka_lenderhändelser"
 
-#: ../search/UIManager.cs:119
+#: ../search/UIManager.cs:149
 msgid "Search calendar events"
 msgstr "Sök kalenderhändelser"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:153
 msgid "_Documents"
 msgstr "_Dokument"
 
-#: ../search/UIManager.cs:124
+#: ../search/UIManager.cs:155
 msgid "Search documents"
 msgstr "Sök dokument"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:159
 msgid "Conve_rsations"
 msgstr "Konve_rsationer"
 
-#: ../search/UIManager.cs:129
+#: ../search/UIManager.cs:161
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Sök e-post- och snabbmeddelandeloggar"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:165
 msgid "_Images"
 msgstr "_Bilder"
 
-#: ../search/UIManager.cs:134
+#: ../search/UIManager.cs:167
 msgid "Search images"
 msgstr "Sök bilder"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:171
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:139
+#: ../search/UIManager.cs:173
 msgid "Search sound and video files"
 msgstr "Sök ljud- och videofiler"
 
-#: ../search/UIManager.cs:146
-msgid "Date _Modified"
-msgstr "Ändringsdatu_m"
+#: ../search/UIManager.cs:177
+msgid "_Folders"
+msgstr "_Mappar"
 
-#: ../search/UIManager.cs:147
+#: ../search/UIManager.cs:179
+msgid "Search for folder names"
+msgstr "Sök efter mappnamn"
+
+#: ../search/UIManager.cs:183
+msgid "_Websites"
+msgstr "_Webbplatser"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Sök i webbplatshistorik"
+
+#: ../search/UIManager.cs:189
+msgid "_News Feeds"
+msgstr "_Nyhetskanaler"
+
+#: ../search/UIManager.cs:191
+msgid "Search news feeds"
+msgstr "Sök i nyhetskanaler"
+
+#: ../search/UIManager.cs:195
+msgid "A_rchives"
+msgstr "A_rkiv"
+
+#: ../search/UIManager.cs:197
+msgid "Search files in Archives"
+msgstr "Sök efter filer i arkiv"
+
+#: ../search/UIManager.cs:205
+msgid "Sort by Date _Modified"
+msgstr "Sortera efter ändringsdatu_m"
+
+#: ../search/UIManager.cs:206
 msgid "Sort the most-recently-modified matches first"
 msgstr "Sortera de senast ändrade träffarna först"
 
-#: ../search/UIManager.cs:150
-msgid "_Name"
-msgstr "_Namn"
+#: ../search/UIManager.cs:209
+msgid "Sort by _Name"
+msgstr "Sortera efter _namn"
 
-#: ../search/UIManager.cs:151
+#: ../search/UIManager.cs:210
 msgid "Sort matches by name"
 msgstr "Sortera träffar efter namn"
 
-#: ../search/UIManager.cs:154
-msgid "_Relevance"
-msgstr "_Relevans"
+#: ../search/UIManager.cs:213
+msgid "Sort by _Relevance"
+msgstr "Sortera efter _relevans"
 
-#: ../search/UIManager.cs:155
+#: ../search/UIManager.cs:214
 msgid "Sort the best matches first"
 msgstr "Sortera de bästa träffarna först"
 
-#: ../search/UIManager.cs:268
+#: ../search/UIManager.cs:221
+msgid "Show Details"
+msgstr "Visa detaljer"
+
+#: ../search/UIManager.cs:354
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
-#: ../tools/Settings.cs:226
+#: ../tools/Settings.cs:227
 msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
-#: ../tools/Settings.cs:227
+#: ../tools/Settings.cs:228
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från dina aktuella ändringar och läsa om inställningarna från disk?"
 
-#: ../tools/Settings.cs:265
+#: ../tools/Settings.cs:266
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:285
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
-#: ../tools/Settings.cs:287
+#: ../tools/Settings.cs:288
 msgid "The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed."
 msgstr "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer den och datat blir redan indexerat."
 
-#: ../tools/Settings.cs:298
-#: ../tools/Settings.cs:490
+#: ../tools/Settings.cs:299
+#: ../tools/Settings.cs:491
 msgid "Path not added"
 msgstr "Sökvägen lades inte till"
 
-#: ../tools/Settings.cs:307
+#: ../tools/Settings.cs:308
 msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:309
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas bort. Vill du fortfarande lägga till den?"
 
-#: ../tools/Settings.cs:334
+#: ../tools/Settings.cs:335
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
-#: ../tools/Settings.cs:335
+#: ../tools/Settings.cs:336
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "Är du säker på att du vill ta bort denna sökväg från listan över kataloger som skall indexeras?"
 
-#: ../tools/Settings.cs:364
+#: ../tools/Settings.cs:365
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
-#: ../tools/Settings.cs:365
+#: ../tools/Settings.cs:366
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "Är du säker på att du vill ta bort det här objektet från listan över data som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:408
+#: ../tools/Settings.cs:409
 msgid "Invalid host entry"
 msgstr "Ogiltig värdpost"
 
-#: ../tools/Settings.cs:415
+#: ../tools/Settings.cs:416
 msgid "Remote host already present in the list."
 msgstr "Fjärrvärden finns redan i listan."
 
-#: ../tools/Settings.cs:424
+#: ../tools/Settings.cs:425
 msgid "Netbeagle Node not added"
 msgstr "Netbeaglenod lades inte till"
 
-#: ../tools/Settings.cs:440
+#: ../tools/Settings.cs:441
 msgid "Remove host"
 msgstr "Ta bort värd"
 
-#: ../tools/Settings.cs:441
+#: ../tools/Settings.cs:442
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Är du säker på att du vill ta bort denna värd från listan?"
 
-#: ../tools/Settings.cs:462
+#: ../tools/Settings.cs:463
 msgid "Select path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:482
 msgid "The selected path is already configured for external access."
 msgstr "Den valda sökvägen är redan konfigurerad för extern åtkomst."
 
-#: ../tools/Settings.cs:505
+#: ../tools/Settings.cs:506
 msgid "Remove public path"
 msgstr "Ta bort publik sökväg"
 
-#: ../tools/Settings.cs:506
+#: ../tools/Settings.cs:507
 msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "Är du säker på att du vill ta bort det här objektet från listan på publika sökvägar?"
 
-#: ../tools/Settings.cs:551
-#: ../tools/Settings.cs:640
-#: ../tools/Settings.cs:718
-#: ../tools/Settings.cs:794
-#: ../tools/Settings.cs:1133
+#: ../tools/Settings.cs:552
+#: ../tools/Settings.cs:641
+#: ../tools/Settings.cs:719
+#: ../tools/Settings.cs:795
+#: ../tools/Settings.cs:1134
 msgid "Name"
 msgstr "Namn"
 
-#: ../tools/Settings.cs:634
+#: ../tools/Settings.cs:635
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:688
 msgid "Path:"
 msgstr "Sökväg:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:691
 msgid "Pattern:"
 msgstr "Mönster:"
 
-#: ../tools/Settings.cs:693
+#: ../tools/Settings.cs:694
 msgid "Mail folder:"
 msgstr "E-postmapp:"
 
-#: ../tools/Settings.cs:1041
+#: ../tools/Settings.cs:1042
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:1067
+#: ../tools/Settings.cs:1068
 #: ../tools/settings.glade.h:25
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
-#: ../tools/Settings.cs:1072
+#: ../tools/Settings.cs:1073
 msgid "M_ail folder:"
 msgstr "E-postm_app:"
 
-#: ../tools/Settings.cs:1077
+#: ../tools/Settings.cs:1078
 msgid "P_attern:"
 msgstr "Mö_nster:"
 
-#: ../tools/Settings.cs:1101
+#: ../tools/Settings.cs:1102
 msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
-#: ../tools/Settings.cs:1102
+#: ../tools/Settings.cs:1103
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i listan på resurser som ska undanhållas från indexering."
 
-#: ../tools/Settings.cs:1132
+#: ../tools/Settings.cs:1133
 msgid "Show"
 msgstr "Visa"
 
@@ -1367,15 +1407,15 @@ msgstr "_Maximalt antal visade resultat:"
 msgid "_Start search & indexing services automatically "
 msgstr "_Starta söknings- och indexeringstjänster automatiskt "
 
-#: ../tools/beagle-settings.desktop.in.h:1
+#: ../tools/beagle-settings.desktop.in.in.h:1
 msgid "Configure Desktop Search & Indexing"
 msgstr "Konfigurera skrivbordssökning och indexering"
 
-#: ../tools/beagle-settings.desktop.in.h:2
+#: ../tools/beagle-settings.desktop.in.in.h:2
 msgid "Configure search & indexing properties"
 msgstr "Konfigurera söknings- och indexeringsegenskaper"
 
-#: ../tools/beagle-settings.desktop.in.h:3
+#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "Sökning och indexering"
 
@@ -1489,6 +1529,14 @@ msgstr "{0:0.0} KB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "Sor_t"
+#~ msgstr "Sor_tera"
+#~ msgid "_Everywhere"
+#~ msgstr "_Överallt"
+#~ msgid "Search everywhere"
+#~ msgstr "Sök överallt"
+#~ msgid "_Applications"
+#~ msgstr "_Program"
 #~ msgid "Image"
 #~ msgstr "Bild"
 #~ msgid ""
