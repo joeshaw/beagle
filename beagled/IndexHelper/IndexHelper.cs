@@ -117,8 +117,16 @@ namespace Beagle.IndexHelper {
 			if (server_has_been_started) {
 				// Set the IO priority to idle so we don't slow down the system
 				if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null) {
-					if (! IoPriority.SetIdle ())
-						IoPriority.SetIoPriority (7);
+					IoPriority.ReduceIoPriority ();
+
+					int prio = Mono.Unix.Native.Syscall.nice (15);
+
+					if (prio < 0)
+						Log.Warn ("Unable to renice helper to +15");
+					else if (prio == 15)
+						Log.Debug ("Reniced helper to +15");
+					else
+						Log.Debug ("Helper was already niced to {0}, not renicing to +15", prio);
 				}
 				
 				// Start the monitor thread, which keeps an eye on memory usage and idle time.
@@ -128,10 +136,10 @@ namespace Beagle.IndexHelper {
 				// if it terminates.
 				ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
 
-				//Application.Run ();
+				// Start the main loop
 				main_loop.Run ();
 
-				// If we palced our sockets in a temp directory, try to clean it up
+				// If we placed our sockets in a temp directory, try to clean it up
 				// Note: this may fail because the daemon is still running
 				if (PathFinder.GetRemoteStorageDir (false) != PathFinder.StorageDir) {
 					try {

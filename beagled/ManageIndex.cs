@@ -230,8 +230,7 @@ namespace Beagle.Daemon
 			}
 
 			// Set the IO priority so we don't slow down the system
-			if (! IoPriority.SetIdle ())
-				IoPriority.SetIoPriority (7);
+			IoPriority.ReduceIoPriority ();
 			
 			LuceneQueryingDriver driver_to_merge = new LuceneQueryingDriver (index_to_merge, -1, false);
 			
@@ -280,8 +279,7 @@ namespace Beagle.Daemon
 		static void ExecuteOptimize ()
 		{
 			// Set the IO priority so we don't slow down the system
-			if (! IoPriority.SetIdle ())
-				IoPriority.SetIoPriority (7);
+			IoPriority.ReduceIoPriority ();
 
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();

@@ -41,6 +41,7 @@ fi
 
 monogrind=0
 heap_buddy=0
+heap_shot=0
 mono_debug=0
 mdb=0
 
@@ -51,6 +52,7 @@ for i in $BEAGLED_ARGS; do
     --bg | --background ) fg_user=0 ;;
     --monogrind ) monogrind=1 ;;
     --heap-buddy ) heap_buddy=1 ;;
+    --heap-shot ) heap_shot=1 ;;
     --mdb ) mdb=1 ;;
     --mono-debug ) mono_debug=1 ;;
     esac
@@ -75,12 +77,21 @@ fi
 
 if [ $heap_buddy -eq 1 ]; then
    export _GET_ON_THE_HEAP_BUDDY_BANDWAGON=1
-      if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then
+   if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then
       export BEAGLE_HEAP_BUDDY_DIR=.
    fi
    MONO_EXTRA_ARGS="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS"
    rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $BEAGLE_HEAP_BUDDY_DIR/outfile.helper.*
+elif [ $heap_shot -eq 1 ]; then
+   export _HEY_LETS_DO_A_HEAP_SHOT=1
+   if [ -z "$BEAGLE_HEAP_SHOT_DIR" ]; then
+      export BEAGLE_HEAP_SHOT_DIR=.
+   fi
+   MONO_EXTRA_ARGS="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS"
+   rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled_* $BEAGLE_HEAP_BUDDY_DIR/outfile.helper_*
 fi
+
+
 
 if [ $mono_debug -eq 1 ]; then
    export BEAGLE_MONO_DEBUG_FLAG_IS_SET=1

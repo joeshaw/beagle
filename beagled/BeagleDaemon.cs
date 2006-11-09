@@ -244,6 +244,7 @@ namespace Beagle.Daemon {
 					break;
 
 				case "--heap-buddy":
+				case "--heap-shot":
 				case "--mdb":
 				case "--mono-debug":
 					// Silently ignore these arguments: they get handled

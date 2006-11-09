@@ -39,28 +39,20 @@ namespace Beagle.Util {
 		[DllImport ("libbeagleglue")]
 		static extern int set_io_priority_best_effort (int ioprio);
 
-		static public bool SetIdle ()
+		static public void ReduceIoPriority ()
 		{
-			// Continue with a warning if we can't set the 
-			// IO-priority to idle, not a big deal.
-			if (set_io_priority_idle () == -1) {
-				Logger.Log.Warn ("Unable to set IO priority for process to idle");
-				return false;
-			}
+			// First try setting our IO class to idle, so that we
+			// only ever get run if there are no other IO tasks.
+			// If that fails, then try setting our IO priority
+			// within the best effort class to the lowest we can,
+			// which is priority 7.
 
-			Logger.Log.Debug ("IO priority for process set to idle");
-			return true;
-		}
-
-		static public bool SetIoPriority (int ioprio)
-		{
-			if (set_io_priority_best_effort (ioprio) == -1) {
-				Logger.Log.Warn ("Unable to set best effort IO priority for process to {0}", ioprio);
-				return false;
-			}
-
-			Logger.Log.Debug ("IO priority for process set to best effort {0}", ioprio);
-			return true;
+			if (set_io_priority_idle () >= 0)
+				Log.Debug ("Set IO priority class to idle.");
+			else if (set_io_priority_best_effort (7) >= 0)
+				Log.Debug ("Set best effort IO priority to lowest level (7)");
+			else
+				Log.Warn ("Unable to set IO priority class to idle or IO priority within best effort class to 7");
 		}
 	}
 }
