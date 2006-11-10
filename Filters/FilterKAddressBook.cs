@@ -85,6 +85,8 @@ namespace Beagle.Filters {
 							return mapped_prop_name + ":WORK";
 						else if (vcpp.param_value == "HOME")
 							return mapped_prop_name + ":HOME";
+						else if (vcpp.param_value == "CELL")
+							return mapped_prop_name + ":CELL";
 					}
 				}
 				break;
