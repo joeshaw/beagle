@@ -41,11 +41,13 @@ namespace Beagle.Util {
 
 		public const string UnindexedNamespace = "_unindexed:";
 
-		private const String timeFormat = "yyyyMMddHHmmss";
+		private const String TimeFormat = "yyyyMMddHHmmss";
+		// FIXME: Fix all the UTC and timezone hack when switching to gmcs
+		private const String LocalTimeFormat = "yyyyMMddHHmmsszz";
 
 		static public string DateTimeToString (DateTime dt)
 		{
-			return dt.ToString (timeFormat);
+			return dt.ToString (TimeFormat);
 		}
 
 		static public string DateTimeToYearMonthString (DateTime dt)
@@ -63,7 +65,14 @@ namespace Beagle.Util {
 			if (str == null || str == "")
 				return new DateTime ();
 
-			return DateTime.ParseExact (str, timeFormat, CultureInfo.CurrentCulture);
+			str = string.Concat (str, "+00");
+			// Uncomment next 3 lines to see what how 20061107173446 (which is stored in UTC)
+			// used to be parsed as 2006-11-07T17:34:46.0000000-05:00
+			//DateTime dt = DateTime.ParseExact (str, LocalTimeFormat, CultureInfo.InvariantCulture);
+			//Console.WriteLine ("Parsed {0} as {1},{2}", str, dt, dt.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture));
+			//return dt;
+			// If no timezone is present, parse_exact uses local time zone
+			return DateTime.ParseExact (str, LocalTimeFormat, CultureInfo.InvariantCulture);
                 }
 
 		static public string DateTimeToFuzzy (DateTime dt)
