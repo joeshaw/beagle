@@ -81,15 +81,13 @@ namespace Beagle.Daemon.KabcQueryable {
 			}
 
 			if (Inotify.Enabled) {
-				Inotify.EventType mask =  Inotify.EventType.CloseWrite
-							| Inotify.EventType.MovedTo;
+				Inotify.EventType mask = Inotify.EventType.Create | Inotify.EventType.MovedTo;
 				Inotify.Subscribe (kabc_dir, OnInotifyEvent, mask);
 			} else {
 				FileSystemWatcher fsw = new FileSystemWatcher ();
 			       	fsw.Path = kabc_dir;
 				fsw.Filter = kabc_file;
 
-				fsw.Changed += new FileSystemEventHandler (OnChangedEvent);
 				fsw.Created += new FileSystemEventHandler (OnChangedEvent);
 				fsw.Renamed += new RenamedEventHandler (OnChangedEvent);
 				

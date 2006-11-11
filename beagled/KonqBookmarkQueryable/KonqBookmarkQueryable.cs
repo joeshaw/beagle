@@ -56,7 +56,10 @@ namespace Beagle.Daemon.KBookmarkQueryable {
 			}
 		}
 
-		public KonqBookmarkQueryable () : base ("KonqBookmarkIndex")
+		// 1: Store URL as text
+		const int MINOR_VERSION = 1;
+
+		public KonqBookmarkQueryable () : base ("KonqBookmarkIndex", MINOR_VERSION)
 		{
 			konq_dir = Path.Combine (PathFinder.HomeDir, ".kde");
 			konq_dir = Path.Combine (konq_dir, "share");
@@ -408,7 +411,7 @@ namespace Beagle.Daemon.KBookmarkQueryable {
 			indexable.NoContent = true;
 
 			indexable.AddProperty (Property.New ("dc:title", current_bookmark.Title));
-			indexable.AddProperty (Property.NewKeyword ("dc:identifier", current_bookmark.Href));
+			indexable.AddProperty (Property.New ("dc:identifier", current_bookmark.Href));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:icon", current_bookmark.Icon));
 			if (current_bookmark.Info != null &&
 			    current_bookmark.Info.Metadata != null &&
