@@ -9,9 +9,10 @@ total_hits = 0
 def hits_added_cb (query, response):
 	global total_hits
 	hits = response.get_hits()
+	num_matches = response.get_num_matches()
 	
 	total_hits = total_hits + len(hits)
-	print "Found hits (%d):" % len(hits)
+	print "Returned hits (%d) out of total %d matches:" % (len(hits), num_matches)
 	print "-------------------------------------------"
 	
 	for hit in hits:

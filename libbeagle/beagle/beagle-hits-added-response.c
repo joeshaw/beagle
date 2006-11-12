@@ -38,7 +38,8 @@ typedef struct {
 	BeagleHit *hit; /* Current hit */
 	BeagleProperty *prop; /* Current property; */
 
-	GSList *hits; /* of BeagleHit */
+	GSList *hits;    /* of BeagleHit */
+	int num_matches; /* Actual number of matches in index */
 } BeagleHitsAddedResponsePrivate;
 
 #define BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_HITS_ADDED_RESPONSE, BeagleHitsAddedResponsePrivate))
@@ -56,6 +57,20 @@ beagle_hits_added_response_finalize (GObject *obj)
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
 		G_OBJECT_CLASS (parent_class)->finalize (obj);
+}
+
+static void
+end_num_matches (BeagleParserContext *ctx)
+{
+	BeagleHitsAddedResponse *response = BEAGLE_HITS_ADDED_RESPONSE (_beagle_parser_context_get_response (ctx));
+	BeagleHitsAddedResponsePrivate *priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
+
+	char *buf;
+	buf = _beagle_parser_context_get_text_buffer (ctx);
+
+	priv->num_matches = (int) g_ascii_strtod (buf, NULL);
+
+	g_free (buf);
 }
 
 static void
@@ -83,6 +98,7 @@ start_hit (BeagleParserContext *ctx, const char **attrs)
 			priv->hit->source = g_strdup (attrs[i + 1]);
 		else if (strcmp (attrs[i], "Score") == 0)
 			priv->hit->score = g_ascii_strtod (attrs[i + 1], NULL);
+
 		else
 			g_warning ("unknown attribute \"%s\" with value \"%s\"", attrs[i], attrs[i + 1]);
 	}
@@ -151,6 +167,7 @@ end_property (BeagleParserContext *ctx)
 }
 
 enum {
+	PARSER_STATE_NUM_MATCHES,
 	PARSER_STATE_HITS,
 	PARSER_STATE_HIT,
 	PARSER_STATE_PROPERTIES,
@@ -158,6 +175,12 @@ enum {
 };
 
 static BeagleParserHandler parser_handlers[] = {
+	{ "NumMatches",
+	  -1,
+	  PARSER_STATE_NUM_MATCHES,
+	  NULL,
+	  end_num_matches},
+
 	{ "Hits",
 	  -1,
 	  PARSER_STATE_HITS,
@@ -222,5 +245,25 @@ beagle_hits_added_response_get_hits (BeagleHitsAddedResponse *response)
 	priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
 
 	return priv->hits;
+}
+
+/**
+ * beagle_hits_added_response_get_num_matches
+ * @response: a #BeagleHitsAddedResponse
+ *
+ * Fetches the total of matches for this query from the given #BeagleHitsAddedResponse. The actual number of results returned is set by max-hits in #BeagleQuery.
+ *
+ * Return value: Total number of actual matches.
+ **/
+int
+beagle_hits_added_response_get_num_matches (BeagleHitsAddedResponse *response)
+{
+	BeagleHitsAddedResponsePrivate *priv;
+
+	g_return_val_if_fail (BEAGLE_IS_HITS_ADDED_RESPONSE (response), -1);
+	priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
+	g_return_val_if_fail (priv != NULL, -1);
+
+	return priv->num_matches;
 }
 

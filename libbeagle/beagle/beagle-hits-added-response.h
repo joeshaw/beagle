@@ -53,6 +53,7 @@ struct _BeagleHitsAddedResponseClass {
 GType    beagle_hits_added_response_get_type (void);
 
 GSList *beagle_hits_added_response_get_hits (BeagleHitsAddedResponse *response);
+int beagle_hits_added_response_get_num_matches (BeagleHitsAddedResponse * response);
 
 #endif /* __BEAGLE_HITS_ADDED_RESPONSE_H */
 

@@ -487,6 +487,12 @@
   (return-type "GSList*")
 )
 
+(define-method get_num_matches
+  (of-object "BeagleHitsAddedResponse")
+  (c-name "beagle_hits_added_response_get_num_matches")
+  (return-type "int")
+)
+
 
 
 ;; From ../../libbeagle/beagle/beagle-hits-subtracted-response.h

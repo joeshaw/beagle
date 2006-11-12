@@ -100,7 +100,7 @@ namespace Beagle.Daemon {
 
 		public void Add (ICollection some_hits)
 		{
-			Add (some_hits, 0);
+			Add (some_hits, -1);
 		}
 
 		// Note: some_hits is allowed to contain null.

@@ -46,12 +46,14 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response)
 	GSList *hits, *l;
 	gint    i;
 	gint    nr_hits;
+	gint    total_matches;
 
 	hits = beagle_hits_added_response_get_hits (response);
+	total_matches = beagle_hits_added_response_get_num_matches (response);
 
 	nr_hits = g_slist_length (hits);
 	total_hits += nr_hits;
-	g_print ("Found hits (%d):\n", nr_hits);
+	g_print ("Found hits (%d) out of total %d matches:\n", nr_hits, total_matches);
 	g_print ("-------------------------------------------\n");
 	for (l = hits, i = 1; l; l = l->next, ++i) {
 		g_print ("[%d] ", i);
