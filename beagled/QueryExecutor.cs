@@ -55,9 +55,9 @@ namespace Beagle.Daemon {
 			this.result.FinishedEvent += OnResultFinished;
 		}
 
-		public void OnResultHitsAdded (QueryResult result, ICollection some_hits)
+		public void OnResultHitsAdded (QueryResult result, ICollection some_hits, int total_results)
 		{
-			HitsAddedResponse response = new HitsAddedResponse (some_hits);
+			HitsAddedResponse response = new HitsAddedResponse (some_hits, total_results);
 
 			this.SendAsyncResponse (response);
 		}

@@ -652,6 +652,10 @@ namespace Beagle.Daemon {
 				if (docs_found == max_results) {
 					all_docs = new ArrayList ();
 					top_docs = null;
+				} else {
+					// Bad luck! Not all docs found
+					// Start afresh - this time traversing all results
+					ordered_matches = null;
 				}
 
 				a.Stop ();
@@ -834,7 +838,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			result.Add (final_list_of_hits);
+			result.Add (final_list_of_hits, primary_matches.TrueCount);
 
 			d.Stop ();
 			total.Stop ();

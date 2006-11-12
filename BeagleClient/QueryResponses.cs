@@ -39,11 +39,15 @@ namespace Beagle {
 		[XmlArrayItem (ElementName="Hit", Type=typeof (Hit))]
 		public ArrayList Hits;
 
+		[XmlAttribute ("TotalHits")]
+		public int Total;
+
 		public HitsAddedResponse () { }
 
-		public HitsAddedResponse (ICollection hits)
+		public HitsAddedResponse (ICollection hits, int total)
 		{
 			this.Hits = new ArrayList (hits);
+			this.Total = total;
 		}
 	}
 

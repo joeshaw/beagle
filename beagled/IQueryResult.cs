@@ -40,6 +40,7 @@ namespace Beagle.Daemon {
 	public interface IQueryResult {
 
 		void Add (ICollection some_hits);
+		void Add (ICollection some_hits, int total_matches);
 
 		void Subtract (ICollection some_uris);
 	}

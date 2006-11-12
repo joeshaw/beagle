@@ -204,6 +204,10 @@ class DumpIndexTool {
 		{
 		}
 
+		public void Add (ICollection hits, int total_results)
+		{
+		}
+
 		public void Subtract (ICollection hits)
 		{
 		}

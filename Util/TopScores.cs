@@ -104,7 +104,7 @@ namespace Beagle.Util {
 				root_node = free_node;
 				nodes [free_node].Score = score;
 				nodes [free_node].Obj = obj;
-				++free_node;
+				UpdateAtCapacity ();
 				return;
 			}
 
@@ -191,15 +191,21 @@ namespace Beagle.Util {
 			else
 				nodes [node].Gt = free_node;
 
-			if (! at_capacity) {
-				++free_node;
-				if (free_node >= count) {
-					cutoff_score = MinimumScore;
-					at_capacity = true;
-					if (Debug)
-						Console.WriteLine ("Hit capacity: set cutoff to {0}", cutoff_score);
-				
-				}
+			UpdateAtCapacity ();
+		}
+
+		private void UpdateAtCapacity ()
+		{
+			if (at_capacity)
+				return;
+
+			++free_node;
+			if (free_node >= count) {
+				cutoff_score = MinimumScore;
+				at_capacity = true;
+				if (Debug)
+					Console.WriteLine ("Hit capacity: set cutoff to {0}", cutoff_score);
+			
 			}
 		}
 
