@@ -136,7 +136,7 @@ namespace Beagle.Daemon {
 				hits.Add (hit);
 				++rank;
 			}
-			result.Add (hits);
+			result.Add (hits, gsr.estimatedTotalResultsCount);
 		}
 
 		public string GetSnippet (string[] query_terms, Hit hit)
