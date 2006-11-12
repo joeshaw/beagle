@@ -175,13 +175,18 @@ WHERE t1.pid=t2.id";
 			command.Parameters.Add ("@ImagesName", filename);
 			
 			SqliteDataReader reader = command.ExecuteReader ();
+
 			DigikamData imagedata = null;
-			string tag = null;
+			ArrayList original_tags = null;
 			if (reader.Read ()) {
 				imagedata = new DigikamData ();
+				original_tags = new ArrayList ();
 				imagedata.caption = (string) reader [0];
-				tag = ((string) reader [1]);
+				original_tags.Add ((string) reader [1]);
 				//Console.WriteLine ("Found caption:" + imagedata.caption);
+			}
+			while (reader.Read ()) {
+				original_tags.Add ((string) reader [1]);
 			}
 
 			reader.Close ();
@@ -191,10 +196,18 @@ WHERE t1.pid=t2.id";
 
 			if (imagedata == null)
 				return null;
-			while (tag != null && tag != String.Empty) {
-				//Console.WriteLine ("Found tag: " + tag);
-				imagedata.AddTag (tag);
-				tag = GetParentTag (tag);
+			SortedList s_list = new SortedList ();
+			foreach (string orig_tag in original_tags) {
+				string tag = orig_tag;
+				while ( tag != null && tag != String.Empty) {
+					if (s_list.ContainsKey (tag)) {
+						break;
+					}
+					//Console.WriteLine ("Found tag: " + tag);
+					s_list.Add (tag, null);
+					imagedata.AddTag (tag);
+					tag = GetParentTag (tag);
+				}
 			}
 
 			return imagedata;
