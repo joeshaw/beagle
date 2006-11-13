@@ -1,5 +1,6 @@
 
-Jon Trowbridge       <trow@novell.com>
+Joe Shaw             <joeshaw@novell.com>
+Jon Trowbridge       <jon@trowbridge.org>
 Nat Friedman         <nat@novell.com>
 Todd Berman          <tberman@off.net>
 Michael Levy         <mlevy@wardium.homeip.net>
@@ -11,7 +12,6 @@ Veerapuram Varadhan  <vvaradhan@novell.com>
 Michael Bayne        <mdb@samskivert.com>
 Fredrik Hedberg      <fredrik@avafan.com>
 Robert Love          <rml@novell.com>
-Joe Shaw             <joeshaw@novell.com>
 Chris Lahey          <clahey@ximian.com>
 Tuomas Kuosmanen     <tigert@tigert.priv>
 Alex Graveley        <alex@beatniksoftware.com>
@@ -30,8 +30,7 @@ and Garrett LeSage.
 
 Thanks to:
 Doug Cutting (for Lucene, which continues to blow my mind)
-George Aroush (for dotLucene)
-Pasha Bizhan (for Lucene.Net)
+George Aroush (for Lucene.Net)
 Simon Mourier (for the Html Agility Pack)
 Mariano Cano Pérez (for his gnome-vfs bindings)
 Kevin Godby (for his work on the renderers)
