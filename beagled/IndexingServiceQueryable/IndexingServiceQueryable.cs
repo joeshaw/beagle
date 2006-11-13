@@ -236,6 +236,9 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 		{
 			Indexable indexable = FileToIndexable (data_file);
 
+			if (indexable == null) // The file disappeared
+				return;
+
 			Scheduler.Task task = NewAddTask (indexable);
 			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
