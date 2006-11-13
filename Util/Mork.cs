@@ -100,10 +100,10 @@ namespace Beagle.Util
 					position = content.IndexOf ('\n', position);
 				else if (content [position].Equals ('<') && content [position+2].Equals ('<'))
 					// Parse metadict information
-					ParseMetaDict (Read (content, ref position, "<(", ")>"));
+					ParseMetaDict (FindStartIndex (content, ref position, "<(", ")>"), position, content);
 				else if (content [position].Equals ('<'))
 					// Parse dict information
-					ParseDict (Read (content, ref position, "<(", ")>"));
+					ParseDict (FindStartIndex (content, ref position, "<(", ")>"),position, content);
 				else if (content [position].Equals ('{')) {
 					// Parse table information
 					ParseTable (Read (content, ref position, "{", "}"));
@@ -128,14 +128,29 @@ namespace Beagle.Util
 			
 			return content.Substring (start_position, position-start_position+1);
 		}
+		// This method is complex, and quite hacky, but it basically returns the index of the beginning
+		// of the substring, and points position to the end of the substring. Which I use in ParseDict
+		// and ParseMetaDict to significantly reduce the number of string allocations we are making.
+		protected int FindStartIndex (string content, ref int position, string start, string end)
+		{
+			int tmp = position, start_position = position;
+			
+			do {
+				position = content.IndexOf (end, position+1);
+				if ((tmp = content.IndexOf (start, tmp+1)) < 0)
+					break;
+			} while (tmp < position);
+			
+			return start_position;
+		}
 		
-		protected virtual void ParseDict (string dict)
+		protected virtual void ParseDict (int start, int end, string dict)
 		{
 			Regex reg = new Regex (@"(?<id>[0-9A-Fa-f]+)\s*=(?<value>(.*))", RegexOptions.Compiled);
 			
 			// This is sooo lame that, but it's an easy solution that works. It seems like regex fails
 			// here when dealing with big amounts of data.
-			foreach (string t in Regex.Replace (dict.Substring (2, dict.Length-3).Replace ("\\\n", "").
+			foreach (string t in Regex.Replace (dict.Substring (start+2,(end-start)-3).Replace ("\\\n", "").
 				Replace ("\n", ""), @"\)\s*\(", "\n").Split ('\n')) {
 				
 				Match m = reg.Match (t);
@@ -144,11 +159,11 @@ namespace Beagle.Util
 			}
 		}
 		
-		protected virtual void ParseMetaDict (string metadict)
+		protected virtual void ParseMetaDict (int start, int end, string content)
 		{
 			Regex reg = new Regex (@"(?<id>[0-9A-Fa-f]+)=(?<value>[^()]+)", RegexOptions.Compiled);
 			
-			foreach (Match m in reg.Matches (metadict))
+			foreach (Match m in reg.Matches (content.Substring(start,end-start+1)))
 				metadicts [m.Result ("${id}")] = m.Result ("${value}");
 		}
 		
@@ -178,8 +193,8 @@ namespace Beagle.Util
 		protected virtual void ParseGroups (string groups)
 		{
 			int start = groups.IndexOf ("{@")+2;
-			
-			Read (groups.Substring (start, groups.Length-start-1));
+			groups =groups.Substring (start, groups.Length-start-1);
+			Read (groups);
 		}
 		
 		protected string Clean (string str)
