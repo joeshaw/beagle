@@ -1,7 +1,7 @@
 //
 // IndexSynchronization.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2005-2006 Novell, Inc.
 //
 
 //
@@ -44,6 +44,9 @@ namespace Beagle.Daemon {
 		// Original index storage directory
 		static private string remote_index_dir = Path.Combine (PathFinder.StorageDir, "Indexes");
 
+		// Locally sync'd storage directory
+		static private string local_index_dir = PathFinder.IndexDir;
+
 		////////////////////////////////////////////////////////////////
 
 		public enum SynchronizationTarget {
@@ -57,6 +60,8 @@ namespace Beagle.Daemon {
 
 			if (! Directory.Exists (remote_index_dir))
 				Directory.CreateDirectory (remote_index_dir);
+
+			Log.Debug ("Remote index storage dir {0} will be synchronized to temp local storage dir {1}", remote_index_dir, local_index_dir);
 
 			// Initial index synchronization			
 			Synchronize (SynchronizationTarget.Local);
@@ -90,8 +95,8 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Synchronizing... (target={0})", target);
 
 				DirectoryInfo source_directory, target_directory;
-				source_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? remote_index_dir : PathFinder.IndexDir);
-				target_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? PathFinder.IndexDir : remote_index_dir);
+				source_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? remote_index_dir : local_index_dir);
+				target_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? local_index_dir : remote_index_dir);
 				
 				if (SynchronizeDirectory (source_directory, target_directory))
 					Logger.Log.Debug ("Synchronized successfully in {0}", watch);
@@ -119,7 +124,7 @@ namespace Beagle.Daemon {
 
 				// FIXME: This may not be safe to do here
 				Logger.Log.Debug ("Purging locally synchronized indexes");
-				Directory.Delete (PathFinder.IndexDir, true);
+				Directory.Delete (local_index_dir, true);
 			} catch (Exception ex) {
 				Logger.Log.Error (ex, "Caught exception while doing shutdown synchronization");
 			}

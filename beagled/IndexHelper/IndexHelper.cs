@@ -111,7 +111,7 @@ namespace Beagle.IndexHelper {
 				server.Start ();
 				server_has_been_started = true;
 			} catch (InvalidOperationException ex) {
-				Logger.Log.Error (ex, "Couldn't start server:");
+				Logger.Log.Error (ex, "Couldn't start server.  Exiting immediately.");
 			}
 
 			if (server_has_been_started) {
@@ -139,6 +139,8 @@ namespace Beagle.IndexHelper {
 				// Start the main loop
 				main_loop.Run ();
 
+				ExceptionHandlingThread.JoinAllThreads ();
+
 				// If we placed our sockets in a temp directory, try to clean it up
 				// Note: this may fail because the daemon is still running
 				if (PathFinder.GetRemoteStorageDir (false) != PathFinder.StorageDir) {
@@ -146,6 +148,8 @@ namespace Beagle.IndexHelper {
 						Directory.Delete (PathFinder.GetRemoteStorageDir (false));
 					} catch (IOException) { }
 				}
+
+				Log.Info ("Index helper process shut down cleanly.");
 			}
 		}
 

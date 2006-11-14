@@ -203,6 +203,9 @@ namespace Beagle.Daemon {
 					if (!(e is IOException || e is ThreadAbortException))
 						throw;
 
+					// Reset the unsightly ThreadAbortException
+					Thread.ResetAbort ();
+
 					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
 					Server.MarkHandlerAsKilled (this);
 					Shutdown.WorkerFinished (network_data);

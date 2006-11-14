@@ -147,9 +147,9 @@ namespace Beagle.Daemon {
 			// Set up out-of-process indexing
 			LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
 
-			// Initialize synchronization to keep the indexes local if PathFinder.HomeDir
+			// Initialize synchronization to keep the indexes local if PathFinder.StorageDir
 			// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set
-			if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.HomeDir) && Conf.Daemon.IndexSynchronization) ||
+			if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && Conf.Daemon.IndexSynchronization) ||
 			    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null)
 				IndexSynchronization.Initialize ();
 
@@ -450,6 +450,10 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting main loop");
 			main_loop.Run ();
 
+			// We're out of the main loop now, join all the
+			// running threads so we can exit cleanly.
+			ExceptionHandlingThread.JoinAllThreads ();
+
 			// If we placed our sockets in a temp directory, try to clean it up
 			// Note: this may fail because the helper is still running
 			if (PathFinder.GetRemoteStorageDir (false) != PathFinder.StorageDir) {
@@ -458,16 +462,11 @@ namespace Beagle.Daemon {
 				} catch (IOException) { }
 			}
 
-			Logger.Log.Debug ("Leaving BeagleDaemon.Main");
-
-			if (arg_debug) {
-				Thread.Sleep (500);
-				ExceptionHandlingThread.SpewLiveThreads ();
-			}
+			Log.Info ("Beagle daemon process shut down cleanly.");
 		}
 
 		/////////////////////////////////////////////////////////////////////////////
-
+		
 		private static bool prev_on_battery = false;
 
 		private static bool CheckBatteryStatus ()

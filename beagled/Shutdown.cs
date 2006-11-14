@@ -169,7 +169,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			Logger.Log.Info ("Exiting");
+			Logger.Log.Info ("All workers have finished.  Exiting main loop.");
 			main_loop.Quit ();
 		}
 	}

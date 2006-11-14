@@ -47,12 +47,12 @@ namespace Beagle.Util {
 
 		private void ThreadStarted ()
 		{
-			this.thread.Name = String.Format ("EHT {0:00000} {1}:{2}", wrap_gettid (), method.Target == null ? "(static)" : method.Target.ToString (), method.Method);
+			this.thread.Name = String.Format ("EHT {0:00000} {1}:{2}", wrap_gettid (), method.Target == null ? method.Method.DeclaringType.ToString () : method.Target.ToString (), method.Method);
 
 			try {
 				this.method ();
 			} catch (ThreadAbortException e) {
-				Logger.Log.Debug ("{0}:\n{1}\n", this.thread.Name, e.StackTrace);
+				Logger.Log.Debug ("Thread aborted: {0}\n{1}\n", this.thread.Name, e.StackTrace);
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Exception caught while executing {0}:{1}",
 						 this.method.Target, this.method.Method);
@@ -102,6 +102,34 @@ namespace Beagle.Util {
 			foreach (Thread t in cancel_threads) {
 				Logger.Log.Debug ("Aborting thread: {0}", t.Name);
 				t.Abort ();
+			}
+		}
+
+		// Only safe to call from the main thread!
+		public static void JoinAllThreads ()
+		{
+			ArrayList join_threads = null;
+
+			// We have to copy the live_threads array to avoid
+			// recursively locking.  We iterate the process to
+			// ensure that we join all the threads, including ones
+			// that are created after JoinAllThreads() is called.
+			while (live_threads.Count > 0) {
+				// Copy the list to avoid recursively locking
+				lock (live_threads)
+					join_threads = (ArrayList) live_threads.Clone ();
+
+				int count = 0;
+				foreach (Thread t in join_threads) {
+					++count;
+
+					if (! t.IsAlive)
+						Log.Debug ("Skipping over finished thread {0} of {1}: {2}", count, join_threads.Count, t.Name);
+					else {
+						Log.Debug ("Joining thread {0} of {1}: {2}", count, join_threads.Count, t.Name);
+						t.Join ();
+					}
+				}
 			}
 		}
 
