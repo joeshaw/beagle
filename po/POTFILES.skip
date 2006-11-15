@@ -1,1 +1,8 @@
 chooser-fu/gtkfilesystembeagle.c
+# gettext is confused by calls to non-Mono.Unix.Catalog GetString()
+# methods prevalent in the Thunderbird backend
+beagled/ThunderbirdQueryable/Contact.cs
+beagled/ThunderbirdQueryable/Mail.cs
+beagled/ThunderbirdQueryable/MoveMail.cs
+beagled/ThunderbirdQueryable/Nntp.cs
+beagled/ThunderbirdQueryable/Rss.cs

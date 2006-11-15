@@ -202,7 +202,7 @@ namespace ContactViewer {
 			}
 			
 			SetStatusMessage (String.Format (Catalog.GetString ("Viewing {0}"), 
-				(ContactHolder.Child as Contact).GetString ("DisplayName")));
+				(ContactHolder.Child as Contact).GetValue ("DisplayName")));
 		}
 		
 		public void Clear ()
@@ -300,7 +300,7 @@ namespace ContactViewer {
 			hbox.Spacing = 10;
 			hbox.PackStart (Beagle.Images.GetWidget ("person.png"), false, false, 0);
 			hbox.PackStart (new VLabel (String.Format ("<b><span size='large'>{0} \"{1}\" {2}</span></b>", 
-				GetString ("FirstName"), GetString ("NickName"), GetString ("LastName")), false));
+				GetValue ("FirstName"), GetValue ("NickName"), GetValue ("LastName")), false));
 			PackStart (hbox, false, false, 0);
 			PackStart (new HSeparator (), false, false, 0);
 			
@@ -310,23 +310,23 @@ namespace ContactViewer {
 			
 			table.Attach (new VLabel (String.Format ("<b>{0}</b>", Catalog.GetString ("Primary E-Mail:")), false), 
 				0, 1, 0, 1, AttachOptions.Shrink | AttachOptions.Fill, AttachOptions.Shrink, 10, 0);
-			table.Attach (new VLabel (GetString ("PrimaryEmail"), true), 1, 2, 0, 1);
+			table.Attach (new VLabel (GetValue ("PrimaryEmail"), true), 1, 2, 0, 1);
 				
 			table.Attach (new VLabel (String.Format ("<b>{0}</b>", Catalog.GetString ("Screen name:")), false), 
 				0, 1, 1, 2, AttachOptions.Shrink | AttachOptions.Fill, AttachOptions.Shrink, 10, 0);
-			table.Attach (new VLabel (GetString ("_AimScreenName"), true), 1, 2, 1, 2);
+			table.Attach (new VLabel (GetValue ("_AimScreenName"), true), 1, 2, 1, 2);
 				
 			table.Attach (new VLabel (String.Format ("<b>{0}</b>", Catalog.GetString ("Home phone:")), false), 
 				0, 1, 2, 3, AttachOptions.Shrink | AttachOptions.Fill, AttachOptions.Shrink, 10, 0);
-			table.Attach (new VLabel (GetString ("HomePhone"), true), 1, 2, 2, 3);
+			table.Attach (new VLabel (GetValue ("HomePhone"), true), 1, 2, 2, 3);
 				
 			table.Attach (new VLabel (String.Format ("<b>{0}</b>", Catalog.GetString ("Mobile phone:")), false), 
 				0, 1, 3, 4, AttachOptions.Shrink | AttachOptions.Fill, AttachOptions.Shrink, 10, 0);
-			table.Attach (new VLabel (GetString ("CellularNumber"), true), 1, 2, 3, 4);
+			table.Attach (new VLabel (GetValue ("CellularNumber"), true), 1, 2, 3, 4);
 				
 			table.Attach (new VLabel (String.Format ("<b>{0}</b>", Catalog.GetString ("Web page:")), false), 
 				0, 1, 4, 5, AttachOptions.Shrink | AttachOptions.Fill, AttachOptions.Shrink, 10, 0);
-			table.Attach (new VLabel (GetString ("WebPage2"), true), 1, 2, 4, 5);
+			table.Attach (new VLabel (GetValue ("WebPage2"), true), 1, 2, 4, 5);
 					
 			// Add a button row with some informational buttons
 			hbuttonbox = new HButtonBox ();
@@ -342,7 +342,7 @@ namespace ContactViewer {
 			hbuttonbox.Add (button);
 		}
 		
-		public string GetString (string str)
+		public string GetValue (string str)
 		{
 			if (!contact.ContainsKey (str))
 				return "N/A";
