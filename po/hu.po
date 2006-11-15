@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-11-15 00:53+0100\n"
-"PO-Revision-Date: 2006-11-15 15:38+0100\n"
+"PO-Revision-Date: 2006-11-15 17:13+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
@@ -984,7 +984,7 @@ msgstr "Össz_es"
 
 #: ../search/UIManager.cs:121
 msgid "_None"
-msgstr "Egyiket se_m"
+msgstr "Egyik _sem"
 
 #: ../search/UIManager.cs:135
 msgid "A_pplications"
@@ -996,7 +996,7 @@ msgstr "Alkalmazások keresése"
 
 #: ../search/UIManager.cs:141
 msgid "_Contacts"
-msgstr "_Névjegyek"
+msgstr "Né_vjegyek"
 
 #: ../search/UIManager.cs:143
 msgid "Search contacts"
@@ -1004,7 +1004,7 @@ msgstr "Névjegyek keresése"
 
 #: ../search/UIManager.cs:147
 msgid "Ca_lendar events"
-msgstr "Na_ptáresemények"
+msgstr "_Naptáresemények"
 
 #: ../search/UIManager.cs:149
 msgid "Search calendar events"
@@ -1028,7 +1028,7 @@ msgstr "E-mailek és azonnaliüzenő-naplók keresése"
 
 #: ../search/UIManager.cs:165
 msgid "_Images"
-msgstr "Ké_pek"
+msgstr "_Képek"
 
 #: ../search/UIManager.cs:167
 msgid "Search images"
@@ -1036,7 +1036,7 @@ msgstr "Képek keresése"
 
 #: ../search/UIManager.cs:171
 msgid "_Media"
-msgstr "_Média"
+msgstr "Méd_ia"
 
 #: ../search/UIManager.cs:173
 msgid "Search sound and video files"
@@ -1132,9 +1132,7 @@ msgstr ""
 msgid ""
 "The selected path wasn't added. The list contains items that supercedes it "
 "and the data is already being indexed."
-msgstr ""
-"A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, "
-"amelyek megelőzik és az adatok már indexelve vannak. "
+msgstr "A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, amelyek megelőzik és az adatok már indexelve vannak."
 
 #: ../tools/Settings.cs:299 ../tools/Settings.cs:491
 msgid "Path not added"
@@ -1308,8 +1306,8 @@ msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
 msgstr ""
-"Egy távoli kiszolgáló hozzáadása, melyen engedélyezett \n"
-"a keresés és hálózatban szeretné használni"
+"Egy távoli kiszolgáló hozzáadása, melyen engedélyezett\n"
+"a keresés és hálózatban szeretné használni."
 
 #: ../tools/settings.glade.h:12
 msgid "Add any additional paths to be included for indexing."
