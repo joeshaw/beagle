@@ -175,46 +175,47 @@ namespace Beagle.Daemon.KonqQueryable {
 				return null;
 			}
 			
-			StreamReader reader = new StreamReader (stream, latin_encoding);
-			string url = null;
-			string creation_date = null;
-			string mimetype = null;
-			string charset = null;
-			bool is_ok = KonqHistoryUtil.ShouldIndex (reader, 
-										   out url, 
-										   out creation_date,
-										   out mimetype, 
-										   out charset);
+			using (StreamReader reader = new StreamReader (stream, latin_encoding)) {
+				string url = null;
+				string creation_date = null;
+				string mimetype = null;
+				string charset = null;
+				bool is_ok = KonqHistoryUtil.ShouldIndex (reader, 
+									  out url, 
+									  out creation_date,
+									  out mimetype, 
+									  out charset);
 			
-			if (!is_ok || url == String.Empty) {
-				//Logger.Log.Debug ("KonqQ: Skipping non-html file " + path + " of type=" + mimetype);
-				// finding out if a cache file should be indexed is expensive
-				// so, soon after we run the test, write lastwritetime attribute
-				FileAttributesStore.AttachLastWriteTime (path, DateTime.UtcNow);
-				return null; // we wont index bad files and non-html files
-			}
+				if (!is_ok || url == String.Empty) {
+					//Logger.Log.Debug ("KonqQ: Skipping non-html file " + path + " of type=" + mimetype);
+					// finding out if a cache file should be indexed is expensive
+					// so, soon after we run the test, write lastwritetime attribute
+					FileAttributesStore.AttachLastWriteTime (path, DateTime.UtcNow);
+					return null; // we wont index bad files and non-html files
+				}
 
-			Logger.Log.Debug ("KonqQ: Indexing " + path + " with url=" + url);
-			Uri uri = new Uri (url, true);
-			if (uri.Scheme == Uri.UriSchemeHttps) {
-				Logger.Log.Error ("Indexing secure https:// URIs is not secure!");
-				return null;
-			}
+				Logger.Log.Debug ("KonqQ: Indexing " + path + " with url=" + url);
+				Uri uri = new Uri (url, true);
+				if (uri.Scheme == Uri.UriSchemeHttps) {
+					Logger.Log.Error ("Indexing secure https:// URIs is not secure!");
+					return null;
+				}
 			
-			Indexable indexable = new Indexable (uri);
-			indexable.HitType = "WebHistory";
-			indexable.MimeType = KonqHistoryUtil.KonqCacheMimeType;
-			// store www.beaglewiki.org as www beagle org, till inpath: query is implemented
-			indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
-			// hint for the filter about the charset
-			indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
+				Indexable indexable = new Indexable (uri);
+				indexable.HitType = "WebHistory";
+				indexable.MimeType = KonqHistoryUtil.KonqCacheMimeType;
+				// store www.beaglewiki.org as www beagle org, till inpath: query is implemented
+				indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
+				// hint for the filter about the charset
+				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
 			
-			DateTime date = new DateTime (1970, 1, 1);
-			date = date.AddSeconds (Int64.Parse (creation_date));
-			indexable.Timestamp = date;
+				DateTime date = new DateTime (1970, 1, 1);
+				date = date.AddSeconds (Int64.Parse (creation_date));
+				indexable.Timestamp = date;
 
-			indexable.ContentUri = UriFu.PathToFileUri (path);
-			return indexable;
+				indexable.ContentUri = UriFu.PathToFileUri (path);
+				return indexable;
+			}
 		}
 
 		// FIXME: Implement removefile - removing files from history doesnt really make sense ? Do they ?
