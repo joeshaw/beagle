@@ -255,6 +255,7 @@ VERSION:2.0
 				    reader.ReadLine () != "PRODID:-//K Desktop Environment//NONSGML libkcal 3.5//EN" ||
 				    reader.ReadLine () != "VERSION:2.0") {
 					is_valid_file = false;
+					reader.Close ();
 					return;
 				}
 			} catch (Exception ex) {

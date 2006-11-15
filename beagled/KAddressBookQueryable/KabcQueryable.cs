@@ -273,12 +273,9 @@ namespace Beagle.Daemon.KabcQueryable {
 						return true;
 			}
 
-			if (line == null) {
-				reader.Close ();
-				if (! initial_scan)
-					queryable.RemoveDeletedContacts (deleted_contacts);
-				return false;
-			}
+			reader.Close ();
+			if (! initial_scan)
+				queryable.RemoveDeletedContacts (deleted_contacts);
 
 			return false;
 		}
@@ -316,10 +313,8 @@ namespace Beagle.Daemon.KabcQueryable {
 				}
 			}
 
-			if (line == null) {
-				reader.Close ();
+			if (line == null)
 				return false;
-			}
 
 			// Bad contact
 			if (string_builder.Length == 0 || current_uid == null)
