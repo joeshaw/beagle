@@ -217,7 +217,7 @@
 			    <widget class="GtkLabel" id="FirstNameLabel">
 			      <property name="width_request">130</property>
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">First:</property>
+			      <property name="label" translatable="yes" comments="This is First name">First:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -245,7 +245,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="LastNameLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Last:</property>
+			      <property name="label" translatable="yes" comments="This is Last name">Last:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -273,7 +273,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="DisplayNameLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Display:</property>
+			      <property name="label" translatable="yes" comments="This is Display name">Display:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -733,7 +733,7 @@ HTML</property>
 			    <widget class="GtkLabel" id="WorkPhoneLabel">
 			      <property name="width_request">130</property>
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Work:</property>
+			      <property name="label" translatable="yes" comments="This is Work phone number">Work:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -761,7 +761,7 @@ HTML</property>
 			  <child>
 			    <widget class="GtkLabel" id="HomePhoneLabel">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Home:</property>
+			      <property name="label" translatable="yes" comments="This is Home phone number">Home:</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>

@@ -127,7 +127,7 @@ namespace Search {
 
 		public MainWindow () : base (WindowType.Toplevel)
 		{
-			Title = "Desktop Search";
+			Title = Catalog.GetString ("Desktop Search");
 			Icon = Beagle.Images.GetPixbuf ("system-search.png");
 
 			DefaultWidth = 700;
@@ -236,7 +236,7 @@ namespace Search {
 
 		private void SetWindowTitle (string query)
 		{
-			Title = String.Format ("Desktop Search: {0}", query);
+			Title = String.Format ( Catalog.GetString ("Desktop Search: {0}"), query);
 		}
 
 		// Whether we should grab focus from the text entry
