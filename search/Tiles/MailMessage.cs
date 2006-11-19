@@ -133,12 +133,14 @@ namespace Search.Tiles {
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
 				p.Arguments [1] = uri;
+#if ENABLE_THUNDERBIRD
 			} else if (client == "thunderbird") {
 				p = new SafeProcess ();
 				p.Arguments = new string [3];
 				p.Arguments [0] = Thunderbird.ExecutableName;
 				p.Arguments [1] = "-mail";
 				p.Arguments [2] = uri;
+#endif
 			}
 
 			return p;

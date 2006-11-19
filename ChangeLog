@@ -1,3 +1,8 @@
+2006-11-19  Priit Laes  <amd@store20.com>
+
+	* search/Tiles/MailMessage.cs: Fix compiling when thunderbird support
+	is disabled.
+
 2006-10-30  dbera
 
 	* KonqBookmarkQueryable: Add Konqueror bookmark backend.
