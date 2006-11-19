@@ -7,3 +7,4 @@ Makefile.in
 *.la
 beagle-search
 beagle-shutdown
+beagle-info
