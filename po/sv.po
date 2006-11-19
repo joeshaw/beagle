@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-08 10:13+0100\n"
-"PO-Revision-Date: 2006-11-08 17:05+0100\n"
+"POT-Creation-Date: 2006-11-16 03:16+0000\n"
+"PO-Revision-Date: 2006-11-19 17:25+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -87,66 +87,30 @@ msgstr[1] "Lade till {0} kontakter"
 msgid "Viewing {0}"
 msgstr "Visar {0}"
 
-#: ../ContactViewer/ContactWindow.cs:205
-msgid "DisplayName"
-msgstr "Visningsnamn"
-
 #: ../ContactViewer/ContactWindow.cs:244
 msgid "Select a mork database file"
 msgstr "Välj en mork-databasfil"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "FirstName"
-msgstr "Förnamn"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "NickName"
-msgstr "Smeknamn"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "LastName"
-msgstr "Efternamn"
 
 #: ../ContactViewer/ContactWindow.cs:311
 msgid "Primary E-Mail:"
 msgstr "Primär e-post:"
 
-#: ../ContactViewer/ContactWindow.cs:313
-msgid "PrimaryEmail"
-msgstr "Primär e-postadress"
-
 #: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:33
+#: ../ContactViewer/contactviewer.glade.h:37
 msgid "Screen name:"
 msgstr "Skärmnamn:"
-
-#: ../ContactViewer/ContactWindow.cs:317
-msgid "_AimScreenName"
-msgstr "_Skärmnamn för AIM"
 
 #: ../ContactViewer/ContactWindow.cs:319
 msgid "Home phone:"
 msgstr "Hemtelefon:"
 
-#: ../ContactViewer/ContactWindow.cs:321
-msgid "HomePhone"
-msgstr "Hemtelefon"
-
 #: ../ContactViewer/ContactWindow.cs:323
 msgid "Mobile phone:"
 msgstr "Mobiltelefon:"
 
-#: ../ContactViewer/ContactWindow.cs:325
-msgid "CellularNumber"
-msgstr "Mobilnummer"
-
 #: ../ContactViewer/ContactWindow.cs:327
 msgid "Web page:"
 msgstr "Webbsida:"
-
-#: ../ContactViewer/ContactWindow.cs:329
-msgid "WebPage2"
-msgstr "Webbsida2"
 
 #: ../ContactViewer/ContactWindow.cs:336
 msgid "Send E-Mail"
@@ -240,64 +204,68 @@ msgstr "Avdelning:"
 msgid "Detailed view"
 msgstr "Detaljerad vy"
 
-#: ../ContactViewer/contactviewer.glade.h:21
+#. This is Display name
+#: ../ContactViewer/contactviewer.glade.h:22
 msgid "Display:"
 msgstr "Visa:"
 
-#: ../ContactViewer/contactviewer.glade.h:22
+#: ../ContactViewer/contactviewer.glade.h:23
 #: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-post:"
 
-#: ../ContactViewer/contactviewer.glade.h:23
+#: ../ContactViewer/contactviewer.glade.h:24
 msgid "Fax:"
 msgstr "Fax:"
 
-#: ../ContactViewer/contactviewer.glade.h:24
+#. This is First name
+#: ../ContactViewer/contactviewer.glade.h:26
 msgid "First:"
 msgstr "Förnamn:"
 
-#: ../ContactViewer/contactviewer.glade.h:25
+#. This is Home phone number
+#: ../ContactViewer/contactviewer.glade.h:28
 msgid "Home:"
 msgstr "Hem:"
 
-#: ../ContactViewer/contactviewer.glade.h:26
+#. This is Last name
+#: ../ContactViewer/contactviewer.glade.h:30
 msgid "Last:"
 msgstr "Efternamn:"
 
-#: ../ContactViewer/contactviewer.glade.h:27
+#: ../ContactViewer/contactviewer.glade.h:31
 msgid "Mobile:"
 msgstr "Mobil:"
 
-#: ../ContactViewer/contactviewer.glade.h:28
+#: ../ContactViewer/contactviewer.glade.h:32
 msgid "Nickname:"
 msgstr "Smeknamn:"
 
-#: ../ContactViewer/contactviewer.glade.h:29
+#: ../ContactViewer/contactviewer.glade.h:33
 msgid "Organization:"
 msgstr "Organisation:"
 
-#: ../ContactViewer/contactviewer.glade.h:30
+#: ../ContactViewer/contactviewer.glade.h:34
 msgid "Other"
 msgstr "Övrigt"
 
-#: ../ContactViewer/contactviewer.glade.h:31
+#: ../ContactViewer/contactviewer.glade.h:35
 msgid "Pager:"
 msgstr "Personsökare:"
 
-#: ../ContactViewer/contactviewer.glade.h:32
+#: ../ContactViewer/contactviewer.glade.h:36
 msgid "Preferred format:"
 msgstr "Föredraget format:"
 
-#: ../ContactViewer/contactviewer.glade.h:34
+#: ../ContactViewer/contactviewer.glade.h:38
 msgid "State/Province"
 msgstr "Län/Region"
 
-#: ../ContactViewer/contactviewer.glade.h:35
+#: ../ContactViewer/contactviewer.glade.h:39
 msgid "State/Province:"
 msgstr "Län/Region:"
 
-#: ../ContactViewer/contactviewer.glade.h:36
+#: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:124
 #: ../search/Tiles/Note.cs:62
@@ -306,7 +274,7 @@ msgstr "Län/Region:"
 msgid "Title:"
 msgstr "Titel:"
 
-#: ../ContactViewer/contactviewer.glade.h:37
+#: ../ContactViewer/contactviewer.glade.h:41
 msgid ""
 "Unknown\n"
 "Plain text\n"
@@ -316,19 +284,20 @@ msgstr ""
 "Ren text\n"
 "HTML"
 
-#: ../ContactViewer/contactviewer.glade.h:40
+#: ../ContactViewer/contactviewer.glade.h:44
 msgid "Web Page:"
 msgstr "Webbsida:"
 
-#: ../ContactViewer/contactviewer.glade.h:41
+#. This is Work phone number
+#: ../ContactViewer/contactviewer.glade.h:46
 msgid "Work:"
 msgstr "Arbete:"
 
-#: ../ContactViewer/contactviewer.glade.h:42
+#: ../ContactViewer/contactviewer.glade.h:47
 msgid "ZIP/Postal Code"
 msgstr "ZIP/Postnummer"
 
-#: ../ContactViewer/contactviewer.glade.h:43
+#: ../ContactViewer/contactviewer.glade.h:48
 msgid "ZIP/Postal Code:"
 msgstr "ZIP/Postnummer:"
 
@@ -426,6 +395,11 @@ msgstr "Söktjänsten kör inte"
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
+#: ../search/Search.cs:130
+#: ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Skrivbordssökning"
+
 #: ../search/Search.cs:151
 msgid "_Find:"
 msgstr "_Sök:"
@@ -441,6 +415,11 @@ msgstr "Skriv in söktermer"
 #: ../search/Search.cs:215
 msgid "Start searching"
 msgstr "Påbörja sökning"
+
+#: ../search/Search.cs:239
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Skrivbordssökning: {0}"
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -664,13 +643,13 @@ msgstr "Arkiv"
 
 #: ../search/Tiles/Utils.cs:126
 #: ../search/Tiles/Utils.cs:208
-#: ../Util/StringFu.cs:79
+#: ../Util/StringFu.cs:88
 msgid "Yesterday"
 msgstr "Igår"
 
 #: ../search/Tiles/Utils.cs:128
 #: ../search/Tiles/Utils.cs:210
-#: ../Util/StringFu.cs:77
+#: ../Util/StringFu.cs:86
 msgid "Today"
 msgstr "Idag"
 
@@ -736,10 +715,6 @@ msgstr "Url:"
 #: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Kom åt:"
-
-#: ../search/Tray/TrayIcon.cs:32
-msgid "Desktop Search"
-msgstr "Skrivbordssökning"
 
 #: ../search/Tray/TrayIcon.cs:57
 msgid "No Recent Searches"
@@ -1392,18 +1367,22 @@ msgid "_Allow Beagle to be run as root"
 msgstr "_Tillåt Beagle att köras som root"
 
 #: ../tools/settings.glade.h:36
+msgid "_Browse..."
+msgstr "_Bläddra..."
+
+#: ../tools/settings.glade.h:37
 msgid "_Folder path"
 msgstr "_Mappsökväg"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "_Mail folder"
 msgstr "E-post_mapp"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "_Maximum number of results displayed:"
 msgstr "_Maximalt antal visade resultat:"
 
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:40
 msgid "_Start search & indexing services automatically "
 msgstr "_Starta söknings- och indexeringstjänster automatiskt "
 
@@ -1449,62 +1428,62 @@ msgid "Unknown Directory"
 msgstr "Okänd katalog"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:82
+#: ../Util/StringFu.cs:91
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:85
+#: ../Util/StringFu.cs:94
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:88
+#: ../Util/StringFu.cs:97
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:94
+#: ../Util/StringFu.cs:103
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:111
+#: ../Util/StringFu.cs:120
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Idag, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:114
+#: ../Util/StringFu.cs:123
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Igår, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:117
+#: ../Util/StringFu.cs:126
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} dagar sedan, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:122
+#: ../Util/StringFu.cs:131
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:127
+#: ../Util/StringFu.cs:136
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:137
+#: ../Util/StringFu.cs:146
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} timme"
 msgstr[1] "{0} timmar"
 
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:153
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1512,23 +1491,41 @@ msgstr[0] "{0} minut"
 msgstr[1] "{0} minuter"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:160
+#: ../Util/StringFu.cs:169
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} byte"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:173
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:176
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "DisplayName"
+#~ msgstr "Visningsnamn"
+#~ msgid "FirstName"
+#~ msgstr "Förnamn"
+#~ msgid "NickName"
+#~ msgstr "Smeknamn"
+#~ msgid "LastName"
+#~ msgstr "Efternamn"
+#~ msgid "PrimaryEmail"
+#~ msgstr "Primär e-postadress"
+#~ msgid "_AimScreenName"
+#~ msgstr "_Skärmnamn för AIM"
+#~ msgid "HomePhone"
+#~ msgstr "Hemtelefon"
+#~ msgid "CellularNumber"
+#~ msgstr "Mobilnummer"
+#~ msgid "WebPage2"
+#~ msgstr "Webbsida2"
 #~ msgid "Sor_t"
 #~ msgstr "Sor_tera"
 #~ msgid "_Everywhere"
