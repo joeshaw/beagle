@@ -49,15 +49,15 @@ public class SettingsDialog
 	// Widgets
 
 	[Widget] VBox administration_frame;
-	[Widget] CheckButton allow_root_toggle;
 
+	[Widget] CheckButton allow_root_toggle;
 	[Widget] CheckButton autostart_toggle;
 	[Widget] CheckButton battery_toggle;
-
+	[Widget] CheckButton auto_search_toggle;
 	[Widget] CheckButton press_ctrl_toggle;
  	[Widget] CheckButton press_alt_toggle;
+
 	[Widget] Entry show_search_window_entry;
-	[Widget] SpinButton max_displayed_spinbutton;
 
 	[Widget] CheckButton index_home_toggle;
 	[Widget] Button remove_include_button;
@@ -165,13 +165,13 @@ public class SettingsDialog
 	{	
 		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
 		autostart_toggle.Active = Conf.Searching.Autostart;
+		auto_search_toggle.Active = Conf.Searching.BeagleSearchAutoSearch;
 		battery_toggle.Active = Conf.Indexing.IndexOnBattery;
 
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
 		press_alt_toggle.Active = show_binding.Alt;
 		show_search_window_entry.Text = show_binding.Key;
-		max_displayed_spinbutton.Value = (uint) Conf.Searching.MaxDisplayed;
 
 		if (Conf.Indexing.IndexHomeDir)
 			index_home_toggle.Active = true;
@@ -198,13 +198,13 @@ public class SettingsDialog
 	{
 		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
 		Conf.Searching.Autostart = autostart_toggle.Active;
+		Conf.Searching.BeagleSearchAutoSearch = auto_search_toggle.Active;
 		Conf.Indexing.IndexOnBattery = battery_toggle.Active;
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 
 									 press_alt_toggle.Active);
 		
-		Conf.Searching.MaxDisplayed = (int) max_displayed_spinbutton.Value;
 		Conf.Indexing.IndexHomeDir = index_home_toggle.Active;
 		
 		Conf.Indexing.Roots = include_view.Includes;

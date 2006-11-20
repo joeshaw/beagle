@@ -79,8 +79,6 @@ namespace Search.Tiles {
 
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ()) {
 
-				bool first = true;
-
 				foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (TileActivatorTypesAttribute))) {
 					try {
 						activators.Add ((TileActivator) Activator.CreateInstance (type));

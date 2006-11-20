@@ -155,9 +155,13 @@ namespace Search {
 			label.MnemonicWidget = entry;
 			uim.FocusSearchEntry += delegate () { entry.GrabFocus (); };
 			entry.Activated += OnEntryActivated;
-			entry.Changed += OnEntryChanged;
-			entry.MoveCursor += OnEntryMoveCursor;
 			hbox.PackStart (entry, true, true, 0);
+
+			// Auto search after timeout is now optional :)
+			if (Beagle.Util.Conf.Searching.BeagleSearchAutoSearch) {
+				entry.Changed += OnEntryChanged;
+				entry.MoveCursor += OnEntryMoveCursor;
+			}
 
 			button = new Gtk.Button ();
 			Gtk.HBox button_hbox = new Gtk.HBox (false, 2);
