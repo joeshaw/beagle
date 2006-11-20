@@ -1,4 +1,73 @@
 
+Version 0.2.13
+20 November 2006
+
+Daemon/Infrastructure:
+* Nice +15 the helper process on startup, since filtering certain
+  files can take a while and we don't want to affect other user apps.
+  (Joe Shaw)
+* Change the IO priority code to automatically fallback from trying to
+  set idle priority to lowering best effort.  (Joe)
+* Fix a bug in which the short circuiting code would cause not all
+  results to be found.  (Debajyoti Bera)
+* Fix a bug in remote filesystem index synchronization when home is on
+  a remote filesystem but BEAGLE_STORAGE is set.  (Joe)
+* Add means to get the total number of Lucene matches that are found.
+* Fix broken UTC/local time mismatches in C clients.  (Bera)
+* Join threads together when shutting down so that all the outstanding
+  work is processed before the final cleanup and exit.  (Joe)
+* Further improve output logging in the daemon and index helper.
+  (Joe)
+
+Backends:
+* Add "email" keyword mapping to KAddressbook backend.  (Bera)
+* Fix a bug in which the extension keyword mapping wasn't working with
+  the static backends.  (Bera)
+* Fix a bug in which directories weren't being returned in results
+  from static backends.  (Bera)
+* Reduce memory usage slightly in Thunderbird backend by avoiding
+  string allocations.  (Kevin Kubasik)
+* Handle null indexables in the indexing service backend.  (Joe)
+* Fix a file descriptor leak in the Konqueror history backend.  (Joe)
+* Fix a file descriptor leak in the KNotes backend.  (Bera)
+
+Filters:
+* Fix conditional defines, to fix Word, PowerPoint, and CHM filters.
+  (Joe)
+* Index cell phone numbers in KAddressbook filter.  (Bera)
+* Fix Digikam tag parsing to add all tags, not just the first one.
+  (Bera)
+
+UI:
+* Make the automatic search after a timeout in the text entry
+  optional.  (Lukas Lipka)
+* Fix various i18n issues in the code.  (Gabor Kelemen)
+
+Tools:
+* Use the watch command for beagle-status instead of our own loop in
+  the shell script.  (José Carlos García Sogo, Joe)
+* Don't quote the query string in beagle-query, it breaks advanced
+  query syntax.  (Bera)
+
+Translations:
+* Added Arabic translation.  (Djihed Afifi)
+* Updated German translation.  (Hendrik Richter)
+* Updated Hungarian translation.  (Gabor)
+* Updated Norwegian bokmål translation.  (Kjartan Maraas)
+* Updated Spanish translation.  (Francisco Javier F. Serrador)
+* Updated Swedish translation.  (Daniel Nylander)
+
+Everything else:
+* Fix many warnings brought on by more strict Mono compilers.  (Lukas)
+* Fix compilation issue when Thunderbird support is disabled.  (Priit
+  Laes)
+* Add support for new heap-shot profiler to the scripts.  (Joe)
+* Work around gettext's check for functions named GetString() in the
+  Contact viewer and Thunderbird backend so that strings that aren't
+  for translation aren't marked as such.  (Joe)
+
+------------------------------------------------------
+
 Version 0.2.12
 1 November 2006
 
@@ -6,7 +75,7 @@ Daemon/Infrastructure:
 * Drastically reduce memory usage of beagled and beagled-index-helper
   at startup by changing how certain pluggable components are
   detected.  Filter and backend authors, see IMPORTANT NOTE below.
-  (Joe Shaw, Debojyoti Bera, Kevin Kubasik)
+  (Joe Shaw, Debajyoti Bera, Kevin Kubasik)
 * Don't run Beagle in Mono with the --debug flag unless --mono-debug
   is passed into beagled.  This saves memory and fixes leaks.  (Joe)
 * Tokenize emails and hostnames when indexing.  (Bera)
