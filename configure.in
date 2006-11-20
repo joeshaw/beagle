@@ -347,12 +347,27 @@ AM_CONDITIONAL(ENABLE_INOTIFY, test "x$enable_inotify" = "xyes")
 
 dnl ----------------------------------------------
 
-dnl beagled
+dnl gsf-sharp
 
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.5, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 if test "x$enable_gsf_sharp" = "xyes"; then
 	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_GSF_SHARP"
+fi
+
+dnl ----------------------------------------------
+
+dnl wv1
+
+enable_wv1=no
+if test "x$enable_gsf_sharp" = "xyes"; then
+	PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes)
+	AC_SUBST(WV1_LIBS)
+fi
+
+AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
+if test "x$enable_wv1" = "xyes"; then
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_WV1"
 fi
 
 dnl ----------------------------------------------
@@ -532,17 +547,6 @@ dnl For the systeminfo glue
 
 SYSTEMINFO_GLUE_X_LIBS="$X_PRE_LIBS $X_LIBS -lX11 $XSS_LIBS $X_EXTRA_LIBS"
 AC_SUBST(SYSTEMINFO_GLUE_X_LIBS)
-
-dnl ----------------------------------------------
-
-dnl For the wv1 glue
-
-PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
-AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
-if test "x$enable_wv1" = "xyes"; then
-	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_WV1"
-fi
-AC_SUBST(WV1_LIBS)
 
 dnl ----------------------------------------------
 
