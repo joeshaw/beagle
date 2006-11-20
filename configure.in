@@ -352,7 +352,7 @@ dnl beagled
 PKG_CHECK_MODULES(GSF_SHARP, gsf-sharp >= 0.5, enable_gsf_sharp=yes, enable_gsf_sharp=no)
 AM_CONDITIONAL(ENABLE_GSF_SHARP, test "x$enable_gsf_sharp" = "xyes")
 if test "x$enable_gsf_sharp" = "xyes"; then
-	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:ENABLE_GSF_SHARP"
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_GSF_SHARP"
 fi
 
 dnl ----------------------------------------------
@@ -540,7 +540,7 @@ dnl For the wv1 glue
 PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
 AM_CONDITIONAL(ENABLE_WV1, test "x$enable_wv1" = "xyes")
 if test "x$enable_wv1" = "xyes"; then
-	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:ENABLE_WV1"
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_WV1"
 fi
 AC_SUBST(WV1_LIBS)
 
@@ -577,7 +577,7 @@ dnl Check if the system has libchm, used by the CHMFilter
 AC_CHECK_LIB(chm,chm_open,has_libchm=yes,has_libchm=no)
 AM_CONDITIONAL(HAS_LIBCHM, test "x$has_libchm" = "xyes")
 if test "x$has_libchm" = "xyes"; then
-	BEAGLE_DEFINES = "$BEAGLE_DEFINES -define:HAVE_LIBCHM"
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:HAVE_LIBCHM"
 fi
 
 dnl ----------------------------------------------

@@ -4,7 +4,7 @@ CSC = $(MCS) -debug
 
 TARGET = Filters.dll
 
-CSFLAGS = -target:library
+CSFLAGS = -target:library $(BEAGLE_DEFINES)
 
 # Found at http://sharptoolbox.madgeek.com/
 HAP_CSFILES =						\
