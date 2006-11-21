@@ -13,6 +13,10 @@ if ENABLE_GALAGO
 CSFLAGS += -define:ENABLE_GALAGO
 endif
 
+if ENABLE_THUNDERBIRD
+CSFLAGS += -define:ENABLE_THUNDERBIRD
+endif
+
 pkglib_DATA = Search.exe Search.exe.mdb
 
 BIN_WRAPPERS = beagle-search
