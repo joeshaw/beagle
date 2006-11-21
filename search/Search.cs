@@ -24,6 +24,7 @@ namespace Search {
 		private Gtk.Notebook pages;
 
 		private Search.UIManager uim;
+		private Search.NotificationArea notification_area;
 		private Search.GroupView view;
 		private Search.Entry entry;
 		private Search.Spinner spinner;
@@ -191,7 +192,7 @@ namespace Search {
 			padding_hbox.PackStart (hbox, true, true, 9);
 			vbox.PackStart (padding_hbox, false, true, 6);
 
-			NotificationArea notification_area = new NotificationArea ();
+			notification_area = new NotificationArea ();
 
 			pages = new Gtk.Notebook ();
 			pages.ShowTabs = false;
@@ -249,6 +250,8 @@ namespace Search {
 			} else {
 				ShowAll ();
 			}
+
+			CheckIndexingStatus ();
 		}
 
 		private void SetWindowTitle (string query)
@@ -498,6 +501,30 @@ namespace Search {
 
 			entry.Text = query;
 			Search (true);
+		}
+
+		//////////////////////////////////////
+
+		private void CheckIndexingStatus ()
+		{
+			DaemonInformationRequest request = new DaemonInformationRequest (false, false, false, true);
+			DaemonInformationResponse response;
+			
+			try {
+				response = (DaemonInformationResponse) request.Send ();
+
+				if (! response.IsIndexing)
+					return;
+			} catch (Beagle.ResponseMessageException) {
+				return;
+			}
+
+			NotificationMessage m = new NotificationMessage ();
+			m.Icon = Gtk.Stock.DialogInfo;
+			m.Title = Catalog.GetString ("Beagle is indexing your data");
+			m.Message = Catalog.GetString ("The Beagle service is still in the process of indexing your personal data.\nNot all the results will appear until the indexing has finished.");
+			m.Timeout = 10000;
+			notification_area.Display (m);
 		}
 	}
 }

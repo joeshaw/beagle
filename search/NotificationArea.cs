@@ -36,6 +36,7 @@ namespace Search {
 			vbox.PackStart (title, false, true, 0);
 
 			message = new Label ();
+			//message.LineWrap = true;
 			message.SetAlignment (0.0f, 0.0f);
 			this.Message = m;			
 			vbox.PackStart (message, true, true, 0);
