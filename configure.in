@@ -361,7 +361,7 @@ dnl wv1
 
 enable_wv1=no
 if test "x$enable_gsf_sharp" = "xyes"; then
-	PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes)
+	PKG_CHECK_MODULES(WV1, wv-1.0, enable_wv1=yes, enable_wv1=no)
 	AC_SUBST(WV1_LIBS)
 fi
 
