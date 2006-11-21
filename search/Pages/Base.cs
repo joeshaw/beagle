@@ -6,12 +6,7 @@ namespace Search.Pages {
 
 	public class Base : EventBox {
 
-		static Gdk.Pixbuf arrow;
-
-		static Base ()
-		{
-			arrow = Beagle.Images.GetPixbuf ("tip-arrow.png");
-		}
+		private static Gdk.Pixbuf arrow = Beagle.Images.GetPixbuf ("tip-arrow.png");
 
 		Gtk.Fixed fixed_widget;
 		Gtk.Table table;
@@ -51,21 +46,15 @@ namespace Search.Pages {
 		}
 
 		public Gdk.Pixbuf HeaderIcon {
-			set {
-				headerIcon.Pixbuf = value;
-			}
+			set { headerIcon.Pixbuf = value; }
 		}
 
 		public string HeaderIconStock {
-			set {
-				headerIcon.SetFromStock (value, Gtk.IconSize.Dnd);
-			}
+			set { headerIcon.SetFromStock (value, Gtk.IconSize.Dnd); }
 		}
 
 		public string HeaderMarkup {
-			set {
-				header.Markup = value;
-			}
+			set { header.Markup = value; }
 		}
 
 		public void Append (string tip)

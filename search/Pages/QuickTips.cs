@@ -17,6 +17,7 @@ namespace Search.Pages {
 		{
 			HeaderIcon = Beagle.Images.GetPixbuf ("quick-tips.png");
 			HeaderMarkup = "<big><b>" + Catalog.GetString ("Quick Tips") + "</b></big>";
+			
 			foreach (string tip in tips)
 				Append (tip);
 		}

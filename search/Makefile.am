@@ -33,6 +33,7 @@ CSFILES =					\
 	$(srcdir)/ConversationCategory.cs	\
 	$(srcdir)/Entry.cs			\
 	$(srcdir)/GroupView.cs			\
+	$(srcdir)/NotificationArea.cs		\
 	$(srcdir)/Panes.cs			\
 	$(srcdir)/Search.cs			\
 	$(srcdir)/SortedTileList.cs		\
