@@ -70,6 +70,12 @@ namespace Beagle.Daemon {
 			get { return UriFu.UriToEscapedString (Uri); }
 			set { Uri = UriFu.EscapedStringToUri (value); }
 		}
+
+		public object Clone ()
+		{
+			return this.MemberwiseClone ();
+		}
+
 	}
 	
 	public class IndexerRemovedReceipt : IndexerReceipt {

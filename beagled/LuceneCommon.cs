@@ -693,21 +693,41 @@ namespace Beagle.Daemon {
 				AddPropertyToDocument (prop, primary_doc);
 			}
 
+			{
+				Property prop;
+				prop = Property.NewBool (Property.IsChildPropKey, indexable.IsChild);
+				AddPropertyToDocument (prop, primary_doc);
+			}
+
 			// Store the other properties
 				
 			foreach (Property prop in indexable.Properties) {
 				Document target_doc = primary_doc;
 				if (prop.IsMutable) {
-					if (secondary_doc == null) {
-						secondary_doc = new Document ();
-						f = Field.Keyword ("Uri", UriFu.UriToEscapedString (indexable.Uri));
-						secondary_doc.Add (f);
-					}
+					if (secondary_doc == null)
+						secondary_doc = CreateSecondaryDocument (indexable.Uri, indexable.ParentUri);
+
 					target_doc = secondary_doc;
 				}
 					
 				AddPropertyToDocument (prop, target_doc);
 			}
+		}
+
+		static private Document CreateSecondaryDocument (Uri uri, Uri parent_uri)
+		{
+			Document secondary_doc = new Document ();
+
+			Field f = Field.Keyword ("Uri", UriFu.UriToEscapedString (uri));
+			secondary_doc.Add (f);
+			
+			if (parent_uri != null) {
+				// Store both Uri and ParentUri in secondary index for easy removal
+				f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (parent_uri));
+				secondary_doc.Add (f);
+			}
+
+			return secondary_doc;
 		}
 
 		static protected Document RewriteDocument (Document old_secondary_doc,
