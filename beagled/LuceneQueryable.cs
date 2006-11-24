@@ -34,6 +34,7 @@ namespace Beagle.Daemon {
 
 	public abstract class LuceneQueryable : IQueryable {
 		
+		static public bool Debug = false;
 		static public bool OptimizeRightAway = false;
 
 		public delegate IIndexer IndexerCreator (string name, int minor_version);
@@ -469,6 +470,16 @@ namespace Beagle.Daemon {
 			writer.Close ();
 		}
 
+		// Everything needed to write the attributes of a file after all its children
+		// is indexed
+		private class ParentIndexableInfo {
+			public Indexable Indexable;
+			public IndexerAddedReceipt Receipt;
+			public DateTime LastChildIndexTime;
+			public int NumChildLeft;
+		}
+
+		private Hashtable parent_indexable_table = UriFu.NewHashtable ();
 
 		//////////////////////////////////////////////////////////////////////////////////
 
@@ -486,6 +497,14 @@ namespace Beagle.Daemon {
 		// notification to work correctly, we have to map it to
 		// an external Uri.
 		virtual protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		{
+			// Does nothing by default
+		}
+
+		// Inform backends that the indexable is completely indexed including all children
+		// Pass in the top-level parent indexable, indexeradded receipt for that indexable
+		// and the time when the receipt about the last child indexing was received
+		virtual protected void PostChildrenIndexedHook (Indexable indexable, IndexerAddedReceipt receipt, DateTime Mtime)
 		{
 			// Does nothing by default
 		}
@@ -914,35 +933,17 @@ namespace Beagle.Daemon {
 			ArrayList added_uris = new ArrayList ();
 			ArrayList removed_uris  = new ArrayList ();
 
+			bool[] indexable_added_receipt_index = new bool [receipts.Length];
+			int[] child_added_receipt_count = new int [receipts.Length];
+
 			for (int i = 0; i < receipts.Length; ++i) {
+				child_added_receipt_count [i] = 0;
+				indexable_added_receipt_index [i] = false;
 
 				if (receipts [i] is IndexerAddedReceipt) {
-					
-					IndexerAddedReceipt r;
-					r = (IndexerAddedReceipt) receipts [i];
-
-					// Add the Uri to the list for our change data
-					// before doing any post-processing.
-					// This ensures that we have internal uris when
-					// we are remapping.
-					added_uris.Add (r.Uri);
-					
-					// Call the appropriate hook
-					try {
-						// Map from internal->external Uris in the PostAddHook
-						PostAddHook (flushed_request.GetByUri (r.Uri), r);
-					} catch (Exception ex) {
-						Logger.Log.Warn (ex, "Caught exception in PostAddHook '{0}' '{1}' '{2}'",
-								 r.Uri, r.FilterName, r.FilterVersion);
-					}
-
-					// Every added Uri also needs to be listed as removed,
-					// to avoid duplicate hits in the query.  Since the
-					// removed Uris need to be external Uris, we add them
-					// to the list *after* post-processing.
-					removed_uris.Add (r.Uri);
-
-
+					// Process IndexerAddedReceipt after knowing if there are any
+					// child of the indexable yet to be indexed
+					indexable_added_receipt_index [i] = true;
 				} else if (receipts [i] is IndexerRemovedReceipt) {
 
 					IndexerRemovedReceipt r;
@@ -982,15 +983,147 @@ namespace Beagle.Daemon {
 						}
 
 						if (please_add_a_new_task) {
-							//Logger.Log.Debug ("Adding child {0}", child.Uri);
+							Log.Debug ("Adding child {0} to parent {1}", child.Uri, child.ParentUri);
 							Scheduler.Task task = NewAddTask (child);
 							task.SubPriority = 1;
 							ThisScheduler.Add (task);
+
+							// value at 'i' = number of successful children
+							child_added_receipt_count [i] ++;
 						} else
 							child.Cleanup ();
 					}
 				}
 			}
+
+			for (int i = 0; i < receipts.Length; ++i) {
+				if (child_added_receipt_count [i] == 0)
+					continue;
+
+				IndexerChildIndexablesReceipt r;
+				r = (IndexerChildIndexablesReceipt) receipts [i];
+
+				if (r.Children == null)
+					continue;
+
+				// Use first child to get parent uri since all children will share same parent
+				Indexable child = (Indexable) r.Children [0];
+				ParentIndexableInfo info;
+
+				Uri parent_uri = child.ParentUri;
+				info = (ParentIndexableInfo) parent_indexable_table [parent_uri];
+				if (info != null) {
+					info.NumChildLeft += r.Children.Count;
+					if (Debug)
+						Log.Debug ("Add {2} children to {0}. (to-index {1})", info.Indexable.Uri, info.NumChildLeft, r.Children.Count);
+					continue;
+				}
+
+				// Need to figure out the indexeraddedreceipt for r.indexable
+				IndexerAddedReceipt added_receipt = null;
+				// FIXME: Huge assumption on how LuceneIndexingDriver works
+				// Assuming that IndexingDriver sends the addedreceipt for the
+				// main indexable and the childreceipts for added children in
+				// the same response.
+				for (int j = 0; j < receipts.Length; ++j) {
+					if (! indexable_added_receipt_index [j])
+						continue;
+
+					added_receipt = (IndexerAddedReceipt) receipts [j];
+					if (added_receipt.Uri == parent_uri)
+						break;
+				}
+
+				// Just being cautious
+				if (added_receipt == null)
+					continue;
+
+				info = new ParentIndexableInfo ();
+				info.NumChildLeft = r.Children.Count;
+				info.LastChildIndexTime = child.Timestamp;
+				info.Indexable = flushed_request.GetByUri (parent_uri);
+				info.Receipt = new IndexerAddedReceipt (added_receipt.Uri,
+									added_receipt.FilterName,
+									added_receipt.FilterVersion);
+				parent_indexable_table [info.Indexable.Uri] = info;
+				if (Debug)
+					Log.Debug ("Add {2} children to {0}. (to-index {1})", info.Indexable.Uri, info.NumChildLeft, r.Children.Count);
+			}
+
+			// Process these after knowing what all child indexable receipts were present
+			for (int i = 0; i < receipts.Length; ++i) {
+				if (! indexable_added_receipt_index [i])
+					continue;
+
+				IndexerAddedReceipt r = (IndexerAddedReceipt) receipts [i];
+				if (Debug)
+					Log.Debug ("AddedReceipt for {0}", r.Uri);
+
+				// Add the Uri to the list for our change data
+				// before doing any post-processing.
+				// This ensures that we have internal uris when
+				// we are remapping.
+				added_uris.Add (r.Uri);
+				
+				// Call the appropriate hook
+				try {
+					// Map from internal->external Uris in the PostAddHook
+					Indexable submitted_indexable = flushed_request.GetByUri (r.Uri);
+					IndexerAddedReceipt receipt_copy = new IndexerAddedReceipt (
+									r.Uri,
+									r.FilterName,
+									r.FilterVersion);
+					PostAddHook (submitted_indexable, r);
+
+					ParentIndexableInfo info;
+					// Check if this indexable has any children
+					info = (ParentIndexableInfo) parent_indexable_table [submitted_indexable.Uri];
+					// Indexable has no children
+					if (info == null) {
+						Uri parent_uri = submitted_indexable.ParentUri;
+
+						if (parent_uri != null) {
+							// Indexable is itself a child
+							info = (ParentIndexableInfo) parent_indexable_table [parent_uri];
+						}
+
+						if (info == null)
+							PostChildrenIndexedHook (submitted_indexable, receipt_copy, submitted_indexable.Timestamp);
+						else {
+							// This indexable is a child registered earlier
+							info.NumChildLeft --;
+							info.LastChildIndexTime = submitted_indexable.Timestamp;
+							if (Debug)
+								Log.Debug ("Finished indexing child for {0} ({1} child left)", info.Indexable.Uri, info.NumChildLeft);
+						}
+					}
+				} catch (Exception ex) {
+					Logger.Log.Warn (ex, "Caught exception in PostAddHook or PostChildrenIndexedHook '{0}' '{1}' '{2}'",
+							 r.Uri, r.FilterName, r.FilterVersion);
+				}
+
+				// Every added Uri also needs to be listed as removed,
+				// to avoid duplicate hits in the query.  Since the
+				// removed Uris need to be external Uris, we add them
+				// to the list *after* post-processing.
+				removed_uris.Add (r.Uri);
+			}
+
+			ArrayList to_remove = new ArrayList ();
+			foreach (ParentIndexableInfo info in parent_indexable_table.Values) {
+				if (info.NumChildLeft > 0)
+					continue;
+
+				if (Debug)
+					Log.Debug ("{0} has no more children left, removing", info.Indexable.Uri);
+				PostChildrenIndexedHook (info.Indexable, info.Receipt, info.LastChildIndexTime);
+				to_remove.Add (info.Indexable.Uri);
+			}
+
+			foreach (Uri uri in to_remove)
+				parent_indexable_table.Remove (uri);
+			if (Debug)
+				Log.Debug ("parent_indexable_table now contains {0} parent-child", parent_indexable_table.Values.Count);
 
 			if (fa_store != null)
 				fa_store.CommitTransaction ();
