@@ -25,6 +25,9 @@
 //
 
 using System;
+using System.Collections;
+using System.IO;
+using System.Text;
 using System.Xml.Serialization;
 
 using Beagle.Util;
@@ -45,6 +48,18 @@ namespace Beagle {
 		bool         is_searched;
 		bool         is_mutable;
 		bool	     is_stored;
+
+		// Commonly used property keys
+		public const string PrivateNamespace = "_private:";
+		public const string SplitFilenamePropKey = "beagle:SplitFilename";
+		public const string ExactFilenamePropKey = "beagle:ExactFilename";
+		public const string TextFilenamePropKey = "beagle:Filename";
+		public const string NoPunctFilenamePropKey = "beagle:NoPunctFilename";
+		public const string FilenameExtensionPropKey = "beagle:FilenameExtension";
+		public const string ParentDirUriPropKey = Property.PrivateNamespace + "ParentDirUri";
+		public const string IsDirectoryPropKey = Property.PrivateNamespace + "IsDirectory";
+		public const string IsChildPropKey = "beagle:IsChild";
+
 
 		[XmlAttribute]
 		public PropertyType Type {
@@ -215,6 +230,49 @@ namespace Beagle {
 		override public string ToString ()
 		{
 			return String.Format ("{0}={1}", Key, Value);
+		}
+
+		// Standard properties for files
+		// Used by FileSystem backend and filters which produce file child-indexables
+		public static IEnumerable StandardFileProperties (string name, bool mutable)
+		{
+			StringBuilder sb;
+			sb = new StringBuilder ();
+
+			string no_ext, ext, no_punct;
+			no_ext = Path.GetFileNameWithoutExtension (name);
+			ext = Path.GetExtension (name).ToLower ();
+			
+			sb.Append (no_ext);
+			for (int i = 0; i < sb.Length; ++i)
+				if (! Char.IsLetterOrDigit (sb [i]))
+					sb [i] = ' ';
+			no_punct = sb.ToString ();
+
+
+			Property prop;
+
+			prop = Property.NewKeyword (ExactFilenamePropKey, name);
+			prop.IsMutable = mutable;
+			yield return prop;
+
+			prop = Property.New (TextFilenamePropKey, no_ext);
+			prop.IsMutable = mutable;
+			yield return prop;
+
+			prop = Property.New (NoPunctFilenamePropKey, no_punct);
+			prop.IsMutable = mutable;
+			yield return prop;
+
+			prop = Property.NewUnsearched (FilenameExtensionPropKey, ext);
+			prop.IsMutable = mutable;
+			yield return prop;
+
+			string str;
+			str = StringFu.FuzzyDivide (no_ext);
+			prop = Property.NewUnstored (SplitFilenamePropKey, str);
+			prop.IsMutable = mutable;
+			yield return prop;
 		}
 	}
 }

@@ -24,6 +24,7 @@ CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs	\
 	$(ENTAGGED_CSFILES)		\
 	$(HAP_CSFILES)			\
+	$(srcdir)/FilterArchive.cs	\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterImage.cs	\
 	$(srcdir)/FilterJpeg.cs		\
