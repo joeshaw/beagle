@@ -37,13 +37,27 @@ namespace Beagle.Util {
 
 		static public Uri PathToFileUri (string path)
 		{
-			return new Uri (PathToFileUriString (path), true);
+			return PathToFileUri (path, null);
+		}
+
+		static public Uri PathToFileUri (string path, string fragment)
+		{
+			return new Uri (PathToFileUriString (path, fragment), true);
 		}
 
 		static public string PathToFileUriString (string path)
 		{
-			return Uri.UriSchemeFile + Uri.SchemeDelimiter 
-				+ StringFu.HexEscape (Path.GetFullPath (path));
+			return PathToFileUriString (path, null);
+		}
+
+		static public string PathToFileUriString (string path, string fragment)
+		{
+			string str = String.Concat (Uri.UriSchemeFile,
+						    Uri.SchemeDelimiter,
+						    StringFu.HexEscape (Path.GetFullPath (path)));
+			if (fragment != null)
+				str = str + fragment;
+			return str;
 		}
 
 		static public Uri EscapedStringToUri (string path)

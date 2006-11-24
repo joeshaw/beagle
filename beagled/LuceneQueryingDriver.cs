@@ -49,8 +49,6 @@ namespace Beagle.Daemon {
 
 		static public bool Debug = false;
 
-		public const string PrivateNamespace = "_private:";
-
 		public delegate bool UriFilter (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);
 
@@ -831,7 +829,7 @@ namespace Beagle.Daemon {
 				int i = 0;
 				while (i < hit.Properties.Count) {
 					Property prop = hit.Properties [i] as Property;
-					if (prop.Key.StartsWith (PrivateNamespace))
+					if (prop.Key.StartsWith (Property.PrivateNamespace))
 						hit.Properties.RemoveAt (i);
 					else
 						++i;

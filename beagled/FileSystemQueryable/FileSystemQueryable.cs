@@ -43,14 +43,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		static public bool Debug = false;
 
-		private const string SplitFilenamePropKey = "beagle:SplitFilename";
-		public const string ExactFilenamePropKey = "beagle:ExactFilename";
-		public const string TextFilenamePropKey = "beagle:Filename";
-		public const string NoPunctFilenamePropKey = "beagle:NoPunctFilename";
-		public const string FilenameExtensionPropKey = "beagle:FilenameExtension";
-		public const string ParentDirUriPropKey = LuceneQueryingDriver.PrivateNamespace + "ParentDirUri";
-		public const string IsDirectoryPropKey = LuceneQueryingDriver.PrivateNamespace + "IsDirectory";
-
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
 		// 2: Overhauled everything to use new lucene infrastructure.
@@ -145,51 +137,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 								     Guid      parent_id,
 								     bool      mutable)
 		{
-			StringBuilder sb;
-			sb = new StringBuilder ();
-
-			string no_ext, ext, no_punct;
-			no_ext = Path.GetFileNameWithoutExtension (name);
-			ext = Path.GetExtension (name).ToLower ();
-			
-			sb.Append (no_ext);
-			for (int i = 0; i < sb.Length; ++i)
-				if (! Char.IsLetterOrDigit (sb [i]))
-					sb [i] = ' ';
-			no_punct = sb.ToString ();
-
-
-			Property prop;
-
-			prop = Property.NewKeyword (ExactFilenamePropKey, name);
-			prop.IsMutable = mutable;
-			indexable.AddProperty (prop);
-
-			prop = Property.New (TextFilenamePropKey, no_ext);
-			prop.IsMutable = mutable;
-			indexable.AddProperty (prop);
-
-			prop = Property.New (NoPunctFilenamePropKey, no_punct);
-			prop.IsMutable = mutable;
-			indexable.AddProperty (prop);
-
-			prop = Property.NewUnsearched (FilenameExtensionPropKey, ext);
-			prop.IsMutable = mutable;
-			indexable.AddProperty (prop);
-
-			string str;
-			str = StringFu.FuzzyDivide (no_ext);
-			prop = Property.NewUnstored (SplitFilenamePropKey, str);
-			prop.IsMutable = mutable;
-			indexable.AddProperty (prop);
+			foreach (Property std_prop in Property.StandardFileProperties (name, mutable))
+				indexable.AddProperty (std_prop);
 
 			if (parent_id == Guid.Empty)
 				return;
 			
-			str = GuidFu.ToUriString (parent_id);
+			string str = GuidFu.ToUriString (parent_id);
 			// We use the uri here to recycle terms in the index,
 			// since each directory's uri will already be indexed.
-			prop = Property.NewUnsearched (ParentDirUriPropKey, str);
+			Property prop = Property.NewUnsearched (Property.ParentDirUriPropKey, str);
 			prop.IsMutable = mutable;
 			indexable.AddProperty (prop);
 		}
@@ -233,7 +190,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			AddStandardPropertiesToIndexable (indexable, name, parent, true);
 
 			Property prop;
-			prop = Property.NewBool (IsDirectoryPropKey, true);
+			prop = Property.NewBool (Property.IsDirectoryPropKey, true);
 			prop.IsMutable = true; // we want this in the secondary index, for efficiency
 			indexable.AddProperty (prop);
 
@@ -1258,7 +1215,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			attr.FilterName = receipt.FilterName;
 			attr.FilterVersion = receipt.FilterVersion;
-			
+
 			if (indexable.LocalState ["IsWalkable"] != null) {
 				string name;
 				name = (string) indexable.LocalState ["Name"];
@@ -1295,7 +1252,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// Now assemble the path by looking at the parent and name
 			string name, path;
-			name = hit [ExactFilenamePropKey];
+			name = hit [Property.ExactFilenamePropKey];
 			if (name == null) {
 				// If we don't have the filename property, we have to do a lookup
 				// based on the guid.  This happens with synthetic hits produced by
@@ -1305,7 +1262,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				path = UniqueIdToFullPath (hit_id);
 			} else {
 				string parent_id_uri;
-				parent_id_uri = hit [ParentDirUriPropKey];
+				parent_id_uri = hit [Property.ParentDirUriPropKey];
 				if (parent_id_uri == null)
 					return false;
 

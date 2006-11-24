@@ -170,7 +170,7 @@ namespace Beagle.Daemon {
 				
 				QueryPart_Property query_part = new QueryPart_Property ();
 
-				query_part.Key = FSQ.FileSystemQueryable.FilenameExtensionPropKey;
+				query_part.Key = Property.FilenameExtensionPropKey;
 
 				if (text.StartsWith ("*."))
 					query_part.Value = text.Substring (1).ToLower ();

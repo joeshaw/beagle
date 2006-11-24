@@ -420,7 +420,7 @@ namespace Beagle.Daemon {
 							
 						TokenStream singleton_stream = new SingletonTokenStream (reader.ReadToEnd ());
 						
-						if (fieldName.StartsWith ("prop:k:" + LuceneQueryingDriver.PrivateNamespace))
+						if (fieldName.StartsWith ("prop:k:" + Property.PrivateNamespace))
 							return singleton_stream;
 						else
 							return new LowerCaseFilter (singleton_stream);
