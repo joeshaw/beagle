@@ -187,11 +187,11 @@ namespace Beagle.Daemon {
 				if (Directory.Exists (path)) {
 					indexable.MimeType = "inode/directory";
 					indexable.NoContent = true;
-					if (! indexable.ValidTimestamp)
+					if (! indexable.ValidTimestamp && indexable.IsNonTransient)
 						indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 				} else if (File.Exists (path)) {
 					// Set the timestamp to the best possible estimate (if no timestamp was set by the backend)
-					if (! indexable.ValidTimestamp)
+					if (! indexable.ValidTimestamp && indexable.IsNonTransient)
 						indexable.Timestamp = File.GetLastWriteTimeUtc (path);
 				} else {
 					Logger.Log.Warn ("No such file: {0}", path);

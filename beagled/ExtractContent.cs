@@ -151,6 +151,9 @@ class ExtractContentTool {
 		if (stream != null)
 			stream.Close ();
 
+		// Clean up any temporary files associated with filtering this indexable.
+		indexable.Cleanup ();
+
 		if (show_children && filter.ChildIndexables != null) {
 			foreach (Indexable i in filter.ChildIndexables) {
 				i.StoreStream ();

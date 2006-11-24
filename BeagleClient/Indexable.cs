@@ -96,6 +96,11 @@ namespace Beagle {
 		// The cached version is used to generate snippets.
 		private bool cache_content = true;
 
+		// Is this indexable a child of another indexable ?
+		// If true, then parent_uri points to the uri of the parent
+		// However, an indexable can have parent_uri set but may not be a child
+		private bool is_child = false;
+
 		// A stream of the content to index
 		private TextReader textReader;
 
@@ -243,6 +248,11 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public bool IsNonTransient {
+			/* Not transient if
+			 *  - content should not be deleted after indexing and
+			 *  - actual source of data (data might be stored in temporary files for indexing) is a file and
+			 *  - there is no parent uri set.
+			 */
 			get { return ! DeleteContent && ContentUri.IsFile && ParentUri == null; }
 		}
 
@@ -273,6 +283,12 @@ namespace Beagle {
 		[XmlIgnore]
 		public IDictionary LocalState {
 			get { return local_state; }
+		}
+
+		[XmlAttribute]
+		public bool IsChild {
+			get { return is_child; }
+			set { is_child = value; }
 		}
 
 		//////////////////////////
@@ -433,7 +449,11 @@ namespace Beagle {
 
 		public void SetChildOf (Indexable parent)
 		{
-			this.ParentUri = parent.Uri;
+			this.IsChild = true;
+			if (parent.IsChild)
+				this.ParentUri = parent.ParentUri;
+			else
+				this.ParentUri = parent.Uri;
 
 			if (!this.ValidTimestamp)
 				this.Timestamp = parent.Timestamp;
@@ -442,10 +462,52 @@ namespace Beagle {
 			// child so that we get matches against the child
 			// that otherwise would match only the parent, at
 			// least until we have proper RDF support.
-			foreach (Property prop in parent.Properties) {
-				Property new_prop = (Property) prop.Clone ();
-				new_prop.Key = "parent:" + new_prop.Key;
-				this.AddProperty (new_prop);
+
+			// FIXME: Copying the correct properties from parent to child:
+			// (This is not perfect yet)
+			// It does not make sense to have parent:parent:parent:...:parent:foo
+			// for property names of a nested child
+			// Moreover, if indexable a.mbox has child b.zip which has child c.zip,
+			// then upon matching c.zip, we would like to get the information from
+			// a.mbox (i.e. the toplevel indexable) only. Intermediate parent information
+			// is not necessary for displaying results; in fact, storing them would cause
+			// confusion during display. E.g. storing parent:beagle:filename for all parents
+			// would cause, parent:beagle:filename=a.mbox, parent.beagle.filename=b.zip
+			// whereas we are only interested in toplevel parent:beagle:filename=a.mbox
+			// For indexables which need to store the intermediate/immediate parent info
+			// separately, explicitly store them.
+			// Another problem is, toplevel indexable might want to store information
+			// which should not be matched when searching for its child. Copying those
+			// properties in all children will incorrectly match them.
+			//
+
+			if (parent.IsChild) {
+				// If parent itself is a child,
+				// then only copy parents' parent:xxx and _private:xxx properties
+				foreach (Property prop in parent.Properties) {
+					if (prop.Key.StartsWith ("parent:") ||
+					    prop.Key.StartsWith (Property.PrivateNamespace)) {
+						Property new_prop = (Property) prop.Clone ();
+						this.AddProperty (new_prop);
+					} else {
+						Property new_prop = (Property) prop.Clone ();
+						new_prop.IsStored = false;
+						this.AddProperty (new_prop);
+					}
+				}
+			} else {
+				// Parent is a top level indexable
+				// Copy all properties
+				foreach (Property prop in parent.Properties) {
+					Property new_prop = (Property) prop.Clone ();
+					// Add parent: to property names ONLY IF
+					// - not private property (these are not properties of the file content)
+					// - property name does not already start with parent:
+					if (! new_prop.Key.StartsWith (Property.PrivateNamespace) &&
+					    ! new_prop.Key.StartsWith ("parent:"))
+						new_prop.Key = "parent:" + new_prop.Key;
+					this.AddProperty (new_prop);
+				}
 			}
 		}
 
