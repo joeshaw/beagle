@@ -41,7 +41,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[PropertyKeywordMapping (Keyword="ext", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.")]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public bool Debug = false;
+		static public new bool Debug = false;
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
@@ -1167,15 +1167,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Our magic LuceneQueryable hooks
 		//
 
-		override protected bool PreChildAddHook (Indexable child)
-		{
-			// FIXME: Handling Uri remapping of children is tricky, and there
-			// is also the issue of properly serializing file: uris that
-			// contain fragments.  For now we just punt it all by dropping
-			// any child indexables of file system objects.
-			return false;
-		}
-
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// If we just changed properties, remap to our *old* external Uri
@@ -1194,37 +1185,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 
-			string path;
-			path = (string) indexable.LocalState ["Path"];
-			ForgetId (path);
-
-			DirectoryModel parent;
-			parent = indexable.LocalState ["Parent"] as DirectoryModel;
-
-			// The parent directory might have run away since we were indexed
-			if (parent != null && ! parent.IsAttached)
+			// We don't have anything to do if we are dealing with a child indexable
+			if (indexable.ParentUri != null)
 				return;
 
-			Guid unique_id;
-			unique_id = GuidFu.FromUri (receipt.Uri);
-
-			FileAttributes attr;
-			attr = FileAttributesStore.ReadOrCreate (path, unique_id);
-			attr.Path = path;
-			attr.LastWriteTime = indexable.Timestamp;
-			
-			attr.FilterName = receipt.FilterName;
-			attr.FilterVersion = receipt.FilterVersion;
-
-			if (indexable.LocalState ["IsWalkable"] != null) {
-				string name;
-				name = (string) indexable.LocalState ["Name"];
-
-				if (! RegisterDirectory (name, parent, attr))
-					return;
-			}
-
-			FileAttributesStore.Write (attr);
+			string path;
+			path = (string) indexable.LocalState ["Path"];
+			if (Debug)
+				Log.Debug ("PostAddHook for {0} ({1}) and receipt uri={2}", indexable.Uri, path, receipt.Uri);
 
 			// Remap the Uri so that change notification will work properly
 			receipt.Uri = UriFu.PathToFileUri (path);
@@ -1242,6 +1210,51 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			ForgetId (external_uri.LocalPath);
 		}
 
+		override protected void PostChildrenIndexedHook (Indexable indexable,
+								 IndexerAddedReceipt receipt,
+								 DateTime Mtime)
+		{
+			if (indexable.ParentUri != null)
+				return;
+
+			string path;
+			path = (string) indexable.LocalState ["Path"];
+			if (Debug)
+				Log.Debug ("PostChildrenIndexedHook for {0} ({1}) and receipt uri={2}", indexable.Uri, path, receipt.Uri);
+
+			ForgetId (path);
+
+			DirectoryModel parent;
+			parent = indexable.LocalState ["Parent"] as DirectoryModel;
+
+			// The parent directory might have run away since we were indexed
+			if (parent != null && ! parent.IsAttached)
+				return;
+
+			Guid unique_id;
+			unique_id = GuidFu.FromUri (receipt.Uri);
+
+			FileAttributes attr;
+			attr = FileAttributesStore.ReadOrCreate (path, unique_id);
+
+			attr.Path = path;
+			// FIXME: Should timestamp be indexable.timestamp or parameter Mtime
+			attr.LastWriteTime = indexable.Timestamp;
+			
+			attr.FilterName = receipt.FilterName;
+			attr.FilterVersion = receipt.FilterVersion;
+
+			if (indexable.LocalState ["IsWalkable"] != null) {
+				string name;
+				name = (string) indexable.LocalState ["Name"];
+
+				if (! RegisterDirectory (name, parent, attr))
+					return;
+			}
+
+			FileAttributesStore.Write (attr);
+		}
+
 		private bool RemapUri (Hit hit)
 		{
 			// Store the hit's internal uri in a property
@@ -1251,8 +1264,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			hit.AddProperty (prop);
 
 			// Now assemble the path by looking at the parent and name
-			string name, path;
-			name = hit [Property.ExactFilenamePropKey];
+			string name = null, path, is_child;
+			is_child = hit [Property.IsChildPropKey];
+
+			if (is_child == "false")
+				name = hit [Property.ExactFilenamePropKey];
+			if (name == null)
+				name = hit ["parent:" + Property.ExactFilenamePropKey];
 			if (name == null) {
 				// If we don't have the filename property, we have to do a lookup
 				// based on the guid.  This happens with synthetic hits produced by
@@ -1261,8 +1279,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				hit_id = GuidFu.FromUri (hit.Uri);
 				path = UniqueIdToFullPath (hit_id);
 			} else {
-				string parent_id_uri;
+				string parent_id_uri = null;
 				parent_id_uri = hit [Property.ParentDirUriPropKey];
+				if (parent_id_uri == null)
+					parent_id_uri = hit ["parent:" + Property.ParentDirUriPropKey];
 				if (parent_id_uri == null)
 					return false;
 
@@ -1288,6 +1308,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		override protected bool HitFilter (Hit hit)
 		{
 			Uri old_uri = hit.Uri;
+			if (Debug)
+				Log.Debug ("HitFilter ({0})", old_uri);
 
 			if (! RemapUri (hit))
 				return false;
@@ -1329,8 +1351,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryModel parent;
 			parent = GetDirectoryModelByPath (Path.GetDirectoryName (path));
 
+			// If child indexable, attach the relative URI at the end
+			// Relative URI starts with '#'
+			string is_child = hit [Property.IsChildPropKey];
+			string fragment = null;
+			if (is_child == "true") {
+				string uri_str = UriFu.UriToEscapedString (old_uri);
+				int begin = uri_str.IndexOf ('#');
+				fragment = uri_str.Remove (0, begin);
+				fragment = old_uri.Fragment;
+				hit.Uri = UriFu.PathToFileUri (path, fragment);
+			}
+
 			// Check the ignore status of the hit
-			if (filter.Ignore (parent, Path.GetFileName (path), is_directory))
+			if (filter.Ignore (parent, Path.GetFileName (fragment == null ? path : fragment), is_directory))
 				return false;
 
 			return true;
