@@ -986,7 +986,7 @@ namespace Beagle.Daemon {
 		// YM(Jun 2005, Sep 2006) OR
 		// (YM(Oct 2006) AND D(1,16))
 
-		static private DateTime lower_bound = new DateTime (1970, 1, 1);
+		static private DateTime lower_bound = DateTimeUtil.UnixToDateTimeUtc (0);
 
 		// FIXME: we should probably boost this sometime around 2030.
 		// Mark your calendar.

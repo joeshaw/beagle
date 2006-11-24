@@ -353,7 +353,7 @@ namespace Beagle.Daemon.KBookmarkQueryable {
 			if (current_bookmark.Info != null &&
 			    current_bookmark.Info.Metadata != null &&
 			    current_bookmark.Info.Metadata.TimeLastVisited != 0) {
-				DateTime date = new DateTime (1970, 1, 1);
+				DateTime date = DateTimeUtil.UnixToDateTimeUtc (0);
 				current_dt = date.AddSeconds (current_bookmark.Info.Metadata.TimeLastVisited);
 			} else
 				current_dt = file_last_write_time;

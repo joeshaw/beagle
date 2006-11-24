@@ -218,7 +218,7 @@ namespace Beagle.Util {
 				message.Subject = GetString ("subject");
 				message.Sender = GetString ("sender");
 				message.MessageId = GetString ("message-id");
-				message.SetDate ((date != string.Empty ? DateTime.Parse (date) : new DateTime (1970, 1, 1, 0, 0, 0)), 0);
+				message.SetDate ((date != string.Empty ? DateTime.Parse (date) : DateTimeUtil.UnixToDateTimeUtc (0)), 0);
 				
 				// Add references
 				if (data.ContainsKey ("references")) {
@@ -629,7 +629,7 @@ namespace Beagle.Util {
 
 		public static string HexDateToString (string hex)
 		{
-			DateTime time = new DateTime (1970,1,1,0,0,0);
+			DateTime time = DateTimeUtil.UnixToDateTimeUtc (0);
 			
 			try {
 				time = time.AddSeconds (

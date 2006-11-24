@@ -320,7 +320,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "FeedItem";
 
-			DateTime date = new DateTime (1970, 1, 1);
+			DateTime date = DateTimeUtil.UnixToDateTimeUtc (0);
 			date = date.AddSeconds (current_item.Timestamp);
 			indexable.Timestamp = date;				
 

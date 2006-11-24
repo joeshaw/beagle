@@ -864,13 +864,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Forget
 		}
 
-		static DateTime epoch = new DateTime (1970, 1, 1, 0, 0, 0);
-
-		static DateTime ToDateTimeUtc (long time_t)
-		{
-			return epoch.AddSeconds (time_t);
-		}
-		
 		private RequiredAction DetermineRequiredAction (DirectoryModel dir,
 								string         name,
 								FileAttributes attr,
@@ -926,12 +919,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			DateTime last_write_time, last_attr_time;
-			last_write_time = ToDateTimeUtc (stat.st_mtime);
-			last_attr_time = ToDateTimeUtc (stat.st_ctime);
+			last_write_time = DateTimeUtil.UnixToDateTimeUtc (stat.st_mtime);
+			last_attr_time = DateTimeUtil.UnixToDateTimeUtc (stat.st_ctime);
 
 			if (attr.LastWriteTime != last_write_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** Index it: MTime has changed ({0} vs {1})", attr.LastWriteTime, last_write_time);
+					Logger.Log.Debug ("*** Index it: MTime has changed ({0} vs {1})",
+						DateTimeUtil.ToString (attr.LastWriteTime),
+						DateTimeUtil.ToString (last_write_time));
 				
 				// If the file has been copied, it will have the
 				// original file's EAs.  Thus we have to check to
@@ -958,7 +953,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// ctime will be at some point in the past.
 			if (attr.LastAttrTime < last_attr_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** CTime is newer, checking last known path ({0} vs {1})", attr.LastAttrTime, last_attr_time);
+					Logger.Log.Debug ("*** CTime is newer, checking last known path ({0} vs {1})",
+						DateTimeUtil.ToString (attr.LastAttrTime),
+						DateTimeUtil.ToString (last_attr_time));
 
 				last_known_path = UniqueIdToFullPath (attr.UniqueId);
 

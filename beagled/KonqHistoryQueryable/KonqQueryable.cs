@@ -209,7 +209,7 @@ namespace Beagle.Daemon.KonqQueryable {
 				// hint for the filter about the charset
 				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
 			
-				DateTime date = new DateTime (1970, 1, 1);
+				DateTime date = DateTimeUtil.UnixToDateTimeUtc (0);
 				date = date.AddSeconds (Int64.Parse (creation_date));
 				indexable.Timestamp = date;
 
