@@ -375,7 +375,7 @@ namespace Beagle.Daemon {
 		}
 
 		// FIXME: This assumes everything being indexed is in English!
-		private class BeagleAnalyzer : StandardAnalyzer {
+		internal class BeagleAnalyzer : StandardAnalyzer {
 
 			private char [] buffer = new char [2];
 			private bool strip_extra_property_info = false;

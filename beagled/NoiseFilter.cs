@@ -26,6 +26,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 
 using Lucene.Net.Analysis;
@@ -39,8 +40,6 @@ namespace Beagle.Daemon {
 	// 3. Splits hostnames into subparts
 	class NoiseEmailHostFilter : TokenFilter {
 			
-		static int total_count = 0;
-		static int noise_count = 0;
 		private bool tokenize_email_hostname;
 
 		TokenStream token_stream;
@@ -137,8 +136,10 @@ namespace Beagle.Daemon {
 			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.HOST];
 		private static readonly string tokentype_number 
 			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.NUM];
+		private static readonly string tokentype_alphanum
+			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.ALPHANUM];
 
-		private bool ProcessToken (Lucene.Net.Analysis.Token token)
+		private bool ProcessToken (ref Lucene.Net.Analysis.Token token)
 		{
 			string type = token.Type ();
 
@@ -150,11 +151,32 @@ namespace Beagle.Daemon {
 				if (tokenize_email_hostname)
 					ProcessURLToken (token);
 				return true;
-			} else if (type == tokentype_number)
+			} else if (type == tokentype_number) {
 				// nobody will remember more than 10 digits
 				return (token.TermText ().Length <= 10);
-			else
-				return false;
+			} else if (type == tokentype_alphanum) {
+				string text = token.TermText ();
+				int begin = 0;
+				// Check if number, in that case strip 0's from beginning
+				foreach (char c in text) {
+					if (! Char.IsDigit (c)) {
+						begin = 0;
+						break;
+					} else if (c == '0')
+						begin ++;
+				}
+
+				if (begin == 0)
+					return ! IsNoise (text);
+				token = new Lucene.Net.Analysis.Token (
+					token.TermText ().Remove (0, begin),
+					token.StartOffset (),
+					token.EndOffset (),
+					token.Type ());
+				return true;
+			} else
+				// FIXME: Noise should be only tested on token type alphanum
+				return ! IsNoise (token.TermText ());
 		}
 
 		private Queue parts = new Queue ();
@@ -180,19 +202,8 @@ namespace Beagle.Daemon {
 
 			while ( (token = token_stream.Next ()) != null) {
 				//Console.WriteLine ("Found token: [{0}]", token.TermText ());
-#if false
-				if (total_count > 0 && total_count % 5000 == 0)
-					Logger.Log.Debug ("BeagleNoiseFilter filtered {0} of {1} ({2:0.0}%)",
-							  noise_count, total_count, 100.0 * noise_count / total_count);
-#endif
-				++total_count;
-				if (ProcessToken (token))
+				if (ProcessToken (ref token))
 					return token;
-				if (IsNoise (token.TermText ())) {
-					++noise_count;
-					continue;
-				}
-				return token;
 			}
 			return null;
 		}
@@ -231,7 +242,21 @@ namespace Beagle.Daemon {
 		}
 	}
 
+#if false
+	public class AnalyzerTest {
+		public static void Analyze (TextReader reader)
+		{
+			Lucene.Net.Analysis.Token lastToken = null;
+			Analyzer indexing_analyzer = new LuceneCommon.BeagleAnalyzer (true);
+			TokenStream stream = indexing_analyzer.TokenStream ("Text", reader);
 
-
-
+			int position = 1;
+			for (Lucene.Net.Analysis.Token t = stream.Next(); t != null; t = stream.Next())
+			{
+				position += (t.GetPositionIncrement() - 1);
+				Console.WriteLine (t);
+			}
+		}
+	}
+#endif
 }
