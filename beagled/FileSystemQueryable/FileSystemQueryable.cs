@@ -1355,13 +1355,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Relative URI starts with '#'
 			string is_child = hit [Property.IsChildPropKey];
 			string fragment = null;
-			if (is_child == "true") {
-				string uri_str = UriFu.UriToEscapedString (old_uri);
-				int begin = uri_str.IndexOf ('#');
-				fragment = uri_str.Remove (0, begin);
-				fragment = old_uri.Fragment;
-				hit.Uri = UriFu.PathToFileUri (path, fragment);
-			}
+			if (is_child == "true")
+				hit.Uri = UriFu.PathToFileUri (path, old_uri.Fragment);
 
 			// Check the ignore status of the hit
 			if (filter.Ignore (parent, Path.GetFileName (fragment == null ? path : fragment), is_directory))
