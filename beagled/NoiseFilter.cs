@@ -152,18 +152,23 @@ namespace Beagle.Daemon {
 					ProcessURLToken (token);
 				return true;
 			} else if (type == tokentype_number) {
-				// nobody will remember more than 10 digits
-				return (token.TermText ().Length <= 10);
+				// nobody will remember more than 20 digits
+				return (token.TermText ().Length <= 20);
 			} else if (type == tokentype_alphanum) {
 				string text = token.TermText ();
 				int begin = 0;
+				bool found = false;
 				// Check if number, in that case strip 0's from beginning
 				foreach (char c in text) {
 					if (! Char.IsDigit (c)) {
 						begin = 0;
 						break;
-					} else if (c == '0')
-						begin ++;
+					} else if (! found) {
+						if (c == '0')
+							begin ++;
+						else
+							found = true;
+					}
 				}
 
 				if (begin == 0)
