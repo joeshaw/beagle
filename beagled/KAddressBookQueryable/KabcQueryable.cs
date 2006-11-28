@@ -43,8 +43,6 @@ namespace Beagle.Daemon.KabcQueryable {
 	[QueryableFlavor (Name="KAddressBook", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class KabcQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("KAddressBookQueryable");
-
 		private string kabc_dir;
 		private string kabc_file;
 		private Hashtable last_modified_table;

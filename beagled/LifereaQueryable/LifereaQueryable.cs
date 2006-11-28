@@ -40,8 +40,6 @@ namespace Beagle.Daemon.LifereaQueryable {
 	[QueryableFlavor (Name="Liferea", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class LifereaQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("LifereaQueryable");
-
 		string liferea_dir;
 		internal string icon_dir;
 
@@ -98,9 +96,8 @@ namespace Beagle.Daemon.LifereaQueryable {
                                 fsw.EnableRaisingEvents = true;
 			}
 
-                        log.Info ("Scanning Liferea feeds...");
+                        Log.Info ("Scanning Liferea feeds...");
 
-			State = QueryableState.Crawling;
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
@@ -110,9 +107,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 				IndexSingleFeed (file.FullName);
 			}
 
-			State = QueryableState.Idle;
 			stopwatch.Stop ();
-                        log.Info ("{0} files will be parsed (scanned in {1})", count, stopwatch);
+                        Log.Info ("{0} files will be parsed (scanned in {1})", count, stopwatch);
 		}
 
 		private bool CheckForExistence ()
@@ -157,7 +153,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		private void IndexSingleFeed (string filename) {
 			if (ThisScheduler.ContainsByTag (filename)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", filename);
+				Log.Debug ("Not adding task for already running task: {0}", filename);
 				return;
 			}
 
@@ -170,7 +166,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 		}
 
 		private void Removefeed_file (string file) {
-			Logger.Log.Debug ("Removing Liferea feed_file:" + file);
+			Log.Debug ("Removing Liferea feed_file:" + file);
 			Uri uri = UriFu.PathToFileUri (file);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -233,7 +229,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Opening liferea feed file: {0}", feed_file);
+				Log.Debug ("Opening liferea feed file: {0}", feed_file);
 				reader = new XmlTextReader (feed_file);
 				reader.WhitespaceHandling = WhitespaceHandling.None;
 				
@@ -266,7 +262,7 @@ namespace Beagle.Daemon.LifereaQueryable {
 					}
 				} while (!reader.EOF && reader.NodeType == XmlNodeType.Element);
 			} catch (XmlException ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing feed file:");
+				Log.Warn (ex, "Caught exception parsing feed file:");
 				is_valid_file = false;
 				reader.Close ();
 			}
@@ -291,8 +287,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 			}
 
 			if (current_item == null) {
-				//Logger.Log.Debug ("LifereaQ: Probably no more feeds left in " + feed_file);
-				//Logger.Log.Debug ("Causing string = " + itemString);
+				//Log.Debug ("LifereaQ: Probably no more feeds left in " + feed_file);
+				//Log.Debug ("Causing string = " + itemString);
 				current_item = null;
 				is_valid_file = false;
 				reader.Close ();

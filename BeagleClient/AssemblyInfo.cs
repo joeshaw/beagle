@@ -31,6 +31,7 @@ using Beagle;
 // Any request message types in the Beagle.dll file must be registered here.
 [assembly: RequestMessageTypes (
 	 typeof (IndexingServiceRequest),
+	 typeof (InformationalMessagesRequest),
 	 typeof (Query),
 	 typeof (DaemonInformationRequest),
 	 typeof (ShutdownRequest),
@@ -42,9 +43,10 @@ using Beagle;
 [assembly: ResponseMessageTypes (
 	 typeof (EmptyResponse),
 	 typeof (ErrorResponse),
+	 typeof (FinishedResponse),
 	 typeof (HitsAddedResponse),
 	 typeof (HitsSubtractedResponse),
-	 typeof (FinishedResponse),
+	 typeof (IndexingStatusResponse),
 	 typeof (SearchTermResponse),
 	 typeof (DaemonInformationResponse),
 	 typeof (SnippetResponse)

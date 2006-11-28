@@ -113,6 +113,8 @@ namespace Search {
 	}
 
 	public class NotificationArea : Frame {
+
+		private NotificationMessage message;
 		
 		public NotificationArea ()
 		{
@@ -121,9 +123,15 @@ namespace Search {
 
 		public new void Display (NotificationMessage m)
 		{
-			m.Area = this;
+			if (message != m) {
+				if (message != null)
+					Remove (message);
+				Add (m);
 
-			Add (m);
+				message = m;
+				m.Area = this;
+			}
+
 			this.ShowAll ();
 		}
 	}

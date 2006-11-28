@@ -71,6 +71,12 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		public abstract Indexable GetNextIndexable ();
 		public abstract void Checkpoint ();
 
+
+		protected double progress_percent;
+		public double ProgressPercent {
+			get { return progress_percent; }
+		}
+
 		public void PostFlushHook ()
 		{
 			Checkpoint ();
@@ -104,10 +110,8 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 					
 		protected void CrawlFinished ()
 		{
-			// FIXME: This is a little sketchy
-			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, DateTime.UtcNow);
-
-			this.queryable.SetGeneratorProgress (this, 100);
+			this.queryable.FileAttributesStore.AttachLastWriteTime (this.CrawlFile.FullName, File.GetLastWriteTimeUtc (this.CrawlFile.FullName));
+			this.queryable.RemoveGenerator (this);
 		}
 
 		public string StatusName {
@@ -199,7 +203,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			if (this.account_name == null) {
 				if (!Setup ()) {
-					this.queryable.RemoveGeneratorProgress (this);
+					this.queryable.RemoveGenerator (this);
 					return false;
 				}
 			}
@@ -394,7 +398,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				progress = String.Format (" ({0}/{1} bytes {2:###.0}%)",
 							  offset, this.file_size, 100.0 * offset / this.file_size);
 
-				this.queryable.SetGeneratorProgress (this, (int) (100.0 * offset / this.file_size));
+				this.progress_percent = 100.0 * offset / this.file_size;
 			}
 
 			Logger.Log.Debug ("{0}: indexed {1} messages{2}",
@@ -617,7 +621,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		{
 			if (this.account_name == null) {
 				if (!Setup ()) {
-					this.queryable.RemoveGeneratorProgress (this);
+					this.queryable.RemoveGenerator (this);
 					return false;
 				}
 			}
@@ -632,7 +636,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 				// Check to see if we even need to bother walking the summary
 				if (cache_loaded && this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
 					Logger.Log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
-					this.queryable.RemoveGeneratorProgress (this);
+					this.queryable.RemoveGenerator (this);
 					return false;
 				}
 			}
@@ -645,7 +649,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 						this.summary = Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
 					Logger.Log.Warn (e, "Unable to index {0}:", this.folder_name);
-					this.queryable.RemoveGeneratorProgress (this);
+					this.queryable.RemoveGenerator (this);
 					return false;
 				}
 			}
@@ -890,7 +894,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 								  this.summary.header.count,
 								  100.0 * this.count / this.summary.header.count);
 
-					this.queryable.SetGeneratorProgress (this, (int) (100.0 * this.count / this.summary.header.count));
+					this.progress_percent = 100.0 * this.count / this.summary.header.count;
 
 				}
 				

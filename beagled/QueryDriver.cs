@@ -329,6 +329,8 @@ namespace Beagle.Daemon {
 			assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 		}
 
+		private static bool queryables_started = false;
+
 		static public void Start ()
 		{
 			// Only add the executing assembly if we haven't already loaded it.
@@ -366,6 +368,8 @@ namespace Beagle.Daemon {
 				Logger.Log.Info ("Starting backend: '{0}'", q.Name);
 				q.Start ();
 			}
+
+			queryables_started = true;
 
 			return false;
 		}
@@ -621,6 +625,12 @@ namespace Beagle.Daemon {
 
 		static public bool IsIndexing {
 			get {
+				// If the backends haven't been started yet,
+				// there is at least the initial setup.  Just
+				// assume all the backends are indexing.
+				if (! queryables_started)
+					return true;
+
 				foreach (Queryable q in queryables) {
 					QueryableStatus status = q.GetQueryableStatus ();
 
@@ -633,6 +643,6 @@ namespace Beagle.Daemon {
 
 				return false;
 			}
-		}					
+		}
 	}
 }

@@ -32,6 +32,7 @@
 
 typedef struct _BeagleQueryableStatus BeagleQueryableStatus;
 
+/* DEPRECATED: These will be removed in a future version */
 typedef enum {
 	BEAGLE_QUERYABLE_STATE_NA, /* Not Applicable */
 	BEAGLE_QUERYABLE_STATE_IDLE,

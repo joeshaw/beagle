@@ -96,8 +96,12 @@ namespace Beagle {
 				foreach (QueryableStatus status in IndexStatus) {
 					builder.Append ("Name: ").Append (status.Name).Append ('\n');
 					builder.Append ("Count: ").Append (status.ItemCount).Append ('\n');
-					builder.Append ("Indexing: ").Append (status.IsIndexing).Append ('\n');
-					builder.Append ('\n');
+					builder.Append ("Crawling: ").Append (status.IsIndexing);
+
+					if (status.ProgressPercent != -1)
+						builder.Append (" (").Append (status.ProgressPercent).Append ("%)");
+
+					builder.Append ("\n\n");
 				}
 
 				return builder.ToString ();

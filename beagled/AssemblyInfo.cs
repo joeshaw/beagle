@@ -42,6 +42,7 @@ using Beagle.Daemon;
 // Executors go in here.
 [assembly: RequestMessageExecutorTypes (
 	typeof (DaemonInformationExecutor),
+	typeof (InformationalMessagesRequestExecutor),
 	typeof (OptimizeIndexesExecutor),
 	typeof (ReloadConfigExecutor),
 	typeof (ShutdownExecutor),

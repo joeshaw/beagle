@@ -39,8 +39,6 @@ namespace Beagle.Daemon.BlamQueryable {
 	[QueryableFlavor (Name="Blam", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class BlamQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("BlamQueryable");
-
 		string blam_dir;
 		FileInfo blam_file;
 

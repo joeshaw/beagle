@@ -79,14 +79,10 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 
 			Logger.Log.Info ("Setting up an initial crawl of the IndexingService directory");
 
-			State = QueryableState.Crawling;
-
 			IndexableGenerator generator = new IndexableGenerator (GetIndexables (index_path));
 			Scheduler.Task task = NewAddTask (generator);
 			task.Tag = "IndexingService initial crawl";
 			ThisScheduler.Add (task);
-
-			State = QueryableState.Idle;
 		}
 
 		private IEnumerable GetIndexables (string path)

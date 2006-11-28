@@ -82,14 +82,6 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////
 
-		private static Logger log;
-
-		public static Logger Log { 
-			get { return log; }
-		}
-
-		/////////////////////////////////////////////////////////////////////////////////////
-
 		[StructLayout (LayoutKind.Sequential)]
 		private struct inotify_event {
 			public int       wd;
@@ -122,8 +114,6 @@ namespace Beagle.Util {
 
 		static Inotify ()
 		{
-			log = Logger.Get ("Inotify");
-
 			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
 				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
 				return;

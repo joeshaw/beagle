@@ -76,16 +76,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			lock (big_lock) {
 				if (to_be_crawled.Count == 0) {
-					is_active = false;
+					DoneCrawling ();
 					return;
 				}
 				dir = to_be_crawled.Dequeue () as DirectoryModel;
+				Log.Debug ("Running tree crawl task");
 				is_active = true;
 			}
 			
 			LuceneQueryable queryable = (LuceneQueryable) Source;
-			QueryableState old_state = queryable.State;
-			queryable.State = QueryableState.Crawling;
 
 			if (dir.IsAttached) {
 				if (FileSystemQueryable.Debug)
@@ -107,10 +106,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (to_be_crawled.Count != 0)
 					Reschedule = true;
 				else
-					is_active = false;
+					DoneCrawling ();
 			}
-
-			queryable.State = old_state;
 		}
+
+		private void DoneCrawling ()
+		{
+			Log.Debug ("Done crawling directory tree!!!");
+			is_active = false;
+		}
+
 	}
 }

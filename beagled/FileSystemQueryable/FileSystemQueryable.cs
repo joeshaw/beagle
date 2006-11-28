@@ -85,10 +85,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// Set up our event backend
 			if (Inotify.Enabled) {
-                                Logger.Log.Debug ("Starting Inotify Backend");
+                                Logger.Log.Debug ("Starting Inotify FSQ file event backend");
                                 event_backend = new InotifyBackend ();
                         } else {
-                                Logger.Log.Debug ("Creating null file event backend");
+                                Logger.Log.Debug ("Creating null FAQ file event backend");
 				event_backend = new NullFileEventBackend ();
                         }
 
@@ -1166,6 +1166,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		//
 		// Our magic LuceneQueryable hooks
 		//
+
+		override protected bool IsIndexing {
+			// FIXME: There is a small race window here, between the starting
+			// of the backend and when either of these tasks first starts
+			// running.  In reality it doesn't come up much, so it's not
+			// urgent to fix.
+			get { return file_crawl_task.IsActive || tree_crawl_task.IsActive; }
+		}
 
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{

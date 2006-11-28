@@ -68,18 +68,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected void DoTaskReal ()
 		{
-			QueryableState old_state = queryable.State;
-			queryable.State = QueryableState.Crawling;
-
-			try {
-				DoCrawl ();
-			} finally {
-				queryable.State = old_state;
-			}
-		}
-
-		private void DoCrawl ()
-		{
 			// If our last generator is still doing stuff, just reschedule
 			// and return.  This keeps us from generating more tasks until
 			// the last one we started runs to completion.
@@ -90,10 +78,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			lock (big_lock) {
+				Log.Debug ("Running file crawl task");
 				is_active = true;
 				current_dir = queryable.GetNextDirectoryToCrawl ();
 				if (current_dir == null) {
-					Logger.Log.Debug ("Done crawling!!!!");
+					Log.Debug ("Done crawling files!!!");
 					is_active = false;
 					return;
 				}
@@ -133,7 +122,5 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Reschedule = true;
 		}
-
-
 	}
 }

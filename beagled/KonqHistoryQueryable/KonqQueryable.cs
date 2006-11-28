@@ -37,8 +37,6 @@ namespace Beagle.Daemon.KonqQueryable {
 	[QueryableFlavor (Name="KonquerorHistory", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class KonqQueryable : LuceneFileQueryable, IIndexableGenerator {
 
-		private static Logger log = Logger.Get ("KonqQueryable");
-
 		string konq_cache_dir;
 		private IEnumerator directory_enumerator = null;
 		private int polling_interval_in_seconds = 300; // 5 min
@@ -59,7 +57,7 @@ namespace Beagle.Daemon.KonqQueryable {
 
 			konq_cache_dir = Path.Combine (tmpdir, "kdecache-" + Environment.UserName ); 
 			konq_cache_dir = Path.Combine (konq_cache_dir, "http"); 
-			log.Debug ("KonqCacheDir: " + konq_cache_dir);
+			Log.Debug ("KonqCacheDir: " + konq_cache_dir);
 		}
 
 		/////////////////////////////////////////////////
@@ -90,18 +88,16 @@ namespace Beagle.Daemon.KonqQueryable {
 				ThisScheduler.Add (crawl_task);
 			}
 
-                        log.Info ("Starting Konq history backend ...");
+                        Log.Info ("Starting Konq history backend ...");
 			Crawl ();
 		}
 
 		private void Crawl ()
 		{
-                        State = QueryableState.Crawling;
 			directory_enumerator = DirectoryWalker.GetDirectoryInfos (konq_cache_dir).GetEnumerator ();
 			Scheduler.Task crawl_task = NewAddTask (this);
 			crawl_task.Tag = crawler_tag;
 			ThisScheduler.Add (crawl_task);
-			State = QueryableState.Idle;
 		}
 
 		private string crawler_tag = "Konqueror History Crawler";

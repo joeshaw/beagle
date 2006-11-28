@@ -45,7 +45,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
 		private string photo_dir;
-		private DateTime start_time;
+
+		private bool initial_crawl = false;
 
 		// Index versions
 		// 1: Original version
@@ -67,10 +68,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			base.Start ();
 
 			// Defer the actual startup till main_loop starts.
-			// This will improve kill beagle while starting up.
 			// EDS requires StartWorker to run in mainloop,
 			// hence it is not started in a separate thread.
-			GLib.Idle.Add (new GLib.IdleHandler (delegate () { StartWorker (); return false;}));
+			GLib.Idle.Add (new GLib.IdleHandler (delegate () { StartWorker (); return false; }));
 		}
 
 		private void StartWorker ()
@@ -79,8 +79,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
 
-			start_time = DateTime.Now;
-			State = QueryableState.Crawling;
+			initial_crawl = true;
 
 			bool success = false;
 
@@ -95,12 +94,16 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			} catch (DllNotFoundException ex) {
 				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
 			} finally {
-				State = QueryableState.Idle;
+				initial_crawl = false;
 				timer.Stop ();
 			}
 			
 			if (success)
 				Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
+		}
+
+		override protected bool IsIndexing {
+			get { return initial_crawl; }
 		}
 
 		public void AddIndexable (Indexable indexable, Scheduler.Priority priority)

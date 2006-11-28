@@ -120,9 +120,10 @@ beagle_queryable_status_get_item_count (BeagleQueryableStatus *status)
  * beagle_queryable_status_get_state:
  * @status: a #BeagleQueryableStatus
  *
- * Fetches the state of the backend for the given #BeagleQueryableStatus.
+ * DEPRECATED: This function will be removed in a future version.  At
+ * present, this function will always reutrn BEAGLE_QUERYABLE_STATE_NA.
  *
- * Return value: the state of the backend for the #BeagleQueryableStatus.
+ * Return value: BEAGLE_QUERYABLE_STATE_NA.
  **/
 BeagleQueryableState
 beagle_queryable_status_get_state (BeagleQueryableStatus *status)
@@ -175,28 +176,6 @@ _beagle_queryable_status_to_xml (BeagleQueryableStatus *status, GString *data)
 		g_string_append_printf (data, " Name=\"%s\"", status->name);
 		
 	g_string_append_printf (data, " ItemCount=\"%d\"", status->item_count);
-
-	switch (status->state) {
-	case BEAGLE_QUERYABLE_STATE_NA:
-		tmp = "NotApplicable";
-		break;
-	case BEAGLE_QUERYABLE_STATE_IDLE:
-		tmp = "Idle";
-		break;
-	case BEAGLE_QUERYABLE_STATE_CRAWLING:
-		tmp = "Crawling";
-		break;
-	case BEAGLE_QUERYABLE_STATE_INDEXING:
-		tmp = "Indexing";
-		break;
-	case BEAGLE_QUERYABLE_STATE_FLUSHING:
-		tmp = "Flushing";
-		break;
-	default:
-		g_assert_not_reached ();
-	}
-
-	g_string_append_printf (data, " State=\"%s\"", tmp);
 
 	g_string_append_printf (data, " ProgressPercent=\"%d\"", status->progress_percent);
 

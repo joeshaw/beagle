@@ -254,7 +254,7 @@ namespace Search {
 				ShowAll ();
 			}
 
-			CheckIndexingStatus ();
+			StartCheckingIndexingStatus ();
 		}
 
 		private void SetWindowTitle (string query)
@@ -317,7 +317,7 @@ namespace Search {
 
 				current_query.SendAsync ();
 				spinner.Start ();
-			} catch (Beagle.ResponseMessageException){
+			} catch (Beagle.ResponseMessageException) {
 				pages.CurrentPage = pages.PageNum (startdaemon);
 			} catch (Exception e) {
 				Console.WriteLine ("Querying the Beagle daemon failed: {0}", e.Message);
@@ -508,25 +508,23 @@ namespace Search {
 
 		//////////////////////////////////////
 
-		private void CheckIndexingStatus ()
+		private void StartCheckingIndexingStatus ()
 		{
-			DaemonInformationRequest request = new DaemonInformationRequest (false, false, false, true);
-			DaemonInformationResponse response;
-			
-			try {
-				response = (DaemonInformationResponse) request.Send ();
+			InformationalMessagesRequest msg_request = new InformationalMessagesRequest ();
+			msg_request.IndexingStatusEvent += OnIndexingStatusEvent;
+			msg_request.SendAsync ();
+		}
 
-				if (! response.IsIndexing)
-					return;
-			} catch (Beagle.ResponseMessageException) {
-				return;
-			}
-
-			NotificationMessage m = new NotificationMessage ();
-			m.Icon = Gtk.Stock.DialogInfo;
-			m.Title = Catalog.GetString ("Beagle is indexing your data");
-			m.Message = Catalog.GetString ("The Beagle service is still in the process of indexing your personal data.  Not all the results will appear until the indexing has finished.");
-			notification_area.Display (m);
+		private void OnIndexingStatusEvent (IndexingStatus status)
+		{
+			if (status == IndexingStatus.Running) {
+				NotificationMessage m = new NotificationMessage ();
+				m.Icon = Gtk.Stock.DialogInfo;
+				m.Title = Catalog.GetString ("Beagle is indexing your data");
+				m.Message = Catalog.GetString ("The Beagle service is in the process of indexing your data.  Search results may be incomplete until indexing has finished.");
+				notification_area.Display (m);
+			} else
+				notification_area.Hide ();
 		}
 	}
 }

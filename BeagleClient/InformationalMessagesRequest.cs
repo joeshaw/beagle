@@ -1,7 +1,7 @@
 //
-// QueryableStatus.cs
+// InformationalMessagesRequest.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2006 Novell, Inc.
 //
 
 //
@@ -25,39 +25,26 @@
 //
 
 using System;
-using System.Xml.Serialization;
 
 namespace Beagle {
 
-	public class QueryableStatus {
+	public class InformationalMessagesRequest : RequestMessage {
 
-		private string name;
-		private int item_count = -1;
-		private int progress_percent = -1;
-		private bool is_indexing = false;
+		// List of responses that consumers can listen for.
+		public delegate void IndexingStatusDelegate (IndexingStatus status);
+		public event IndexingStatusDelegate IndexingStatusEvent;
 
-		[XmlAttribute]
-		public string Name {
-			get { return this.name; }
-			set { this.name = value; }
+		public InformationalMessagesRequest () : base (true)
+		{
+			this.RegisterAsyncResponseHandler (typeof (IndexingStatusResponse), OnIndexingStatus);
 		}
 
-		[XmlAttribute]
-		public int ItemCount {
-			get { return this.item_count; }
-			set { this.item_count = value; }
-		}
+		private void OnIndexingStatus (ResponseMessage r)
+		{
+			IndexingStatusResponse response = (IndexingStatusResponse) r;
 
-		[XmlAttribute]
-		public int ProgressPercent {
-			get { return this.progress_percent; }
-			set { this.progress_percent = value; }
-		}
-
-		[XmlAttribute]
-		public bool IsIndexing {
-			get { return this.is_indexing; }
-			set { this.is_indexing = value; }
+			if (this.IndexingStatusEvent != null)
+				this.IndexingStatusEvent (response.Status);
 		}
 	}
 }

@@ -281,6 +281,8 @@ namespace Beagle.Util {
 
 					if (Reschedule) {
 						++count;
+						if (Debug)
+							Log.Debug ("Rescheduling task {0}", Tag);
 						scheduler.Add (this); // re-add ourselves
 					} else {
 						DecrementAllTaskGroups ();
@@ -577,10 +579,9 @@ namespace Beagle.Util {
 					return;
 
 				if (Debug) {
-					Logger.Log.Debug ("Adding task");
-					Logger.Log.Debug ("Tag: {0}", task.Tag);
+					Logger.Log.Debug ("Adding task {0}", task.Tag);
 					if (task.Description != null)
-						Logger.Log.Debug ("Desc: {0}", task.Description);
+						Logger.Log.Debug ("  Desc: {0}", task.Description);
 				}
 
 				if (task.Priority == Priority.Shutdown)

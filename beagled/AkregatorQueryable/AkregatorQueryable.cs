@@ -40,8 +40,6 @@ namespace Beagle.Daemon.AkregatorQueryable {
 	[QueryableFlavor (Name="Akregator", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class AkregatorQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("AkregatorQueryable");
-
 		string akregator_dir;
 
 		// construct a serializer and keep it handy for indexablegenerator to use
@@ -116,9 +114,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
                                 fsw.EnableRaisingEvents = true;
 			}
 
-                        log.Info ("Scanning Akregator feeds...");
+                        Log.Info ("Scanning Akregator feeds...");
 
-			State = QueryableState.Crawling;
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
@@ -131,9 +128,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 				}
 			}
 
-			State = QueryableState.Idle;
 			stopwatch.Stop ();
-                        log.Info ("{0} files will be parsed (scanned in {1})", count, stopwatch);
+                        Log.Info ("{0} files will be parsed (scanned in {1})", count, stopwatch);
 		}
 
 		private bool CheckForExistence ()
@@ -180,7 +176,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			if (! filename.EndsWith (".xml"))
 				return;
 			if (ThisScheduler.ContainsByTag (filename)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", filename);
+				Log.Debug ("Not adding task for already running task: {0}", filename);
 				return;
 			}
 
@@ -192,7 +188,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 		}
 
 		private void RemoveFeedFile (string file) {
-			Logger.Log.Debug ("Removing Akregator feedfile:" + file);
+			Log.Debug ("Removing Akregator feedfile:" + file);
 			Uri uri = UriFu.PathToFileUri (file);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -262,7 +258,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Opening feed file: {0}", feed_file);
+				Log.Debug ("Opening feed file: {0}", feed_file);
 				reader = new XmlTextReader (feed_file);
 				reader.WhitespaceHandling = WhitespaceHandling.None;
 				
@@ -307,7 +303,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 					}
 				} while (!reader.EOF && reader.NodeType == XmlNodeType.Element);
 			} catch (XmlException ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing feed file:");
+				Log.Warn (ex, "Caught exception parsing feed file:");
 				is_valid_file = false;
 				reader.Close ();
 			}
@@ -332,8 +328,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			}
 
 			if (current_item == null) {
-				//Logger.Log.Debug ("AkregatorQ: Probably no more feeds left in " + feed_file);
-				//Logger.Log.Debug ("Causing string = " + itemString);
+				//Log.Debug ("AkregatorQ: Probably no more feeds left in " + feed_file);
+				//Log.Debug ("Causing string = " + itemString);
 				current_item = null;
 				is_valid_file = false;
 				reader.Close ();
@@ -364,7 +360,7 @@ namespace Beagle.Daemon.AkregatorQueryable {
 			if (current_item == null)
 				return null;
 
-			//Logger.Log.Debug ("Indexing " + channel_link + ":" + current_item.Link);
+			//Log.Debug ("Indexing " + channel_link + ":" + current_item.Link);
 			Indexable indexable = new Indexable (new Uri (String.Format ("feed:{0};item={1}", channel_link, current_item.Link)));
 			indexable.ParentUri = UriFu.PathToFileUri (feed_file);
 			indexable.MimeType = "text/html";

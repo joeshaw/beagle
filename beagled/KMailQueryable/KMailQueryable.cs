@@ -124,7 +124,6 @@ namespace Beagle.Daemon.KMailQueryable {
 			}
 
 			Logger.Log.Debug ("Starting mail crawl");
-			State = QueryableState.Crawling;
 			if (local_path != null) {
 				local_indexer = new KMailIndexer (this, "local", local_path);
 				local_indexer.Crawl ();
@@ -134,7 +133,6 @@ namespace Beagle.Daemon.KMailQueryable {
 				dimap_indexer = new KMailIndexer (this, "dimap", dimap_path);
 				dimap_indexer.Crawl ();
 			}
-			State = QueryableState.Idle;
 			Logger.Log.Debug ("Mail crawl done");
 
 			if (! Inotify.Enabled) {

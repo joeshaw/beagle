@@ -39,11 +39,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 	[QueryableFlavor (Name="GaimLog", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class GaimLogQueryable : LuceneFileQueryable, IIndexableGenerator {
 
-		private static Logger log = Logger.Get ("GaimLogQueryable");
-
 		private string config_dir, log_dir, icons_dir;
 
 		private int polling_interval_in_seconds = 60;
+
+		private bool crawling = false;
 		
 		private GaimBuddyListReader list = new GaimBuddyListReader ();
 
@@ -63,7 +63,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				return;
 			}
 
-			log.Info ("Starting Gaim log backend");
+			Log.Info ("Starting Gaim log backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -87,7 +87,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			stopwatch.Stop ();
 
-			log.Info ("Gaim log backend worker thread done in {0}", stopwatch); 
+			Log.Info ("Gaim log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 
@@ -95,6 +95,10 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			base.Start ();
 			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
+		}
+
+		protected override bool IsIndexing {
+			get { return crawling; }
 		}
 
 		/////////////////////////////////////////////////
@@ -116,6 +120,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private void Crawl (bool index)
 		{
+			this.crawling = true;
+
 			if (Inotify.Enabled)
 				Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
 
@@ -155,6 +161,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
 					if (FileIsInteresting (file.Name))
 						IndexLog (file.FullName, Scheduler.Priority.Delayed);
+
+				crawling = false;
 			}
 		}
 
@@ -173,7 +181,12 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (log_files == null)
 				log_files = DirectoryWalker.GetFileInfosRecursive (log_dir).GetEnumerator ();
 
-			return log_files.MoveNext ();
+			if (log_files.MoveNext ())
+				return true;
+			else {
+				crawling = false;
+				return false;
+			}
 		}
 
 		public Indexable GetNextIndexable ()

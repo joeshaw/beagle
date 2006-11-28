@@ -44,7 +44,7 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		private MailCrawler crawler;
 
-		private Hashtable generator_progress = new Hashtable ();
+		private ArrayList running_generators = new ArrayList ();
 
 		// Index versions
 		// 1: Original version, stored all recipient addresses as a
@@ -90,12 +90,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			Logger.Log.Debug ("Starting mail crawl");
-			State = QueryableState.Crawling;
 			crawler = new MailCrawler (this.local_path, this.imap_path, this.imap4_path);
 			crawler.MboxAddedEvent += IndexMbox;
 			crawler.SummaryAddedEvent += IndexSummary;
 			crawler.Crawl ();
-			State = QueryableState.Idle;
 			Logger.Log.Debug ("Mail crawl finished");
 
 			// If we don't have inotify, we have to poll the file system.  Ugh.
@@ -146,10 +144,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Scheduler.Task task;
 			task = NewAddTask (generator);
 			task.Tag = summaryInfo.FullName;
-			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 
-			SetGeneratorProgress (generator, 0);
+			AddGenerator (generator);
 		}
 
 		public void IndexMbox (FileInfo mboxInfo)
@@ -166,10 +163,39 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			Scheduler.Task task;
 			task = NewAddTask (generator);
 			task.Tag = mboxInfo.FullName;
-			// IndexableGenerator tasks default to having priority Scheduler.Priority Generator
 			ThisScheduler.Add (task);
 
-			SetGeneratorProgress (generator, 0);
+			AddGenerator (generator);
+		}
+
+		internal void AddGenerator (EvolutionMailIndexableGenerator generator)
+		{
+			running_generators.Add (generator);
+		}
+
+		internal void RemoveGenerator (EvolutionMailIndexableGenerator generator)
+		{
+			running_generators.Remove (generator);
+		}
+
+		protected override bool IsIndexing {
+			get { return running_generators.Count > 0; }
+		}
+
+		protected override int ProgressPercent {
+			get {
+				// An embarrassingly unscientific attempt at getting progress
+				// information from the mail backend as a whole.  Unfortunately
+				// the IMAP and mbox backends don't have a common unit of
+				// measurement (IMAP has number of messages, mbox number of
+				// bytes), so we can't get anything really accurate.
+				double total_percent = 0;
+
+				foreach (EvolutionMailIndexableGenerator generator in running_generators)
+					total_percent += generator.ProgressPercent;
+
+				return (int) (total_percent / running_generators.Count);
+			}
 		}
 
 		public static Uri EmailUri (string accountName, string folderName, string uid)
@@ -177,43 +203,5 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			return new Uri (String.Format ("email://{0}/{1};uid={2}",
 						       accountName, folderName, uid));
 		}
-
-		// An embarrassingly unscientific attempt at getting progress
-		// information from the mail backend as a whole.  Unfortunately
-		// the IMAP and mbox backends don't have a common unit of
-		// measurement (IMAP has number of messages, mbox number of
-		// bytes), so we can't get anything really accurate.  We could
-		// try to normalize the byte count; that'd do us a little
-		// better.
-		public void SetGeneratorProgress (EvolutionMailIndexableGenerator generator, int percent)
-		{
-			this.generator_progress [generator] = percent;
-
-			int i = 0, total_percent = 0;
-			foreach (int progress in this.generator_progress.Values) {
-				total_percent += progress;
-				i++;
-			}
-
-			Logger.Log.Debug ("Overall percent is {0}", (float) total_percent / i);
-
-			this.ProgressPercent = total_percent / i;
-		}
-
-		public void RemoveGeneratorProgress (EvolutionMailIndexableGenerator generator)
-		{
-			this.generator_progress.Remove (generator);
-
-			int i = 0, total_percent = 0;
-			foreach (int progress in this.generator_progress.Values) {
-				total_percent += progress;
-				i++;
-			}
-
-			Logger.Log.Debug ("Overall percent is {0}", (float) total_percent / i);
-
-			this.ProgressPercent = total_percent / i;
-		}
 	}
-
 }

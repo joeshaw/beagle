@@ -9,21 +9,23 @@ CSFLAGS = 					\
 	-define:PKGLIBDIR=$(pkglibdir)		\
 	$(BEAGLE_DEFINES)
 
-CSFILES = 					\
-	$(srcdir)/AssemblyInfo.cs		\
-	$(srcdir)/Client.cs			\
-	$(srcdir)/Hit.cs                	\
-	$(srcdir)/IIndexableGenerator.cs       	\
-	$(srcdir)/Indexable.cs          	\
-	$(srcdir)/IndexingService.cs		\
-	$(srcdir)/Message.cs			\
-	$(srcdir)/Property.cs           	\
-	$(srcdir)/Query.cs              	\
-	$(srcdir)/QueryPart.cs			\
-	$(srcdir)/QueryResponses.cs            	\
-	$(srcdir)/QueryableStatus.cs		\
-	$(srcdir)/RemoteControl.cs		\
-	$(srcdir)/Snippet.cs			\
+CSFILES = 						\
+	$(srcdir)/AssemblyInfo.cs			\
+	$(srcdir)/Client.cs				\
+	$(srcdir)/Hit.cs                		\
+	$(srcdir)/IIndexableGenerator.cs       		\
+	$(srcdir)/Indexable.cs          		\
+	$(srcdir)/IndexingService.cs			\
+	$(srcdir)/IndexingStatusResponse.cs		\
+	$(srcdir)/InformationalMessagesRequest.cs	\
+	$(srcdir)/Message.cs				\
+	$(srcdir)/Property.cs           		\
+	$(srcdir)/Query.cs              		\
+	$(srcdir)/QueryPart.cs				\
+	$(srcdir)/QueryResponses.cs            		\
+	$(srcdir)/QueryableStatus.cs			\
+	$(srcdir)/RemoteControl.cs			\
+	$(srcdir)/Snippet.cs				\
 	$(srcdir)/Versioned.cs
 
 LOCAL_ASSEMBLIES =			\

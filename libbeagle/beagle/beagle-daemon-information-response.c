@@ -213,18 +213,7 @@ start_queryable_status (BeagleParserContext *ctx, const char **attrs)
 			queryable_status->progress_percent = (int) g_ascii_strtod (attrs[i + 1], NULL);
 		else if (strcmp (attrs[i], "IsIndexing") == 0)
 			queryable_status->is_indexing = strcmp (attrs[i + 1], "true") == 0;
-		else if (strcmp (attrs[i], "State") == 0) {
-		        if (strcmp (attrs [i + 1], "NotApplicable") == 0)
-			        queryable_status->state = BEAGLE_QUERYABLE_STATE_NA;
-		        else if (strcmp (attrs [i + 1], "Idle") == 0)
-			        queryable_status->state = BEAGLE_QUERYABLE_STATE_IDLE;
-			else if (strcmp (attrs [i + 1], "Crawling") == 0)
-			        queryable_status->state = BEAGLE_QUERYABLE_STATE_CRAWLING;
-			else if (strcmp (attrs [i + 1], "Indexing") == 0)
-			        queryable_status->state = BEAGLE_QUERYABLE_STATE_INDEXING;
-			else if (strcmp (attrs [i + 1], "Flushing") == 0)
-			        queryable_status->state = BEAGLE_QUERYABLE_STATE_FLUSHING;
-		} else
+		else
 			g_warning ("could not handle %s", attrs[i]);
 	}
 

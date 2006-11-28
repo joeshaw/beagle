@@ -40,8 +40,6 @@ namespace Beagle.Daemon.KBookmarkQueryable {
 	[QueryableFlavor (Name="KonqBookmark", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class KonqBookmarkQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("KonqBookmarkQueryable");
-
 		private string konq_dir;
 		private string bookmark_file;
 		private Hashtable last_modified_table;
