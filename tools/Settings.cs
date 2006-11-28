@@ -285,7 +285,7 @@ public class SettingsDialog
 					error_message = Catalog.GetString ("The selected path is already selected for indexing and wasn't added.");
 				} else if (new_include.StartsWith (old_include)) {
 					throw_error = true;
-					error_message = Catalog.GetString ("The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed.");
+					error_message = Catalog.GetString ("The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed.");
 				} else if (old_include.StartsWith (new_include)) {
 					obsolete_includes.Add (old_include);
 				}
