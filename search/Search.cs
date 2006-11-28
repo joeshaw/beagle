@@ -192,17 +192,20 @@ namespace Search {
 			padding_hbox.PackStart (hbox, true, true, 9);
 			vbox.PackStart (padding_hbox, false, true, 6);
 
+			VBox view_box = new VBox (false, 3);
+			vbox.PackStart (view_box, true, true, 0);
+
+			HBox na_padding = new HBox ();
+			view_box.PackStart (na_padding, false, true, 0);
+
 			notification_area = new NotificationArea ();
+			na_padding.PackStart (notification_area, true, true, 3);
 
 			pages = new Gtk.Notebook ();
 			pages.ShowTabs = false;
 			pages.ShowBorder = false;
 			pages.BorderWidth = 3;
-
-			VBox view_box = new VBox (false, 0);
-			view_box.PackStart (notification_area, false, true, 0);
 			view_box.PackStart (pages, true, true, 0);
-			vbox.PackStart (view_box, true, true, 0);
 
 			quicktips = new Pages.QuickTips ();
 			quicktips.Show ();
@@ -522,8 +525,7 @@ namespace Search {
 			NotificationMessage m = new NotificationMessage ();
 			m.Icon = Gtk.Stock.DialogInfo;
 			m.Title = Catalog.GetString ("Beagle is indexing your data");
-			m.Message = Catalog.GetString ("The Beagle service is still in the process of indexing your personal data.\nNot all the results will appear until the indexing has finished.");
-			m.Timeout = 10000;
+			m.Message = Catalog.GetString ("The Beagle service is still in the process of indexing your personal data.  Not all the results will appear until the indexing has finished.");
 			notification_area.Display (m);
 		}
 	}

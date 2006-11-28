@@ -13,15 +13,30 @@ namespace Search {
 
 	public class NotificationMessage : HBox {
 
+		private static Gtk.Style style;
+
 		private Gtk.Image icon;
 		private Gtk.Label title;
 		private Gtk.Label message;
 		private Gtk.Box action_box;
 
+		private NotificationArea area;
+
+		static NotificationMessage ()
+		{
+			Gtk.Window temp_win = new Gtk.Window (WindowType.Popup);
+			temp_win.Name = "gtk-tooltips";
+			temp_win.EnsureStyle ();
+
+			style = temp_win.Style.Copy ();
+		}
+
 		public NotificationMessage () : this (null, null) { }
 
 		public NotificationMessage (string t, string m) : base (false, 5)
 		{
+			this.Style = style;
+
 			BorderWidth = 5;
 
 			icon = new Image (Stock.DialogInfo, IconSize.Dialog);
@@ -36,7 +51,8 @@ namespace Search {
 			vbox.PackStart (title, false, true, 0);
 
 			message = new Label ();
-			//message.LineWrap = true;
+			message.LineWrap = true;
+			message.SetSizeRequest (500, -1); // ugh, no way to sanely reflow a gtk label
 			message.SetAlignment (0.0f, 0.0f);
 			this.Message = m;			
 			vbox.PackStart (message, true, true, 0);
@@ -54,17 +70,10 @@ namespace Search {
 
 		protected override bool OnExposeEvent (Gdk.EventExpose e)
 		{
-			GdkWindow.DrawRectangle (Style.BackgroundGC (StateType.Selected), false,
-						 Allocation.X,
-						 Allocation.Y,
-						 Allocation.Width,
-						 Allocation.Height);
-
-			GdkWindow.DrawRectangle (Style.LightGC (StateType.Normal), true,
-						 Allocation.X + 1,
-						 Allocation.Y + 1,
-						 Allocation.Width - 2,
-						 Allocation.Height - 2);
+			Style.PaintBox (Style, GdkWindow, StateType.Normal,
+					ShadowType.Out, e.Area, this, "notification area",
+					Allocation.X, Allocation.Y,
+					Allocation.Width, Allocation.Height);
 
 			return base.OnExposeEvent (e);
 		}
@@ -79,20 +88,9 @@ namespace Search {
 			action_box.PackStart (action, false, true, 0);
 		}
 
-		public void SetTimeout (uint timeout)
-		{
-			GLib.Timeout.Add (timeout, new GLib.TimeoutHandler (OnTimeout));
-		}
-
 		private void OnHideClicked (object o, EventArgs args)
 		{
-			Hide ();
-		}
-
-		private bool OnTimeout ()
-		{
-			Hide ();
-			return false;
+			area.Hide ();
 		}
 
 		public string Title {
@@ -109,21 +107,24 @@ namespace Search {
 			set { icon.SetFromStock (value, Gtk.IconSize.Dialog); }
 		}
 
-		public uint Timeout {
-			set { SetTimeout (value); }
+		public NotificationArea Area {
+			set { area = value; }
 		}
 	}
 
-	public class NotificationArea : Alignment {
+	public class NotificationArea : Frame {
 		
-		public NotificationArea () : base (0.0f, 0.5f, 1.0f, 0.0f)
+		public NotificationArea ()
 		{
+			ShadowType = ShadowType.Out;
 		}
 
 		public new void Display (NotificationMessage m)
 		{
-			m.ShowAll ();
+			m.Area = this;
+
 			Add (m);
+			this.ShowAll ();
 		}
 	}
 }
