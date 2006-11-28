@@ -88,7 +88,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
                                 Logger.Log.Debug ("Starting Inotify FSQ file event backend");
                                 event_backend = new InotifyBackend ();
                         } else {
-                                Logger.Log.Debug ("Creating null FAQ file event backend");
+                                Logger.Log.Debug ("Creating null FSQ file event backend");
 				event_backend = new NullFileEventBackend ();
                         }
 
