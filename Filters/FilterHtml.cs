@@ -50,6 +50,7 @@ namespace Beagle.Filters {
 		private Stack ignore_stack;
 		private bool building_text;
 		private StringBuilder builder;
+		protected Encoding enc;
 
 		// delegate types
 		public delegate int AppendTextCallback (string s);
@@ -164,7 +165,7 @@ namespace Beagle.Filters {
 				} else if (node.Name == "meta") {
 	   				string name = node.GetAttributeValue ("name", "");
            				string content = node.GetAttributeValue ("content", "");
-					if (name != "" && content != "")
+					if (name != String.Empty && content != String.Empty)
 						AddProperty (Beagle.Property.New ("meta:" + name, content));
 				} else if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
@@ -182,14 +183,15 @@ namespace Beagle.Filters {
 						}
 						if (node.Name == "img") {
 							string attr = node.GetAttributeValue ("alt", "");
-							if (attr != "") {
+							if (attr != String.Empty) {
 								AppendText (HtmlEntity.DeEntitize (attr));
 								AppendWhiteSpace ();
 							}
 						} else if (node.Name == "a") {
 							string attr = node.GetAttributeValue ("href", "");
-							if (attr != "") {
-								AppendText (HtmlEntity.DeEntitize (SW.HttpUtility.UrlDecode (attr)));
+							if (attr != String.Empty) {
+								AppendText (HtmlEntity.DeEntitize (
+									    SW.HttpUtility.UrlDecode (attr, enc)));
 								AppendWhiteSpace ();
 							}
 						}
@@ -236,7 +238,7 @@ namespace Beagle.Filters {
 
 		override protected void DoOpen (FileInfo info)
 		{
-			Encoding enc = null;
+			enc = null;
 
 			foreach (Property prop in IndexableProperties) {
 				if (prop.Key != StringFu.UnindexedNamespace + "encoding")
@@ -274,9 +276,10 @@ namespace Beagle.Filters {
 				else
 					doc.Load (Stream, enc);
 			} catch (NotSupportedException) {
-				doc.Load (Stream, Encoding.ASCII);
+				enc = Encoding.ASCII;
+				doc.Load (Stream, enc);
 			} catch (Exception e) {
-				Log.Debug (e, "Exception while filtering HTML file");
+				Log.Debug (e, "Exception while filtering HTML file " + info.FullName);
 			}
 
 			Finished ();
