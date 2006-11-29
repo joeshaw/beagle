@@ -100,15 +100,10 @@ namespace Beagle.Filters {
 		
 		protected override void DoClose () 
 		{
-			Dispose ();
-		}
-
-		public void Dispose ()
-		{
 			if (this.archive != null)
 				archive.Close ();
 		}
-	
+
 		private class ArchiveEntry {
 			private string name;
 			private long size;
