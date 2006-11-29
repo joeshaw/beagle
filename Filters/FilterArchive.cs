@@ -40,10 +40,9 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	public class FilterArchive : Beagle.Daemon.Filter, IDisposable {
+	public class FilterArchive : Beagle.Daemon.Filter {
 
 		Archive archive = null;
-		ArchiveHandler tarHandler = null;
 
 		public FilterArchive ()
 		{
@@ -68,10 +67,35 @@ namespace Beagle.Filters {
 
 		protected override void DoPullSetup ()
 		{
-			this.tarHandler = new ArchiveHandler (this);
-			this.tarHandler.OnEachEntry (archive);
+			ArchiveEntry a_entry;
 
-			AddChildIndexables (this.tarHandler.ChildIndexables);
+			while ((a_entry = archive.GetNextEntry ()) != null) {
+				// FIXME: For nested archives, create uid:foo#bar
+				// instead of uid:foo#xxx#bar (avoid duplicates ?)
+				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Uri, true));
+
+				child.CacheContent = false;
+				child.MimeType = a_entry.MimeType;
+				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFileName);
+				child.DeleteContent = true;
+
+				//Log.Debug ("Creating child with uri={0}, content-uri={1}",
+				//	a_entry.Uri,
+				//	child.ContentUri);
+				//Console.WriteLine ("Name: {0}, MimeType: {1}", sub_uri, child.MimeType);
+
+				if (a_entry.Comment != null)
+					child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
+				child.AddProperty (Property.New ("fixme:name", a_entry.Name));
+				child.AddProperty (Property.NewKeyword ("fixme:size", a_entry.Size));
+				child.AddProperty (Property.New ("fixme:relativeuri", a_entry.Uri));
+				foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
+					child.AddProperty (prop);
+
+				//child.SetBinaryStream (File.OpenRead (a_entry.Name));
+
+				AddChildIndexable (child);
+			}
 		}
 		
 		protected override void DoClose () 
@@ -392,57 +416,6 @@ namespace Beagle.Filters {
 				set {
 					throw new System.NotSupportedException();
 				}
-			}
-		}
-	
-
-		private class ArchiveHandler {
-			private Beagle.Daemon.Filter filter;
-			private ArrayList child_indexables = new ArrayList ();
-			private int count = 0; // entries handled so far
-
-			public ArchiveHandler (Beagle.Daemon.Filter filter)
-			{
-				this.filter = filter;
-			}
-
-			public void OnEachEntry (Archive archive)
-			{
-				ArchiveEntry a_entry = null;
-
-				//Log.Debug ("{0}.GetNextentry", archive.filename);
-				while ((a_entry = archive.GetNextEntry ()) != null) {
-					// FIXME: For nested archives, create uid:foo#bar
-					// instead of uid:foo#xxx#bar (avoid duplicates ?)
-					Indexable child = new Indexable (new Uri (filter.Uri.ToString () + "#" + a_entry.Uri, true));
-
-					child.CacheContent = false;
-					child.MimeType = a_entry.MimeType;
-					child.ContentUri = UriFu.PathToFileUri (a_entry.TempFileName);
-					child.DeleteContent = true;
-
-					//Log.Debug ("Creating child with uri={0}, content-uri={1}",
-					//	a_entry.Uri,
-					//	child.ContentUri);
-					//Console.WriteLine ("Name: {0}, MimeType: {1}", sub_uri, child.MimeType);
-
-					if (a_entry.Comment != null)
-						child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
-					child.AddProperty (Property.New ("fixme:name", a_entry.Name));
-					child.AddProperty (Property.NewKeyword ("fixme:size", a_entry.Size));
-					child.AddProperty (Property.New ("fixme:relativeuri", a_entry.Uri));
-					foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
-						child.AddProperty (prop);
-
-					//child.SetBinaryStream (File.OpenRead (a_entry.Name));
-
-					this.child_indexables.Add (child);
-					this.count++;
-				}
-			}
-
-			public ICollection ChildIndexables {
-				get { return this.child_indexables; }
 			}
 		}
 	}	
