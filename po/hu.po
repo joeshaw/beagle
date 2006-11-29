@@ -9,15 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-17 00:57+0100\n"
-"PO-Revision-Date: 2006-11-17 13:59+0100\n"
+"POT-Creation-Date: 2006-11-29 00:51+0100\n"
+"PO-Revision-Date: 2006-11-29 03:40+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@gnome.hu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.11.4\n"
+"X-Generator: KBabel 1.11.2\n"
 
 #: ../glue/eggtrayicon.c:127
 msgid "Orientation"
@@ -314,7 +314,7 @@ msgstr "Társalgások a következőben: {0}"
 msgid "Conversations with {0}"
 msgstr "Társalgások a következővel: {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:28
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:30
 msgid "Search"
 msgstr "Keresés"
 
@@ -405,30 +405,40 @@ msgstr "A keresőszolgáltatás nem fut"
 msgid "Start search service"
 msgstr "A keresőszolgáltatás elindítása"
 
-#: ../search/Search.cs:130 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:139 ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
 msgstr "Asztali keresés"
 
-#: ../search/Search.cs:151
+#: ../search/Search.cs:158
 msgid "_Find:"
 msgstr "K_eresés:"
 
-#: ../search/Search.cs:166
+#: ../search/Search.cs:179
 msgid "Find Now"
 msgstr "Keresés most"
 
-#: ../search/Search.cs:214
+#: ../search/Search.cs:235
 msgid "Type in search terms"
 msgstr "Írja be a keresendő kifejezéseket"
 
-#: ../search/Search.cs:215
+#: ../search/Search.cs:236
 msgid "Start searching"
 msgstr "A keresés megkezdése"
 
-#: ../search/Search.cs:239
+#: ../search/Search.cs:262
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Asztali keresés: {0}"
+
+#: ../search/Search.cs:523
+msgid "Beagle is indexing your data"
+msgstr "A Beagle indexeli az adatait"
+
+#: ../search/Search.cs:524
+msgid ""
+"The Beagle service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "A Beagle szolgáltatás jelenleg indexeli az adatokat. A keresés eredményei hiányosak lehetnek az indexelés befejeződéséig."
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -1106,10 +1116,10 @@ msgstr ""
 
 #: ../tools/Settings.cs:288
 msgid ""
-"The selected path wasn't added. The list contains items that supercedes it "
+"The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
 msgstr ""
-"A kiválasztott útvonal nem lesz hozzáadva, a lista tartalmaz olyan elemeket, "
+"A kiválasztott útvonal nem lett hozzáadva. A lista olyan elemeket tartalmaz, "
 "amelyek megelőzik és az adatok már indexelve vannak."
 
 #: ../tools/Settings.cs:299 ../tools/Settings.cs:491
@@ -1215,7 +1225,7 @@ msgstr "Levélmappa:"
 msgid "Select Folder"
 msgstr "Mappa kiválasztása"
 
-#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:27
 msgid "P_ath:"
 msgstr "Út_vonal:"
 
@@ -1276,10 +1286,14 @@ msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Levélmappa kiválasztása</b>"
 
 #: ../tools/settings.glade.h:9
+msgid "<b>User Interface</b>"
+msgstr "<b>Felhasználói felület</b>"
+
+#: ../tools/settings.glade.h:10
 msgid "Add Remote Host"
 msgstr "Távoli kiszolgáló hozzáadása"
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:11
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
@@ -1287,17 +1301,17 @@ msgstr ""
 "Egy távoli kiszolgáló hozzáadása, melyen engedélyezett\n"
 "a keresés és hálózatban szeretné használni."
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:13
 msgid "Add any additional paths to be included for indexing."
 msgstr "Tetszőleges útvonal felvétele indexeléshez."
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:14
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
 "Vegye fel a távoli kiszolgálókat, amelyeken engedélyezett a keresés és "
 "hálózatban szeretné őket használni"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1305,63 +1319,67 @@ msgstr ""
 "Állítsa be, milyen típusú eredmények legyenek láthatóak és milyen sorrendben "
 "legyenek rendezve típus szerinti csoportosításkor."
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:16
 msgid "Allow _external access to local search services"
 msgstr "_Külső hozzáférés engedélyezése a helyi keresőszolgáltatásokhoz"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
+msgid "Automatically start searching after the user has stopped typing"
+msgstr "A keresés automatikus elindítása, miután a felhasználó befejezte a gépelést"
+
+#: ../tools/settings.glade.h:19
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Display the search window by pressing:"
 msgstr "Keresőablak mutatása ennek lenyomásakor:"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Exclude Resource"
 msgstr "Erőforrás kihagyása"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:22
 msgid "Filename _pattern"
 msgstr "Fájlnév_minta"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "I_ndex my home directory"
 msgstr "Saját könyvtáram in_dexelése"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:24
 msgid "Index data while on battery power"
 msgstr "Adatok indexelése akkumulátorról való működés esetén is"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:25
 msgid "Indexing"
 msgstr "Indexelés"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:26
 msgid "Networking"
 msgstr "Hálózat"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Kérem válassza ki az indexelésből kihagyandó erőforrást."
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Kérem válassza ki az indexelésből kihagyandó levélkönyvtárat."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "Search Preferences"
 msgstr "Keresés beállításai"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "Select Mail Folder"
 msgstr "Levélmappa kiválasztása"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1369,39 +1387,35 @@ msgstr ""
 "Adja meg az indexelésből kihagyandó erőforrásokat, például útvonalakat, "
 "mintákat, levélmappákat vagy objektumtípusokat."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:34
 msgid "Specify paths that should be available for external access."
 msgstr "Adja meg a külső hozzáférés számára elérhető útvonalakat."
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:35
 msgid "Type:"
 msgstr "Típus:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:36
 msgid "_Address:"
 msgstr "_Cím:"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:37
 msgid "_Allow Beagle to be run as root"
 msgstr "A Beagle f_uttatásának engedélyezése rootként"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:38
 msgid "_Browse..."
 msgstr "_Tallózás..."
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:39
 msgid "_Folder path"
 msgstr "Mappaút_vonal"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:40
 msgid "_Mail folder"
 msgstr "_Levélmappa"
 
-#: ../tools/settings.glade.h:39
-msgid "_Maximum number of results displayed:"
-msgstr "A megjelenített eredmények ma_ximális száma"
-
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:41
 msgid "_Start search & indexing services automatically "
 msgstr "Kereső- és indexelőszolgáltatások _automatikus indítása"
 
