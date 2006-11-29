@@ -523,8 +523,9 @@ namespace Search {
 				m.Title = Catalog.GetString ("Beagle is indexing your data");
 				m.Message = Catalog.GetString ("The Beagle service is in the process of indexing your data.  Search results may be incomplete until indexing has finished.");
 				notification_area.Display (m);
-			} else
+			} else {
 				notification_area.Hide ();
+			}
 		}
 	}
 }

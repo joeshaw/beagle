@@ -118,6 +118,7 @@ namespace Search {
 		
 		public NotificationArea ()
 		{
+			NoShowAll = true;
 			ShadowType = ShadowType.Out;
 		}
 
@@ -126,13 +127,15 @@ namespace Search {
 			if (message != m) {
 				if (message != null)
 					Remove (message);
+
 				Add (m);
 
 				message = m;
 				m.Area = this;
+				m.ShowAll ();
 			}
 
-			this.ShowAll ();
+			this.Show ();
 		}
 	}
 }
