@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
             byte[] ones = new byte[size];
             byte val = DefaultSimilarity.EncodeNorm(1.0f);
             for (int index = 0; index < size; index++)
-                ones.SetValue(val, index);
+                ones [index] = val;
 
             return ones;
 		}
