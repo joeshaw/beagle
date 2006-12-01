@@ -86,7 +86,7 @@ namespace Beagle.Daemon {
 					this.client.GetStream ().WriteByte (0xff);
 					this.client.GetStream ().Flush ();
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Caught an exception sending response.  Shutting down socket.");
+					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
 					return false;
 				}
 

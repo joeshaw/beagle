@@ -91,6 +91,7 @@ end_text (BeagleParserContext *ctx)
 
 	*priv->current_list = g_slist_append (*priv->current_list, _beagle_parser_context_get_text_buffer (ctx));
 }
+
 enum {
 	PARSER_STATE_EXACT,
 	PARSER_STATE_STEMMED,

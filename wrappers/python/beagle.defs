@@ -70,6 +70,13 @@
   (gtype-id "BEAGLE_TYPE_QUERY")
 )
 
+(define-object InformationalMessagesRequest
+  (in-module "Beagle")
+  (parent "BeagleRequest")
+  (c-name "BeagleInformationalMessagesRequest")
+  (gtype-id "BEAGLE_TYPE_INFORMATIONAL_MESSAGES_REQUEST")
+)
+
 (define-object IndexingServiceRequest
   (in-module "Beagle")
   (parent "BeagleRequest")
@@ -89,6 +96,13 @@
   (parent "GObject")
   (c-name "BeagleResponse")
   (gtype-id "BEAGLE_TYPE_RESPONSE")
+)
+
+(define-object IndexingStatusResponse
+  (in-module "Beagle")
+  (parent "BeagleResponse")
+  (c-name "BeagleIndexingStatusResponse")
+  (gtype-id "BEAGLE_TYPE_INDEXING_STATUS_RESPONSE")
 )
 
 (define-object HitsSubtractedResponse
@@ -326,6 +340,12 @@
   (of-object "BeagleDaemonInformationResponse")
   (c-name "beagle_daemon_information_response_get_scheduler_information")
   (return-type "BeagleSchedulerInformation*")
+)
+
+(define-method get_human_readable_status
+  (of-object "BeagleDaemonInformationResponse")
+  (c-name "beagle_daemon_information_response_get_human_readable_status")
+  (return-type "const-char*")
 )
 
 (define-method get_index_status
@@ -785,6 +805,38 @@
   (parameters
     '("const-char*" "uri")
   )
+)
+
+
+
+;; From ../../libbeagle/beagle/beagle-indexing-status-response.h
+
+(define-function beagle_indexing_status_response_get_type
+  (c-name "beagle_indexing_status_response_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_indexing_status_is_indexing
+  (c-name "beagle_indexing_status_is_indexing")
+  (return-type "gboolean")
+  (parameters
+    '("BeagleIndexingStatusResponse*" "response")
+  )
+)
+
+
+
+;; From ../../libbeagle/beagle/beagle-informational-messages-request.h
+
+(define-function beagle_informational_messages_request_get_type
+  (c-name "beagle_informational_messages_request_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_informational_messages_request_new
+  (c-name "beagle_informational_messages_request_new")
+  (is-constructor-of "BeagleInformationalMessagesRequest")
+  (return-type "BeagleInformationalMessagesRequest*")
 )
 
 

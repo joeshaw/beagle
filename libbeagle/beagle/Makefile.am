@@ -21,6 +21,8 @@ libbeagle_la_SOURCES = 				\
 	beagle-hits-subtracted-response.c	\
 	beagle-indexable.c			\
 	beagle-indexing-service-request.c	\
+	beagle-indexing-status-response.c	\
+	beagle-informational-messages-request.c	\
 	beagle-property.c			\
 	beagle-marshal.c			\
 	beagle-marshal.h			\
@@ -67,6 +69,8 @@ libbeagleinclude_HEADERS = 			\
 	beagle-hits-subtracted-response.h	\
 	beagle-indexable.h			\
 	beagle-indexing-service-request.h	\
+	beagle-indexing-status-response.h	\
+	beagle-informational-messages-request.h	\
 	beagle-property.h			\
 	beagle-query.h				\
 	beagle-query-part.h			\

@@ -38,6 +38,8 @@
 #include <beagle/beagle-hits-subtracted-response.h>
 #include <beagle/beagle-indexable.h>
 #include <beagle/beagle-indexing-service-request.h>
+#include <beagle/beagle-indexing-status-response.h>
+#include <beagle/beagle-informational-messages-request.h>
 #include <beagle/beagle-property.h>
 #include <beagle/beagle-scheduler-information.h>
 #include <beagle/beagle-query.h>

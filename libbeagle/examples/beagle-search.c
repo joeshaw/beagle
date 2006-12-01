@@ -73,13 +73,22 @@ finished_cb (BeagleQuery            *query,
 	g_main_loop_quit (main_loop);
 }
 
+static void
+indexing_status_cb (BeagleInformationalMessagesRequest *request,
+		    BeagleIndexingStatusResponse       *response,
+		    gpointer                            user_data)
+{
+	g_print ("Daemon is indexing: %s\n", beagle_indexing_status_response_is_indexing (response) ? "YES" : "NO");
+}
+
 int
 main (int argc, char **argv)
 {
-	BeagleClient   *client;
-	BeagleQuery    *query;
-	GMainLoop      *main_loop;
-	gint            i;
+	BeagleClient *client;
+	BeagleInformationalMessagesRequest *info_req;
+	BeagleQuery *query;
+	GMainLoop *main_loop;
+	gint i;
 	
 	if (argc < 2) {
 		g_print ("Usage %s \"query string\"\n", argv[0]);
@@ -92,7 +101,19 @@ main (int argc, char **argv)
 
 	client = beagle_client_new (NULL);
 
+	if (client == NULL) {
+		g_warning ("Unable to establish a connection to the beagle daemon");
+		return 1;
+	}
+
 	main_loop = g_main_loop_new (NULL, FALSE);
+
+	info_req = beagle_informational_messages_request_new ();
+	g_signal_connect (info_req, "indexing-status",
+			  G_CALLBACK (indexing_status_cb),
+			  NULL);
+	beagle_client_send_request_async (client, BEAGLE_REQUEST (info_req),
+					  NULL);
 
 	query = beagle_query_new ();
 
@@ -112,6 +133,8 @@ main (int argc, char **argv)
 					  NULL);
 
 	g_main_loop_run (main_loop);
+
+	g_object_unref (info_req);
 	g_object_unref (query);
 	g_object_unref (client);
 	g_main_loop_unref (main_loop);

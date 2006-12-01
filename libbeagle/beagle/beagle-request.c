@@ -47,6 +47,9 @@ typedef struct {
 	GIOChannel *channel;
 	guint io_watch;
 	BeagleParserContext *ctx;
+#ifdef ENABLE_XML_DUMP
+	GString *data;
+#endif
 } BeagleRequestPrivate;
 
 #define BEAGLE_REQUEST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_REQUEST, BeagleRequestPrivate))
@@ -304,6 +307,11 @@ request_io_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 			if (bytes_read > 0) {
 				start = 0;
 
+#ifdef ENABLE_XML_DUMP
+				if (priv->data == NULL)
+					priv->data = g_string_new (NULL);
+#endif
+
 				while (start < bytes_read) {
 					marker = memchr (buf + start, 0xff, bytes_read - start);
 
@@ -315,9 +323,19 @@ request_io_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 						to_parse = (marker - buf) - start;
 
 						if (to_parse > 0) {
+#ifdef ENABLE_XML_DUMP
+							priv->data = g_string_append_len (priv->data, buf + start, to_parse);
+#endif
 							_beagle_parser_context_parse_chunk (priv->ctx, buf + start, to_parse);
 						}
 						
+#ifdef ENABLE_XML_DUMP
+						printf ("Received async response:\n");
+						printf ("%s\n\n", priv->data->str);
+						g_string_free (priv->data, TRUE);
+						priv->data = NULL;
+#endif
+
 						/* Finish the context */
 						response = _beagle_parser_context_finished (priv->ctx);
 						g_assert (response != NULL);
@@ -340,6 +358,9 @@ request_io_cb (GIOChannel *channel, GIOCondition condition, gpointer user_data)
 						priv->ctx = NULL;
 					}
 					else {
+#ifdef ENABLE_XML_DUMP
+						priv->data = g_string_append_len (priv->data, buf + start, bytes_read - start);
+#endif
 						_beagle_parser_context_parse_chunk (priv->ctx, buf + start, bytes_read - start);
 						break;
 					}
@@ -392,6 +413,10 @@ _beagle_request_send (BeagleRequest *request, const char *socket_path, GError **
 
 	ctx = _beagle_parser_context_new ();
 
+#ifdef ENABLE_XML_DUMP
+	priv->data = g_string_new (NULL);
+#endif
+
 	do {
 		gsize to_parse;
 
@@ -408,10 +433,20 @@ _beagle_request_send (BeagleRequest *request, const char *socket_path, GError **
 			else
 				to_parse = bytes_read;
 
+#ifdef ENABLE_XML_DUMP
+			priv->data = g_string_append_len (priv->data, buf, to_parse);
+#endif
 			_beagle_parser_context_parse_chunk (ctx, buf, to_parse);
 		}
 	} while ((status == G_IO_STATUS_NORMAL || G_IO_STATUS_AGAIN) &&
 		 marker == NULL);
+
+#ifdef ENABLE_XML_DUMP
+	printf ("Received sync response:\n");
+	printf ("%s\n\n", priv->data->str);
+	g_string_free (priv->data, TRUE);
+	priv->data = NULL;
+#endif
 
 	response = _beagle_parser_context_finished (ctx);
 

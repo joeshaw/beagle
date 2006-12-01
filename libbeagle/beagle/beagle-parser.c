@@ -46,31 +46,12 @@ enum {
 	BEAGLE_PARSER_LAST_STATE = BEAGLE_PARSER_STATE_MESSAGE
 };
 
-int _beagle_parser_state_index = BEAGLE_PARSER_LAST_STATE;
-
-typedef enum {
-
-	/* Specific message types */
-	/* ErrorResponse */
-	PARSER_STATE_ERROR_MESSAGE,
-
-	/* HitsAddedResponse */
-	PARSER_STATE_HITS_ADDED_HITS,
-	PARSER_STATE_HITS_ADDED_HIT,
-	PARSER_STATE_HITS_ADDED_PROPERTIES,
-	PARSER_STATE_HITS_ADDED_PROPERTY,
-
-	/* HitsSubtractedResponse */
-	PARSER_STATE_HITS_SUBTRACTED_URIS,
-	PARSER_STATE_HITS_SUBTRACTED_URI,
-
-	/* DaemonInformationResponse */
-} ParserState;
+int _beagle_parser_state_index = BEAGLE_PARSER_LAST_STATE + 1;
 
 struct _BeagleParserContext {
 	xmlParserCtxt *xml_context;
 
-	ParserState state;
+	int state;
 
 	char *text_buffer;
 	int buffer_len;
@@ -156,7 +137,7 @@ sax_end_document (void *data)
 	BeagleParserContext *ctx = (BeagleParserContext *) data;
 
 	if (ctx->state != BEAGLE_PARSER_STATE_TOPLEVEL)
-		printf ("Invalid document!\n");
+		g_warning ("Invalid document!\n");
 }
 
 static BeagleParserHandler *
@@ -178,7 +159,7 @@ find_handler (BeagleParserContext *ctx, BeagleParserHandler *handlers, const xml
 		if (state == -1)
 			state = BEAGLE_PARSER_LAST_STATE;
 
-		if (state == ctx->state &&
+		if ((! src || state == ctx->state) &&
 		    strcmp (handler.name, name) == 0) {
 
 			return &handlers [i];
@@ -220,7 +201,6 @@ sax_start_element (void *data, const xmlChar *name, const xmlChar **attrs)
 	BeagleParserContext *ctx = (BeagleParserContext *) data;
 	BeagleParserHandler *handler;
 
-	
 	handler = get_handler (ctx, name, TRUE);
 
 	if (handler != NULL) {

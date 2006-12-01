@@ -198,6 +198,7 @@ static BeagleParserHandler parser_handlers[] = {
 	  PARSER_STATE_PROPERTIES,
 	  NULL,
 	  NULL },
+
 	{ "Property",
 	  PARSER_STATE_PROPERTIES,
 	  PARSER_STATE_PROPERTY,
