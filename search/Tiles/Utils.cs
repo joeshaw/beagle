@@ -94,6 +94,13 @@ namespace Search.Tiles {
 			return ScopeType.Nothing;
 		}
 
+		public static string GetFirstPropertyOfParent (Beagle.Hit hit, string prop)
+		{
+			if (hit.ParentUri == null)
+				return hit.GetFirstProperty (prop);
+			else
+				return hit.GetFirstProperty ("parent:" + prop);
+		}
 
 		public static DateTime ParseTimestamp (string timestamp)
 		{

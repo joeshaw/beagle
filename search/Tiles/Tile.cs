@@ -181,7 +181,9 @@ namespace Search.Tiles {
 
 #if ENABLE_OPEN_WITH
 			if (EnableOpenWith) {
-				OpenWithMenu owm = new OpenWithMenu (Hit ["beagle:MimeType"]);
+				// FIXME: Not sure if going with the parent is
+				// the right thing to do in all cases.
+				OpenWithMenu owm = new OpenWithMenu (Utils.GetFirstPropertyOfParent (hit, "beagle:MimeType"));
 				owm.ApplicationActivated += OpenWith;
 				owm.AppendToMenu (menu);
 			}
@@ -353,9 +355,16 @@ namespace Search.Tiles {
 				return;
 			}
 			
-			if (expects_uris)
-				item = hit.EscapedUri;
-			else
+			if (expects_uris) {
+				// FIXME: I'm not sure that opening the parent
+				// URI (if present) is the right thing to do in
+				// all cases, but it does work for all our
+				// current cases.
+				if (hit.ParentUri != null)
+					item = hit.EscapedParentUri;
+				else
+					item = hit.EscapedUri;
+			} else
 				item = hit.Path;
 
 			// Sometimes the command is 'quoted'

@@ -30,6 +30,7 @@ using Search.Tiles;
 
 [assembly: TileActivatorTypes (
 	 typeof (ApplicationActivator),
+	 typeof (ArchivedFileActivator),
 	 typeof (AudioActivator),
 	 typeof (CalendarActivator),
 	 typeof (CAppletActivator),

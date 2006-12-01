@@ -49,39 +49,30 @@ namespace Search.Tiles {
 
 	public class MailMessage : TileFlat {
 
-		// Wrapper around Hit.GetFirstProperty() that deals with child indexables
-		private static string GetFirstProperty (Beagle.Hit hit, string prop)
-		{
-			if (hit.ParentUri == null)
-				return hit.GetFirstProperty (prop);
-			else
-				return hit.GetFirstProperty ("parent:" + prop);
-		}
-
 		public MailMessage (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Group = TileGroup.Conversations;
 
-			string title = GetFirstProperty (hit, "dc:title");
+			string title = Utils.GetFirstPropertyOfParent (hit, "dc:title");
 			if (title == null || title == String.Empty)
 				title = Catalog.GetString ("(untitled)");
 			Subject.LabelProp = Title = title;
 
 			From.LabelProp = "<b>" + GetAddress (hit) + "</b>";
 			try {
-				Timestamp = Utils.ParseTimestamp (GetFirstProperty (hit, "fixme:date"));
+				Timestamp = Utils.ParseTimestamp (Utils.GetFirstPropertyOfParent (hit, "fixme:date"));
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 
-			if (GetFirstProperty (Hit, "fixme:client") == "evolution")
+			if (Utils.GetFirstPropertyOfParent (Hit, "fixme:client") == "evolution")
 				AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			if (GetFirstProperty (Hit, "fixme:isAnswered") != null)
+			if (Utils.GetFirstPropertyOfParent (Hit, "fixme:isAnswered") != null)
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-replied", size);
-			else if (GetFirstProperty (Hit, "fixme:isSeen") != null)
+			else if (Utils.GetFirstPropertyOfParent (Hit, "fixme:isSeen") != null)
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail-open", size);
 			else
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("stock_mail", size);
@@ -89,8 +80,8 @@ namespace Search.Tiles {
 
 		private static string GetAddress (Beagle.Hit hit)
 		{
-			bool sent = (GetFirstProperty (hit, "fixme:isSent") != null);
-			string address = sent ? GetFirstProperty (hit, "fixme:to") : GetFirstProperty (hit, "fixme:from");
+			bool sent = (Utils.GetFirstPropertyOfParent (hit, "fixme:isSent") != null);
+			string address = sent ? Utils.GetFirstPropertyOfParent (hit, "fixme:to") : Utils.GetFirstPropertyOfParent (hit, "fixme:from");
 
 			if (address == null)
 				return "";
@@ -104,7 +95,7 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			bool sent = (GetFirstProperty (Hit, "fixme:isSent") != null);
+			bool sent = (Utils.GetFirstPropertyOfParent (Hit, "fixme:isSent") != null);
 
 			details.AddLabelPair (Catalog.GetString ("Subject:"), SubjectLabel.Text);
 
@@ -150,9 +141,9 @@ namespace Search.Tiles {
 		{
 			SafeProcess p;
 			if (Hit.ParentUri != null) 
-				p = GetClientProcess (GetFirstProperty ( Hit, "fixme:client"), Hit.EscapedParentUri);
+				p = GetClientProcess (Utils.GetFirstPropertyOfParent (Hit, "fixme:client"), Hit.EscapedParentUri);
 			else
-				p = GetClientProcess (GetFirstProperty ( Hit, "fixme:client"), Hit.EscapedUri);
+				p = GetClientProcess (Utils.GetFirstPropertyOfParent (Hit, "fixme:client"), Hit.EscapedUri);
 			
 			if (p == null) {
 				OpenFromMime (Hit);

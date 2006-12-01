@@ -122,6 +122,8 @@ namespace Beagle.Filters {
 				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
 				child.DeleteContent = true;
 
+				child.AddProperty (Property.NewBool ("fixme:inside_archive", true));
+
 				child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
 
 				if (a_entry.Comment != null)

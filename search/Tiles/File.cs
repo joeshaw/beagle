@@ -23,7 +23,7 @@ namespace Search.Tiles {
 
 		public TileFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			Title = GetTitle ();
+			Title = GetTitle (hit);
 			EnableOpenWith = true;
 			
 			if (Hit.FileInfo != null) {
@@ -47,14 +47,28 @@ namespace Search.Tiles {
 				base.LoadIcon (image, size);
 		}
 
-		private string GetTitle ()
+		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
 		{
-			string title = Hit.GetFirstProperty ("dc:title");
+			string title;
 
-			if (title == null || title == "")
-				title = Hit.GetFirstProperty ("beagle:ExactFilename");
+			if (get_parent)
+				title = Utils.GetFirstPropertyOfParent (hit, "dc:title");
+			else
+				title = hit.GetFirstProperty ("dc:title");
+
+			if (title == null || title == "") {
+				if (get_parent)
+					title = Utils.GetFirstPropertyOfParent (hit, "beagle:ExactFilename");
+				else
+					title = hit.GetFirstProperty ("beagle:ExactFilename");
+			}
 
 			return title;
+		}
+
+		protected static string GetTitle (Beagle.Hit hit)
+		{
+			return GetTitle (hit, false);
 		}
 
 		public override void Open ()
@@ -121,7 +135,7 @@ namespace Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle ());
+			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle (Hit));
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
 
 			if (Hit ["dc:author"] != null)

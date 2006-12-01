@@ -41,7 +41,7 @@ namespace Search.Tiles {
 	
 		public void AppendToMenu (Gtk.Menu menu)
 		{
-			if (list.Count < 1)
+			if (list == null || list.Count == 0)
 				return;
 
 			Gtk.MenuItem open_with = new Gtk.MenuItem (Mono.Unix.Catalog.GetString ("Open With"));
