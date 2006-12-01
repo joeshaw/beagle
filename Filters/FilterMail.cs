@@ -333,6 +333,8 @@ namespace Beagle.Filters {
 							string sub_uri = this.filter.Uri.ToString () + "#" + this.count;
 							Indexable child = new Indexable (new Uri (sub_uri));
 
+							child.DisplayUri = new Uri (this.filter.DisplayUri.ToString () + "#" + this.count);
+
 							child.HitType = "MailMessage";
 							child.MimeType = mime_type;
 							child.CacheContent = false;
