@@ -244,11 +244,7 @@ namespace HtmlAgilityPack
 					Read (false);
 					return _buf_current [index % _block_size];
 				}
-				Console.WriteLine ("EXCEPTION!!!");
-				throw new Exception (String.Format ("{0} is out of current bounds:[{1}-{2}] and further than read-ahead",
-								    index,
-								    _position - _block_size,
-								    _position + _block_size - 1));
+				return OutOfBandRead (index, 1) [0];
 			}
 		}
 
@@ -305,7 +301,7 @@ namespace HtmlAgilityPack
 			if (length > _block_size || startindex < _position - _block_size) {
 				return OutOfBandRead (startindex, length);
 			}
-			if (startindex + length - 1 >= _position + _block_size) {
+			while (startindex + length - 1 >= _position + _block_size) {
 				Read (false);
 			}
 			string substr;
