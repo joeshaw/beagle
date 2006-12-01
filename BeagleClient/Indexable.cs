@@ -660,6 +660,17 @@ namespace Beagle {
 			}
 		}
 
+		public void CloseStreams ()
+		{
+			if (textReader != null)
+				textReader.Close ();
+			else if (binary_stream != null)
+				binary_stream.Close ();
+
+			if (hotTextReader != null)
+				hotTextReader.Close ();
+		}
+
 		//////////////////////////
 
 		public override int GetHashCode ()

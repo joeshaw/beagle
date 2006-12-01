@@ -75,8 +75,10 @@ namespace Beagle.IndexHelper {
 					IndexerChildIndexablesReceipt cir;
 					cir = r as IndexerChildIndexablesReceipt;
 					if (cir != null) {
-						foreach (Indexable i in cir.Children)
+						foreach (Indexable i in cir.Children) {
 							i.StoreStream ();
+							i.CloseStreams ();
+						}
 					}
 				}
 			}
