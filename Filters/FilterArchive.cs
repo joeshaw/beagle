@@ -118,6 +118,7 @@ namespace Beagle.Filters {
 				child.CacheContent = false;
 				child.MimeType = a_entry.MimeType;
 
+				child.DisplayUri = new Uri (DisplayUri.ToString () + "#" + a_entry.Name, true);
 				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
 				child.DeleteContent = true;
 

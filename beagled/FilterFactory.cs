@@ -204,7 +204,7 @@ namespace Beagle.Daemon {
 				if (! indexable.NoContent) {
 					indexable.NoContent = true;
 
-					Logger.Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.Uri, path, indexable.MimeType);
+					Logger.Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.DisplayUri, path, indexable.MimeType);
 					return false;
 				}
 				
@@ -228,8 +228,9 @@ namespace Beagle.Daemon {
 				if (indexable.Crawled)
 					candidate_filter.EnableCrawlMode ();
 				
-				// Set the filter's URI
+				// Set the filter's URIs
 				candidate_filter.Uri = indexable.Uri;
+				candidate_filter.DisplayUri = indexable.DisplayUri;
 
 				// allow the filter access to the indexable's properties
 				candidate_filter.IndexableProperties = indexable.Properties;

@@ -706,6 +706,13 @@ namespace Beagle.Daemon {
 			set { uri = value; }
 		}
 
+		private Uri display_uri = null;
+
+		public Uri DisplayUri {
+			get { return display_uri; }
+			set { display_uri = value; }
+		}
+
 		//////////////////////////////
 
 		private ArrayList child_indexables = new ArrayList ();

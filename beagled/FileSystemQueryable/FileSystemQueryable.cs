@@ -173,9 +173,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
 				indexable.MimeType = "inode/directory";
 				indexable.NoContent = true;
-				// Set the ContentUri anyway so that we get
-				// nice URIs in the logs.
-				indexable.ContentUri = UriFu.PathToFileUri (path);
+				indexable.DisplayUri = UriFu.PathToFileUri (path);
 				indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 			} catch (IOException) {
 				// Looks like the directory was deleted.
@@ -210,6 +208,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
 				indexable.Timestamp = File.GetLastWriteTimeUtc (path);
 				indexable.ContentUri = UriFu.PathToFileUri (path);
+				indexable.DisplayUri = UriFu.PathToFileUri (path);
 				indexable.Crawled = crawl_mode;
 				indexable.Filtering = Beagle.IndexableFiltering.Always;
 			} catch (IOException) {

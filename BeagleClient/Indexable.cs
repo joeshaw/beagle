@@ -217,9 +217,18 @@ namespace Beagle {
 			set { hotContentUri = (value != "") ? UriFu.EscapedStringToUri (value) : null; }
 		}
 
+		private Uri display_uri = null;
+
 		[XmlIgnore]
 		public Uri DisplayUri {
-			get { return uri.Scheme == GuidFu.UriScheme ? ContentUri : Uri; }
+			get { return display_uri != null ? display_uri : Uri; }
+			set { display_uri = value; }
+		}
+
+		[XmlAttribute ("DisplayUri")]
+		public string DisplayUriString {
+			get { return UriFu.UriToEscapedString (DisplayUri); }
+			set { DisplayUri = UriFu.EscapedStringToUri (value); }
 		}
 
 		[XmlAttribute]
