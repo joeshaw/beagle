@@ -888,63 +888,26 @@ namespace Beagle.Daemon {
 				indexable_added_receipt_index [i] = false;
 
 				if (receipts [i] is IndexerAddedReceipt) {
+
 					// Process IndexerAddedReceipt after knowing if there are any
 					// child of the indexable yet to be indexed
 					indexable_added_receipt_index [i] = true;
+
 				} else if (receipts [i] is IndexerRemovedReceipt) {
 
 					IndexerRemovedReceipt r;
 					r = (IndexerRemovedReceipt) receipts [i];
-					
-					// Drop the removed item from the text cache
-					TextCache.UserCache.Delete (r.Uri);
-
-					
-					// Call the appropriate hook
-					try {
-						PostRemoveHook (flushed_request.GetByUri (r.Uri), r);
-					} catch (Exception ex) {
-						Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
-								 r.Uri);
-					}
-
-					// Add the removed Uri to the list for our
-					// change data.  This will be an external Uri
-					// when we are remapping.
-					removed_uris.Add (r.Uri);
+					HandleRemoveReceipt (r, flushed_request.GetByUri (r.Uri), removed_uris);
 					
 				} else if (receipts [i] is IndexerChildIndexablesReceipt) {
 					
 					IndexerChildIndexablesReceipt r;
 					r = (IndexerChildIndexablesReceipt) receipts [i];
-
-					foreach (Indexable child in r.Children) {
-						bool please_add_a_new_task = false;
-
-						try {
-							please_add_a_new_task = PreChildAddHook (child);
-						} catch (InvalidOperationException ex) {
-							// Queryable does not support adding children
-						} catch (Exception ex) {
-							Logger.Log.Warn (ex, "Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
-						}
-
-						if (please_add_a_new_task) {
-							if (Debug)
-								Log.Debug ("Adding child {0} to parent {1}", child.Uri, child.ParentUri);
-
-							Scheduler.Task task = NewAddTask (child);
-							task.SubPriority = 1;
-							ThisScheduler.Add (task);
-
-							// value at 'i' = number of successful children
-							child_added_receipt_count [i] ++;
-						} else
-							child.Cleanup ();
-					}
+					HandleChildIndexableReceipt (r, child_added_receipt_count, i);
 				}
 			}
 
+			// First process the child receipts
 			for (int i = 0; i < receipts.Length; ++i) {
 				if (child_added_receipt_count [i] == 0)
 					continue;
@@ -964,12 +927,16 @@ namespace Beagle.Daemon {
 				if (info != null) {
 					info.NumChildLeft += r.Children.Count;
 					if (Debug)
-						Log.Debug ("Add {2} children to {0}. (to-index {1})", info.Indexable.Uri, info.NumChildLeft, r.Children.Count);
+						Log.Debug ("Add {2} children to {0}. (to-index {1})",
+							   info.Indexable.Uri,
+							   info.NumChildLeft,
+							   r.Children.Count);
 					continue;
 				}
 
 				// Need to figure out the indexeraddedreceipt for r.indexable
 				IndexerAddedReceipt added_receipt = null;
+
 				// FIXME: Huge assumption on how LuceneIndexingDriver works
 				// Assuming that IndexingDriver sends the addedreceipt for the
 				// main indexable and the childreceipts for added children in
@@ -987,6 +954,7 @@ namespace Beagle.Daemon {
 				if (added_receipt == null)
 					continue;
 
+				// Store the parent-child info for use when child is done indexing
 				info = new ParentIndexableInfo ();
 				info.NumChildLeft = r.Children.Count;
 				info.LastChildIndexTime = child.Timestamp;
@@ -994,9 +962,13 @@ namespace Beagle.Daemon {
 				info.Receipt = new IndexerAddedReceipt (added_receipt.Uri,
 									added_receipt.FilterName,
 									added_receipt.FilterVersion);
+
 				parent_indexable_table [info.Indexable.Uri] = info;
 				if (Debug)
-					Log.Debug ("Add {2} children to {0}. (to-index {1})", info.Indexable.Uri, info.NumChildLeft, r.Children.Count);
+					Log.Debug ("Add {2} children to {0}. (to-index {1})",
+						    info.Indexable.Uri,
+						    info.NumChildLeft,
+						    r.Children.Count);
 			}
 
 			// Process these after knowing what all child indexable receipts were present
@@ -1016,36 +988,7 @@ namespace Beagle.Daemon {
 				
 				// Call the appropriate hook
 				try {
-					// Map from internal->external Uris in the PostAddHook
-					Indexable submitted_indexable = flushed_request.GetByUri (r.Uri);
-					IndexerAddedReceipt receipt_copy = new IndexerAddedReceipt (
-									r.Uri,
-									r.FilterName,
-									r.FilterVersion);
-					PostAddHook (submitted_indexable, r);
-
-					ParentIndexableInfo info;
-					// Check if this indexable has any children
-					info = (ParentIndexableInfo) parent_indexable_table [submitted_indexable.Uri];
-					// Indexable has no children
-					if (info == null) {
-						Uri parent_uri = submitted_indexable.ParentUri;
-
-						if (parent_uri != null) {
-							// Indexable is itself a child
-							info = (ParentIndexableInfo) parent_indexable_table [parent_uri];
-						}
-
-						if (info == null)
-							PostChildrenIndexedHook (submitted_indexable, receipt_copy, submitted_indexable.Timestamp);
-						else {
-							// This indexable is a child registered earlier
-							info.NumChildLeft --;
-							info.LastChildIndexTime = submitted_indexable.Timestamp;
-							if (Debug)
-								Log.Debug ("Finished indexing child for {0} ({1} child left)", info.Indexable.Uri, info.NumChildLeft);
-						}
-					}
+					HandleAddReceipt (r, flushed_request.GetByUri (r.Uri));
 				} catch (Exception ex) {
 					Logger.Log.Warn (ex, "Caught exception in PostAddHook or PostChildrenIndexedHook '{0}' '{1}' '{2}'",
 							 r.Uri, r.FilterName, r.FilterVersion);
@@ -1059,6 +1002,7 @@ namespace Beagle.Daemon {
 			}
 
 			ArrayList to_remove = new ArrayList ();
+			// Find indexables whose all children are indexed
 			foreach (ParentIndexableInfo info in parent_indexable_table.Values) {
 				if (info.NumChildLeft > 0)
 					continue;
@@ -1072,7 +1016,8 @@ namespace Beagle.Daemon {
 			foreach (Uri uri in to_remove)
 				parent_indexable_table.Remove (uri);
 			if (Debug)
-				Log.Debug ("parent_indexable_table now contains {0} parent-child", parent_indexable_table.Values.Count);
+				Log.Debug ("parent_indexable_table now contains {0} parent-child", 
+					   parent_indexable_table.Values.Count);
 
 			if (fa_store != null)
 				fa_store.CommitTransaction ();
@@ -1085,6 +1030,98 @@ namespace Beagle.Daemon {
 				change_data.RemovedUris = removed_uris;
 
 				QueryDriver.QueryableChanged (this, change_data);
+			}
+		}
+
+		private void HandleAddReceipt (IndexerAddedReceipt r,
+					  Indexable indexable)
+		{
+			// Map from internal->external Uris in the PostAddHook
+			IndexerAddedReceipt receipt_copy = new IndexerAddedReceipt (
+							r.Uri,
+							r.FilterName,
+							r.FilterVersion);
+			PostAddHook (indexable, r);
+
+			// Handle child indexables
+			ParentIndexableInfo info;
+
+			// Check if this indexable has any children
+			info = (ParentIndexableInfo) parent_indexable_table [indexable.Uri];
+
+			// Indexable has children, they are already taken care of
+			if (info != null)
+				return;
+
+			Uri parent_uri = indexable.ParentUri;
+			if (parent_uri != null) {
+				// Indexable is itself a child
+				info = (ParentIndexableInfo) parent_indexable_table [parent_uri];
+			}
+
+			if (info == null)
+				// No children, not a child
+				PostChildrenIndexedHook (indexable, receipt_copy, indexable.Timestamp);
+			else {
+				// This indexable is a child registered earlier
+				info.NumChildLeft --;
+				info.LastChildIndexTime = indexable.Timestamp;
+				if (Debug)
+					Log.Debug ("Finished indexing child for {0} ({1} child left)", info.Indexable.Uri, info.NumChildLeft);
+			}
+			
+		}
+
+		private void HandleRemoveReceipt (IndexerRemovedReceipt r,
+						  Indexable indexable,
+						  ArrayList removed_uris)
+		{
+			// Drop the removed item from the text cache
+			TextCache.UserCache.Delete (r.Uri);
+			
+			// Call the appropriate hook
+			try {
+				PostRemoveHook (indexable, r);
+			} catch (Exception ex) {
+				Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
+						 r.Uri);
+			}
+
+			// Add the removed Uri to the list for our
+			// change data.  This will be an external Uri
+			// when we are remapping.
+			removed_uris.Add (r.Uri);
+		}
+
+		private void HandleChildIndexableReceipt (IndexerChildIndexablesReceipt r,
+							  int[] child_receipt_count,
+							  int receipt_index)
+		{
+			foreach (Indexable child in r.Children) {
+				bool please_add_a_new_task = false;
+
+				try {
+					please_add_a_new_task = PreChildAddHook (child);
+				} catch (InvalidOperationException ex) {
+					// Queryable does not support adding children
+				} catch (Exception ex) {
+					Logger.Log.Warn (ex, "Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
+				}
+
+				if (! please_add_a_new_task) {
+					child.Cleanup ();
+					continue;
+				}
+
+				if (Debug)
+					Log.Debug ("Adding child {0} to parent {1}", child.Uri, child.ParentUri);
+
+				Scheduler.Task task = NewAddTask (child);
+				task.SubPriority = 1;
+				ThisScheduler.Add (task);
+
+				// value at 'receipt_index' = number of successful children
+				child_receipt_count [receipt_index] ++;
 			}
 		}
 

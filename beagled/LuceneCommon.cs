@@ -745,6 +745,12 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Debug ("Rewriting {0}", prop_only_indexable.DisplayUri);
 
+			if (prop_only_indexable.ParentUri != null) {
+				uri_f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (prop_only_indexable.ParentUri));
+				new_doc.Add (uri_f);
+				Logger.Log.Debug ("Parent Uri {0}", prop_only_indexable.ParentUri);
+			}
+
 			// Add the new properties to the new document.  To
 			// delete a property, set the Value to null... then it
 			// will be added to seen_props (so the old value will

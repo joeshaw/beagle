@@ -472,51 +472,66 @@ namespace Beagle {
 			// that otherwise would match only the parent, at
 			// least until we have proper RDF support.
 
-			// FIXME: Copying the correct properties from parent to child:
-			// (This is not perfect yet)
-			// It does not make sense to have parent:parent:parent:...:parent:foo
-			// for property names of a nested child
-			// Moreover, if indexable a.mbox has child b.zip which has child c.zip,
-			// then upon matching c.zip, we would like to get the information from
-			// a.mbox (i.e. the toplevel indexable) only. Intermediate parent information
-			// is not necessary for displaying results; in fact, storing them would cause
-			// confusion during display. E.g. storing parent:beagle:filename for all parents
-			// would cause, parent:beagle:filename=a.mbox, parent.beagle.filename=b.zip
-			// whereas we are only interested in toplevel parent:beagle:filename=a.mbox
-			// For indexables which need to store the intermediate/immediate parent info
-			// separately, explicitly store them.
-			// Another problem is, toplevel indexable might want to store information
-			// which should not be matched when searching for its child. Copying those
-			// properties in all children will incorrectly match them.
-			//
+			if (parent.IsChild)
+				CopyPropertyChildToChild (parent);
+			else
+				CopyPropertyParentToChild (parent);
+		}
 
-			if (parent.IsChild) {
-				// If parent itself is a child,
-				// then only copy parents' parent:xxx and _private:xxx properties
-				foreach (Property prop in parent.Properties) {
-					if (prop.Key.StartsWith ("parent:") ||
-					    prop.Key.StartsWith (Property.PrivateNamespace)) {
-						Property new_prop = (Property) prop.Clone ();
-						this.AddProperty (new_prop);
-					} else {
-						Property new_prop = (Property) prop.Clone ();
-						new_prop.IsStored = false;
-						this.AddProperty (new_prop);
-					}
-				}
-			} else {
-				// Parent is a top level indexable
-				// Copy all properties
-				foreach (Property prop in parent.Properties) {
+		// FIXME: Copying the correct properties from parent to child:
+		// (This is not perfect yet)
+		// It does not make sense to have parent:parent:parent:...:parent:foo
+		// for property names of a nested child
+		// Moreover, if indexable a.mbox has child b.zip which has child c.zip,
+		// then upon matching c.zip, we would like to get the information from
+		// a.mbox (i.e. the toplevel indexable) only. Intermediate parent information
+		// is not necessary for displaying results; in fact, storing them would cause
+		// confusion during display.
+		// E.g. storing parent:beagle:filename for all parents
+		// would cause, parent:beagle:filename=a.mbox, parent.beagle.filename=b.zip
+		// whereas we are only interested in toplevel parent:beagle:filename=a.mbox
+		// For indexables which need to store the intermediate/immediate parent info
+		// separately, explicitly store them.
+		// Another problem is, toplevel indexable might want to store information
+		// which should not be matched when searching for its child. Copying those
+		// properties in all children will incorrectly match them.
+		//
+
+		private void CopyPropertyChildToChild (Indexable parent)
+		{
+			// If parent itself is a child,
+			// then only copy parents' parent:xxx and _private:xxx properties
+			foreach (Property prop in parent.Properties) {
+
+				if (prop.Key.StartsWith ("parent:") ||
+				    prop.Key.StartsWith (Property.PrivateNamespace)) {
+
 					Property new_prop = (Property) prop.Clone ();
-					// Add parent: to property names ONLY IF
-					// - not private property (these are not properties of the file content)
-					// - property name does not already start with parent:
-					if (! new_prop.Key.StartsWith (Property.PrivateNamespace) &&
-					    ! new_prop.Key.StartsWith ("parent:"))
-						new_prop.Key = "parent:" + new_prop.Key;
+					this.AddProperty (new_prop);
+				} else {
+					
+					Property new_prop = (Property) prop.Clone ();
+					new_prop.IsStored = false;
 					this.AddProperty (new_prop);
 				}
+			}
+		}
+
+		private void CopyPropertyParentToChild (Indexable parent)
+		{
+			// Parent is a top level indexable
+			// Copy all properties
+			foreach (Property prop in parent.Properties) {
+
+				Property new_prop = (Property) prop.Clone ();
+				// Add parent: to property names ONLY IF
+				// - not private property (these are not properties of the file content)
+				// - property name does not already start with parent:
+				if (! new_prop.Key.StartsWith (Property.PrivateNamespace) &&
+				    ! new_prop.Key.StartsWith ("parent:"))
+					new_prop.Key = "parent:" + new_prop.Key;
+
+				this.AddProperty (new_prop);
 			}
 		}
 

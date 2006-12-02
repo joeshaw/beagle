@@ -324,6 +324,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return ToFullPath (info.Name, info.ParentId);
 		}
 
+		private string UniqueIdToFileName (Guid id)
+		{
+			LuceneNameResolver.NameInfo info;
+			info = name_resolver.GetNameInfoById (id);
+			if (info == null)
+				return null;
+			return info.Name;
+		}
+
 		private void RegisterId (string name, DirectoryModel dir, Guid id)
 		{
 			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
@@ -1176,6 +1185,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
+			// We don't have anything to do if we are dealing with a child indexable
+			if (indexable.ParentUri != null)
+				return;
+
 			// If we just changed properties, remap to our *old* external Uri
 			// to make notification work out property.
 			if (indexable.Type == IndexableType.PropertyChange) {
@@ -1191,10 +1204,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				return;
 			}
-
-			// We don't have anything to do if we are dealing with a child indexable
-			if (indexable.ParentUri != null)
-				return;
 
 			string path;
 			path = (string) indexable.LocalState ["Path"];
@@ -1221,7 +1230,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 								 IndexerAddedReceipt receipt,
 								 DateTime Mtime)
 		{
-			if (indexable.ParentUri != null)
+			// There is no business here for children or if only the property changed
+			if (indexable.Type == IndexableType.PropertyChange ||
+			    indexable.ParentUri != null)
 				return;
 
 			string path;
@@ -1274,10 +1285,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string name = null, path, is_child;
 			is_child = hit [Property.IsChildPropKey];
 
-			if (is_child == "false")
-				name = hit [Property.ExactFilenamePropKey];
-			if (name == null)
+			if (is_child == "true")
 				name = hit ["parent:" + Property.ExactFilenamePropKey];
+			else
+				name = hit [Property.ExactFilenamePropKey];
+
 			if (name == null) {
 				// If we don't have the filename property, we have to do a lookup
 				// based on the guid.  This happens with synthetic hits produced by
@@ -1301,6 +1313,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Logger.Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
 							  name, GuidFu.ToShortString (parent_id));
 			}
+
+			if (Debug)
+				Log.Debug ("Resolved {0} to {1}", hit.Uri, path);
 
 			if (path != null) {
 				hit.Uri = UriFu.PathToFileUri (path);
@@ -1363,8 +1378,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string is_child = hit [Property.IsChildPropKey];
 			string fragment = null;
 			if (is_child == "true") {
-				hit.ParentUri = hit.Uri;
 				hit.Uri = UriFu.PathToFileUri (path, old_uri.Fragment);
+				hit.ParentUri = UriFu.PathToFileUri (path);
 			}
 
 			// Check the ignore status of the hit
