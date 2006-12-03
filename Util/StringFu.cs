@@ -314,7 +314,7 @@ namespace Beagle.Util {
 
 			foreach (char c in str) {
 
-				if (Array.IndexOf (CharsToQuote, c) != -1)
+				if (ArrayFu.IndexOfChar (CharsToQuote, c) != -1)
 					builder.Append (Uri.HexEscape (c));
 				else if (c < 128)
 					builder.Append (c);

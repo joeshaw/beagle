@@ -49,6 +49,8 @@ namespace Beagle.Util {
 			}
 		}
 
+		// FIXME: These can all go away when we switch to generics.
+
 		// This is designed to be used instead of Array.IndexOf as it reduces
 		// boxing and is therefore more efficient.
 		public static int IndexOfByte (byte [] array, byte target, int start)
@@ -75,6 +77,33 @@ namespace Beagle.Util {
 		public static int IndexOfString (string [] array, string target)
 		{
 			return IndexOfString (array, target, 0);
+		}
+
+		public static int IndexOfChar (string str, char target, int start)
+		{
+			for (int i = start; i < str.Length; ++i)
+				if (str [i] == target)
+					return i;
+			return -1;
+		}
+
+		public static int IndexOfChar (string str, char target)
+		{
+			return IndexOfChar (str, target, 0);
+		}
+
+		public static int IndexOfChar (char [] array, char target, int start)
+		{
+			for (int i = start; i < array.Length; ++i)
+				if (array [i] == target)
+					return i;
+
+			return -1;
+		}
+
+		public static int IndexOfChar (char [] array, char target)
+		{
+			return IndexOfChar (array, target, 0);
 		}
 	}
 }

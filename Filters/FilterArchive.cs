@@ -48,6 +48,9 @@ namespace Beagle.Filters {
 		private Stream archive_stream;
 		private GetNextEntry get_next_entry;
 
+		// Fairly arbitrary number of files to limit
+		private const int MAX_CHILDREN = 30;
+
 		public FilterArchive ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/zip"));
@@ -109,8 +112,9 @@ namespace Beagle.Filters {
 		protected override void DoPullSetup ()
 		{
 			ArchiveEntry a_entry;
+			int count = 0;
 
-			while ((a_entry = this.get_next_entry ()) != null) {
+			while ((a_entry = this.get_next_entry ()) != null && count < MAX_CHILDREN) {
 				// FIXME: For nested archives, create uid:foo#bar
 				// instead of uid:foo#xxx#bar (avoid duplicates ?)
 				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name, true));
@@ -133,6 +137,8 @@ namespace Beagle.Filters {
 					child.AddProperty (prop);
 
 				AddChildIndexable (child);
+
+				++count;
 			}
 		}
 

@@ -51,7 +51,7 @@ namespace Beagle.Util {
 		private static void CheckLoadAverage ()
 		{
 			// Only call getloadavg() at most once every 10 seconds
-			if ((DateTime.Now - proc_loadavg_time).TotalSeconds < loadavg_poll_delay)
+			if ((DateTime.UtcNow - proc_loadavg_time).TotalSeconds < loadavg_poll_delay)
 				return;
 
 			double [] loadavg = new double [3];
@@ -66,7 +66,7 @@ namespace Beagle.Util {
 			cached_loadavg_5min  = loadavg [1];
 			cached_loadavg_15min = loadavg [2];
 
-			proc_loadavg_time = DateTime.Now;
+			proc_loadavg_time = DateTime.UtcNow;
 		}
 
 		public static double LoadAverageOneMinute {

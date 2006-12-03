@@ -127,7 +127,8 @@ namespace Beagle.IndexHelper {
 						Log.Debug ("Reniced helper to +15");
 					else
 						Log.Debug ("Helper was already niced to {0}, not renicing to +15", prio);
-				}
+				} else
+					Log.Info ("BEAGLE_EXERCISE_THE_DOG is set");
 				
 				// Start the monitor thread, which keeps an eye on memory usage and idle time.
 				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));

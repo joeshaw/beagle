@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -47,6 +48,7 @@ namespace Beagle.Daemon {
 		private static bool arg_replace = false;
 		private static bool arg_disable_scheduler = false;
 		private static bool arg_indexing_test_mode = false;
+		private static bool arg_heap_shot = false;
 
 		public static bool StartServer ()
 		{
@@ -75,12 +77,43 @@ namespace Beagle.Daemon {
 			} while (! StartServer ());			
 		}
 
+		private static int prev_rss = -1;
+		private static long prev_gc = -1;
+
+		private static void MaybeSendSigprof (int rss, long gc)
+		{
+			bool send_sigprof = false;
+
+			try {
+				if (prev_rss == -1 || prev_gc == -1)
+					return;
+
+				if (rss - prev_rss > 5 ||
+				    (double) rss / (double) prev_rss > 1.05)
+					send_sigprof = true;
+
+				if ((double) gc / (double) prev_gc > 1.05)
+					send_sigprof = true;
+			} finally {
+				prev_rss = rss;
+				prev_gc = gc;
+
+				if (send_sigprof) {
+					Log.Debug ("Suspicious memory size change detected.  Sending SIGPROF to ourself");
+					Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGPROF);
+				}
+			}
+		}
+
 		private static void LogMemoryUsage ()
 		{
 			while (! Shutdown.ShutdownRequested) {
+				SystemInformation.LogMemoryUsage ();
+
 				int vm_rss = SystemInformation.VmRss;
 
-				SystemInformation.LogMemoryUsage ();
+				if (arg_heap_shot)
+					MaybeSendSigprof (vm_rss, GC.GetTotalMemory (false));
 
 				if (vm_rss > 300 * 1024) {
 					Logger.Log.Debug ("VmRss too large --- shutting down");
@@ -243,8 +276,6 @@ namespace Beagle.Daemon {
 					Environment.Exit (0);
 					break;
 
-				case "--heap-buddy":
-				case "--heap-shot":
 				case "--mdb":
 				case "--mono-debug":
 					// Silently ignore these arguments: they get handled
@@ -275,6 +306,13 @@ namespace Beagle.Daemon {
 					arg_debug = true;
 					break;
 
+				case "--heap-shot":
+					arg_heap_shot = true;
+					arg_debug = true;
+					arg_debug_memory = true;
+					break;
+
+				case "--heap-buddy":
 				case "--debug-memory":
 					arg_debug = true;
 					arg_debug_memory = true;
