@@ -85,9 +85,6 @@ namespace Beagle.Daemon {
 			bool send_sigprof = false;
 
 			try {
-				Log.Debug ("Checking: RSS {0} old RSS {1}  GC {2} old GC {3}",
-					   rss, prev_rss, gc, prev_gc);
-
 				if (prev_rss == -1 || prev_gc == -1)
 					return;
 
