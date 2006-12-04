@@ -107,6 +107,10 @@ AC_FUNC_MMAP()
 AC_PATH_PROG(DESKTOP_LAUNCH, desktop-launch, no)
 AM_CONDITIONAL(ENABLE_DESKTOP_LAUNCH, test "x$DESKTOP_LAUNCH" != "xno")
 
+# check for xdg-open
+AC_PATH_PROG(XDG_OPEN, xdg-open, no)
+AM_CONDITIONAL(ENABLE_XDG_OPEN, test "x$XDG_OPEN" != "xno")
+
 # Google QueryDriver
 # Disable GoogleDriver by default, enable if you want know what you are doing
 dnl -----------------------------------------------

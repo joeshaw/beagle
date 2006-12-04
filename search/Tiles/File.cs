@@ -92,6 +92,8 @@ namespace Search.Tiles {
 
 #if ENABLE_DESKTOP_LAUNCH
 			p.Arguments = new string [] { "desktop-launch", path };
+#elif ENABLE_XDG_OPEN
+			p.Arguments = new string [] { "xdg-open", path };
 #else
 			p.Arguments = new string [] { "nautilus", "--no-desktop", path };
 #endif

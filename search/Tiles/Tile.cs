@@ -342,7 +342,10 @@ namespace Search.Tiles {
 #if ENABLE_DESKTOP_LAUNCH
 			command = "desktop-launch";
 			expects_uris = true;
-#else		       
+#elif ENABLE_XDG_OPEN
+			command = "xdg-open";
+			expects_uris = true;
+#else
 			GnomeFu.VFSMimeApplication app;
 			app = GnomeFu.GetDefaultAction (hit.MimeType);
 			if (app.command != null) {
@@ -418,9 +421,14 @@ namespace Search.Tiles {
 
 		public void OpenFromUri (string uri)
                 {
-#if ENABLE_DESKTOP_LAUNCH
+#if ENABLE_DESKTOP_LAUNCH || ENABLE_XDG_OPEN
 			SafeProcess p = new SafeProcess ();
+
+#  if ENABLE_DESKTOP_LAUNCH
 			p.Arguments = new string[] { "desktop-launch", uri };
+#  elif ENABLE_XDG_OPEN
+			p.Arguments = new string[] { "xdg-open", uri };
+#  endif
 
 			try {
 				p.Start ();
