@@ -485,7 +485,18 @@ namespace Beagle.Daemon {
 			case PropertyType.Date:    return "PropertyDate";
 			}
 
-			return null;
+			throw new Exception ("Bad property type: " + type);
+		}
+
+		static private Field.Index TypeToIndexInstruction (PropertyType type)
+		{
+			switch (type) {
+			case PropertyType.Text:    return Field.Index.TOKENIZED; // Full analysis
+			case PropertyType.Keyword: return Field.Index.TOKENIZED; // Lowercases keywords
+			case PropertyType.Date:    return Field.Index.NO_NORMS;  // Do nothing
+			}
+
+			throw new Exception ("Bad property type: " + type);
 		}
 
 		// Exposing this is a little bit suspicious.
@@ -502,16 +513,14 @@ namespace Beagle.Daemon {
 			Field f;
 			f = new Field ("YM:" + field_name,
 				       StringFu.DateTimeToYearMonthString (dt),
-				       false,   // never store
-				       true,    // always index
-				       false);  // never tokenize
+				       Field.Store.NO,
+				       Field.Index.NO_NORMS);
 			doc.Add (f);
 
 			f = new Field ("D:" + field_name,
 				       StringFu.DateTimeToDayString (dt),
-				       false,   // never store
-				       true,    // always index
-				       false);  // never tokenize
+				       Field.Store.NO,
+				       Field.Index.NO_NORMS);
 			doc.Add (f);
 		}
 
@@ -529,17 +538,21 @@ namespace Beagle.Daemon {
 
 			if (prop.IsSearched) {
 				string wildcard_field = TypeToWildcardField (prop.Type);
-				if (wildcard_field != null) {
-					f = new Field (wildcard_field,
-						       prop.Value,
-						       false, // never stored
-						       true,  // always indexed
-						       true); // always tokenize (just lowercases for keywords; full analysis for text)
-					doc.Add (f);
 
-					if (prop.Type == PropertyType.Date)
-						AddDateFields (wildcard_field, prop, doc);
-				}
+				f = new Field (wildcard_field,
+					       prop.Value,
+					       Field.Store.NO,
+					       TypeToIndexInstruction (prop.Type));
+
+				// We don't want to include norms for non-text
+				// fields, even if we do tokenize them.
+				if (prop.Type == PropertyType.Keyword || prop.Type == PropertyType.Date)
+					f.SetOmitNorms (true);
+
+				doc.Add (f);
+
+				if (prop.Type == PropertyType.Date)
+					AddDateFields (wildcard_field, prop, doc);
 			}
 
 			string coded_value;
@@ -551,9 +564,8 @@ namespace Beagle.Daemon {
 
 			f = new Field (field_name,
 				       coded_value,
-				       prop.IsStored,
-				       true,        // always index
-				       true);       // always tokenize (strips off type code for keywords and lowercases)
+				       prop.IsStored ? Field.Store.YES : Field.Store.NO,
+				       Field.Index.TOKENIZED);
 			doc.Add (f);
 
 			if (prop.Type == PropertyType.Date)
@@ -606,11 +618,13 @@ namespace Beagle.Daemon {
 
 			Field f;
 
-			f = Field.Keyword ("Uri", UriFu.UriToEscapedString (indexable.Uri));
+			f = new Field ("Uri", UriFu.UriToEscapedString (indexable.Uri),
+				       Field.Store.YES, Field.Index.NO_NORMS);
 			primary_doc.Add (f);
 
 			if (indexable.ParentUri != null) {
-				f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (indexable.ParentUri));
+				f = new Field ("ParentUri", UriFu.UriToEscapedString (indexable.ParentUri),
+					       Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 			}
 			
@@ -623,27 +637,30 @@ namespace Beagle.Daemon {
 				string wildcard_field = TypeToWildcardField (PropertyType.Date);
 
 				string str = StringFu.DateTimeToString (indexable.Timestamp);
-				f = Field.Keyword ("Timestamp", str);
+				f = new Field ("Timestamp", str, Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
-				f = Field.UnStored (wildcard_field, str);
+				f = new Field (wildcard_field, str, Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
 				// Create an inverted timestamp so that we can
 				// sort by timestamp at search-time.
 				long timeval = Convert.ToInt64 (str);
-				f = Field.UnStored ("InvertedTimestamp", (Int64.MaxValue - timeval).ToString ());
+				f = new Field ("InvertedTimestamp", (Int64.MaxValue - timeval).ToString (),
+					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
 				str = StringFu.DateTimeToYearMonthString (indexable.Timestamp);
-				f = Field.Keyword ("YM:Timestamp", str);
+				f = new Field ("YM:Timestamp", str, Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
-				f = Field.UnStored ("YM:" + wildcard_field, str);
+				f = new Field ("YM:" + wildcard_field, str,
+					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
 				str = StringFu.DateTimeToDayString (indexable.Timestamp);
-				f = Field.Keyword ("D:Timestamp", str);
+				f = new Field ("D:Timestamp", str, Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
-				f = Field.UnStored ("D:" + wildcard_field, str);
+				f = new Field ("D:" + wildcard_field, str,
+					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 			}
 
@@ -663,13 +680,13 @@ namespace Beagle.Daemon {
 				
 				reader = indexable.GetTextReader ();
 				if (reader != null) {
-					f = Field.Text ("Text", reader);
+					f = new Field ("Text", reader);
 					primary_doc.Add (f);
 				}
 			
 				reader = indexable.GetHotTextReader ();
 				if (reader != null) {
-					f = Field.Text ("HotText", reader);
+					f = new Field ("HotText", reader);
 					primary_doc.Add (f);
 				}
 			}
@@ -719,12 +736,12 @@ namespace Beagle.Daemon {
 		{
 			Document secondary_doc = new Document ();
 
-			Field f = Field.Keyword ("Uri", UriFu.UriToEscapedString (uri));
+			Field f = new Field ("Uri", UriFu.UriToEscapedString (uri), Field.Store.YES, Field.Index.NO_NORMS);
 			secondary_doc.Add (f);
 			
 			if (parent_uri != null) {
 				// Store both Uri and ParentUri in secondary index for easy removal
-				f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (parent_uri));
+				f = new Field ("ParentUri", UriFu.UriToEscapedString (parent_uri), Field.Store.YES, Field.Index.NO_NORMS);
 				secondary_doc.Add (f);
 			}
 
@@ -741,13 +758,13 @@ namespace Beagle.Daemon {
 			new_doc = new Document ();
 
 			Field uri_f;
-			uri_f = Field.Keyword ("Uri", UriFu.UriToEscapedString (prop_only_indexable.Uri));
+			uri_f = new Field ("Uri", UriFu.UriToEscapedString (prop_only_indexable.Uri), Field.Store.YES, Field.Index.NO_NORMS);
 			new_doc.Add (uri_f);
 
 			Logger.Log.Debug ("Rewriting {0}", prop_only_indexable.DisplayUri);
 
 			if (prop_only_indexable.ParentUri != null) {
-				uri_f = Field.Keyword ("ParentUri", UriFu.UriToEscapedString (prop_only_indexable.ParentUri));
+				uri_f = new Field ("ParentUri", UriFu.UriToEscapedString (prop_only_indexable.ParentUri), Field.Store.YES, Field.Index.NO_NORMS);
 				new_doc.Add (uri_f);
 				Logger.Log.Debug ("Parent Uri {0}", prop_only_indexable.ParentUri);
 			}
@@ -1330,12 +1347,9 @@ namespace Beagle.Daemon {
 				QueryPart_Property part = (QueryPart_Property) abstract_part;
 
 				string field_name;
-				if (part.Key == QueryPart_Property.AllProperties) {
+				if (part.Key == QueryPart_Property.AllProperties)
 					field_name = TypeToWildcardField (part.Type);
-					// FIXME: probably shouldn't just return silently
-					if (field_name == null)
-						return;
-				} else
+				else
 					field_name = PropertyToFieldName (part.Type, part.Key);
 
 				if (part.Type == PropertyType.Text)
