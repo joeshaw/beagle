@@ -42,22 +42,38 @@ namespace Beagle.Util {
 		public const string UnindexedNamespace = "_unindexed:";
 
 		private const String TimeFormat = "yyyyMMddHHmmss";
-		// FIXME: Fix all the UTC and timezone hack when switching to gmcs
+		// FIXME: Fix all the UTC and timezone hack when switching to .Net-2.0
 		private const String LocalTimeFormat = "yyyyMMddHHmmsszz";
+
+		// Remove when switching to .Net-2.0
+		// This is a totally incorrect function - except it works in practice
+		static private DateTime ToUtc (DateTime dt)
+		{
+			// [+-]xx:xx
+			string timezone = dt.ToString("zzz", CultureInfo.InvariantCulture);
+			return ((timezone [1] == timezone [2] &&
+				 timezone [2] == timezone [3] &&
+				 timezone [3] == timezone [4] &&
+				 timezone [4] == '0') ?
+				dt :
+				dt.ToUniversalTime ());
+
+			
+		}
 
 		static public string DateTimeToString (DateTime dt)
 		{
-			return dt.ToString (TimeFormat);
+			return ToUtc (dt).ToString (TimeFormat);
 		}
 
 		static public string DateTimeToYearMonthString (DateTime dt)
 		{
-			return dt.ToString ("yyyyMM");
+			return ToUtc (dt).ToString ("yyyyMM");
 		}
 
 		static public string DateTimeToDayString (DateTime dt)
 		{
-			return dt.ToString ("dd");
+			return ToUtc (dt).ToString ("dd");
 		}
 
                 static public DateTime StringToDateTime (string str)

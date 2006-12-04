@@ -50,7 +50,7 @@ namespace Beagle.Util {
 
 		public static string ToString (DateTime dt)
 		{
-			return dt.ToString("yyyy-MM-ddTHH:mm:sszzz", CultureInfo.InvariantCulture);
+			return dt.ToString("yyyy-MM-dd HH:mm:ss zzz", CultureInfo.InvariantCulture);
 		}
 	}
 }
