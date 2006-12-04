@@ -79,6 +79,7 @@ namespace Beagle.Daemon {
 
 		private static int prev_rss = -1;
 		private static long prev_gc = -1;
+		private static int sigprof_count = 0;
 
 		private static void MaybeSendSigprof (int rss, long gc)
 		{
@@ -88,18 +89,20 @@ namespace Beagle.Daemon {
 				if (prev_rss == -1 || prev_gc == -1)
 					return;
 
-				if (rss - prev_rss > 5000 ||
-				    (double) rss / (double) prev_rss > 1.05)
+				// Log RSS increases of at least 5 megs or 5%
+				if (rss - prev_rss >= 5 * 1024 ||
+				    (double) rss / (double) prev_rss >= 1.05)
 					send_sigprof = true;
 
-				if ((double) gc / (double) prev_gc > 1.05)
+				// Log total object size increase of at least 10%.
+				if ((double) gc / (double) prev_gc >= 1.1)
 					send_sigprof = true;
 			} finally {
 				prev_rss = rss;
 				prev_gc = gc;
 
 				if (send_sigprof) {
-					Log.Debug ("Suspicious memory size change detected.  Sending SIGPROF to ourself");
+					Log.Debug ("Suspicious memory size change detected.  Sending SIGPROF to ourself ({0})", sigprof_count++);
 					Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGPROF);
 				}
 			}
