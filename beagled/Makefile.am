@@ -1,3 +1,5 @@
+autostartdir = $(sysconfdir)/xdg/autostart
+autostart_DATA = beagled-autostart.desktop
 
 # Warnings we don't want to see.
 # Most of these are thanks to DotLucene.  It would be nice if we could use
@@ -1052,6 +1054,7 @@ noinst_SCRIPTS=	\
 	$(NAME_INDEX_WRAPPER)		
 
 EXTRA_DIST = \
+	$(autostart_DATA)			\
 	$(WRAPPER_IN)   			\
 	$(DAEMON_WRAPPER_IN)			\
 	$(INDEX_HELPER_WRAPPER_IN)		\

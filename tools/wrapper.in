@@ -5,7 +5,7 @@
 
 if [ -z $installed ] ; then
     echo "*** Running uninstalled @target@ ***"
-    THIS_PATH="../Util:../BeagleClient:../beagled"
+    THIS_PATH="../Util:../BeagleClient:../beagled:../images"
     THIS_EXE="./@target@"
     THIS_FILTERS="../Filters"
     THIS_BACKENDS="../beagled"

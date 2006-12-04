@@ -391,10 +391,7 @@ namespace Beagle.Daemon {
 					break;
 
 				case "--autostarted":
-					if (! Conf.Searching.Autostart) {
-						Console.WriteLine ("Autostarting is disabled, not starting");
-						Environment.Exit (0);
-					}
+					// FIXME: This option is deprecated and will be removed in a future release.
 					break;
 
 				default:

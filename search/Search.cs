@@ -87,10 +87,7 @@ namespace Search {
 					break;
 
 				case "--autostarted":
-					if (! Conf.Searching.Autostart) {
-						Console.WriteLine ("beagle-search: Autostarting is disabled, not starting");
-						Environment.Exit (0);
-					}
+					// FIXME: This option is deprecated and will be removed in a future release.
 					break;
 
 				// Ignore session management
@@ -520,8 +517,8 @@ namespace Search {
 			if (status == IndexingStatus.Running) {
 				NotificationMessage m = new NotificationMessage ();
 				m.Icon = Gtk.Stock.DialogInfo;
-				m.Title = Catalog.GetString ("Beagle is indexing your data");
-				m.Message = Catalog.GetString ("The Beagle service is in the process of indexing your data.  Search results may be incomplete until indexing has finished.");
+				m.Title = Catalog.GetString ("Your data is being indexed");
+				m.Message = Catalog.GetString ("The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished.");
 				notification_area.Display (m);
 			} else {
 				notification_area.Hide ();

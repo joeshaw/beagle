@@ -1,7 +1,6 @@
 # Warnings we don't want to see
-# 0169 = The private field is never used
 
-CSC = $(MCS) -debug -nowarn:0169
+CSC = $(MCS) -debug
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
@@ -104,7 +103,7 @@ $(CONFIG_WRAPPER): $(WRAPPER_IN)
 SETTINGS_TARGET    = Settings.exe
 SETTINGS_WRAPPER   = beagle-settings
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs
-SETTINGS_RESOURCES = $(srcdir)/settings.glade
+SETTINGS_RESOURCES = $(srcdir)/settings.glade $(top_srcdir)/beagled/beagled-autostart.desktop $(top_srcdir)/search/beagle-search-autostart.desktop
 SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
 SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll -r:../images/Images.dll
 

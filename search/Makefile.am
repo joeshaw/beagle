@@ -116,6 +116,9 @@ desktop_h_files = $(desktop_in_files:.in=.in.h)
 desktopdir       = $(datadir)/applications
 desktop_DATA     = $(desktop_files)
 
+autostartdir = $(sysconfdir)/xdg/autostart
+autostart_DATA = beagle-search-autostart.desktop
+
 all: $(BIN_WRAPPERS)
 
 install-data-local: $(BIN_WRAPPERS)
@@ -134,6 +137,7 @@ EXTRA_DIST =			\
 	$(PAGES)		\
 	$(TRAY)			\
 	$(desktop_DATA).in	\
+	$(autostart_DATA)	\
 	beagle-search.in	\
 	beagle-search.desktop.in.in
 

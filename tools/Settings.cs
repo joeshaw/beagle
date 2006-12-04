@@ -25,14 +25,17 @@
 //
 
 using System;
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Reflection;
 using System.Threading;
+
+using Mono.Unix;
+using Mono.Unix.Native;
 
 using Gtk;
 using Gdk;
 using Glade;
-using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;
@@ -68,34 +71,11 @@ public class SettingsDialog
 
 	[Widget] Gtk.Window settings_dialog;
 
-	[Widget] ScrolledWindow display_sw;
-
 	[Widget] ScrolledWindow include_sw;
 	[Widget] ScrolledWindow exclude_sw;
-						
-#if false
-	DisplayView display_view;
-#endif
 
 	IncludeView include_view;
 	ExcludeView exclude_view;
-
-	////////////////////////////////////////////////////////////////
-	// WebServices
-
-	[Widget] VBox networking_box;
-	[Widget] CheckButton allow_global_access_toggle;
-	[Widget] Button remove_publicfolder_button;
-	[Widget] Button remove_netbeagle_button;
-
-	[Widget] ScrolledWindow publicfolder_sw;
-	[Widget] ScrolledWindow netbeagle_sw;
-		
-	[Widget] Dialog netbeagle_entry_dialog;
-	[Widget] Entry netbeagle_textentry;
-
-	PublicfolderView	publicfolder_view;
-	NetbeagleView		netbeagle_view; 
 
 	////////////////////////////////////////////////////////////////
 	// Initialize       
@@ -112,13 +92,6 @@ public class SettingsDialog
 		settings_dialog.Icon = Beagle.Images.GetPixbuf ("system-search.png");
 		administration_frame.Visible = (Environment.UserName == "root");
 
-#if false
-		display_view = new DisplayView ();
-		display_view.Selection.Changed += new EventHandler (OnDisplaySelected);
-		display_view.Show ();
-	        // The display sorting stuff is something i have been testing locally, Best CVS wont use it
-		display_sw.Child = display_view;
-#endif
 		include_view = new IncludeView ();
 		include_view.Selection.Changed += new EventHandler (OnIncludeSelected);
 		include_view.Show ();
@@ -129,28 +102,10 @@ public class SettingsDialog
 		exclude_view.Show ();
 		exclude_sw.Child = exclude_view;
 
-#if ENABLE_WEBSERVICES	
-		networking_box.Visible = true;
-
-		publicfolder_view = new PublicfolderView ();
-		publicfolder_view.Selection.Changed += new EventHandler (OnPublicfolderSelected);
-		publicfolder_view.Show ();
-		publicfolder_sw.Child = publicfolder_view;
-			
-		netbeagle_view = new NetbeagleView ();
-		netbeagle_view.Selection.Changed += new EventHandler (OnNetbeagleSelected);
-		netbeagle_view.Show ();
-		netbeagle_sw.Child = netbeagle_view;
-#endif
 		LoadConfiguration ();
 
 		Conf.Subscribe (typeof (Conf.IndexingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		Conf.Subscribe (typeof (Conf.SearchingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-
-#if ENABLE_WEBSERVICES	
-		Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-		Conf.Subscribe (typeof (Conf.WebServicesConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-#endif 		
 	}
 
 	public void Run ()
@@ -164,9 +119,10 @@ public class SettingsDialog
 	private void LoadConfiguration ()
 	{	
 		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
-		autostart_toggle.Active = Conf.Searching.Autostart;
 		auto_search_toggle.Active = Conf.Searching.BeagleSearchAutoSearch;
 		battery_toggle.Active = Conf.Indexing.IndexOnBattery;
+
+		autostart_toggle.Active = IsAutostartEnabled ();
 
 		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
 		press_ctrl_toggle.Active = show_binding.Ctrl;
@@ -181,23 +137,11 @@ public class SettingsDialog
 
 		foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes)
 			exclude_view.AddItem (exclude_item);
-
-#if ENABLE_WEBSERVICES				
-		foreach (string netbeagle in Conf.Networking.NetBeagleNodes)
-				netbeagle_view.AddNode (netbeagle);
-
-		if (Conf.WebServices.AllowGlobalAccess)
-				allow_global_access_toggle.Active = true;
-								
-		foreach (string publicfolder in Conf.WebServices.PublicFolders)
-			publicfolder_view.AddPath (publicfolder);
-#endif 											
 	}
 
 	private void SaveConfiguration ()
 	{
 		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
-		Conf.Searching.Autostart = autostart_toggle.Active;
 		Conf.Searching.BeagleSearchAutoSearch = auto_search_toggle.Active;
 		Conf.Indexing.IndexOnBattery = battery_toggle.Active;
 		
@@ -210,11 +154,6 @@ public class SettingsDialog
 		Conf.Indexing.Roots = include_view.Includes;
 		Conf.Indexing.Excludes = exclude_view.Excludes;
 
-#if ENABLE_WEBSERVICES	
-		Conf.Networking.NetBeagleNodes = netbeagle_view.Netbeagles;
-		Conf.WebServices.AllowGlobalAccess = allow_global_access_toggle.Active;
-		Conf.WebServices.PublicFolders = publicfolder_view.Publicfolders;
-#endif 			
 		Conf.Save (true);
 	}
 
@@ -237,7 +176,99 @@ public class SettingsDialog
 	}
 
 	////////////////////////////////////////////////////////////////
+	// Autostart
+
+	private string system_autostart_dir = Path.Combine (Path.Combine (ExternalStringsHack.SysConfDir, "xdg"), "autostart");
+	private string local_autostart_dir = Path.Combine (Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".config"), "autostart");
+
+	private bool IsAutostartEnabled ()
+	{
+		// FIXME: We need to do better than this.
+
+		string local_beagled = Path.Combine (local_autostart_dir, "beagled-autostart.desktop");
+		string system_beagled = Path.Combine (system_autostart_dir, "beagled-autostart.desktop");
+
+		if (File.Exists (local_beagled)) {
+			StreamReader reader = new StreamReader (local_beagled);
+
+			try {
+				string l;
+				while ((l = reader.ReadLine ()) != null) {
+					if (String.Compare (l, "X-GNOME-autostart-enabled=false", true) == 0)
+						return false;
+				}
+
+				return true;
+			} finally {
+				reader.Close ();
+			}
+		} else if (File.Exists (system_beagled)) {
+			StreamReader reader = new StreamReader (system_beagled);
+
+			try {
+				string l;
+				while ((l = reader.ReadLine ()) != null) {
+					if (String.Compare (l, "X-GNOME-autostart-enabled=false", true) == 0)
+						return false;
+				}
+
+				return true;
+			} finally {
+				reader.Close ();
+			}
+		} else
+			return false;
+	}
+
+	private void SetAutostart (bool enabled)
+	{
+		if (! Directory.Exists (local_autostart_dir)) {
+			Directory.CreateDirectory (local_autostart_dir);
+			Syscall.chmod (local_autostart_dir, (FilePermissions) 448); // 448 == 0700
+		}
+
+		string beagled_file = Path.Combine (local_autostart_dir, "beagled-autostart.desktop");
+		string beagle_search_file = Path.Combine (local_autostart_dir, "beagle-search-autostart.desktop");
+
+		Assembly assembly = Assembly.GetExecutingAssembly ();
+
+		StreamReader reader = new StreamReader (assembly.GetManifestResourceStream ("beagled-autostart.desktop"));
+		StreamWriter writer = new StreamWriter (beagled_file);
+
+		string l;
+		while ((l = reader.ReadLine ()) != null)
+			writer.WriteLine (l);
+		reader.Close ();
+
+		if (! enabled) {
+			writer.WriteLine ("Hidden=true");
+			writer.WriteLine ("X-GNOME-autostart-enabled=false");
+		}
+
+		writer.Close ();
+
+		reader = new StreamReader (assembly.GetManifestResourceStream ("beagle-search-autostart.desktop"));
+		writer = new StreamWriter (beagle_search_file);
+
+		while ((l = reader.ReadLine ()) != null)
+			writer.WriteLine (l);
+		reader.Close ();
+
+		if (! enabled) {
+			writer.WriteLine ("Hidden=true");
+			writer.WriteLine ("X-GNOME-autostart-enabled=false");
+		}
+
+		writer.Close ();
+	}
+
+	////////////////////////////////////////////////////////////////
 	// Eventhandlers
+
+	private void OnAutostartToggled (object o, EventArgs args)
+	{
+		SetAutostart (((Gtk.ToggleButton) o).Active);
+	}
 
 	private void OnDialogResponse (object o, ResponseArgs args)
 	{
@@ -383,142 +414,6 @@ public class SettingsDialog
 	private void OnExcludeItemAdded (ExcludeItem exclude_item)
 	{
 		exclude_view.AddItem (exclude_item);
-	}
-
-	//Netbeagle: Add, Remove operations
-	private void OnAddNetbeagleClicked (object o, EventArgs args)
-	{	
-		Glade.XML glade = new Glade.XML (null, "settings.glade", "netbeagle_entry_dialog", "beagle");
-		glade.Autoconnect (this);
-		ResponseType nbed_response = (ResponseType) netbeagle_entry_dialog.Run ();
-
-		string new_node = netbeagle_textentry.Text.Trim();
-								
-		if ((new_node.Length > 1) && (((string[])new_node.Split(':')).Length < 2))
-			new_node += ":8888";
-			
-		netbeagle_entry_dialog.Destroy ();
-		
-		if (nbed_response == ResponseType.Ok) {
-			string error_message = "";
-			bool throw_error = false;
-
-			if (new_node.Length < 2)
-			{
-				throw_error = true;
-				error_message = Catalog.GetString ("Invalid host entry");			
-			}
-			else
-				// Check if the new entry matches an existing netbeagle entry
-				foreach (string old_node in netbeagle_view.Netbeagles) {
-					if (new_node == old_node) {
-						throw_error = true;
-						error_message = Catalog.GetString ("Remote host already present in the list.");
-					} 
-				}
-
-			if (throw_error) {
-				HigMessageDialog.RunHigMessageDialog (settings_dialog,
-								      DialogFlags.Modal,
-								      MessageType.Warning,
-								      ButtonsType.Ok,
-								      Catalog.GetString ("Netbeagle Node not added"),
-								      error_message);
-			} 
-			else 
-					netbeagle_view.AddNode (new_node);
-
-		}
-	}
-
-	private void OnRemoveNetbeagleClicked (object o, EventArgs args)
-	{
-		// Confirm removal
-		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog,
-								 DialogFlags.Modal,
-								 MessageType.Question,
-								 ButtonsType.YesNo,
-								 Catalog.GetString ("Remove host"),
-								 Catalog.GetString ("Are you sure you wish to remove this host from the list?"));
-
-		ResponseType response = (ResponseType) dialog.Run ();
-		dialog.Destroy ();
-
-		if (response != ResponseType.Yes)
-			return;
-
-		netbeagle_view.RemoveSelectedNode ();
-		
-		remove_netbeagle_button.Sensitive = false;
-	}
-
-	private void OnNetbeagleSelected (object o, EventArgs args)
-	{
-		remove_netbeagle_button.Sensitive = true;
-	}
-	
-	//Publicfolders: Add, Remove operations
-	private void OnAddPublicfolderClicked (object o, EventArgs args)
-	{
-		CompatFileChooserDialog fs_dialog = new CompatFileChooserDialog (Catalog.GetString ("Select path"), 
-										 settings_dialog, 
-										 CompatFileChooserDialog.Action.SelectFolder);
-		fs_dialog.SelectMultiple = false;
-
-		ResponseType fs_response = (ResponseType) fs_dialog.Run ();
-		string new_pf = fs_dialog.Filename;
-		fs_dialog.Destroy ();
-		
-		if (fs_response == ResponseType.Ok) {
-		
-			string error_message = "";
-			bool throw_error = false;
-
-			// Check and see if the current data collides with the new path in any way
-			// FIXME: Do this with System.IO.Path or something
-			foreach (string old_pf in publicfolder_view.Publicfolders) {
-				if (new_pf == old_pf) {
-					throw_error = true;
-					error_message = Catalog.GetString ("The selected path is already configured for external access.");
-				} 
-			}
-
-			if (throw_error) {
-				HigMessageDialog.RunHigMessageDialog (settings_dialog,
-								      DialogFlags.Modal,
-								      MessageType.Warning,
-								      ButtonsType.Ok,
-								      Catalog.GetString ("Path not added"),
-								      error_message);
-			} 
-			else 
-					publicfolder_view.AddPath (new_pf);		
-		}
-	}
-
-	private void OnRemovePublicfolderClicked (object o, EventArgs args)
-	{
-		// Confirm removal
-		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog,
-								 DialogFlags.Modal,
-								 MessageType.Question,
-								 ButtonsType.YesNo,
-								 Catalog.GetString ("Remove public path"),
-								 Catalog.GetString ("Are you sure you wish to remove this entry from the list of public paths?"));
-
-		ResponseType response = (ResponseType) dialog.Run ();
-		dialog.Destroy ();
-
-		if (response != ResponseType.Yes)
-			return;
-
-		publicfolder_view.RemoveSelectedPath ();
-		remove_publicfolder_button.Sensitive = false;
-	}
-
-	private void OnPublicfolderSelected (object o, EventArgs args)
-	{
-		remove_publicfolder_button.Sensitive  = true;
 	}
 
 	////////////////////////////////////////////////////////////////
@@ -698,76 +593,9 @@ public class SettingsDialog
 	}
 
 	////////////////////////////////////////////////////////////////
-
-	// NetbeagleView 	
-	class NetbeagleView : TreeView 
-	{
-		private ListStore store;
-
-		private ArrayList netBeagleList = new ArrayList ();
-
-		public ArrayList Netbeagles {
-			get { return netBeagleList; }
-		}
-
-		public NetbeagleView ()
-		{
-			store = new ListStore (typeof (string));
-
-			this.Model = store;
-
-			AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 0);
-		}
-
-		public void AddNode (string node)
-		{
-			netBeagleList.Add (node);
-			store.AppendValues (node);
-		} 
-
-		public void RemoveNode (string node)
-		{
-			find_node = node;
-			found_iter = TreeIter.Zero;
-
-			this.Model.Foreach (new TreeModelForeachFunc (ForeachFindNode));
-
-			store.Remove (ref found_iter);
-			netBeagleList.Remove (node);
-		}
-
-		private string find_node;
-		private TreeIter found_iter;
-
-		private bool ForeachFindNode (TreeModel model, TreePath path, TreeIter iter)
-		{
-			if ((string) model.GetValue (iter, 0) == find_node) {
-				found_iter = iter;
-				return true;
-			}
-
-			return false;
-		}
-
-		public void RemoveSelectedNode ()
-		{
-			TreeModel model;
-			TreeIter iter;
-
-			if (!this.Selection.GetSelected(out model, out iter)) {
-				return;
-			}
-			string node = (string)model.GetValue(iter, 0);
-
-			store.Remove (ref iter);
-			netBeagleList.Remove (node);
-		}
-		
-	}
-	////////////////////////////////////////////////////////////////
 	// PublicfolderView 
 
-	class PublicfolderView: TreeView 
+	class PublicfolderView : TreeView 
 	{
 		private ListStore store;
 
