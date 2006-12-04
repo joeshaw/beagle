@@ -66,7 +66,7 @@ class QueryTool {
 					   (lastQueryTime - queryStartTime).TotalSeconds);
 		}
 
-		if (response.NumMatches >= 0)
+		if (verbose && response.NumMatches >= 0)
 			Console.WriteLine ("Returned latest {0} results out of total {1} matches", response.Hits.Count, response.NumMatches);
 
 		if (! display_hits) {
