@@ -245,6 +245,13 @@ namespace Beagle.Daemon {
 				RequestWrapper wrapper = (RequestWrapper) req_serializer.Deserialize (buffer_stream);
 				
 				req = wrapper.Message;
+			} catch (InvalidOperationException e) {
+				// Undocumented: Xml Deserialization exceptions
+				if (e.InnerException != null)
+					resp = new ErrorResponse (e.InnerException);
+				else
+					resp = new ErrorResponse (e);
+				force_close_connection = true;
 			} catch (Exception e) {
 				resp = new ErrorResponse (e);
 				force_close_connection = true;

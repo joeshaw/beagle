@@ -77,7 +77,8 @@ namespace Beagle.Daemon {
 		// 15: analyze PropertyKeyword field, and store all properties as
 		//     lower case so that we're truly case insensitive.
 		// 16: add inverted timestamp to make querying substantially faster
-		private const int MAJOR_VERSION = 16;
+		// 17: add boolean property to denote a child indexable
+		private const int MAJOR_VERSION = 17;
 		private int minor_version = 0;
 
 		private string index_name;
