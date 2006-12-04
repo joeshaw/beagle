@@ -119,7 +119,7 @@ namespace Beagle.Filters {
 				// instead of uid:foo#xxx#bar (avoid duplicates ?)
 				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name, true));
 
-				child.CacheContent = false;
+				child.CacheContent = true;
 				child.MimeType = a_entry.MimeType;
 
 				child.DisplayUri = new Uri (DisplayUri.ToString () + "#" + a_entry.Name, true);

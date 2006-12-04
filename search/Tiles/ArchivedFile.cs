@@ -41,9 +41,49 @@ namespace Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			// FIXME: Emblemize some sort of archive icon on top of
-			// the main icon.
 			base.LoadIcon (image, size);
+
+			string parent_mime_type = XdgMime.GetMimeTypeFromFileName (Hit.EscapedParentUri);
+
+			if (parent_mime_type == null)
+				return;
+
+			Gdk.Pixbuf emblem = WidgetFu.LoadMimeIcon (parent_mime_type, 24);
+
+			if (emblem == null)
+				return;
+
+			Gdk.Pixbuf icon = image.Pixbuf.Copy ();
+
+			emblem.Composite (icon, 
+					  0,                                // dest_x
+					  icon.Height - emblem.Height,      // dest_y
+					  emblem.Width,                     // dest_width
+					  emblem.Height,                    // dest_height
+					  0,                                // offset_x
+					  icon.Height - emblem.Height,      // offset_y
+					  1, 1,                             // scale
+					  Gdk.InterpType.Bilinear, 255);
+
+			image.Pixbuf.Dispose ();
+			image.Pixbuf = icon;
 		}
+
+		protected override DetailsPane GetDetails ()
+		{
+			DetailsPane details = new DetailsPane ();
+
+			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle (Hit));
+			details.AddLabelPair (Catalog.GetString ("File Name:"), Hit.Uri.Fragment.Substring (1)); // Substring to move past the initial #
+			details.AddLabelPair (Catalog.GetString ("Inside File:"), Hit.Uri.LocalPath);
+
+			if (Hit ["dc:author"] != null)
+				details.AddLabelPair (Catalog.GetString ("Author:"), Hit ["dc:author"]);
+
+			details.AddSnippet ();
+
+			return details;
+		}
+
 	}
 }

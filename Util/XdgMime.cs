@@ -36,6 +36,14 @@ namespace Beagle.Util {
 		[DllImport ("libbeagleglue")]
 		static extern IntPtr xdg_mime_get_mime_type_for_file (string file_path, IntPtr optional_stat_info);
 
+		[DllImport ("libbeagleglue")]
+		static extern IntPtr xdg_mime_get_mime_type_from_file_name (string file_name);
+
+		public static string GetMimeTypeFromFileName (string file_name)
+		{
+			return Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_name));
+		}
+
 		public static string GetMimeType (string file_path)
 		{
 			string mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_for_file (file_path, (IntPtr) null));
