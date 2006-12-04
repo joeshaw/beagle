@@ -1,4 +1,4 @@
-# translation of es.po to Spanish
+# translation of es.po to
 # Antonio Ognio <gnrfan@gnrfan.org>, 2005.
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-12 21:46+0100\n"
-"PO-Revision-Date: 2006-11-12 21:48+0100\n"
-"Last-Translator: Francisco Javier F. Serrador <serrador@cvs.gnome.org>\n"
-"Language-Team: Spanish <traductores@es.gnome.org>\n"
+"POT-Creation-Date: 2006-12-04 17:58+0100\n"
+"PO-Revision-Date: 2006-12-04 18:02+0100\n"
+"Last-Translator: \n"
+"Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,7 +29,7 @@ msgstr "La orientación de la bandeja."
 
 #: ../ContactViewer/ContactWindow.cs:74
 msgid "Open..."
-msgstr "Abrir..."
+msgstr "Abrir…"
 
 #: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
 msgid "Quit"
@@ -86,66 +86,30 @@ msgstr[1] "Añadidos {0} contactos"
 msgid "Viewing {0}"
 msgstr "Viendo {0}"
 
-#: ../ContactViewer/ContactWindow.cs:205
-msgid "DisplayName"
-msgstr "NombreMostrado"
-
 #: ../ContactViewer/ContactWindow.cs:244
 msgid "Select a mork database file"
 msgstr "Seleccione un archivo de base de datos mork"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "FirstName"
-msgstr "Nombre"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "NickName"
-msgstr "Apodo"
-
-#: ../ContactViewer/ContactWindow.cs:303
-msgid "LastName"
-msgstr "Apellidos"
 
 #: ../ContactViewer/ContactWindow.cs:311
 msgid "Primary E-Mail:"
 msgstr "Correo-e primario:"
 
-#: ../ContactViewer/ContactWindow.cs:313
-msgid "PrimaryEmail"
-msgstr "CorreoPrimario"
-
 #: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:33
+#: ../ContactViewer/contactviewer.glade.h:37
 msgid "Screen name:"
 msgstr "Nombre en pantalla:"
-
-#: ../ContactViewer/ContactWindow.cs:317
-msgid "_AimScreenName"
-msgstr "NombrePantalla_Aim"
 
 #: ../ContactViewer/ContactWindow.cs:319
 msgid "Home phone:"
 msgstr "Tlf. casa:"
 
-#: ../ContactViewer/ContactWindow.cs:321
-msgid "HomePhone"
-msgstr "TlfCasa"
-
 #: ../ContactViewer/ContactWindow.cs:323
 msgid "Mobile phone:"
 msgstr "Tlf. móvil:"
 
-#: ../ContactViewer/ContactWindow.cs:325
-msgid "CellularNumber"
-msgstr "TelefMovil"
-
 #: ../ContactViewer/ContactWindow.cs:327
 msgid "Web page:"
 msgstr "Página web:"
-
-#: ../ContactViewer/ContactWindow.cs:329
-msgid "WebPage2"
-msgstr "WebPage2"
 
 #: ../ContactViewer/ContactWindow.cs:336
 msgid "Send E-Mail"
@@ -153,7 +117,7 @@ msgstr "Enviar correo"
 
 #: ../ContactViewer/ContactWindow.cs:340
 msgid "Details..."
-msgstr "Detalles..."
+msgstr "Detalles…"
 
 #: ../ContactViewer/ContactWindow.cs:368
 msgid "Could not find a valid E-mail address!"
@@ -239,69 +203,73 @@ msgstr "Departamento:"
 msgid "Detailed view"
 msgstr "Vista detallada"
 
-#: ../ContactViewer/contactviewer.glade.h:21
+#. This is Display name
+#: ../ContactViewer/contactviewer.glade.h:22
 msgid "Display:"
 msgstr "Pantalla:"
 
-#: ../ContactViewer/contactviewer.glade.h:22 ../search/Tiles/Contact.cs:68
+#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "Correo-e:"
 
-#: ../ContactViewer/contactviewer.glade.h:23
+#: ../ContactViewer/contactviewer.glade.h:24
 msgid "Fax:"
 msgstr "Fax:"
 
-#: ../ContactViewer/contactviewer.glade.h:24
+#. This is First name
+#: ../ContactViewer/contactviewer.glade.h:26
 msgid "First:"
 msgstr "Nombre:"
 
-#: ../ContactViewer/contactviewer.glade.h:25
+#. This is Home phone number
+#: ../ContactViewer/contactviewer.glade.h:28
 msgid "Home:"
 msgstr "Domicilio:"
 
-#: ../ContactViewer/contactviewer.glade.h:26
+#. This is Last name
+#: ../ContactViewer/contactviewer.glade.h:30
 msgid "Last:"
 msgstr "Apellidos:"
 
-#: ../ContactViewer/contactviewer.glade.h:27
+#: ../ContactViewer/contactviewer.glade.h:31
 msgid "Mobile:"
 msgstr "Móvil:"
 
-#: ../ContactViewer/contactviewer.glade.h:28
+#: ../ContactViewer/contactviewer.glade.h:32
 msgid "Nickname:"
 msgstr "Apodo:"
 
-#: ../ContactViewer/contactviewer.glade.h:29
+#: ../ContactViewer/contactviewer.glade.h:33
 msgid "Organization:"
 msgstr "Organización:"
 
-#: ../ContactViewer/contactviewer.glade.h:30
+#: ../ContactViewer/contactviewer.glade.h:34
 msgid "Other"
 msgstr "Otro"
 
-#: ../ContactViewer/contactviewer.glade.h:31
+#: ../ContactViewer/contactviewer.glade.h:35
 msgid "Pager:"
 msgstr "Buscapersonas:"
 
-#: ../ContactViewer/contactviewer.glade.h:32
+#: ../ContactViewer/contactviewer.glade.h:36
 msgid "Preferred format:"
 msgstr "Formato preferido:"
 
-#: ../ContactViewer/contactviewer.glade.h:34
+#: ../ContactViewer/contactviewer.glade.h:38
 msgid "State/Province"
 msgstr "Estado/Provincia"
 
-#: ../ContactViewer/contactviewer.glade.h:35
+#: ../ContactViewer/contactviewer.glade.h:39
 msgid "State/Province:"
 msgstr "Estado/Provincia:"
 
-#: ../ContactViewer/contactviewer.glade.h:36 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:62
+#: ../ContactViewer/contactviewer.glade.h:40 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:138 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Título:"
 
-#: ../ContactViewer/contactviewer.glade.h:37
+#: ../ContactViewer/contactviewer.glade.h:41
 msgid ""
 "Unknown\n"
 "Plain text\n"
@@ -311,19 +279,20 @@ msgstr ""
 "Texto sin formato\n"
 "HTML"
 
-#: ../ContactViewer/contactviewer.glade.h:40
+#: ../ContactViewer/contactviewer.glade.h:44
 msgid "Web Page:"
 msgstr "Página web:"
 
-#: ../ContactViewer/contactviewer.glade.h:41
+#. This is Work phone number
+#: ../ContactViewer/contactviewer.glade.h:46
 msgid "Work:"
 msgstr "Trabajo:"
 
-#: ../ContactViewer/contactviewer.glade.h:42
+#: ../ContactViewer/contactviewer.glade.h:47
 msgid "ZIP/Postal Code"
 msgstr "Código Postal/ZIP"
 
-#: ../ContactViewer/contactviewer.glade.h:43
+#: ../ContactViewer/contactviewer.glade.h:48
 msgid "ZIP/Postal Code:"
 msgstr "Código postal/ZIP:"
 
@@ -345,7 +314,7 @@ msgstr "Conversaciones en {0}"
 msgid "Conversations with {0}"
 msgstr "Conversaciones con {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:28
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:30
 msgid "Search"
 msgstr "Búsqueda"
 
@@ -401,15 +370,13 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha</"
 "b>"
@@ -438,21 +405,40 @@ msgstr "El servicio de búsqueda no está en ejecución"
 msgid "Start search service"
 msgstr "Iniciar el servicio de búsqueda"
 
-#: ../search/Search.cs:151
+#: ../search/Search.cs:139 ../search/Tray/TrayIcon.cs:32
+msgid "Desktop Search"
+msgstr "Búsquedas de Escritorio"
+
+#: ../search/Search.cs:158
 msgid "_Find:"
 msgstr "_Buscar:"
 
-#: ../search/Search.cs:166
+#: ../search/Search.cs:179
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Search.cs:214
+#: ../search/Search.cs:235
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Search.cs:215
+#: ../search/Search.cs:236
 msgid "Start searching"
 msgstr "Empezar a buscar"
+
+#: ../search/Search.cs:262
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Búsquedas de Escritorio: {0}"
+
+#: ../search/Search.cs:523
+msgid "Beagle is indexing your data"
+msgstr "Beagle está indizando sus datos"
+
+#: ../search/Search.cs:524
+msgid ""
+"The Beagle service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "El servicio Beagle esté indizando sus datos. Los resultados de búsqueda podrían estar incompletos hasta que el indizado haya terminado."
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -497,16 +483,16 @@ msgstr "Correo-e"
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:139 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Tiles/File.cs:128
+#: ../search/Tiles/File.cs:142
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/File.cs:144 ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:79
 msgid "Full Path:"
 msgstr "Ruta completa:"
@@ -539,7 +525,7 @@ msgstr "Conversación MI"
 msgid "Name:"
 msgstr "Nombre:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Fecha de recepción:"
 
@@ -567,31 +553,31 @@ msgstr "Disponible"
 msgid "Mail attachment"
 msgstr "Adjunto de correo"
 
-#: ../search/Tiles/MailMessage.cs:67
+#: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
 msgstr "(sin título)"
 
-#: ../search/Tiles/MailMessage.cs:77
+#: ../search/Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "Enviar por correo"
 
-#: ../search/Tiles/MailMessage.cs:109
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Asunto:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "To:"
 msgstr "Para:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "From:"
 msgstr "De:"
 
-#: ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Sent:"
 msgstr "Fecha de envío:"
 
-#: ../search/Tiles/MailMessage.cs:120
+#: ../search/Tiles/MailMessage.cs:111
 msgid "Folder:"
 msgstr "Carpeta:"
 
@@ -669,28 +655,28 @@ msgstr "Proveedores de noticias"
 msgid "Archives"
 msgstr "Archivadores"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
-#: ../Util/StringFu.cs:88
+#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
+#: ../Util/StringFu.cs:104
 msgid "Yesterday"
 msgstr "Ayer"
 
-#: ../search/Tiles/Utils.cs:128 ../search/Tiles/Utils.cs:210
-#: ../Util/StringFu.cs:86
+#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
+#: ../Util/StringFu.cs:102
 msgid "Today"
 msgstr "Hoy"
 
-#: ../search/Tiles/Utils.cs:130 ../search/Tiles/Utils.cs:212
+#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
 msgid "Tomorrow"
 msgstr "Mañana"
 
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:235
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "hace {0} semana"
 msgstr[1] "hace {0} semanas"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:237
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -698,28 +684,28 @@ msgstr[0] "En {0} semana"
 msgstr[1] "En {0} semanas"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:239
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "hace {0} mes"
 msgstr[1] "hace {0} meses"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:241
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "En {0} mes"
 msgstr[1] "En {0} meses"
 
-#: ../search/Tiles/Utils.cs:236
+#: ../search/Tiles/Utils.cs:243
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Hace {0} año"
 msgstr[1] "Hace {0} años"
 
-#: ../search/Tiles/Utils.cs:238
+#: ../search/Tiles/Utils.cs:245
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -739,10 +725,6 @@ msgstr "URL:"
 #: ../search/Tiles/WebHistory.cs:52
 msgid "Accessed:"
 msgstr "Accedido:"
-
-#: ../search/Tray/TrayIcon.cs:32
-msgid "Desktop Search"
-msgstr "Búsquedas de Escritorio"
 
 #: ../search/Tray/TrayIcon.cs:57
 msgid "No Recent Searches"
@@ -1117,15 +1099,14 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:285
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
+msgstr "La ruta seleccionada ya está seleccionada para la indización y no se añadió."
 
 #: ../tools/Settings.cs:288
 msgid ""
-"The selected path wasn't added. The list contains items that supercedes it "
+"The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
 msgstr ""
-"La ruta seleccionada no se ha añadido. Esta lista contiene elementos que la "
+"La ruta seleccionada no se ha añadido. La lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
 #: ../tools/Settings.cs:299 ../tools/Settings.cs:491
@@ -1155,7 +1136,7 @@ msgid ""
 "included for indexing?"
 msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
-"excluirán de la indexación?"
+"excluirán de la indización?"
 
 #: ../tools/Settings.cs:365
 msgid "Remove item"
@@ -1167,7 +1148,7 @@ msgid ""
 "excluded from indexing?"
 msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
-"excluir de la indexación?"
+"excluir de la indización?"
 
 #: ../tools/Settings.cs:409
 msgid "Invalid host entry"
@@ -1202,8 +1183,7 @@ msgid "Remove public path"
 msgstr "Quitar ruta pública"
 
 #: ../tools/Settings.cs:507
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
+msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr "¿Seguro que quiere quitar este elemento de la lista de rutas públicas?"
 
 #: ../tools/Settings.cs:552 ../tools/Settings.cs:641 ../tools/Settings.cs:719
@@ -1231,7 +1211,7 @@ msgstr "Carpeta de correo:"
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:27
 msgid "P_ath:"
 msgstr "_Ruta:"
 
@@ -1253,7 +1233,7 @@ msgid ""
 "the list of resources excluded for indexing."
 msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
-"lista de recursos excluidos de la indexación."
+"lista de recursos excluidos de la indización."
 
 #: ../tools/Settings.cs:1133
 msgid "Show"
@@ -1292,10 +1272,14 @@ msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Seleccione la carpeta de correo</b>"
 
 #: ../tools/settings.glade.h:9
+msgid "<b>User Interface</b>"
+msgstr "<b>Interfaz de usuario</b>"
+
+#: ../tools/settings.glade.h:10
 msgid "Add Remote Host"
 msgstr "Añadir equipo remoto"
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:11
 msgid ""
 "Add a remote search-enabled host you wish \n"
 "to network with."
@@ -1303,17 +1287,17 @@ msgstr ""
 "Añade un host remoto con búsqueda por red activada\n"
 "con el que conectarse."
 
-#: ../tools/settings.glade.h:12
-msgid "Add any additional paths to be included for indexing."
-msgstr "Añadir cualquier ruta adicional para incluirla en la indexación."
-
 #: ../tools/settings.glade.h:13
+msgid "Add any additional paths to be included for indexing."
+msgstr "Añadir cualquier ruta adicional para incluirla en la indización."
+
+#: ../tools/settings.glade.h:14
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
 "Añade cualquier host con búsqueda remota activada con el que desee "
 "conectarse."
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1321,63 +1305,67 @@ msgstr ""
 "Configurar qué tipos de resultados deberían ser visibles, y en qué orden "
 "deberían presentarse al agruparlos por tipo."
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:16
 msgid "Allow _external access to local search services"
 msgstr "Permitir acceso _externo a servicios de búsqueda locales"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
+msgid "Automatically start searching after the user has stopped typing"
+msgstr "Empezar a buscar automáticamente después de que el usuario haya terminado de teclear"
+
+#: ../tools/settings.glade.h:19
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Display the search window by pressing:"
 msgstr "Mostrar la ventana de búsqueda al presionar:"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Exclude Resource"
 msgstr "Excluir recurso"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:22
 msgid "Filename _pattern"
 msgstr "_Patrón de nombre de archivo"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "I_ndex my home directory"
 msgstr "_Indexar mi directorio personal"
 
-#: ../tools/settings.glade.h:22
-msgid "Index data while on battery power"
-msgstr "Indexar datos cuando se esté funcionando con baterías"
-
-#: ../tools/settings.glade.h:23
-msgid "Indexing"
-msgstr "Indexación"
-
 #: ../tools/settings.glade.h:24
+msgid "Index data while on battery power"
+msgstr "Indizar datos cuando se esté funcionando con baterías"
+
+#: ../tools/settings.glade.h:25
+msgid "Indexing"
+msgstr "Indización"
+
+#: ../tools/settings.glade.h:26
 msgid "Networking"
 msgstr "Redes"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:28
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Seleccione un recurso que desee excluir de la indexación."
-
-#: ../tools/settings.glade.h:27
-msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Seleccione la carpeta de correo que desee excluir de la indexación. "
+msgstr "Seleccione un recurso que desee excluir de la indización."
 
 #: ../tools/settings.glade.h:29
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Seleccione la carpeta de correo que desee excluir de la indización. "
+
+#: ../tools/settings.glade.h:31
 msgid "Search Preferences"
 msgstr "Preferencias de búsqueda"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "Select Mail Folder"
 msgstr "Seleccione la carpeta de correo"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1385,37 +1373,37 @@ msgstr ""
 "Especifique cualquier recurso, como rutas, patrones, carpetas de correo ó "
 "tipos de objetos que desea excluir del índice."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:34
 msgid "Specify paths that should be available for external access."
 msgstr "Especificar rutas que deberían estar disponibles para acceso externo."
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:35
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:36
 msgid "_Address:"
 msgstr "_Dirección:"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:37
 msgid "_Allow Beagle to be run as root"
 msgstr "_Permitir a Beagle ejecutarse como root"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:38
+msgid "_Browse..."
+msgstr "_Examinar…"
+
+#: ../tools/settings.glade.h:39
 msgid "_Folder path"
 msgstr "_Ruta a la carpeta"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:40
 msgid "_Mail folder"
 msgstr "Carpeta de _correo"
 
-#: ../tools/settings.glade.h:38
-msgid "_Maximum number of results displayed:"
-msgstr "Número _máximo de resultados mostrados:"
-
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:41
 msgid "_Start search & indexing services automatically "
-msgstr "_Iniciar los servicios de búsqueda e indexación automáticamente"
+msgstr "_Iniciar los servicios de búsqueda e indización automáticamente"
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
 msgid "Configure Desktop Search & Indexing"
@@ -1423,11 +1411,11 @@ msgstr "Configure la búsqueda e indexado del escritorio"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
 msgid "Configure search & indexing properties"
-msgstr "Configure las propiedades de búsqueda e indexación"
+msgstr "Configure las propiedades de búsqueda e indización"
 
 #: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
-msgstr "Búsqueda e indexación"
+msgstr "Búsqueda e indización"
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
@@ -1458,62 +1446,62 @@ msgid "Unknown Directory"
 msgstr "Directorio desconocido"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:91
+#: ../Util/StringFu.cs:107
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:94
+#: ../Util/StringFu.cs:110
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:97
+#: ../Util/StringFu.cs:113
 msgid "h:mm tt"
 msgstr "HH:MM"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:103
+#: ../Util/StringFu.cs:119
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:136
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Hoy, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:139
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ayer, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "Hace {0} días, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:147
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:136
+#: ../Util/StringFu.cs:152
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} horas"
 
-#: ../Util/StringFu.cs:153
+#: ../Util/StringFu.cs:169
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1521,34 +1509,20 @@ msgstr[0] "{0} minuto"
 msgstr[1] "{0} minutos"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:169
+#: ../Util/StringFu.cs:185
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:173
+#: ../Util/StringFu.cs:189
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} Kib"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:176
+#: ../Util/StringFu.cs:192
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mib"
 
-#~ msgid "Sor_t"
-#~ msgstr "_Ordenar"
-
-#~ msgid "_Everywhere"
-#~ msgstr "_En todos los lugares"
-
-#~ msgid "Search everywhere"
-#~ msgstr "Buscar en todos los lugares"
-
-#~ msgid "_Applications"
-#~ msgstr "_Aplicaciones"
-
-#~ msgid "_Name"
-#~ msgstr "_Nombre"
