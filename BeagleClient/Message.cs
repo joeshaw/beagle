@@ -242,7 +242,7 @@ namespace Beagle {
 	public class EmptyResponse : ResponseMessage { }
 
 	public class ErrorResponse : ResponseMessage {
-		public string Message;
+		public string ErrorMessage;
 		public string Details;
 
 		// Needed by the XmlSerializer for deserialization
@@ -250,13 +250,13 @@ namespace Beagle {
 
 		public ErrorResponse (Exception e)
 		{
-			this.Message = e.Message;
+			this.ErrorMessage = e.Message;
 			this.Details = e.ToString ();
 		}
 
 		public ErrorResponse (string message)
 		{
-			this.Message = message;
+			this.ErrorMessage = message;
 		}
 	}
 
@@ -264,7 +264,7 @@ namespace Beagle {
 
 		private string details;
 
-		internal ResponseMessageException (ErrorResponse response) : base (response.Message)
+		internal ResponseMessageException (ErrorResponse response) : base (response.ErrorMessage)
 		{ 
 			Log.Debug ("Creating a ResponseMessageException from an ErrorResponse");
 			details = response.Details;

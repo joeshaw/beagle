@@ -8,3 +8,4 @@ Makefile.in
 beagle-search
 beagle-shutdown
 beagle-info
+beagle-search-provider

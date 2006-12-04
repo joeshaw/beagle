@@ -94,8 +94,13 @@ beagle_timestamp_new_from_unix_time (time_t time)
 {
 	BeagleTimestamp *timestamp;
 	struct tm *result;
+	gboolean before_utc;
+	int offset_mins, tz_hour, tz_min;
 
-	result = gmtime (&time);
+	/* Send everything in localtime since XmlSerializer .Net-1.0 likes that.
+	 * FIXED: To be changed back to gmtime() in .Net-2.0 era.
+	 */
+	result = localtime (&time);
 
 	timestamp = beagle_timestamp_new ();
 
@@ -106,6 +111,23 @@ beagle_timestamp_new_from_unix_time (time_t time)
 	timestamp->hour = result->tm_hour;
 	timestamp->minute = result->tm_min;
 	timestamp->second = result->tm_sec;
+
+	/* Compute timezone offset. */
+	time = 0;
+	result = localtime (&time);
+	before_utc = (result->tm_mday == 1);
+
+	offset_mins = 60 * result->tm_hour + result->tm_min;
+	if (before_utc == FALSE)
+		offset_mins = 1440 - offset_mins; /* 1440 = mins in 1 day */
+	
+	tz_hour = offset_mins/60;
+	tz_min = offset_mins % 60;
+	if (before_utc == FALSE)
+		tz_hour = -tz_hour;
+
+	timestamp->tz_hour = tz_hour;
+	timestamp->tz_minute = tz_min;
 
 	return timestamp;
 }

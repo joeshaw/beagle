@@ -42,7 +42,7 @@ namespace Beagle {
 
 		}
 
-		[XmlArray (ElementName="Indexables")]
+		[XmlArray (ElementName="ToAdd")]
 		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
 		public ArrayList ToAdd {
 			get { return to_add; }
