@@ -53,6 +53,9 @@ namespace Beagle.Filters {
 
 		public FilterArchive ()
 		{
+			// 1: Store entry names as text content
+			SetVersion (1);
+
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/zip"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-bzip-compressed-tar"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-compressed-tar"));
@@ -137,6 +140,10 @@ namespace Beagle.Filters {
 					child.AddProperty (prop);
 
 				AddChildIndexable (child);
+
+				// Store file names in the archive
+				AppendText (Path.GetFileName (a_entry.Name));
+				AppendText (" ");
 
 				++count;
 			}

@@ -270,7 +270,7 @@ namespace Beagle {
 
 			string str;
 			str = StringFu.FuzzyDivide (no_ext);
-			prop = Property.NewUnstored (SplitFilenamePropKey, str);
+			prop = Property.New (SplitFilenamePropKey, str);
 			prop.IsMutable = mutable;
 			yield return prop;
 		}
