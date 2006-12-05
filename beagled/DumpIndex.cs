@@ -282,7 +282,7 @@ class DumpIndexTool {
 		if (primary_hits.Length () == 1) {
 			primary_doc = primary_hits.Doc (0);
 			Console.WriteLine (
-			"-----------------------------------------[ Immutable data ]--------------------------------------");
+			"------------[ Immutable data ]------------");
 			foreach (Field f in primary_doc.Fields ()) {
 
 				String name = f.Name ();
@@ -293,16 +293,20 @@ class DumpIndexTool {
 				if (name.Length >= 7 && name.StartsWith ("prop:"))
 					tokenized = (name [5] != 't');
 				float boost = f.GetBoost();
+				Console.WriteLine ("{0,-30} = [{1}]", name, val);
+				Console.WriteLine ("{0,-32} ({1}stored, {2} searchable, {3} tokenized)",
+						    "",
+						    (stored ? "" : "un"),
+						    (searchable ? "" : "not"),
+						    (tokenized ? "" : "not"));
 
-				Console.WriteLine ("{0,-30} = [{1}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
-						    name, val, stored, searchable, tokenized, boost);
 			}
 		}
 		
 		if (secondary_hits.Length () == 1) {
 			secondary_doc = secondary_hits.Doc (0);
 			Console.WriteLine (
-			"------------------------------------------[ Mutable data ]---------------------------------------");
+			"------------[ Mutable data ]-----------");
 			foreach (Field f in secondary_doc.Fields ()) {
 
 				String name = f.Name ();
@@ -314,8 +318,12 @@ class DumpIndexTool {
 					tokenized = (name [5] != 't');
 				float boost = f.GetBoost();
 
-				Console.WriteLine ("{0,-30} = [{1}] (stored? {2}, searchable? {3}, tokenized? {4}, boost={5})",
-						    name, val, stored, searchable, tokenized, boost);
+				Console.WriteLine ("{0,-30} = [{1}]", name, val);
+				Console.WriteLine ("{0,-32} ({1}stored, {2} searchable, {3} tokenized)",
+						    "",
+						    (stored ? "" : "un"),
+						    (searchable ? "" : "not"),
+						    (tokenized ? "" : "not"));
 			}
 		}
 
