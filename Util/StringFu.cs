@@ -45,35 +45,19 @@ namespace Beagle.Util {
 		// FIXME: Fix all the UTC and timezone hack when switching to .Net-2.0
 		private const String LocalTimeFormat = "yyyyMMddHHmmsszz";
 
-		// Remove when switching to .Net-2.0
-		// This is a totally incorrect function - except it works in practice
-		static private DateTime ToUtc (DateTime dt)
-		{
-			// [+-]xx:xx
-			string timezone = dt.ToString("zzz", CultureInfo.InvariantCulture);
-			return ((timezone [1] == timezone [2] &&
-				 timezone [2] == timezone [3] &&
-				 timezone [3] == timezone [4] &&
-				 timezone [4] == '0') ?
-				dt :
-				dt.ToUniversalTime ());
-
-			
-		}
-
 		static public string DateTimeToString (DateTime dt)
 		{
-			return ToUtc (dt).ToString (TimeFormat);
+			return dt.ToString (TimeFormat);
 		}
 
 		static public string DateTimeToYearMonthString (DateTime dt)
 		{
-			return ToUtc (dt).ToString ("yyyyMM");
+			return dt.ToString ("yyyyMM");
 		}
 
 		static public string DateTimeToDayString (DateTime dt)
 		{
-			return ToUtc (dt).ToString ("dd");
+			return dt.ToString ("dd");
 		}
 
                 static public DateTime StringToDateTime (string str)
