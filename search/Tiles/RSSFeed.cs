@@ -32,9 +32,12 @@ namespace Search.Tiles {
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
 			string path = Hit ["fixme:cachedimg"];
-			if (path != null && File.Exists (path))
-				image.Pixbuf = new Gdk.Pixbuf (path, size, size);
-			else
+			if (path != null && File.Exists (path)) {
+				image.Pixbuf = new Gdk.Pixbuf (path);
+
+				if (image.Pixbuf.Width > size || image.Pixbuf.Height > size)
+					image.Pixbuf = image.Pixbuf.ScaleSimple (size, size, Gdk.InterpType.Bilinear);
+			} else
 				image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", size); // FIXME: RSS icon?
 		}
 
