@@ -184,6 +184,9 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 
 		protected override int ProgressPercent {
 			get {
+				if (running_generators.Count == 0)
+					return -1;
+
 				// An embarrassingly unscientific attempt at getting progress
 				// information from the mail backend as a whole.  Unfortunately
 				// the IMAP and mbox backends don't have a common unit of
