@@ -194,7 +194,7 @@ public class SettingsDialog
 			try {
 				string l;
 				while ((l = reader.ReadLine ()) != null) {
-					if (String.Compare (l, "X-GNOME-autostart-enabled=false", true) == 0)
+					if (String.Compare (l, "X-GNOME-Autostart-enabled=false", true) == 0)
 						return false;
 				}
 
@@ -208,7 +208,7 @@ public class SettingsDialog
 			try {
 				string l;
 				while ((l = reader.ReadLine ()) != null) {
-					if (String.Compare (l, "X-GNOME-autostart-enabled=false", true) == 0)
+					if (String.Compare (l, "X-GNOME-Autostart-enabled=false", true) == 0)
 						return false;
 				}
 
@@ -242,7 +242,7 @@ public class SettingsDialog
 
 		if (! enabled) {
 			writer.WriteLine ("Hidden=true");
-			writer.WriteLine ("X-GNOME-autostart-enabled=false");
+			writer.WriteLine ("X-GNOME-Autostart-enabled=false");
 		}
 
 		writer.Close ();
@@ -256,7 +256,7 @@ public class SettingsDialog
 
 		if (! enabled) {
 			writer.WriteLine ("Hidden=true");
-			writer.WriteLine ("X-GNOME-autostart-enabled=false");
+			writer.WriteLine ("X-GNOME-Autostart-enabled=false");
 		}
 
 		writer.Close ();
