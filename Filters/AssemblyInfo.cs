@@ -81,6 +81,7 @@ using Beagle.Filters;
 	 typeof(FilterRuby),
 	 typeof(FilterScheme),
 	 typeof(FilterScilab),
+	 typeof(FilterScribus),
 	 typeof(FilterShellscript),
 	 typeof(FilterSpreadsheet),
 	 typeof(FilterSvg),

@@ -76,7 +76,8 @@ CSFILES = 				\
 	$(srcdir)/FilterKAddressBook.cs \
 	$(srcdir)/FilterKCal.cs		\
 	$(srcdir)/FilterKNotes.cs	\
-	$(srcdir)/FilterLabyrinth.cs
+	$(srcdir)/FilterLabyrinth.cs	\
+	$(srcdir)/FilterScribus.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
