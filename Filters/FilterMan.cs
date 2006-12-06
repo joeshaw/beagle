@@ -47,6 +47,9 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+
+			SnippetMode = true;
 		}
  		/*
  			FIXME: 
