@@ -127,7 +127,7 @@ namespace Beagle.Daemon {
 				hits_to_report = new ArrayList ();
 				foreach (Hit hit in some_hits) {
 					if (hit != null && ! uri_hash.Contains (hit.Uri)) {
-						uri_hash [hit.Uri] = hit;
+						uri_hash [hit.Uri] = hit.Uri;
 						hits_to_report.Add (hit);
 					}
 				}
@@ -169,18 +169,6 @@ namespace Beagle.Daemon {
 				if (HitsSubtractedEvent != null && filtered_uris.Count > 0)
 					HitsSubtractedEvent (this, filtered_uris);
 			}
-		}
-
-		//////////////////////////////////
-
-		// Given the Uri of a Hit contained in the QueryResult, return that Hit.
-		public Hit GetHitFromUri (Uri uri)
-		{
-			return uri_hash [uri] as Hit;
-		}
-
-		public ICollection HitUris {
-			get { return uri_hash.Keys; }
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////
@@ -269,6 +257,8 @@ namespace Beagle.Daemon {
 
 				//DateTime then = (DateTime) per_worker_started_time [o];
 				//Logger.Log.Debug ("{0} finished in {1:0.00}s", o, (now - then).TotalSeconds);
+
+				per_worker_started_time.Remove (o);
 
 				if (workers == 0) {
 					finished_time = now;

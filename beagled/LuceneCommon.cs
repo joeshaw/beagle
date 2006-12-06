@@ -1563,7 +1563,6 @@ namespace Beagle.Daemon {
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
-					rav.Refcount++;
 
 					directory_rav_map [directory] = rav;
 					reader_rav_map [reader] = rav;
@@ -1574,17 +1573,15 @@ namespace Beagle.Daemon {
 				version = IndexReader.GetCurrentVersion (directory);
 				
 				if (version != rav.Version) {
-					UnrefReaderAndVersion_Unlocked (rav);
-
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
-					rav.Refcount++;
 
 					directory_rav_map [directory] = rav;
 					reader_rav_map [reader] = rav;
-				} else
+				} else {
 					rav.Refcount++;
+				}
 
 				return rav.Reader;
 			}
@@ -1595,8 +1592,9 @@ namespace Beagle.Daemon {
 			rav.Refcount--;
 
 			if (rav.Refcount == 0) {
-				rav.Reader.Close ();
 				reader_rav_map.Remove (rav.Reader);
+				directory_rav_map.Remove (rav.Reader.Directory ());
+				rav.Reader.Close ();
 			}
 		}
 
@@ -1605,7 +1603,10 @@ namespace Beagle.Daemon {
 			lock (reader_rav_map) {
 				ReaderAndVersion rav = (ReaderAndVersion) reader_rav_map [reader];
 
-				UnrefReaderAndVersion_Unlocked (rav);
+				if (rav != null)
+					UnrefReaderAndVersion_Unlocked (rav);
+				else
+					reader.Close ();
 			}
 		}
 
