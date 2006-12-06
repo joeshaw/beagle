@@ -22,6 +22,7 @@ namespace Search {
 		private Gtk.Button button;
 		private Gtk.Tooltips tips;
 		private Gtk.Notebook pages;
+		private Gtk.Statusbar statusbar;
 
 		private Search.UIManager uim;
 		private Search.NotificationArea notification_area;
@@ -44,6 +45,7 @@ namespace Search {
 		private Search.SortType sort = SortType.Modified;
 		private Search.TypeFilter filter = null;
 		private bool show_details = true;
+		private int total_matches = -1;
 
 		private XKeybinder keybinder = new XKeybinder ();
 
@@ -225,6 +227,9 @@ namespace Search {
 			view.TileSelected += ShowInformation;
 			view.CategoryToggled += OnCategoryToggled;
 			panes.MainContents = view;
+
+			this.statusbar = new Gtk.Statusbar ();
+			vbox.PackEnd (this.statusbar, false, false, 0);
 			
 			Add (vbox);
 
@@ -259,6 +264,28 @@ namespace Search {
 			Title = String.Format ( Catalog.GetString ("Desktop Search: {0}"), query);
 		}
 
+		private int TotalMatches {
+			get { return this.total_matches; }
+			set {
+				if (this.total_matches != -1)
+					this.statusbar.Pop (0);
+
+				this.total_matches = value;
+				
+				if (this.total_matches > -1) {
+					string message;
+					int tile_count = view.TileCount;
+
+					if (tile_count == this.total_matches)
+						message = String.Format (Catalog.GetString ("Showing all {0} matches"), this.total_matches);
+					else
+						message = String.Format (Catalog.GetString ("Showing the top {0} of {1} total matches"), view.TileCount, this.total_matches);
+
+					this.statusbar.Push (0, message);
+				}
+			}
+		}
+
 		// Whether we should grab focus from the text entry
 		private bool grab_focus;
 
@@ -291,10 +318,13 @@ namespace Search {
 
 			try {
 				if (current_query != null) {
+					TotalMatches = -1;
 					current_query.HitsAddedEvent -= OnHitsAdded;
 					current_query.HitsSubtractedEvent -= OnHitsSubtracted;
 					current_query.Close ();
 				}
+
+				TotalMatches = 0;
 
 				current_query = new Query ();
 				current_query.AddDomain (QueryDomain.Neighborhood);
@@ -409,6 +439,7 @@ namespace Search {
 		private void OnShowQuickTips ()
 		{
 			if (current_query != null) {
+				TotalMatches = -1;
 				current_query.HitsAddedEvent -= OnHitsAdded;
 				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
 				current_query.Close ();
@@ -455,6 +486,8 @@ namespace Search {
 				if (pages.CurrentPageWidget != panes)
 					pages.CurrentPage = pages.PageNum (panes);
 			}
+
+			TotalMatches += response.NumMatches;
 		}
 
 		private void OnHitsSubtracted (HitsSubtractedResponse response)

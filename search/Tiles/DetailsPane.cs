@@ -35,6 +35,10 @@ namespace Search.Tiles {
 			if (maximized)
 				return;
 
+			// Add a placeholder widget
+			Gtk.Label label = WidgetFu.NewLabel ("");
+			Attach (label, 0, 2, current_row, ++current_row, fill, expand, 0, 0);
+
 			Gtk.Table.TableChild[,] children = new Gtk.Table.TableChild[NColumns, NRows];
 
 			foreach (Gtk.Widget child in Children) {
@@ -68,7 +72,7 @@ namespace Search.Tiles {
 				}
 			}
 
-			// Vertically expand only the bottom row
+			// Vertically expand only the placeholder row
 			for (uint row = 0; row < NRows; row++) {
 				for (uint col = 1; col < NColumns; col++) {
 					if (children[col, row] == null)
@@ -151,14 +155,6 @@ namespace Search.Tiles {
 			Gtk.Label label = WidgetFu.NewLabel ("");
 			label.Show ();
 			Attach (label, 1, 2, current_row, ++current_row, fill, fill, 0, 0);
-			return label;
-		}
-
-		public Gtk.Label AddFinalLine ()
-		{
-			Gtk.Label label = WidgetFu.NewLabel ("");
-			label.Show ();
-			Attach (label, 1, 2, current_row, ++current_row, expand, expand, 0, 0);
 			return label;
 		}
 

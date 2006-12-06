@@ -91,6 +91,19 @@ namespace Search {
 				first.Select (grabFocus, !others);
 		}
 
+		public int TileCount {
+			get {
+				int count = 0;
+
+				foreach (Category category in categories.Values) {
+					if (category.Visible)
+						count += category.Count;
+				}
+
+				return count;
+			}
+		}
+
 		public MatchType MatchState {
 			get {
 				bool hiddenMatches = false;

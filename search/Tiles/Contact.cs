@@ -73,8 +73,6 @@ namespace Search.Tiles {
 			if (home_phone != null && home_phone != "")
 				details.AddLabelPair (Catalog.GetString ("Home Phone:"), home_phone);
 			
-			details.AddFinalLine ();
-
 			return details;
 		}
 

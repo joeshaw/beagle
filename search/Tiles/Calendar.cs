@@ -60,8 +60,6 @@ namespace Search.Tiles {
 			if (attendees != null && attendees.Length > 0)
 				details.AddLabelPair (Catalog.GetString ("Attendees:"), String.Join (", ", attendees));
 
-			details.AddFinalLine ();
-
 			return details;
 		}
 
