@@ -117,7 +117,7 @@ msgstr "Pàgina web:"
 #
 #: ../ContactViewer/ContactWindow.cs:336
 msgid "Send E-Mail"
-msgstr "Envia per correu"
+msgstr "Envia un correu"
 
 #: ../ContactViewer/ContactWindow.cs:340
 msgid "Details..."
@@ -125,7 +125,7 @@ msgstr "Detalls..."
 
 #: ../ContactViewer/ContactWindow.cs:368
 msgid "Could not find a valid E-mail address!"
-msgstr "No s'ha pogut trobar una adreça electrònica vàlida"
+msgstr "No s'ha pogut trobar cap adreça electrònica vàlida"
 
 #: ../ContactViewer/contactviewer.glade.h:1
 msgid "<b>Custom fields</b>"
@@ -174,7 +174,7 @@ msgstr "Adreça"
 #
 #: ../ContactViewer/contactviewer.glade.h:10
 msgid "Address:"
-msgstr "_Adreça:"
+msgstr "Adreça:"
 
 #
 #: ../ContactViewer/contactviewer.glade.h:11
@@ -273,7 +273,7 @@ msgstr "Altres"
 #
 #: ../ContactViewer/contactviewer.glade.h:35
 msgid "Pager:"
-msgstr "Paginador:"
+msgstr "Cercapersones:"
 
 #: ../ContactViewer/contactviewer.glade.h:36
 msgid "Preferred format:"
@@ -424,7 +424,7 @@ msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr ""
-"Per raons de segueretat, el Beagle no es pot exectuar com a superusuari. "
+"Per raons de seguretat, el Beagle no es pot exectuar com a superusuari. "
 "Hauríeu de reiniciar com a usuari normal."
 
 #
@@ -990,7 +990,7 @@ msgstr "_Visualitza"
 
 #: ../search/UIManager.cs:74
 msgid "_Help"
-msgstr "Aj_uda"
+msgstr "A_juda"
 
 #: ../search/UIManager.cs:83
 msgid "_Contents"
@@ -1828,7 +1828,7 @@ msgstr "{0:0.0} MB"
 #~ msgstr "dddd"
 
 #~ msgid "Last Week"
-#~ msgstr "La setmana pasada"
+#~ msgstr "La setmana passada"
 
 #~ msgid "This Month"
 #~ msgstr "Aquest mes"
