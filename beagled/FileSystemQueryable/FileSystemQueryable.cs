@@ -112,7 +112,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		override protected IFileAttributesStore BuildFileAttributesStore ()
 		{
-			return new FileAttributesStore_Mixed (IndexDirectory, IndexFingerprint);
+			// FIXME: This is incorrect, but needed for DISABLE_XATTR
+			// ExtendedAttribute.Supported only looks at homedirectory
+			// There should be a similar check for all mount points or roots
+			if (ExtendedAttribute.Supported)
+				return new FileAttributesStore_Mixed (IndexDirectory, IndexFingerprint);
+                        else
+                                return new FileAttributesStore_Sqlite (IndexDirectory, IndexFingerprint);
 		}
 
 		override protected LuceneQueryingDriver BuildLuceneQueryingDriver (string index_name,

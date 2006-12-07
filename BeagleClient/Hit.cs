@@ -266,9 +266,12 @@ namespace Beagle {
 			
 			first = 0;
 			top = 0;
+
 			int range = properties.Count - 1;
+			if (range < 0)
+				return false;
+
 			Property prop;
-			
 			// O(log n + |range|)-time algorithm for 1-d range query
 			while (range > 1) {
 				// find middle index

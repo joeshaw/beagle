@@ -37,15 +37,15 @@ namespace Beagle.Util {
 
 		static DateTimeUtil ()
 		{
-			// Hack to compensate for lousy .Net-1 DateTime
-			// DateTime (1970,1,1,0,0,0,0) creates a datetime of 1970/1/1 00:00:00 _Localtime_
-			// Adjust timezone difference to make the time correct wrt to its timezone
-			epoch = new DateTime (1970, 1, 1, 0, 0, 0).ToLocalTime ();
+			epoch = new DateTime (1970, 1, 1, 0, 0, 0);
 		}
 
 		public static DateTime UnixToDateTimeUtc (long time_t)
 		{
-			return epoch.AddSeconds (time_t);
+			// Hack to compensate for lousy .Net-1 DateTime
+			// DateTime (1970,1,1,0,0,0,0) creates a datetime of 1970/1/1 00:00:00 _Localtime_
+			// Adjust timezone difference to make the time correct wrt to its timezone
+			return epoch.AddSeconds (time_t).ToLocalTime ();
 		}
 
 		public static string ToString (DateTime dt)
