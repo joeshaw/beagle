@@ -83,7 +83,7 @@ class ExtractContentTool {
 		Console.WriteLine ();
 
 		if (filter.ChildIndexables != null && filter.ChildIndexables.Count > 0) {
-			Console.WriteLine ("Child indexables:");
+			Console.WriteLine ("Child indexables ({0}):", filter.ChildIndexables.Count);
 
 			foreach (Indexable i in filter.ChildIndexables)
 				Console.WriteLine ("  {0}", i.Uri);

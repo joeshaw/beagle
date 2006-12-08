@@ -109,7 +109,9 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery prop_change_children_query = null;
 			int delete_count = 0;
 
-			foreach (Indexable indexable in request.Indexables) {
+			ICollection request_indexables = request.Indexables;
+
+			foreach (Indexable indexable in request_indexables) {
 
 				switch (indexable.Type) {
 
@@ -251,7 +253,7 @@ namespace Beagle.Daemon {
 			primary_writer = new IndexWriter (PrimaryStore, IndexingAnalyzer, false);
 			secondary_writer = null;
 
-			foreach (Indexable indexable in request.Indexables) {
+			foreach (Indexable indexable in request_indexables) {
 				
 				if (indexable.Type == IndexableType.Remove)
 					continue;

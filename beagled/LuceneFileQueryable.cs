@@ -149,6 +149,8 @@ namespace Beagle.Daemon {
 			if (info == null)
 				return;
 
+			file_info_cache.Remove (info.Uri);
+
 			// Yeah, this is ghetto. If it's a file that's shared across multiple
 			// indexables, only tag it with when the last indexable has been indexed.
 			if (info.Shared && DecrementReferenceCount (info.Path))
@@ -172,8 +174,6 @@ namespace Beagle.Daemon {
 
 			if (! FileAttributesStore.Write (attr))
 				Logger.Log.Warn ("Couldn't write attributes for {0}", info.Path);
-
-			file_info_cache.Remove (info.Uri);
 		}
 
 		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)

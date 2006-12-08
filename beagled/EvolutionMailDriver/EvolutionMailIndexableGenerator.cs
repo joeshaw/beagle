@@ -426,7 +426,6 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 		private ImapBackendType backend_type;
 		private Camel.Summary summary;
 		private IEnumerator summary_enumerator;
-		private ICollection accounts;
 		private string folder_cache_name;
 		private Hashtable mapping;
 		private ArrayList deleted_list;
@@ -475,8 +474,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			string imap_start = dir_name.Substring (imap_start_idx);
 			this.imap_name = imap_start.Substring (0, imap_start.IndexOf ('/'));
 
+			ICollection accounts = null;
+
 			try {
-				this.accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
+				accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
 			} catch (Exception ex) {
 				Logger.Log.Warn ("Caught exception in Setup(): " + ex.Message);
 				Logger.Log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
@@ -484,10 +485,10 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 			}
 
 			// This should only happen if we shut down while waiting for the GConf results to come back.
-			if (this.accounts == null)
+			if (accounts == null)
 				return false;
 
-			foreach (string xml in this.accounts) {
+			foreach (string xml in accounts) {
 				XmlDocument xmlDoc = new XmlDocument ();
 
 				xmlDoc.LoadXml (xml);

@@ -1,7 +1,7 @@
 //
 // IndexerRequest.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2005-2006 Novell, Inc.
 //
 
 //
@@ -36,18 +36,17 @@ namespace Beagle.Daemon {
 
 		public bool OptimizeIndex = false;
 
-		private Hashtable indexables_by_uri = UriFu.NewHashtable ();
+		// These two collections are mutually exclusive.  It's an ugly
+		// hack, but it's necessary to make XML serialization work
+		// easily, and assumes that an IndexerRequest is never changed
+		// after it has been serialized.
+		private Hashtable indexables_by_uri = null;
 		private ArrayList indexables = null;
-
-		// FIXME: We don't try to keep the ArrayList and the Hashtable
-		// in-sync.  This is a hack to make XML serialization work easily,
-		// and it assumes that an IndexerRequest is never changed after
-		// it has been serialized.
 
 		public void Clear ()
 		{
 			OptimizeIndex = false;
-			indexables_by_uri.Clear ();
+			indexables_by_uri = null;
 			indexables = null;
 		}
 	       
@@ -58,6 +57,9 @@ namespace Beagle.Daemon {
 
 			if (indexable == null)
 				return;
+
+			if (indexables_by_uri == null)
+				indexables_by_uri = UriFu.NewHashtable ();
 
 			Indexable prior;
 			prior = indexables_by_uri [indexable.Uri] as Indexable;
@@ -96,14 +98,24 @@ namespace Beagle.Daemon {
 			return null;
 		}
 
+		[XmlIgnore]
+		public ICollection Indexables {
+			get { 
+				if (indexables != null)
+					return indexables;
+				else if (indexables_by_uri != null)
+					return indexables_by_uri.Values;
+				else
+					return new Indexable [0];
+			}
+		}
+
 		[XmlArray (ElementName="Indexables")]
 		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
-		public ArrayList Indexables {
+		public ArrayList IndexablesForSerialization {
 			get { 
 				if (indexables == null) {
-					indexables = new ArrayList ();
-					foreach (Indexable indexable in indexables_by_uri.Values)
-						indexables.Add (indexable);
+					indexables = new ArrayList (Indexables);
 					indexables.Sort (); // sort into ascending timestamp order
 				}
 				return indexables;
@@ -112,7 +124,7 @@ namespace Beagle.Daemon {
 
 		[XmlIgnore]
 		public int Count {
-			get { return indexables != null ? indexables.Count : indexables_by_uri.Count; }
+			get { return Indexables.Count; }
 		}
 		
 		[XmlIgnore]
@@ -122,12 +134,8 @@ namespace Beagle.Daemon {
 
 		public void Cleanup ()
 		{
-			if (indexables_by_uri != null)
-				foreach (Indexable i in indexables_by_uri.Values)
-					i.Cleanup ();
-			else
-				foreach (Indexable i in indexables)
-					i.Cleanup ();
+			foreach (Indexable i in Indexables)
+				i.Cleanup ();
 		}
 	}
 }
