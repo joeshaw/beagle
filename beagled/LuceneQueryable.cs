@@ -942,18 +942,32 @@ namespace Beagle.Daemon {
 				// Assuming that IndexingDriver sends the addedreceipt for the
 				// main indexable and the childreceipts for added children in
 				// the same response.
-				for (int j = 0; j < receipts.Length; ++j) {
+				int j = 0;
+				for (; j < receipts.Length; ++j) {
 					if (! indexable_added_receipt_index [j])
 						continue;
 
 					added_receipt = (IndexerAddedReceipt) receipts [j];
-					if (added_receipt.Uri == parent_uri)
+					if (UriFu.Equals (added_receipt.Uri, parent_uri))
 						break;
 				}
 
 				// Just being cautious
-				if (added_receipt == null)
+				if (j == receipts.Length) {
+					if (Debug) {
+						Log.Debug ("Strange! {0} not contained in:", 
+							    parent_uri);
+						for (j = 0; j < receipts.Length; ++j) {
+							if (! indexable_added_receipt_index [j])
+								continue;
+							added_receipt = (IndexerAddedReceipt) receipts [j];
+							Log.Debug ("---- {0}", added_receipt.Uri);
+						}
+					}
+					Log.Warn ("Ignoring child indexable {0}, good luck!",
+						   child.Uri);
 					continue;
+				}
 
 				// Store the parent-child info for use when child is done indexing
 				info = new ParentIndexableInfo ();
