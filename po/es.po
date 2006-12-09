@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-08 20:34+0100\n"
-"PO-Revision-Date: 2006-12-08 20:34+0100\n"
+"POT-Creation-Date: 2006-12-09 21:26+0100\n"
+"PO-Revision-Date: 2006-12-09 21:27+0100\n"
 "Last-Translator: \n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -435,22 +435,24 @@ msgstr "Búsquedas de Escritorio: {0}"
 #: ../search/Search.cs:280
 #, csharp-format
 msgid "Showing all {0} matches"
-msgstr ""
+msgstr "Mostrando {0} coincidencias"
 
 #: ../search/Search.cs:282
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr ""
+msgstr "Mostrando las primeras {0} de {1} coincidencias en total"
 
 #: ../search/Search.cs:553
 msgid "Your data is being indexed"
-msgstr ""
+msgstr "Se están indizando sus datos"
 
 #: ../search/Search.cs:554
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
-msgstr "El servicio de búsqueda está indizando sus datos. Los resultados de búsqueda podrían estar incompletos hasta que el indizado haya terminado."
+msgstr ""
+"El servicio de búsqueda está indizando sus datos. Los resultados de búsqueda "
+"podrían estar incompletos hasta que el indizado haya terminado."
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -1262,7 +1264,9 @@ msgstr "Alt"
 
 #: ../tools/settings.glade.h:11
 msgid "Automatically s_tart searching after the user has stopped typing"
-msgstr "Empezar a buscar _automáticamente después de que el usuario haya terminado de teclear"
+msgstr ""
+"Empezar a buscar _automáticamente después de que el usuario haya terminado "
+"de teclear"
 
 #: ../tools/settings.glade.h:12
 msgid "Ctrl"
