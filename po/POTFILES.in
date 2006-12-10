@@ -25,6 +25,7 @@ search/Spinner.cs
 search/TileCategory.cs
 search/Tiles/ActionMenuItem.cs
 search/Tiles/Application.cs
+search/Tiles/ArchivedFile.cs
 search/Tiles/Audio.cs
 search/Tiles/Calendar.cs
 search/Tiles/CApplet.cs
