@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-16 03:16+0000\n"
-"PO-Revision-Date: 2006-11-19 17:25+0100\n"
+"POT-Creation-Date: 2006-12-10 11:33+0100\n"
+"PO-Revision-Date: 2006-12-10 15:40+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -266,10 +266,11 @@ msgid "State/Province:"
 msgstr "Län/Region:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76
 #: ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:124
+#: ../search/Tiles/File.cs:140
 #: ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:45
+#: ../search/Tiles/RSSFeed.cs:48
 #: ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
 msgstr "Titel:"
@@ -320,7 +321,7 @@ msgid "Conversations with {0}"
 msgstr "Konversationer med {0}"
 
 #: ../search/beagle-search.desktop.in.in.h:1
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:22
 msgid "Search"
 msgstr "Sök"
 
@@ -395,31 +396,68 @@ msgstr "Söktjänsten kör inte"
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
-#: ../search/Search.cs:130
+#: ../search/Search.cs:138
 #: ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
 msgstr "Skrivbordssökning"
 
-#: ../search/Search.cs:151
+#: ../search/Search.cs:157
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Search.cs:166
+#: ../search/Search.cs:178
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Search.cs:214
+#: ../search/Search.cs:237
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Search.cs:215
+#: ../search/Search.cs:238
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
-#: ../search/Search.cs:239
+#: ../search/Search.cs:264
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivbordssökning: {0}"
+
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Showing all {0} matches"
+msgstr "Visar alla {0} träffar"
+
+#: ../search/Search.cs:282
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr "Visar de första {0} av totalt {1} träffar"
+
+#: ../search/Search.cs:553
+msgid "Your data is being indexed"
+msgstr "Ditt data håller på att indexeras"
+
+#: ../search/Search.cs:554
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
+
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Inne i arkivet {0}"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Filnamn:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "inne i filen:"
+
+#: ../search/Tiles/ArchivedFile.cs:81
+#: ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Författare:"
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -465,19 +503,15 @@ msgstr "E-post"
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
-#: ../search/Tiles/File.cs:125
+#: ../search/Tiles/File.cs:141
 #: ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
-#: ../search/Tiles/File.cs:128
-msgid "Author:"
-msgstr "Författare:"
-
-#: ../search/Tiles/File.cs:130
+#: ../search/Tiles/File.cs:146
 #: ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:79
+#: ../search/Tiles/Image.cs:80
 msgid "Full Path:"
 msgstr "Fullständig sökväg:"
 
@@ -497,7 +531,7 @@ msgstr[1] "Innehåller {0} objekt"
 msgid "Set as Wallpaper"
 msgstr "Ställ in som skrivbordsbakgrund"
 
-#: ../search/Tiles/Image.cs:78
+#: ../search/Tiles/Image.cs:79
 msgid "Modified:"
 msgstr "Ändrad:"
 
@@ -510,7 +544,7 @@ msgid "Name:"
 msgstr "Namn:"
 
 #: ../search/Tiles/IMLog.cs:93
-#: ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
@@ -538,31 +572,31 @@ msgstr "Tillgänglig"
 msgid "Mail attachment"
 msgstr "E-postbilaga"
 
-#: ../search/Tiles/MailMessage.cs:67
+#: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
 msgstr "(namnlös)"
 
-#: ../search/Tiles/MailMessage.cs:77
+#: ../search/Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "Skicka i e-post"
 
-#: ../search/Tiles/MailMessage.cs:109
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Ämne:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "To:"
 msgstr "Till:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "From:"
 msgstr "Från:"
 
-#: ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Sent:"
 msgstr "Datum skickat:"
 
-#: ../search/Tiles/MailMessage.cs:120
+#: ../search/Tiles/MailMessage.cs:111
 msgid "Folder:"
 msgstr "Mapp:"
 
@@ -578,11 +612,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diabild"
 msgstr[1] "{0} diabilder"
 
-#: ../search/Tiles/RSSFeed.cs:46
+#: ../search/Tiles/RSSFeed.cs:49
 msgid "Site:"
 msgstr "Plats:"
 
-#: ../search/Tiles/RSSFeed.cs:47
+#: ../search/Tiles/RSSFeed.cs:50
 msgid "Date Viewed:"
 msgstr "Visningsdatum:"
 
@@ -641,31 +675,31 @@ msgstr "Nyhetskanaler"
 msgid "Archives"
 msgstr "Arkiv"
 
-#: ../search/Tiles/Utils.cs:126
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:133
+#: ../search/Tiles/Utils.cs:215
 #: ../Util/StringFu.cs:88
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../search/Tiles/Utils.cs:128
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:135
+#: ../search/Tiles/Utils.cs:217
 #: ../Util/StringFu.cs:86
 msgid "Today"
 msgstr "Idag"
 
-#: ../search/Tiles/Utils.cs:130
-#: ../search/Tiles/Utils.cs:212
+#: ../search/Tiles/Utils.cs:137
+#: ../search/Tiles/Utils.cs:219
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:235
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} vecka sedan"
 msgstr[1] "{0} veckor sedan"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:237
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -673,28 +707,28 @@ msgstr[0] "Om {0} vecka"
 msgstr[1] "Om {0} veckor"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:239
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} månad sedan"
 msgstr[1] "{0} månader sedan"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:241
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} månad"
 msgstr[1] "Om {0} månader"
 
-#: ../search/Tiles/Utils.cs:236
+#: ../search/Tiles/Utils.cs:243
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år sedan"
 msgstr[1] "{0} år sedan"
 
-#: ../search/Tiles/Utils.cs:238
+#: ../search/Tiles/Utils.cs:245
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -1096,293 +1130,219 @@ msgstr "Visa detaljer"
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
-#: ../tools/Settings.cs:227
+#: ../tools/Settings.cs:166
 msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
-#: ../tools/Settings.cs:228
+#: ../tools/Settings.cs:167
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från dina aktuella ändringar och läsa om inställningarna från disk?"
 
-#: ../tools/Settings.cs:266
+#: ../tools/Settings.cs:297
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:285
+#: ../tools/Settings.cs:316
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
-#: ../tools/Settings.cs:288
-msgid "The selected path wasn't added. The list contains items that supercedes it and the data is already being indexed."
+#: ../tools/Settings.cs:319
+msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
 msgstr "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer den och datat blir redan indexerat."
 
-#: ../tools/Settings.cs:299
-#: ../tools/Settings.cs:491
+#: ../tools/Settings.cs:330
 msgid "Path not added"
 msgstr "Sökvägen lades inte till"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:339
 msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
-#: ../tools/Settings.cs:309
+#: ../tools/Settings.cs:340
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas bort. Vill du fortfarande lägga till den?"
 
-#: ../tools/Settings.cs:335
+#: ../tools/Settings.cs:366
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
-#: ../tools/Settings.cs:336
+#: ../tools/Settings.cs:367
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "Är du säker på att du vill ta bort denna sökväg från listan över kataloger som skall indexeras?"
 
-#: ../tools/Settings.cs:365
+#: ../tools/Settings.cs:396
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
-#: ../tools/Settings.cs:366
+#: ../tools/Settings.cs:397
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "Är du säker på att du vill ta bort det här objektet från listan över data som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:409
-msgid "Invalid host entry"
-msgstr "Ogiltig värdpost"
-
-#: ../tools/Settings.cs:416
-msgid "Remote host already present in the list."
-msgstr "Fjärrvärden finns redan i listan."
-
-#: ../tools/Settings.cs:425
-msgid "Netbeagle Node not added"
-msgstr "Netbeaglenod lades inte till"
-
-#: ../tools/Settings.cs:441
-msgid "Remove host"
-msgstr "Ta bort värd"
-
-#: ../tools/Settings.cs:442
-msgid "Are you sure you wish to remove this host from the list?"
-msgstr "Är du säker på att du vill ta bort denna värd från listan?"
-
-#: ../tools/Settings.cs:463
-msgid "Select path"
-msgstr "Välj sökväg"
-
-#: ../tools/Settings.cs:482
-msgid "The selected path is already configured for external access."
-msgstr "Den valda sökvägen är redan konfigurerad för extern åtkomst."
-
-#: ../tools/Settings.cs:506
-msgid "Remove public path"
-msgstr "Ta bort publik sökväg"
-
-#: ../tools/Settings.cs:507
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "Är du säker på att du vill ta bort det här objektet från listan på publika sökvägar?"
-
-#: ../tools/Settings.cs:552
-#: ../tools/Settings.cs:641
-#: ../tools/Settings.cs:719
-#: ../tools/Settings.cs:795
-#: ../tools/Settings.cs:1134
+#: ../tools/Settings.cs:447
+#: ../tools/Settings.cs:536
+#: ../tools/Settings.cs:623
+#: ../tools/Settings.cs:962
 msgid "Name"
 msgstr "Namn"
 
-#: ../tools/Settings.cs:635
+#: ../tools/Settings.cs:530
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:688
+#: ../tools/Settings.cs:583
 msgid "Path:"
 msgstr "Sökväg:"
 
-#: ../tools/Settings.cs:691
+#: ../tools/Settings.cs:586
 msgid "Pattern:"
 msgstr "Mönster:"
 
-#: ../tools/Settings.cs:694
+#: ../tools/Settings.cs:589
 msgid "Mail folder:"
 msgstr "E-postmapp:"
 
-#: ../tools/Settings.cs:1042
+#: ../tools/Settings.cs:870
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:1068
-#: ../tools/settings.glade.h:25
+#: ../tools/Settings.cs:896
+#: ../tools/settings.glade.h:19
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
-#: ../tools/Settings.cs:1073
+#: ../tools/Settings.cs:901
 msgid "M_ail folder:"
 msgstr "E-postm_app:"
 
-#: ../tools/Settings.cs:1078
+#: ../tools/Settings.cs:906
 msgid "P_attern:"
 msgstr "Mö_nster:"
 
-#: ../tools/Settings.cs:1102
+#: ../tools/Settings.cs:930
 msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
-#: ../tools/Settings.cs:1103
+#: ../tools/Settings.cs:931
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i listan på resurser som ska undanhållas från indexering."
 
-#: ../tools/Settings.cs:1133
+#: ../tools/Settings.cs:961
 msgid "Show"
 msgstr "Visa"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add Remote Host</b>"
-msgstr "<b>Lägg till fjärrvärd</b>"
-
-#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>Administration</b>"
 
-#: ../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:2
 msgid "<b>Display</b>"
 msgstr "<b>Visa</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:3
 msgid "<b>Exclude Resource</b>"
 msgstr "<b>Undanhåll resurs</b>"
 
-#: ../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:4
 msgid "<b>General</b>"
 msgstr "<b>Allmänt</b>"
 
-#: ../tools/settings.glade.h:6
-msgid "<b>Networking</b>"
-msgstr "<b>Nätverk</b>"
-
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:5
 msgid "<b>Privacy</b>"
 msgstr "<b>Privat</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:6
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Välj e-postmapp</b>"
 
-#: ../tools/settings.glade.h:9
-msgid "Add Remote Host"
-msgstr "Lägg till fjärrvärd"
+#: ../tools/settings.glade.h:7
+msgid "<b>User Interface</b>"
+msgstr "<b>Användargränssnitt</b>"
 
-#: ../tools/settings.glade.h:10
-msgid ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
-msgstr ""
-"Lägg till en fjärrvärd aktiverad för sökning som du\n"
-"önskar nätverka med."
-
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:8
 msgid "Add any additional paths to be included for indexing."
 msgstr "Lägg till ytterligare sökvägar för indexering."
 
-#: ../tools/settings.glade.h:13
-msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr "Lägg till fjärrvärdar aktiverade för sökning som du önskar nätverka med."
-
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:9
 msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
 msgstr "Justera vilka typer av resultat som ska visas och i vilken ordning de ska presenteras när de grupperas efter typ."
 
-#: ../tools/settings.glade.h:15
-msgid "Allow _external access to local search services"
-msgstr "Tillåt _extern åtkomst till lokala söktjänster"
-
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:10
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:11
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "S_tarta automatiskt sökningen efter att användaren har slutat skriva"
+
+#: ../tools/settings.glade.h:12
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:13
 msgid "Display the search window by pressing:"
 msgstr "Visa sökfönstret genom att trycka:"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:14
 msgid "Exclude Resource"
 msgstr "Undanhåll resurs"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:15
 msgid "Filename _pattern"
 msgstr "Filnamns_mönster"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:16
 msgid "I_ndex my home directory"
 msgstr "I_ndexera min hemkatalog"
 
-#: ../tools/settings.glade.h:22
-msgid "Index data while on battery power"
-msgstr "Indexera data vid batteridrift"
+#: ../tools/settings.glade.h:17
+msgid "Index data while on _battery power"
+msgstr "Indexera data vid _batteridrift"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:18
 msgid "Indexing"
 msgstr "Indexering"
 
-#: ../tools/settings.glade.h:24
-msgid "Networking"
-msgstr "Nätverk"
-
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:20
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Välj den resurs som du vill undanhålla från indexing."
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:21
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Välj den e-postmapp som du vill undanhålla från indexing. "
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:23
 msgid "Search Preferences"
 msgstr "Sökinställningar"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:24
 msgid "Select Mail Folder"
 msgstr "Välj e-postmapp"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:25
 msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
 msgstr "Lägg till resurser såsom sökvägar, mönster och e-postmappar eller objekttyper som du vill undanhålla från indexering."
 
-#: ../tools/settings.glade.h:32
-msgid "Specify paths that should be available for external access."
-msgstr "Ange sökvägar som ska vara tillgängliga för extern åtkomst."
-
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:26
 msgid "Type:"
 msgstr "Typ:"
 
-#: ../tools/settings.glade.h:34
-msgid "_Address:"
-msgstr "_Adress:"
-
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:27
 msgid "_Allow Beagle to be run as root"
 msgstr "_Tillåt Beagle att köras som root"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:28
 msgid "_Browse..."
 msgstr "_Bläddra..."
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:29
 msgid "_Folder path"
 msgstr "_Mappsökväg"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:30
 msgid "_Mail folder"
 msgstr "E-post_mapp"
 
-#: ../tools/settings.glade.h:39
-msgid "_Maximum number of results displayed:"
-msgstr "_Maximalt antal visade resultat:"
-
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:31
 msgid "_Start search & indexing services automatically "
 msgstr "_Starta söknings- och indexeringstjänster automatiskt "
 
@@ -1508,6 +1468,52 @@ msgstr "{0:0.0} KB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "Invalid host entry"
+#~ msgstr "Ogiltig värdpost"
+#~ msgid "Remote host already present in the list."
+#~ msgstr "Fjärrvärden finns redan i listan."
+#~ msgid "Netbeagle Node not added"
+#~ msgstr "Netbeaglenod lades inte till"
+#~ msgid "Remove host"
+#~ msgstr "Ta bort värd"
+#~ msgid "Are you sure you wish to remove this host from the list?"
+#~ msgstr "Är du säker på att du vill ta bort denna värd från listan?"
+#~ msgid "Select path"
+#~ msgstr "Välj sökväg"
+#~ msgid "The selected path is already configured for external access."
+#~ msgstr "Den valda sökvägen är redan konfigurerad för extern åtkomst."
+#~ msgid "Remove public path"
+#~ msgstr "Ta bort publik sökväg"
+#~ msgid ""
+#~ "Are you sure you wish to remove this entry from the list of public paths?"
+#~ msgstr ""
+#~ "Är du säker på att du vill ta bort det här objektet från listan på "
+#~ "publika sökvägar?"
+#~ msgid "<b>Add Remote Host</b>"
+#~ msgstr "<b>Lägg till fjärrvärd</b>"
+#~ msgid "<b>Networking</b>"
+#~ msgstr "<b>Nätverk</b>"
+#~ msgid "Add Remote Host"
+#~ msgstr "Lägg till fjärrvärd"
+#~ msgid ""
+#~ "Add a remote search-enabled host you wish \n"
+#~ "to network with."
+#~ msgstr ""
+#~ "Lägg till en fjärrvärd aktiverad för sökning som du\n"
+#~ "önskar nätverka med."
+#~ msgid "Add any remote search-enabled hosts you wish to network with."
+#~ msgstr ""
+#~ "Lägg till fjärrvärdar aktiverade för sökning som du önskar nätverka med."
+#~ msgid "Allow _external access to local search services"
+#~ msgstr "Tillåt _extern åtkomst till lokala söktjänster"
+#~ msgid "Networking"
+#~ msgstr "Nätverk"
+#~ msgid "Specify paths that should be available for external access."
+#~ msgstr "Ange sökvägar som ska vara tillgängliga för extern åtkomst."
+#~ msgid "_Address:"
+#~ msgstr "_Adress:"
+#~ msgid "_Maximum number of results displayed:"
+#~ msgstr "_Maximalt antal visade resultat:"
 #~ msgid "DisplayName"
 #~ msgstr "Visningsnamn"
 #~ msgid "FirstName"
@@ -1542,8 +1548,6 @@ msgstr "{0:0.0} MB"
 #~ msgstr ""
 #~ "Om du undrar om Best fungerar så kan du hitta den i din notifieringsyta "
 #~ "(system tray)"
-#~ msgid "in Files"
-#~ msgstr "i filer"
 #~ msgid "in Chats"
 #~ msgstr "i snabbmeddelanden"
 #~ msgid "Show More Results"
