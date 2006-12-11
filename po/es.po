@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-09 21:26+0100\n"
-"PO-Revision-Date: 2006-12-09 21:27+0100\n"
+"POT-Creation-Date: 2006-12-11 17:49+0100\n"
+"PO-Revision-Date: 2006-12-11 17:49+0100\n"
 "Last-Translator: \n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -263,7 +263,8 @@ msgstr "Estado/Provincia"
 msgid "State/Province:"
 msgstr "Estado/Provincia:"
 
-#: ../ContactViewer/contactviewer.glade.h:40 ../search/Tiles/Calendar.cs:51
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:50
 msgid "Title:"
@@ -454,6 +455,24 @@ msgstr ""
 "El servicio de búsqueda está indizando sus datos. Los resultados de búsqueda "
 "podrían estar incompletos hasta que el indizado haya terminado."
 
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Dentro del archivo {0}"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Nombre de archivo:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "Dentro del archivo:"
+
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Autor:"
+
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
 msgstr "Descripción:"
@@ -501,10 +520,6 @@ msgstr "Mover a la papelera"
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
-
-#: ../search/Tiles/File.cs:144
-msgid "Author:"
-msgstr "Autor:"
 
 #: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:80
