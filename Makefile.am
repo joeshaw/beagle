@@ -1,3 +1,5 @@
+# Require at least automake 1.6
+AUTOMAKE_OPTIONS = 1.6
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = beagle-0.0.pc beagle-daemon.pc

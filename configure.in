@@ -63,16 +63,8 @@ PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED)
 
 BEAGLE_DEFINES=""
 
-# SharpZipLib broke API in 1.1.11.  Route around the damage.
-if `$PKG_CONFIG --atleast-version=1.1.11 mono`; then
-  SHARPZIPLIB_LIBS="-r:`$PKG_CONFIG --variable=prefix mono`/lib/mono/compat-1.0/ICSharpCode.SharpZipLib.dll"
-else
-  SHARPZIPLIB_LIBS="-r:ICSharpCode.SharpZipLib"
-fi
-AC_SUBST(SHARPZIPLIB_LIBS)
-
 # check for various mono DLLs that we need.
-needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services"
+needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
   if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/1.0/$i.dll; then
@@ -81,6 +73,11 @@ for i in $needed_dlls; do
     AC_MSG_RESULT([found])
   fi
 done
+
+# SharpZipLib was broken previously, and all our Makefile.am's depend on this
+# define.
+SHARPZIPLIB_LIBS="-r:ICSharpCode.SharpZipLib"
+AC_SUBST(SHARPZIPLIB_LIBS)
 
 # check for OS
 case "$target" in
@@ -103,7 +100,6 @@ AM_CONDITIONAL(OS_FREEBSD, test "x$os" = "xfreebsd")
 AC_FUNC_MMAP()
 
 # check for desktop-launch
-
 AC_PATH_PROG(DESKTOP_LAUNCH, desktop-launch, no)
 AM_CONDITIONAL(ENABLE_DESKTOP_LAUNCH, test "x$DESKTOP_LAUNCH" != "xno")
 

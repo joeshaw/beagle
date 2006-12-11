@@ -57,19 +57,19 @@ namespace Bludgeon {
 			StringBuilder name_builder;
 			name_builder = new StringBuilder (fso.FullName);
 			name_builder.Remove (0, this.FullName.Length+1);
-			header.name = name_builder;
+			header.Name = name_builder.ToString ();
 
-			header.modTime = fso.Timestamp;
+			header.ModTime = fso.Timestamp;
 			if (fso is DirectoryObject) {
-				header.mode = 511; // 0777
-				header.typeFlag = TarHeader.LF_DIR;
-				header.size = 0;
+				header.Mode = 511; // 0777
+				header.TypeFlag = TarHeader.LF_DIR;
+				header.Size = 0;
 			} else {
-				header.mode = 438; // 0666
-				header.typeFlag = TarHeader.LF_NORMAL;
+				header.Mode = 438; // 0666
+				header.TypeFlag = TarHeader.LF_NORMAL;
 				memory = new MemoryStream ();
 				((FileObject) fso).AddToStream (memory, tracker);
-				header.size = memory.Length;
+				header.Size = memory.Length;
 			}
 
 			TarEntry entry;
