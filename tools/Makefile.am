@@ -195,7 +195,6 @@ uninstall-local:
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(CRAWL_WRAPPER_IN)		\
-	$(CRAWL_WRAPPER_CRONTAB_IN)	\
 	$(INFO_CSFILES)			\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
@@ -205,6 +204,7 @@ EXTRA_DIST =				\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
 	$(CRAWL_RULES)			\
+	$(cron_SCRIPTS)			\
 	$(desktop_in_files)		\
 	$(desktop_DATA) 		\
 	beagle-index-info		\
@@ -218,7 +218,6 @@ CLEANFILES = 				\
 	$(TARGETS_MDB)			\
 	$(WRAPPERS)			\
 	$(CRAWL_WRAPPER)		\
-	$(CRAWL_WRAPPER_CRONTAB)	\
 	$(desktop_DATA)		 	\
 	$(desktop_h_files)		\
 	settings.glade.h
