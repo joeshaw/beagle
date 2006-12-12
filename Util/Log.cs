@@ -226,7 +226,7 @@ namespace Beagle.Util {
 			StringBuilder prefix_builder;
 			prefix_builder = new StringBuilder ();
 			prefix_builder.Append ('\n'); // start w/ a newline
-			prefix_builder.AppendFormat ("{0:yyMMdd HHmmssffff} {1:00000} ",
+			prefix_builder.AppendFormat ("{0:yyyyMMdd HH:mm:ss.ffff} {1:00000} ",
 						     DateTime.Now, Process.GetCurrentProcess ().Id);
 			prefix_builder.Append (program_identifier_truncated);
 
