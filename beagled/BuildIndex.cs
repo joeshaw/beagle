@@ -451,7 +451,13 @@ namespace Beagle.Daemon
 
 		static Indexable FileToIndexable (FileInfo file)
 		{
-			if (!file.Exists || Ignore (file) || fa_store.IsUpToDate (file.FullName))
+			if (!file.Exists || Ignore (file))
+				return null;
+
+			// Check if file information is uptodate in the attributes store
+			FileAttributes attr = fa_store.Read (file.FullName);
+			// FIXME:.Net-2.0 DateTime - compare attr.LastWriteTime, no need to ToUTC()
+			if (attr != null && file.LastWriteTimeUtc <= attr.LastWriteTime.ToUniversalTime ())
 				return null;
 
 			// Create the indexable and add the standard properties we
@@ -479,7 +485,9 @@ namespace Beagle.Daemon
 
 			// If the directory exists in the fa store, then it is already indexed
 			if (attr != null) {
-				if (arg_delete && dir.LastWriteTimeUtc > attr.LastWriteTime)
+				// FIXME:.Net-2.0 DateTime - compare attr.LastWriteTime, no need to ToUTC()
+				// Temporary protection against incorrect LastWriteTimeUtc
+				if (arg_delete && dir.LastWriteTimeUtc > attr.LastWriteTime.ToUniversalTime ())
 					modified_directories.Enqueue (dir);
 				return null;
 			}
