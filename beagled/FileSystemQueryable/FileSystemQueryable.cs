@@ -236,6 +236,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.PropertyChange, GuidFu.ToUri (id));
+			indexable.DisplayUri = UriFu.PathToFileUri (name);
 
 			AddStandardPropertiesToIndexable (indexable, name, parent, true);
 
@@ -618,10 +619,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Remove, uri);
+			indexable.DisplayUri = UriFu.PathToFileUri (dir.FullName);
 
 			// Remember a copy of our external Uri, so that we can
 			// easily remap it in the PostRemoveHook.
-			indexable.LocalState ["RemovedUri"] = UriFu.PathToFileUri (dir.FullName);
+			indexable.LocalState ["RemovedUri"] = indexable.DisplayUri;
 
 			// Forget watches and internal references
 			ForgetDirectoryRecursively (dir);
@@ -1063,6 +1065,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Remove, uri);
+			indexable.DisplayUri = file_uri;
 			indexable.LocalState ["RemovedUri"] = file_uri;
 
 			Scheduler.Task task;
