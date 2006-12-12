@@ -278,6 +278,7 @@ namespace Beagle.Daemon {
 					SqliteUtils.DoNonQuery (connection,
 								"DELETE FROM file_attributes WHERE directory='{0}' AND filename='{1}'",
 								directory, filename);
+					attr = null;
 				}
 			}
 
@@ -287,6 +288,8 @@ namespace Beagle.Daemon {
 		public bool Write (FileAttributes fa)
 		{
 			SetPathFlag (fa.Path);
+			int ret = 0;
+			string filter_name;
 
 			// We need to quote any 's that appear in the strings
 			// (in particular, in the path)
@@ -295,13 +298,12 @@ namespace Beagle.Daemon {
 				// If a transaction has been requested, start it now.
 				MaybeStartTransaction ();
 
-				string filter_name;
 				filter_name = fa.FilterName;
 				if (filter_name == null)
 					filter_name = "";
 				filter_name = filter_name.Replace ("'", "''");
 
-				SqliteUtils.DoNonQuery (connection,
+				ret = SqliteUtils.DoNonQuery (connection,
 							"INSERT OR REPLACE INTO file_attributes " +
 							" (unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version) " +
 							" VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
@@ -312,7 +314,8 @@ namespace Beagle.Daemon {
 							filter_name,
 							fa.FilterVersion);
 			}
-			return true;
+
+			return (ret != 0);
 		}
 
 		public void Drop (string path)

@@ -36,16 +36,17 @@ namespace Beagle.Util {
 		// static class
 		private SqliteUtils () { }
 
-		public static void DoNonQuery (SqliteConnection connection, string command_text)
+		public static int DoNonQuery (SqliteConnection connection, string command_text)
 		{
 			SqliteCommand command;
 			command = new SqliteCommand ();
 			command.Connection = connection;
 			command.CommandText = command_text;
+			int ret = 0;
 
 			while (true) {
 				try {
-					command.ExecuteNonQuery ();
+					ret = command.ExecuteNonQuery ();
 					break;
 				} catch (SqliteBusyException ex) {
 					Thread.Sleep (50);
@@ -53,11 +54,12 @@ namespace Beagle.Util {
 			}
 
 			command.Dispose ();
+			return ret;
 		}
 			
-		public static void DoNonQuery (SqliteConnection connection, string format, params object [] args)
+		public static int DoNonQuery (SqliteConnection connection, string format, params object [] args)
 		{
-			DoNonQuery (connection, String.Format (format, args));
+			return DoNonQuery (connection, String.Format (format, args));
 		}
 
 		public static SqliteCommand QueryCommand (SqliteConnection connection, string where_format, params object [] where_args)
