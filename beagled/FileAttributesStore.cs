@@ -114,6 +114,15 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////
 
+		public static bool IsUpToDate (string path, FileAttributes attr)
+		{
+			if (attr == null)
+				return false;
+
+			// FIXME:.Net-2.0 DateTime - Compare attr.LastWriteTime without converting to UTC
+			return (attr.LastWriteTime.ToUniversalTime () >= FileSystem.GetLastWriteTimeUtc (path));
+		}
+
 		public bool IsUpToDate (string path, Filter filter)
 		{
 			FileAttributes attr;
@@ -144,15 +153,12 @@ namespace Beagle.Daemon {
 					return false;
 			} 
 
-			if (FileSystem.GetLastWriteTimeUtc (path) > attr.LastWriteTime)
-				return false;
-
-			return true;
+			return IsUpToDate (path, attr);
 		}
 
 		public bool IsUpToDate (string path)
 		{
-			return IsUpToDate (path, null);
+			return IsUpToDate (path, (Filter) null);
 		}
 
 		//////////////////////////////////////////////////////////
