@@ -241,7 +241,11 @@ public class SettingsDialog
 		reader.Close ();
 
 		if (! enabled) {
-			writer.WriteLine ("Hidden=true");
+			// FIXME: gnome-session has a bug in which autostart overrides
+			// break if Hidden=true is set.
+			writer.WriteLine ("# FIXME: Hidden=true has to be commented out for GNOME autostart to be");
+			writer.WriteLine ("# disabled, but KDE requires it to disable autostart.");
+			writer.WriteLine ("#Hidden=true");
 			writer.WriteLine ("X-GNOME-Autostart-enabled=false");
 		}
 
@@ -255,7 +259,11 @@ public class SettingsDialog
 		reader.Close ();
 
 		if (! enabled) {
-			writer.WriteLine ("Hidden=true");
+			// FIXME: gnome-session has a bug in which autostart overrides
+			// break if Hidden=true is set.
+			writer.WriteLine ("# FIXME: Hidden=true has to be commented out for GNOME autostart to be");
+			writer.WriteLine ("# disabled, but KDE requires it to disable autostart.");
+			writer.WriteLine ("#Hidden=true");
 			writer.WriteLine ("X-GNOME-Autostart-enabled=false");
 		}
 
