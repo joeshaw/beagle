@@ -77,6 +77,15 @@ namespace Beagle.Daemon {
 	
 		////////////////////////////////////////////////////////////////
 
+		// We use this in the index helper so that we can report what's
+		// going on if the helper spins the CPU.  The method will be
+		// called with null parameters after filtering has finished.
+
+		public delegate void FileFilterDelegate (Uri display_uri, Filter filter);
+		public FileFilterDelegate FileFilterNotifier = null;
+
+		////////////////////////////////////////////////////////////////
+
 		//
 		// Implementation of the IIndexer interface
 		//
@@ -295,7 +304,10 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("+{0}", indexable.DisplayUri);
 
 				Filter filter = null;
-				
+
+				if (FileFilterNotifier != null)
+					FileFilterNotifier (indexable.DisplayUri, null); // We don't know what filter yet.
+
 				// If we have content, try to find a filter
 				// which we can use to process the indexable.
 				try {
@@ -304,6 +316,9 @@ namespace Beagle.Daemon {
 					Logger.Log.Error (e, "Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					indexable.NoContent = true;
 				}
+
+				if (FileFilterNotifier != null)
+					FileFilterNotifier (indexable.DisplayUri, filter); // Update with our filter
 					
 				Document primary_doc = null, secondary_doc = null;
 
@@ -345,6 +360,9 @@ namespace Beagle.Daemon {
 						receipt_queue.Add (cr);
 					}
 				}
+
+				if (FileFilterNotifier != null)
+					FileFilterNotifier (null, null); // reset
 				
 				if (secondary_doc != null) {
 					if (secondary_writer == null)

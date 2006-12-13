@@ -47,6 +47,10 @@ namespace Beagle.IndexHelper {
 		private static DateTime last_activity;
 		private static Server server;
 
+		// Current state with filtering.
+		public static Uri CurrentUri;
+		public static Filter CurrentFilter;
+
 		[DllImport ("libc")]
 		extern static private int unsetenv (string name);
 
@@ -252,6 +256,7 @@ namespace Beagle.IndexHelper {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGINT, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGUSR1, OurSignalHandler);
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGUSR2, OurSignalHandler);
 
 			// Ignore SIGPIPE
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
@@ -270,8 +275,11 @@ namespace Beagle.IndexHelper {
 			if (signal < 0)
 				return;
 
-			// Set shutdown flag to true so that other threads can stop initializing
-			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1)
+			// SIGUSR1 and SIGUSR2 are informational signals.  For other
+			// signals that we handle, set the shutdown flag to true so
+			// that other threads can stop initializing
+			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1 &&
+			    (Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR2)
 				Shutdown.ShutdownRequested = true;
 
 			// Do all signal handling work in the main loop and not in the signal handler.
@@ -280,15 +288,28 @@ namespace Beagle.IndexHelper {
 
 		private static void HandleSignal (int signal)
 		{
-			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
+			Log.Warn ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			// If we get SIGUSR1, turn the debugging level up.
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
 				LogLevel old_level = Log.Level;
 				Log.Level = LogLevel.Debug;
 				Log.Debug ("Moving from log level {0} to Debug", old_level);
-				return;
 			}
+
+			string span = StringFu.TimeSpanToString (DateTime.Now - last_activity);
+
+			if (CurrentUri == null)
+				Log.Warn ("Filtering status ({0} ago): no document is currently being filtered.", span);
+			else if (CurrentFilter == null)
+				Log.Warn ("Filtering status ({0} ago): determining filter for {1}", span, CurrentUri);
+			else
+				Log.Warn ("Filtering status ({0} ago): filtering {1} with {2}", span, CurrentUri, CurrentFilter);
+
+			// Don't shut down on information signals (SIGUSR1 and SIGUSR2)
+			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
+			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2)
+				return;
 
 			Logger.Log.Debug ("Initiating shutdown in response to signal.");
 			Shutdown.BeginShutdown ();

@@ -156,6 +156,24 @@ namespace Beagle.Util {
 			
 			return span_str;
 		}
+
+		static public string TimeSpanToString (TimeSpan span)
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			if (span.Days > 0)
+				sb.Append (span.Days + "d");
+
+			if (span.TotalHours > 1.0)
+				sb.Append (span.Hours + "h");
+
+			if (span.TotalMinutes > 1.0)
+				sb.Append (span.Minutes + "m");
+
+			sb.Append (span.Seconds + "s");
+
+			return sb.ToString ();
+		}
 		
 		static public string FileLengthToString (long len)
 		{

@@ -251,7 +251,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		static public void SignalRemoteIndexer ()
+		static public void SignalRemoteIndexer (Mono.Unix.Native.Signum signal)
 		{
 			// No helper running right now
 			if (helper_pid == -1 || ! CheckHelper ()) {
@@ -259,7 +259,8 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			Mono.Unix.Native.Syscall.kill (helper_pid, Mono.Unix.Native.Signum.SIGUSR1);
+			Log.Debug ("Forwarding signal {0} ({1}) to index helper (pid {2})", (int) signal, signal, helper_pid);
+			Mono.Unix.Native.Syscall.kill (helper_pid, signal);
 		}
 	}
 }

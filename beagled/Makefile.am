@@ -575,7 +575,8 @@ INDEX_HELPER_CSFILES =	\
 INDEX_HELPER_LOCAL_ASSEMBLIES =		\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
-	./$(DAEMON_DLL_TARGET)
+	./$(DAEMON_DLL_TARGET)		\
+	./$(PLUGIN_TARGET)
 
 INDEX_HELPER_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\

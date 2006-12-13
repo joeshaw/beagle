@@ -53,13 +53,20 @@ namespace Beagle.IndexHelper {
 			IndexHelperTool.ReportActivity ();
 
 			// Find the appropriate driver for this request.
-			IIndexer indexer;
+			LuceneIndexingDriver indexer;
 			lock (indexer_table) {
-				indexer = indexer_table [remote_request.RemoteIndexName] as IIndexer;
+				indexer = (LuceneIndexingDriver) indexer_table [remote_request.RemoteIndexName];
+
 				if (indexer == null) {
 					indexer = new LuceneIndexingDriver (remote_request.RemoteIndexName,
 									    remote_request.RemoteIndexMinorVersion);
 					indexer_table [remote_request.RemoteIndexName] = indexer;
+
+					indexer.FileFilterNotifier += delegate (Uri display_uri, Filter filter) {
+						IndexHelperTool.ReportActivity ();
+						IndexHelperTool.CurrentUri = display_uri;
+						IndexHelperTool.CurrentFilter = filter;
+					};
 				}
 			}
 

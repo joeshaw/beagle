@@ -557,6 +557,7 @@ namespace Beagle.Daemon {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGINT, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGTERM, OurSignalHandler);
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGUSR1, OurSignalHandler);
+			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGUSR2, OurSignalHandler);
 
 			// Ignore SIGPIPE
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
@@ -588,7 +589,12 @@ namespace Beagle.Daemon {
 				LogLevel old_level = Log.Level;
 				Log.Level = LogLevel.Debug;
 				Log.Debug ("Moving from log level {0} to Debug", old_level);
-				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer (); return false; }));
+			}
+
+			// Send informational signals to the helper too.
+			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
+			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
+				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer ((Mono.Unix.Native.Signum) signal); return false; }));
 				return;
 			}
 
