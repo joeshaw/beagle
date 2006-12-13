@@ -27,11 +27,11 @@ namespace Search.Tiles {
 
 			Title = Hit ["beagle:ExactFilename"];
 
-			if (Hit ["beagle:FilenameExtension"].Length > 0)
-				Description = Hit ["beagle:FilenameExtension"].Substring (1).ToUpper ();
+			if (Hit.GetFirstProperty("beagle:FilenameExtension") != null && (Hit.GetFirstProperty("beagle:FilenameExtension").Length > 0))
+				Description = (Hit.GetFirstProperty("beagle:FilenameExtension").Substring (1)).ToUpper ();
 			
-			if (Hit ["fixme:width"] != null && Hit ["fixme:width"] != "")
-				Description += String.Format (" {0}x{1}", Hit ["fixme:width"], Hit ["fixme:height"]);
+			if (Hit.GetFirstProperty("fixme:width") != null && Hit.GetFirstProperty("fixme:width") != "")
+				Description += String.Format (" {0}x{1}", Hit.GetFirstProperty("fixme:width"), Hit.GetFirstProperty("fixme:height"));
 
 			Description += String.Format (" ({0})", StringFu.FileLengthToString (Hit.FileInfo.Length));
 
@@ -44,7 +44,7 @@ namespace Search.Tiles {
 			base.LoadIcon (image, size);
 
 			// Draw the F-Spot overlay
-			if (size > 32 && Hit ["fspot:IsIndexed"] == "true") {
+			if (size > 32 && Hit.GetFirstProperty("fspot:IsIndexed") == "true") {
 				Gdk.Pixbuf icon = image.Pixbuf.Copy ();
 				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 24, 24);
 
@@ -79,7 +79,7 @@ namespace Search.Tiles {
 			details.AddLabelPair (Catalog.GetString ("Modified:"), Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime));
 			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
 
-			if (Hit ["fspot:Description"] != null && Hit ["fspot:Description"] != "") {
+			if (Hit.GetFirstProperty("fspot:Description") != null && Hit.GetFirstProperty("fspot:Description") != "") {
 				details.AddNewLine ();
 				details.AddTextLabel (Hit ["fspot:Description"]);
 			}
