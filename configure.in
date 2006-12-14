@@ -404,8 +404,6 @@ dnl ----------------------------------------------
 
 dnl libbeagle
 
-GTK_DOC_CHECK(1.0)
-
 AC_ARG_ENABLE([libbeagle],
 	AC_HELP_STRING([--disable-libbeagle], [Disable libbeagle (C API)]),
 	enable_libbeagle=$enableval,
@@ -447,6 +445,11 @@ else
 	else
 		enable_libbeagle="no (disabled)"
 	fi
+fi
+
+# If libbeagle is enabled, do the documentation check.
+if test "x$enable_libbeagle" == "xyes"; then
+	GTK_DOC_CHECK(1.0)
 fi
 
 AM_CONDITIONAL(ENABLE_LIBBEAGLE, test "x$enable_libbeagle" = "xyes")
@@ -732,6 +735,7 @@ echo "
 
 	Enable libbeagle	  ${enable_libbeagle}
 	Enable python bindings	  ${have_python}
+	Enable libbeagle docs     ${enable_gtk_doc}
 	Monitor screensaver       ${have_xss}
 
 	Enable beagle-search GUI  ${enable_gui}
