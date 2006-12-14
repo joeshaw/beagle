@@ -9,6 +9,7 @@ namespace Search.Tiles {
 		{
 			Gtk.Label label = new Gtk.Label ();
 			label.SetAlignment (0.0f, 0.5f);
+			label.Selectable = true;
 			return label;
 		}
 
