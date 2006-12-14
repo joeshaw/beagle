@@ -1,6 +1,8 @@
 using System;
 using Mono.Unix;
 
+using Beagle.Util;
+
 namespace Search.Tiles {
 
 	public class WebHistoryActivator : TileActivator {
@@ -40,7 +42,8 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			base.OpenFromUri (Hit.Uri.ToString ());
+			
+			base.OpenFromUri (UriFu.UriToEscapedString(Hit.Uri));
 		}
 
 		protected override DetailsPane GetDetails ()
