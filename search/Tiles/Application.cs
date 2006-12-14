@@ -3,9 +3,14 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Mono.Unix;
 
+using GConf;
+
 namespace Search.Tiles {
 
 	public class ApplicationActivator : TileActivator {
+
+		static bool checked_gconf = false;
+		static bool disable_command_line = false;
 
 		public ApplicationActivator () : base ()
 		{
@@ -27,6 +32,20 @@ namespace Search.Tiles {
 		{
 			if (ditem != IntPtr.Zero)
 				gnome_desktop_item_unref (ditem);
+		}
+
+		static void CheckLockdown ()
+		{
+			GConf.Client client = new GConf.Client ();
+
+			try {
+				disable_command_line = (bool) client.Get ("/desktop/gnome/lockdown/disable_command_line");
+			} catch {
+				// The key isn't set for some reason
+				disable_command_line = false;
+			}
+
+			checked_gconf = true;
 		}
 
 		// invalid .desktop files get filtered out by Validate(), so they won't
@@ -66,6 +85,17 @@ namespace Search.Tiles {
 			string onlyshow = gnome_desktop_item_get_string (ditem, "OnlyShowIn");
 			if (onlyshow != null && onlyshow.IndexOf ("GNOME") == -1)
 				return null;
+
+
+			if (!checked_gconf)
+				CheckLockdown();
+
+			if (disable_command_line) {
+				string[] categories = hit.GetProperties ("fixme:Categories");
+
+				if (categories != null && Array.IndexOf (categories, "TerminalEmulator") != -1)
+					return null;
+			}
 
 			return new Application (hit, query, ditem);
 		}
