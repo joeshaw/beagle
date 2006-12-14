@@ -63,6 +63,14 @@ public abstract class Summary : IEnumerable {
 		this.header = this.ReadHeader (f);
 		f.Close ();
 	}
+
+	public override string ToString ()
+	{
+		if (header == null)
+			return "No header read";
+		else
+			return header.ToString ();
+	}
 	
 	public IEnumerator GetEnumerator () {
 		return new SummaryEnumerator (this);
@@ -117,9 +125,9 @@ public abstract class Summary : IEnumerable {
 					try {
 						info = s.ReadMessageInfo (f);
 					} catch (Exception e) {
-						Logger.Log.Warn ("Skipping bogus message " +
-								 "[file={0}, index={1}, error={2}]",
-								 s.filename, index, e.ToString());
+						Log.Warn ("Skipping bogus message " +
+							  "[file={0}, index={1}, error={2}]",
+							  s.filename, index, e.ToString());
 						
 						info = null;
 						++index;
@@ -333,8 +341,6 @@ public abstract class Summary : IEnumerable {
 		}
 	}
 
-
-
 	public class ImapMessageInfo : MessageInfo {
 		public uint server_flags;
 		
@@ -358,6 +364,7 @@ public abstract class Summary : IEnumerable {
 			return false;
 
 		    uint count = Decode.UInt (f);
+
 		    if (count > 500) {
 			return false;
 		    }
@@ -442,8 +449,12 @@ public abstract class Summary : IEnumerable {
 				deleted = Decode.FixedInt (f);
 				junk    = Decode.FixedInt (f);
 			}
+		}
 
-			//Console.WriteLine ("V={0} ({1}) time={2}, count={3} unread={4} deleted={5} junk={6}", version, version & 0xff, time, count, unread, deleted, junk);
+		public override string ToString ()
+		{
+			return String.Format ("version={0} flags={1} nextuid={2} time={3} count={4} unread={5} deleted={6} junk={7}",
+					      version, flags, nextuid, time, count, unread, deleted, junk);
 		}
 	}
 
@@ -457,29 +468,32 @@ public abstract class Summary : IEnumerable {
 			local_version = Decode.FixedInt (f);
 			mbox_version = Decode.FixedInt (f);
 			folder_size = Decode.FixedInt (f);
+		}
 
-			//Console.WriteLine ("local_version={0}  mbox_version={1}  folder_size={2}", local_version, mbox_version, folder_size);
+		public override string ToString ()
+		{
+			return String.Format ("{0} local_version={1} mbox_version={2} folder_size={3}",
+					      base.ToString (), local_version, mbox_version, folder_size);
 		}
 	}
 
 	public class ImapSummaryHeader : SummaryHeader {
+		private int imap_version;
 		
 		public ImapSummaryHeader (FileStream f) : base (f)
 		{
 			// Check for legacy version
 			if (base.version != 0x30c) { // 780
-				int version = Decode.FixedInt (f);
+				imap_version = Decode.FixedInt (f);
 
-				//Console.WriteLine ("imap version={0}", version);
-
-				if (version < 0)
+				if (imap_version < 0)
 					throw new Exception ("IMAP summary version too low");
 
 				// Right now we only support summary versions 1 through 3
-				if (version > 3)
-					throw new Exception (String.Format ("Reported summary version ({0}) is too new", version));
+				if (imap_version > 3)
+					throw new Exception (String.Format ("Reported summary version ({0}) is too new", imap_version));
 
-				if (version == 2)
+				if (imap_version == 2)
 					Decode.FixedInt (f);
 
 				// validity
@@ -489,6 +503,11 @@ public abstract class Summary : IEnumerable {
 				Decode.UInt (f);
 			}
 		}
+
+		public override string ToString ()
+		{
+			return String.Format ("{0} imap_version={1}", base.ToString (), imap_version);
+		}
 	}
 	
 	public class Decode {
@@ -497,8 +516,8 @@ public abstract class Summary : IEnumerable {
 
 		static Decode ()
 		{
-			UnixBaseTicks = DateTimeUtil.UnixToDateTimeUtc (0).Ticks;
-			//UnixBaseTicks = new DateTime (1970, 1, 1, 0, 0, 0).Ticks;
+			//UnixBaseTicks = DateTimeUtil.UnixToDateTimeUtc (0).Ticks;
+			UnixBaseTicks = new DateTime (1970, 1, 1, 0, 0, 0).Ticks;
 		}
 
 		public static string Token (FileStream f) 
@@ -553,10 +572,14 @@ public abstract class Summary : IEnumerable {
 			uint value = 0;
 			int v;
 			
-			while (((v = f.ReadByte ()) & 0x80) == 0 && v != -1){
+			while (((v = f.ReadByte ()) & 0x80) == 0 && v != -1) {
 				value |= (byte) v;
 				value <<= 7;
 			}
+
+			if (v == -1)
+				throw new Exception ("Unexpected end of file");
+
 			return value | ((byte)(v & 0x7f));
 		}
 		
@@ -582,7 +605,10 @@ public abstract class Summary : IEnumerable {
 			for (int i = IntPtr.Size - 1; i >= 0; i--) {
 				int v = f.ReadByte ();
 
-				seconds |= v << (i * 8);
+				if (v == -1)
+					throw new Exception ("Unexpected end of file");
+
+				seconds |= (uint) v << (i * 8);
 			}
 
 			if (seconds == 0)
@@ -601,9 +627,10 @@ public abstract class Summary : IEnumerable {
 		}
 	}
 
+
 #if false
 	class Test {
-		void Main (string [] args)
+		public static void Main (string [] args)
 		{
 			string file;
 			
@@ -612,7 +639,9 @@ public abstract class Summary : IEnumerable {
 			else
 				file = args [0];
 			
-			Summary s = Summary.LoadMBoxSummary (file);
+			Summary s = Summary.LoadImapSummary (file);
+			Console.WriteLine (s);
+			Console.WriteLine ();
 			foreach (MessageInfo m in s) {
 				Console.WriteLine(m);
 			}
