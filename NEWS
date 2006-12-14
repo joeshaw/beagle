@@ -1,4 +1,162 @@
 
+Version 0.2.14
+14 December 2006
+
+Daemon/Infrastructure:
+* Added the infrastructure necessary to handle indexing of archive
+  files.  (Debajyoti Bera, Daniel Drake)
+* Fix many issues with dates because .NET 1.1 was interpreting the
+  dates as local time, not UTC.  (Bera)
+* Indexables are no longer marked as indexed until all of its children
+  are indexed first.  (Bera)
+* Add infrastructure to signal clients when we're doing the initial
+  index.  (Joe Shaw)
+* Changes to how child indexables are dealt with in the index.  (Bera)
+* Work around a bug in Mono 1.2.1, so that Beagle doesn't incorrectly
+  think your home directory is on a remote filesystem like NFS.  (Joe)
+* Use the XDG autostart specification to autostart the daemon, and
+  deprecate the old --autostarted flag.  (Joe)
+* Fix a URI comparison problem that would cause files to be repeatedly
+  reindexed.  (Bera)
+* Fix a bug in the tokenizer so that "001234" is tokenized as "1234".
+  (Bera)
+* Tokenize longer numbers, like international phone numbers.  (Bera)
+* After we store child indexable streams in the helper, close them
+  rather than letting the GC do it for us.  (Joe)
+* Don't set the "source" on indexables if they are already set.  This
+  allows indexing service clients to set their own "source" names.
+  (Bera)
+* Added a handler for SIGUSR2 to the helper process, which will print
+  out what file it is currently filtering.  Should help debugging 100%
+  CPU issues greatly.  (Joe)
+* Greatly improve logging in the daemon and helper.  (Joe)
+
+Backends:
+* Support child indexables in the file system backend.  (Bera)
+* Report progress percentages in the Evolution mail backend.  (Joe)
+
+Filters:
+* Added a new archive filter, to handle zip, tar, gzip and bzip2
+  archives.  (Joe, Veerapuram Varadhan, Bera)
+* Limit the archive filter to only index 30 files inside archives for
+  now, to avoid excessive disk usage.  (Joe)
+* Added Scribus filter.  (Alexander Macdonald)
+* Fix a crash and clean up the code in the SVG filter.  (Alexander)
+* Fix a potential crash in the HTML filter.  (Bera)
+* Use the current encoding when decoding URLs in the HTML filter.
+  (Bera)
+* Add text/troff to the list of supported MIME types in the man page
+  filter.  (Joe)
+* Turn on snippeting in the man page filter.  (Joe)
+
+Bindings:
+* Fix a logic bug in libbeagle that would cause responses to get lost
+  if different complex messages were sent to the daemon.  (Joe)
+* Print out the response in libbeagle apps if ENABLE_XML_DUMP is
+  defined.  (Joe)
+* Set the correct time zone info in BeagleTimestamp.  (Bera)
+* Add example code for using the indexing service APIs.  (Bera)
+
+Tools:
+* Only show the timestamp in beagle-extract-content if it's valid.
+  (Joe)
+* Fix a problem in which child indexables from archives weren't being
+  cleaned up in beagle-extract-content.  (Bera)
+* Only show the number of total hits if we're in verbose mode with
+  beagle-query, so that scripts can still easily deal only with URIs.
+  (Joe)
+* Add support to beagle-settings to handle autostarting the daemon and
+  UI with the XDG autostart spec.  (Joe)
+* Show the percentages of progress in beagle-index-info for the
+  backends that support it.  (Joe)
+* Remove dead webservices code from beagle-settings tool.  (Joe)
+* Fix a problem in which passing in --disable-directories to
+  beagle-crawl-system would override --disable-filtering.  (Joe, 
+  Pat Double)
+
+UI:
+* Show an informational box when the daemon is in the process of
+  indexing the user's data.  (Lukas Lipka, Joe)
+* New tile to show files inside archives.  (Joe)
+* Added a status bar, and display in it the total number of matching
+  documents and the number that are currently displayed.  (Joe)
+* Fix some rendering ugliness in the details pane if you resized it.
+  (Joe)
+* Add support for xdg-open if present.  (Joe)
+* Fix the build so that Thunderbird was correctly opened from tiles.
+  (Kevin Kubasik)
+* Fix a crash in the image tile if the file didn't have an extension.
+  (Kevin)
+* Fix web tiles opening the handler for the MIME type, rather than the
+  handler for the URL.  (Kevin, Joe)
+* Fix a crash on right-click when the "Open With..." menu would have
+  been blank.  (Joe)
+* Use the XDG autostart spec to autostart beagle-search, and deprecate
+  the old --autostarted method.  (Joe)
+* Fix a potential crash in the image tile in the unlikely event that
+  we'd attempt to composite the F-Spot logo on top of a standard MIME
+  icon.  (Joe)
+* Don't scale up RSS feed icons.  Liferea stores icons mostly at 16x16
+  or 32x32, and those look terrible.  (Joe)
+
+Memory optimizations:
+* Fix a big leak in which we were leaking Lucene IndexReader
+  instances.  This substantially reduces memory usage.  (Joe)
+* Plug a leak in which QueryWorker instances were never removed from a
+  static hash table.  (Joe)
+* Don't store full Hit objects in the QueryWorker's URI hash table,
+  since they're never used and hold references on a lot of objects.
+  (Joe)
+* Fix a leak of URIs in LuceneFileQueryable, which is the base class
+  for most of the smaller backends.  (Joe)
+* Fix a leak in which the list of all the Evolution accounts were
+  stored for each folder.  (Joe)
+* Avoid some unnecessary boxing in Lucene, reducing memory usage.
+  (Joe)
+* For all our non-tokenized fields, turn off storing norms in the
+  Lucene index.  This will save disk and memory usage for those
+  fields.  (Joe)
+* Make the code in the IndexerRequest class a little better about
+  object allocations.  (Joe)
+* Fix an issue where characters were boxed every time we processed a
+  URI.  This heavily reduces memory allocations.  (Joe)
+* Use UTC when calculating load averages, to avoid uncessary
+  allocations related to timezones.  (Joe)
+* If --heap-buddy or --heap-shot are passed to the daemon, assume
+  --debug-memory.  (Joe)
+* If running with --heap-shot and the RSS increases by more than 5% or
+  5 megs, or the Mono heap size increases by more than 10%,
+  automatically send SIGPROF to the daemon to generate a memory
+  snapshot.  (Joe)
+
+Translations:
+* Updated Arabic translation.  (Djihed Afifi)
+* Updated Catalan translation.  (Jordi Mas)
+* Updated Czech translation.  (Jakub Friedl)
+* Updated Galician translation.  (Ignacio Casal Quinteiro)
+* Updated German translation.  (Hendrik Brandt)
+* Updated Hungarian translation.  (Gabor Kelemen)
+* Updated Japanese translation.  (Takeshi Aihana)
+* Updated Norwegian bokmål translation.  (Kjartan Maraas)
+* Updated Spanish translation. (Francisco Javier F. Serrador)
+* Updated Swedish translation. (Daniel Nylander)
+
+Everything else:
+* Sync our xdgmime with upstream.  (Bera)
+* Only check for wv1 if we have gsf-sharp.  We need both for MS Word
+  filtering.  (Joe, Bera)
+* Only build the po directory if we're building the GUI.  (Joe)
+* Update the build system to use gnome-common's gnome-autogen.sh if
+  it's available.  If not, use our own included copy.  (Joe)
+* Require automake 1.8 to build.  (Joe, Pat, Max Weihle)
+* Build against Mono's included SharpZipLib 0.84, instead of the older
+  0.60 version.  (Joe)
+* Fix an issue with the cron scripts not being included in the
+  tarball.  (Joe)
+* Only check for gtk-doc if libbeagle is enabled.  (Joe)
+
+------------------------------------------------------
+
 Version 0.2.13
 20 November 2006
 
