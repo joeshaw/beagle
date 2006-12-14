@@ -52,7 +52,7 @@ struct _BeagleIndexingStatusResponseClass {
 
 GType    beagle_indexing_status_response_get_type (void);
 
-gboolean beagle_indexing_status_is_indexing (BeagleIndexingStatusResponse *response);
+gboolean beagle_indexing_status_response_is_indexing (BeagleIndexingStatusResponse *response);
 
 #endif /* __BEAGLE_INDEXING_STATUS_RESPONSE_H */
 

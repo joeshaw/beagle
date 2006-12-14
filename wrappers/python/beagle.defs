@@ -816,12 +816,10 @@
   (return-type "GType")
 )
 
-(define-function beagle_indexing_status_is_indexing
-  (c-name "beagle_indexing_status_is_indexing")
+(define-method is_indexing
+  (of-object "BeagleIndexingStatusResponse")
+  (c-name "beagle_indexing_status_response_is_indexing")
   (return-type "gboolean")
-  (parameters
-    '("BeagleIndexingStatusResponse*" "response")
-  )
 )
 
 
