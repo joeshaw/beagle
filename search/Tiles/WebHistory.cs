@@ -40,7 +40,7 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			base.OpenFromMime (Hit);
+			base.OpenFromUri (Hit.Uri.ToString ());
 		}
 
 		protected override DetailsPane GetDetails ()
