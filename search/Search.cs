@@ -495,6 +495,8 @@ namespace Search {
 			foreach (Uri uri in response.Uris)
 				view.SubtractHit (uri);
 
+			TotalMatches -= response.Uris.Count;
+
 			CheckNoMatch ();
 		}
 
