@@ -485,6 +485,7 @@ namespace Mono.Data.SqliteClient
 					// statement, which will be the NULL character if
 					// this was the last statement.
 					bool last = Marshal.ReadByte(pzTail) == 0;
+					Exception caught_ex = null;
 
 					try {
 						if (parent_conn.Version == 3)
@@ -497,13 +498,24 @@ namespace Mono.Data.SqliteClient
 						
 						if (last) // rows_affected is only used if !want_results
 							rows_affected = NumChanges ();
-						
+					} catch (Exception ex) {
+						caught_ex = ex;
 					} finally {
 						if (! want_results) {
 							if (parent_conn.Version == 3) 
 								Sqlite.sqlite3_finalize (pStmt);
-							else
+							else {
 								Sqlite.sqlite_finalize (pStmt, out errMsgPtr);
+
+								if (errMsgPtr != IntPtr.Zero) {
+									string errMsg = Marshal.PtrToStringAnsi (errMsgPtr);
+
+									if (caught_ex != null)
+										throw new SqliteExecutionException (errMsg, caught_ex);
+									else
+										throw new SqliteExecutionException (errMsg);
+								}
+							}
 						}
 					}
 					

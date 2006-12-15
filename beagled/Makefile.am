@@ -466,6 +466,7 @@ evomailqueryable = $(srcdir)/EvolutionMailDriver
 EVO_MAIL_QUERYABLE_CSFILES =					\
 	$(evomailqueryable)/EvolutionMailDriver.cs		\
 	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
+	$(evomailqueryable)/EvolutionSummaryTracker.cs		\
 	$(evomailqueryable)/GConfThreadHelper.cs		\
 	$(evomailqueryable)/MailCrawler.cs
 

@@ -117,11 +117,11 @@ namespace Beagle.Daemon {
 			Shutdown.ShutdownEvent += new Shutdown.ShutdownHandler (OnShutdownEvent);
 		}
 
-		protected string IndexName {
+		public string IndexName {
 			get { return index_name; }
 		}
 
-		protected string IndexDirectory {
+		public string IndexDirectory {
 			get { return driver.TopDirectory; }
 		}
 
