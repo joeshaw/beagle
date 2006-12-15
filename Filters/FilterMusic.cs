@@ -111,8 +111,12 @@ namespace Beagle.Filters {
 			foreach (int track in tag.TrackCounts)
 				AddProperty (Beagle.Property.NewUnsearched ("fixme:trackcount", track));
 
-			foreach (int year in tag.Years)
-				AddProperty (Beagle.Property.NewUnsearched ("fixme:year", year));
+			try {
+				// FIXME: Not ideal; we probably should patch entagged-sharp to handle
+				// the format exception itself instead and keep going.
+				foreach (int year in tag.Years)
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:year", year));
+			} catch (FormatException) { }
 
 			foreach (string genre in tag.Genres)
 				AddProperty (Beagle.Property.NewKeyword ("fixme:genre", genre));
