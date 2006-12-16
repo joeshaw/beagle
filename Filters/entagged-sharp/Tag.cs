@@ -406,7 +406,9 @@ namespace Entagged.Audioformats
                 fields[id] = list;
             }
 
-            list.Add(content);
+	    // Does not make sense to add if already added
+	    if (! list.Contains (content))
+		list.Add(content);
         }
 
         public void Add(string id, string content, bool checkcommon)
