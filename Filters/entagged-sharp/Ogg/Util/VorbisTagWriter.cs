@@ -39,7 +39,7 @@ namespace Entagged.Audioformats.Ogg.Util {
 			OggTag tag = null;
 			try {
 				tag = (OggTag) reader.Read(raf);
-			} catch(CannotReadException e) {
+			} catch(CannotReadException) {
 				Write(new OggTag(), raf, tempRaf);
 				return;
 			}

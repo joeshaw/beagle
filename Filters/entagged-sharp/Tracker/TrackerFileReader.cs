@@ -67,7 +67,7 @@ namespace Entagged.Audioformats.Tracker {
 
 			try {
 				return (TrackerFormat) Enum.Parse(typeof(TrackerFormat), segment, true);
-			} catch(Exception e) {
+			} catch(Exception) {
 				throw new Exception("Unrecognised tracker file format: " + mime);
 			}
 		}

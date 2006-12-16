@@ -95,30 +95,32 @@ namespace Entagged.Audioformats.Util
             return System.Text.Encoding.ASCII.GetBytes(s);
         }
         
-        public static string [] FieldListToStringArray(IList taglist)
+        public static IEnumerable FieldListToStringArray(IList taglist)
         {
-            string[] ret = new string[taglist.Count];
-            int i = 0;
-            
             foreach (string field in taglist)
-                ret[i++] = (field != null && field.Trim().Length > 0) ?
-                    field : null;
-            
-            return ret;
+		if (field != null && field.Trim().Length > 0)
+		    yield return field;
         }
 
-        public static int [] FieldListToIntArray(IList taglist)
+        public static IEnumerable FieldListToIntArray(IList taglist)
         {
-            int [] ret = new int[taglist.Count];
-            int i = 0;
-            
+	    bool converted;
+	    int i = 0;
+
             foreach(string field in taglist) {
+		converted = false;
+
                 if(field.Length > 0) {
-                    ret[i++] = Convert.ToInt32(field);
+		    try {
+			i = Convert.ToInt32(field);
+			converted = true;
+		    } catch (FormatException) { }
                 }
+
+		if (converted)
+		    yield return i;
             }
-            
-            return ret;
+	    yield break;
         }
 
         public static Tag CombineTags(params Tag [] tags)
@@ -236,7 +238,7 @@ namespace Entagged.Audioformats.Util
                         }
                     }
                 }
-            } catch(IndexOutOfRangeException e) {
+            } catch(IndexOutOfRangeException) {
                 return false;
             }
 

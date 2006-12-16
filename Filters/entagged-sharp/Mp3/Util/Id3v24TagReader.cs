@@ -101,7 +101,7 @@ namespace Entagged.Audioformats.Mp3.Util {
 					try {
 						// Create the Frame upon the byte array data.
 						AddId3Frame(tag, field, b, version);
-					} catch (Exception e) {
+					} catch (Exception) {
 						//FIXME: do we have to output anything here?
 					}
 				}

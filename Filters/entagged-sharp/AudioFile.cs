@@ -26,6 +26,7 @@
  
 using System;
 using System.IO;
+using System.Collections;
 using Entagged.Audioformats;
 using Entagged.Audioformats.Util;
 
@@ -98,59 +99,59 @@ namespace Entagged
             }
         }
 
-        public string [] Genres {
+        public IEnumerable Genres {
             get { 
                return Utils.FieldListToStringArray(Tag.Genre); 
             }
         }
 
-        public string [] Titles
+        public IEnumerable Titles
         {
             get { 
                 return Utils.FieldListToStringArray(Tag.Title); 
             }
         }
 
-        public int [] TrackNumbers
+        public IEnumerable TrackNumbers
         {
             get { 
                 return Utils.FieldListToIntArray(Tag.Track); 
             }
         }
 
-        public int [] TrackCounts
+        public IEnumerable TrackCounts
         {
             get { 
                 return Utils.FieldListToIntArray(Tag.TrackCount); 
             }
         }
 
-        public int [] Years
+        public IEnumerable Years
         {
             get { 
                 return Utils.FieldListToIntArray(Tag.Year); 
             }
         }
 
-        public string [] Albums {
+        public IEnumerable Albums {
             get { 
                 return Utils.FieldListToStringArray(Tag.Album); 
             }
         }
 
-        public string [] Artists {
+        public IEnumerable Artists {
             get { 
                 return Utils.FieldListToStringArray(Tag.Artist); 
             }
         }
 
-        public string [] Comments {
+        public IEnumerable Comments {
             get { 
                 return Utils.FieldListToStringArray(Tag.Comment); 
             }
         }
 
-        public string [] Licenses {
+        public IEnumerable Licenses {
             get { 
                 return Utils.FieldListToStringArray(Tag.License);
             }

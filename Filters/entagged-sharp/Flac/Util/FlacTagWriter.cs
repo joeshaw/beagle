@@ -39,7 +39,7 @@ namespace Entagged.Audioformats.Flac.Util {
 			OggTag tag = null;
 			try {
 				tag = reader.Read(raf);
-			} catch(CannotReadException e) {
+			} catch(CannotReadException) {
 				Write(new OggTag(), raf, tempRaf);
 				return;
 			}

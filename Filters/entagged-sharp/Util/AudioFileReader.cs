@@ -66,7 +66,7 @@ namespace Entagged.Audioformats.Util
                 try {
                     stream.Seek(0, SeekOrigin.Begin);
                     tag = GetTag(stream, mime);
-                } catch(CannotReadException e) {
+                } catch(CannotReadException) {
                     // Do nothing
                 }
 
@@ -78,7 +78,7 @@ namespace Entagged.Audioformats.Util
                     if(stream != null) {
                         stream.Close();
                     }
-                } catch(Exception ex) {
+                } catch(Exception) {
                     /* We tried everything... */
                 }
             }
