@@ -258,7 +258,11 @@ namespace Beagle.Filters {
 			if (enc == null) {
 				// we need to tell the parser to detect encoding,
 				HtmlDocument temp_doc = new HtmlDocument ();
-				enc = temp_doc.DetectEncoding (Stream);
+				try {
+					enc = temp_doc.DetectEncoding (Stream);
+				} catch (NotSupportedException) {
+					enc = Encoding.ASCII;
+				}
 				//Console.WriteLine ("Detected encoding:" + (enc == null ? "null" : enc.EncodingName));
 				temp_doc = null;
 				Stream.Seek (0, SeekOrigin.Begin);
