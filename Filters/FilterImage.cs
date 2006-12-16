@@ -99,16 +99,12 @@ namespace Beagle.Filters {
 
 			AddProperty (Beagle.Property.NewBool ("fspot:IsIndexed", true));
 			
-			if (photo.Description != null && photo.Description != "") {
-				AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
-				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", photo.Description));
-			}
+			AddProperty (Beagle.Property.New ("fspot:Description", photo.Description));
+			AddProperty (Beagle.Property.NewUnstored ("fixme:comment", photo.Description));
 			
-			foreach (FSpotTools.Tag tag in photo.Tags) {				
-				if (tag.Name != null && tag.Name != "") {
-					AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
-					AddProperty (Beagle.Property.NewUnstored ("image:tag", tag.Name));
-				}
+			foreach (FSpotTools.Tag tag in photo.Tags) {
+				AddProperty (Beagle.Property.New ("fspot:Tag", tag.Name));
+				AddProperty (Beagle.Property.NewUnstored ("image:tag", tag.Name));
 			}
 		}
 
@@ -121,10 +117,8 @@ namespace Beagle.Filters {
 
 			AddProperty (Beagle.Property.NewBool ("digikam:IsIndexed", true));
 			
-			if (digikam_data.caption != null && digikam_data.caption != "") {
-				AddProperty (Beagle.Property.New ("digikam:caption", digikam_data.caption));
-				AddProperty (Beagle.Property.NewUnstored ("fixme:comment", digikam_data.caption));
-			}
+			AddProperty (Beagle.Property.New ("digikam:caption", digikam_data.caption));
+			AddProperty (Beagle.Property.NewUnstored ("fixme:comment", digikam_data.caption));
 			
 			foreach (string tag in digikam_data.Tags) {
 				AddProperty (Beagle.Property.New ("digikam:Tag", tag));

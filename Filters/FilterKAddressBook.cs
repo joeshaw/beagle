@@ -102,10 +102,7 @@ namespace Beagle.Filters {
 		{
 			pref_email_set = false;
 			base.DoPullProperties ();
-			if (pref_email != null)
-				AddProperty (Beagle.Property.New (
-						"vCard:PREFEMAIL",
-						pref_email));
+			AddProperty (Beagle.Property.New ("vCard:PREFEMAIL", pref_email));
 		}
 
 		override protected void ProcessPropertySpecial (string prop_name,

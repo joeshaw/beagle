@@ -84,26 +84,17 @@ namespace Beagle.Filters {
 
 		override protected void DoPullProperties() 
 		{
-						
-			if(chmFile.Title != "") 
-				AddProperty (Beagle.Property.New ("dc:title", chmFile.Title));
-			
-						
+			AddProperty (Beagle.Property.New ("dc:title", chmFile.Title));
 		}
 
 		override protected void DoPull()
 		{
-			
-			
 			Finished ();
-			
-			
 		}
 
 		override protected void  DoClose() 
 		{
 			chmFile.Dispose ();
-		
 		}
 		
 		override protected  void  RegisterSupportedTypes()

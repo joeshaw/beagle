@@ -163,9 +163,9 @@ namespace Beagle.Filters {
 						building_text = false;
 					}
 				} else if (node.Name == "meta") {
-	   				string name = node.GetAttributeValue ("name", "");
-           				string content = node.GetAttributeValue ("content", "");
-					if (name != String.Empty && content != String.Empty)
+	   				string name = node.GetAttributeValue ("name", String.Empty);
+           				string content = node.GetAttributeValue ("content", String.Empty);
+					if (name != String.Empty)
 						AddProperty (Beagle.Property.New ("meta:" + name, content));
 				} else if (! NodeIsContentFree (node.Name)) {
 					bool isHot = NodeIsHot (node.Name);
@@ -182,13 +182,13 @@ namespace Beagle.Filters {
 							hot_stack.Push (node.Name);
 						}
 						if (node.Name == "img") {
-							string attr = node.GetAttributeValue ("alt", "");
+							string attr = node.GetAttributeValue ("alt", String.Empty);
 							if (attr != String.Empty) {
 								AppendText (HtmlEntity.DeEntitize (attr));
 								AppendWhiteSpace ();
 							}
 						} else if (node.Name == "a") {
-							string attr = node.GetAttributeValue ("href", "");
+							string attr = node.GetAttributeValue ("href", String.Empty);
 							if (attr != String.Empty) {
 								AppendText (HtmlEntity.DeEntitize (
 									    SW.HttpUtility.UrlDecode (attr, enc)));

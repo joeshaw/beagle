@@ -126,7 +126,7 @@ namespace Beagle.Filters {
 				return;
 
 			if (prop_value == null)
-				prop_value = "";
+				prop_value = String.Empty;
 
 			if (! KCalPropertyMapping.Contains (prop_name))
 				return;

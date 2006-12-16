@@ -88,14 +88,14 @@ namespace Beagle.Filters
 					if (reader.Name.StartsWith ("sect") || reader.Name.StartsWith ("chapter")) {
 						string id = reader.GetAttribute ("id");
 
-						if (id != null && id != "") {
+						if (id != null && id != String.Empty) {
 							DocbookEntry entry = new DocbookEntry ();
 							entry.Id = id;
 							entry.Depth = reader.Depth;
 
 							string language = reader.GetAttribute ("lang");
 							
-							if (language != null && language != "")
+							if (language != null && language != String.Empty)
 								entry.Language = language;
 
 							entries_stack.Push (entry);
@@ -103,7 +103,7 @@ namespace Beagle.Filters
 					} else if (reader.Name == "article" || reader.Name == "book") {
 						string language = reader.GetAttribute ("lang");
 
-						if (language != null && language != "")
+						if (language != null && language != String.Empty)
 							base_language = language;
 					} else if (reader.Name == "title") {
 						reader.Read (); // Go to the text node
@@ -130,7 +130,8 @@ namespace Beagle.Filters
 					break;
 					
 				case XmlNodeType.EndElement:
-					if (entries_stack.Count > 0 && ((DocbookEntry) entries_stack.Peek ()).Depth == reader.Depth) {
+					if (entries_stack.Count > 0 &&
+					    ((DocbookEntry) entries_stack.Peek ()).Depth == reader.Depth) {
 						DocbookEntry entry, parent_entry = null;
 
 						entry = (DocbookEntry) entries_stack.Pop ();
@@ -144,13 +145,10 @@ namespace Beagle.Filters
 						indexable.Filtering = IndexableFiltering.AlreadyFiltered;
 
 						indexable.AddProperty (Property.NewUnsearched ("fixme:id", entry.Id));
-						
-						if (entry.Title != null)
-							indexable.AddProperty (Property.New ("dc:title", entry.Title));
-						
+						indexable.AddProperty (Property.New ("dc:title", entry.Title));
+
 						// Add the docbook book title
-						if (base_title != null)
-							indexable.AddProperty (Property.NewUnsearched ("fixme:base_title", base_title));
+						indexable.AddProperty (Property.NewUnsearched ("fixme:base_title", base_title));
 
 						// Add the child language (or docbook language if none is specified)
 						if (entry.Language != null)
@@ -161,9 +159,7 @@ namespace Beagle.Filters
 						// Add any parent (as in docbook parent entry, not beagle) data if we have it
 						if (parent_entry != null) {
 							indexable.AddProperty (Property.NewUnsearched ("fixme:parent_id", parent_entry.Id));
-
-							if (parent_entry.Title != null)
-								indexable.AddProperty (Property.NewUnsearched ("fixme:parent_title", parent_entry.Title));
+							indexable.AddProperty (Property.NewUnsearched ("fixme:parent_title", parent_entry.Title));
 						}
 
 
@@ -179,11 +175,8 @@ namespace Beagle.Filters
 			// Add the common properties to the top-level
 			// file item such as Title, Language etc.
 
-			if (base_title != null)
-				AddProperty (Property.New ("dc:title", base_title));
-
-			if (base_language != null)
-				AddProperty (Property.NewUnsearched ("fixme:language", base_language));
+			AddProperty (Property.New ("dc:title", base_title));
+			AddProperty (Property.NewUnsearched ("fixme:language", base_language));
 
 			watch.Stop ();
 			

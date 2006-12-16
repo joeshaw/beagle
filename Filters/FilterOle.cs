@@ -88,7 +88,6 @@ namespace Beagle.Filters {
 		{ 
 			
 			DocProp prop = null;
-			string str = null;
 
 			sumMeta = new DocMetaData ();
 			if (sum_stream != null)
@@ -105,75 +104,45 @@ namespace Beagle.Filters {
 			if (sumMeta != null) {
 				prop = sumMeta.Lookup ("dc:title");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:title", str));
+					AddProperty (Beagle.Property.New ("dc:title", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("dc:subject");			
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:subject", str));
+					AddProperty (Beagle.Property.New ("dc:subject", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("dc:description");		
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("dc:description", str));
+					AddProperty (Beagle.Property.New ("dc:description", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("gsf:keywords");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:keywords", str));
+					AddProperty (Beagle.Property.New ("fixme:keywords", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("gsf:creator");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:author", str));
+					AddProperty (Beagle.Property.New ("fixme:author", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("gsf:last-saved-by");		
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:last-saved-by", str));
+					AddProperty (Beagle.Property.New ("fixme:last-saved-by", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("gsf:generator");		
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:generator", str));
+					AddProperty (Beagle.Property.New ("fixme:generator", prop.Val as string));
 
-				str = null;
 				prop = sumMeta.Lookup ("gsf:template");		
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:template", str));
+					AddProperty (Beagle.Property.New ("fixme:template", prop.Val as string));
 			}
 			
 			if (docSumMeta != null) {
-				str = null;
 				prop = docSumMeta.Lookup ("gsf:company");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:company", str));
+					AddProperty (Beagle.Property.New ("fixme:company", prop.Val as string));
 
-				str = null;
 				prop = docSumMeta.Lookup ("gsf:category");
 				if (prop != null)
-					str = prop.Val as string;
-				if (str != null && str.Length > 0)
-					AddProperty (Beagle.Property.New ("fixme:category", str));
-
+					AddProperty (Beagle.Property.New ("fixme:category", prop.Val as string));
 			}
 
 			ExtractMetaData (sum_stream, doc_stream);

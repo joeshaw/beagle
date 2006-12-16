@@ -76,7 +76,7 @@ namespace Beagle.Filters {
 		{
 			foreach (ImLog.Utterance utt in log.Utterances) {
 				AppendText (utt.Text);
-				AppendText (" ");
+				AppendWhiteSpace ();
 			}
 
 			Finished ();

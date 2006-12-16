@@ -51,7 +51,7 @@ namespace Beagle.Filters {
 		{
 			XmlTextReader reader = new XmlTextReader (Stream);
 
-			string text = "";
+			string text = String.Empty;
 			int pagecount = 0;
 			
 			bool join_text_mode = false;
@@ -71,8 +71,7 @@ namespace Beagle.Filters {
 						case "DOCUMENT":
 							for (int i=0; i<scribus_attributes.Length; i++) {
 								text = reader.GetAttribute(scribus_attributes[i]);
-								if (text != null)
-									AddProperty (Property.New (scribus_properties[i] , text));
+								AddProperty (Property.New (scribus_properties[i] , text));
 							}
 							
 							// treat the DOCDATE attribute in a special way
@@ -109,7 +108,7 @@ namespace Beagle.Filters {
 					}
 				}
 
-				AddProperty (Property.New ("fixme:pagecount", "" + pagecount));
+				AddProperty (Property.New ("fixme:pagecount", pagecount.ToString ()));
 				
 				if (join_text_mode)
 					AppendText (sb.ToString());

@@ -122,7 +122,7 @@ namespace Beagle.Filters {
 
 			StreamReader pout = new StreamReader (pc.StandardOutput);
 			string str;
-			string name = "";
+			string name = String.Empty;
 			
 			while ((str = pout.ReadLine ()) != null) {
 				if (!str.StartsWith ("ID_"))

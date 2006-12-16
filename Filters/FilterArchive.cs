@@ -132,9 +132,7 @@ namespace Beagle.Filters {
 				child.AddProperty (Property.NewBool ("fixme:inside_archive", true));
 
 				child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
-
-				if (a_entry.Comment != null)
-					child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
+				child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
 
 				foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
 					child.AddProperty (prop);
@@ -143,7 +141,7 @@ namespace Beagle.Filters {
 
 				// Store file names in the archive
 				AppendText (Path.GetFileName (a_entry.Name));
-				AppendText (" ");
+				AppendWhiteSpace ();
 
 				++count;
 			}

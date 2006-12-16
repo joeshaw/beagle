@@ -68,7 +68,7 @@ internal class RTFControlWordType {
 	// "header", "footer" etc.
 	static RTFControlWordType[] types = 
 	{
-		new RTFControlWordType (Type.None, ""),
+		new RTFControlWordType (Type.None, String.Empty),
 		new RTFControlWordType (Type.MetaDataBlock, "info"),
 		new RTFControlWordType (Type.MetaDataTag, "title"),
 		new RTFControlWordType (Type.MetaDataTag, "author"),
@@ -148,7 +148,7 @@ namespace Beagle.Filters {
 			bPartHotStyle = false;
 			FsRTF = null;
 			SReaderRTF = null;
-			partText = "";
+			partText = String.Empty;
 
 			MetaDataStack = new Stack ();
 			TextDataStack = new Stack ();
@@ -428,7 +428,7 @@ namespace Beagle.Filters {
 				}
 			}
 			
-			strTemp = "";
+			strTemp = String.Empty;
 			if (str.Length > 0) {
 				//Console.WriteLine ("Text: [{0}]", str);
 
@@ -470,8 +470,8 @@ namespace Beagle.Filters {
 				} else {
 					strTemp = partText + paramStr;
 					partText = strTemp;
-					paramStr = "";
-					strTemp = "";
+					paramStr = String.Empty;
+					strTemp = String.Empty;
 				}
 					
 				// Enable *HOT* just before appending the text
@@ -484,8 +484,7 @@ namespace Beagle.Filters {
 				} else 
 					bPartHotStyle |= false;
 
-				if (paramStr.Length > 0)
-					AppendText (paramStr);
+				AppendText (paramStr);
 
 				if (partText.Length < 1)
 					bPartHotStyle = false;

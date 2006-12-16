@@ -177,7 +177,7 @@ namespace Beagle.Filters {
 		}
 
 		private Stack hot_nodes = new Stack ();
-		private string strPartText = "";
+		private string strPartText = String.Empty;
 		private bool bPartHotStyle = false;
 		private Stack hot_container_nodes = new Stack ();
 
@@ -218,8 +218,8 @@ namespace Beagle.Filters {
 			} else {
 				strTemp = strPartText + paramStr;
 				strPartText = strTemp;
-				paramStr = "";
-				strTemp = "";
+				paramStr = String.Empty;
+				strTemp = String.Empty;
 			}
 					
 			// Enable *HOT* just before appending the text
@@ -232,8 +232,7 @@ namespace Beagle.Filters {
 			} else 
 				bPartHotStyle |= false;
 
-			if (paramStr.Length > 0)
-				AppendText (paramStr);
+			AppendText (paramStr);
 
 			if (strPartText.Trim().Length < 1)
 				bPartHotStyle = false;
@@ -256,7 +255,7 @@ namespace Beagle.Filters {
 				AppendText (strPartText);
 				if (IsHot)
 					HotDown ();
-				strPartText = "";
+				strPartText = String.Empty;
 			}
 			bPartHotStyle = false;
 
@@ -421,8 +420,8 @@ namespace Beagle.Filters {
 				}
 				reader.Read ();
 			}
-			if (slideCount != null)
-				AddProperty (Beagle.Property.NewUnsearched ("fixme:slide-count", slideCount));
+
+			AddProperty (Beagle.Property.NewUnsearched ("fixme:slide-count", slideCount));
 		}
 
 		private void ExtractMetadata (XmlReader reader)
@@ -459,11 +458,9 @@ namespace Beagle.Filters {
 					
 				case "meta:document-statistic":
 					string attr = reader.GetAttribute ("meta:page-count");
-					if (attr != null)
-						AddProperty (Beagle.Property.NewUnsearched ("fixme:page-count", attr));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:page-count", attr));
 					attr = reader.GetAttribute ("meta:word-count");
-					if (attr != null)
-						AddProperty (Beagle.Property.NewUnsearched ("fixme:word-count", attr));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:word-count", attr));
 
 					// Both writer and calc uses this attribute.  writer stores the
 					// count of tables in a sxw whereas calc stores the count of
@@ -478,10 +475,8 @@ namespace Beagle.Filters {
 					string name = reader.GetAttribute ("meta:name");
 					reader.Read ();
 
-					if (reader.Value != "") {
-						AddProperty (Beagle.Property.New ("fixme:UserDefined-" + name,
+					AddProperty (Beagle.Property.New ("fixme:UserDefined-" + name,
 										  reader.Value));
-					}
 					break;
 
 				case "meta:keyword":

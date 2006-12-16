@@ -102,7 +102,7 @@ namespace Beagle.Filters {
 		{
 			int index;
 			token.Length = 0;
-			string splCharSeq = "";
+			string splCharSeq = String.Empty;
 
 			for (index = 0; index < str.Length; index++) {
 		         	if (((str[index] == '{' 
@@ -127,7 +127,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						    } else 
 							token.Append (splCharSeq);
-						splCharSeq = ""; 
+						splCharSeq = String.Empty; 
                                                 break;
 
 					case "*)":
@@ -138,7 +138,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
-						splCharSeq = "";
+						splCharSeq = String.Empty;
 						break;          
                            
                                         case "{":
@@ -147,7 +147,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						    } else 
 							token.Append (splCharSeq);
-						splCharSeq = ""; 
+						splCharSeq = String.Empty; 
                                                 break;
 
 					case "}":
@@ -158,7 +158,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
-						splCharSeq = "";
+						splCharSeq = String.Empty;
 						break;
 					case "//":
 						if (SrcLineType == LineType.None) {
@@ -166,7 +166,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						} else
 							token.Append (splCharSeq);
-						splCharSeq = "";
+						splCharSeq = String.Empty;
 						break;
 						
 					case "/*":
@@ -175,7 +175,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						} else 
 							token.Append (splCharSeq);
-						splCharSeq = "";
+						splCharSeq = String.Empty;
 						break;
 							
 					case "*/":
@@ -186,7 +186,7 @@ namespace Beagle.Filters {
 							token.Length = 0;
 						} else if (SrcLineType != LineType.None)
 							token.Append (splCharSeq);
-						splCharSeq = "";
+						splCharSeq = String.Empty;
 						break;
 					}
 				} else if ((str[index] == '#' && (SrcLangType == LangType.Python_Style ||
@@ -228,7 +228,7 @@ namespace Beagle.Filters {
 						index += 2;
 					}
 					       
-					splCharSeq = "";
+					splCharSeq = String.Empty;
 				}
 				// Lisp: ignore the single quote character; do another iteration
 				else if (SrcLangType == LangType.Lisp_Style && str[index] == '\'') {
@@ -251,12 +251,12 @@ namespace Beagle.Filters {
 						token.Length = 0;
 					} else
 						token.Append (str[index]);
-					splCharSeq = "";
+					splCharSeq = String.Empty;
 
 				} else if (SrcLineType != LineType.None) {
 					token.Append (splCharSeq);
 					token.Append (str[index]);
-					splCharSeq = "";
+					splCharSeq = String.Empty;
 
 				} else if (SrcLineType == LineType.None) { 
 					if (AppendToToken (str[index], index, str.Length)) {			       
@@ -274,7 +274,7 @@ namespace Beagle.Filters {
 								continue;
 							}
 						}
-						//token = token.Replace(" ", "");
+						//token = token.Replace(" ", String.Empty);
 						if (token.Length > 0) {
 							string tok;
 							if (SrcLangType == LangType.Fortran_Style)
@@ -291,7 +291,7 @@ namespace Beagle.Filters {
 						// reset the token
 						token.Length = 0;
 					}
-					splCharSeq = "";
+					splCharSeq = String.Empty;
 				}
 		        }
 			if (SrcLineType != LineType.None) {

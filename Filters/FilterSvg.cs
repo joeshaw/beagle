@@ -53,7 +53,7 @@ namespace Beagle.Filters {
 			XmlTextReader reader = new XmlTextReader (Stream);
 			reader.XmlResolver = null;
 
-			string current_tag_name = "";
+			string current_tag_name = String.Empty;
 			bool grab_property = false;
 			bool grab_text = false;
 
@@ -119,7 +119,7 @@ namespace Beagle.Filters {
 
 		protected void PullRdfProperties (XmlTextReader reader, int depth)
 		{
-			string current_tag_name = "";
+			string current_tag_name = String.Empty;
 			bool grab_text = false;
 			bool grab_date = false;
 

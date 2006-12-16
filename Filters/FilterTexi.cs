@@ -56,7 +56,7 @@ namespace Beagle.Filters {
 						
 			line = TextReader.ReadLine ();
 			foreach (string keyword in texiKeywords)
-				line = line.Replace (keyword, "");
+				line = line.Replace (keyword, String.Empty);
 
 			AppendText (line);
 			AppendWhiteSpace ();

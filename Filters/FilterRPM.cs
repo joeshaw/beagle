@@ -190,7 +190,7 @@ namespace Beagle.Filters {
 			}
 
 			//Logger.Log.Debug ("    Done reading values. Now at " + 
-			//	(reader.IsStartElement () ? "" : "/") + reader.Name);
+			//	(reader.IsStartElement () ? String.Empty : "/") + reader.Name);
 		}
 	}
 }
