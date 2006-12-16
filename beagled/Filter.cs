@@ -233,26 +233,28 @@ namespace Beagle.Daemon {
 		
 		private bool last_was_structural_break = true;
 
-		// This two-arg AppendText() will give flexibility to
-		// filters to segregate hot-contents and
-		// normal-contents of a para and call this method with
-		// respective contents.  
-		//
-		// str : Holds both the normal-contents and hot contents.
-		// strHot: Holds only hot-contents.
-		//
-		// Ex:- suppose the actual-content is "one <b>two</b> three"
-		// str = "one two three"
-		// strHot = "two"
-		//
-		// NOTE: HotUp() or HotDown() has NO-EFFECT on this variant 
-		// of AppendText ()
-		
+		/*
+		 * This two-arg AppendText() will give flexibility to
+		 * filters to segregate hot-contents and
+		 * normal-contents of a para and call this method with
+		 * respective contents.  
+		 * 
+		 * str : Holds both the normal-contents and hot contents.
+		 * strHot: Holds only hot-contents.
+		 * Both arguments can be null.
+		 * 
+		 * Ex:- suppose the actual-content is "one <b>two</b> three"
+		 * str = "one two three"
+		 * strHot = "two"
+		 * 
+		 * NOTE: HotUp() or HotDown() has NO-EFFECT on this variant 
+		 * of AppendText ()
+		 */
 		public int AppendText (string str, string strHot)
 		{
 			int num_words = 0;
 
-			if (!IsFrozen && word_count < MAXWORDS && str != null && str != "") {
+			if (!IsFrozen && word_count < MAXWORDS && str != null && str != String.Empty) {
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string
@@ -279,12 +281,15 @@ namespace Beagle.Daemon {
 			return num_words;
 		}
 		
+		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
+		 * Handles null str.
+		 */
 		public int AppendText (string str)
 		{
 			if (Debug)
 				Logger.Log.Debug ("AppendText (\"{0}\")", str);
 
-			if (! IsFrozen && str != null && str != "")
+			if (! IsFrozen && str != null && str != String.Empty)
 				return AppendText (str, IsHot ? str : null);
 
 			return 0;
@@ -293,7 +298,7 @@ namespace Beagle.Daemon {
 		// Does adding text to to text/hot pools respectively.
 		private void ReallyAppendText (string str, string strHot)
 		{
-			if (!IsFrozen && strHot != null && strHot != "")
+			if (!IsFrozen && strHot != null && strHot != String.Empty)
 				hotPool.Add (strHot.Trim()+" ");
 
 			if (str != null) {
@@ -318,6 +323,9 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		/*
+		 * Adds whitespace to the textpool.
+		 */
 		public void AppendWhiteSpace ()
 		{
 			if (last_was_structural_break)
@@ -334,12 +342,19 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		/*
+		 * Adds property prop.
+		 * prop can be null or can have null value; in both cases nothing is added.
+		 */
 		public void AddProperty (Property prop)
 		{
-			if (prop != null && prop.Value != null && prop.Value != "")
+			if (prop != null && prop.Value != null && prop.Value != String.Empty)
 				propertyPool.Add (prop);
 		}
 
+		/*
+		 * Creates a new paragraph. Mainly useful for storing cached contents.
+		 */
 		public void AppendStructuralBreak ()
 		{
 			if (snippetWriter != null && ! last_was_structural_break) {
