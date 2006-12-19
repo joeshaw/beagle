@@ -32,12 +32,12 @@ using System.IO;
 namespace Beagle.Util {
 
 	public class ImBuddy {
-		public string Protocol = "";
-		public string OwnerAccountName = "";
-		public string BuddyAccountName = "";
-		public string Alias = "";
-		public string BuddyIconLocation = "";
-		public string BuddyIconChecksum = "";
+		public string Protocol = String.Empty;
+		public string OwnerAccountName = String.Empty;
+		public string BuddyAccountName = String.Empty;
+		public string Alias = String.Empty;
+		public string BuddyIconLocation = String.Empty;
+		public string BuddyIconChecksum = String.Empty;
 
 		public ImBuddy (string protocol, string owneraccount, string buddyaccount, string alias, string iconlocation, string iconchecksum) {
 			Protocol = protocol;
@@ -123,7 +123,7 @@ namespace Beagle.Util {
 				XmlNodeList contacts = accounts.SelectNodes ("//contact");
 				
 				foreach (XmlNode contact in contacts) {
-					string groupalias = "";
+					string groupalias = String.Empty;
 					
 					foreach (XmlAttribute attr in contact.Attributes) {
 						if (attr.Name == "alias") {
@@ -131,7 +131,7 @@ namespace Beagle.Util {
 						}
 					}
 					
-					if (groupalias != "") {
+					if (groupalias != String.Empty) {
 						foreach (XmlNode buddy in contact.ChildNodes) {
 							AddBuddy (buddy, groupalias);
 						}
@@ -150,12 +150,12 @@ namespace Beagle.Util {
 		{
 			string protocol, owner, other, alias, iconlocation, iconchecksum;
 			
-			protocol = "";
-			owner = "";
-			other = "";
-			alias = "";
-			iconlocation = "";
-			iconchecksum = "";
+			protocol = String.Empty;
+			owner = String.Empty;
+			other = String.Empty;
+			alias = String.Empty;
+			iconlocation = String.Empty;
+			iconchecksum = String.Empty;
 
 			foreach (XmlAttribute attr in buddy.Attributes) {
 				switch (attr.Name) {
@@ -199,13 +199,14 @@ namespace Beagle.Util {
 
 			ImBuddy old;
 
-			alias = groupalias;
+			if (groupalias != null)
+				alias = groupalias;
 
 			if (buddyList.ContainsKey (Format(other))) {
 				old = (ImBuddy)buddyList[Format(other)];
-				if (old.Alias == "" && alias != "")
+				if (old.Alias == String.Empty && alias != String.Empty)
 					old.Alias = alias;
-				if (old.BuddyIconLocation == "" && iconlocation == "") {
+				if (old.BuddyIconLocation == String.Empty && iconlocation == String.Empty) {
 					old.BuddyIconLocation = iconlocation;
 					old.BuddyIconChecksum = iconchecksum;
 				}
@@ -218,77 +219,12 @@ namespace Beagle.Util {
 
 		private void AddBuddy (XmlNode buddy) 
 		{
-			string protocol, owner, other, alias, iconlocation, iconchecksum;
-			
-			protocol = "";
-			owner = "";
-			other = "";
-			alias = "";
-			iconlocation = "";
-			iconchecksum = "";
-
-			foreach (XmlAttribute attr in buddy.Attributes) {
-				switch (attr.Name) {
-					case "account":
-						owner = attr.Value;
-						DebugPrint ("owner: " + owner);
-						break;
-					case "proto":
-					protocol = attr.Value;
-					DebugPrint ("protocol: " + protocol);
-					break;
-				}
-			}
-		
-			foreach (XmlNode attr in buddy.ChildNodes) {
-				switch (attr.LocalName) {
-					case "name":
-						other = attr.InnerText;
-						DebugPrint ("other: " + other);
-						break;
-					case "alias":
-						alias = attr.InnerText;
-						DebugPrint ("alias: " + alias);
-						break;
-					case "setting":
-						foreach (XmlAttribute subattr in attr.Attributes) {
-							if (subattr.Name == "name" && subattr.Value == "buddy_icon")
-							{
-								iconlocation = attr.InnerText;
-								DebugPrint ("iconlocation: " + iconlocation);
-							}
-							else if ( subattr.Name == "name" && subattr.Value == "icon_checksum")
-							{
-								iconchecksum = attr.InnerText;
-								DebugPrint ("iconchecksum: " + iconchecksum);
-							}
-						}
-						break;
-				}
-			}
-
-			ImBuddy old;
-
-			if (buddyList.ContainsKey (Format(other))) {
-				old = (ImBuddy)buddyList[Format(other)];
-				if (old.Alias == "" && alias != "")
-					old.Alias = alias;
-				if (old.BuddyIconLocation == "" && iconlocation == "") {
-					old.BuddyIconLocation = iconlocation;
-					old.BuddyIconChecksum = iconchecksum;
-				}
-				buddyList.Remove (Format(other));
-				buddyList.Add (Format(other), old);
-			} 
-			else
-				buddyList.Add (Format(other), new ImBuddy (protocol, owner, Format(other), alias, iconlocation, iconchecksum));
+			AddBuddy (buddy, null);
 		}
-		
 
 		public ImBuddy Search (string buddy) {
 			return (ImBuddy)buddyList[Format(buddy)];
 		}
-
 	}
 
 	/////////////////////////////////////////////////////////////
@@ -357,12 +293,12 @@ namespace Beagle.Util {
 		{
 			string protocol, owner, other, alias, iconlocation, iconchecksum;
 			
-			protocol = "";
-			owner = "";
-			other = "";
-			alias = "";
-			iconlocation = "";
-			iconchecksum = "";
+			protocol = String.Empty;
+			owner = String.Empty;
+			other = String.Empty;
+			alias = String.Empty;
+			iconlocation = String.Empty;
+			iconchecksum = String.Empty;
 
 			// For each and every meta-contact, there can be multiple 
 			// buddy information entries if we have a contact added on
