@@ -516,8 +516,8 @@ public abstract class Summary : IEnumerable {
 
 		static Decode ()
 		{
-			//UnixBaseTicks = DateTimeUtil.UnixToDateTimeUtc (0).Ticks;
-			UnixBaseTicks = new DateTime (1970, 1, 1, 0, 0, 0).Ticks;
+			UnixBaseTicks = DateTimeUtil.UnixToDateTimeUtc (0).Ticks;
+			//UnixBaseTicks = new DateTime (1970, 1, 1, 0, 0, 0).Ticks;
 		}
 
 		public static string Token (FileStream f) 
