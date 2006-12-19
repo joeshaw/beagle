@@ -42,37 +42,55 @@ namespace Beagle.Util {
 		public const string UnindexedNamespace = "_unindexed:";
 
 		private const String TimeFormat = "yyyyMMddHHmmss";
-		// FIXME: Fix all the UTC and timezone hack when switching to .Net-2.0
-		private const String LocalTimeFormat = "yyyyMMddHHmmsszz";
+
+		public static DateTime MinValueUtc = new DateTime (0, DateTimeKind.Utc);
+		public static DateTime MaxValueUtc = new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc);
+
+		// We use this instead of DateTime.ToUniversalTime() because
+		// we want to assume DateTimeKind.Unspecified dates are UTC
+		static private DateTime ToUniversalTime (DateTime dt)
+		{
+			switch (dt.Kind) {
+
+			case DateTimeKind.Utc:
+				return dt;
+
+			case DateTimeKind.Local:
+				return dt.ToUniversalTime ();
+
+			case DateTimeKind.Unspecified:
+				// FIXME: We should fix all the instances of unspecified
+				// DateTimes to avoid any potential comparison issues.
+				//Log.Warn ("Possibly incorrect unspecified date ({0}): {1}", dt, new System.Diagnostics.StackTrace (true).ToString ());
+				return dt;
+			}
+
+			// We'll never hit this, but otherwise the compiler
+			// complains about not all codepaths returning...
+			throw new Exception ("Unreachable code reached");
+		}
 
 		static public string DateTimeToString (DateTime dt)
 		{
-			return dt.ToString (TimeFormat);
+			return ToUniversalTime (dt).ToString (TimeFormat);
 		}
 
 		static public string DateTimeToYearMonthString (DateTime dt)
 		{
-			return dt.ToString ("yyyyMM");
+			return ToUniversalTime (dt).ToString ("yyyyMM");
 		}
 
 		static public string DateTimeToDayString (DateTime dt)
 		{
-			return dt.ToString ("dd");
+			return ToUniversalTime (dt).ToString ("dd");
 		}
 
                 static public DateTime StringToDateTime (string str)
                 {
-			if (str == null || str == "")
+			if (str == null || str == String.Empty)
 				return new DateTime ();
 
-			str = string.Concat (str, "+00");
-			// Uncomment next 3 lines to see what how 20061107173446 (which is stored in UTC)
-			// used to be parsed as 2006-11-07T17:34:46.0000000-05:00
-			//DateTime dt = DateTime.ParseExact (str, LocalTimeFormat, CultureInfo.InvariantCulture);
-			//Console.WriteLine ("Parsed {0} as {1},{2}", str, dt, dt.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture));
-			//return dt;
-			// If no timezone is present, parse_exact uses local time zone
-			return DateTime.ParseExact (str, LocalTimeFormat, CultureInfo.InvariantCulture);
+			return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
                 }
 
 		static public string DateTimeToFuzzy (DateTime dt)

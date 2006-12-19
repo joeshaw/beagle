@@ -42,6 +42,7 @@ using Lucene.Net.QueryParsers;
 using LNS = Lucene.Net.Search;
 
 using Beagle.Util;
+using Stopwatch = Beagle.Util.Stopwatch;
 
 namespace Beagle.Daemon {
 

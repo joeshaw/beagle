@@ -510,6 +510,8 @@ namespace Beagle.Daemon {
 		{
 			DateTime dt = StringFu.StringToDateTime (prop.Value);
 
+			Console.WriteLine ("DateTime is {0}, kind is {1}", dt, dt.Kind);
+
 			Field f;
 			f = new Field ("YM:" + field_name,
 				       StringFu.DateTimeToYearMonthString (dt),

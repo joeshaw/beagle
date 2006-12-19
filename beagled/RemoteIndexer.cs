@@ -32,6 +32,7 @@ using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;
+using Stopwatch = Beagle.Util.Stopwatch;
 
 namespace Beagle.Daemon {
 

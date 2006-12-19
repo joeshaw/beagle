@@ -1,7 +1,8 @@
 # Warnings we don't want to see
 # 0169 = The private field is never used
+# 0414 = The private field is assigned but its value is never used
 
-CSC = $(MCS) -debug -nowarn:0169
+CSC = $(MCS) -debug -nowarn:0169,0414
 CSFLAGS = -target:library
 
 UTIL_TARGET = Util.dll

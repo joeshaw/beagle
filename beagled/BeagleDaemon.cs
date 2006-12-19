@@ -36,6 +36,7 @@ using GLib;
 
 using Beagle.Util;
 using Log = Beagle.Util.Log;
+using Stopwatch = Beagle.Util.Stopwatch;
 
 namespace Beagle.Daemon {
 	class BeagleDaemon {

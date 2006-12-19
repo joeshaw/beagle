@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 
 using Beagle.Util;
+using Stopwatch = Beagle.Util.Stopwatch;
 
 namespace Bludgeon {
 

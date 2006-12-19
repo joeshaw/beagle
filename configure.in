@@ -49,7 +49,7 @@ AC_SUBST(BASH)
 AC_PATH_PROG(ZIP, zip)
 
 AC_PATH_PROG(MONO, mono)
-AC_PATH_PROG(MCS, mcs)
+AC_PATH_PROG(MCS, gmcs)
 
 AC_MSG_CHECKING([for mono.pc])
 if test -z `$PKG_CONFIG --variable=prefix mono`; then
@@ -67,7 +67,7 @@ BEAGLE_DEFINES=""
 needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
-  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/1.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])

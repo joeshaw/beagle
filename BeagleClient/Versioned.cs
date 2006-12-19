@@ -32,7 +32,7 @@ namespace Beagle {
 
 	public class Versioned {
 
-		protected DateTime timestamp = new DateTime (0);
+		protected DateTime timestamp = DateTime.MinValue;
 
 		public bool ValidTimestamp {
 			get { return timestamp.Ticks > 0; }
@@ -42,11 +42,6 @@ namespace Beagle {
 		public DateTime Timestamp {
 			get { return timestamp; }
 			set { timestamp = value; }
-		}
-
-		[XmlIgnore]
-		public double DaysSinceTimestamp {
-			get { return (DateTime.Now - timestamp).TotalDays; }
 		}
 
 		public bool IsObsoletedBy (DateTime timestamp)
