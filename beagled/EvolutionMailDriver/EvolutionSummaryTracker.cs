@@ -37,14 +37,11 @@ namespace Beagle.Daemon.EvolutionMailDriver {
 	public class EvolutionSummaryTracker : IDisposable {
 
 		private SqliteConnection connection;
-		private string tmp_filename;
 
 		public EvolutionSummaryTracker (string directory, string account_name, string folder_name)
 		{
 			string filename = Path.Combine (directory, String.Format ("SummaryTracker-{0}-{1}.db", account_name, folder_name.Replace ('/', '-')));
 			bool create_new_db = ! File.Exists (filename);
-
-			tmp_filename = filename;
 
 			connection = GetConnection (filename);
 			try {
