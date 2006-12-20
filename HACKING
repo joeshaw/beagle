@@ -267,6 +267,11 @@ HACKING file.
 	  because using "" will cause a new string to be allocated,
 	  whereas String.Empty is an interned reference.
 
+	* Instead of comparing strings against both null and "" or
+	  String.Empty, use String.IsNullOrEmpty().  This function
+	  was added in .NET 2.0, so large portions of the code
+	  don't use this yet.
+
 If you are using Emacs, you might want to put something like this
 in your .emacs file:
 
