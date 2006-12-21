@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-05 15:08+0100\n"
+"POT-Creation-Date: 2006-12-21 22:38+0100\n"
 "PO-Revision-Date: 2006-12-05 18:31+0200\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
@@ -287,9 +287,10 @@ msgstr "Estat/Comarca"
 msgid "State/Province:"
 msgstr "Estat/Comarca:"
 
-#: ../ContactViewer/contactviewer.glade.h:40 ../search/Tiles/Calendar.cs:51
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Títol:"
 
@@ -438,43 +439,73 @@ msgstr "El servei de cerca no s'està executant"
 msgid "Start search service"
 msgstr "Inicia el servei de cerca"
 
-#: ../search/Search.cs:136 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
 msgid "Desktop Search"
 msgstr "Cerca a l'escriptori"
 
 #
-#: ../search/Search.cs:155
+#: ../search/Search.cs:157
 msgid "_Find:"
 msgstr "_Cerca:"
 
-#: ../search/Search.cs:176
+#: ../search/Search.cs:178
 msgid "Find Now"
 msgstr "Cerca ara"
 
-#: ../search/Search.cs:232
+#: ../search/Search.cs:237
 msgid "Type in search terms"
 msgstr "Introduïu els termes de la cerca"
 
-#: ../search/Search.cs:233
+#: ../search/Search.cs:238
 msgid "Start searching"
 msgstr "Inicia la cerca"
 
-#: ../search/Search.cs:259
+#: ../search/Search.cs:264
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Cerca a l'escriptori: {0}"
 
-#: ../search/Search.cs:520
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Showing all {0} matches"
+msgstr "S'estan mostrant les {0} coincidències"
+
+#: ../search/Search.cs:282
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr "S'estan mostrant les {0} coincidències més rellevants de les {1} totals"
+
+#: ../search/Search.cs:555
 msgid "Your data is being indexed"
 msgstr "S'estant indexant les dades"
 
-#: ../search/Search.cs:521
+#: ../search/Search.cs:556
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
 msgstr ""
 "El servei de cerca està indexant les dades. Els resultats de la cerca poden "
 "ser incomplets fins que la indexació hagi finalitzat."
+
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Dins de l'arxiu {0}"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+#
+msgid "File Name:"
+msgstr "Nom del fitxer:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+#
+msgid "Inside File:"
+msgstr "Dins del fitxer:"
+
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+msgid "Author:"
+msgstr "Autor/a:"
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
@@ -528,10 +559,6 @@ msgstr "Mou a la paperera"
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Última edició:"
-
-#: ../search/Tiles/File.cs:144
-msgid "Author:"
-msgstr "Autor/a:"
 
 #: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:80
@@ -634,11 +661,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diapositiva"
 msgstr[1] "{0} diapositives"
 
-#: ../search/Tiles/RSSFeed.cs:46
+#: ../search/Tiles/RSSFeed.cs:49
 msgid "Site:"
 msgstr "Títol:"
 
-#: ../search/Tiles/RSSFeed.cs:47
+#: ../search/Tiles/RSSFeed.cs:50
 msgid "Date Viewed:"
 msgstr "Última visualització:"
 
@@ -701,12 +728,12 @@ msgid "Archives"
 msgstr "Arxius"
 
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:104
+#: ../Util/StringFu.cs:106
 msgid "Yesterday"
 msgstr "Ahir"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:102
+#: ../Util/StringFu.cs:104
 msgid "Today"
 msgstr "Avui"
 
@@ -766,11 +793,11 @@ msgstr[1] "En {0} anys"
 msgid "Unknown duration"
 msgstr "Durada desconeguda"
 
-#: ../search/Tiles/WebHistory.cs:51
+#: ../search/Tiles/WebHistory.cs:54
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:52
+#: ../search/Tiles/WebHistory.cs:55
 msgid "Accessed:"
 msgstr "Accedit:"
 
@@ -1006,7 +1033,7 @@ msgstr "Quant a la cerca a l'escriptori"
 
 #: ../search/UIManager.cs:111
 msgid "_All"
-msgstr "_Tot"
+msgstr "_Totes"
 
 #
 #: ../search/UIManager.cs:121
@@ -1163,17 +1190,17 @@ msgstr ""
 "El fitxer de configuració ha estat modificat per una altra aplicació. Voleu "
 "descartar els valors actuals i llegir la configuració del disc?"
 
-#: ../tools/Settings.cs:297
+#: ../tools/Settings.cs:305
 msgid "Select Path"
 msgstr "Seleccioneu un camí"
 
-#: ../tools/Settings.cs:316
+#: ../tools/Settings.cs:324
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "El camí seleccionat ja està seleccionat per a ser indexat i no s'ha afegit."
 
-#: ../tools/Settings.cs:319
 #
+#: ../tools/Settings.cs:327
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1181,15 +1208,15 @@ msgstr ""
 "El camí seleccionat no s'ha afegit. La llista conté elements que excedeixen "
 "la seva capacitat i les dades ja s'estan indexant."
 
-#: ../tools/Settings.cs:330
+#: ../tools/Settings.cs:338
 msgid "Path not added"
 msgstr "El camí no s'ha afegit"
 
-#: ../tools/Settings.cs:339
+#: ../tools/Settings.cs:347
 msgid "Remove obsolete paths"
 msgstr "Elimina els camins obsolets"
 
-#: ../tools/Settings.cs:340
+#: ../tools/Settings.cs:348
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1198,11 +1225,11 @@ msgstr ""
 "obsolets, i això causarà l'eliminació dels antics camins obsolets. Esteu "
 "segur que el voleu afegir?"
 
-#: ../tools/Settings.cs:366
+#: ../tools/Settings.cs:374
 msgid "Remove path"
 msgstr "Elimina el camí"
 
-#: ../tools/Settings.cs:367
+#: ../tools/Settings.cs:375
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1210,11 +1237,11 @@ msgstr ""
 "Esteu segur que voleu eliminar aquest camí de la llista de directoris que "
 "s'inclouran a la indexació?"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:404
 msgid "Remove item"
 msgstr "Elimina l'element"
 
-#: ../tools/Settings.cs:397
+#: ../tools/Settings.cs:405
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1222,48 +1249,48 @@ msgstr ""
 "Esteu segur que voleu eliminar aquest element de la llista de dades que "
 "s'exclouran de la indexació?"
 
-#: ../tools/Settings.cs:447 ../tools/Settings.cs:536 ../tools/Settings.cs:623
-#: ../tools/Settings.cs:962
+#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:970
 msgid "Name"
 msgstr "Nom"
 
-#: ../tools/Settings.cs:530
+#: ../tools/Settings.cs:538
 msgid "Type"
 msgstr "Tipus"
 
-#: ../tools/Settings.cs:583
+#: ../tools/Settings.cs:591
 msgid "Path:"
 msgstr "Camí:"
 
-#: ../tools/Settings.cs:586
+#: ../tools/Settings.cs:594
 msgid "Pattern:"
 msgstr "Patró:"
 
-#: ../tools/Settings.cs:589
+#: ../tools/Settings.cs:597
 msgid "Mail folder:"
 msgstr "Carpeta de correu:"
 
-#: ../tools/Settings.cs:870
+#: ../tools/Settings.cs:878
 msgid "Select Folder"
 msgstr "Seleccioneu una carpeta"
 
-#: ../tools/Settings.cs:896 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
 msgid "P_ath:"
 msgstr "_Camí:"
 
-#: ../tools/Settings.cs:901
+#: ../tools/Settings.cs:909
 msgid "M_ail folder:"
 msgstr "Ca_rpeta de correu:"
 
-#: ../tools/Settings.cs:906
+#: ../tools/Settings.cs:914
 msgid "P_attern:"
 msgstr "P_atró:"
 
-#: ../tools/Settings.cs:930
+#: ../tools/Settings.cs:938
 msgid "Error adding path"
 msgstr "S'ha produït un error en afegir el camí"
 
-#: ../tools/Settings.cs:931
+#: ../tools/Settings.cs:939
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1271,7 +1298,7 @@ msgstr ""
 "El camí indicat no s'ha pogut trobar i per tant no s'ha pogut afegir a la "
 "llista de recursos exclosos de la indexació."
 
-#: ../tools/Settings.cs:961
+#: ../tools/Settings.cs:969
 msgid "Show"
 msgstr "Mostra"
 
@@ -1300,8 +1327,8 @@ msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Seleccioneu la carpeta del correu</b>"
 
 #
-#: ../tools/settings.glade.h:7
 #
+#: ../tools/settings.glade.h:7
 msgid "<b>User Interface</b>"
 msgstr "<b>Interfície d'usuari</b>"
 
@@ -1323,7 +1350,8 @@ msgstr "Alt"
 
 #: ../tools/settings.glade.h:11
 msgid "Automatically s_tart searching after the user has stopped typing"
-msgstr "Inic_ia la cerca automàticament després que l'usuari ha deixat de teclejar"
+msgstr ""
+"Inic_ia la cerca automàticament després que l'usuari ha deixat de teclejar"
 
 #: ../tools/settings.glade.h:12
 msgid "Ctrl"
@@ -1345,8 +1373,8 @@ msgstr "Patró de_l nom de fitxer"
 msgid "I_ndex my home directory"
 msgstr "Inde_xa el meu directori inicial"
 
-#: ../tools/settings.glade.h:17
 #
+#: ../tools/settings.glade.h:17
 msgid "Index data while on _battery power"
 msgstr "Indexa dades quan funcioni amb _bateries"
 
@@ -1444,62 +1472,62 @@ msgid "Unknown Directory"
 msgstr "Directori desconegut"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:107
+#: ../Util/StringFu.cs:109
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:110
+#: ../Util/StringFu.cs:112
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:113
+#: ../Util/StringFu.cs:115
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:119
+#: ../Util/StringFu.cs:121
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:136
+#: ../Util/StringFu.cs:138
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Avui, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:139
+#: ../Util/StringFu.cs:141
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ahir, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:142
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "fa {0} dies, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:147
+#: ../Util/StringFu.cs:149
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:154
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} hores"
 
-#: ../Util/StringFu.cs:169
+#: ../Util/StringFu.cs:171
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1507,19 +1535,19 @@ msgstr[0] "{0} minut"
 msgstr[1] "{0} minuts"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:185
+#: ../Util/StringFu.cs:205
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:189
+#: ../Util/StringFu.cs:209
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} kB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:192
+#: ../Util/StringFu.cs:212
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
@@ -1726,9 +1754,6 @@ msgstr "{0:0.0} MB"
 #~ msgstr ""
 #~ "Ara tancareu la safata de cerca. La safata de cerca s'inicia "
 #~ "automàticament en entrar. Voleu inhabilitar-la en sessions futures?"
-
-#~ msgid "in Files"
-#~ msgstr "en els fitxers"
 
 #~ msgid "in Addressbook"
 #~ msgstr "en la llibreta d'adreces"
