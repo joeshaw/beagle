@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-01 12:04+0100\n"
-"PO-Revision-Date: 2006-12-01 12:07+0100\n"
+"POT-Creation-Date: 2006-12-27 13:53+0100\n"
+"PO-Revision-Date: 2006-12-27 13:56+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -31,6 +31,7 @@ msgid "Open..."
 msgstr "Åpne..."
 
 #: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+#: ../Best/BestTray.cs:236
 msgid "Quit"
 msgstr "Avslutt"
 
@@ -262,9 +263,15 @@ msgstr "Stat/provins"
 msgid "State/Province:"
 msgstr "Stat/provins:"
 
-#: ../ContactViewer/contactviewer.glade.h:40 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+#: ../Tiles/TranslationHack.cs:18 ../Tiles/TranslationHack.cs:86
+#: ../Tiles/TranslationHack.cs:102
 msgid "Title:"
 msgstr "Tittel"
 
@@ -313,7 +320,7 @@ msgstr "Samtaler i {0}"
 msgid "Conversations with {0}"
 msgstr "Samtaler med {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:30
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
 msgid "Search"
 msgstr "Søk"
 
@@ -404,42 +411,80 @@ msgstr "Søketjenesten kjører ikke"
 msgid "Start search service"
 msgstr "Start søketjenesten"
 
-#: ../search/Search.cs:139 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+#: ../Best/best.desktop.in.h:2
 msgid "Desktop Search"
 msgstr "Skrivebordssøk"
 
-#: ../search/Search.cs:158
+#: ../search/Search.cs:157
 msgid "_Find:"
 msgstr "_Finn:"
 
-#: ../search/Search.cs:179
+#: ../search/Search.cs:178
 msgid "Find Now"
 msgstr "Finn nå"
 
-#: ../search/Search.cs:235
+#: ../search/Search.cs:237
 msgid "Type in search terms"
 msgstr "Skriv inn søkeord"
 
-#: ../search/Search.cs:236
+#: ../search/Search.cs:238
 msgid "Start searching"
 msgstr "Start søk"
 
-#: ../search/Search.cs:262
+#: ../search/Search.cs:264
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivebordssøk: {0}"
 
-#: ../search/Search.cs:523
-msgid "Beagle is indexing your data"
-msgstr "Beagle indekserer dine data"
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Showing all {0} matches"
+msgstr ""
 
-#: ../search/Search.cs:524
+#: ../search/Search.cs:282
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr ""
+
+#: ../search/Search.cs:555
+msgid "Your data is being indexed"
+msgstr ""
+
+#: ../search/Search.cs:556
+#, fuzzy
 msgid ""
-"The Beagle service is in the process of indexing your data.  Search results "
+"The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
-msgstr "Beagle-tjenesten holder på å indeksere dine data. Søkeresultater kan være ufullstendige inntil indeksering er fullført."
+msgstr ""
+"Beagle-tjenesten holder på å indeksere dine data. Søkeresultater kan være "
+"ufullstendige inntil indeksering er fullført."
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr ""
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Filnavn:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "Inne i filen:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+#: ../Tiles/TranslationHack.cs:20 ../Tiles/TranslationHack.cs:88
+#: ../Tiles/TranslationHack.cs:104
+msgid "Author:"
+msgstr "Forfatter:"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../search/Tiles/Calendar.cs:54 ../Tiles/TranslationHack.cs:74
 msgid "Description:"
 msgstr "Beskrivelse:"
 
@@ -451,7 +496,7 @@ msgstr "Lokasjon:"
 msgid "Attendees:"
 msgstr "Deltakere:"
 
-#: ../search/Tiles/Contact.cs:30
+#: ../search/Tiles/Contact.cs:30 ../Tiles/TileImLog.cs:67
 msgid "Send Mail"
 msgstr "Send e-post"
 
@@ -482,25 +527,21 @@ msgstr "E-post"
 msgid "Move to Trash"
 msgstr "Flytt til papirkurv"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Sist endret:"
 
-#: ../search/Tiles/File.cs:128
-msgid "Author:"
-msgstr "Forfatter:"
-
-#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:79
+#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:80
 msgid "Full Path:"
 msgstr "Full sti:"
 
-#: ../search/Tiles/Folder.cs:31
+#: ../search/Tiles/Folder.cs:31 ../Tiles/TileFolder.cs:53
 msgid "Empty"
 msgstr "Tom"
 
-#: ../search/Tiles/Folder.cs:33
+#: ../search/Tiles/Folder.cs:33 ../Tiles/TileFolder.cs:55
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -512,7 +553,8 @@ msgstr[1] "Inneholder {0} elementer"
 msgid "Set as Wallpaper"
 msgstr "Sett som bakgrunn"
 
-#: ../search/Tiles/Image.cs:78
+#. For translators: From template Tiles/template-picture.html
+#: ../search/Tiles/Image.cs:79 ../Tiles/TranslationHack.cs:70
 msgid "Modified:"
 msgstr "Endret:"
 
@@ -524,7 +566,7 @@ msgstr "IM-samtale"
 msgid "Name:"
 msgstr "Navn:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Motatt:"
 
@@ -552,31 +594,32 @@ msgstr "Tilgjengelig"
 msgid "Mail attachment"
 msgstr "Epostvedlegg"
 
-#: ../search/Tiles/MailMessage.cs:67
+#: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
 msgstr "(uten navn)"
 
-#: ../search/Tiles/MailMessage.cs:77
+#: ../search/Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "Send i e-post"
 
-#: ../search/Tiles/MailMessage.cs:109
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Emne:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "To:"
 msgstr "Til:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:102
 msgid "From:"
 msgstr "Fra:"
 
-#: ../search/Tiles/MailMessage.cs:114
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Sent:"
 msgstr "Dato sendt:"
 
-#: ../search/Tiles/MailMessage.cs:120
+#. For translators: From template Tiles/template-mail-message.html
+#: ../search/Tiles/MailMessage.cs:111 ../Tiles/TranslationHack.cs:48
 msgid "Folder:"
 msgstr "Mappe:"
 
@@ -591,11 +634,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} lysbilde"
 msgstr[1] "{0} lysbilder"
 
-#: ../search/Tiles/RSSFeed.cs:46
+#: ../search/Tiles/RSSFeed.cs:49
 msgid "Site:"
 msgstr "Sted:"
 
-#: ../search/Tiles/RSSFeed.cs:47
+#: ../search/Tiles/RSSFeed.cs:50
 msgid "Date Viewed:"
 msgstr "Visningsdato:"
 
@@ -606,7 +649,28 @@ msgid_plural "{0} pages"
 msgstr[0] "{0} side"
 msgstr[1] "{0} sider"
 
-#: ../search/Tiles/Tile.cs:179
+#. For translators: From template Tiles/template-blog.html
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-launcher.html
+#. For translators: From template Tiles/template-mail-message.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-note.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#. For translators: From template Tiles/template-web-history.html
+#. For translators: From template Tiles/template-network.html
+#. For translators: From template Tiles/template-im-log.html
+#: ../search/Tiles/Tile.cs:179 ../Tiles/TranslationHack.cs:12
+#: ../Tiles/TranslationHack.cs:22 ../Tiles/TranslationHack.cs:32
+#: ../Tiles/TranslationHack.cs:40 ../Tiles/TranslationHack.cs:44
+#: ../Tiles/TranslationHack.cs:50 ../Tiles/TranslationHack.cs:58
+#: ../Tiles/TranslationHack.cs:66 ../Tiles/TranslationHack.cs:76
+#: ../Tiles/TranslationHack.cs:92 ../Tiles/TranslationHack.cs:106
+#: ../Tiles/TranslationHack.cs:114 ../Tiles/TranslationHack.cs:118
+#: ../Tiles/TranslationHack.cs:122
 msgid "Open"
 msgstr "Åpne"
 
@@ -654,28 +718,28 @@ msgstr "Nyhetsstrømmer"
 msgid "Archives"
 msgstr "Arkiver"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
-#: ../Util/StringFu.cs:88
+#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
+#: ../Util/StringFu.cs:106
 msgid "Yesterday"
 msgstr "I går"
 
-#: ../search/Tiles/Utils.cs:128 ../search/Tiles/Utils.cs:210
-#: ../Util/StringFu.cs:86
+#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
+#: ../Util/StringFu.cs:104
 msgid "Today"
 msgstr "I dag"
 
-#: ../search/Tiles/Utils.cs:130 ../search/Tiles/Utils.cs:212
+#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
 msgid "Tomorrow"
 msgstr "I morgen"
 
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:235
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} uke siden"
 msgstr[1] "{0} uker siden"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:237
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -683,28 +747,28 @@ msgstr[0] "Om {0} uke"
 msgstr[1] "Om {0} uker"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:239
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} måned siden"
 msgstr[1] "{0} måneder siden"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:241
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} måned"
 msgstr[1] "Om {0} måneder"
 
-#: ../search/Tiles/Utils.cs:236
+#: ../search/Tiles/Utils.cs:243
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år siden"
 msgstr[1] "{0} år siden"
 
-#: ../search/Tiles/Utils.cs:238
+#: ../search/Tiles/Utils.cs:245
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -717,23 +781,23 @@ msgstr[1] "Om {0} år"
 msgid "Unknown duration"
 msgstr "Ukjent lengde"
 
-#: ../search/Tiles/WebHistory.cs:51
+#: ../search/Tiles/WebHistory.cs:54
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:52
+#: ../search/Tiles/WebHistory.cs:55
 msgid "Accessed:"
 msgstr "Aksessert:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:57 ../Best/BestTray.cs:207
 msgid "No Recent Searches"
 msgstr "Ingen nylige søk"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:62 ../Best/BestTray.cs:212
 msgid "Recent Searches"
 msgstr "Nylige søk"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:78 ../Best/BestTray.cs:228
 msgid "Clear"
 msgstr "Tøm"
 
@@ -1079,11 +1143,11 @@ msgstr "Vis detaljer"
 msgid "Couldn't launch web browser"
 msgstr "Kunne ikke starte nettleser"
 
-#: ../tools/Settings.cs:227
+#: ../tools/Settings.cs:166
 msgid "Reload configuration"
 msgstr "Last om konfigurasjon"
 
-#: ../tools/Settings.cs:228
+#: ../tools/Settings.cs:167
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1091,30 +1155,32 @@ msgstr ""
 "Konfigurasjonsfilen har blitt endret av et annet program. Vil du avvise de "
 "viste verdiene og laste om konfigrasjonen fra disk?"
 
-#: ../tools/Settings.cs:266
+#: ../tools/Settings.cs:305
 msgid "Select Path"
 msgstr "Velg sti"
 
-#: ../tools/Settings.cs:285
+#: ../tools/Settings.cs:324
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Den valgte stien er allerede valgt for indeksering og ble ikke lagt til."
 
-#: ../tools/Settings.cs:288
+#: ../tools/Settings.cs:327
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
-msgstr "Den valgte stien ble ikke lagt til. Listen inneholder oppføringer som er nyere enn denne og data blir indeksert allerede."
+msgstr ""
+"Den valgte stien ble ikke lagt til. Listen inneholder oppføringer som er "
+"nyere enn denne og data blir indeksert allerede."
 
-#: ../tools/Settings.cs:299 ../tools/Settings.cs:491
+#: ../tools/Settings.cs:338
 msgid "Path not added"
 msgstr "Sti ble ikke lagt til"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:347
 msgid "Remove obsolete paths"
 msgstr "Fjern overflødige stier"
 
-#: ../tools/Settings.cs:309
+#: ../tools/Settings.cs:348
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1123,11 +1189,11 @@ msgstr ""
 "Dette vil medføre at de overflødige stiene blir fjernet. Vil du fremdeles "
 "legge den til?"
 
-#: ../tools/Settings.cs:335
+#: ../tools/Settings.cs:374
 msgid "Remove path"
 msgstr "Fjern sti"
 
-#: ../tools/Settings.cs:336
+#: ../tools/Settings.cs:375
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1135,11 +1201,11 @@ msgstr ""
 "Vil du fjerne denne stien fra listen av mapper som skal bli inkludert for "
 "indeksering?"
 
-#: ../tools/Settings.cs:365
+#: ../tools/Settings.cs:404
 msgid "Remove item"
 msgstr "Fjern element"
 
-#: ../tools/Settings.cs:366
+#: ../tools/Settings.cs:405
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1147,85 +1213,48 @@ msgstr ""
 "Vil du fjerne dette elementet fra listen over data som skal bli ekskludert "
 "fra indeksering?"
 
-#: ../tools/Settings.cs:409
-msgid "Invalid host entry"
-msgstr "Ugyldig vert"
-
-#: ../tools/Settings.cs:416
-msgid "Remote host already present in the list."
-msgstr "Ekstern vert finnes allerede i listen."
-
-#: ../tools/Settings.cs:425
-msgid "Netbeagle Node not added"
-msgstr "Netbeagle node ble ikke lagt til"
-
-#: ../tools/Settings.cs:441
-msgid "Remove host"
-msgstr "Fjern tjener"
-
-#: ../tools/Settings.cs:442
-msgid "Are you sure you wish to remove this host from the list?"
-msgstr "Vil du fjerne denne tjeneren fra listen?"
-
-#: ../tools/Settings.cs:463
-msgid "Select path"
-msgstr "Velg sti"
-
-#: ../tools/Settings.cs:482
-msgid "The selected path is already configured for external access."
-msgstr "Den valgte stien er allerede konfigurert for ekstern tilgang."
-
-#: ../tools/Settings.cs:506
-msgid "Remove public path"
-msgstr "Fjern offentlig sti"
-
-#: ../tools/Settings.cs:507
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "Vil du fjerne denne oppføringen fra listen over offentlige stier?"
-
-#: ../tools/Settings.cs:552 ../tools/Settings.cs:641 ../tools/Settings.cs:719
-#: ../tools/Settings.cs:795 ../tools/Settings.cs:1134
+#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:970
 msgid "Name"
 msgstr "Navn"
 
-#: ../tools/Settings.cs:635
+#: ../tools/Settings.cs:538
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:688
+#: ../tools/Settings.cs:591
 msgid "Path:"
 msgstr "Sti:"
 
-#: ../tools/Settings.cs:691
+#: ../tools/Settings.cs:594
 msgid "Pattern:"
 msgstr "Mønster:"
 
-#: ../tools/Settings.cs:694
+#: ../tools/Settings.cs:597
 msgid "Mail folder:"
 msgstr "E-postmappe:"
 
-#: ../tools/Settings.cs:1042
+#: ../tools/Settings.cs:878
 msgid "Select Folder"
 msgstr "Velg mappe"
 
-#: ../tools/Settings.cs:1068 ../tools/settings.glade.h:27
+#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
 msgid "P_ath:"
 msgstr "_Sti:"
 
-#: ../tools/Settings.cs:1073
+#: ../tools/Settings.cs:909
 msgid "M_ail folder:"
 msgstr "E-postm_appe:"
 
-#: ../tools/Settings.cs:1078
+#: ../tools/Settings.cs:914
 msgid "P_attern:"
 msgstr "Mø_nster:"
 
-#: ../tools/Settings.cs:1102
+#: ../tools/Settings.cs:938
 msgid "Error adding path"
 msgstr "Feil ved tilføying av sti"
 
-#: ../tools/Settings.cs:1103
+#: ../tools/Settings.cs:939
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1233,67 +1262,43 @@ msgstr ""
 "Stien ble ikke funnet og kan derfor ikke legges til listen over stier som "
 "skal bli ekskluderes fra indeksering."
 
-#: ../tools/Settings.cs:1133
+#: ../tools/Settings.cs:969
 msgid "Show"
 msgstr "Vis"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add Remote Host</b>"
-msgstr "<b>Legg til ekstern vert</b>"
-
-#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>Administrasjon</b>"
 
-#: ../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:2
 msgid "<b>Display</b>"
 msgstr "<b>Vise</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:3
 msgid "<b>Exclude Resource</b>"
 msgstr "<b>Eksluder ressurs</b>"
 
-#: ../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:4
 msgid "<b>General</b>"
 msgstr "<b>Generelt</b>"
 
-#: ../tools/settings.glade.h:6
-msgid "<b>Networking</b>"
-msgstr "<b>Nettverk</b>"
-
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:5
 msgid "<b>Privacy</b>"
 msgstr "<b>Personvern</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:6
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Velg e-postmappe</b>"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:7
 msgid "<b>User Interface</b>"
 msgstr "<b>Brukergrensesnitt</b>"
 
-#: ../tools/settings.glade.h:10
-msgid "Add Remote Host"
-msgstr "Legg til ekstern vert"
-
-#: ../tools/settings.glade.h:11
-msgid ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
-msgstr ""
-"Legg til en søkemulig vert du vil \n"
-"koble til."
-
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:8
 msgid "Add any additional paths to be included for indexing."
 msgstr "Legg til ytterligere stier som skal bli inkludert for indeksering."
 
-#: ../tools/settings.glade.h:14
-msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr "Legg til eksterne søkbare verter du vil koble til."
-
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:9
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1301,67 +1306,60 @@ msgstr ""
 "Tilpass hvilke typer treff som skal bli vist og i hvilken rekkefølge de skal "
 "bli presentert når gruppert etter type."
 
-#: ../tools/settings.glade.h:16
-msgid "Allow _external access to local search services"
-msgstr "Tillat _ekstern tilgang til lokale søketjenester"
-
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:10
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:18
-msgid "Automatically start searching after the user has stopped typing"
+#: ../tools/settings.glade.h:11
+#, fuzzy
+msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr "Start søk automatisk etter at bruker har sluttet å skrive"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:12
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:13
 msgid "Display the search window by pressing:"
 msgstr "Vis søkevinduet ved å trykke:"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:14
 msgid "Exclude Resource"
 msgstr "Eksluder ressurs"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:15
 msgid "Filename _pattern"
 msgstr "Filnavn_mønster"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:16
 msgid "I_ndex my home directory"
 msgstr "I_ndekser min hjemmemappe"
 
-#: ../tools/settings.glade.h:24
-msgid "Index data while on battery power"
-msgstr "Indekser data mens du kjører på batteristrøm"
+#: ../tools/settings.glade.h:17
+msgid "Index data while on _battery power"
+msgstr "Indekser data mens du kjører på _batteristrøm"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:18
 msgid "Indexing"
 msgstr "Indeksering"
 
-#: ../tools/settings.glade.h:26
-msgid "Networking"
-msgstr "Nettverk"
-
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:20
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Velg en ressurs som skal ekskluderes fra indeksering."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:21
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Velg e-postmappen som skal ekskluderes fra indeksering."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:23
 msgid "Search Preferences"
 msgstr "Brukervalg for søk"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:24
 msgid "Select Mail Folder"
 msgstr "Velg e-postmappe"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:25
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1369,35 +1367,27 @@ msgstr ""
 "Angi ressurser som f.eks. mapper, filnavnmønster, e-postmapper eller type "
 "objekter du vil ekskludere fra indeksering."
 
-#: ../tools/settings.glade.h:34
-msgid "Specify paths that should be available for external access."
-msgstr "Angi stier som skal være tilgjengelige for ekstern tilgang."
-
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:26
 msgid "Type:"
 msgstr "Type:"
 
-#: ../tools/settings.glade.h:36
-msgid "_Address:"
-msgstr "_Adresse:"
-
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:27
 msgid "_Allow Beagle to be run as root"
 msgstr "L_a Beagle kjøre som root"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:28
 msgid "_Browse..."
 msgstr "_Bla gjennom..."
 
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:29
 msgid "_Folder path"
 msgstr "_Mappesti"
 
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:30
 msgid "_Mail folder"
 msgstr "E-post_mappe"
 
-#: ../tools/settings.glade.h:41
+#: ../tools/settings.glade.h:31
 msgid "_Start search & indexing services automatically "
 msgstr "_Start søke- og indekseringstjenesten automatisk "
 
@@ -1442,62 +1432,62 @@ msgid "Unknown Directory"
 msgstr "Ukjent mappe"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:91
+#: ../Util/StringFu.cs:109
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:94
+#: ../Util/StringFu.cs:112
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:97
+#: ../Util/StringFu.cs:115
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:103
+#: ../Util/StringFu.cs:121
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:138
 #, csharp-format
 msgid "Today, {0}"
 msgstr "I dag, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:141
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "I går, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "{0} dager siden, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:149
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:136
+#: ../Util/StringFu.cs:154
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} time"
 msgstr[1] "{0} timer"
 
-#: ../Util/StringFu.cs:153
+#: ../Util/StringFu.cs:171
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1505,19 +1495,294 @@ msgstr[0] "{0} minutt"
 msgstr[1] "{0} minutter"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:169
+#: ../Util/StringFu.cs:205
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} byte"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:173
+#: ../Util/StringFu.cs:209
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:176
+#: ../Util/StringFu.cs:212
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#. We might get this exception if there are
+#. missing symbols from the Mozilla runtime if
+#. the user did a Firefox 1.0 -> 1.5 upgrade.
+#. There's nothing we can do about this, it's
+#. an ABI change, so tell the user this is
+#. probably what's wrong.
+#: ../Best/Best.cs:121
+msgid ""
+"Best cannot initialize Mozilla's Gecko runtime environment.\n"
+"Have you upgraded Mozilla or Firefox recently?  If so, you\n"
+"probably need to rebuild beagle against this new version.\n"
+"See http://bugzilla.gnome.org/show_bug.cgi?id=326503 for\n"
+"more information."
+msgstr ""
+
+#: ../Best/Best.cs:150
+msgid ""
+"If you're wondering whether Best is working check your notification area "
+"(system tray)"
+msgstr ""
+
+#: ../Best/BestTray.cs:148
+msgid "Disable Searching"
+msgstr "Deaktiver søk"
+
+#: ../Best/BestTray.cs:149
+msgid ""
+"You are about to close the search tray. The search tray is automatically "
+"started at login-time. Would you like to disable it for future sessions?"
+msgstr ""
+
+#: ../Best/BestWindow.cs:301
+msgid "Anywhere"
+msgstr ""
+
+#: ../Best/BestWindow.cs:305
+msgid "in Files"
+msgstr "i filer"
+
+#: ../Best/BestWindow.cs:309
+#, fuzzy
+msgid "in Addressbook"
+msgstr "Adresse"
+
+#: ../Best/BestWindow.cs:313
+#, fuzzy
+msgid "in Mail"
+msgstr "Send e-post"
+
+#: ../Best/BestWindow.cs:317
+#, fuzzy
+msgid "in Web Pages"
+msgstr "Nettside:"
+
+#: ../Best/BestWindow.cs:321
+msgid "in Chats"
+msgstr "i lynmeldingslogger"
+
+#: ../Best/BestWindow.cs:338
+msgid "Search terms:"
+msgstr "Søk i begreper:"
+
+#: ../Best/BestWindow.cs:362
+msgid "Find"
+msgstr "Finn"
+
+#: ../Best/BestWindow.cs:384
+msgid "Show More Results"
+msgstr "Vis flere resultater"
+
+#: ../Best/BestWindow.cs:390
+msgid "Show Previous Results"
+msgstr "Vis tidligere resultater"
+
+#: ../Best/BestWindow.cs:474
+msgid "No results."
+msgstr "Ingen resultater."
+
+#. To translators: {0} is the current count of results shown of {1} in total, this is the message that is initially shown
+#. when results are returned to the user.
+#: ../Best/BestWindow.cs:478
+#, csharp-format
+msgid "Best <b>{0} results of {1}</b> are shown."
+msgstr ""
+
+#. To translators: {0} to {1} is the interval of results currently shown of {2} results in total
+#: ../Best/BestWindow.cs:483
+#, csharp-format
+msgid "Results <b>{0} through {1} of {2}</b> are shown."
+msgstr ""
+
+#. To translators: {0} represents the current query keywords
+#: ../Best/BestWindow.cs:584
+#, csharp-format
+msgid ""
+"The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
+"daemon isn't running."
+msgstr ""
+
+#. To translators: {0} represents the current query keywords, {1} contains the errormessage
+#: ../Best/BestWindow.cs:589
+#, csharp-format
+msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
+msgstr ""
+
+#: ../Best/best.desktop.in.h:1
+msgid "Beagle Search"
+msgstr "Beagle søk"
+
+#: ../Tiles/TileDocs.cs:77
+msgid "Pages:"
+msgstr "Sider:"
+
+#: ../Tiles/TileDocs.cs:81
+msgid "Words:"
+msgstr "Ord:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TileImLog.cs:71 ../Tiles/TranslationHack.cs:52
+msgid "Send IM"
+msgstr "Send lynmelding"
+
+#: ../Tiles/TileImLog.cs:77
+#, csharp-format
+msgid "Conversation in {0}"
+msgstr "Samtale i {0}"
+
+#: ../Tiles/TileImLog.cs:79
+#, csharp-format
+msgid "Conversation with {0}"
+msgstr "Samtale med {0}"
+
+#: ../Tiles/TileMailMessage.cs:88
+msgid "No Subject"
+msgstr "Uten emne"
+
+#: ../Tiles/TileMailMessage.cs:95
+msgid "To"
+msgstr "Til"
+
+#: ../Tiles/TileMailMessage.cs:95
+msgid "From"
+msgstr "Fra"
+
+#: ../Tiles/TileMailMessage.cs:123
+msgid "Sent"
+msgstr "Sendt"
+
+#: ../Tiles/TileMailMessage.cs:123
+msgid "Received"
+msgstr "Mottatt"
+
+#: ../Tiles/TileMailMessage.cs:131
+msgid "Email attachment"
+msgstr "E-postvedlegg"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:6
+msgid "Weblog:"
+msgstr "Nettlogg:"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:8
+msgid "by"
+msgstr "av"
+
+#. For translators: From template Tiles/template-blog.html
+#: ../Tiles/TranslationHack.cs:10
+msgid "Published:"
+msgstr "Publisert:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-folder.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:14 ../Tiles/TranslationHack.cs:28
+#: ../Tiles/TranslationHack.cs:38 ../Tiles/TranslationHack.cs:68
+#: ../Tiles/TranslationHack.cs:82 ../Tiles/TranslationHack.cs:98
+msgid "in folder"
+msgstr "i mappe:"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:16 ../Tiles/TranslationHack.cs:30
+#: ../Tiles/TranslationHack.cs:84 ../Tiles/TranslationHack.cs:100
+msgid "Last modified"
+msgstr "Sist endret"
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:24 ../Tiles/TranslationHack.cs:34
+#: ../Tiles/TranslationHack.cs:78 ../Tiles/TranslationHack.cs:94
+#: ../Tiles/TranslationHack.cs:108
+msgid "Send to..."
+msgstr "Send til..."
+
+#. For translators: From template Tiles/template-docs.html
+#. For translators: From template Tiles/template-file.html
+#. For translators: From template Tiles/template-music.html
+#. For translators: From template Tiles/template-picture.html
+#. For translators: From template Tiles/template-presentation.html
+#. For translators: From template Tiles/template-spreadsheet.html
+#: ../Tiles/TranslationHack.cs:26 ../Tiles/TranslationHack.cs:36
+#: ../Tiles/TranslationHack.cs:62 ../Tiles/TranslationHack.cs:80
+#: ../Tiles/TranslationHack.cs:96 ../Tiles/TranslationHack.cs:110
+#, fuzzy
+msgid "Reveal in file manager"
+msgstr "Vis i mappe"
+
+#. For translators: From template Tiles/template-launcher.html
+#: ../Tiles/TranslationHack.cs:42
+msgid "Application:"
+msgstr "Program:"
+
+#. For translators: From template Tiles/template-mail-message.html
+#: ../Tiles/TranslationHack.cs:46
+#, fuzzy
+msgid "Email subject:"
+msgstr "Emne:"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:54
+msgid "Track"
+msgstr ""
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:56
+msgid "from"
+msgstr "fra"
+
+#. For translators: From template Tiles/template-music.html
+#: ../Tiles/TranslationHack.cs:60
+msgid "Enqueue"
+msgstr ""
+
+#. For translators: From template Tiles/template-note.html
+#: ../Tiles/TranslationHack.cs:64
+msgid "last modified"
+msgstr "sist endret"
+
+#. For translators: From template Tiles/template-picture.html
+#: ../Tiles/TranslationHack.cs:72
+#, fuzzy
+msgid "Tags:"
+msgstr "Etternavn:"
+
+#. For translators: From template Tiles/template-presentation.html
+#: ../Tiles/TranslationHack.cs:90
+#, fuzzy
+msgid "Slides:"
+msgstr "Sted:"
+
+#. For translators: From template Tiles/template-web-history.html
+#: ../Tiles/TranslationHack.cs:112
+msgid "Last viewed:"
+msgstr "Sist vist:"
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:116
+msgid "from Networked Beagle on host"
+msgstr ""
+
+#. For translators: From template Tiles/template-network.html
+#: ../Tiles/TranslationHack.cs:120
+#, fuzzy
+msgid "Search Networked Beagle"
+msgstr "Søk i nyheter på nett"
