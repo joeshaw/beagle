@@ -1,7 +1,0 @@
-*.exe
-*.dll
-*.mdb
-Makefile
-Makefile.in
-best
-best.desktop

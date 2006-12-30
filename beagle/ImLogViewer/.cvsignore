@@ -1,7 +1,0 @@
-*.exe
-*.dll
-*.mdb
-Makefile
-Makefile.in
-beagle-imlogviewer
-ImLogViewer/ImLogViewer.glade.h

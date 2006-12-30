@@ -1,6 +1,0 @@
-*.exe
-*.dll
-*.mdb
-Makefile
-Makefile.in
-ExternalStringsHack.cs

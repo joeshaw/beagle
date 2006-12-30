@@ -1,8 +1,0 @@
-*.exe
-*.dll
-*.mdb
-Makefile
-Makefile.in
-GoogleSearch.cs
-ExternalStringsHack.cs
-*.config
