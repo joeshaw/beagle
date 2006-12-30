@@ -1,11 +1,11 @@
 
-CVS
----
+Subversion
+----------
 
-Beagle's source repository is in GNOME CVS, in the module 'beagle'.
+Beagle's source repository is in GNOME subversion, in the module 'beagle'.
 
-For information on GNOME CVS, see:
-http://developer.gnome.org/tools/cvs/html.
+For information on GNOME svn, see:
+http://developer.gnome.org/tools/svn.html.
 
 
 Patches
