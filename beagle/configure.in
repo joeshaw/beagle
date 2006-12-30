@@ -107,21 +107,6 @@ AM_CONDITIONAL(ENABLE_DESKTOP_LAUNCH, test "x$DESKTOP_LAUNCH" != "xno")
 AC_PATH_PROG(XDG_OPEN, xdg-open, no)
 AM_CONDITIONAL(ENABLE_XDG_OPEN, test "x$XDG_OPEN" != "xno")
 
-# Google QueryDriver
-# Disable GoogleDriver by default, enable if you want know what you are doing
-dnl -----------------------------------------------
-AC_ARG_ENABLE([googledriver],
-	AC_HELP_STRING([--enable-googledriver], [Enable Google backend]),
-	enable_googledriver=$enableval,
-	enable_googledriver=no)
-
-if test "x$enable_googledriver" = "xyes"; then
-	# check for wsdl
-	AC_PATH_PROG(WSDL, wsdl)
-fi
-
-AM_CONDITIONAL(ENABLE_GOOGLEDRIVER, test "x$enable_googledriver" = "xyes")
-
 #
 # I18N
 #
@@ -725,7 +710,6 @@ echo "
 	wv1?			  ${enable_wv1}
 	galago-sharp?		  ${enable_galago}
 	libchm?			  ${has_libchm} 
-	google backend?		  ${enable_googledriver} (Unsupported)
 	Thunderbird backend? 	  ${enable_tbird}
 
 	Mozilla Extension?	  yes

@@ -145,17 +145,6 @@ endif
 
 UTIL_TARGET_FILES = $(UTIL_CSFILES) $(EXTSTR)
 
-if ENABLE_GOOGLEDRIVER
-GOOGLE_WSDL = $(srcdir)/GoogleSearch.wsdl
-GOOGLE_CS   = GoogleSearch.cs
-
-$(GOOGLE_CS): $(GOOGLE_WSDL)
-	wsdl -namespace:Beagle.Util -out:$@ $^
-
-UTIL_TARGET_FILES +=				\
-	$(GOOGLE_CS)
-endif
-
 $(UTIL_TARGET): $(UTIL_TARGET_FILES)
 	$(CSC) -unsafe -out:$@ $(CSFLAGS) $^ $(UTIL_ASSEMBLIES)
 
@@ -237,12 +226,4 @@ CLEANFILES =			\
 	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
 	Inotify.exe.mdb
-
-if ENABLE_GOOGLEDRIVER
-EXTRA_DIST +=			\
-	$(GOOGLE_WSDL)
-
-CLEANFILES +=			\
-	$(GOOGLE_CS)
-endif
 

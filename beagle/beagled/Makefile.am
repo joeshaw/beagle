@@ -425,11 +425,6 @@ else
 DAEMON_DLL_ASSEMBLIES += -r:Mono.Data.SqliteClient
 endif
 
-if ENABLE_GOOGLEDRIVER
-DAEMON_DLL_CSFILES +=                  \
-       $(srcdir)/GoogleDriver.cs
-endif
-
 $(DAEMON_DLL_TARGET): $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_DLL_CSFLAGS) $(DAEMON_DLL_CSFILES) $(DAEMON_DLL_ASSEMBLIES)
 
