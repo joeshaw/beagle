@@ -1,13 +1,13 @@
 
 Beagle is an indexing sub-system and search aggregator built on top of
-the Lucene indexer.
+the Lucene.Net indexer.
 
-For general information on Beagle, visit http://www.gnome.org/projects/beagle.
+For general information on Beagle, visit http://beagle-project.org.
 
-For help on compiling Beagle, visit http://www.beaglewiki.org.
+For help on compiling Beagle, visit 
+http://www.beagle-project.org/Getting_Started.
 
-If you want to improve or fix Beagle, read the HACKING file.  There might also
-be relevant information at http://www.beaglewiki.org.
+If you want to improve or fix Beagle, please read the HACKING file.  
 
 For the latest gossip, visit http://www.planetbeagle.org.
 
