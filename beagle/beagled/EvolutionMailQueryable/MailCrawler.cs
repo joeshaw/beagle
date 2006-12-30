@@ -32,7 +32,7 @@ using System.IO;
 using Beagle.Util;
 using Beagle.Daemon;
 
-namespace Beagle.Daemon.EvolutionMailDriver {
+namespace Beagle.Daemon.EvolutionMailQueryable {
 	
 	class MailCrawler {
 		public delegate void ItemAddedHandler (FileInfo file);

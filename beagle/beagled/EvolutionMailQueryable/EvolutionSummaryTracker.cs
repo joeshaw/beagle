@@ -32,7 +32,7 @@ using Mono.Data.SqliteClient;
 
 using Beagle.Util;
 
-namespace Beagle.Daemon.EvolutionMailDriver {
+namespace Beagle.Daemon.EvolutionMailQueryable {
 
 	public class EvolutionSummaryTracker : IDisposable {
 

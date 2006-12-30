@@ -1,7 +1,7 @@
 //
-// EvolutionMailDriver.cs
+// EvolutionMailQueryable.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 //
 //
@@ -33,7 +33,7 @@ using System.Threading;
 using Beagle.Util;
 using Camel = Beagle.Util.Camel;
 
-namespace Beagle.Daemon.EvolutionMailDriver {
+namespace Beagle.Daemon.EvolutionMailQueryable {
 
 	[QueryableFlavor (Name="EvolutionMail", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionMailQueryable : LuceneQueryable {

@@ -29,7 +29,7 @@ using System.Threading;
 using GConf;
 using GLib;
 
-namespace Beagle.Daemon.EvolutionMailDriver {
+namespace Beagle.Daemon.EvolutionMailQueryable {
 
 	public class GConfThreadHelper {
 		private static object lock_obj = new object ();

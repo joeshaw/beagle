@@ -462,9 +462,9 @@ EDS_QUERYABLE_CSFILES =                                 \
 	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
 	$(edsqueryable)/SourcesHandler.cs
 
-evomailqueryable = $(srcdir)/EvolutionMailDriver
+evomailqueryable = $(srcdir)/EvolutionMailQueryable
 EVO_MAIL_QUERYABLE_CSFILES =					\
-	$(evomailqueryable)/EvolutionMailDriver.cs		\
+	$(evomailqueryable)/EvolutionMailQueryable.cs		\
 	$(evomailqueryable)/EvolutionMailIndexableGenerator.cs	\
 	$(evomailqueryable)/EvolutionSummaryTracker.cs		\
 	$(evomailqueryable)/GConfThreadHelper.cs		\

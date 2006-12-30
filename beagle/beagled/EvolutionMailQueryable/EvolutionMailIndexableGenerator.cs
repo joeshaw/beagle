@@ -37,7 +37,7 @@ using Beagle.Daemon;
 
 using Camel = Beagle.Util.Camel;
 
-namespace Beagle.Daemon.EvolutionMailDriver {
+namespace Beagle.Daemon.EvolutionMailQueryable {
 
 	public abstract class EvolutionMailIndexableGenerator : IIndexableGenerator {
 

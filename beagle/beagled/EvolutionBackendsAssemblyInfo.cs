@@ -26,7 +26,7 @@
 using System;
 
 using Beagle.Daemon;
-using Beagle.Daemon.EvolutionMailDriver;
+using Beagle.Daemon.EvolutionMailQueryable;
 using Beagle.Daemon.EvolutionDataServerQueryable;
 
 [assembly: IQueryableTypes (
