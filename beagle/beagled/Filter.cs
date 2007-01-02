@@ -254,7 +254,7 @@ namespace Beagle.Daemon {
 		{
 			int num_words = 0;
 
-			if (!IsFrozen && word_count < MAXWORDS && str != null && str != String.Empty) {
+			if (!IsFrozen && word_count < MAXWORDS && ! string.IsNullOrEmpty (str)) {
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string
@@ -289,7 +289,7 @@ namespace Beagle.Daemon {
 			if (Debug)
 				Logger.Log.Debug ("AppendText (\"{0}\")", str);
 
-			if (! IsFrozen && str != null && str != String.Empty)
+			if (! IsFrozen && ! string.IsNullOrEmpty (str))
 				return AppendText (str, IsHot ? str : null);
 
 			return 0;
@@ -298,7 +298,7 @@ namespace Beagle.Daemon {
 		// Does adding text to to text/hot pools respectively.
 		private void ReallyAppendText (string str, string strHot)
 		{
-			if (!IsFrozen && strHot != null && strHot != String.Empty)
+			if (!IsFrozen && ! string.IsNullOrEmpty (strHot))
 				hotPool.Add (strHot.Trim()+" ");
 
 			if (str != null) {
@@ -348,7 +348,7 @@ namespace Beagle.Daemon {
 		 */
 		public void AddProperty (Property prop)
 		{
-			if (prop != null && prop.Value != null && prop.Value != String.Empty)
+			if (prop != null && ! string.IsNullOrEmpty (prop.Value))
 				propertyPool.Add (prop);
 		}
 
