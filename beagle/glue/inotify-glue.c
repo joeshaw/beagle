@@ -82,14 +82,8 @@ inotify_glue_init (void)
 		return fd;
 
 	fd = inotify_init ();
-	if (fd < 0) {
-		int err = errno;
-		perror ("inotify_init");
-		if (err == ENOSYS) 
-			fprintf(stderr, "Inotify not supported!  You need a "
-				"2.6.13 kernel or later with CONFIG_INOTIFY "
-				"enabled.");
-	}
+	if (fd < 0)
+		return -errno;
 
 	if (pipe (snarf_cancellation_pipe) == -1)
 		perror ("Can't create snarf_cancellation_pipe");
@@ -108,20 +102,8 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 	int wd;
 
 	wd = inotify_add_watch (fd, filename, mask);
-	if (wd < 0) {
-		static int watch_limit_hit = 0;
-
-		int err = errno;
-
-		if (! watch_limit_hit || err != ENOSPC)
-			perror ("inotify_add_watch");
-
-		if (! watch_limit_hit && err == ENOSPC) {
-			fprintf(stderr, "Maximum watch limit hit. "
-				"Try adjusting " PROCFS_MAX_USER_WATCHES ".\n");
-			watch_limit_hit = 1;
-		}
-	}
+	if (wd < 0)
+		return -errno;
 
 	return wd;
 }
@@ -134,7 +116,7 @@ inotify_glue_ignore (int fd, __u32 wd)
 
 	ret = inotify_rm_watch (fd, wd);
 	if (ret < 0)
-		perror ("inotify_rm_watch");
+		return -errno;
 
 	return ret;
 }

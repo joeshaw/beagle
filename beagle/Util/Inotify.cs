@@ -129,8 +129,18 @@ namespace Beagle.Util {
 				return;
 			}
 
-			if (inotify_fd == -1)
-				Logger.Log.Warn ("Could not initialize inotify");
+			if (inotify_fd < 0) {
+				Mono.Unix.Native.Errno errno = Mono.Unix.Native.NativeConvert.ToErrno (-inotify_fd);
+
+				string error_message;
+
+				if (errno == Mono.Unix.Native.Errno.ENOSYS)
+					error_message = "Inotify not supported!  You need a 2.6.13 kernel or later with CONFIG_INOTIFY enabled.";
+				else
+					error_message = Mono.Unix.UnixMarshal.GetErrorDescription (errno);
+
+				Logger.Log.Warn ("Could not initialize inotify: {0}", error_message);
+			}
 		}
 
 		public static bool Enabled {
@@ -404,13 +414,18 @@ namespace Beagle.Util {
 
 			int retval = inotify_glue_ignore (inotify_fd, watched.Wd);
 			if (retval < 0) {
-				string msg = String.Format ("Attempt to ignore {0} failed!", watched.Path);
+				Mono.Unix.Native.Errno errno = Mono.Unix.Native.NativeConvert.ToErrno (-retval);
+				string msg = String.Format ("Attempt to ignore {0} failed: {1}", watched.Path, Mono.Unix.UnixMarshal.GetErrorDescription (errno));
 				throw new IOException (msg);
 			}
 
 			Forget (watched);
 			return;
 		}
+
+		// We don't want to keep printing the inotify watch limit
+		// warning over and over again.
+		static bool watch_limit_error_displayed = false;
 
 		// Ensure our watch exists, meets all the subscribers requirements,
 		// and isn't matching any other events that we don't care about.
@@ -423,6 +438,8 @@ namespace Beagle.Util {
 			if (watched.Wd >= 0 && watched.Mask == new_mask)
 				return;
 
+			//Log.Debug ("{0} inotify watch on {1}", watched.Wd >= 0 ? "Recreating" : "Creating", watched.Path);
+
 			// We rely on the behaviour that watching the same inode twice won't result
 			// in the wd value changing.
 			// (no need to worry about watched_by_wd being polluted with stale watches)
@@ -430,9 +447,17 @@ namespace Beagle.Util {
 			int wd = -1;
 			wd = inotify_glue_watch (inotify_fd, watched.Path, new_mask);
 			if (wd < 0) {
-				string msg = String.Format ("Attempt to watch {0} failed!", watched.Path);
+				Mono.Unix.Native.Errno errno = Mono.Unix.Native.NativeConvert.ToErrno (-wd);
+
+				if (! watch_limit_error_displayed && errno == Mono.Unix.Native.Errno.ENOSPC) {
+					Log.Error ("Maximum inotify watch limit hit adding watch to {0}.  Try adjusting /proc/sys/fs/inotify/max_user_watches", watched.Path);
+					watch_limit_error_displayed = true;
+				}
+
+				string msg = String.Format ("Attempt to watch {0} failed: {1}", watched.Path, Mono.Unix.UnixMarshal.GetErrorDescription (errno));
 				throw new IOException (msg);
 			}
+
 			if (watched.Wd >= 0 && watched.Wd != wd) {
 				string msg = String.Format ("Watch handle changed unexpectedly!", watched.Path);	
 				throw new IOException (msg);
