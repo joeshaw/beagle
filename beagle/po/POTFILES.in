@@ -65,12 +65,3 @@ Util/Conf.cs
 Util/Evolution.cs
 Util/ExifData.cs
 Util/StringFu.cs
-Best/Best.cs
-Best/BestTray.cs
-Best/BestWindow.cs
-Best/best.desktop.in
-Tiles/TileDocs.cs
-Tiles/TileFolder.cs
-Tiles/TileImLog.cs
-Tiles/TileMailMessage.cs
-Tiles/TranslationHack.cs
