@@ -185,6 +185,7 @@ namespace Beagle.Util {
 			"/proc/acpi/ac_adapter/AC/state",
 			"/proc/acpi/ac_adapter/AC0/state",
 			"/proc/acpi/ac_adapter/ADp1/state"
+			"/proc/acpi/ac_adapter/ACAD/state",
 		};
 
 		private static string proc_ac_state_filename = null;
