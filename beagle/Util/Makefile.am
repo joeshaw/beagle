@@ -64,7 +64,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MetadataStore.cs		\
-	$(srcdir)/Mozilla.cs	        	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
