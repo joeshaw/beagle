@@ -33,6 +33,60 @@ line arguments in this.  This item is required.
 
 arguments - Any arguments to pass into the given command.  The special
 token "%s" means the filename to be passed in.  This item is required.
+
+Here are some sample filters from the Wiki, simply move them into the 
+'external-filters' tags to activate!
+
+Simple TeX filter
+
+    * Author: Stephan Hegel
+    * Description: untex to remove LaTeX commands from input
+    * Dependencies: untex 
+<filter>
+  <mimetype>text/x-tex</mimetype>
+  <extension>.tex</extension>
+  <command>untex</command>
+  <arguments>-gascii %s</arguments>
+</filter> 
+
+Simple DVI filter
+
+    * Author: Dav
+    * Description: dvi to text using the "-q" option of dvi2tty
+    * Dependencies: dvi2tty 
+<filter>
+  <mimetype>application/x-dvi</mimetype>
+  <extension>.dvi</extension>
+  <command>dvi2tty</command>
+  <arguments>-q %s</arguments>
+</filter>
+
+Simple Postscript filter
+
+    * Author: Ben Lee
+    * Description: ps2ascii to extract text from postscript
+    * Dependencies: ps2ascii 
+<filter>
+  <mimetype>application/postscript</mimetype>
+  <extension>.ps</extension>
+  <extension>.ai</extension>
+  <extension>.eps</extension>
+  <command>ps2ascii</command>
+  <arguments>%s</arguments>
+</filter>
+
+Simple Djvu filter 
+    * Author: Ben Lee
+    * Description: djvutxt to extract text from Djvu files
+    * Dependencies: djvutxt 
+<filter>
+  <mimetype>image/vnd.djvu</mimetype>
+  <extension>.djvu</extension>
+  <extension>.djv</extension>
+  <command>djvutxt</command>
+  <arguments>%s</arguments>
+</filter>
+
 -->
 
 <external-filters>
