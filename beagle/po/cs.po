@@ -3,13 +3,13 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 #
-# Jakub Friedl <jfriedl@suse.cz>, 2006.
+# Jakub Friedl <jfriedl@suse.cz>, 2006, 2007.
 msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-11 17:03+0100\n"
-"PO-Revision-Date: 2006-12-11 16:34+0100\n"
+"POT-Creation-Date: 2007-01-03 11:31+0100\n"
+"PO-Revision-Date: 2007-01-03 11:33+0100\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -266,7 +266,7 @@ msgstr "Stát/provincie:"
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:50
+#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Název:"
 
@@ -358,8 +358,7 @@ msgstr ""
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr ""
-"Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
+msgstr "Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -374,17 +373,14 @@ msgstr ""
 "OR višně</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Chcete-li vynechat některé termíny, použijte před nimi mínus, např. <b>-"
 "kočky</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
@@ -445,11 +441,11 @@ msgstr "Zobrazuje se všech {0} výsledků"
 msgid "Showing the top {0} of {1} total matches"
 msgstr "Zobrazuje se prvních {0} z {1} výsledků"
 
-#: ../search/Search.cs:553
+#: ../search/Search.cs:555
 msgid "Your data is being indexed"
 msgstr "Vaše data se právě indexují"
 
-#: ../search/Search.cs:554
+#: ../search/Search.cs:556
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -690,12 +686,12 @@ msgid "Archives"
 msgstr "Archívy"
 
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:88
+#: ../Util/StringFu.cs:106
 msgid "Yesterday"
 msgstr "Včera"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:104
 msgid "Today"
 msgstr "Dnes"
 
@@ -758,11 +754,11 @@ msgstr[2] "Za {0} let"
 msgid "Unknown duration"
 msgstr "Neznámá délka"
 
-#: ../search/Tiles/WebHistory.cs:51
+#: ../search/Tiles/WebHistory.cs:54
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:52
+#: ../search/Tiles/WebHistory.cs:55
 msgid "Accessed:"
 msgstr "Přistoupeno:"
 
@@ -1140,16 +1136,15 @@ msgstr ""
 "Konfigurační soubor byl změn jinou aplikací. Chcete zahodit právě zobrazené "
 "hodnoty a načíst konfiguraci znovu z disku?"
 
-#: ../tools/Settings.cs:297
+#: ../tools/Settings.cs:305
 msgid "Select Path"
 msgstr "Vyberte cestu"
 
-#: ../tools/Settings.cs:316
+#: ../tools/Settings.cs:324
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
+msgstr "Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
 
-#: ../tools/Settings.cs:319
+#: ../tools/Settings.cs:327
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1157,15 +1152,15 @@ msgstr ""
 "Vybraná cesta nebyla přidána. Seznam obsahuje položky, které ji zahrnují a "
 "data jsou tedy již indexována."
 
-#: ../tools/Settings.cs:330
+#: ../tools/Settings.cs:338
 msgid "Path not added"
 msgstr "Cesta nebyla přidána"
 
-#: ../tools/Settings.cs:339
+#: ../tools/Settings.cs:347
 msgid "Remove obsolete paths"
 msgstr "Odstranit neplatné cesty"
 
-#: ../tools/Settings.cs:340
+#: ../tools/Settings.cs:348
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1173,22 +1168,21 @@ msgstr ""
 "Přidáním této cesty nahradíte jednu z existujících cest. Toto odstraní "
 "původní cestu. Opravdu ji chcete přidat?"
 
-#: ../tools/Settings.cs:366
+#: ../tools/Settings.cs:374
 msgid "Remove path"
 msgstr "Odstranit cestu"
 
-#: ../tools/Settings.cs:367
+#: ../tools/Settings.cs:375
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr ""
-"Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
+msgstr "Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
 
-#: ../tools/Settings.cs:396
+#: ../tools/Settings.cs:404
 msgid "Remove item"
 msgstr "Odstranit položku"
 
-#: ../tools/Settings.cs:397
+#: ../tools/Settings.cs:405
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1196,48 +1190,48 @@ msgstr ""
 "Opravdu chcete odstranit tuto položku ze seznamu dat, která nemají být "
 "indexována?"
 
-#: ../tools/Settings.cs:447 ../tools/Settings.cs:536 ../tools/Settings.cs:623
-#: ../tools/Settings.cs:962
+#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:970
 msgid "Name"
 msgstr "Jméno"
 
-#: ../tools/Settings.cs:530
+#: ../tools/Settings.cs:538
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:583
+#: ../tools/Settings.cs:591
 msgid "Path:"
 msgstr "Cesta:"
 
-#: ../tools/Settings.cs:586
+#: ../tools/Settings.cs:594
 msgid "Pattern:"
 msgstr "Vzor:"
 
-#: ../tools/Settings.cs:589
+#: ../tools/Settings.cs:597
 msgid "Mail folder:"
 msgstr "Poštovní složka:"
 
-#: ../tools/Settings.cs:870
+#: ../tools/Settings.cs:878
 msgid "Select Folder"
 msgstr "Vyberte složku"
 
-#: ../tools/Settings.cs:896 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
 msgid "P_ath:"
 msgstr "_Cesta"
 
-#: ../tools/Settings.cs:901
+#: ../tools/Settings.cs:909
 msgid "M_ail folder:"
 msgstr "_Poštovní složka:"
 
-#: ../tools/Settings.cs:906
+#: ../tools/Settings.cs:914
 msgid "P_attern:"
 msgstr "_Vzor:"
 
-#: ../tools/Settings.cs:930
+#: ../tools/Settings.cs:938
 msgid "Error adding path"
 msgstr "Chyba při přidávání cesty"
 
-#: ../tools/Settings.cs:931
+#: ../tools/Settings.cs:939
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1245,7 +1239,7 @@ msgstr ""
 "Zadaná cesta nemůže být nalezena a proto nemůže být přidána mezi zdroje "
 "vyjmuté z indexace."
 
-#: ../tools/Settings.cs:961
+#: ../tools/Settings.cs:969
 msgid "Show"
 msgstr "Zobrazit"
 
@@ -1346,7 +1340,7 @@ msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
 msgstr ""
-"Zadejte prosím libovolné zdroje jako jsou cesty, vzory cest, poštovní složky "
+"Zadejte libovolné zdroje jako jsou cesty, vzory cest, poštovní složky "
 "nebo typy objektů, které chcete vyjmout z indexace."
 
 #: ../tools/settings.glade.h:26
@@ -1414,55 +1408,55 @@ msgid "Unknown Directory"
 msgstr "Neznámý adresář"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:91
+#: ../Util/StringFu.cs:109
 msgid "MMM d"
 msgstr "d. MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:94
+#: ../Util/StringFu.cs:112
 msgid "MMM d, yyyy"
 msgstr "d. MMM yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:97
+#: ../Util/StringFu.cs:115
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:103
+#: ../Util/StringFu.cs:121
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:138
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Dnes, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:141
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Včera, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:144
 #, csharp-format
 msgid "{0} days ago, {1}"
 msgstr "před {0} dny, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:149
 msgid "MMMM d, h:mm tt"
 msgstr "d. MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:136
+#: ../Util/StringFu.cs:154
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d. MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:164
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -1470,7 +1464,7 @@ msgstr[0] "{0} hodina"
 msgstr[1] "{0} hodiny"
 msgstr[2] "{0} hodin"
 
-#: ../Util/StringFu.cs:153
+#: ../Util/StringFu.cs:171
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1479,19 +1473,20 @@ msgstr[1] "{0} minuty"
 msgstr[2] "{0} minut"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:169
+#: ../Util/StringFu.cs:205
 #, csharp-format
 msgid "{0} bytes"
 msgstr "{0} bajtů"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:173
+#: ../Util/StringFu.cs:209
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:176
+#: ../Util/StringFu.cs:212
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
