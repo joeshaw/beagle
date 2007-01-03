@@ -1,7 +1,7 @@
 //
 // DumpIndex.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -50,10 +50,41 @@ class DumpIndexTool {
 		}
 	}
 
+	static ArrayList RemapUris (LuceneQueryingDriver driver, ArrayList uris)
+	{
+		// We only need to remap URIs in the file system backend
+		if (driver.IndexName != "FileSystemIndex")
+			return uris;
+
+		FileAttributesStore fa_store = new FileAttributesStore (new FileAttributesStore_Mixed (Path.Combine (PathFinder.IndexDir, "FileSystemIndex"), driver.Fingerprint));
+
+		for (int i = 0; i < uris.Count; i++) {
+			Uri uri = (Uri) uris [i];
+			string path = uri.LocalPath;
+
+			Beagle.Daemon.FileAttributes attr = fa_store.Read (path);
+			if (attr == null) {
+				Console.WriteLine ("No file attribute info for {0}", uri);
+				continue;
+			}
+
+			Uri internal_uri = new Uri ("uid:" + GuidFu.ToShortString (attr.UniqueId) + uri.Fragment);
+			uris [i] = internal_uri;
+		}
+
+		return uris;
+	}
+
 	static string RemapUriToPath (Hashtable all_hits_by_uri, Hit hit)
 	{
-		string exact_name = hit.GetFirstProperty ("beagle:ExactFilename");
-		string parent_uri_str = hit.GetFirstProperty ("_private:ParentDirUri");
+		string exact_name;
+
+		if (hit.GetFirstProperty (Property.IsChildPropKey) == "true")
+			exact_name = hit.GetFirstProperty ("parent:" + Property.ExactFilenamePropKey);
+		else
+			exact_name = hit.GetFirstProperty (Property.ExactFilenamePropKey);
+
+		string parent_uri_str = hit.GetFirstProperty (Property.ParentDirUriPropKey);
 
 		if (parent_uri_str == null)
 			return exact_name;
@@ -62,27 +93,62 @@ class DumpIndexTool {
 					     exact_name);
 	}
 
-	static int DumpOneIndex_Metadata (string index_name, bool only_dump_the_urls)
+	static int DumpOneIndex_Metadata (string index_name, ArrayList uris, bool show_properties)
 	{
-		Console.WriteLine (); // a visual cue that something has changed
 		LuceneQueryingDriver driver;
 		driver = new LuceneQueryingDriver (index_name, -1, true);
-		
-		Hashtable all_hits_by_uri;
-		all_hits_by_uri = driver.GetAllHitsByUri ();
 
-		ArrayList all_hits;
-		all_hits = new ArrayList (all_hits_by_uri.Values);
+		Hashtable all_hits_by_uri = null;
+		ArrayList all_hits = null;
 
-		if (index_name == "FileSystemIndex") // A hard-wired hack
-			foreach (Hit hit in all_hits)
-				hit.Uri = UriFu.PathToFileUri (RemapUriToPath (all_hits_by_uri, hit));
+		if (uris.Count == 0 || index_name == "FileSystemIndex") {
+			all_hits_by_uri = driver.GetAllHitsByUri ();
+			all_hits = new ArrayList (all_hits_by_uri.Values);
+		}
 
-		all_hits.Sort (new HitByUriComparer ());
+		// A hard-wired hack
+		if (index_name == "FileSystemIndex") { 
+			foreach (Hit hit in all_hits) {
+				string internal_uri;
 
-		foreach (Hit hit in all_hits) {
+				if (hit [Property.IsChildPropKey] == "true") {
+					string path = RemapUriToPath (all_hits_by_uri, hit);
+					
+					internal_uri = UriFu.UriToEscapedString (hit.ParentUri);
+					
+					hit.ParentUri = UriFu.PathToFileUri (path);
+					hit.Uri = UriFu.PathToFileUri (path, hit.Uri.Fragment);
+				} else {
+					internal_uri = UriFu.UriToEscapedString (hit.Uri);
 
-			if (only_dump_the_urls) {
+					hit.Uri = UriFu.PathToFileUri (RemapUriToPath (all_hits_by_uri, hit));
+					hit.AddProperty (Property.NewUnsearched ("beagle:InternalUri", internal_uri));
+				}
+			}
+		}
+
+		ArrayList matching_hits;
+
+		if (uris.Count == 0)
+			matching_hits = all_hits;
+		else {
+			matching_hits = new ArrayList (driver.GetHitsForUris (RemapUris (driver, uris)));
+
+			if (index_name == "FileSystemIndex") {
+				for (int i = 0; i < matching_hits.Count; i++) {
+					Hit hit = (Hit) matching_hits [i];
+					Hit mapped_hit = (Hit) all_hits_by_uri [hit.Uri];
+
+					matching_hits [i] = mapped_hit;
+				}
+			}
+		}
+
+		matching_hits.Sort (new HitByUriComparer ());
+
+		foreach (Hit hit in matching_hits) {
+
+			if (! show_properties) {
 				Console.WriteLine ("{0}: {1}", index_name, hit.Uri);
 				continue;
 			}
@@ -93,21 +159,29 @@ class DumpIndexTool {
 				Console.WriteLine ("Parent: {0}", hit.ParentUri);
 			Console.WriteLine (" MimeT: {0}", hit.MimeType);
 			Console.WriteLine ("  Type: {0}", hit.Type);
+			Console.WriteLine ("Source: {0}", hit.Source);
 
 			ArrayList props;
 			props = new ArrayList (hit.Properties);
 			props.Sort ();
-			foreach (Property prop in props)
-				if (! prop.Key.StartsWith ("_private:"))
-				    Console.WriteLine ("  Prop: {0} = '{1}'", prop.Key, prop.Value);
+			foreach (Property prop in props) {
+				char [] legend = new char [4];
+
+				legend [0] = prop.IsMutable  ? 'm' : ' ';
+				legend [1] = prop.IsStored   ? 's' : ' ';
+				legend [2] = prop.IsSearched ? 's' : ' ';
+				legend [3] = prop.Type == PropertyType.Text ? 't' : ' ';
+
+				Console.WriteLine ("  Prop: [{0}] {1} = '{2}'", new String (legend), prop.Key, prop.Value);
+			}
+				
 
 			Console.WriteLine ();
 		}
 
-		return all_hits.Count;
+		return matching_hits.Count;
 	}
 
-	static Term initial_enum_term;
 	// Dump the term frequencies: we do this via direct Lucene access.
 	static void DumpOneIndex_TermFrequencies (string index_name)
 	{
@@ -118,7 +192,7 @@ class DumpIndexTool {
 		reader = IndexReader.Open (driver.PrimaryStore);
 
 		TermEnum term_enum;
-		term_enum = reader.Terms (initial_enum_term);
+		term_enum = reader.Terms (new Term ("Text", ""));
 
 		int distinct_term_count = 0;
 		int term_count = 0;
@@ -148,6 +222,8 @@ class DumpIndexTool {
 		Console.WriteLine ();
 	}
 
+	/////////////////////////////////////////////////////////
+		
 	public class IndexInfo : IComparable {
 		public string Name;
 		public int    Count;
@@ -164,176 +240,64 @@ class DumpIndexTool {
 		}
 	}
 
-	static void DumpIndexInformation (Mode mode, bool show_counts)
+	static void DumpIndexInformation (ArrayList indexes, ArrayList uris, bool show_properties, bool show_counts)
 	{
-		ArrayList index_info_list;
-		index_info_list = new ArrayList ();
+		foreach (IndexInfo info in indexes)
+			info.Count = DumpOneIndex_Metadata (info.Name, uris, show_properties);
 
-		DirectoryInfo dir;
-		dir = new DirectoryInfo (PathFinder.IndexDir);
-		foreach (DirectoryInfo subdir in dir.GetDirectories ())
-			index_info_list.Add (new IndexInfo (subdir.Name));
-		
-		index_info_list.Sort ();
-
-		bool set_counts = false;
-		
-		if (mode == Mode.TermFrequencies)
-			initial_enum_term = new Term ("Text", "");
-
-		foreach (IndexInfo info in index_info_list) {
-			if (mode == Mode.Uris || mode == Mode.Properties) {
-				info.Count = DumpOneIndex_Metadata (info.Name, mode == Mode.Uris);
-				set_counts = true;
-			} else {
-				DumpOneIndex_TermFrequencies (info.Name);
-			}
+		if (show_properties) {
+			Console.WriteLine ("LEGEND:");
+			Console.WriteLine ("  m - mutable");
+			Console.WriteLine ("  s - stored");
+			Console.WriteLine ("  s - searched");
+			Console.WriteLine ("  t - tokenized");
 		}
 
-		if (show_counts && set_counts) {
+		if (show_counts) {
 			Console.WriteLine ();
 			Console.WriteLine ("FINAL COUNTS");
 
-			foreach (IndexInfo info in index_info_list) 
+			foreach (IndexInfo info in indexes)
 				Console.WriteLine ("{0} {1}", info.Count.ToString ().PadLeft (7), info.Name);
 		}
 	}
 
-	class DummyQueryResult : IQueryResult {
-		public void Add (ICollection hits)
-		{
-		}
-
-		public void Add (ICollection hits, int total_results)
-		{
-		}
-
-		public void Subtract (ICollection hits)
-		{
-		}
+	static void DumpIndexTermFreqs (ArrayList indexes)
+	{
+		foreach (IndexInfo info in indexes)
+			DumpOneIndex_TermFrequencies (info.Name);
 	}
 
-	static void DumpFileIndexInformation (string path, string indexdir)
+	/////////////////////////////////////////////////////////
+
+	static void PrintUsage ()
 	{
-		//Uri uri = UriFu.PathToFileUri (path);
-	    	//Console.WriteLine ("Dumping information about:" + uri.AbsolutePath);
-	    	//path = uri.AbsolutePath;
-	    	if ((! File.Exists (path)) && (! Directory.Exists (path))) {
-	    	        Console.WriteLine ("No such file or directory:" + path);
-	    	        return;
-	    	}
+		string usage = @"
+beagle-dump-index: Low-level index management
+Web page: http://beagle-project.org
+Copyright (C) 2004-2007 Novell, Inc.
 
-		if (indexdir == null)
-			// default is ~/.beagle/Indexes/FileSystemIndex
-			indexdir = Path.Combine (PathFinder.IndexDir, "FileSystemIndex");
-		if (! Directory.Exists (indexdir)) {
-			Console.WriteLine ("Index:{0} doesnt exist.", indexdir);
-			return;
-		}
-		
-	    	// get fingerprint
-	    	TextReader reader;
-	    	reader = new StreamReader (Path.Combine (indexdir, "fingerprint"));
-	    	string fingerprint = reader.ReadLine ();
-	    	reader.Close ();
-		//Console.WriteLine ("Read fingerprint:" + fingerprint);
+Usage: beagle-dump-index [options] [[file or URI to match] ...]
+			
+  --uris                   Dump all Uris (default)
+  --properties             Dump all properties
+  --term-frequencies       Dump term frequencies
 
-		// find out uid
-	    	FileAttributesStore fa_store = new FileAttributesStore (new FileAttributesStore_Mixed (indexdir, fingerprint));
-	    	Beagle.Daemon.FileAttributes attr = fa_store.Read (path);
-		if (attr == null) {
-			Console.WriteLine ("No information about this file in index. Ignoring.");
-			return;
-		}
-		string uri_string = "uid:" + GuidFu.ToShortString (attr.UniqueId);
-		Console.WriteLine ("Uri = " + uri_string);
-		//Console.WriteLine ("FilterName:" + attr.FilterName);
-		Console.WriteLine ("LastAttrTime:" + attr.LastAttrTime);
-		Console.WriteLine ("LastWriteTime:" + attr.LastWriteTime);
+  --show-counts            Show index count totals (default)
+  --hide-counts            Hide index count totals
 
-		LuceneQueryingDriver driver;
-		driver = new LuceneQueryingDriver (indexdir, -1, true);
+  --index=<index name>     Limit results to an index by name.  May be used
+                           multiple times.
+  --indexdir=<directory>   Limit results to an index specified by absolute
+                           path.  May be used multiple times.  Example path:
+                           /home/user/.beagle/Indexes/FileSystemIndex
 
-
-		// first try for the Uri:"uid:xxxxxxxxxxxxxxx"
-		Lucene.Net.Search.Query query = new TermQuery(new Term("Uri", uri_string));
-		if (DoQuery (driver, query))
-			return;
-		
-		// else query by path - this is for static indexes
-		path = UriFu.PathToFileUriString (path);
-		Console.WriteLine ("Querying by:[" + path + "]");
-		query = new TermQuery(new Term("Uri", path));
-		DoQuery (driver, query);
-		
-	}
-
-	static bool DoQuery (LuceneQueryingDriver driver, Lucene.Net.Search.Query query)
-	{
-		IndexSearcher primary_searcher = LuceneCommon.GetSearcher (driver.PrimaryStore);
-		IndexSearcher secondary_searcher = LuceneCommon.GetSearcher (driver.SecondaryStore);
-		
-		Hits primary_hits = primary_searcher.Search(query);
-		Hits secondary_hits = secondary_searcher.Search (query);
-		Console.WriteLine ("{0} hits from primary store; {1} hits from secondary store", primary_hits.Length (), secondary_hits.Length ());
-		
-		Document primary_doc, secondary_doc;
-		// there should be exactly one primary hit and 0/1 secondary hit
-		if (primary_hits.Length () == 1) {
-			primary_doc = primary_hits.Doc (0);
-			Console.WriteLine (
-			"------------[ Immutable data ]------------");
-			foreach (Field f in primary_doc.Fields ()) {
-
-				String name = f.Name ();
-				String val = f.StringValue ();
-				bool stored = f.IsStored ();
-				bool searchable = (val [0] == 's');
-				bool tokenized = f.IsTokenized();
-				if (name.Length >= 7 && name.StartsWith ("prop:"))
-					tokenized = (name [5] != 't');
-				float boost = f.GetBoost();
-				Console.WriteLine ("{0,-30} = [{1}]", name, val);
-				Console.WriteLine ("{0,-32} ({1}stored, {2} searchable, {3} tokenized)",
-						    "",
-						    (stored ? "" : "un"),
-						    (searchable ? "" : "not"),
-						    (tokenized ? "" : "not"));
-
-			}
-		}
-		
-		if (secondary_hits.Length () == 1) {
-			secondary_doc = secondary_hits.Doc (0);
-			Console.WriteLine (
-			"------------[ Mutable data ]-----------");
-			foreach (Field f in secondary_doc.Fields ()) {
-
-				String name = f.Name ();
-				String val = f.StringValue ();
-				bool stored = f.IsStored ();
-				bool searchable = (val [0] == 's');
-				bool tokenized = f.IsTokenized();
-				if (name.Length >= 7 && name.StartsWith ("prop:"))
-					tokenized = (name [5] != 't');
-				float boost = f.GetBoost();
-
-				Console.WriteLine ("{0,-30} = [{1}]", name, val);
-				Console.WriteLine ("{0,-32} ({1}stored, {2} searchable, {3} tokenized)",
-						    "",
-						    (stored ? "" : "un"),
-						    (searchable ? "" : "not"),
-						    (tokenized ? "" : "not"));
-			}
-		}
-
-		LuceneCommon.ReleaseSearcher (primary_searcher);
-		LuceneCommon.ReleaseSearcher (secondary_searcher);
-		
-		if (primary_hits.Length () != 0 || secondary_hits.Length () != 0)
-			return true;
-		else
-			return false;
+  file or URI to match     Get information in index about one or more files
+                           or URIs.  Note this doesn't make sense with
+                           --term-frequencies and will cause an error.
+";
+			
+		Console.WriteLine (usage);
 	}
 
 	enum Mode {
@@ -341,36 +305,21 @@ class DumpIndexTool {
 		Properties,
 		TermFrequencies
 	}
-		
 
 	static void Main (string [] args)
 	{
 		Mode mode = Mode.Uris;
 		bool show_counts = true;
-		string file = null;
-		string indexdir = null;
+		ArrayList index_dirs = new ArrayList ();
+		ArrayList index_names = new ArrayList ();
+		ArrayList uris = new ArrayList ();
 		
 		foreach (string arg in args) {
 
 			switch (arg) {
 				
 			case "--help":
-				Console.WriteLine (@"
-beagle-dump-index [options] [ [--indexdir=dir] file]
-			
---uris                   Dump all Uris (default)
---properties             Dump all properties
---term-frequencies       Dump term frequencies
-
---show-counts            Show index count totals (default)
---hide-counts            Hide index count totals
-
---indexdir=<index directory>
-                         Absolute path of the directory storing the index
-                         e.g. /home/user/.beagle/Indexes/FileSystemIndex
-file                     Get information in index about this file or directory
-
---help                         What you just did");
+				PrintUsage ();
 				Environment.Exit (0);
 				break;
 				
@@ -379,10 +328,12 @@ file                     Get information in index about this file or directory
 				break;
 
 			case "--properties":
+			case "--props":
 				mode = Mode.Properties;
 				break;
 
 			case "--term-frequencies":
+			case "--term-freqs":
 				mode = Mode.TermFrequencies;
 				break;
 
@@ -396,17 +347,56 @@ file                     Get information in index about this file or directory
 
 			default:
 				if (arg.StartsWith ("--indexdir="))
-					indexdir = arg.Remove (0, 11);
-				else
-					file = arg;
+					index_dirs.Add (arg.Remove (0, 11));
+				else if (arg.StartsWith ("--index="))
+					index_names.Add (arg.Remove (0, 8));
+				else {
+					Uri uri;
+					
+					try {
+						uri = new Uri (arg);
+					} catch (UriFormatException) {
+						uri = new Uri (Path.GetFullPath (arg));
+					}
+
+					uris.Add (uri);
+				}
 				break;
 			}
 		}
 
-		if (file == null)
-			DumpIndexInformation (mode, show_counts);
-		else
-			DumpFileIndexInformation (file, indexdir);
+		if (uris.Count > 0 && mode == Mode.TermFrequencies) {
+			Console.WriteLine ("ERROR: --term-frequencies doesn't make sense with files or URIs.");
+			Environment.Exit (1);
+		}
 
+		ArrayList indexes = new ArrayList ();
+
+		// If no --index or --indexdir options, get all the default indexes.
+		if (index_dirs.Count == 0 && index_names.Count == 0) {
+			foreach (DirectoryInfo subdir in DirectoryWalker.GetDirectoryInfos (PathFinder.IndexDir))
+				indexes.Add (new IndexInfo (subdir.Name));
+		} else {
+			foreach (string name in index_names) {
+				DirectoryInfo info = new DirectoryInfo (Path.Combine (PathFinder.IndexDir, name));
+
+				if (!info.Exists) {
+					Console.WriteLine ("ERROR: No index named '{0}'", name);
+					Environment.Exit (1);
+				}
+
+				indexes.Add (new IndexInfo (info.Name));
+			}
+
+			foreach (string dir in index_dirs)
+				indexes.Add (new IndexInfo (dir));
+		}
+
+		indexes.Sort ();
+
+		if (mode == Mode.Uris || mode == Mode.Properties)
+			DumpIndexInformation (indexes, uris, mode == Mode.Properties, show_counts);
+		else
+			DumpIndexTermFreqs (indexes);
 	}
 }

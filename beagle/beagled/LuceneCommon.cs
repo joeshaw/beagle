@@ -107,7 +107,7 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////
 
-		protected string IndexName { get { return index_name; } }
+		public string IndexName { get { return index_name; } }
 
 		public Lucene.Net.Store.Directory PrimaryStore { get { return primary_store; } }
 
@@ -1775,6 +1775,47 @@ namespace Beagle.Daemon {
 			ReleaseReader (secondary_reader);
 
 			return all_hits;
+		}
+
+		// For a large index, this will be very slow and will consume
+		// a lot of memory.  Don't call it without a good reason!
+		public ICollection GetHitsForUris (ICollection uris)
+		{
+			Hashtable hits_by_uri = UriFu.NewHashtable ();
+
+			LNS.IndexSearcher primary_searcher = GetSearcher (PrimaryStore);
+			LNS.IndexSearcher secondary_searcher = GetSearcher (SecondaryStore);
+
+			LNS.Query uri_query = UriQuery ("Uri", uris);
+
+			LNS.Hits primary_hits = primary_searcher.Search (uri_query);
+
+			for (int i = 0; i < primary_hits.Length (); i++) {
+				Document doc = primary_hits.Doc (i);
+
+				Uri u = GetUriFromDocument (doc);
+
+				Hit hit = DocumentToHit (doc);
+				hits_by_uri [hit.Uri] = hit;
+			}
+
+			if (secondary_searcher != null) {
+				LNS.Hits secondary_hits = secondary_searcher.Search (uri_query);
+
+				for (int i = 0; i < secondary_hits.Length (); i++) {
+					Document doc = secondary_hits.Doc (i);
+
+					Uri uri = GetUriFromDocument (doc);
+					Hit hit = (Hit) hits_by_uri [uri];
+					if (hit != null)
+						AddPropertiesToHit (hit, doc, false);
+				}
+			}
+
+			ReleaseSearcher (primary_searcher);
+			ReleaseSearcher (secondary_searcher);
+
+			return hits_by_uri.Values;
 		}
 	}
 }

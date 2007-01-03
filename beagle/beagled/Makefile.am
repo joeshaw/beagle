@@ -986,6 +986,8 @@ endif
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET).mdb       $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(BUILD_INDEX_TARGET)            $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(BUILD_INDEX_TARGET).mdb        $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(DUMP_INDEX_TARGET)             $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(DUMP_INDEX_TARGET).mdb         $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET)           $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET).mdb       $(DESTDIR)$(pkglibdir)
 if ENABLE_THUNDERBIRD
@@ -1029,6 +1031,8 @@ endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET).mdb
+	rm -f $(DESTDIR)$(pkglibdir)/$(DUMP_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkglibdir)/$(DUMP_INDEX_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET).mdb
 
@@ -1039,13 +1043,13 @@ BIN_WRAPPERS = \
 
 SBIN_WRAPPERS = \
 	$(BUILD_INDEX_WRAPPER)		\
+	$(DUMP_INDEX_WRAPPER)		\
 	$(MANAGE_INDEX_WRAPPER)
 
 #	$(MASTER_DELETE_WRAPPER)
 #	$(FS_SANITY_CHECK_WRAPPER)
 
 noinst_SCRIPTS=	\
-	$(DUMP_INDEX_WRAPPER)		\
 	$(SNIPPET_TEST_WRAPPER)		\
 	$(TERM_STATS_WRAPPER)		\
 	$(NAME_INDEX_WRAPPER)		
