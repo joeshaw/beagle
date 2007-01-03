@@ -96,9 +96,17 @@ namespace Beagle.Filters {
 					}
                       		} else {
                       			// A "regular" string
-
-                      			// FIXME: We need to strip out other macros
-					// (.SH for example)
+                      			// Strip out some of the more common
+                      			// troff macros, ideally we should handle more
+								str = str.Replace (".SH","");
+								str = str.Replace (".PP","");
+								str = str.Replace ("\fI","");
+								str = str.Replace ("\fR","");
+								str = str.Replace (".SH","");
+								str = str.Replace (".B","");
+								str = str.Replace (".TP","");
+								str = str.Replace (".BR","");
+								str = str.Replace ("\fB","");
                       			AppendText (str);
 				
                       		}
