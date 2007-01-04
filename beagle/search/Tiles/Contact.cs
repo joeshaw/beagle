@@ -80,8 +80,7 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = null;
 
-			// Evolution also accepts 'null' since it was added later
-   			if (client == "evolution" || client == null) {
+   			if (client == "evolution" || (client == null && uri.StartsWith ("contacts:")) {
 				p = new SafeProcess ();
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
@@ -102,6 +101,11 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
+
+			if (p == null) {
+				Console.WriteLine ("Opening contact '{0}' is unsupported!", Hit.EscapedUri);
+				return;
+			}
 			
 			try {
 				p.Start ();
