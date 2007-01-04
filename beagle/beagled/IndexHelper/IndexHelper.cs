@@ -86,15 +86,6 @@ namespace Beagle.IndexHelper {
 					LogLevel.Debug,
 					run_by_hand || log_in_fg);
 
-			// Intentionally unset DISPLAY so that we can't connect
-			// to the X server and aren't influenced by it if it
-			// goes away.  It's important to do this before
-			// Application.InitCheck(), since that's what makes the
-			// connection.
-			//unsetenv ("DISPLAY");
-
-			SystemInformation.XssInit (false);
-
 			// Initialize GObject type system
 			g_type_init ();
 

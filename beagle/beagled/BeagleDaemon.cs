@@ -465,7 +465,7 @@ namespace Beagle.Daemon {
 			// Initialize GObject type system
 			g_type_init ();
 			
-			if (SystemInformation.XssInit (true))
+			if (SystemInformation.XssInit ())
 				Logger.Log.Debug ("Established a connection to the X server");
 			else
 				Logger.Log.Debug ("Unable to establish a connection to the X server");
