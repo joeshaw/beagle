@@ -70,15 +70,19 @@ class ExtractContentTool {
 
 		Console.WriteLine ("Filename: " + indexable.Uri);
 
+		Stopwatch watch = new Stopwatch ();
+
 		Filter filter;
 
+		watch.Start ();
 		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
 			Console.WriteLine ("No filter for {0}", indexable.MimeType);
 			indexable.Cleanup ();
 			return;
 		}
+		watch.Stop ();
 
-		Console.WriteLine ("Filter: {0}", filter);
+		Console.WriteLine ("Filter: {0} (determined in {1})", filter, watch);
 		Console.WriteLine ("MimeType: {0}", filter.MimeType);
 		Console.WriteLine ();
 
@@ -110,6 +114,9 @@ class ExtractContentTool {
 
 		if (indexable.NoContent)
 			return;
+
+		watch.Reset ();
+		watch.Start ();
 
 		TextReader reader;
 
@@ -150,6 +157,11 @@ class ExtractContentTool {
 			else
 				Console.WriteLine ();
 		}
+
+		watch.Stop ();
+
+		Console.WriteLine ();
+		Console.WriteLine ("Text extracted in {0}", watch);
 
 		Stream stream = indexable.GetBinaryStream ();
 		if (stream != null)
