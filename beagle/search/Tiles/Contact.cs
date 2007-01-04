@@ -80,7 +80,8 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = null;
 
-   			if (client == "evolution") {
+			// Evolution also accepts 'null' since it was added later
+   			if (client == "evolution" || client == null) {
 				p = new SafeProcess ();
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
@@ -102,9 +103,6 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
 			
-			if ( p == null )
-				return;
-		
 			try {
 				p.Start ();
 			} catch (SafeProcessException e) {

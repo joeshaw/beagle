@@ -247,6 +247,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			indexable.Timestamp = rev;
 			indexable.HitType = "Contact";
 
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "evolution");
 			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", contact.Id));
 						
