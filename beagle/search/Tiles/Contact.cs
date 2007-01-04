@@ -101,7 +101,10 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p = GetClientProcess (Hit.GetFirstProperty ("fixme:client"), Hit.EscapedUri);
-
+			
+			if ( p == null )
+				return;
+		
 			try {
 				p.Start ();
 			} catch (SafeProcessException e) {
