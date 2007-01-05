@@ -174,6 +174,12 @@ namespace Beagle.Filters {
 			
 		}
 
+		override protected void DoClose ()
+		{
+			SReaderRTF.Close ();
+			FsRTF.Close ();
+		}
+
 		// Identifies the type of RTF control word and handles accordingly
 		private ErrorCodes HandleControlWord (string strCtrlWord, int paramVal, bool bMeta)
 		{
