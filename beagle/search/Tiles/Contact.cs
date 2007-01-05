@@ -80,7 +80,7 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = null;
 
-   			if (client == "evolution" || (client == null && uri.StartsWith ("contacts:")) {
+   			if (client == "evolution" || (client == null && uri.StartsWith ("contacts:"))) {
 				p = new SafeProcess ();
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
