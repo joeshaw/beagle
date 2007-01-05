@@ -276,21 +276,31 @@ namespace Beagle.Daemon.KMailQueryable {
 			if (! flag)
 				return false;
 
+			bool found_no_good_mbox = true;
 			foreach (FileInfo file in DirectoryWalker.GetFileInfos (path)) {
 				if (file.Name.StartsWith ("."))
 					continue;
+
 				// index-file name is of pattern .name.index
 				string indexfile = Path.Combine (path, "." + file.Name + ".index");
-				if (! File.Exists (indexfile)) {
-					flag = false;
-					Logger.Log.Warn ( "KMail backend: " + 
-						path + 
-						" contains an mbox file but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
-					break;
-				}
+				found_no_good_mbox = (found_no_good_mbox && (file.Length == 0));
+
+				if (File.Exists (indexfile) || file.Length == 0)
+					continue;
+
+				flag = false;
+				Logger.Log.Warn ( "KMail backend: " + 
+					path + 
+					" contains an mbox file but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
+				break;
 			}
 			
-			return flag;	
+			// If found a non-empty file without any index file OR
+			// all files were zero size, return false
+			if (! flag || found_no_good_mbox)
+				return false;
+
+			return true;
 		}
 
 		/**
