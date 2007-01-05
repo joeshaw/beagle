@@ -20,10 +20,35 @@ HAP_CSFILES =						\
 
 include entagged-sharp/entagged-sharp.sources
 
+# Local copy of http://svn.myrealbox.com/viewcvs/trunk/mcs/class/Managed.Windows.Forms/System.Windows.Forms.RTF/
+SWF_RTF_CSFILES =						\
+	$(srcdir)/System.Windows.Forms.RTF/Charcode.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/Charset.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/CharsetFlags.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/CharsetType.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/ClassDelegate.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/Color.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/DestinationDelegate.cs \
+	$(srcdir)/System.Windows.Forms.RTF/Font.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/KeysInit.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/KeyStruct.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/Major.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/Minor.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/RTF.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/RTFException.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/StandardCharCode.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/StandardCharName.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/Style.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/StyleElement.cs	\
+	$(srcdir)/System.Windows.Forms.RTF/StyleType.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/TextMap.cs		\
+	$(srcdir)/System.Windows.Forms.RTF/TokenClass.cs
+
 CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs	\
 	$(ENTAGGED_CSFILES)		\
 	$(HAP_CSFILES)			\
+	$(SWF_RTF_CSFILES)		\
 	$(srcdir)/FilterArchive.cs	\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterImage.cs	\
