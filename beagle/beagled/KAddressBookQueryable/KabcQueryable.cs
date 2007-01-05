@@ -352,6 +352,7 @@ namespace Beagle.Daemon.KabcQueryable {
 			indexable.MimeType = ICalParser.KabcMimeType;
 			indexable.HitType = "Contact";
 			indexable.Timestamp = current_dt;
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "KAddressBook"));
 			// Add uid as a keyword field for convenience
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", current_uid));
 
