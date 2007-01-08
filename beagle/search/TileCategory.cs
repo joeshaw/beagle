@@ -51,13 +51,13 @@ namespace Search {
 			req.Height *= (PageSize + Columns - 1) / Columns;
 
 			if (!Expanded)
-				req.Height = 2;  //keep a thin line of background.
+				req.Height = 2;  // keep a thin line of background.
 			
 			// Add height for the header, and update the width if the header
 			// is wider than the tile area
 
 			req.Height += headerReq.Height;
-			req.Width = Math.Max (req.Width, headerReq.Width); // + headerReq.Height);
+			req.Width = Math.Max (req.Width, headerReq.Width);
 
 			// Handle BorderWidth
 			req.Width += (int)(2 * BorderWidth);
