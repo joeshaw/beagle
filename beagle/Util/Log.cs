@@ -33,6 +33,7 @@ using System.Diagnostics;
 namespace Beagle.Util {
 
 	public enum LogLevel {
+		Always,
 		Error,
 		Warn,
 		Debug,
@@ -199,7 +200,7 @@ namespace Beagle.Util {
 
 		static private void WriteLine (LogLevel level, string format, object [] args, Exception ex) 
 		{
-			if (cutoff_level < level)
+			if (level != LogLevel.Always && cutoff_level < level)
 				return;
 
 			string ex_str = null;
@@ -240,6 +241,9 @@ namespace Beagle.Util {
 				break;
 			case LogLevel.Debug:
 				prefix_builder.Append ("DEBUG");
+				break;
+			case LogLevel.Always:
+				prefix_builder.Append (" INFO");
 				break;
 			default:
 				prefix_builder.Append (" HUH?");
@@ -337,6 +341,21 @@ namespace Beagle.Util {
 		static public void Error (Exception ex)
 		{
 			WriteLine (LogLevel.Error, null, null, ex);
+		}
+
+		static public void Always (string message, params object [] args)
+		{
+			WriteLine (LogLevel.Always, message, args, null);
+		}
+		
+		static public void Always (Exception ex, string message, params object [] args)
+		{
+			WriteLine (LogLevel.Always, message, args, ex);
+		}
+
+		static public void Always (Exception ex)
+		{
+			WriteLine (LogLevel.Always, null, null, ex);
 		}
 	}
 }

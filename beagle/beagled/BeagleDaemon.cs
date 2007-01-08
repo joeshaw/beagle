@@ -443,11 +443,11 @@ namespace Beagle.Daemon {
 					LogLevel.Debug,
 					arg_fg);
 
-			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
-			Logger.Log.Info ("Running on {0}", SystemInformation.MonoRuntimeVersion);
-			Logger.Log.Debug ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
-			Logger.Log.Debug ("Command Line: {0}",
-					  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
+			Log.Always ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
+			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
+			Log.Always ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
+			Log.Always ("Command Line: {0}",
+					   Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
 			if (! ExtendedAttribute.Supported) {
 				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +
@@ -500,7 +500,7 @@ namespace Beagle.Daemon {
 				} catch (IOException) { }
 			}
 
-			Log.Info ("Beagle daemon process shut down cleanly.");
+			Log.Always ("Beagle daemon process shut down cleanly.");
 		}
 
 		/////////////////////////////////////////////////////////////////////////////

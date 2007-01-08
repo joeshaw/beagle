@@ -129,6 +129,7 @@ namespace Beagle.Daemon {
 			// method.
 			bool first_signal = false;
 			if (signal_time == DateTime.MinValue) {
+				Log.Always ("Shutdown requested");
 				signal_time = DateTime.Now;
 				first_signal = true;
 			}
