@@ -61,14 +61,16 @@ namespace Search {
 
 			headerReq = header.ChildRequisition;
 
-			childAlloc.X = allocation.X + (int)BorderWidth + headerReq.Height;
-			childAlloc.Width = allocation.Width - (int)BorderWidth - headerReq.Height;
+			childAlloc.X = allocation.X + (int)BorderWidth;
+			childAlloc.Width = allocation.Width - (int)BorderWidth;
 			childAlloc.Y = allocation.Y + (int)BorderWidth;
 			childAlloc.Height = headerReq.Height;
 			header.Allocation = childAlloc;
 
+			// Indent the tiles by the same distance as the height of the header.
 			childAlloc.X += headerReq.Height;
 			childAlloc.Width -= headerReq.Height;
+
 			foreach (Widget w in VisibleTiles) {
 				childAlloc.Y += childAlloc.Height;
 				childAlloc.Height = w.ChildRequisition.Height;

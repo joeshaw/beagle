@@ -10,8 +10,9 @@ namespace Search.Tiles {
 			BorderWidth = 6;
 
 			icon = new Gtk.Image ();
+			icon.SetAlignment (0.5f, 0.0f);
 			icon.Show ();
-			Attach (icon, 0, 1, 0, 1, fill, fill, 0, 0);
+			Attach (icon, 0, 1, 0, 1, fill, fill, 6, 0);
 
 			SizeRequested += DetailsSizeRequested;
 		}
@@ -92,6 +93,7 @@ namespace Search.Tiles {
 		private Gtk.Label AddGrayLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewGrayLabel (text);
+			label.SetAlignment (1.0f, 0.0f);
 			label.Show ();
 			Attach (label, column, column + 1, row, row + 1, fill, fill, 0, 0);
 			maximized = false;
@@ -102,6 +104,7 @@ namespace Search.Tiles {
 		{
 			Gtk.Label label = WidgetFu.NewLabel (text);
 			label.Selectable = true;
+			label.SetAlignment (0.0f, 0.0f);
 			WidgetFu.EllipsizeLabel (label);
 			label.Show ();
 			Attach (label, column, column + 1, row, row + 1, expand, fill, 0, 0);
@@ -112,6 +115,7 @@ namespace Search.Tiles {
 		private Gtk.Label AddBoldLabel (string text, uint row, uint column)
 		{
 			Gtk.Label label = WidgetFu.NewBoldLabel (text);
+			label.SetAlignment (0.0f, 0.0f);
 			WidgetFu.EllipsizeLabel (label);
 			label.Show ();
 			Attach (label, column, column + 1, row, row + 1, expand, fill, 0, 0);
@@ -122,6 +126,7 @@ namespace Search.Tiles {
 		public Gtk.Label AddTitleLabel (string text)
 		{
 			Gtk.Label label = AddBoldLabel (text, current_row++, 1);
+			label.SetAlignment (0.0f, 0.0f);
 			label.Selectable = true;
 			return label;
 		}
@@ -140,11 +145,14 @@ namespace Search.Tiles {
 
 		public Gtk.Label AddSnippet ()
 		{
+			AddNewLine ();
+
 			snippet = WidgetFu.NewLabel ();
+			snippet.SetAlignment (0.0f, 0.0f);
 			snippet.Selectable = true;
 			WidgetFu.EllipsizeLabel (snippet);
 			snippet.Show ();
-			Attach (snippet, 1, 2, current_row, ++current_row, expand, fill, 48, 0);
+			Attach (snippet, 1, 2, current_row, ++current_row, expand, fill, 0, 0);
 			maximized = false;
 
 			return snippet;

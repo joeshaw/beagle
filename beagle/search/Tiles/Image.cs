@@ -76,8 +76,24 @@ namespace Search.Tiles {
 			details.AddTextLabel (Description);
 			details.AddNewLine ();
 
+			string[] tags = Hit.GetProperties ("dc:subject");
+			if (tags != null && tags.Length > 0)
+				details.AddLabelPair (Catalog.GetString ("Tags:"), String.Join (", ", tags));
+
 			details.AddLabelPair (Catalog.GetString ("Modified:"), Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime));
 			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
+
+			// Get comments from the image.  FIXME: These should be unified into a single field.
+			string comment = Hit.GetFirstProperty ("png:comment");
+
+			if (String.IsNullOrEmpty (comment))
+				comment = Hit.GetFirstProperty ("jfif:Comment");
+
+			if (! String.IsNullOrEmpty (comment)) {
+				details.AddLabelPair (Catalog.GetString ("Comment:"), comment);
+				//details.AddNewLine ();
+				//details.AddTextLabel (comment);
+			}
 
 			if (Hit ["fspot:Description"] != null && Hit ["fspot:Description"] != "") {
 				details.AddNewLine ();

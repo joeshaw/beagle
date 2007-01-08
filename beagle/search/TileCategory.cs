@@ -57,7 +57,7 @@ namespace Search {
 			// is wider than the tile area
 
 			req.Height += headerReq.Height;
-			req.Width = Math.Max (req.Width, headerReq.Width + headerReq.Height);
+			req.Width = Math.Max (req.Width, headerReq.Width); // + headerReq.Height);
 
 			// Handle BorderWidth
 			req.Width += (int)(2 * BorderWidth);
@@ -75,8 +75,8 @@ namespace Search {
 
 			headerReq = header.ChildRequisition;
 
-			childAlloc.X = allocation.X + (int)BorderWidth + headerReq.Height;
-			childAlloc.Width = allocation.Width - (int)BorderWidth - headerReq.Height;
+			childAlloc.X = allocation.X + (int)BorderWidth;
+			childAlloc.Width = allocation.Width - (int)BorderWidth;
 			childAlloc.Y = allocation.Y + (int)BorderWidth;
 			childAlloc.Height = headerReq.Height;
 			header.Allocation = childAlloc;
@@ -88,8 +88,7 @@ namespace Search {
 			if (tileReq.Width == 0)
 				return;
 
-			tilesWidth = allocation.Width - (int)(2 * BorderWidth) -
-					2 * headerReq.Height;
+			tilesWidth = allocation.Width - (int)(2 * BorderWidth) - headerReq.Height;
 			maxcols = tilesWidth / tileReq.Width;
 			if (maxcols != Columns) {
 				Columns = maxcols;
@@ -107,7 +106,7 @@ namespace Search {
 
 				col = (col + 1) % Columns;
 				if (col == 0) {
-					childAlloc.X = (int)BorderWidth + 2 * headerReq.Height;
+					childAlloc.X = (int)BorderWidth + headerReq.Height;
 					childAlloc.Y += childAlloc.Height;
 				} else
 					childAlloc.X += childAlloc.Width;
