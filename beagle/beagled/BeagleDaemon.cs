@@ -444,9 +444,8 @@ namespace Beagle.Daemon {
 					arg_fg);
 
 			Logger.Log.Info ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
-
 			Logger.Log.Info ("Running on {0}", SystemInformation.MonoRuntimeVersion);
-			
+			Logger.Log.Debug ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
 			Logger.Log.Debug ("Command Line: {0}",
 					  Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
