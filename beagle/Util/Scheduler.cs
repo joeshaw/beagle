@@ -523,7 +523,7 @@ namespace Beagle.Util {
 			exercise = Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG");
 
 			if (exercise != null) {
-				Log.Info ("BEAGLE_EXERCISE_THE_DOG is set.");
+				Log.Always ("BEAGLE_EXERCISE_THE_DOG is set.");
 
 				if (exercise.Length > 2 && exercise [0] == 't')
 					global_delay = Double.Parse (exercise.Substring (1));
