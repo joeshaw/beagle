@@ -99,7 +99,7 @@ namespace Beagle.IndexHelper {
 			Shutdown.RegisterMainLoop (main_loop);
 
 			// Start the server
-			Logger.Log.Debug ("Starting messaging server");
+			Log.Always ("Starting messaging server");
 			bool server_has_been_started = false;
 			try {
 				server = new Server ("socket-helper");
@@ -123,7 +123,7 @@ namespace Beagle.IndexHelper {
 					else
 						Log.Debug ("Helper was already niced to {0}, not renicing to +15", prio);
 				} else
-					Log.Info ("BEAGLE_EXERCISE_THE_DOG is set");
+					Log.Always ("BEAGLE_EXERCISE_THE_DOG is set");
 				
 				// Start the monitor thread, which keeps an eye on memory usage and idle time.
 				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
@@ -145,7 +145,7 @@ namespace Beagle.IndexHelper {
 					} catch (IOException) { }
 				}
 
-				Log.Info ("Index helper process shut down cleanly.");
+				Log.Always ("Index helper process shut down cleanly.");
 			}
 		}
 

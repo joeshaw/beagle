@@ -67,7 +67,7 @@ namespace Beagle.Daemon {
 
 		public static void ReplaceExisting () 
 		{
-			Logger.Log.Info ("Attempting to replace another beagled.");
+			Log.Always ("Attempting to replace another beagled.");
 
 			do {
 				ShutdownRequest request = new ShutdownRequest ();
