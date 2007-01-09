@@ -8,12 +8,7 @@ if ENABLE_GUI
 pkgconfig_DATA += beagle-ui-0.0.pc
 endif
 
-SUBDIRS =			\ 
-	Util			\
-	glue			\
-	BeagleClient		\
-	beagled			\
-	Filters			
+SUBDIRS =
 
 if ENABLE_GUI
 SUBDIRS += po
@@ -24,7 +19,12 @@ SUBDIRS += libbeagle
 endif
 
 SUBDIRS +=			\
-	wrappers
+	wrappers		\
+	Util			\
+	glue			\
+	BeagleClient            \
+	beagled                 \
+	Filters
 
 if ENABLE_GUI
 SUBDIRS +=			\
