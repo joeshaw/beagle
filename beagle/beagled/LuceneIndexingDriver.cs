@@ -71,10 +71,10 @@ namespace Beagle.Daemon {
 			: this (index_name, minor_version, true) { }
 		
 		public LuceneIndexingDriver (string index_name, bool build_usercache)
-			: this (index_name, 0, build_usercache) { }
+			: this (index_name, -1, build_usercache) { }
 
 		public LuceneIndexingDriver (string index_name) 
-			: this (index_name, 0, true) { }
+			: this (index_name, -1, true) { }
 	
 		////////////////////////////////////////////////////////////////
 
