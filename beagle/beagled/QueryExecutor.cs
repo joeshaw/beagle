@@ -46,6 +46,7 @@ namespace Beagle.Daemon {
 					
 			this.result.Cancel ();
 			this.result.Dispose ();
+			this.result = null;
 		}
 
 		private void AttachResult ()
@@ -101,6 +102,8 @@ namespace Beagle.Daemon {
 		{
 			QueryDriver.ChangedEvent -= OnQueryDriverChanged;
 			DisconnectResult ();
+
+			this.query = null;
 		}
 	}
 }

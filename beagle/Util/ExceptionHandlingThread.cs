@@ -60,6 +60,10 @@ namespace Beagle.Util {
 
 			lock (live_threads)
 				live_threads.Remove (this.thread);
+
+			// Reset variables to help the GC
+			this.method = null;
+			this.thread = null;
 		}
 
 		public static Thread Start (ThreadStart method)

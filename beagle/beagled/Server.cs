@@ -207,6 +207,7 @@ namespace Beagle.Daemon {
 					Thread.ResetAbort ();
 
 					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
+					this.thread = null;
 					Server.MarkHandlerAsKilled (this);
 					Shutdown.WorkerFinished (network_data);
 					return;
@@ -310,6 +311,10 @@ namespace Beagle.Daemon {
 				Close ();
 			else
 				SetupWatch ();
+
+			// Release our reference to Thread.CurrentThread, which
+			// is a static instance (although thread-local)
+			this.thread = null;
 
 			Server.MarkHandlerAsKilled (this);
 			Shutdown.WorkerFinished (network_data);
