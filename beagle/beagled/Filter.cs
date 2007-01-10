@@ -49,15 +49,6 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
-		private string identifier;
-
-		public string Identifier {
-			get { return identifier; }
-			set { identifier = value; }
-		}
-
-		//////////////////////////
-
 		private ArrayList supported_flavors = new ArrayList ();
 		
 		protected void AddSupportedFlavor (FilterFlavor flavor) 
@@ -545,16 +536,6 @@ namespace Beagle.Daemon {
 				else if (HasError)
 					return false;
 				
-				// Reset our TextReader
-				// Dont close the streamreader as
-				// that will also close the stream
-				if (currentReader != null) {
-					currentReader.DiscardBufferedData ();
-				}
-				
-				// Seek back to the beginning of our stream
-				currentStream.Seek (0, SeekOrigin.Begin);
-				
 				DoPullSetup ();
 				
 				if (HasError)
@@ -620,21 +601,20 @@ namespace Beagle.Daemon {
 		{
 			Cleanup ();
 
-			if (currentStream == null)
-				return;
-
 			DoClose ();
-
-			// When crawling, give the OS a hint that we don't
-			// need to keep this file around in the page cache.
-			if (CrawlMode)
-				FileAdvise.FlushCache (currentStream);
 
 			if (currentReader != null)
 				currentReader.Close ();
 
-			currentStream.Close ();
-			currentStream = null;
+			if (currentStream != null) {
+				// When crawling, give the OS a hint that we don't
+				// need to keep this file around in the page cache.
+				if (CrawlMode)
+					FileAdvise.FlushCache (currentStream);
+
+				currentStream.Close ();
+				currentStream = null;
+			}
 
 			if (snippetWriter != null)
 				snippetWriter.Close ();
@@ -695,7 +675,6 @@ namespace Beagle.Daemon {
 		public TextReader GetTextReader ()
 		{
 			PullingReader pr = new PullingReader (new PullingReader.Pull (PullText));
-			pr.Identifier = Identifier;
 			return pr;
 		}
 

@@ -1,0 +1,21 @@
+Some things that filter writers should be aware of:
+===================================================
+
+* See the coding guildelines in the file HACKING in the top-level directory.
+
+* Check the tutorial at http://beagle-project.org/Filter_Tutorial
+
+* The heavy ground work of indexing is carried out by beagle-index-helper using the army of Filters. A new instance of a filter is created for each new document. Implement the constant data like tables, maps, constant strings used in the filters as static variables.
+
+* A filter submits metadata by calling AddProperty and submits text data by calling AppendText, AppendStructuralBreak or AppendLine. All of these methods can be called in DoPullProperties(), but AddProperty() may not be called in DoPull(). To reduce memory overhead, it is recommended to only call AddProperty() from DoPullProperties().
+
+* While registering the data types to be handled by a filter, prefer registering by mimetypes instead of extensions.
+
+* DoOpen() is called with a FileInfo object passed as parameter. However, the filter has access to the data as the variable Stream (of type Stream). It is recommended to use Stream instead of opening the file directly.
+
+* If the file is opened explicitly in a filter, be sure to close it (by overriding DoClose()) to avoid leaking of file-descriptors.
+
+* AppendText() handles compaction of newlines and empty lines. You need not handle them specially in your filter.
+
+* AddProperty() handles null properties and properties with null or empty values. You need not add special checks for them in your filter.
+

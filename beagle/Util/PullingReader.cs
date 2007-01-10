@@ -33,15 +33,6 @@ namespace Beagle.Util {
 	
 	public class PullingReader : TextReader {
 
-		private string identifier;
-
-		public string Identifier {
-			get { return identifier; }
-			set { identifier = value; }
-		}
-
-		//////////////////////////
-
 		public delegate bool Pull (StringBuilder buffer);
 
 		Pull pull;

@@ -260,6 +260,22 @@ HACKING file.
                   However, don't be afraid to use multiple lines, especially
                   with function arguments when it may be easier to read or
                   more aesthetic to do so.
+		  
+		  If you are splitting a function declaration into multiple
+		  lines, the arguments should be aligned to match the
+		  opening brace:
+
+			void Function (int arg1, bool arg2,
+				       bool arg3)
+			{
+			}
+
+		  If you are splitting a function invokation, the overflowed
+		  lines begin at the next tabbed position:
+
+			MyFunction ("Very long argument 1",
+				"Next argument begins at next tab",
+				"And so on");
 
 * Best practices
 
