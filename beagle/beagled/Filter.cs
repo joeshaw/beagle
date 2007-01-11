@@ -223,6 +223,18 @@ namespace Beagle.Daemon {
 		}
 		
 		private bool last_was_structural_break = true;
+		const string WHITESPACE = " ";
+
+		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
+		 * Handles null str.
+		 */
+		public int AppendText (string str)
+		{
+			if (Debug)
+				Logger.Log.Debug ("AppendText (\"{0}\")", str);
+
+			return AppendText (str, IsHot ? str : null);
+		}
 
 		/*
 		 * This two-arg AppendText() will give flexibility to
@@ -241,11 +253,18 @@ namespace Beagle.Daemon {
 		 * NOTE: HotUp() or HotDown() has NO-EFFECT on this variant 
 		 * of AppendText ()
 		 */
+
 		public int AppendText (string str, string strHot)
 		{
 			int num_words = 0;
 
-			if (!IsFrozen && word_count < MAXWORDS && ! string.IsNullOrEmpty (str)) {
+			if (Debug)
+				Logger.Log.Debug ("AppendText (\"{0}, {1}\")", str, strHot);
+
+			if (IsFrozen)
+				return 0;
+
+			if (word_count < MAXWORDS && ! string.IsNullOrEmpty (str)) {
 				string[] lines;
 
 				// Avoid unnecessary allocation of a string
@@ -254,64 +273,84 @@ namespace Beagle.Daemon {
 					lines = str.Split ('\n'); 
 					foreach (string line in lines) {
 						if (line.Length > 0) {
-							ReallyAppendText (line, null);
+							ReallyAppendText (line);
 							AppendStructuralBreak ();
 						}
 					}
 				} else 
-					ReallyAppendText (str, null);
+					ReallyAppendText (str);
+
 				num_words = StringFu.CountWords (str, 3, -1);
 				word_count += num_words;
 			}
 
-			if (hotword_count < MAXWORDS) {
-				ReallyAppendText (null, strHot);
+			if (hotword_count < MAXWORDS && ! string.IsNullOrEmpty (strHot)) {
+				ReallyAppendHotText (strHot);
 				hotword_count += StringFu.CountWords (strHot, 3, -1);
 			}
 
 			return num_words;
 		}
 		
-		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
-		 * Handles null str.
-		 */
-		public int AppendText (string str)
+		// strHot may not be null or empty - checked before
+		private void ReallyAppendHotText (string strHot)
+		{
+			hotPool.Add (strHot.Trim());
+			hotPool.Add (WHITESPACE);
+		}
+
+		// str may not be null or empty - checked before
+		private void ReallyAppendText (string str)
+		{
+			textPool.Add (str);
+
+			if (snippetWriter != null)
+				snippetWriter.Write (str);
+
+			last_was_structural_break = false;
+		}
+
+		// Add a word followed by a whitespace. word may not be whitespace or newline.
+		public int AppendWord (string word)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendText (\"{0}\")", str);
+				Logger.Log.Debug ("AppendWord (\"{0}\")", word);
 
-			if (! IsFrozen && ! string.IsNullOrEmpty (str))
-				return AppendText (str, IsHot ? str : null);
-
-			return 0;
+			return AppendWords (word, false);
 		}
 
-		// Does adding text to to text/hot pools respectively.
-		private void ReallyAppendText (string str, string strHot)
+		// Add a line followed by a newline.
+		public int AppendLine (string line)
 		{
-			if (!IsFrozen && ! string.IsNullOrEmpty (strHot))
-				hotPool.Add (strHot.Trim()+" ");
+			if (Debug)
+				Logger.Log.Debug ("AppendLine (\"{0}\")", line);
 
-			if (str != null) {
-				textPool.Add (str);
+			return AppendWords (line, true);
+		}
 
-				if (snippetWriter != null)
-					snippetWriter.Write (str);
+		private int AppendWords (string words, bool is_line)
+		{
+			if (IsFrozen || string.IsNullOrEmpty (words))
+				return 0;
 
-				last_was_structural_break = false;
+			if (IsHot) {
+				hotPool.Add (words);
+				hotword_count += StringFu.CountWords (words, 3, -1);
 			}
-		}
-		private bool NeedsWhiteSpace (ArrayList array)
-		{
-			if (array.Count == 0)
-				return true;
-			
-			string last = (string) array [array.Count-1];
-			if (last.Length > 0
-			    && char.IsWhiteSpace (last [last.Length-1]))
-				return false;
 
-			return true;
+			textPool.Add (words);
+
+			if (snippetWriter != null)
+				snippetWriter.Write (words);
+
+			if (is_line)
+				AppendStructuralBreak ();
+			else
+				AppendWhiteSpace ();
+
+			int num_words = StringFu.CountWords (words, 3, -1);
+			word_count += num_words;
+			return num_words;
 		}
 
 		/*
@@ -326,21 +365,11 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("AppendWhiteSpace ()");
 
 			if (NeedsWhiteSpace (textPool)) {
-				textPool.Add (" ");
+				textPool.Add (WHITESPACE);
 				if (snippetWriter != null)
-					snippetWriter.Write (" ");
+					snippetWriter.Write (WHITESPACE);
 				last_was_structural_break = false;
 			}
-		}
-
-		/*
-		 * Adds property prop.
-		 * prop can be null or can have null value; in both cases nothing is added.
-		 */
-		public void AddProperty (Property prop)
-		{
-			if (prop != null && ! string.IsNullOrEmpty (prop.Value))
-				propertyPool.Add (prop);
 		}
 
 		/*
@@ -352,10 +381,34 @@ namespace Beagle.Daemon {
 				snippetWriter.WriteLine ();
 				last_was_structural_break = true;
 			}
+
 			// When adding a "newline" to the textCache, we need to 
 			// append a "Whitespace" to the text pool.
 			if (NeedsWhiteSpace (textPool))
-				textPool.Add (" ");
+				textPool.Add (WHITESPACE);
+		}
+
+		private bool NeedsWhiteSpace (ArrayList array)
+		{
+			if (array.Count == 0)
+				return true;
+			
+			string last = (string) array [array.Count-1];
+			if (last.Length > 0
+			    && char.IsWhiteSpace (last [last.Length-1]))
+				return false;
+
+			return true;
+		}
+
+		/*
+		 * Adds property prop.
+		 * prop can be null or can have null value; in both cases nothing is added.
+		 */
+		public void AddProperty (Property prop)
+		{
+			if (prop != null && ! string.IsNullOrEmpty (prop.Value))
+				propertyPool.Add (prop);
 		}
 
 		//////////////////////////
