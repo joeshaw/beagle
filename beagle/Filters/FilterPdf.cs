@@ -27,10 +27,13 @@ namespace Beagle.Filters {
 		// FIXME: we should have a reasonable failure mode if pdftotext is
 		// not installed.
 
+		SafeProcess pc = null;
+		StreamReader pout = null;
+
 		protected override void DoPullProperties ()
 		{
 			// create new external process
-			SafeProcess pc = new SafeProcess ();
+			pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdfinfo", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
@@ -44,7 +47,7 @@ namespace Beagle.Filters {
 			}
 
 			// add pdfinfo's output to pool
-			StreamReader pout = new StreamReader (pc.StandardOutput);
+			pout = new StreamReader (pc.StandardOutput);
 			string str = null;
 			string[] tokens = null;
 			string strMetaTag = null;
@@ -95,10 +98,12 @@ namespace Beagle.Filters {
 			pc.Close ();
 		}
 		
-		protected override void DoPull ()
+		bool pull_started = false;
+
+		private bool InitDoPull ()
 		{
 			// create new external process
-			SafeProcess pc = new SafeProcess ();
+			pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
@@ -108,31 +113,49 @@ namespace Beagle.Filters {
 			} catch (SafeProcessException e) {
 				Log.Warn (e.Message);
 				Error ();
-				return;
+				return false;
 			}
 
 			// add pdftotext's output to pool
-			StreamReader pout = new StreamReader (pc.StandardOutput);
+			pout = new StreamReader (pc.StandardOutput);
+			pull_started = true;
+
+			return true;
+		}
+
+		protected override void DoPull ()
+		{
+			if (! pull_started && ! InitDoPull ())
+				return;
 
 			// FIXME:  I don't think this is really required
 			// Line by line parsing, however, we have to make
 			// sure, that "pdftotext" doesn't output any "New-lines".
-			string str;
-			while ((str = pout.ReadLine()) != null) {
-				AppendText (str);
-				AppendStructuralBreak ();
-				if (! AllowMoreWords ())
-					break;
+			string str = pout.ReadLine ();
+			if (str == null) {
+				Finished ();
+				return;
 			}
-			pout.Close ();
 
+			AppendLine (str);
+			if (! AllowMoreWords ())
+				Finished ();
+		}
+
+		override protected void DoClose ()
+		{
+			if (! pull_started)
+				return;
+
+			pout.Close ();
 			pout = new StreamReader (pc.StandardError);
+
+			string str;
 			while ((str = pout.ReadLine ()) != null)
 				Log.Warn ("pdftotext [{0}]: {1}", Uri, str);
 
 			pout.Close ();
 			pc.Close ();
-			Finished ();
 		}
 	}
 }

@@ -685,9 +685,13 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private bool PullFromArray (ArrayList array, StringBuilder sb)
+		private bool PullFromArray (ArrayList array, StringBuilder sb, bool is_hot)
 		{
-			while (array.Count == 0 && Pull ()) { }
+			if (! is_hot) {
+				// HotText is read after Text by DoPull()*.DoClose()
+				// So, do not Pull() again for HotText - there ain't anything to pull
+				while (array.Count == 0 && Pull ()) { }
+			}
 
 			// FIXME: Do we want to try to extract as much data as
 			// possible from the filter if we get an error, or
@@ -703,11 +707,11 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		private bool PullTextCarefully (ArrayList array, StringBuilder sb)
+		private bool PullTextCarefully (ArrayList array, StringBuilder sb, bool is_hot)
 		{
 			bool pulled = false;
 			try {
-				pulled = PullFromArray (array, sb);
+				pulled = PullFromArray (array, sb, is_hot);
 			} catch (Exception ex) {
 				Logger.Log.Debug (ex, "Caught exception while pulling text in filter '{0}'", Name);
 			}
@@ -717,12 +721,12 @@ namespace Beagle.Daemon {
 
 		private bool PullText (StringBuilder sb)
 		{
-			return PullTextCarefully (textPool, sb);
+			return PullTextCarefully (textPool, sb, false);
 		}
 
 		private bool PullHotText (StringBuilder sb)
 		{
-			return PullTextCarefully (hotPool, sb);
+			return PullTextCarefully (hotPool, sb, true);
 		}
 
 		public TextReader GetTextReader ()
