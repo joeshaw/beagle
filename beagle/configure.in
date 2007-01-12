@@ -46,10 +46,20 @@ AC_PATH_PROG(BASH, bash)
 AC_SUBST(BASH)
 
 # mozilla extension uses zip to create the jar/xpi files
-AC_PATH_PROG(ZIP, zip)
+AC_PATH_PROG(ZIP, zip, no)
+if test "x$ZIP" = "xno"; then
+	AC_MSG_ERROR([You need to install the zip program])
+fi
 
-AC_PATH_PROG(MONO, mono)
-AC_PATH_PROG(MCS, gmcs)
+AC_PATH_PROG(MONO, mono, no)
+if test "x$MONO" = "xno"; then
+	AC_MSG_ERROR([You need to install the Mono runtime])
+fi
+
+AC_PATH_PROG(MCS, gmcs, no)
+if test "x$MCS" = "xno"; then
+	AC_MSG_ERROR([You need to install the Mono gmcs compiler])
+fi
 
 AC_MSG_CHECKING([for mono.pc])
 if test -z `$PKG_CONFIG --variable=prefix mono`; then
