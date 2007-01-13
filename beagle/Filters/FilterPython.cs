@@ -1,6 +1,7 @@
 //
 // FilterPython.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,32 +36,67 @@ namespace Beagle.Filters {
 
 	public class FilterPython : FilterSource {
 
-		static string [] strKeyWords = {"and", "assert", "break", "class", "continue", "def", 
-						   "del", "elif", "else", "except", "exec", "finally", 
-						   "for", "from", "global", "if", "import", "in", "is",
-						   "lambda", "not", "or", "pass", "print", "raise", "return",
-						   "try", "while", "yield"};
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 29;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["and"] = true;
+			key_words_hash ["assert"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["class"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["def"] = true;
+			key_words_hash ["del"] = true;
+			key_words_hash ["elif"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["except"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["exec"] = true;
+			key_words_hash ["finally"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["from"] = true;
+			key_words_hash ["global"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["import"] = true;
+			key_words_hash ["in"] = true;
+			key_words_hash ["is"] = true;
+			key_words_hash ["lambda"] = true;
+
+			/* 21 - 29 */
+			key_words_hash ["not"] = true;
+			key_words_hash ["or"] = true;
+			key_words_hash ["pass"] = true;
+			key_words_hash ["print"] = true;
+			key_words_hash ["raise"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["try"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["yield"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
 
 		public FilterPython ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
-
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.Python_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

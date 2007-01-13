@@ -1,6 +1,7 @@
 //
 // FilterJava.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,35 +36,90 @@ namespace Beagle.Filters {
 
 	public class FilterJava : FilterSource {
 
-		static string [] strKeyWords = {"abstract", "boolean", "break", "byte", "case", "catch",
-						 "char", "class", "const", "continue", "default", "do",
-						 "double", "else", "extends", "final", "finally", "float", 
-						 "for", "goto", "if", "implements", "import", "instanceof", 
-						 "int", "interface", "long", "native", "new", "package", 
-						 "private", "protected", "public", "return", "short", "static", 
-						 "strictfp", "super", "switch", "synchronized", "this", "throw",
-						 "throws", "transient", "try", "void", "volatile", "while" };
-		
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 48;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["abstract"] = true;
+			key_words_hash ["boolean"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["byte"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["catch"] = true;
+			key_words_hash ["char"] = true;
+			key_words_hash ["class"] = true;
+			key_words_hash ["const"] = true;
+			key_words_hash ["continue"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["default"] = true;
+			key_words_hash ["do"] = true;
+			key_words_hash ["double"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["extends"] = true;
+			key_words_hash ["final"] = true;
+			key_words_hash ["finally"] = true;
+			key_words_hash ["float"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["goto"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["if"] = true;
+			key_words_hash ["implements"] = true;
+			key_words_hash ["import"] = true;
+			key_words_hash ["instanceof"] = true;
+			key_words_hash ["int"] = true;
+			key_words_hash ["interface"] = true;
+			key_words_hash ["long"] = true;
+			key_words_hash ["native"] = true;
+			key_words_hash ["new"] = true;
+			key_words_hash ["package"] = true;
+
+			/* 31 - 40 */
+			key_words_hash ["private"] = true;
+			key_words_hash ["protected"] = true;
+			key_words_hash ["public"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["short"] = true;
+			key_words_hash ["static"] = true;
+			key_words_hash ["strictfp"] = true;
+			key_words_hash ["super"] = true;
+			key_words_hash ["switch"] = true;
+			key_words_hash ["synchronized"] = true;
+
+			/* 41 - 48 */
+			key_words_hash ["this"] = true;
+			key_words_hash ["throw"] = true;
+			key_words_hash ["throws"] = true;
+			key_words_hash ["transient"] = true;
+			key_words_hash ["try"] = true;
+			key_words_hash ["void"] = true;
+			key_words_hash ["volatile"] = true;
+			key_words_hash ["while"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterJava ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
-
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.C_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

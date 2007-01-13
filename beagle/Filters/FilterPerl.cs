@@ -1,6 +1,7 @@
 //
 // FilterPerl.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,36 +36,100 @@ namespace Beagle.Filters {
 
 	public class FilterPerl : FilterSource {
 
-		static string [] strKeyWords = { "and", "break", "chop", "class", "close", "closedir", 
-						 "continue", "defined", "die", "do", "eval",
-						 "each", "else", "elsif", "eof", "eq", "exec", "for", 
-						 "foreach", "ge", "getc", "glob", "goto", "gt",
-						 "if", "index", "keys", "last", "le", "length",
-						 "lt", "ne", "next", "not", "or", "pick", "print", "quit",
-						 "redo", "rename", "reply", "require", "return", 
-						 "scalar", "sub", "tr", "unless", "until", "use", "undef", 
-						 "values", "wantarray", "warn", "while", "xor" }; 
-		
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 55;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["and"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["chop"] = true;
+			key_words_hash ["class"] = true;
+			key_words_hash ["close"] = true;
+			key_words_hash ["closedir"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["defined"] = true;
+			key_words_hash ["die"] = true;
+			key_words_hash ["do"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["eval"] = true;
+			key_words_hash ["each"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["elsif"] = true;
+			key_words_hash ["eof"] = true;
+			key_words_hash ["eq"] = true;
+			key_words_hash ["exec"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["foreach"] = true;
+			key_words_hash ["ge"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["getc"] = true;
+			key_words_hash ["glob"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["gt"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["index"] = true;
+			key_words_hash ["keys"] = true;
+			key_words_hash ["last"] = true;
+			key_words_hash ["le"] = true;
+			key_words_hash ["length"] = true;
+
+			/* 31 - 40 */
+			key_words_hash ["lt"] = true;
+			key_words_hash ["ne"] = true;
+			key_words_hash ["next"] = true;
+			key_words_hash ["not"] = true;
+			key_words_hash ["or"] = true;
+			key_words_hash ["pick"] = true;
+			key_words_hash ["print"] = true;
+			key_words_hash ["quit"] = true;
+			key_words_hash ["redo"] = true;
+			key_words_hash ["rename"] = true;
+
+			/* 41 - 50 */
+			key_words_hash ["reply"] = true;
+			key_words_hash ["require"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["scalar"] = true;
+			key_words_hash ["sub"] = true;
+			key_words_hash ["tr"] = true;
+			key_words_hash ["unless"] = true;
+			key_words_hash ["until"] = true;
+			key_words_hash ["use"] = true;
+			key_words_hash ["undef"] = true;
+
+			/* 51 - 55 */
+			key_words_hash ["values"] = true;
+			key_words_hash ["wantarray"] = true;
+			key_words_hash ["warn"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["xor"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterPerl ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-perl"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-perl"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.Python_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

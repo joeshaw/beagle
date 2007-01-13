@@ -1,6 +1,7 @@
 //
 // FilterC.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,14 +36,66 @@ namespace Beagle.Filters {
 
 	public class FilterC : FilterSource {
 
-		static string  [] strKeyWords  = {"auto", "break", "case", "char", "const", 
-						  "continue", "default", "do", "double", "else",
-						  "enum", "extern", "float", "for", "goto",
-						  "if", "include", "int", "long", "main",
-						  "NULL", "register", "return", "short", "signed",
-						  "sizeof", "static", "struct", "switch", "typedef",
-						  "union", "unsigned", "void", "volatile", "while" };
-			
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 35;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["auto"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["char"] = true;
+			key_words_hash ["const"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["default"] = true;
+			key_words_hash ["do"] = true;
+			key_words_hash ["double"] = true;
+			key_words_hash ["else"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["enum"] = true;
+			key_words_hash ["extern"] = true;
+			key_words_hash ["float"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["include"] = true;
+			key_words_hash ["int"] = true;
+			key_words_hash ["long"] = true;
+			key_words_hash ["main"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["NULL"] = true;
+			key_words_hash ["register"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["short"] = true;
+			key_words_hash ["signed"] = true;
+			key_words_hash ["sizeof"] = true;
+			key_words_hash ["static"] = true;
+			key_words_hash ["struct"] = true;
+			key_words_hash ["switch"] = true;
+			key_words_hash ["typedef"] = true;
+
+			/* 31 - 35 */
+			key_words_hash ["union"] = true;
+			key_words_hash ["unsigned"] = true;
+			key_words_hash ["void"] = true;
+			key_words_hash ["volatile"] = true;
+			key_words_hash ["while"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterC ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
@@ -53,20 +106,10 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-sun-h-file"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.C_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

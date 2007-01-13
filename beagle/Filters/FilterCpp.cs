@@ -1,6 +1,7 @@
 //
 // FilterCpp.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,37 +36,105 @@ namespace Beagle.Filters {
 
 	public class FilterCpp : FilterSource {
 
-		static string [] strKeyWords = {"asm", "auto", "bool", "break", "case", "catch", "char",
-						"class", "const", "const_cast", "continue", "default", "delete",
-						"do", "double", "dynamic_cast", "else", "enum", "explicit", 
-						"export", "extern", "false", "float", "for", "friend", "goto",
-						"if", "inline", "int", "long", "mutable", "namespace", "new", 
-						"operator", "private", "public", "protected", "register", 
-						"reinterpret_cast", "return", "short", "signed", "sizeof", 
-						"static", "static_cast", "struct", "switch", "template", 
-						"this", "throw", "true" ,"try", "typedef", "typeid", 
-						"typename", "union", "unsigned", "using", "virtual",
-						"void", "volatile", "wchar_t", "while"};
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 60;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["asm"] = true;
+			key_words_hash ["auto"] = true;
+			key_words_hash ["bool"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["catch"] = true;
+			key_words_hash ["char"] = true;
+			key_words_hash ["class"] = true;
+			key_words_hash ["const"] = true;
+			key_words_hash ["const_cast"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["do"] = true;
+			key_words_hash ["double"] = true;
+			key_words_hash ["dynamic_cast"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["enum"] = true;
+			key_words_hash ["explicit"] = true;
+			key_words_hash ["export"] = true;
+			key_words_hash ["extern"] = true;
+			key_words_hash ["false"] = true;
+			key_words_hash ["float"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["for"] = true;
+			key_words_hash ["friend"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["inline"] = true;
+			key_words_hash ["int"] = true;
+			key_words_hash ["long"] = true;
+			key_words_hash ["mutable"] = true;
+			key_words_hash ["namespace"] = true;
+			key_words_hash ["new"] = true;
+
+			/* 31 - 40 */
+			key_words_hash ["operator"] = true;
+			key_words_hash ["private"] = true;
+			key_words_hash ["public"] = true;
+			key_words_hash ["protected"] = true;
+			key_words_hash ["register"] = true;
+			key_words_hash ["reinterpret_cast"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["short"] = true;
+			key_words_hash ["signed"] = true;
+			key_words_hash ["sizeof"] = true;
+
+			/* 41 - 50 */
+			key_words_hash ["static"] = true;
+			key_words_hash ["static_cast"] = true;
+			key_words_hash ["struct"] = true;
+			key_words_hash ["switch"] = true;
+			key_words_hash ["template"] = true;
+			key_words_hash ["this"] = true;
+			key_words_hash ["throw"] = true;
+			key_words_hash ["true"] = true;
+			key_words_hash ["try"] = true;
+			key_words_hash ["typedef"] = true;
+
+			/* 51 - 60 */
+			key_words_hash ["typeid"] = true;
+			key_words_hash ["typename"] = true;
+			key_words_hash ["union"] = true;
+			key_words_hash ["unsigned"] = true;
+			key_words_hash ["using"] = true;
+			key_words_hash ["virtual"] = true;
+			key_words_hash ["void"] = true;
+			key_words_hash ["volatile"] = true;
+			key_words_hash ["wchar_t"] = true;
+			key_words_hash ["while"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterCpp ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.C_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

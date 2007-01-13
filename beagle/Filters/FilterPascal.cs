@@ -1,6 +1,7 @@
 //
 // FilterPascal.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,36 +36,95 @@ namespace Beagle.Filters {
 
 	public class FilterPascal : FilterSource {
 
-		static string [] strKeyWords = { "and", "end", "library", "shl", "array", "exports",
-						 "mod", "shr", "asm", "file", "nil", "string", "begin", 
-						 "for", "not", "then", "case", "function", "object", 
-						 "to", "const", "goto", "of", "type", "constructor",
-						 "if", "or", "unit", "declare", "implementation", 
-						 "packed", "until", "destructor", "in", "procedure", 
-						 "uses", "div", "inherited", "program", "var", "do", 
-						 "inline", "record", "while", "downto", "interface", 
-						 "repeat", "with", "else", "label", "set", "xor" };
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 52;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["and"] = true;
+			key_words_hash ["end"] = true;
+			key_words_hash ["library"] = true;
+			key_words_hash ["shl"] = true;
+			key_words_hash ["array"] = true;
+			key_words_hash ["exports"] = true;
+			key_words_hash ["mod"] = true;
+			key_words_hash ["shr"] = true;
+			key_words_hash ["asm"] = true;
+			key_words_hash ["file"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["nil"] = true;
+			key_words_hash ["string"] = true;
+			key_words_hash ["begin"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["not"] = true;
+			key_words_hash ["then"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["function"] = true;
+			key_words_hash ["object"] = true;
+			key_words_hash ["to"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["const"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["of"] = true;
+			key_words_hash ["type"] = true;
+			key_words_hash ["constructor"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["or"] = true;
+			key_words_hash ["unit"] = true;
+			key_words_hash ["declare"] = true;
+			key_words_hash ["implementation"] = true;
+
+			/* 31 - 40 */
+			key_words_hash ["packed"] = true;
+			key_words_hash ["until"] = true;
+			key_words_hash ["destructor"] = true;
+			key_words_hash ["in"] = true;
+			key_words_hash ["procedure"] = true;
+			key_words_hash ["uses"] = true;
+			key_words_hash ["div"] = true;
+			key_words_hash ["inherited"] = true;
+			key_words_hash ["program"] = true;
+			key_words_hash ["var"] = true;
+
+			/* 41 - 50 */
+			key_words_hash ["do"] = true;
+			key_words_hash ["inline"] = true;
+			key_words_hash ["record"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["downto"] = true;
+			key_words_hash ["interface"] = true;
+			key_words_hash ["repeat"] = true;
+			key_words_hash ["with"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["label"] = true;
+
+			/* 51 - 52 */
+			key_words_hash ["set"] = true;
+			key_words_hash ["xor"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
 
 		public FilterPascal ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
-
 			SrcLangType = LangType.Pascal_Style;
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }

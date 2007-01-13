@@ -1,6 +1,7 @@
 //
 // FilterFortran.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,32 +36,56 @@ namespace Beagle.Filters {
 
 	public class FilterFortran : FilterSource {
 
-		static string [] strKeyWords = { "call", "character", "continue", 
-						 "data", "dimension", "do", "else", "elseif", 
-						 "end", "enddo", "endif", "function", "goto", 
-						 "if", "parameter", "real", "return",
-						 "subroutine", "then", "use" }; 
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 20;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["call"] = true;
+			key_words_hash ["character"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["data"] = true;
+			key_words_hash ["dimension"] = true;
+			key_words_hash ["do"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["elseif"] = true;
+			key_words_hash ["end"] = true;
+			key_words_hash ["enddo"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["endif"] = true;
+			key_words_hash ["function"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["parameter"] = true;
+			key_words_hash ["real"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["subroutine"] = true;
+			key_words_hash ["then"] = true;
+			key_words_hash ["use"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
 
 		public FilterFortran ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-fortran"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
-
 			SrcLangType = LangType.Fortran_Style;
 		}
 
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
-		}
 	}
 }

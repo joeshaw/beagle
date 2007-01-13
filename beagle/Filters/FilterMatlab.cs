@@ -1,6 +1,8 @@
 //
 // FilterMatlab.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
+// Copyright (C) 2004 Novell, Inc.
 //
 
 //
@@ -24,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -34,30 +36,52 @@ namespace Beagle.Filters {
 
 	public class FilterMatlab : FilterSource {
 
-		static string  [] strKeyWords  = {"break", "case", "catch", "continue", "else",
-						  "elsif", "end", "for", "function", "global", "if",
-						  "otherwise", "persistent", "return", "switch", 
-						  "try", "while"};
-			
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 17;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["break"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["catch"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["elsif"] = true;
+			key_words_hash ["end"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["function"] = true;
+			key_words_hash ["global"] = true;
+
+			/* 11 - 17 */
+			key_words_hash ["if"] = true;
+			key_words_hash ["otherwise"] = true;
+			key_words_hash ["persistent"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["switch"] = true;
+			key_words_hash ["try"] = true;
+			key_words_hash ["while"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterMatlab ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.Matlab_Style;
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }

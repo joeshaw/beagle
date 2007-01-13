@@ -1,6 +1,7 @@
 //
 // FilterScilab.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,32 +36,75 @@ namespace Beagle.Filters {
 
 	public class FilterScilab : FilterSource {
 
-		static string  [] strKeyWords  = {"abort", "break", "case", "clear", "clearglobal", "continue",
-						  "debug", "else", "elsif", "end", "endfunction", "exit", "for",
-						  "function", "funptr", "global", "if", "iserror", "isglobal",
-						  "mode", "null", "pause", "predef", "quit", "resume", "return",
-						  "select", "then", "typename", "what", "where", "whereami",
-						  "whereis", "while", "who", "whos"};
-			
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 36;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["abort"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["clear"] = true;
+			key_words_hash ["clearglobal"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["debug"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["elsif"] = true;
+			key_words_hash ["end"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["endfunction"] = true;
+			key_words_hash ["exit"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["function"] = true;
+			key_words_hash ["funptr"] = true;
+			key_words_hash ["global"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["iserror"] = true;
+			key_words_hash ["isglobal"] = true;
+			key_words_hash ["mode"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["null"] = true;
+			key_words_hash ["pause"] = true;
+			key_words_hash ["predef"] = true;
+			key_words_hash ["quit"] = true;
+			key_words_hash ["resume"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["select"] = true;
+			key_words_hash ["then"] = true;
+			key_words_hash ["typename"] = true;
+			key_words_hash ["what"] = true;
+
+			/* 31 - 36 */
+			key_words_hash ["where"] = true;
+			key_words_hash ["whereami"] = true;
+			key_words_hash ["whereis"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["who"] = true;
+			key_words_hash ["whos"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterScilab ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".sci"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.C_Style;
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 //
 // FilterShellscript.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004-2006 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -36,13 +37,68 @@ namespace Beagle.Filters {
 
 	public class FilterShellscript : FilterSource {
 
-		static string  [] strKeyWords  = { "bash", "mv", "cp", "ls", "ps", "exit", 
-						  "export", "echo", "if", "else", "elif", 
-						  "then", "fi", "while", "do", "done", "until", 
-						  "case", "in", "esac", "select", "for",
-						  "function", "time", "break", "cd", "continue",
-						  "declare", "fg", "kill", "pwd", "read", "return",
-						  "set", "test", "unset", "wait", "touch" };
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 38;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["bash"] = true;
+			key_words_hash ["mv"] = true;
+			key_words_hash ["cp"] = true;
+			key_words_hash ["ls"] = true;
+			key_words_hash ["ps"] = true;
+			key_words_hash ["exit"] = true;
+			key_words_hash ["export"] = true;
+			key_words_hash ["echo"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["else"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["elif"] = true;
+			key_words_hash ["then"] = true;
+			key_words_hash ["fi"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["do"] = true;
+			key_words_hash ["done"] = true;
+			key_words_hash ["until"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["in"] = true;
+			key_words_hash ["esac"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["select"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["function"] = true;
+			key_words_hash ["time"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["cd"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["declare"] = true;
+			key_words_hash ["fg"] = true;
+			key_words_hash ["kill"] = true;
+
+			/* 31 - 38 */
+			key_words_hash ["pwd"] = true;
+			key_words_hash ["read"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["set"] = true;
+			key_words_hash ["test"] = true;
+			key_words_hash ["unset"] = true;
+			key_words_hash ["wait"] = true;
+			key_words_hash ["touch"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
 
 		private int count;
 			
@@ -52,15 +108,9 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sh"));
 		}
 
-		override protected void DoOpen (FileInfo info)
-		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
-			SrcLangType = LangType.Shell_Style;
-		}
-
 		override protected void DoPullSetup ()
 		{
+			SrcLangType = LangType.Shell_Style;
 			this.count = 0;
 		}
 

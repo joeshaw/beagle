@@ -26,7 +26,7 @@
 
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 namespace Beagle.Filters {
@@ -46,7 +46,6 @@ namespace Beagle.Filters {
 		};
 		
 		protected LangType SrcLangType;
-		protected Hashtable KeyWordsHash;
 
 		private enum LineType {
 			None,
@@ -57,8 +56,8 @@ namespace Beagle.Filters {
 		
 		LineType SrcLineType;
 		string StrConstIdentifier;
-
 		StringBuilder token;
+
 		public FilterSource ()
 		{
 			// Initialize the linetype member.
@@ -66,11 +65,28 @@ namespace Beagle.Filters {
 			SrcLangType = LangType.None;
 			StrConstIdentifier = " ";
 
-			KeyWordsHash = new Hashtable ();
-
 			SnippetMode = true;
 			OriginalIsText = true;
 			token = new StringBuilder ();
+		}
+
+		protected abstract Dictionary<string, bool> KeyWordsHash {
+			get;
+		}
+
+		override protected void DoPull ()
+		{
+			string str = TextReader.ReadLine ();
+			if (str == null)
+				Finished ();
+			else
+				ExtractTokens (str);
+		}
+
+		protected override void DoClose ()
+		{
+			token.Length = 0;
+			token = null;
 		}
 
 		// Validate the character and append it to the token,
@@ -281,7 +297,7 @@ namespace Beagle.Filters {
 								tok = token.ToString().ToLower();
 							else
 								tok = token.ToString ();
-							if (!KeyWordsHash.Contains (tok)) {
+							if (! KeyWordsHash.ContainsKey (tok)) {
 								if (!Char.IsDigit (token[0])) {
 									AppendText (tok);
 									AppendWhiteSpace ();

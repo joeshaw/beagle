@@ -1,6 +1,7 @@
 //
 // FilterJs.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -25,7 +26,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -35,29 +36,51 @@ namespace Beagle.Filters {
 
 	public class FilterJavascript : FilterSource {
 
-		static string [] javascriptKeyWords = { "return", "goto", "if", "else", "case", "default",
-							"switch", "break", "continue", "while", "do", "for", 
-							"catch", "throw", "finally", "try" };
-		  
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 16;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["return"] = true;
+			key_words_hash ["goto"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["default"] = true;
+			key_words_hash ["switch"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["continue"] = true;
+			key_words_hash ["while"] = true;
+
+			/* 11 - 16 */
+			key_words_hash ["do"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["catch"] = true;
+			key_words_hash ["throw"] = true;
+			key_words_hash ["finally"] = true;
+			key_words_hash ["try"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
+
 		public FilterJavascript ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".js"));
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in javascriptKeyWords)
-				KeyWordsHash [keyword] = true;
 			SrcLangType = LangType.C_Style;
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }

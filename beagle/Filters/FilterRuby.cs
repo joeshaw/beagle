@@ -1,6 +1,7 @@
 //
 // FilterRuby.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Author: Uwe Hermann <uwe@hermann-uwe.de>
 //
 // Copyright (C) 2005 Uwe Hermann
@@ -27,7 +28,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -37,35 +38,79 @@ namespace Beagle.Filters {
 
 	public class FilterRuby : FilterSource {
 
-		static string [] strKeyWords = { "BEGIN", "END", "alias", "and", "begin", "break", "case",
-						 "class", "def", "defined", "do", "else", "elsif", "end",
-						 "ensure", "false", "for", "if", "in", "module", "next",
-						 "nil", "not", "or", "redo", "rescue", "retry", "return",
-						 "self", "super", "then", "true", "undef", "unless", "until",
-						 "when", "while", "yield" };
+		static Dictionary<string, bool> key_words_hash = null;
+		protected override Dictionary<string,bool> KeyWordsHash {
+			get {
+				if (key_words_hash == null)
+					Init ();
+				return key_words_hash;
+			}
+		}
+
+		static void Init ()
+		{
+			int NumKeyWords = 38;
+			key_words_hash = new Dictionary<string, bool> (NumKeyWords);
+
+			/* 1 - 10 */
+			key_words_hash ["BEGIN"] = true;
+			key_words_hash ["END"] = true;
+			key_words_hash ["alias"] = true;
+			key_words_hash ["and"] = true;
+			key_words_hash ["begin"] = true;
+			key_words_hash ["break"] = true;
+			key_words_hash ["case"] = true;
+			key_words_hash ["class"] = true;
+			key_words_hash ["def"] = true;
+			key_words_hash ["defined"] = true;
+
+			/* 11 - 20 */
+			key_words_hash ["do"] = true;
+			key_words_hash ["else"] = true;
+			key_words_hash ["elsif"] = true;
+			key_words_hash ["end"] = true;
+			key_words_hash ["ensure"] = true;
+			key_words_hash ["false"] = true;
+			key_words_hash ["for"] = true;
+			key_words_hash ["if"] = true;
+			key_words_hash ["in"] = true;
+			key_words_hash ["module"] = true;
+
+			/* 21 - 30 */
+			key_words_hash ["next"] = true;
+			key_words_hash ["nil"] = true;
+			key_words_hash ["not"] = true;
+			key_words_hash ["or"] = true;
+			key_words_hash ["redo"] = true;
+			key_words_hash ["rescue"] = true;
+			key_words_hash ["retry"] = true;
+			key_words_hash ["return"] = true;
+			key_words_hash ["self"] = true;
+			key_words_hash ["super"] = true;
+
+			/* 31 - 38 */
+			key_words_hash ["then"] = true;
+			key_words_hash ["true"] = true;
+			key_words_hash ["undef"] = true;
+			key_words_hash ["unless"] = true;
+			key_words_hash ["until"] = true;
+			key_words_hash ["when"] = true;
+			key_words_hash ["while"] = true;
+			key_words_hash ["yield"] = true;
+
+			// Increase NumKeyWords if more keywords are added
+		}
 
 		public FilterRuby ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
-
 		}
 
-		override protected void DoOpen (FileInfo info)
+		override protected void DoPullSetup ()
 		{
-			foreach (string keyword in strKeyWords)
-				KeyWordsHash [keyword] = true;
                         // Ruby also supports "#" as comment, so,
 			// adding Python_Style will process that as well.
 			SrcLangType = LangType.Python_Style;
-		}
-
-		override protected void DoPull ()
-		{
-			string str = TextReader.ReadLine ();
-			if (str == null)
-				Finished ();
-			else
-				ExtractTokens (str);
 		}
 	}
 }
