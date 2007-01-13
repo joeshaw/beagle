@@ -316,14 +316,14 @@ namespace Mono.Data.SqliteClient
 			{
 				err = Sqlite.sqlite_step (pStmt, out cols, out pazValue, out pazColName);
 				if (err == SqliteError.ERROR)
-					throw new SqliteExecutionException ();
+					throw new SqliteExecutionException ("Error ERROR occurred execuring the Sqlite command.");
 			}
 			
 			if (err == SqliteError.BUSY)
 				throw new SqliteBusyException();
 			
 			if (err == SqliteError.MISUSE)
-				throw new SqliteExecutionException();
+				throw new SqliteExecutionException("Error MISUSE occurred executing the Sqlite command.");
 				
 			// err is either ROW or DONE.
 			return err == SqliteError.ROW;
