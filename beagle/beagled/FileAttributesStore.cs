@@ -66,7 +66,8 @@ namespace Beagle.Daemon {
 					attr.Path = path;
 					
 					// Now add the new attribute
-					ifas.Write (attr);
+					// Note: New attribute should not be added.
+					//ifas.Write (attr);
 					created = true;
 				}
 				return attr;
