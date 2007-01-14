@@ -35,6 +35,8 @@ namespace Beagle.Util
 	{
 		public static string KabcMimeType = "text/x-kabc-directory";
 		public static string KnotesMimeType = "text/x-knotes-calendar";
+ 		public static string KOrganizerEventMimeType = "text/x-korganizer-event";
+ 		public static string KOrganizerTodoMimeType = "text/x-korganizer-todo";
 
 		private ParserState state = ParserState.ParsingProperty;
 		private StringBuilder buffer = new StringBuilder ();
