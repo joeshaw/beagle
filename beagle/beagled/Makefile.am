@@ -339,6 +339,10 @@ knotesqueryable = $(srcdir)/KNotesQueryable
 KNOTES_QUERYABLE_CSFILES =				\
 	$(knotesqueryable)/KNotesQueryable.cs
 
+korganizerqueryable = $(srcdir)/KOrganizerQueryable
+KORGANIZER_QUERYABLE_CSFILES =				\
+	$(korganizerqueryable)/KOrganizerQueryable.cs
+
 kabcqueryable = $(srcdir)/KAddressBookQueryable
 KABC_QUERYABLE_CSFILES =				\
 	$(kabcqueryable)/KabcQueryable.cs
@@ -361,6 +365,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONQHISTORY_QUERYABLE_CSFILES)			\
 	$(KONQBOOKMARK_QUERYABLE_CSFILES)			\
 	$(KNOTES_QUERYABLE_CSFILES)				\
+	$(KORGANIZER_QUERYABLE_CSFILES)				\
 	$(KABC_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(srcdir)/AssemblyInfo.cs				\

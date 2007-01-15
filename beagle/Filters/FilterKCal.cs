@@ -2,7 +2,7 @@
 // FilterKCal.cs
 // WARNING: This is not a general purpose ical/vcard filter!
 // It could be modified to serve that purpose, but for the time
-// being, it is just a base class to filter kcal (knotes and 
+// being, it is just a base class to filter kcal (knotes, korganizer and 
 // kaddressbook) files.
 //
 // Copyright (C) 2006 Debajyoti Bera <dbera.web@gmail.com>

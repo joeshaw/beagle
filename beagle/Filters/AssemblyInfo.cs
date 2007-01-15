@@ -58,6 +58,7 @@ using Beagle.Filters;
 	 typeof(FilterJpeg),
 	 typeof(FilterKAddressBook),
 	 typeof(FilterKnotes),
+	 typeof(FilterKOrganizer),
 	 typeof(FilterKonqHistory),
 	 typeof(FilterLabyrinth),
 	 typeof(FilterMail),

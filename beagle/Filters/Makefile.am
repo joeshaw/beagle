@@ -101,6 +101,7 @@ CSFILES = 				\
 	$(srcdir)/FilterKAddressBook.cs \
 	$(srcdir)/FilterKCal.cs		\
 	$(srcdir)/FilterKNotes.cs	\
+	$(srcdir)/FilterKOrganizer.cs	\
 	$(srcdir)/FilterLabyrinth.cs	\
 	$(srcdir)/FilterScribus.cs
 
