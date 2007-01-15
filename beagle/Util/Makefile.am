@@ -61,6 +61,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/KonqHistoryUtil.cs		\
+	$(srcdir)/LineReader.cs			\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MetadataStore.cs		\

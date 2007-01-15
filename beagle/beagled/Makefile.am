@@ -347,6 +347,10 @@ kabcqueryable = $(srcdir)/KAddressBookQueryable
 KABC_QUERYABLE_CSFILES =				\
 	$(kabcqueryable)/KabcQueryable.cs
 
+konversationqueryable = $(srcdir)/KonversationQueryable
+KONVERSATION_QUERYABLE_CSFILES =				\
+	$(konversationqueryable)/KonversationQueryable.cs
+
 indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
@@ -368,6 +372,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KORGANIZER_QUERYABLE_CSFILES)				\
 	$(KABC_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
+	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\

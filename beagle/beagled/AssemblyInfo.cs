@@ -67,5 +67,6 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.KOrganizerQueryable.KOrganizerQueryable),
 	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
 	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
+	typeof (Beagle.Daemon.KonversationQueryable.KonversationQueryable),
 	typeof (Beagle.Daemon.StaticQueryable)
 )]
