@@ -247,13 +247,13 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 				Logger.Log.Debug ("Checking if {0} is a valid KOrganizer file.", korganizer_file);
 				/** KOrganizer file std.ics should start with something like
 BEGIN:VCALENDAR
-PRODID:-//K Desktop Environment//NONSGML KOrganizer 3.5.5//EN
+PRODID:-//K Desktop Environment//NONSGML
 VERSION:2.0
 				*/
 				// FIXME: Encoding of std.ics
 				reader = new StreamReader (korganizer_file);
 				if (reader.ReadLine () != "BEGIN:VCALENDAR" ||
-				    !reader.ReadLine ().StartsWith("PRODID:-//K Desktop Environment//NONSGML KOrganizer 3.5") ||
+				    !reader.ReadLine ().StartsWith("PRODID:-//K Desktop Environment//NONSGML") ||
 				    reader.ReadLine () != "VERSION:2.0") {
 					is_valid_file = false;
 					reader.Close ();
