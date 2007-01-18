@@ -41,10 +41,10 @@ class ExtractContentTool {
 	static string mime_type = null;
 
 	// FIXME: We don't display structural breaks
-	static void DisplayContent (string line)
+	static void DisplayContent (char[] buffer, int length)
 	{
 		if (tokenize) {
-			
+			string line = new string (buffer, 0, length);
 			string [] parts = line.Split (' ');
 			for (int i = 0; i < parts.Length; ++i) {
 				string part = parts [i].Trim ();
@@ -53,7 +53,7 @@ class ExtractContentTool {
 			}
 
 		} else {
-			Console.WriteLine (line);
+			Console.Write (buffer, 0, length);
 		}
 	}
 
@@ -120,42 +120,44 @@ class ExtractContentTool {
 
 		TextReader reader;
 
+		char[] buffer = new char [2048];
 		reader = indexable.GetTextReader ();
 		if (reader != null) {
-			string line;
-			first = true;
-			while ((line = reader.ReadLine ()) != null) {
-				if (first) {
-					Console.WriteLine ("Content:");
+			Console.WriteLine ("Content:");
+			while (true) {
+				int l = reader.Read (buffer, 0, 2048);
+				if (l <= 0)
+					break;
+				if (first)
 					first = false;
-				}
-				DisplayContent (line);
+				DisplayContent (buffer, l);
 			}
 			reader.Close ();
 
 			if (first)
 				Console.WriteLine ("(no content)");
 			else
-				Console.WriteLine ();
+				Console.WriteLine ('\n');
 		}
 			
 		reader = indexable.GetHotTextReader ();
 		if (reader != null) {
-			string line;
+			Console.WriteLine ("HotContent:");
 			first = true;
-			while ((line = reader.ReadLine ()) != null) {
-				if (first) {
-					Console.WriteLine ("HotContent:");
+			while (true) {
+				int l = reader.Read (buffer, 0, 2048);
+				if (l <= 0)
+					break;
+				if (first)
 					first = false;
-				}
-				DisplayContent (line);
+				DisplayContent (buffer, l);
 			}
 			reader.Close ();
 
 			if (first)
 				Console.WriteLine ("(no hot content)");
 			else
-				Console.WriteLine ();
+				Console.WriteLine ('\n');
 		}
 
 		watch.Stop ();
