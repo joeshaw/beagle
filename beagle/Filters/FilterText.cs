@@ -62,12 +62,20 @@ namespace Beagle.Filters {
 
 		override protected void DoPull ()
 		{
-			string str = TextReader.ReadLine ();
-			if (str == null) {
-				Finished ();
-			} else if (str.Length > 0) {
-				AppendText (str);
-				AppendStructuralBreak ();
+			int n = 0;
+
+			// Using internal information: Lucene currently asks for char[2048] data
+			while (n <= 2048) {
+				string str = TextReader.ReadLine ();
+				if (str == null) {
+					Finished ();
+					return;
+				} else if (str.Length > 0) {
+					AppendText (str);
+					AppendStructuralBreak ();
+					n += str.Length;
+					n ++; // for the structural break
+				}
 			}
 		}
 	}
