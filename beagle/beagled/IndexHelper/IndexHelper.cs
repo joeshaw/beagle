@@ -89,6 +89,35 @@ namespace Beagle.IndexHelper {
 			// Initialize GObject type system
 			g_type_init ();
 
+			// Set the IO priority to idle, nice ourselves, and set
+			// a batch scheduling policy so we that we play nice
+			// on the system
+			if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null) {
+				SystemPriorities.ReduceIoPriority ();
+
+				int nice_to_set;
+				
+				// We set different nice values because the
+				// internal implementation of SCHED_BATCH
+				// unconditionally imposes a +5 penalty on
+				// processes, and we want to be at nice +17,
+				// because it has a nice timeslice.
+				if (SystemPriorities.SetSchedulerPolicyBatch ())
+					nice_to_set = 12;
+				else
+					nice_to_set = 17;
+					
+				int prio = Mono.Unix.Native.Syscall.nice (nice_to_set);
+
+				if (prio < 0)
+					Log.Warn ("Unable to renice helper to +{0}", nice_to_set);
+				else if (prio == nice_to_set)
+					Log.Debug ("Reniced helper to +{0}", nice_to_set);
+				else
+					Log.Debug ("Helper was already niced to {0}, not renicing to +{1}", prio, nice_to_set);
+			} else
+				Log.Always ("BEAGLE_EXERCISE_THE_DOG is set");
+
 			Server.Init ();
 
 			SetupSignalHandlers ();
@@ -110,21 +139,6 @@ namespace Beagle.IndexHelper {
 			}
 
 			if (server_has_been_started) {
-				// Set the IO priority to idle so we don't slow down the system
-				if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null) {
-					IoPriority.ReduceIoPriority ();
-
-					int prio = Mono.Unix.Native.Syscall.nice (15);
-
-					if (prio < 0)
-						Log.Warn ("Unable to renice helper to +15");
-					else if (prio == 15)
-						Log.Debug ("Reniced helper to +15");
-					else
-						Log.Debug ("Helper was already niced to {0}, not renicing to +15", prio);
-				} else
-					Log.Always ("BEAGLE_EXERCISE_THE_DOG is set");
-				
 				// Start the monitor thread, which keeps an eye on memory usage and idle time.
 				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
 

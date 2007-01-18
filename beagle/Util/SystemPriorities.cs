@@ -1,7 +1,7 @@
 //
-// IoPriority.cs
+// SystemPriorities.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2005-2007 Novell, Inc.
 //
 
 //
@@ -29,9 +29,10 @@ using System.Runtime.InteropServices;
 
 namespace Beagle.Util {
 	
-	public class IoPriority {
+	public static class SystemPriorities {
 
-		private IoPriority () {} // Static class
+		//////////////////////////////////////////////////////////////
+		// IO priorities
 
 		[DllImport ("libbeagleglue")]
 		static extern int set_io_priority_idle ();
@@ -53,6 +54,35 @@ namespace Beagle.Util {
 				Log.Debug ("Set best effort IO priority to lowest level (7)");
 			else
 				Log.Warn ("Unable to set IO priority class to idle or IO priority within best effort class to 7");
+		}
+
+		//////////////////////////////////////////////////////////////
+		// Scheduler policies
+
+		[DllImport ("libbeagleglue")]
+		static extern int set_scheduler_policy_batch ();
+
+		[DllImport ("libbeagleglue")]
+		static extern int set_scheduler_policy_other ();
+
+		static public bool SetSchedulerPolicyBatch ()
+		{
+			int rc = set_scheduler_policy_batch ();
+
+			if (rc < 0)
+				Log.Debug ("Unable to set scheduler policy to SCHED_BATCH");
+
+			return rc >= 0;
+		}
+
+		static public bool SetSchedulerPolicyOther ()
+		{
+			int rc = set_scheduler_policy_other ();
+
+			if (rc < 0)
+				Log.Debug ("Unable to set scheduler policy to SCHED_OTHER");
+
+			return rc >= 0;
 		}
 	}
 }

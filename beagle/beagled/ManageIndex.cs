@@ -229,8 +229,9 @@ namespace Beagle.Daemon
 				Environment.Exit (1);
 			}
 
-			// Set the IO priority so we don't slow down the system
-			IoPriority.ReduceIoPriority ();
+			// Set system priorities so we don't slow down the system
+			SystemPriorities.ReduceIoPriority ();
+			SystemPriorities.SetSchedulerPolicyBatch ();
 			
 			LuceneQueryingDriver driver_to_merge = new LuceneQueryingDriver (index_to_merge, -1, false);
 			
@@ -278,8 +279,9 @@ namespace Beagle.Daemon
 
 		static void ExecuteOptimize ()
 		{
-			// Set the IO priority so we don't slow down the system
-			IoPriority.ReduceIoPriority ();
+			// Set system priorities so we don't slow down the system
+			SystemPriorities.ReduceIoPriority ();
+			SystemPriorities.SetSchedulerPolicyBatch ();
 
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();

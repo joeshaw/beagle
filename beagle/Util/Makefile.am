@@ -57,7 +57,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
-	$(srcdir)/IoPriority.cs			\
 	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/KonqHistoryUtil.cs		\
@@ -79,6 +78,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/StringFu.cs           	\
 	$(srcdir)/StringMatcher.cs		\
 	$(srcdir)/SystemInformation.cs		\
+	$(srcdir)/SystemPriorities.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/ThreadPond.cs			\
 	$(srcdir)/Tiff.cs			\
