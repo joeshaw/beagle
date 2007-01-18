@@ -1,6 +1,7 @@
 //
 // ImLog.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -38,6 +39,7 @@ namespace Beagle.Util {
 	public enum ImClient {
 		Gaim,
 		Kopete,
+		Konversation
 	}
 
 	public abstract class ImLog {
@@ -388,6 +390,116 @@ namespace Beagle.Util {
 			reader.Close ();
 		}
 
+	}
+
+	///////////////////////////////////////////////////////////////////////////////
+
+	//
+	// Gaim Logs
+	//
+	public class KonversationLog : ImLog {
+
+		private LineReader reader;
+
+		public KonversationLog (FileInfo file) : base ("konversation", file, null)
+		{
+			Protocol = "IRC";
+			Identity = "Me"; // FIXME - read from config file
+
+			SpeakingTo = Path.GetFileNameWithoutExtension (file.Name);
+
+			Logger.Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo);
+			Load ();
+		}
+		
+		public const string LogTimeFormatString = "[ddd MMM d yyyy] [HH:mm:ss]";
+
+		protected override void Load ()
+		{
+			ClearUtterances ();
+
+			StringBuilder line_sb = null;
+			LineReader reader = new ReencodingLineReader (File.FullName);
+
+			string dt_string, text;
+			string speaker = String.Empty;
+
+			try {
+				while ((line_sb = reader.ReadLineAsStringBuilder ()) != null) {
+					if (ProcessLine (line_sb, out text, out dt_string, ref speaker)) {
+						DateTime dt = DateTime.ParseExact (
+							dt_string,
+							LogTimeFormatString,
+							CultureInfo.InvariantCulture,
+							DateTimeStyles.AssumeLocal);
+
+						AddUtterance (dt, speaker, text);
+					}
+				}
+			} catch {
+				if (line_sb != null)
+					Log.Debug ("Caught exception while parsing line [{0}] from {1}", line_sb.ToString (), File.FullName);
+				else
+					Log.Debug ("Caught exception while parsing (null) line from {0}", File.FullName);
+			} finally {
+				reader.Close ();
+			}
+		}
+
+		// Returns true if the line is a correct chat line, false otherwise
+		// If the line is correct, text contains the text of the chat line,
+		// dt_string contains the date string line and if speaker was set to not-null,
+		// speaker contains the name of the speaker
+		public static bool ProcessLine (StringBuilder log_line_sb, out string text, out string dt_string, ref string speaker)
+		{
+			text = dt_string = null;
+
+			// Ignore empty lines or non-chat lines
+			if (log_line_sb.Length == 0 || log_line_sb [0] != '[')
+				return false;
+
+			// Proper log line looks like
+			//
+			//[Mon Nov 1 2005] [14:09:32] <dBera>    can yo...
+
+			int bracket_begin_index, bracket_end_index;
+			bracket_begin_index = 0;
+
+			bracket_end_index = IndexOfSB (log_line_sb, ']', bracket_begin_index + 1);
+			bracket_end_index = IndexOfSB (log_line_sb, '[', bracket_end_index + 1);
+			bracket_end_index = IndexOfSB (log_line_sb, ']', bracket_end_index + 1);
+
+			// Ignore lines like '[Tue Nov 8 2005] [17:53:14]   * joe nods'
+			if (log_line_sb.Length < bracket_end_index + 3 || log_line_sb [bracket_end_index + 2] != '<')
+				return false;
+
+			dt_string = log_line_sb.ToString (0, bracket_end_index + 1);
+
+			// Search for name of speaker '<foobar>'
+			bracket_begin_index = IndexOfSB (log_line_sb, '<', bracket_end_index + 1);
+			bracket_end_index = IndexOfSB (log_line_sb, '>', bracket_begin_index + 1);
+
+			if (speaker != null)
+				speaker = log_line_sb.ToString (bracket_begin_index + 1, bracket_end_index - bracket_begin_index - 1);
+
+			text = log_line_sb.ToString (bracket_end_index + 1, log_line_sb.Length - bracket_end_index - 1);
+			//Console.WriteLine ("[{0}] {1}", dt_string, text);
+
+			return true;
+		}
+
+		private static int IndexOfSB (StringBuilder sb, char c, int begin_index)
+		{
+			int pos = -1;
+			for (int i = begin_index; i < sb.Length; ++i) {
+				if (sb [i] != c)
+					continue;
+				pos = i;
+				break;
+			}
+
+			return pos;
+		}
 	}
 }
 

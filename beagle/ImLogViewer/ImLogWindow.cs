@@ -97,6 +97,22 @@ namespace ImLogViewer {
 				buddy = new GaimBuddyListReader ().Search (speaker);
 			else if (client == ImClient.Kopete)
 				buddy = new KopeteBuddyListReader ().Search (speaker);
+			else if (client == ImClient.Konversation) {
+				int pos = speaker.IndexOf ('_');
+				string server, channel;
+
+				// speaker of the form irc.gimp.net_#mono-dev
+				if (pos == -1)
+					imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker);
+				else	
+					imviewer.Title = String.Format (
+						Catalog.GetString ("Conversations in {0} ({1})"),
+						speaker.Substring (pos + 1),
+						speaker.Substring (0, pos));
+
+				speaking_to = speaker;
+				return;
+			}
 			
 			if (speaker.EndsWith (".chat")) {
 				imviewer.Title = String.Format (Catalog.GetString ("Conversations in {0}"), speaker.Replace (".chat", String.Empty));
@@ -173,6 +189,8 @@ namespace ImLogViewer {
 					log = new GaimLog (new FileInfo (file), reader);
 				else if (client == ImClient.Kopete)
 					log = new KopeteLog (new FileInfo (file), reader);
+				else if (client == ImClient.Konversation)
+					log = new KonversationLog (new FileInfo (file));
 
 				reader.Close ();
 

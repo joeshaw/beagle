@@ -253,27 +253,12 @@ namespace Beagle.Daemon.KonversationQueryable {
 				AddChannelInformation (indexable);
 
 				foreach (string speaker in speakers.Keys)
-					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:speaker", speaker));
+					indexable.AddProperty (Beagle.Property.NewUnstored ("fixme:speaker", speaker));
 
 				StringReader data_reader = new StringReader (data_sb.ToString ());
 				indexable.SetTextReader (data_reader);
 
 				return indexable;
-			}
-
-			const string LogTimeFormatString = "[ddd MMM d yyyy] [HH:mm:ss]";
-
-			private static int IndexOfSB (StringBuilder sb, char c, int begin_index)
-			{
-				int pos = -1;
-				for (int i = begin_index; i < sb.Length; ++i) {
-					if (sb [i] != c)
-						continue;
-					pos = i;
-					break;
-				}
-
-				return pos;
 			}
 
 			// Returns false if log_line belonged to next session and was not appended
@@ -282,37 +267,16 @@ namespace Beagle.Daemon.KonversationQueryable {
 			{
 				line_dt = DateTime.MinValue;
 
-				// Skip empty lines
-				if (log_line_as_sb.Length == 0)
-					return true;
+				string dt_string, text;
+				string speaker = String.Empty;
+				bool is_good_line = KonversationLog.ProcessLine (log_line_as_sb, out text, out dt_string, ref speaker);
 
-				// Skip other lines
-				if (log_line_as_sb [0] != '[')
-				//if (! log_line.StartsWith ("["))
-					return true;
+				if (! is_good_line)
+					return false;
 
-				// Proper log line looks like
-				//[Mon Nov 1 2005] [14:09:32] <dBera>    can yo...
-				int bracket_begin_index, bracket_end_index;
-
-				//bracket_begin_index = log_line.IndexOf ('[');
-				bracket_begin_index = IndexOfSB (log_line_as_sb, '[', 0);
-
-				//bracket_end_index = log_line.IndexOf (']', bracket_begin_index + 1);
-				bracket_end_index = IndexOfSB (log_line_as_sb, ']', bracket_begin_index + 1);
-
-				//bracket_end_index = log_line.IndexOf ('[', bracket_end_index + 1);
-				bracket_end_index = IndexOfSB (log_line_as_sb, '[', bracket_end_index + 1);
-
-				//bracket_end_index = log_line.IndexOf (']', bracket_end_index + 1);
-				bracket_end_index = IndexOfSB (log_line_as_sb, ']', bracket_end_index + 1);
-
-				// Ignore lines like '[Tue Nov 8 2005] [17:53:14]   * joe nods'
-				if (log_line_as_sb [bracket_end_index + 2] != '<')
-					return true;
-
-				line_dt = DateTime.ParseExact (log_line_as_sb.ToString (0, bracket_end_index + 1),
-					LogTimeFormatString,
+				line_dt = DateTime.ParseExact (
+					dt_string,
+					KonversationLog.LogTimeFormatString,
 					CultureInfo.InvariantCulture,
 					DateTimeStyles.AssumeLocal);
 
@@ -323,40 +287,39 @@ namespace Beagle.Daemon.KonversationQueryable {
 						line_dt.Month,
 						line_dt.Day,
 						line_dt.Hour,
-						line_dt.Minute, // FIXME
-						line_dt.Second); // FIXME
+						0,
+						0);
 					session_end_time = line_dt;
 					//Log.Debug ("Adding session begin time {0}", DateTimeUtil.ToString (session_begin_time));
-					AddLine (log_line_as_sb, bracket_end_index + 1);
-
+					AddLine (text, speaker);
 					return true;
 				}
 
-				// If more than 50 useful lines were seen in this session
-				if (session_num_lines > 50) {
+				// If we are on a different day then make a new session
+				if (session_begin_time.Day != line_dt.Day)
+					return false;
+				// or if more than 50 useful lines were seen in this session
+				else if (session_num_lines > 50) {
 					// Split session in 6 hour = 360 min interval
 					TimeSpan ts = line_dt - session_begin_time;
 					if (ts.TotalMinutes > 360)
 						return false;
 				}
 
-				AddLine (log_line_as_sb, bracket_end_index + 1);
+				AddLine (text, speaker);
 				session_end_time = line_dt;
 
 				return true;
 			}
 
-			private void AddLine (StringBuilder sb, int begin_index)
+			private void AddLine (string text, string speaker)
 			{
-				begin_index = IndexOfSB (sb, '<', begin_index);
-				int end_index = IndexOfSB (sb, '>', begin_index + 1);
-
-				//Log.Debug ("Adding [{0}]", sb.ToString (end_index + 1, sb.Length - end_index - 1));
-				data_sb.Append (sb.ToString (end_index + 1, sb.Length - end_index - 1));
+				//Log.Debug ("Adding [{0}]", text);
+				data_sb.Append (text);
 				data_sb.Append (' ');
 				session_num_lines ++;
 
-				speakers [sb.ToString (begin_index + 1, end_index - begin_index - 1)] = true;
+				speakers [speaker] = true;
 			}
 
 			private void AddChannelInformation (Indexable indexable)
