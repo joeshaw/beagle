@@ -106,15 +106,8 @@ namespace Beagle.IndexHelper {
 					nice_to_set = 12;
 				else
 					nice_to_set = 17;
-					
-				int prio = Mono.Unix.Native.Syscall.nice (nice_to_set);
 
-				if (prio < 0)
-					Log.Warn ("Unable to renice helper to +{0}", nice_to_set);
-				else if (prio == nice_to_set)
-					Log.Debug ("Reniced helper to +{0}", nice_to_set);
-				else
-					Log.Debug ("Helper was already niced to {0}, not renicing to +{1}", prio, nice_to_set);
+				SystemPriorities.Renice (nice_to_set);
 			} else
 				Log.Always ("BEAGLE_EXERCISE_THE_DOG is set");
 

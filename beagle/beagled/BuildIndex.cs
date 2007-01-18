@@ -279,6 +279,7 @@ namespace Beagle.Daemon
 			// Set system priorities so we don't slow down the system
 			SystemPriorities.ReduceIoPriority ();
 			SystemPriorities.SetSchedulerPolicyBatch ();
+			SystemPriorities.Renice (19);
 			
 			driver = new LuceneIndexingDriver (arg_output, false);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
