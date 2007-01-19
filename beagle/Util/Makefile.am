@@ -36,7 +36,6 @@ $(EXTSTR): $(EXTSTR_IN)
 UTIL_CSFILES = 			        	\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/BetterBitArray.cs		\
-	$(srcdir)/EndianConverter.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/Conf.cs			\
@@ -46,7 +45,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/Evolution.cs			\
 	$(srcdir)/ExceptionHandlingThread.cs	\
-	$(srcdir)/ExifData.cs			\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/FileSystem.cs			\
@@ -57,18 +55,15 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/ImBuddy.cs              	\
 	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
-	$(srcdir)/JpegHeader.cs			\
 	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/LineReader.cs			\
 	$(srcdir)/Log.cs			\
 	$(srcdir)/Logger.cs             	\
-	$(srcdir)/MetadataStore.cs		\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/PathFinder.cs			\
-	$(srcdir)/PngHeader.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/ReflectionFu.cs		\
 	$(srcdir)/SafeProcess.cs		\
@@ -81,7 +76,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SystemPriorities.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/ThreadPond.cs			\
-	$(srcdir)/Tiff.cs			\
 	$(srcdir)/Timeline.cs			\
 	$(srcdir)/TopScores.cs			\
 	$(srcdir)/TypeCacheAttribute.cs		\
@@ -89,7 +83,13 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
-	$(srcdir)/XmpFile.cs			\
+	$(srcdir)/FSpot/EndianConverter.cs	\
+	$(srcdir)/FSpot/Exif.cs			\
+	$(srcdir)/FSpot/JpegHeader.cs		\
+	$(srcdir)/FSpot/MetadataStore.cs	\
+	$(srcdir)/FSpot/PngFile.cs		\
+	$(srcdir)/FSpot/Tiff.cs			\
+	$(srcdir)/FSpot/XmpFile.cs		\
 	$(srcdir)/SemWeb/ForwardLogic.cs		\
 	$(srcdir)/SemWeb/KnowledgeModel.cs		\
 	$(srcdir)/SemWeb/MemoryStore.cs		\
