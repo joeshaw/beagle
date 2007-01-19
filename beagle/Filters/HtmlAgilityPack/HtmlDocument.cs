@@ -343,7 +343,7 @@ namespace HtmlAgilityPack
 			return (index >= _length);
 		}
 
-		public new char this[int index] {
+		public override char this[int index] {
 			get { return _base_string [index]; }
 		}
 
