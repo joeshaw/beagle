@@ -1,4 +1,32 @@
-using Beagle.Util;
+//
+// Tiff.cs
+//
+// Authors:
+//     Larry Ewing <lewing@novell.com>
+//
+//
+// Copyright (C) 2004 - 2006 Novell, Inc (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using SemWeb;
 using System;
 
@@ -262,8 +290,8 @@ namespace Beagle.Util.Tiff {
 		
 		public SRational (byte [] raw_data, int offset, bool little)
 		{
-			Numerator = EndianConverter.ToInt32 (raw_data, offset, little);
-			Denominator = EndianConverter.ToInt32 (raw_data, offset, little);
+			Numerator = BitConverter.ToInt32 (raw_data, offset, little);
+			Denominator = BitConverter.ToInt32 (raw_data, offset, little);
 		}
 
 		public SRational (int numerator, int denominator)
@@ -348,8 +376,22 @@ namespace Beagle.Util.Tiff {
 		string Charset;
 		public string Value;
 
+		public UserComment (string value)
+		{
+			Charset = null;
+			Value = value;
+		}
+
 		public UserComment (byte [] raw_data, bool little)
 		{
+			if (raw_data.Length == 8 || raw_data.Length == 0) { 
+				Charset = null;
+				Value = "";
+				return;
+			} else if (raw_data.Length < 8) {
+				throw new Exception ("Invalid UserComment value, no charset found");
+			}
+
 			string charset = System.Text.Encoding.ASCII.GetString (raw_data, 0, 8);
 			System.Text.Encoding enc;
 
@@ -358,11 +400,17 @@ namespace Beagle.Util.Tiff {
 				enc = System.Text.Encoding.ASCII;
 				break;
 			case "UNICODE\0":
-				enc = System.Text.Encoding.BigEndianUnicode;
+			case "Unicode\0":
+				enc = new System.Text.UnicodeEncoding (! little, true);
 				break;
-			case "SJIS\0\0\0\0":
-				// FIXME I'm pretty sure this isn't actually the encoding name.
-				enc = System.Text.Encoding.GetEncoding ("SJIS");
+			case "JIS\0\0\0\0\0":
+				// FIXME this requires mono locale extras
+				try {
+					enc = System.Text.Encoding.GetEncoding ("euc-jp");
+				} catch {
+					System.Console.WriteLine ("missing jis0208 encoding");
+					enc = System.Text.Encoding.Default;
+				}
 				break;
 			case "\0\0\0\0\0\0\0\0":
 				// FIXME the spec says to use the local encoding in this case, we could probably
@@ -377,6 +425,43 @@ namespace Beagle.Util.Tiff {
 			Charset = charset;
 			Value = enc.GetString (raw_data, 8, raw_data.Length - 8);
 		}
+
+		public byte [] GetBytes (bool is_little)
+		{
+			bool ascii = true;
+			string description = Value;
+			System.Text.Encoding enc;
+			string heading;
+
+			for (int i = 0; i < description.Length; i++) {
+				if (description [i] > 127) {
+					ascii = false;
+					break;
+				}
+			}
+
+			if (ascii) {
+				heading = "ASCII\0\0\0";
+				enc = new System.Text.ASCIIEncoding ();
+			} else {
+				heading = "Unicode\0";
+				enc = new System.Text.UnicodeEncoding (! is_little, true);
+			}
+			
+			int len = enc.GetByteCount (description);
+			byte [] data = new byte [len + heading.Length];
+			System.Text.Encoding.ASCII.GetBytes (heading, 0, heading.Length, data, 0);
+			enc.GetBytes (Value, 0, Value.Length, data, heading.Length);
+			
+			UserComment c = new UserComment (data, is_little);
+			System.Console.WriteLine ("old = \"{0}\" new = \"{1}\" heading = \"{2}\"", c.Value, description, heading);
+			return data;
+		}
+
+		public override string ToString ()
+		{
+			return String.Format ("({0},charset={1})", Value, Charset);
+		}
 	}
 
 	public struct CFAPattern {
@@ -386,8 +471,8 @@ namespace Beagle.Util.Tiff {
 
 		public CFAPattern (byte [] raw_data, bool little)
 		{
-			Columns = EndianConverter.ToUInt16 (raw_data, 0, little);
-			Rows = EndianConverter.ToUInt16 (raw_data, 2, little);
+			Columns = BitConverter.ToUInt16 (raw_data, 0, little);
+			Rows = BitConverter.ToUInt16 (raw_data, 2, little);
 
 			Values = new byte [Rows * Columns];
 			System.Array.Copy (raw_data, 4, Values, 0, Values.Length);
@@ -417,8 +502,8 @@ namespace Beagle.Util.Tiff {
 		
 		public OECFTable (byte [] raw_data, bool little)
 		{
-			Columns = EndianConverter.ToUInt16 (raw_data, 0, little);
-			Rows = EndianConverter.ToUInt16 (raw_data, 2, little);
+			Columns = BitConverter.ToUInt16 (raw_data, 0, little);
+			Rows = BitConverter.ToUInt16 (raw_data, 2, little);
 			Names = new string [Columns];
 			Values = new SRational [Columns * Rows];
 
@@ -604,7 +689,7 @@ namespace Beagle.Util.Tiff {
 		OtherSource = 255
 	}
 
-	public enum ColorSpace : ushort {
+	public enum ColorSpace {
 		StandardRGB = 1,  // sRGB
 		AdobeRGB = 2,
 		Uncalibrated = 0xffff
@@ -730,7 +815,7 @@ namespace Beagle.Util.Tiff {
 		        if (stream.Read (tmp, 0, tmp.Length) < 4)
 				throw new System.Exception ("Short Read");
 
-			return EndianConverter.ToUInt32 (tmp, 0, endian == Endian.Little);
+			return BitConverter.ToUInt32 (tmp, 0, endian == Endian.Little);
 		}
 
 		public static ushort ReadUShort (System.IO.Stream stream, Endian endian)
@@ -740,18 +825,24 @@ namespace Beagle.Util.Tiff {
 		        if (stream.Read (tmp, 0, tmp.Length) < 2)
 				throw new System.Exception ("Short Read");
 
-			return EndianConverter.ToUInt16 (tmp, 0, endian == Endian.Little);
+			return BitConverter.ToUInt16 (tmp, 0, endian == Endian.Little);
 		}
 	}
 
-	public class Header {
+	public class Header : SemWeb.StatementSource {
 		public Endian endian;
 
 		private uint directory_offset;
 		public ImageDirectory Directory;
 
+                // false seems a safe default
+                public bool Distinct {
+                        get { return false; }
+                }
+
 		public Header (System.IO.Stream stream)
 		{
+			//using (new Timer ("new Tiff.Header")) {
 			byte [] data = new byte [8];
 			stream.Read (data, 0, data.Length);
 			if (data [0] == 'M' && data [1] == 'M')
@@ -759,7 +850,7 @@ namespace Beagle.Util.Tiff {
 			else if (data [0] == 'I' && data [1] == 'I')
 				endian = Endian.Little;
 
-			ushort marker = EndianConverter.ToUInt16 (data, 2, endian == Endian.Little);
+			ushort marker = BitConverter.ToUInt16 (data, 2, endian == Endian.Little);
 			switch (marker) {
 			case 42:
 				//System.Console.WriteLine ("Found Standard Tiff Marker {0}", marker);
@@ -776,40 +867,46 @@ namespace Beagle.Util.Tiff {
 			}
 
 			//System.Console.WriteLine ("Converting Something");
-			directory_offset = EndianConverter.ToUInt32 (data, 4, endian == Endian.Little);
+			directory_offset = BitConverter.ToUInt32 (data, 4, endian == Endian.Little);
 			
 			if (directory_offset < 8)
 				throw new System.Exception ("Invalid IFD0 Offset [" + directory_offset.ToString () + "]"); 
 			
-			//System.Console.WriteLine ("Reading First IFD");
+#if DEBUG_LOADER
+			System.Console.WriteLine ("Reading First IFD");
+#endif
 			Directory = new ImageDirectory (stream, directory_offset, endian); 
+			//}
 		}
 		
 		
-#if INSIDE_FSPOT
 		public void Select (SemWeb.StatementSink sink)
 		{
-			SelectDirectory (Directory, sink);
+			//using (new Timer ("Tiff.Header.Select")) {
+				SelectDirectory (Directory, sink);
+			//}
 		}
 
 		public void SelectDirectory (ImageDirectory dir, StatementSink sink)
 		{
 			foreach (DirectoryEntry e in dir.Entries) {
-				//System.Console.WriteLine ("{0}", e.Id);
+#if DEBUG_LOADER
+				System.Console.WriteLine ("{0}", e.Id);
+#endif
 				switch (e.Id) {
 				case TagId.IPTCNAA:
 					System.IO.Stream iptcstream = new System.IO.MemoryStream (e.RawData);
-					FSpot.Iptc.IptcFile iptc = new FSpot.Iptc.IptcFile (iptcstream);
+					Iptc.IptcFile iptc = new Iptc.IptcFile (iptcstream);
 					iptc.Select (sink);
 					break;
 				case TagId.PhotoshopPrivate:
 					System.IO.Stream bimstream = new System.IO.MemoryStream (e.RawData);
-					FSpot.Bim.BimFile bim = new FSpot.Bim.BimFile (bimstream);
+					Bim.BimFile bim = new Bim.BimFile (bimstream);
 					bim.Select (sink);
 					break;
 				case TagId.XMP:
 					System.IO.Stream xmpstream = new System.IO.MemoryStream (e.RawData);
-					FSpot.Xmp.XmpFile xmp = new FSpot.Xmp.XmpFile (xmpstream);
+					Xmp.XmpFile xmp = new Xmp.XmpFile (xmpstream);
 					xmp.Select (sink);
 					break;
 				case TagId.ImageDescription:
@@ -862,8 +959,8 @@ namespace Beagle.Util.Tiff {
 					//case TagId.SpatialFrequencyResponse
 				case TagId.ExifCFAPattern:
 					CFAPattern pattern = new CFAPattern (e.RawData, e.IsLittle);
-					Entity empty = new Entity (null);
-					Statement top = new Statement ("", 
+					Entity empty = new BNode ();
+					Statement top = new Statement (MetadataStore.FSpotXMPBase, 
 								       (Entity)MetadataStore.Namespaces.Resolve ("exif:" + e.Id.ToString ()),
 								       empty);
 					
@@ -950,7 +1047,6 @@ namespace Beagle.Util.Tiff {
 				}
 			}
 		}
-#endif
 
 		public void Dump (string name)
 		{
@@ -1000,8 +1096,9 @@ namespace Beagle.Util.Tiff {
 		protected virtual void ReadEntries (System.IO.Stream stream) 
 		{
 			num_entries = Converter.ReadUShort (stream, endian);
-			//System.Console.WriteLine ("reading {0} entries", num_entries);
-			
+#if DEBUG_LOADER
+			System.Console.WriteLine ("reading {0} entries", num_entries);
+#endif			
 			entries = new System.Collections.ArrayList (num_entries);
 			int entry_length = num_entries * 12;
 			byte [] content = new byte [entry_length];
@@ -1012,7 +1109,9 @@ namespace Beagle.Util.Tiff {
 			for (int pos = 0; pos < entry_length; pos += 12) {
 				DirectoryEntry entry = EntryFactory.CreateEntry (this, content, pos, this.endian);
 				entries.Add (entry);		
-				//System.Console.WriteLine ("Added Entry {0} {1} - {2} * {3}", entry.Id.ToString (), entry.Id.ToString ("x"), entry.Type, entry.Count);
+#if DEBUG_LOADER
+				System.Console.WriteLine ("Added Entry {0} {1} - {2} * {3}", entry.Id.ToString (), entry.Id.ToString ("x"), entry.Type, entry.Count);
+#endif
 				if (entry.Id == TagId.NewSubfileType) {
 					
 				}
@@ -1033,13 +1132,15 @@ namespace Beagle.Util.Tiff {
 		
 		protected void LoadNextDirectory (System.IO.Stream stream)
 		{
-			//System.Console.WriteLine ("next_directory_offset = {0}", next_directory_offset);
+#if DEBUG_LOADER
+			System.Console.WriteLine ("start_position = {1} next_directory_offset = {0}", next_directory_offset, orig_position);
+#endif
 			next_directory = null;
 			try {
-				if (next_directory_offset != 0)
+				if (next_directory_offset != 0 && next_directory_offset != orig_position)
 					next_directory = new ImageDirectory (stream, next_directory_offset, this.endian);
 				
-			} catch {
+			} catch (System.Exception) {
 				//System.Console.WriteLine ("Error loading directory {0}", e.ToString ());
 				next_directory = null;
 				next_directory_offset = 0;
@@ -1076,7 +1177,98 @@ namespace Beagle.Util.Tiff {
 
 			return null;
 		}
+		
+#if false // FIXME: Do we need Cms ?
 
+		public Cms.Profile GetProfile ()
+		{
+			Cms.ColorCIExyY whitepoint = new Cms.ColorCIExyY (0, 0, 0);
+			Cms.ColorCIExyYTriple primaries = new Cms.ColorCIExyYTriple (whitepoint, whitepoint, whitepoint);
+			Cms.GammaTable [] transfer = null;
+			int bits_per_sample = 8;
+			double gamma = 2.2;
+			
+			foreach (DirectoryEntry e in entries) {
+				switch (e.Id) {
+				case TagId.InterColorProfile:
+					try {
+						return new Cms.Profile (e.RawData);
+					} catch (System.Exception ex) {
+						System.Console.WriteLine (ex);
+					}
+					break;
+				case TagId.ColorSpace:
+					switch ((ColorSpace)e.ValueAsLong [0]) {
+					case ColorSpace.StandardRGB:
+						return Cms.Profile.CreateStandardRgb ();
+					case ColorSpace.AdobeRGB:
+						return Cms.Profile.CreateAlternateRgb ();
+					case ColorSpace.Uncalibrated:
+						System.Console.WriteLine ("Uncalibrated colorspace");
+						break;
+					}
+					break;
+
+				case TagId.WhitePoint:
+					Rational [] white = e.RationalValue;
+					whitepoint.x = white [0].Value;
+					whitepoint.y = white [1].Value;
+					whitepoint.Y = 1.0;
+					break;
+				case TagId.PrimaryChromaticities:
+					Rational [] colors = e.RationalValue;
+					primaries.Red.x = colors [0].Value;
+					primaries.Red.y = colors [1].Value;
+					primaries.Red.Y = 1.0;
+
+					primaries.Green.x = colors [2].Value;
+					primaries.Green.y = colors [3].Value;
+					primaries.Green.Y = 1.0;
+
+					primaries.Blue.x = colors [4].Value;
+					primaries.Blue.y = colors [5].Value;
+					primaries.Blue.Y = 1.0;
+					break;
+				case TagId.TransferFunction:
+					ushort [] trns = e.ShortValue;
+					ushort gamma_count = (ushort) (1 << bits_per_sample);
+					Cms.GammaTable [] tables = new Cms.GammaTable [3];
+					System.Console.WriteLine ("Parsing transfer function: count = {0}", trns.Length);
+
+					// FIXME we should use the TransferRange here
+					// FIXME we should use bits per sample here
+					for (int c = 0; c < 3; c++) {
+						tables [c] = new Cms.GammaTable (trns, c * gamma_count, gamma_count);
+					}
+
+					transfer = tables;
+					break;
+				case TagId.ExifIfdPointer:
+					SubdirectoryEntry exif = (SubdirectoryEntry) e;
+					DirectoryEntry ee = exif.Directory [0].Lookup ((int)TagId.Gamma);
+					
+					if (ee == null)
+						break;
+
+					Rational rgamma = ee.RationalValue [0];
+					gamma = rgamma.Value;
+					break;
+				}
+			}
+
+			if (transfer == null) {
+				Cms.GammaTable basic = new Cms.GammaTable (1 << bits_per_sample, gamma);
+				transfer = new Cms.GammaTable [] { basic, basic, basic };
+			}
+
+			// if we didn't get a white point or primaries, give up
+			if (whitepoint.Y != 1.0 || primaries.Red.Y != 1.0)
+				return null;
+				
+			return new Cms.Profile (whitepoint, primaries, transfer);
+		}
+
+#endif
 		public void Dump (string name) 
 		{
 			System.Console.WriteLine ("Starting {0}", name);
@@ -1192,7 +1384,7 @@ namespace Beagle.Util.Tiff {
 
 			for (int i = 0; i <  entry_count; i++) {
 				try {
-					directory_offset = EndianConverter.ToUInt32 (raw_data, i * 4, endian == Endian.Little);
+					directory_offset = BitConverter.ToUInt32 (raw_data, i * 4, endian == Endian.Little);
 					Directory [i] = new ImageDirectory (stream, directory_offset, endian);
 				} catch (System.Exception e) {
 					System.Console.WriteLine ("Error loading Subdirectory {0} at {2} of {3}bytes:\n{1}", 
@@ -1361,8 +1553,8 @@ namespace Beagle.Util.Tiff {
 
 		public static int ParseHeader (byte [] data, int start, out TagId tagid, out EntryType type, Endian endian)
 		{
-			tagid = (TagId) EndianConverter.ToUInt16 (data, start, endian == Endian.Little);
-			type = (EntryType) EndianConverter.ToUInt16 (data, start + 2, endian == Endian.Little);
+			tagid = (TagId) BitConverter.ToUInt16 (data, start, endian == Endian.Little);
+			type = (EntryType) BitConverter.ToUInt16 (data, start + 2, endian == Endian.Little);
 			return 4;
 		}
 		
@@ -1457,11 +1649,11 @@ namespace Beagle.Util.Tiff {
 		{
 			int i = start;
 
-			count = EndianConverter.ToUInt32 (data, i, endian == Endian.Little); 
+			count = BitConverter.ToUInt32 (data, i, endian == Endian.Little); 
 			i += 4;
 			int size = (int)count * GetTypeSize ();
 			if (size > 4)
-				data_offset = EndianConverter.ToUInt32 (data, i, endian == Endian.Little);
+				data_offset = BitConverter.ToUInt32 (data, i, endian == Endian.Little);
 			else {
 				data_offset = 0;
 				raw_data = new byte [size];
@@ -1587,10 +1779,10 @@ namespace Beagle.Util.Tiff {
 				for (int i = 0; i < this.Count; i++) {
 					switch (this.Type) {
 					case EntryType.Long:
-						data [i] = EndianConverter.ToUInt32 (raw_data, i * GetTypeSize (), endian == Endian.Little);
+						data [i] = BitConverter.ToUInt32 (raw_data, i * GetTypeSize (), endian == Endian.Little);
 						break;
 					case EntryType.Short:
-						data [i] = EndianConverter.ToUInt16 (raw_data, i * GetTypeSize (), endian == Endian.Little);
+						data [i] = BitConverter.ToUInt16 (raw_data, i * GetTypeSize (), endian == Endian.Little);
 						break;
 					case EntryType.Undefined:
 					case EntryType.Byte:
@@ -1657,7 +1849,7 @@ namespace Beagle.Util.Tiff {
 			get {
 				uint [] data = new uint [raw_data.Length / 4];
 				for (int i = 0; i < raw_data.Length; i+= 4)
-					data [i/4] = EndianConverter.ToUInt32 (raw_data, i, endian == Endian.Little);
+					data [i/4] = BitConverter.ToUInt32 (raw_data, i, endian == Endian.Little);
 
 				return data;
 			}
@@ -1667,38 +1859,58 @@ namespace Beagle.Util.Tiff {
 			get {
 				ushort [] data = new ushort [raw_data.Length];
 				for (int i = 0; i < raw_data.Length; i+= 2) {
-					data [i] = EndianConverter.ToUInt16 (raw_data, i, endian == Endian.Little);
+					data [i] = BitConverter.ToUInt16 (raw_data, i, endian == Endian.Little);
 				}
 				return data;
 			}
 		}
 	}
 
+
 #if false
 	public class TiffFile : ImageFile, SemWeb.StatementSource {
 		public Header Header;
 
+                // false seems a safe default
+                public bool Distinct {
+                        get { return false; }
+                }
+
 		public TiffFile (string path) : base (path)
 		{
 			try {
-				using (System.IO.Stream input = System.IO.File.OpenRead (path)) {
+				using (System.IO.Stream input = Open ()) {
 					this.Header = new Header (input);
 				}
 
 #if DEBUG_LOADER
-				Header.Dump (this.ToSring () + ":");
+				Header.Dump (this.ToString () + ":");
 #endif
 			} catch (System.Exception e) {
 				System.Console.WriteLine (e.ToString ());
 			}
 		}
 
-#if INSIDE_FSPOT
+		public TiffFile (Uri uri) : base (uri)
+		{
+			try {
+				using (System.IO.Stream input = Open ()) {
+					this.Header = new Header (input);
+				}
+
+#if DEBUG_LOADER
+				Header.Dump (this.ToString () + ":");
+#endif
+			} catch (System.Exception e) {
+				System.Console.WriteLine (e.ToString ());
+			}
+		}
+
 		public virtual void Select (SemWeb.StatementSink sink)
 		{
 			Header.SelectDirectory (Header.Directory, sink);
 		}
-#endif
+
 		public override System.DateTime Date {
 			get {
 				SubdirectoryEntry sub = (SubdirectoryEntry) this.Header.Directory.Lookup (TagId.ExifIfdPointer);
@@ -1708,13 +1920,13 @@ namespace Beagle.Util.Tiff {
 					e = sub.Directory [0].Lookup (TagId.DateTimeOriginal);
 					
 					if (e != null)
-						return DirectoryEntry.DateTimeFromString (e.StringValue);
+						return DirectoryEntry.DateTimeFromString (e.StringValue).ToUniversalTime ();
 				}
 
 				e = this.Header.Directory.Lookup (TagId.DateTime);
 
 				if (e != null)
-					return DirectoryEntry.DateTimeFromString (e.StringValue);
+					return DirectoryEntry.DateTimeFromString (e.StringValue).ToUniversalTime ();
 				else
 					return base.Date;
 			}
@@ -1722,7 +1934,7 @@ namespace Beagle.Util.Tiff {
 		
 		public override System.IO.Stream PixbufStream ()
 		{
-			return null;
+			return Open ();
 		}
 
 		public override PixbufOrientation GetOrientation ()
@@ -1738,7 +1950,7 @@ namespace Beagle.Util.Tiff {
 		{
 			uint offset = directory.Lookup (TagId.JPEGInterchangeFormat).ValueAsLong [0];
 			
-			System.IO.Stream file = System.IO.File.OpenRead (this.path);
+			System.IO.Stream file = Open ();
 			file.Position = offset;
 			return file;
 		}
@@ -1748,7 +1960,7 @@ namespace Beagle.Util.Tiff {
 			uint offset = directory.Lookup (TagId.JPEGInterchangeFormat).ValueAsLong [0];
 			uint length = directory.Lookup (TagId.JPEGInterchangeFormatLength).ValueAsLong [0];
 			   
-			using (System.IO.Stream file = System.IO.File.OpenRead (this.path)) {
+			using (System.IO.Stream file = Open ()) {
 				file.Position = offset;
 				
 				byte [] data = new byte [32768];
@@ -1776,6 +1988,10 @@ namespace Beagle.Util.Tiff {
 		{
 		}
 
+		public DngFile (System.Uri uri) : base (uri) 
+		{
+		}
+
 		public override System.IO.Stream PixbufStream ()
 		{
 			try {
@@ -1783,17 +1999,12 @@ namespace Beagle.Util.Tiff {
 				ImageDirectory directory = sub.Directory [sub.Directory.Length - 1];
 
 				uint offset = directory.Lookup (TagId.StripOffsets).ValueAsLong [0];
-				System.IO.Stream file = System.IO.File.OpenRead (this.path);
+				System.IO.Stream file = Open ();
 				file.Position = offset;
 				return file;
 			} catch {
-				return DCRawFile.RawPixbufStream (path);
+				return DCRawFile.RawPixbufStream (uri);
 			}
-		}
-
-		public override Gdk.Pixbuf Load ()
-		{
-			return DCRawFile.Load (this.path, null);
 		}
 
 		public override void Select (SemWeb.StatementSink sink)
@@ -1815,7 +2026,7 @@ namespace Beagle.Util.Tiff {
 			e = Header.Directory.Lookup (TagId.XMP);
 			if (e != null) {
 				System.IO.Stream xmpstream = new System.IO.MemoryStream (e.RawData);
-				FSpot.Xmp.XmpFile xmp = new FSpot.Xmp.XmpFile (xmpstream);
+				Xmp.XmpFile xmp = new Xmp.XmpFile (xmpstream);
 				xmp.Select (sink);
 			}
 
@@ -1858,6 +2069,10 @@ namespace Beagle.Util.Tiff {
 		{
 		}
 
+		public NefFile (Uri uri) : base (uri)
+		{
+		}
+
 		public override void Select (SemWeb.StatementSink sink)
 		{
 			DirectoryEntry e = Header.Directory.Lookup (TagId.NewSubfileType);
@@ -1894,7 +2109,9 @@ namespace Beagle.Util.Tiff {
 
 		public Gdk.Pixbuf GetEmbeddedThumbnail ()
 		{
-			return TransformAndDispose (new Gdk.Pixbuf (path));
+			using (System.IO.Stream stream = Open ()) {
+				return TransformAndDispose (new Gdk.Pixbuf (stream));
+			}
 		}
 
 		public override System.IO.Stream PixbufStream ()
@@ -1903,37 +2120,19 @@ namespace Beagle.Util.Tiff {
 				SubdirectoryEntry sub = (SubdirectoryEntry) Header.Directory.Lookup (TagId.SubIFDs);
 				ImageDirectory jpeg_directory = sub.Directory [0];
 				return LookupJpegSubstream (jpeg_directory);
-			} catch (System.Exception e) {
-				return DCRawFile.RawPixbufStream (path);
+			} catch (System.Exception) {
+				return DCRawFile.RawPixbufStream (uri);
 			}
-		}
-		
-		public override Gdk.Pixbuf Load () 
-		{
-			Gdk.Pixbuf pixbuf = null;
-			System.Console.WriteLine ("starting load");
-			
-			try {
-				SubdirectoryEntry sub = (SubdirectoryEntry) Header.Directory.Lookup (TagId.SubIFDs);
-				ImageDirectory jpeg_directory = sub.Directory [0];
-				
-				pixbuf = LoadJpegInterchangeFormat (jpeg_directory);
-			} catch (System.Exception e) {
-				System.Console.WriteLine (e);
-				pixbuf = null;
-			}
-
-			if (pixbuf == null)
-				return DCRawFile.Load (this.Path, null);
-			
-			return TransformAndDispose (pixbuf);
 		}
 	}
 		
 
 	public class Cr2File : TiffFile, IThumbnailContainer {
-
 		public Cr2File (string path) : base (path) 
+		{
+		}
+
+		public Cr2File (Uri uri) : base (uri)
 		{
 		}
 
@@ -1955,29 +2154,9 @@ namespace Beagle.Util.Tiff {
 		public override System.IO.Stream PixbufStream ()
 		{
 			uint offset = Header.Directory.Lookup (TagId.StripOffsets).ValueAsLong [0];
-			System.IO.Stream file = System.IO.File.OpenRead (this.path);
+			System.IO.Stream file = Open ();
 			file.Position = offset;
 			return file;
-			//return LookupJpegSubstream (Header.Directory.NextDirectory);
-			//return DCRawFile.RawPixbufStream (path);
-		}
-
-		public override Gdk.Pixbuf Load ()
-		{
-			return DCRawFile.Load (this.Path, null);
-		}
-
-		public override System.DateTime Date
-		{
-			get {
-				SubdirectoryEntry sub = (SubdirectoryEntry) this.Header.Directory.Lookup (TagId.ExifIfdPointer);
-				DirectoryEntry e = sub.Directory [0].Lookup (TagId.DateTimeOriginal);
-				
-				if (e != null)
-					return DirectoryEntry.DateTimeFromString (e.StringValue);
-				else
-					return base.Date;
-			}
 		}
 	}
 #endif

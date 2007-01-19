@@ -29,13 +29,13 @@ namespace SemWeb {
 			rdfStatement = "http://www.w3.org/1999/02/22-rdf-syntax-ns#Statement";
 		
 		public RdfXmlReader(XmlDocument document) {
-			xml = new XmlNodeReader(document);
+			xml = new XmlBaseAwareReader(new XmlNodeReader(document));
 		}
 		
 		public RdfXmlReader(XmlReader document) {
 			XmlValidatingReader reader = new XmlValidatingReader(document);
 			reader.ValidationType = ValidationType.None;
-			xml = reader;
+			xml = new XmlBaseAwareReader(reader);
 		}
 		
 		public RdfXmlReader(TextReader document) : this(new XmlTextReader(document)) {
@@ -54,16 +54,22 @@ namespace SemWeb {
 			// Otherwise, the document element is itself a
 			// description.
 			
-			storage = GetDupCheckSink(storage);
 			this.storage = storage;
 									
 			while (xml.Read()) {
 				if (xml.NamespaceURI == NS.RDF && xml.LocalName == "RDF" ) {
+					// If there is an xml:base here, set BaseUri so
+					// the application can recover it.  It doesn't
+					// affect parsing since the xml:base attribute
+					// will override BaseUri.
+					string xmlbase = xml.GetAttribute("xml:base");
+					if (xmlbase != null) BaseUri = xmlbase;
+					
 					while (xml.Read()) {
 						if (xml.NodeType == XmlNodeType.Element)
 							ParseDescription();
 					}
-					
+					break;
 				}
 			}
 
@@ -71,6 +77,16 @@ namespace SemWeb {
 		}
 		
 		private string CurNode() {
+			if (xml.NamespaceURI == "")
+				OnWarning("Element node must be qualified (" + xml.Name + ")");
+			if (xml.Prefix != "")
+				Namespaces.AddNamespace(xml.NamespaceURI, xml.Prefix);
+
+			// This probably isn't quite right, but compensates
+			// for a corresponding hash issue in XmlWriter.
+			if (xml.NamespaceURI == "" && BaseUri == null)
+				return "#" + xml.LocalName;
+
 			return xml.NamespaceURI + xml.LocalName;
 		}
 		
@@ -86,7 +102,7 @@ namespace SemWeb {
 			if (blankNodes.ContainsKey(nodeID))
 				return (Entity)blankNodes[nodeID];
 			
-			Entity entity = new Entity(null);
+			Entity entity = new BNode(nodeID);
 			blankNodes[nodeID] = entity;
 
 			return entity;
@@ -116,6 +132,11 @@ namespace SemWeb {
 			string ID = xml.GetAttribute("ID", NS.RDF);
 			if (isset(nodeID) + isset(about) + isset(ID) > 1)
 				OnError("An entity description cannot specify more than one of rdf:nodeID, rdf:about, and rdf:ID");
+
+			if (nodeID != null && !IsValidXmlName(nodeID))
+				OnWarning("'" + nodeID + "' is not a valid XML Name");
+			if (ID != null && !IsValidXmlName(ID))
+				OnWarning("'" + ID + "' is not a valid XML Name");
 				
 			Entity entity;
 			
@@ -125,17 +146,19 @@ namespace SemWeb {
 				entity = GetNamedNode(Unrelativize("#" + ID));
 				
 				if (seenIDs.ContainsKey(entity.Uri))
-					OnError("Two descriptions cannot use the same rdf:ID: <" + entity.Uri + ">");
+					OnWarning("Two descriptions should not use the same rdf:ID: <" + entity.Uri + ">");
 				seenIDs[entity.Uri] = seenIDs;
 			} else if (nodeID != null)
 				entity = GetBlankNode(nodeID);
 			else
-				entity = new Entity(null);
+				entity = new BNode();
 			
 			// If the name of the element is not rdf:Description,
 			// then the name gives its type.
 			if (CurNode() != NS.RDF + "Description") {
-				if (CurNode() == NS.RDF + "li") OnError("rdf:li cannot be the type of a node");
+				if (IsRestrictedName(CurNode()) || IsDeprecatedName(CurNode()))
+					OnError(xml.Name + " cannot be the type of a resource.");
+				if (CurNode() == NS.RDF + "li") OnError("rdf:li cannot be the type of a resource");
 				storage.Add(new Statement(entity, rdfType, (Entity)CurNode(), Meta));
 			}
 			
@@ -167,14 +190,10 @@ namespace SemWeb {
 				
 				// Properties which are not recognized as property
 				// attributes and should be ignored.
-				if (curnode == NS.RDF + "RDF") continue;
-				if (curnode == NS.RDF + "Description") continue;
-				if (curnode == NS.RDF + "ID") continue;
-				if (curnode == NS.RDF + "about") continue;
-				if (curnode == NS.RDF + "parseType") continue;
-				if (curnode == NS.RDF + "resource") continue;
-				if (curnode == NS.RDF + "nodeID") continue;
-				if (curnode == NS.RDF + "datatype") continue;
+				if (IsRestrictedName(curnode))
+					continue;
+				if (IsDeprecatedName(curnode))
+					OnError(xml.Name + " is deprecated.");
 				
 				// Properties which are invalid as attributes.
 				if (curnode == NS.RDF + "li")
@@ -191,6 +210,7 @@ namespace SemWeb {
 				string lang = xml.XmlLang != "" ? xml.XmlLang : null;
 				storage.Add(new Statement(entity, curnode,
 					new Literal(xml.Value, lang, null), Meta));
+				Namespaces.AddNamespace(xml.NamespaceURI, xml.Prefix);
 				foundAttrs = true;
 					
 			} while (xml.MoveToNextAttribute());
@@ -212,6 +232,12 @@ namespace SemWeb {
 			while (xml.Read()) {
 				if (xml.NodeType == XmlNodeType.EndElement)
 					break;
+
+				if (xml.NodeType == XmlNodeType.Text) {
+					OnWarning("Text \"" + xml.Value + "\" ignored in description node");
+					continue;
+				}
+
 				if (xml.NodeType != XmlNodeType.Element)
 					continue;
 				
@@ -237,9 +263,22 @@ namespace SemWeb {
 			string predicate = CurNode();
 			if (predicate == NS.RDF + "li")
 				predicate = NS.RDF + "_" + (liIndex++);
-				
+
+			if (IsRestrictedName(predicate))
+				OnError(xml.Name + " cannot be used as a property name.");
+			if (IsDeprecatedName(predicate))
+				OnError(xml.Name + " has been deprecated and cannot be used as a property name.");
+
 			string ID = xml.GetAttribute("ID", NS.RDF);
-			
+
+			Console.WriteLine ("({0})({1})({2})({3})({4})({5})({6})",
+				nodeID, resource, parseType, datatype, lang, predicate, ID);
+
+			if (nodeID != null && !IsValidXmlName(nodeID))
+				OnWarning("'" + nodeID + "' is not a valid XML Name");
+			if (ID != null && !IsValidXmlName(ID))
+				OnWarning("'" + ID + "' is not a valid XML Name");
+				
 			Resource objct = null;
 			if (nodeID != null || resource != null) {
 				if (isset(nodeID) + isset(resource) > 1)
@@ -249,7 +288,6 @@ namespace SemWeb {
 					OnError("The attributes rdf:parseType and rdf:datatype are not valid on a predicate with a rdf:nodeID or rdf:resource attribute");
 					
 				// Object is an entity given by nodeID or resource.
-				// The 
 				if (nodeID != null)
 					objct = GetBlankNode(nodeID);
 				else if (resource != null)
@@ -271,20 +309,23 @@ namespace SemWeb {
 				if (datatype == null)
 					datatype = "http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral";
 				
-				if (ParsePropertyAttributes(new Entity(null)))
+				if (ParsePropertyAttributes(new BNode()))
 					OnError("Property attributes are not valid when parseType is Literal");
+
+				// TODO: Do we canonicalize according to:
+				// http://www.w3.org/TR/2002/REC-xml-exc-c14n-20020718/ ?
 				
 				objct = new Literal(xml.ReadInnerXml(), null, datatype);
-				
+
 			} else if (parseType != null && parseType == "Resource") {
-				objct = new Entity(null);
+				objct = new BNode();
 				
 				ParsePropertyAttributes((Entity)objct);
 				if (!xml.IsEmptyElement)
 					ParsePropertyNodes((Entity)objct);
 				
 			} else if (parseType != null && parseType == "Collection") {
-				Entity collection = new Entity(null);
+				Entity collection = new BNode();
 				Entity lastnode = collection;
 				bool empty = true;
 				
@@ -296,7 +337,7 @@ namespace SemWeb {
 					if (xml.NodeType != XmlNodeType.Element) continue;
 					
 					if (!empty) {
-						Entity next = new Entity(null);
+						Entity next = new BNode();
 						storage.Add(new Statement(lastnode, rdfRest, next, Meta));
 						lastnode = next;
 					}
@@ -313,15 +354,23 @@ namespace SemWeb {
 					objct = rdfNil;
 				else
 					objct = collection;
+					
+			} else if (parseType != null) {
+				OnError("Invalid value for parseType: '" + parseType + "'");
 				
 			} else if (datatype != null) {
-				// Forces even xml content to be read as in parseType=Literal?
 				// Note that any xml:lang is discarded.
 				
-				if (ParsePropertyAttributes(new Entity(null)))
-					OnError("Property attributes are not valid when a data type is given");
+				if (ParsePropertyAttributes(new BNode()))
+					OnError("Property attributes are not valid when a datatype is given");
 					
-				objct = new Literal(xml.ReadInnerXml(), null, datatype);
+				if (xml.IsEmptyElement) {
+					objct = new Literal("", null, datatype);
+				} else {
+					objct = new Literal(xml.ReadString(), null, datatype);
+					if (xml.NodeType != XmlNodeType.EndElement)
+						OnError("XML markup may not appear in a datatyped literal property.");
+				}
 			
 			} else {
 				// We don't know whether the contents of this element
@@ -331,7 +380,7 @@ namespace SemWeb {
 				// is an anonymous entity.  Otherwise the text content
 				// is the literal value.
 				
-				objct = new Entity(null);
+				objct = new BNode();
 				if (ParsePropertyAttributes((Entity)objct)) {
 					// Found property attributes.  There should be no other internal content?
 					
@@ -355,9 +404,13 @@ namespace SemWeb {
 						if (xml.NodeType == XmlNodeType.Element) {
 							if (hadText)
 								OnError("Both text and elements are present as a property value");
+							if (hadElement)
+								OnError("A property node cannot contain more than one entity description.  " + objct + " already found.");
+							
 							hadElement = true;
 							
 							objct = ParseDescription();
+							
 						} else if (xml.NodeType == XmlNodeType.Text || xml.NodeType == XmlNodeType.SignificantWhitespace) {
 							if (hadElement)
 								OnError("Both text and elements are present as a property value");
@@ -386,6 +439,39 @@ namespace SemWeb {
 			}
 		}
 		
+		private bool IsRestrictedName(string name) {
+			if (name == NS.RDF + "RDF") return true;
+			if (name == NS.RDF + "Description") return true;
+			if (name == NS.RDF + "ID") return true;
+			if (name == NS.RDF + "about") return true;
+			if (name == NS.RDF + "parseType") return true;
+			if (name == NS.RDF + "resource") return true;
+			if (name == NS.RDF + "nodeID") return true;
+			if (name == NS.RDF + "datatype") return true;
+			return false;
+		}
+		
+		private bool IsDeprecatedName(string name) {
+			if (name == NS.RDF + "bagID") return true;
+			if (name == NS.RDF + "aboutEach") return true;
+			if (name == NS.RDF + "aboutEachPrefix") return true;
+			return false;
+		}
+
+		private bool IsValidXmlName(string name) {
+			// I'm not sure what's supposed to be valid, but this is just for warnings anyway.
+			// CombiningChar and Extender characters are omitted.
+			if (name.Length == 0) return false;
+			char f = name[0];
+			if (!char.IsLetter(f) && f != '_') return false;
+			for (int i = 1; i < name.Length; i++) {
+				f = name[i];
+				if (!char.IsLetter(f) && !char.IsDigit(f) && f != '.' && f != '-' && f != '_')
+					return false;
+			}
+			return true;
+		}
+		
 		private void OnError(string message) {
 			if (xml is IXmlLineInfo && ((IXmlLineInfo)xml).HasLineInfo()) {
 				IXmlLineInfo line = (IXmlLineInfo)xml;
@@ -393,6 +479,113 @@ namespace SemWeb {
 			}
 			throw new ParserException(message);
 		}
+
+		private new void OnWarning(string message) {
+			if (xml is IXmlLineInfo && ((IXmlLineInfo)xml).HasLineInfo()) {
+				IXmlLineInfo line = (IXmlLineInfo)xml;
+				message += ", line " + line.LineNumber + " col " + line.LinePosition;
+			}
+			base.OnWarning(message);
+		}
+		
+		private class XmlBaseAwareReader : XmlReader {
+			XmlReader _reader;
+			Stack _bases = new Stack();
+		    Uri _baseUri;
+		    bool temp = false;
+		    XmlResolver resolver = new XmlUrlResolver();
+
+		    public XmlBaseAwareReader(XmlReader reader) {
+		    	_reader = reader;
+	        	if (_reader.BaseURI != "")
+	        		_baseUri = new Uri(_reader.BaseURI);
+		    }
+
+		    public override string BaseURI {
+		        get { return _baseUri == null ? "" : _baseUri.AbsoluteUri; }
+		    }
+
+		    public override bool Read()
+		    {        
+		        if (!_reader.Read()) return false;
+		        
+		        if (temp) { // last element was an empty element
+		        	_baseUri = (Uri)_bases.Pop();
+		        	temp = false;
+		        }
+
+				if (_reader.NodeType == XmlNodeType.EndElement)
+					_baseUri = (Uri)_bases.Pop();
+		        
+		        if (_reader.NodeType == XmlNodeType.Element) {
+		            string baseAttr = _reader.GetAttribute("xml:base");
+		            if (_reader.IsEmptyElement && baseAttr == null) {
+		            	// do nothing : there is no EndElement, so no pop
+		            } else {
+		            	_bases.Push(_baseUri); // even if no change, there will be a pop
+			            if (baseAttr != null)
+	            			_baseUri = resolver.ResolveUri(_baseUri, baseAttr);
+		            		
+		            	// if this is an empty element, there is no EndElement,
+		            	// so we must do a pop before processing the next node.
+		            	temp = _reader.IsEmptyElement;
+			    	}
+		    	}
+		        return true;            
+		    }
+
+			public override void Close () { _reader.Close(); }
+			public override string GetAttribute (int i) { return _reader.GetAttribute(i); }
+			public override string GetAttribute (string name) { return _reader.GetAttribute(name); }
+			public override string GetAttribute (string localName, string namespaceName) { return _reader.GetAttribute(localName, namespaceName); }
+			public override bool IsStartElement () { return _reader.IsStartElement(); }
+			public override bool IsStartElement (string name) { return _reader.IsStartElement(name); }
+			public override bool IsStartElement (string localName, string namespaceName) { return _reader.IsStartElement(localName, namespaceName); }
+			public override string LookupNamespace (string prefix) { return _reader.LookupNamespace(prefix); }
+			public override void MoveToAttribute (int i) { _reader.MoveToAttribute(i); }
+			public override bool MoveToAttribute (string name) { return _reader.MoveToAttribute(name); }
+			public override bool MoveToAttribute (string localName, string namespaceName) { return _reader.MoveToAttribute(localName, namespaceName); }
+			public override XmlNodeType MoveToContent () { return _reader.MoveToContent(); }
+			public override bool MoveToElement () { return _reader.MoveToElement(); }
+			public override bool MoveToFirstAttribute () { return _reader.MoveToFirstAttribute(); }
+			public override bool MoveToNextAttribute () { return _reader.MoveToNextAttribute(); }
+			public override bool ReadAttributeValue () { return _reader.ReadAttributeValue(); }
+			public override string ReadElementString () { return _reader.ReadElementString(); }
+			public override string ReadElementString (string name) { return _reader.ReadElementString(name); }
+			public override string ReadElementString (string localName, string namespaceName) { return _reader.ReadElementString(localName, namespaceName); }
+			public override void ReadEndElement () { _reader.ReadEndElement(); }
+			public override string ReadInnerXml () { return _reader.ReadInnerXml(); }
+			public override string ReadOuterXml () { return _reader.ReadOuterXml(); }
+			public override void ReadStartElement () { _reader.ReadStartElement(); }
+			public override void ReadStartElement (string name) { _reader.ReadStartElement(name); }
+			public override void ReadStartElement (string localName, string namespaceName) { _reader.ReadStartElement(localName, namespaceName); }
+			public override string ReadString () { return _reader.ReadString(); }
+			public override void ResolveEntity () { _reader.ResolveEntity(); }
+			public override void Skip () { _reader.Skip(); }
+			
+			public override int AttributeCount { get { return _reader.AttributeCount; } }
+			public override bool CanResolveEntity { get { return _reader.CanResolveEntity; } }
+			public override int Depth { get { return _reader.Depth; } }
+			public override bool EOF { get { return _reader.EOF; } }
+			public override bool HasAttributes { get { return _reader.HasAttributes; } }
+			public override bool HasValue { get { return _reader.HasValue; } }
+			public override bool IsDefault { get { return _reader.IsDefault; } }
+			public override bool IsEmptyElement { get { return _reader.IsEmptyElement; } }
+			public override string this [int i] { get { return _reader[i]; } }
+			public override string this [string name] { get { return _reader[name]; } }
+			public override string this [string localName, string namespaceName] { get { return _reader[localName, namespaceName]; } }
+			public override string LocalName { get { return _reader.LocalName; } }
+			public override string Name { get { return _reader.Name; } }
+			public override string NamespaceURI { get { return _reader.NamespaceURI; } }
+			public override XmlNameTable NameTable { get { return _reader.NameTable; } }
+			public override XmlNodeType NodeType { get { return _reader.NodeType; } }
+			public override string Prefix { get { return _reader.Prefix; } }
+			public override char QuoteChar { get { return _reader.QuoteChar; } }
+			public override ReadState ReadState { get { return _reader.ReadState; } }
+			public override string Value { get { return _reader.Value; } }
+			public override string XmlLang { get { return _reader.XmlLang; } }
+			public override XmlSpace XmlSpace { get { return _reader.XmlSpace; } }
+		}		
 	}
 }
 

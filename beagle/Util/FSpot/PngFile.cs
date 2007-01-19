@@ -1,5 +1,5 @@
 //
-// EndianConverter.cs
+// PngHeader.cs
 //
 // Authors:
 //     Larry Ewing <lewing@novell.com>
@@ -29,6 +29,14 @@
 
 using ICSharpCode.SharpZipLib.Zip.Compression;
 using SemWeb;
+using System;
+using System.IO;
+using System.Collections;
+using System.Reflection;
+
+#if ENABLE_NUNIT
+using NUnit.Framework;
+#endif
 
 namespace Beagle.Util {
 	public class PngHeader {
@@ -55,7 +63,6 @@ namespace Beagle.Util {
 
 		   Other keywords may be defined for other purposes. Keywords of general interest can be registered with th
 		*/
-
 		/*
 		public void Select (SemWeb.StatementSink sink)
 		{
@@ -75,13 +82,14 @@ namespace Beagle.Util {
 					case "XMP":
 					case "XML:com.adobe.xmp":
 						System.IO.Stream xmpstream = new System.IO.MemoryStream (text.TextData);
-						XmpFile xmp = new XmpFile (xmpstream);
+						Xmp.XmpFile xmp = new Xmp.XmpFile (xmpstream);
 						xmp.Select (sink);
 						break;
 					case "Comment":
 						MetadataStore.AddLiteral (sink, "exif:UserComment", text.Text);
 						break;
 					case "Software":
+						MetadataStore.AddLiteral (sink, "xmp:CreatorTool", text.Text);
 						break;
 					case "Title":
 						MetadataStore.AddLiteral (sink, "dc:title", "rdf:Alt", new Literal (text.Text, "x-default", null));
@@ -126,8 +134,8 @@ namespace Beagle.Util {
 					uint denominator = (uint) (phys.InMeters ? 100 : 1);
 					
 					MetadataStore.AddLiteral (sink, "tiff:ResolutionUnit", phys.InMeters ? "3" : "1");
-					MetadataStore.AddLiteral (sink, "tiff:XResolution", new FSpot.Tiff.Rational (phys.PixelsPerUnitX, denominator).ToString ());
-					MetadataStore.AddLiteral (sink, "tiff:YResolution", new FSpot.Tiff.Rational (phys.PixelsPerUnitY, denominator).ToString ());
+					MetadataStore.AddLiteral (sink, "tiff:XResolution", new Tiff.Rational (phys.PixelsPerUnitX, denominator).ToString ());
+					MetadataStore.AddLiteral (sink, "tiff:YResolution", new Tiff.Rational (phys.PixelsPerUnitY, denominator).ToString ());
 				}
 			}
 		}
@@ -158,7 +166,27 @@ namespace Beagle.Util {
 				}
 			}
 
-			public ZtxtChunk (string name, byte [] data) : base (name, data) {}
+			public ZtxtChunk (string keyword, string text) : base ()
+			{
+				Name = "zTXt";
+				Compression = 0;
+				this.keyword = keyword;
+			}
+
+			public ZtxtChunk (string name, byte [] data) : base (name, data)
+			{
+			}			
+
+			protected ZtxtChunk ()
+			{
+			}
+
+			public override void SetText (string text)
+			{
+				/* FIXME this is broken */
+				text_data = encoding.GetBytes (text);
+				data = Chunk.Deflate (text_data, 0, text_data.Length);
+			}
 			
 			public override void Load (byte [] data) 
 			{
@@ -176,13 +204,13 @@ namespace Beagle.Util {
 			
 			public uint PixelsPerUnitX {
 				get {
-					return EndianConverter.ToUInt32 (data, 0, false);
+					return BitConverter.ToUInt32 (data, 0, false);
 				}
 			}
 
 			public uint PixelsPerUnitY {
 				get {
-					return EndianConverter.ToUInt32 (data, 4, false);
+					return BitConverter.ToUInt32 (data, 4, false);
 				}
 			}
 			
@@ -197,12 +225,26 @@ namespace Beagle.Util {
 			//public static string Name = "tEXt";
 
 			protected string keyword;
-			protected string text;
 			protected byte [] text_data;
 			protected System.Text.Encoding encoding = Latin1;
 
 			public static System.Text.Encoding Latin1 = System.Text.Encoding.GetEncoding (28591);
-			public TextChunk (string name, byte [] data) : base (name, data) {}
+
+			public TextChunk (string name, byte [] data) : base (name, data) 
+			{
+			}
+
+			protected TextChunk ()
+			{
+			}
+
+
+			public TextChunk (string keyword, string text)
+			{
+				this.Name = "tEXt";
+				this.keyword = keyword;
+				SetText (text);
+			}
 
 			public override void Load (byte [] data)
 			{
@@ -221,13 +263,23 @@ namespace Beagle.Util {
 				}
 			}
 
-			public byte [] TextData 
-			{
+			public byte [] TextData {
 				get {
 					return text_data;
 				}
 			}
 			
+			public virtual void SetText (string text)
+			{
+				text_data = encoding.GetBytes (text);
+
+				byte [] keyword_data = Latin1.GetBytes (keyword);
+				data = new byte [keyword_data.Length + 1 + text_data.Length];
+				System.Array.Copy (keyword_data, 0, data, 0, keyword_data.Length);
+				data [keyword_data.Length] = 0;
+				System.Array.Copy (text_data, 0, data, keyword_data.Length + 1, text_data.Length);
+			}
+
 			public string Text {
 				get {
 					return encoding.GetString (text_data, 0, text_data.Length);
@@ -293,9 +345,62 @@ namespace Beagle.Util {
 				}
 			}
 
+			public override void SetText (string text)
+			{
+				byte [] raw = System.Text.Encoding.UTF8.GetBytes (text);
+				SetText (raw);
+			}
+
+			public void SetText (byte [] raw)
+			{
+				MemoryStream stream = new MemoryStream ();
+				byte [] tmp;
+
+				text_data = raw;
+
+				tmp = Latin1.GetBytes (keyword);
+				stream.Write (tmp, 0, tmp.Length);
+				stream.WriteByte (0);
+
+				stream.WriteByte ((byte)(compressed ? 1 : 0));
+				stream.WriteByte (Compression);
+
+				if (Language != null && Language != "") {
+					tmp = Latin1.GetBytes (Language);
+					stream.Write (tmp, 0, tmp.Length);
+				}
+				stream.WriteByte (0);
+
+				if (LocalizedKeyword != null && LocalizedKeyword != "") {
+					tmp = System.Text.Encoding.UTF8.GetBytes (LocalizedKeyword);
+					stream.Write (tmp, 0, tmp.Length);
+				}
+				stream.WriteByte (0);
+				
+				if (compressed) {
+					tmp = Deflate (text_data, 0, text_data.Length);
+					stream.Write (tmp, 0, tmp.Length);
+				} else {
+					stream.Write (text_data, 0, text_data.Length);
+				}
+				this.data = stream.ToArray ();
+			}
+
 			public ItxtChunk (string name, byte [] data) : base (name, data) 
 			{
+				this.Name = name;
 				encoding = System.Text.Encoding.UTF8;
+			}
+
+			public ItxtChunk (string keyword, string language, bool compressed) : base ()
+			{
+				encoding = System.Text.Encoding.UTF8;
+				this.Name = "iTXt";
+				this.keyword = keyword;
+				this.Language = language;
+				this.LocalizedKeyword = "";
+				this.compressed = compressed;
+				this.Compression = 0;
 			}
 		}
 
@@ -306,12 +411,12 @@ namespace Beagle.Util {
 
 			public System.DateTime Time {
 				get {
-					return new System.DateTime (EndianConverter.ToUInt16 (data, 0, false),
+					return new System.DateTime (BitConverter.ToUInt16 (data, 0, false),
 								    data [2], data [3], data [4], data [5], data [6]);
 
 				}
 				set {
-					byte [] year = EndianConverter.GetBytes ((ushort)value.Year, false);
+					byte [] year = BitConverter.GetBytes ((ushort)value.Year, false);
 					data [0] = year [0];
 					data [1] = year [1];
 					data [2] = (byte) value.Month;
@@ -323,10 +428,24 @@ namespace Beagle.Util {
 			}
 			
 			public TimeChunk (string name, byte [] data) : base (name, data) {}
+			
+			public TimeChunk ()
+			{
+				this.Name = "tIME";
+				this.Time = System.DateTime.Now;
+			}
 		}
 
 		public class StandardRgbChunk : Chunk {
 			public StandardRgbChunk (string name, byte [] data) : base (name, data) {}
+			
+#if false
+			public Cms.Intent RenderingIntent {
+				get {
+					return (Cms.Intent) data [0];
+				}
+			}
+#endif
 		}
 
 		public class GammaChunk : Chunk {
@@ -335,7 +454,7 @@ namespace Beagle.Util {
 
 			public double Gamma {
 				get {
-					return EndianConverter.ToUInt32 (data, 0, false) / (double) divisor;
+					return BitConverter.ToUInt32 (data, 0, false) / (double) divisor;
 				}
 			}
 		}
@@ -345,45 +464,45 @@ namespace Beagle.Util {
 			public const uint Denominator = 100000;
 
 			public ColorChunk (string name, byte [] data) : base (name, data) {}
-			/*
-			public FSpot.Tiff.Rational WhiteX {
+/*
+			public Tiff.Rational WhiteX {
 				get {
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 0, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 0, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational WhiteY {
+			public Tiff.Rational WhiteY {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 4, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 4, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational RedX {
+			public Tiff.Rational RedX {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 8, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 8, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational RedY {
+			public Tiff.Rational RedY {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 12, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 12, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational GreenX {
+			public Tiff.Rational GreenX {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 16, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 16, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational GreenY {
+			public Tiff.Rational GreenY {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 20, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 20, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational BlueX {
+			public Tiff.Rational BlueX {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 24, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 24, false), Denominator);
 				}
 			}
-			public FSpot.Tiff.Rational BlueY {
+			public Tiff.Rational BlueY {
 				get { 
-					return new FSpot.Tiff.Rational (FSpot.EndianConverter.ToUInt32 (data, 28, false), Denominator);
+					return new Tiff.Rational (BitConverter.ToUInt32 (data, 28, false), Denominator);
 				}
 			}
 			*/
@@ -394,7 +513,7 @@ namespace Beagle.Util {
 			Rgb = 2,
 			Indexed = 3,
 			GrayAlpha = 4,	
-			RgbAlpha = 6
+			RgbA = 6
 		};
 		
 		public enum CompressionMethod : byte {
@@ -432,8 +551,8 @@ namespace Beagle.Util {
 			
 			public override void Load (byte [] data)
 			{
-				Width = EndianConverter.ToUInt32 (data, 0, false);
-				Height = EndianConverter.ToUInt32 (data, 4, false);
+				Width = BitConverter.ToUInt32 (data, 0, false);
+				Height = BitConverter.ToUInt32 (data, 4, false);
 				Depth = data [8];
 				Color = (ColorType) data [9];
 				//if (Color != ColorType.Rgb)
@@ -463,7 +582,7 @@ namespace Beagle.Util {
 						return 2;
 					case ColorType.Rgb:
 						return 3;
-					case ColorType.RgbAlpha:
+					case ColorType.RgbA:
 						return 4;
 					default:
 						throw new System.Exception (System.String.Format ("Unknown format {0}", Color));
@@ -485,6 +604,69 @@ namespace Beagle.Util {
 				}
 
 				return length;
+			}
+		}
+
+		public class Crc {
+			static uint [] lookup;
+			uint value = 0xffffffff;
+			uint length;
+			System.IO.Stream stream;
+
+			public uint Value {
+				get { return (value ^ 0xffffffff); }
+			}
+
+			public uint Length {
+				get { return length; }
+			}
+
+			static Crc () {
+				lookup = new uint [265];
+				uint c, n;
+				int k;
+				
+				for (n = 0; n < 256; n++) {
+					c = n;
+					for (k = 0; k < 8; k++) {
+						if ((c & 1) != 0)
+							c = 0xedb88320 ^ (c >> 1);
+						else
+							c = c >> 1;
+					}
+					lookup [n] = c;
+				}
+			}
+
+			public Crc ()
+			{
+			}
+
+			public Crc (System.IO.Stream stream)
+			{
+				this.stream = stream;
+			}
+			
+			public void Write (byte [] buffer)
+			{
+				Write (buffer, 0, buffer.Length);
+			}
+
+			public void Write (byte [] buffer, int offset, int len)
+			{
+				for (int i = offset; i < len; i++) 
+					value = lookup [(value ^ buffer[i]) & 0xff] ^ (value >> 8); 
+
+				length += (uint)len;
+
+				if (stream != null)
+					stream.Write (buffer, offset, len);
+			}
+
+			public void WriteSum ()
+			{
+				byte [] data = BitConverter.GetBytes (Value, false);
+				stream.Write (data, 0, data.Length);
 			}
 		}
 
@@ -519,13 +701,16 @@ namespace Beagle.Util {
 				name_table ["sRGB"] = typeof (StandardRgbChunk);
 			}
 			
+			protected Chunk ()
+			{
+			}
+			
 			public Chunk (string name, byte [] data) 
 			{
 				this.Name = name;
 				this.data = data;
 				Load (data);
 			}
-
 			
 			protected string GetString  (ref int i, System.Text.Encoding enc) 
 			{
@@ -545,6 +730,17 @@ namespace Beagle.Util {
 			public virtual void Load (byte [] data)
 			{
 				
+			}
+			
+			public virtual void Save (System.IO.Stream stream)
+			{
+				byte [] name_bytes = System.Text.Encoding.ASCII.GetBytes (Name);
+				byte [] length_bytes = BitConverter.GetBytes ((uint)data.Length, false);
+				stream.Write (length_bytes, 0, length_bytes.Length);
+				Crc crc = new Crc (stream);
+				crc.Write (name_bytes);
+				crc.Write (data);
+				crc.WriteSum ();
 			}
 
 			public bool Critical {
@@ -571,10 +767,14 @@ namespace Beagle.Util {
 				}
 			}
 
-			public bool CheckCrc (uint crc)
+			public bool CheckCrc (uint value)
 			{
-				// FIXME implement me
-				return true;
+				byte [] name = System.Text.Encoding.ASCII.GetBytes (Name);
+				Crc crc = new Crc ();
+				crc.Write (name);
+				crc.Write (data);
+
+				return crc.Value == value;
 			}
 
 			public static Chunk Generate (string name, byte [] data)
@@ -599,17 +799,27 @@ namespace Beagle.Util {
 				
 				byte [] buf = new byte [1024];
 				int inflate_length;
-				while ((inflate_length = inflater.Inflate (buf)) > 0) {
+				while ((inflate_length = inflater.Inflate (buf)) > 0)
 					output.Write (buf, 0, inflate_length);
-				}
 				
-				byte [] result = new byte [output.Length];
-				output.Position = 0;
-				output.Read (result, 0, result.Length);
 				output.Close ();
-				return result;
+				return output.ToArray ();
 			}
 
+			public static byte [] Deflate (byte [] input, int offset, int length)
+			{
+				System.IO.MemoryStream output = new System.IO.MemoryStream ();
+				Deflater deflater = new Deflater ();
+				deflater.SetInput (input, offset, length);
+				
+				byte [] buf = new byte [1024];
+				int deflate_length;
+				while ((deflate_length = deflater.Deflate (buf)) > 0)
+					output.Write (buf, 0, deflate_length);
+
+				output.Close ();
+				return output.ToArray ();
+			}
 		}
 
 		public class ChunkInflater {
@@ -650,52 +860,57 @@ namespace Beagle.Util {
 			}
 		}
 
-	        void Load (System.IO.Stream stream)
+		private static byte [] magic = new byte [] { 137, 80, 78, 71, 13, 10, 26, 10 };
+
+		void Load (Stream stream) 
 		{
 			byte [] heading = new byte [8];
+			byte [] crc_data = new byte [4];
 			stream.Read (heading, 0, heading.Length);
-
-			if (heading [0] != 137 ||
-			    heading [1] != 80 ||
-			    heading [2] != 78 ||
-			    heading [3] != 71 ||
-			    heading [4] != 13 ||
-			    heading [5] != 10 ||
-			    heading [6] != 26 ||
-			    heading [7] != 10)
-			    throw new System.Exception ("Invalid PNG magic number");
-
+			
+			for (int i = 0; i < heading.Length; i++)
+			if (heading [i] != magic [i])
+				throw new System.Exception ("Invalid PNG magic number");
+			
 			chunk_list = new System.Collections.ArrayList ();
-
+			
 			for (int i = 0; stream.Read (heading, 0, heading.Length) == heading.Length; i++) {
-				uint length = EndianConverter.ToUInt32 (heading, 0, false);
+				uint length = BitConverter.ToUInt32 (heading, 0, false);
 				string name = System.Text.Encoding.ASCII.GetString (heading, 4, 4);
 				byte [] data = new byte [length];
 				if (length > 0)
 					stream.Read (data, 0, data.Length);
-
-				stream.Read (heading, 0, 4);
-				uint crc = EndianConverter.ToUInt32 (heading, 0, false);
-
+				
+				stream.Read (crc_data, 0, 4);
+				uint crc = BitConverter.ToUInt32 (crc_data, 0, false);
+				
 				Chunk chunk = Chunk.Generate (name, data);
-				if (! chunk.CheckCrc (crc)) {
-					if (chunk.Critical) {
-						throw new System.Exception ("Chunk CRC check failed");
-					} else {
-						System.Console.WriteLine ("bad CRC in Chunk {0}... skipping", 
-									  chunk.Name);
-						continue;
-					}
-				} else {
-					chunk_list.Add (chunk);
+				if (! chunk.CheckCrc (crc))
+					throw new System.Exception ("chunk crc check failed");
+				
+				//System.Console.Write ("read one {0} {1}", chunk, chunk.Name);
+				chunk_list.Add (chunk);
+				
+#if false		       
+				if (chunk is TextChunk) {
+					TextChunk text = (TextChunk) chunk;
+					System.Console.Write (" Text Chunk {0} {1}", 
+							      text.Keyword, "", "");
 				}
+				
+				TimeChunk time = chunk as TimeChunk;
+				if (time != null)
+					System.Console.Write(" Time {0}", time.Time);
 
+				System.Console.WriteLine ("");
+#endif
+				
 				if (chunk.Name == "IEND")
 					break;
 			}
 		}
 
-		public string LookupText (string keyword)
+		internal string LookupText (string keyword)
 		{
 			TextChunk chunk = LookupTextChunk (keyword);
 			if (chunk != null)
@@ -703,8 +918,8 @@ namespace Beagle.Util {
 
 			return null;
 		}
-
-		public TextChunk LookupTextChunk (string keyword)
+			
+		internal TextChunk LookupTextChunk (string keyword)
 		{
 			foreach (Chunk chunk in Chunks) {
 				TextChunk text = chunk as TextChunk;
@@ -713,5 +928,161 @@ namespace Beagle.Util {
 			}
 			return null;	
 		}
+
+		public string Description {
+			get {
+				string description = LookupText ("Description");
+
+				if (description != null)
+					return description;
+				else
+					return LookupText ("Comment");
+			}
+		}
+
+		public Xmp.XmpFile GetXmp ()
+		{
+			TextChunk xmpchunk  = LookupTextChunk ("XML:com.adobe.xmp");
+			if (xmpchunk == null)
+				xmpchunk = LookupTextChunk ("XMP");
+
+			if (xmpchunk == null)
+				return null;
+			
+			using (MemoryStream stream = new MemoryStream (xmpchunk.TextData)) {
+				return new Xmp.XmpFile (stream);
+			}
+		}
+
+		public System.DateTime Date {
+			get {
+				// FIXME: we should first try parsing the
+				// LookupText ("Creation Time") as a valid date
+
+				foreach (Chunk chunk in Chunks) {
+					TimeChunk time = chunk as TimeChunk;
+					if (time != null)
+						return time.Time.ToUniversalTime ();
+				}
+				return DateTime.UtcNow;
+			}
+		}
+		
+#if ENABLE_NUNIT
+		[TestFixture]
+		public class Tests {
+			public Tests ()
+			{
+				Gnome.Vfs.Vfs.Initialize ();
+				Gtk.Application.Init ();
+			}
+
+			[Test]
+			public void Save ()
+			{
+				Gdk.Pixbuf test = new Gdk.Pixbuf (null, "f-spot-32.png");
+				string path = ImageFile.TempPath ("joe.png");
+				test.Save (path, "png");
+				PngFile pimg = new PngFile (path);
+
+				string desc = "this is a png test";
+				string desc2 = "\000xa9 Novell Inc.";
+				pimg.SetDescription (desc);
+				using (Stream stream = File.OpenWrite (path)) {
+					pimg.Save (stream);
+				}
+				PngFile mod = new PngFile (path);
+				Assert.AreEqual (mod.Orientation, PixbufOrientation.TopLeft);
+				Assert.AreEqual (mod.Description, desc);
+				pimg.SetDescription (desc2);
+
+				using (Stream stream = File.OpenWrite (path)) {
+					pimg.Save (stream);
+				}
+				mod = new PngFile (path);
+				Assert.AreEqual (mod.Description, desc2);
+				
+				File.Delete (path);
+			}
+
+			[Test]
+			public void Load ()
+			{
+				string desc = "(c) 2004 Jakub Steiner\n\nCreated with The GIMP";
+				Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly ();
+				string path  = ImageFile.TempPath ("maddy.png");
+				using (Stream output = File.OpenWrite (path)) {
+					using (Stream source = assembly.GetManifestResourceStream ("f-spot-adjust-colors.png")) {
+						byte [] buffer = new byte [256];
+						while (source.Read (buffer, 0, buffer.Length) > 0) {
+							output.Write (buffer, 0, buffer.Length);
+						}
+					}
+				}
+				PngFile pimg = new PngFile (path);
+				Assert.AreEqual (pimg.Description, desc);
+
+				File.Delete (path);
+			}
+		}
+#endif
+
+#if false
+		public class ImageFile {
+			string Path;
+			public ImageFile (string path)
+			{
+				this.Path = path;
+			}
+		}
+
+		public static void Main (string [] args) 
+		{
+			System.Collections.ArrayList failed = new System.Collections.ArrayList ();
+			Gtk.Application.Init ();
+			foreach (string path in args) {
+				Gtk.Window win = new Gtk.Window (path);
+				Gtk.HBox box = new Gtk.HBox ();
+				box.Spacing = 12;
+				win.Add (box);
+				Gtk.Image image;
+				image = new Gtk.Image ();
+
+				System.DateTime start = System.DateTime.Now;
+				System.TimeSpan one = start - start;
+				System.TimeSpan two = start - start;
+				try {
+					start = System.DateTime.Now;
+					image.Pixbuf = new Gdk.Pixbuf (path);
+					one = System.DateTime.Now - start;
+				}  catch (System.Exception e) {
+				}
+				box.PackStart (image);
+
+				image = new Gtk.Image ();
+				try {
+					start = System.DateTime.Now;
+					PngFile png = new PngFile (path);
+					image.Pixbuf = png.GetPixbuf ();
+					two = System.DateTime.Now - start;
+				} catch (System.Exception e) {
+					failed.Add (path);
+					//System.Console.WriteLine ("Error loading {0}", path);
+					System.Console.WriteLine (e.ToString ());
+				}
+
+				System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
+				box.PackStart (image);
+				win.ShowAll ();
+			}
+			
+			System.Console.WriteLine ("{0} Failed to Load", failed.Count);
+			foreach (string fail_path in failed) {
+				System.Console.WriteLine (fail_path);
+			}
+
+			Gtk.Application.Run ();
+		}
+#endif
 	}
 }

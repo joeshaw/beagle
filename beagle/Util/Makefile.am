@@ -83,35 +83,39 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
-	$(srcdir)/FSpot/EndianConverter.cs	\
+	$(srcdir)/FSpot/Bim.cs			\
+	$(srcdir)/FSpot/BitConverter.cs		\
 	$(srcdir)/FSpot/Exif.cs			\
+	$(srcdir)/FSpot/IptcFile.cs		\
 	$(srcdir)/FSpot/JpegHeader.cs		\
 	$(srcdir)/FSpot/MetadataStore.cs	\
 	$(srcdir)/FSpot/PngFile.cs		\
+	$(srcdir)/FSpot/PixbufUtils.cs		\
 	$(srcdir)/FSpot/Tiff.cs			\
 	$(srcdir)/FSpot/XmpFile.cs		\
-	$(srcdir)/SemWeb/ForwardLogic.cs		\
-	$(srcdir)/SemWeb/KnowledgeModel.cs		\
-	$(srcdir)/SemWeb/MemoryStore.cs		\
-	$(srcdir)/SemWeb/N3Parser.cs			\
-	$(srcdir)/SemWeb/N3Writer.cs			\
-	$(srcdir)/SemWeb/NamespaceManager.cs		\
-	$(srcdir)/SemWeb/Query.cs			\
-	$(srcdir)/SemWeb/RdfParser.cs			\
-	$(srcdir)/SemWeb/RdfWriter.cs			\
-	$(srcdir)/SemWeb/Reasoning.cs			\
-	$(srcdir)/SemWeb/Resource.cs			\
-	$(srcdir)/SemWeb/RSquary.cs			\
-	$(srcdir)/SemWeb/RSquaryFilters.cs		\
-	$(srcdir)/SemWeb/Sparql.cs			\
-	$(srcdir)/SemWeb/SQLStore.cs			\
-	$(srcdir)/SemWeb/Statement.cs			\
-	$(srcdir)/SemWeb/Store.cs			\
-	$(srcdir)/SemWeb/UriMap.cs			\
-	$(srcdir)/SemWeb/Util.cs			\
-	$(srcdir)/SemWeb/XmlParser.cs			\
-	$(srcdir)/SemWeb/XmlWriter.cs			\
-	$(srcdir)/SemWeb/XPathSemWebNavigator.cs	\
+	$(srcdir)/SemWeb/AssemblyInfo.cs        \
+	$(srcdir)/SemWeb/NamespaceManager.cs    \
+	$(srcdir)/SemWeb/Util.cs                \
+	$(srcdir)/SemWeb/UriMap.cs              \
+	$(srcdir)/SemWeb/Resource.cs            \
+	$(srcdir)/SemWeb/Statement.cs           \
+	$(srcdir)/SemWeb/Store.cs               \
+	$(srcdir)/SemWeb/MemoryStore.cs         \
+	$(srcdir)/SemWeb/SQLStore.cs            \
+	$(srcdir)/SemWeb/RdfReader.cs           \
+	$(srcdir)/SemWeb/RdfXmlReader.cs        \
+	$(srcdir)/SemWeb/N3Reader.cs            \
+	$(srcdir)/SemWeb/RdfWriter.cs           \
+	$(srcdir)/SemWeb/RdfXmlWriter.cs        \
+	$(srcdir)/SemWeb/N3Writer.cs            \
+	$(srcdir)/SemWeb/RSquary.cs             \
+	$(srcdir)/SemWeb/LiteralFilters.cs      \
+	$(srcdir)/SemWeb/Query.cs               \
+	$(srcdir)/SemWeb/Inference.cs           \
+	$(srcdir)/SemWeb/RDFS.cs                \
+	$(srcdir)/SemWeb/Algos.cs               \
+	$(srcdir)/SemWeb/Remote.cs              \
+	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
 	$(srcdir)/PropertyKeywordAttribute.cs
 
 if ENABLE_THUNDERBIRD

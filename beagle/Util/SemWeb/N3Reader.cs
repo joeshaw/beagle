@@ -23,6 +23,8 @@ namespace SemWeb {
 		Entity entDAMLEQUIV = "http://www.daml.org/2000/12/daml+oil#equivalentTo";
 		Entity entLOGIMPLIES = "http://www.w3.org/2000/10/swap/log#implies";
 		
+		bool addFailuresAsWarnings = false;
+		
 		public N3Reader(TextReader source) {
 			this.sourcestream = source;
 		}
@@ -38,6 +40,7 @@ namespace SemWeb {
 			public NamespaceManager namespaces;
 			public UriMap namedNode;
 			public Hashtable anonymous;
+			public Hashtable variables;
 			public Entity meta;
 			public bool UsingKeywords;
 			public Hashtable Keywords;
@@ -48,10 +51,11 @@ namespace SemWeb {
 		public override void Select(StatementSink store) {
 			ParseContext context = new ParseContext();
 			context.source = new MyReader(sourcestream);
-			context.store = GetDupCheckSink(store);
+			context.store = store;
 			context.namespaces = namespaces;
 			context.namedNode = new UriMap();
 			context.anonymous = new Hashtable();
+			context.variables = new Hashtable();
 			context.meta = Meta;
 			
 			while (ReadStatement(context)) { }
@@ -126,8 +130,18 @@ namespace SemWeb {
 		
 		private char ReadPredicates(Resource subject, ParseContext context) {			
 			char punctuation = ';';
-			while (punctuation == ';')
+			while (punctuation == ';') {
 				punctuation = ReadPredicate(subject, context);
+
+				// if we read a semicolon, we may still be done
+				// if it's followed by a period (end of statement)
+				// or bracket (end of bnode), or brace (end of formula, N3).
+				if (punctuation == ';') {
+					int npunc = NextPunc(context.source);
+					if (npunc == (int)'.' || npunc == (int)']' || npunc == (int)'}')
+						return ReadPunc(context.source);
+				}
+			}
 			return punctuation;
 		}
 		
@@ -145,7 +159,7 @@ namespace SemWeb {
 				punctuation = ReadPunc(context.source);
 			}
 			if (punctuation != '.' && punctuation != ';' && punctuation != ']' && punctuation != '}')
-				OnError("Expecting a period, semicolon, comma, or close-bracket but found '" + punctuation + "'", loc);
+				OnError("Expecting a period, semicolon, comma, close-bracket, or close-brace but found '" + punctuation + "'", loc);
 			
 			return punctuation;
 		}
@@ -350,6 +364,7 @@ namespace SemWeb {
 				while (true) {
 					int ci = source.Peek();
 					if (ci == -1) break;
+					if (ci == ']' || ci == ')' || ci == '}') break;
 					
 					// punctuation followed by a space means the punctuation is
 					// punctuation, and not part of this token
@@ -405,7 +420,7 @@ namespace SemWeb {
 				if (reverse || reverse2) OnError("is...of is not allowed in path expressions", loc);
 				if (!(path is Entity)) OnError("A path expression cannot be a literal", loc);
 				
-				Entity anon = new Entity(null);
+				Entity anon = new BNode();
 				
 				Statement s;
 				if (pathType == '!' || pathType == '.') {
@@ -442,16 +457,18 @@ namespace SemWeb {
 			if (prefix == "_") {
 				Resource ret = (Resource)context.anonymous[str];
 				if (ret == null) {
-					ret = new Entity(null);
+					ret = new BNode(str.Substring(colon+1));
 					context.anonymous[str] = ret;
 				}
 				return ret;
-			} else if (prefix == "") {
-				return GetResource(context, (BaseUri == null ? "" : BaseUri) + str.Substring(colon+1));
+			} else if (prefix == "" && context.namespaces.GetNamespace(prefix) == null) {
+				return GetResource(context, (BaseUri == null ? "#" : BaseUri) + str.Substring(colon+1));
 			} else {
 				string ns = context.namespaces.GetNamespace(prefix);
 				if (ns == null)
 					OnError("Prefix is undefined: " + str, loc);
+				if (prefix != "")
+					Namespaces.AddNamespace(ns, prefix);
 				return GetResource(context, ns + str.Substring(colon+1));
 			}
 		}
@@ -530,11 +547,13 @@ namespace SemWeb {
 			// VARIABLE
 			
 			if (str[0] == '?') {
-				string uri = str.Substring(1);
-				if (BaseUri != null)
-					uri = BaseUri + uri;
-				Entity var = GetResource(context, uri);
-				AddVariable(var);
+				string name = str.Substring(1);
+				Entity var = (Entity)context.variables[name];
+				if (var == null) {
+					var = new Variable(name);
+					AddVariable((Variable)var);
+					context.variables[name] = var;
+				}
 				return var;
 			}
 			
@@ -546,7 +565,7 @@ namespace SemWeb {
 			// ANONYMOUS
 			
 			if (str == "[") {
-				Entity ret = new Entity(null);
+				Entity ret = new BNode();
 				ReadWhitespace(context.source);
 				if (context.source.Peek() != ']') {
 					char bracket = ReadPredicates(ret, context);
@@ -572,9 +591,9 @@ namespace SemWeb {
 						break;
 					
 					if (ent == null) {
-						ent = new Entity(null);
+						ent = new BNode();
 					} else {
-						Entity sub = new Entity(null);
+						Entity sub = new BNode();
 						Add(context.store, new Statement(ent, entRDFREST, sub, context.meta), loc);
 						ent = sub;
 					}
@@ -591,15 +610,24 @@ namespace SemWeb {
 			if (str == ")")
 				return null; // Should I use a more precise end-of-list return value?
 			
-			// REIFICATION
+			// FORMULA
 			
 			if (str == "{") {
-				// Embedded resource
+				// ParseContext is a struct, so this gives us a clone.
 				ParseContext newcontext = context;
-				newcontext.meta = new Entity(null);
+				
+				// The formula is denoted by a blank node
+				newcontext.meta = new BNode();
+				
+				// According to the spec, _:xxx anonymous nodes are
+				// local to the formula.  But ?$variables (which aren't
+				// mentioned in the spec) are treated as global names.
+				newcontext.anonymous = new Hashtable();
+				
 				while (NextPunc(context.source) != '}' && ReadStatement(newcontext)) { }
 				ReadWhitespace(context.source);
 				if (context.source.Peek() == '}') context.source.Read();
+				
 				return newcontext.meta;
 			}
 			
@@ -628,7 +656,10 @@ namespace SemWeb {
 			try {
 				store.Add(statement);
 			} catch (Exception e) {
-				OnError("Add failed on statement { " + statement + " }: " + e.Message, position, e);
+				if (!addFailuresAsWarnings)
+					OnError("Add failed on statement { " + statement + " }: " + e.Message, position, e);
+				else
+					OnWarning("Add failed on statement { " + statement + " }: " + e.Message, position, e);
 			}
 		}
 		
@@ -637,6 +668,9 @@ namespace SemWeb {
 		}
 		private void OnError(string message, Location position, Exception cause) {
 			throw new ParserException(message + ", line " + position.Line + " col " + position.Col, cause);
+		}
+		private void OnWarning(string message, Location position, Exception cause) {
+			OnWarning(message + ", line " + position.Line + " col " + position.Col);
 		}
 		
 	

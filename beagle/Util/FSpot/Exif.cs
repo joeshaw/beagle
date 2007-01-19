@@ -8,17 +8,39 @@
 //
 // (C) 2002, 2004, 2005 Novell, Inc.
 //
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 
 using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-namespace Beagle.Util {
+using Mono.Unix;
+
+namespace Beagle.Util.Exif {
 	public enum ExifTag {
 		InteroperabilityIndex		= 0x0001,
 		InteroperabilityVersion	        = 0x0002,
 		ImageWidth 			= 0x0100,
-		ImageLength 			= 0x0101,
+		ImageHeight 			= 0x0101,
 		BitsPersample 	         	= 0x0102,
 		Compression 			= 0x0103,
 		PhotometricInterpretation 	= 0x0106,
@@ -52,7 +74,7 @@ namespace Beagle.Util {
 		ReferenceBlackWhite		= 0x0214,
 		RelatedImageFileFormat   	= 0x1000,
 		RelatedImageWidth		= 0x1001,
-		RelatedImageLength		= 0x1002,
+		RelatedImageHeight		= 0x1002,
 		CFARepeatPatternDim		= 0x828d,
 		CFAPattern			= 0x828e,
 		BatteryLevel			= 0x828f,
@@ -129,7 +151,7 @@ namespace Beagle.Util {
 		PimIfdPointer              = 0xc4a5
 	}
 	
-	public enum ExifByteOrder {
+	public enum ByteOrder {
 		Motorola,
 		Intel
 	}
@@ -145,7 +167,7 @@ namespace Beagle.Util {
 		SRational = 10
 	}
 	
-	public enum ExifIfd {
+	public enum Ifd {
 		Zero = 0,
 		One,
 		Exif,
@@ -166,7 +188,7 @@ namespace Beagle.Util {
 		static extern IntPtr exif_tag_get_description (ExifTag tag);
 		
 		[DllImport ("libexif.dll")]
-		static extern IntPtr exif_byte_order_get_name (ExifByteOrder order);
+		static extern IntPtr exif_byte_order_get_name (ByteOrder order);
 		
 		[DllImport ("libexif.dll")]
 		static extern IntPtr exif_format_get_name (ExifFormat format);
@@ -175,7 +197,7 @@ namespace Beagle.Util {
 		static extern char exif_format_get_size (ExifFormat format);
 		
 		[DllImport ("libexif.dll")]
-		static extern IntPtr exif_ifd_get_name (ExifIfd ifd);
+		static extern IntPtr exif_ifd_get_name (Ifd ifd);
 		
 		public static string GetTagName (ExifTag tag)
 		{
@@ -196,7 +218,7 @@ namespace Beagle.Util {
 			return Marshal.PtrToStringAnsi (raw_ret);
 		}
 		
-		public static string GetByteOrderName (ExifByteOrder order)
+		public static string GetByteOrderName (ByteOrder order)
 		{
 			IntPtr raw_ret = exif_byte_order_get_name (order);
 			return Marshal.PtrToStringAnsi (raw_ret);
@@ -213,27 +235,27 @@ namespace Beagle.Util {
 			return exif_format_get_size (format);
 		}
 		
-		public static string GetIfdName (ExifIfd ifd)
+		public static string GetIfdName (Ifd ifd)
 		{			
 			IntPtr raw_ret = exif_ifd_get_name (ifd);
 			return Marshal.PtrToStringAnsi (raw_ret);
 		}
 		
-		public static string GetIfdNameExtended (ExifIfd ifd)
+		public static string GetIfdNameExtended (Ifd ifd)
 		{
 			switch (ifd) {
-			case ExifIfd.Zero:
-				return Mono.Unix.Catalog.GetString ("Image Directory");
-			case ExifIfd.One:
-				return Mono.Unix.Catalog.GetString ("Thumbnail Directory");
-			case ExifIfd.Exif:
-				return Mono.Unix.Catalog.GetString ("Exif Directory");
-			case ExifIfd.Gps:
-				return Mono.Unix.Catalog.GetString ("GPS Directory");
-			case ExifIfd.InterOperability:
-				return Mono.Unix.Catalog.GetString ("InterOperability Directory");
+			case Ifd.Zero:
+				return Catalog.GetString ("Image Directory");
+			case Ifd.One:
+				return Catalog.GetString ("Thumbnail Directory");
+			case Ifd.Exif:
+				return Catalog.GetString ("Exif Directory");
+			case Ifd.Gps:
+				return Catalog.GetString ("GPS Directory");
+			case Ifd.InterOperability:
+				return Catalog.GetString ("InterOperability Directory");
 			default:
-				return Mono.Unix.Catalog.GetString ("Unknown Directory");
+				return Catalog.GetString ("Unknown Directory");
 			}
 		}
 		
@@ -284,11 +306,11 @@ namespace Beagle.Util {
 	
 	[StructLayout(LayoutKind.Sequential)]
 	internal unsafe struct _ExifContent {
-		IntPtr entries;
-		uint count; 
-		IntPtr parent;
+		public IntPtr entries;
+		public uint count; 
+		public IntPtr parent;
 		
-		IntPtr priv;
+		public IntPtr priv;
 	}
 	
 	public class ExifContent : ExifObject {
@@ -420,7 +442,7 @@ namespace Beagle.Util {
 		
 		public IntPtr parent;
 		
-		IntPtr priv;
+		public IntPtr priv;
 	}
 	
 	
@@ -526,13 +548,16 @@ namespace Beagle.Util {
 			get {
 				unsafe {
 					byte [] data = new byte [_handle->size]; 
-					Marshal.Copy (_handle->data, data, 0, (int)_handle->size);
+					
+					if (data.Length > 0)
+						Marshal.Copy (_handle->data, data, 0, (int)_handle->size);
+					
 					return data;
 				}
 			}
 		}
 		
-		public void SetData (byte [] data, bool check_type)
+		public void SetData (byte [] data, int size)
 		{
 			unsafe {
 				if (data == null || data.Length == 0)
@@ -547,24 +572,24 @@ namespace Beagle.Util {
 				_handle->size = (uint) data.Length;
 				// This needs to be set per type as well but
 				// we do it here as well
-				_handle->components = (uint) data.Length;
+				_handle->components = (uint) (data.Length / size);
 			}
 		}
 		
 		public void SetData (byte []data)
 		{
-			SetData (data, true);
+			SetData (data, 1);
 		}
 
-		public void SetData (ushort [] data)
+		public void SetData (uint s)
 		{
-
-		} 
-		
-		public void SetData (short [] data)
-		{
-			
+			this.SetData (BitConverter.GetBytes (s, this.ByteOrder == ByteOrder.Intel), 4);
 		}
+
+		public void SetData (ushort s)
+		{
+			this.SetData (BitConverter.GetBytes (s, this.ByteOrder == ByteOrder.Intel), 2);
+		}	    
 
 		public void SetData (string value)
 		{
@@ -573,7 +598,7 @@ namespace Beagle.Util {
 			System.Text.Encoding.UTF8.GetBytes (value, 0, value.Length, tmp, 0);
 			tmp[len] = 0;
 			System.Console.WriteLine ("value = {0} len = {1}", value, len);
-			SetData (tmp, false);
+			SetData (tmp, 1);
 		}
 
 		public void SetData (System.DateTime time)
@@ -584,7 +609,7 @@ namespace Beagle.Util {
 		private unsafe void PutBytes (byte *dest, byte *src, int count)
 		{
 			int i = 0;
-			if (System.BitConverter.IsLittleEndian == (this.ByteOrder == ExifByteOrder.Intel)) {
+			if (System.BitConverter.IsLittleEndian == (this.ByteOrder == ByteOrder.Intel)) {
 				for (i = 0; i < count; i++) {
 					//System.Console.WriteLine ("Copying normal byte [{0}]= {1}", i, src[i]);
 					dest [i] = src [i];
@@ -646,7 +671,7 @@ namespace Beagle.Util {
 			return null;
 		}
 
-		public ExifByteOrder ByteOrder
+		public ByteOrder ByteOrder
 		{
 			get {
 				return parent.Parent.GetByteOrder ();
@@ -693,7 +718,7 @@ namespace Beagle.Util {
 					try {
 						exif_entry_get_value_brief (this.Handle);
 						fallback = 1;
-					} catch {
+					} catch (EntryPointNotFoundException) {
 						fallback = -1;
 					}
 				}
@@ -727,16 +752,16 @@ namespace Beagle.Util {
 	
 	[StructLayout(LayoutKind.Sequential)]
 	internal struct _ExifData {
-		IntPtr ifd0;
-		IntPtr ifd1;
-		IntPtr ifd_exif;
-		IntPtr ifd_gps;
-		IntPtr ifd_interop;
+		internal IntPtr ifd0;
+		internal IntPtr ifd1;
+		internal IntPtr ifd_exif;
+		internal IntPtr ifd_gps;
+		internal IntPtr ifd_interop;
 
 		internal IntPtr  data;
 		internal int     size;
 		
-		IntPtr priv;
+		internal IntPtr priv;
 	}
 	
 	public class ExifData : ExifObject {
@@ -760,7 +785,12 @@ namespace Beagle.Util {
 		
 		[DllImport ("libexif.dll")]
 		internal static extern IntPtr exif_data_new_from_data (byte [] data, uint size);
-		
+
+		public ExifData (byte [] data)
+		{
+			handle = new HandleRef (this, exif_data_new_from_data (data, (uint) data.Length));
+		}
+
 		public ExifData (byte [] data, uint size)
 		{
 			handle = new HandleRef (this, exif_data_new_from_data (data, size));
@@ -802,7 +832,15 @@ namespace Beagle.Util {
 			exif_data_unref (handle);
 		}
 		
-		public ExifContent GetContents (ExifIfd ifd)
+		[DllImport ("libexif.dll")]
+		internal static extern void exif_data_dump (HandleRef data);
+
+		public void Dump ()
+		{
+			exif_data_dump (handle);
+		}
+		
+		public ExifContent GetContents (Ifd ifd)
 		{
 			Assemble ();
 
@@ -817,9 +855,9 @@ namespace Beagle.Util {
 		}
 
 		[DllImport("libexif.dll")]
-		internal static extern ExifByteOrder exif_data_get_byte_order (HandleRef handle);
+		internal static extern ByteOrder exif_data_get_byte_order (HandleRef handle);
 		
-		public ExifByteOrder GetByteOrder ()
+		public ByteOrder GetByteOrder ()
 		{
 			return exif_data_get_byte_order (handle);
 		}

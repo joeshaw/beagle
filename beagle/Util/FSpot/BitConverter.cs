@@ -1,5 +1,5 @@
 //
-// EndianConverter.cs
+// BitConverter.cs
 //
 // Authors:
 //     Larry Ewing <lewing@novell.com>
@@ -31,7 +31,7 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Beagle.Util {
-	public class EndianConverter {
+	public class BitConverter {
 		public static uint Swap (uint val, bool little) 
 		{
 			return (little != System.BitConverter.IsLittleEndian) ?
@@ -121,4 +121,3 @@ namespace Beagle.Util {
 		}
 	}
 }
-
