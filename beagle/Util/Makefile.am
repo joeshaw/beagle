@@ -83,16 +83,16 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/UriFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
-	$(srcdir)/FSpot/Bim.cs			\
-	$(srcdir)/FSpot/BitConverter.cs		\
-	$(srcdir)/FSpot/Exif.cs			\
-	$(srcdir)/FSpot/IptcFile.cs		\
-	$(srcdir)/FSpot/JpegHeader.cs		\
-	$(srcdir)/FSpot/MetadataStore.cs	\
-	$(srcdir)/FSpot/PngFile.cs		\
-	$(srcdir)/FSpot/PixbufUtils.cs		\
-	$(srcdir)/FSpot/Tiff.cs			\
-	$(srcdir)/FSpot/XmpFile.cs		\
+	$(srcdir)/F-Spot/Bim.cs			\
+	$(srcdir)/F-Spot/BitConverter.cs		\
+	$(srcdir)/F-Spot/Exif.cs			\
+	$(srcdir)/F-Spot/IptcFile.cs		\
+	$(srcdir)/F-Spot/JpegHeader.cs		\
+	$(srcdir)/F-Spot/MetadataStore.cs	\
+	$(srcdir)/F-Spot/PngFile.cs		\
+	$(srcdir)/F-Spot/PixbufUtils.cs		\
+	$(srcdir)/F-Spot/Tiff.cs			\
+	$(srcdir)/F-Spot/XmpFile.cs		\
 	$(srcdir)/SemWeb/AssemblyInfo.cs        \
 	$(srcdir)/SemWeb/NamespaceManager.cs    \
 	$(srcdir)/SemWeb/Util.cs                \
