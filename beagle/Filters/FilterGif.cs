@@ -30,6 +30,7 @@ using System.Text;
 
 using Beagle.Util;
 using Beagle.Daemon;
+using BitConverter = Beagle.Util.BitConverter;
 
 namespace Beagle.Filters {
 
@@ -72,8 +73,8 @@ namespace Beagle.Filters {
 
 				AddProperty (Beagle.Property.NewUnsearched ("gif:version", new string (gif_version)));
 
-				ushort width = EndianConverter.ToUInt16 (data, 6, true);
-				ushort height = EndianConverter.ToUInt16 (data, 8, true);
+				ushort width = BitConverter.ToUInt16 (data, 6, true);
+				ushort height = BitConverter.ToUInt16 (data, 8, true);
 
 				Width = width;
 				Height = height;

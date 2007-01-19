@@ -29,6 +29,7 @@ using System.Text;
 
 using Beagle.Util;
 using Beagle.Daemon;
+using BitConverter = Beagle.Util.BitConverter;
 
 namespace Beagle.Filters
 {
@@ -75,26 +76,26 @@ namespace Beagle.Filters
 			// We're not using it for anything, so we might as well not parse it.
 			/*
 			BitmapHeader bmh;
-			bmh.type        = EndianConverter.ToUInt16 (data, 0, true);
-			bmh.size        = EndianConverter.ToUInt32 (data, 2, true);
-			bmh.reserved1   = EndianConverter.ToUInt16 (data, 6, true);
-			bmh.reserved2   = EndianConverter.ToUInt16 (data, 8, true);
-			bmh.offset      = EndianConverter.ToUInt32 (data, 10, true);
+			bmh.type        = BitConverter.ToUInt16 (data, 0, true);
+			bmh.size        = BitConverter.ToUInt32 (data, 2, true);
+			bmh.reserved1   = BitConverter.ToUInt16 (data, 6, true);
+			bmh.reserved2   = BitConverter.ToUInt16 (data, 8, true);
+			bmh.offset      = BitConverter.ToUInt32 (data, 10, true);
 			*/
 			
 			/* Read the Info Header */
 			BitmapInfoHeader bmih;
-			bmih.size               = EndianConverter.ToUInt32 (data, 14, true);
-			bmih.width              = EndianConverter.ToInt32  (data, 18, true);
-			bmih.height             = EndianConverter.ToInt32  (data, 22, true);
-			bmih.planes             = EndianConverter.ToUInt16 (data, 26, true);
-			bmih.bits               = EndianConverter.ToUInt16 (data, 28, true);
-			bmih.compression        = (BitmapCompressionTypes) EndianConverter.ToUInt32 (data, 30, true);
-			bmih.imagesize          = EndianConverter.ToUInt32 (data, 34, true);
-			bmih.xresolution        = EndianConverter.ToInt32  (data, 38, true);
-			bmih.yresolution        = EndianConverter.ToInt32  (data, 42, true);
-			bmih.ncolors            = EndianConverter.ToUInt32 (data, 46, true);
-			bmih.importantcolors    = EndianConverter.ToUInt32 (data, 50, true);
+			bmih.size               = BitConverter.ToUInt32 (data, 14, true);
+			bmih.width              = BitConverter.ToInt32  (data, 18, true);
+			bmih.height             = BitConverter.ToInt32  (data, 22, true);
+			bmih.planes             = BitConverter.ToUInt16 (data, 26, true);
+			bmih.bits               = BitConverter.ToUInt16 (data, 28, true);
+			bmih.compression        = (BitmapCompressionTypes) BitConverter.ToUInt32 (data, 30, true);
+			bmih.imagesize          = BitConverter.ToUInt32 (data, 34, true);
+			bmih.xresolution        = BitConverter.ToInt32  (data, 38, true);
+			bmih.yresolution        = BitConverter.ToInt32  (data, 42, true);
+			bmih.ncolors            = BitConverter.ToUInt32 (data, 46, true);
+			bmih.importantcolors    = BitConverter.ToUInt32 (data, 50, true);
 
 			Width = bmih.width;
 			Height = bmih.height;

@@ -29,6 +29,7 @@ using System.IO;
 
 using Beagle.Util;
 using Beagle.Daemon;
+using Beagle.Util.Xmp;
 
 using SemWeb;
 
@@ -73,7 +74,7 @@ namespace Beagle.Filters {
 						colorType = "Greyscale";
 						hasAlpha = true;
 						break;
-					case PngHeader.ColorType.RgbAlpha:
+					case PngHeader.ColorType.RgbA:
 						colorType = "Truecolor";
 						hasAlpha = true;
 						break;

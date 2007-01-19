@@ -31,6 +31,7 @@ using System.Text;
 using Beagle.Util;
 using Beagle.Daemon;
 using Beagle.Util.Tiff;
+using Beagle.Util.Xmp;
 
 using SemWeb;
 
