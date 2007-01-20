@@ -71,7 +71,12 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", "[%{*:xml}\n]", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
-			pc.RedirectStandardError = true;
+
+			// Runs inside the child process after fork() but before exec()
+			pc.ChildProcessSetup += delegate {
+				// Let rpm run for 90 seconds, max.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
+			};
 			
 			try {
 				pc.Start ();

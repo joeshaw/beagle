@@ -85,7 +85,7 @@ namespace Beagle.Util {
 			int rc = set_scheduler_policy_batch ();
 
 			if (rc < 0)
-				Log.Debug ("Unable to set scheduler policy to SCHED_BATCH");
+				Log.Warn ("Unable to set scheduler policy to SCHED_BATCH");
 
 			return rc >= 0;
 		}
@@ -95,9 +95,32 @@ namespace Beagle.Util {
 			int rc = set_scheduler_policy_other ();
 
 			if (rc < 0)
-				Log.Debug ("Unable to set scheduler policy to SCHED_OTHER");
+				Log.Warn ("Unable to set scheduler policy to SCHED_OTHER");
 
 			return rc >= 0;
 		}
+
+		//////////////////////////////////////////////////////////////
+		// Process limits (rlimit)
+
+		[DllImport ("libbeagleglue")]
+		static extern int set_rlimit (Resource resource, int limit);
+
+		// If you change these, you also have to deal with them in
+		// glue/rlimit-glue.c!  For more descriptions, look at the
+		// setrlimit(2) man page.
+		public enum Resource {
+			Cpu          = 0, // Seconds of CPU time
+			AddressSpace = 1  // Addressed memory (VmSize)
+		}
+
+		static public void SetResourceLimit (Resource resource, int limit)
+		{
+			int rc = set_rlimit (resource, limit);
+
+			if (rc < 0)
+				Log.Warn ("Unable to set resource limit ({0} to {1})", resource, limit);
+		}
+
 	}
 }

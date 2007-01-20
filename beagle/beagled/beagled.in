@@ -13,9 +13,7 @@ if [ -z $installed ] ; then
 
     export _BEAGLED_INDEX_HELPER_PATH="."
 
-    # The stuff in webserver, Tiles and images is only needed when
-    # web services are enabled.
-    export MONO_PATH="../Util:../BeagleClient:./webserver:../Tiles:../images${MONO_PATH+:$MONO_PATH}"
+    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
 
     export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
     

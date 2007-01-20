@@ -38,6 +38,12 @@ namespace Beagle.Filters {
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
+			// Runs inside the child process after form() but before exec()
+			pc.ChildProcessSetup += delegate {
+				// Let pdfinfo run for 10 CPU seconds, max.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 10);
+			};
+
 			try {
 				pc.Start ();
 			} catch (SafeProcessException e) {
@@ -104,9 +110,15 @@ namespace Beagle.Filters {
 		{
 			// create new external process
 			pc = new SafeProcess ();
-			pc.Arguments = new string [] { "pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
+			pc.Arguments = new string [] { "pdftotext", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
+
+			// Runs inside the child process after form() but before exec()
+			pc.ChildProcessSetup += delegate {
+				// Let pdftotext run for 90 CPU seconds, max.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
+			};
 
 			try {
 				pc.Start ();
@@ -125,6 +137,7 @@ namespace Beagle.Filters {
 
 		protected override void DoPull ()
 		{
+			// InitDoPull() calls Error() if it fails
 			if (! pull_started && ! InitDoPull ())
 				return;
 

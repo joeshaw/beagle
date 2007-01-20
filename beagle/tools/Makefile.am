@@ -45,6 +45,17 @@ cron_SCRIPTS = $(CRAWL_WRAPPER)
 configdir = $(sysconfdir)/beagle
 config_DATA = $(CRAWL_RULES)
 
+DOC_EXTRACTOR_TARGET  = DocExtractor.exe
+DOC_EXTRACTOR_WRAPPER = beagle-doc-extractor
+DOC_EXTRACTOR_CSFILES = $(srcdir)/DocExtractor.cs
+
+$(DOC_EXTRACTOR_TARGET): $(DOC_EXTRACTOR_CSFILES)
+	$(CSC) -out:$@ $(CSFLAGS) $(DOC_EXTRACTOR_CSFILES) $(ASSEMBLIES)
+
+$(DOC_EXTRACTOR_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(DOC_EXTRACTOR_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(DOC_EXTRACTOR_WRAPPER)
+
 INFO_TARGET  = Info.exe
 INFO_WRAPPER = beagle-info
 INFO_CSFILES = $(srcdir)/Info.cs
@@ -125,6 +136,10 @@ if ENABLE_GUI
 TARGETS += $(SETTINGS_TARGET)
 endif
 
+if ENABLE_WV1
+TARGETS += $(DOC_EXTRACTOR_TARGET)
+endif
+
 TARGETS_MDB = $(TARGETS:%=%.mdb)
 
 WRAPPERS = 				\
@@ -136,6 +151,10 @@ WRAPPERS = 				\
 
 if ENABLE_GUI
 WRAPPERS += $(SETTINGS_WRAPPER)
+endif
+
+if ENABLE_WV1
+WRAPPERS += $(DOC_EXTRACTOR_WRAPPER)
 endif
 
 PREBUILT_WRAPPERS =		\
@@ -195,6 +214,7 @@ uninstall-local:
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
 	$(CRAWL_WRAPPER_IN)		\
+	$(DOC_EXTRACTOR_CSFILES)	\
 	$(INFO_CSFILES)			\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\

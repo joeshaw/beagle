@@ -1,10 +1,8 @@
 //
-// FilterDOC.cs : Trivial implementation of a MS Word-document filter.
-//                This filter uses wv1 library - http://wvware.sourceforge.net/
+// FilterDOC.cs: MS Word filter.  Uses an external extractor utility to
+//               actually get the text.
 //
-// Author: Veerapuram Varadhan <vvaradhan@novell.com>
-//
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 // 
 
 //
@@ -42,20 +40,6 @@ namespace Beagle.Filters {
 
 		//////////////////////////////////////////////////////////
 
-		private delegate void TextHandlerCallback (IntPtr byteArray, int dataLen, 
-							   IntPtr byteHotArray, int hotDataLen,
-							   bool appendStructBrk);
-		
-		[DllImport ("libbeagleglue")]
-		private static extern int wv1_glue_init_doc_parsing (string fname, TextHandlerCallback callback);
-
-		[DllImport ("libbeagleglue")]
-		private static extern int wv1_init ();
-
-		//////////////////////////////////////////////////////////
-
-		static bool wv1_Initted = false;
-
 		public FilterDOC () 
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/msword"));
@@ -64,40 +48,6 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 		}
 		
-  		private void IndexText (IntPtr byteArray, int dataLen, 
-					IntPtr byteHotArray, int hotDataLen,
-					bool appendStructBrk)
-  		{
-			byte[] data = null;
-			string str = null;
-			string strHot = null;
-
-			try {
-				if (dataLen > 0){
-					data = new byte[dataLen];
-					Marshal.Copy (byteArray, data, 0, dataLen);
-				}
-			
-				if (data != null)
-					str = System.Text.Encoding.UTF8.GetString (data, 0, dataLen);
-
-				data = null;
-				if (hotDataLen > 0) {
-					data = new byte [hotDataLen];
-					Marshal.Copy (byteHotArray, data, 0, hotDataLen);
-				}
-				if (data != null)
-					strHot = System.Text.Encoding.UTF8.GetString (data, 0, hotDataLen);
-			
-				AppendText (str, strHot);
-			
-				if (appendStructBrk)
-					AppendStructuralBreak ();
-			} catch (Exception e) {
-				Logger.Log.Debug ("Exception occurred in Word-Doc filter. {0}", e);
-			}
-  		}
-
 		override protected void OpenStorage (FileInfo info)
 		{
 			FileName = info.FullName;
@@ -124,30 +74,92 @@ namespace Beagle.Filters {
 			}
 		}
 
-		override protected void DoPull ()
-		{
-			int ret;
-			TextHandlerCallback textHandler;
-			textHandler = new TextHandlerCallback (IndexText);
+		private bool pull_started = false;
+		private SafeProcess pc;
+		private StreamReader pout;
 
-			if (!wv1_Initted) {
-				wv1_init ();
-				wv1_Initted = true;
+		private bool RunExtractor ()
+		{
+			string extractor_path, exe;
+
+			// Hack, along with magic in beagled-index-helper.in
+			// and tools/wrapper.in to make this work in the
+			// uninstalled case.
+			extractor_path = Environment.GetEnvironmentVariable ("BEAGLE_TOOL_PATH");
+
+			if (extractor_path != null)
+				exe = Path.Combine (extractor_path, "beagle-doc-extractor");
+			else
+				exe = "beagle-doc-extractor";
+
+			pc = new SafeProcess ();
+			pc.Arguments = new string [] { exe, FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = true;
+
+			// Runs inside the child process after form() but before exec()
+			pc.ChildProcessSetup += delegate {
+				// Let pdftotext run for 90 CPU seconds, max.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
+
+				// Some documents make wv1 go crazy with memory.
+				// Limit to 100 megs data size, too.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace, 100*1024*1024);
+			};
+
+			try {
+				pc.Start ();
+			} catch (SafeProcessException e) {
+				Log.Warn (e);
+				Error ();
+				return false;
 			}
 
-			Stopwatch stopwatch = new Stopwatch ();
-			stopwatch.Start ();
+			pout = new StreamReader (pc.StandardOutput);
+			pull_started = true;
 
-			ret = wv1_glue_init_doc_parsing (FileName, textHandler);
-			if (ret == -2)
-				Logger.Log.Error ("{0} : is password protected", FileName);
-			else if (ret == -1)
-				Logger.Log.Error ("{0} : Unable to read", FileName);
-			else if (ret == -3)
-				Logger.Log.Error ("Unable to initiate the parser for {0}", FileName);
-			stopwatch.Stop ();
-			Logger.Log.Info ("Word document extraction done in {0}", stopwatch);
-			Finished ();
+			return true;
+		}
+
+		override protected void DoPull ()
+		{
+			// RunExtractor() calls Error() if it fails
+			if (! pull_started && ! RunExtractor ())
+				return;
+
+			string line = pout.ReadLine ();
+			if (line == null) {
+				Finished ();
+				return;
+			}
+
+			if (line.StartsWith ("**BREAK**"))
+				AppendStructuralBreak ();
+			else if (line.StartsWith ("**HOT**")) {
+				string l = line.Substring (7);
+				AppendText (l, l);
+			} else
+				AppendText (line);
+
+			if (! AllowMoreWords ())
+				Finished ();
+		}
+
+		override protected void DoClose ()
+		{
+			if (! pull_started)
+				return;
+
+			pout.Close ();
+
+			pout = new StreamReader (pc.StandardError);
+			
+			string line;
+			while ((line = pout.ReadLine ()) != null)
+				Log.Warn ("doc extractor [{0}]: {1}", Uri, line);
+
+			pout.Close ();
+			pc.Close ();
 		}
 	}
 }

@@ -5,10 +5,18 @@
 
 if [ -z $installed ] ; then
     echo "*** Running uninstalled @target@ ***"
-    THIS_PATH="../Util:../BeagleClient:../beagled:../images"
-    THIS_EXE="./@target@"
-    THIS_FILTERS="../Filters"
-    THIS_BACKENDS="../beagled"
+
+    if [ -n "$BEAGLE_TOOL_PATH" ]; then
+	TOOLDIR="$PWD/$BEAGLE_TOOL_PATH"
+    else
+	TOOLDIR="."
+    fi
+
+    THIS_LIB_DIR="$TOOLDIR/../glue/.libs"
+    THIS_PATH="$TOOLDIR/../Util:$TOOLDIR/../BeagleClient:$TOOLDIR/../beagled:$TOOLDIR/../images"
+    THIS_EXE="$TOOLDIR/@target@"
+    THIS_FILTERS="$TOOLDIR/../Filters"
+    THIS_BACKENDS="$TOOLDIR/../beagled"
 else
     THIS_PATH="@pkglibdir@:@libdir@"
     THIS_EXE="@pkglibdir@/@target@"
@@ -20,5 +28,5 @@ else
    echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
 fi
 
-MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" BEAGLE_FILTER_PATH="$BEAGLE_FILTER_PATH${THIS_FILTERS+:$THIS_FILTERS}" BEAGLE_BACKEND_PATH="$BEAGLE_BACKEND_PATH${THIS_BACKENDS+:$THIS_BACKENDS}" exec $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
+LD_LIBRARY_PATH="$THIS_LIB_DIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}" MONO_PATH="$THIS_PATH${MONO_PATH+:$MONO_PATH}" BEAGLE_FILTER_PATH="$BEAGLE_FILTER_PATH${THIS_FILTERS+:$THIS_FILTERS}" BEAGLE_BACKEND_PATH="$BEAGLE_BACKEND_PATH${THIS_BACKENDS+:$THIS_BACKENDS}" exec $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
 

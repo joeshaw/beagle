@@ -34,10 +34,15 @@ namespace Beagle.Util {
 
 	public class SafeProcess {
 
+		private delegate void ChildProcessSetupWrapperDelegate (IntPtr user_data);
+		public delegate void ChildProcessSetupDelegate ();
+
 		private bool redirect_stdin, redirect_stdout, redirect_stderr;
 		private string[] args;
 		private UnixStream stdin_stream, stdout_stream, stderr_stream;
 		private int pid;
+
+		public ChildProcessSetupDelegate ChildProcessSetup;
 
 		public string[] Arguments {
 			get { return args; }
@@ -80,7 +85,7 @@ namespace Beagle.Util {
 							     string[] argv,
 							     string[] envp,
 							     int flags,
-							     IntPtr child_setup,
+							     ChildProcessSetupWrapperDelegate child_setup,
 							     IntPtr child_data,
 							     out int pid,
 							     [In,Out] IntPtr standard_input,
@@ -103,6 +108,7 @@ namespace Beagle.Util {
 			}
 
 			IntPtr in_ptr = IntPtr.Zero, out_ptr = IntPtr.Zero, err_ptr = IntPtr.Zero;
+			ChildProcessSetupWrapperDelegate setup_func = null;
 
 			try {
 				if (RedirectStandardInput)
@@ -114,10 +120,25 @@ namespace Beagle.Util {
 				if (RedirectStandardError)
 					err_ptr = Marshal.AllocHGlobal (IntPtr.Size);
 
+				if (ChildProcessSetup != null) {
+					setup_func = delegate { 
+						// Exceptions in here go to stderr
+						try {
+							ChildProcessSetup ();
+						} catch (Exception e) {
+							Console.Error.WriteLine ("Exception caught in child setup function:");
+							Console.Error.WriteLine (e);
+						}
+					};
+				}
+
 				g_spawn_async_with_pipes (null, args, null,
 							  1 << 2, // G_SPAWN_SEARCH_PATH
-							  IntPtr.Zero, IntPtr.Zero, out pid,
-							  in_ptr, out_ptr, err_ptr, out error);
+							  setup_func,
+							  IntPtr.Zero,
+							  out pid,
+							  in_ptr, out_ptr, err_ptr,
+							  out error);
 
 				if (error != IntPtr.Zero)
 					throw new SafeProcessException (new GException (error));
