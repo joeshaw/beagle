@@ -99,7 +99,7 @@ namespace Beagle.Filters {
 
 			// Runs inside the child process after form() but before exec()
 			pc.ChildProcessSetup += delegate {
-				// Let pdftotext run for 90 CPU seconds, max.
+				// Let beagle-doc-extractor run for 90 CPU seconds, max.
 				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
 
 				// Some documents make wv1 go crazy with memory.

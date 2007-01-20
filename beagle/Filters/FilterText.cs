@@ -73,6 +73,10 @@ namespace Beagle.Filters {
 				} else if (str.Length > 0) {
 					AppendText (str);
 					AppendStructuralBreak ();
+					// If we have added 2048 chars, stop
+					// DoPull is called repeatedly till the buffer is full,
+					// so stop after the buffer is full (and possibly overflown)
+					// to reduce number of function calls
 					n += str.Length;
 					n ++; // for the structural break
 				}
