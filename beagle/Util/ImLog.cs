@@ -322,6 +322,9 @@ namespace Beagle.Util {
 
 		protected override void Load ()
 		{
+			if (File.Length == 0)
+				return;
+
 			ClearUtterances ();
 
 			XmlReader reader;
@@ -333,8 +336,7 @@ namespace Beagle.Util {
 									     FileAccess.Read,
 									     FileShare.Read));
 			} catch (Exception e) {
-				Console.WriteLine ("Could not open '{0}'", File.FullName);
-				Console.WriteLine (e);
+				Log.Debug (e, "Could not open '{0}'", File.FullName);
 				return;
 			}
 			
