@@ -2,6 +2,8 @@
 // LabyrithQueryable.cs
 //
 // Copyright (C) 2006 Kevin Kubasik <kevin@kubasik.net>
+// Copyright (C) 2004-2006 Novell, Inc.
+// Copyright (C) 2004 Christopher Orr
 //
 
 //
