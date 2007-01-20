@@ -131,7 +131,6 @@ endif
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
-	-r:System.Web.Services			\
 	-r:System.Data				\
 	-r:Mono.Data.SqliteClient		\
 	-r:Mono.Posix				\
