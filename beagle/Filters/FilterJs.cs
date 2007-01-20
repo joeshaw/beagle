@@ -75,6 +75,10 @@ namespace Beagle.Filters {
 
 		public FilterJavascript ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".js"));
 		}
 

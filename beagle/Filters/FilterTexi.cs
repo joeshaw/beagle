@@ -43,9 +43,14 @@ namespace Beagle.Filters {
 		
 		public FilterTexi ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			// Make this a general texi filter.
 			AddSupportedMimeType ("text/x-texinfo");
 		}
+
 		/*
 		FIXME:
 		Other texi keywords and formatting tags needs to be handled.
@@ -58,7 +63,7 @@ namespace Beagle.Filters {
 			foreach (string keyword in texiKeywords)
 				line = line.Replace (keyword, String.Empty);
 
-			AppendText (line);
+			AppendLine (line);
 			AppendWhiteSpace ();
 		}
 	}

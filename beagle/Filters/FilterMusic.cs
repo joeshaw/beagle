@@ -40,7 +40,10 @@ namespace Beagle.Filters {
 		{
 			// 1: Added duration and bitrate property
 			SetVersion (1);
-			
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			// APE / Monkeys Audio
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ape"));
 

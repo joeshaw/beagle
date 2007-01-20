@@ -59,7 +59,10 @@ namespace Beagle.Filters
 		{
 			SnippetMode = false;
 			SetVersion (4);
+		}
 
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
 

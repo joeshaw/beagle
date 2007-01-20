@@ -89,7 +89,10 @@ namespace Beagle.Filters {
 				// Something else wrong with the XML
 				Logger.Log.Error (ex, "Unable to parse {0}", path);
 			}
+		}
 
+		protected override void RegisterSupportedTypes ()
+		{
 			if (this.filters == null)
 				return;
 

@@ -71,7 +71,6 @@ namespace Beagle.Filters {
 			if (register_filter) {
 				// 1: Add meta keyword fields as meta:key
 				SetVersion (1);
-				RegisterSupportedTypes ();
 				SnippetMode = true;
 
 				AppendText = new AppendTextCallback (base.AppendText);
@@ -316,7 +315,7 @@ namespace Beagle.Filters {
 
 		}
 
-		virtual protected void RegisterSupportedTypes () 
+		override protected void RegisterSupportedTypes () 
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 		}

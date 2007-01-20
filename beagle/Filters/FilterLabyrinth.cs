@@ -38,9 +38,13 @@ namespace Beagle.Filters {
 
 		public FilterLabyrinth ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("x-beagle/x-labyrinth-note"));
 			SnippetMode = true;
 			OriginalIsText = false;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("x-beagle/x-labyrinth-note"));
 		}
 
 

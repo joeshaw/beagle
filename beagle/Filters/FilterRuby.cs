@@ -103,6 +103,10 @@ namespace Beagle.Filters {
 
 		public FilterRuby ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-ruby"));
 		}
 

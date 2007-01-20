@@ -39,10 +39,14 @@ namespace Beagle.Filters {
 
 		public FilterImLog ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType (GaimLog.MimeType));
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType (KopeteLog.MimeType));
 			SnippetMode = true;
 			OriginalIsText = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType (GaimLog.MimeType));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType (KopeteLog.MimeType));
 		}
 
 		override protected void DoOpen (FileInfo file)

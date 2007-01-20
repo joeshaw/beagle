@@ -40,10 +40,7 @@ namespace Beagle.Filters {
 	
 		public FilterChm () : base()
 		{
-		
-			RegisterSupportedTypes ();
 			SnippetMode = true;
-			
 		}
 		
 		override protected void DoOpen (FileInfo info) 

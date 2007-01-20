@@ -39,6 +39,10 @@ namespace Beagle.Filters {
 
 		public FilterDirectory ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("x-directory/normal"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("inode/directory"));
 		}

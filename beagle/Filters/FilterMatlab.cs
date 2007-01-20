@@ -76,6 +76,10 @@ namespace Beagle.Filters {
 
 		public FilterMatlab ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".m"));
 		}
 

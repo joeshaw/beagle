@@ -127,6 +127,10 @@ namespace Beagle.Filters {
 
 		public FilterCpp ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++src"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c++"));
 		}

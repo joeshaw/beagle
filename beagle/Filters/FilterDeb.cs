@@ -35,6 +35,10 @@ namespace Beagle.Filters {
 	
 		public FilterDeb ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-deb"));
 		}
 		

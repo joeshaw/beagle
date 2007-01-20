@@ -46,8 +46,12 @@ namespace Beagle.Filters {
 				
 		public FilterAbiWord () 
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-abiword"));
 			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-abiword"));
 		}
 
 		// Process the <styles> ... </styles> nodes.

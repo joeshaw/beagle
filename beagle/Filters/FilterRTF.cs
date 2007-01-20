@@ -55,13 +55,17 @@ namespace Beagle.Filters {
 
 		public FilterRTF ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rtf"));
 			SnippetMode = true;
 			// 1: Modified filter based on System.Windows.Forms.RTF
 			SetVersion (1);
 
 			text_map = new TextMap ();
 			TextMap.SetupStandardTable(text_map.Table);
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/rtf"));
 		}
 
 		void Init ()

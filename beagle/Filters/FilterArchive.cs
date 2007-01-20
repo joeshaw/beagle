@@ -56,6 +56,10 @@ namespace Beagle.Filters {
 			// 1: Store entry names as text content
 			SetVersion (1);
 
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/zip"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-bzip-compressed-tar"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-compressed-tar"));

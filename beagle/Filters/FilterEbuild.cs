@@ -38,6 +38,10 @@ namespace Beagle.Filters {
 
 		public FilterEbuild () 
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".ebuild"));
 		}
 

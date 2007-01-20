@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -57,12 +58,12 @@ namespace Beagle.Daemon {
 		{
 			Hashtable matched_filters_by_flavor = FilterFlavor.NewHashtable ();
 			
-			foreach (FilterFlavor flavor in filter_types_by_flavor.Keys) {
+			foreach (FilterFlavor flavor in FilterFlavor.Flavors) {
 				if (flavor.IsMatch (uri, extension, mime_type)) {
 					Filter matched_filter = null;
 
 					try {
-						matched_filter = (Filter) Activator.CreateInstance ((Type) filter_types_by_flavor [flavor]);
+						matched_filter = (Filter) Activator.CreateInstance ((Type) FilterFlavor.FilterTable [flavor]);
 
 						if (flavor.MimeType != null)
 							matched_filter.MimeType = flavor.MimeType;
@@ -90,8 +91,8 @@ namespace Beagle.Daemon {
 
 		static public int GetFilterVersion (string filter_name) 
 		{
-			if (filter_versions_by_name.Contains (filter_name)) {
-				return (int) filter_versions_by_name [filter_name];
+			if (filter_versions_by_name.ContainsKey (filter_name)) {
+				return filter_versions_by_name [filter_name];
 			} else {
 				return -1;
 			}
@@ -288,8 +289,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////////////////////////////////////
 
-		private static Hashtable filter_types_by_flavor = new Hashtable ();
-		private static Hashtable filter_versions_by_name = new Hashtable ();
+		private static Dictionary<string, int> filter_versions_by_name = new Dictionary<string, int> ();
 
 		static private int ScanAssemblyForFilters (Assembly assembly)
 		{
@@ -309,10 +309,8 @@ namespace Beagle.Daemon {
 
 				filter_versions_by_name [t.ToString ()] = filter.Version;
 
-				foreach (FilterFlavor flavor in filter.SupportedFlavors) {
-					filter_types_by_flavor [flavor] = t;
-					FilterFlavor.Flavors.Add (flavor);
-				}
+				foreach (FilterFlavor flavor in filter.SupportedFlavors)
+					FilterFlavor.FilterTable [flavor] = t;
 
 				++count;
 			}

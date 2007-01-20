@@ -119,6 +119,10 @@ namespace Beagle.Filters {
 
 		public FilterPascal ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-pascal"));
 		}
 

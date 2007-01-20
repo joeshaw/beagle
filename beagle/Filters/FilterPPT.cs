@@ -389,11 +389,15 @@ namespace Beagle.Filters {
 		TextType textType;
 		public FilterPPT () 
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-powerpoint"));
 			textType = TextType.Invalid;
 			file = null;
 			FileName = null;
 			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-powerpoint"));
 		}
 
 		private int ParseElement (Input stream)

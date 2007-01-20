@@ -42,14 +42,17 @@ namespace Beagle.Filters {
 		
 		public FilterMan ()
 		{
+			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			// Make this a general troff filter.
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff-man"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
-
-			SnippetMode = true;
 		}
  		/*
  			FIXME: 

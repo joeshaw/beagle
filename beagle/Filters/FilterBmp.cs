@@ -63,8 +63,12 @@ namespace Beagle.Filters
 
 		public FilterBMP () : base ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/bmp"));
 			PreLoad = false;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/bmp"));
 		}
 
 		protected override void PullImageProperties ()

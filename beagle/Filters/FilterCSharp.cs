@@ -148,6 +148,10 @@ namespace Beagle.Filters {
 
 		public FilterCSharp ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csharp"));
 		}
 

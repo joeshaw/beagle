@@ -40,10 +40,12 @@ namespace Beagle.Filters {
 
 		public FilterKnotes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KnotesMimeType));
-			if (vCard_property_mapping == null)
-				SetupPropertyMapping ();
 			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KnotesMimeType));
 		}
 
 		private static Hashtable vCard_property_mapping = null;
@@ -86,6 +88,12 @@ namespace Beagle.Filters {
 				if (dt != DateTime.MinValue)
 					Timestamp = dt;
 			}
+		}
+
+		override protected void DoOpen (FileInfo fi)
+		{
+			if (vCard_property_mapping == null)
+				SetupPropertyMapping ();
 		}
 
 		override protected void DoPull ()

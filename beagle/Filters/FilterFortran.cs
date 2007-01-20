@@ -79,6 +79,10 @@ namespace Beagle.Filters {
 
 		public FilterFortran ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-fortran"));
 		}
 

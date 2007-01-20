@@ -41,7 +41,6 @@ namespace Beagle.Filters {
 	public class FilterOpenOffice : Beagle.Daemon.Filter {
 
 		private Hashtable hotStyles;
-		private bool odtFormat;
 
 		private Hashtable attr_to_index = null;
 		private Hashtable InterestingAttribute {
@@ -59,6 +58,11 @@ namespace Beagle.Filters {
 		}
 
 		public FilterOpenOffice () 
+		{
+			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
 		{
 			// OO 1.0 mime types
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.sun.xml.writer"));
@@ -79,9 +83,6 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.presentation-template"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.graphics"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.oasis.opendocument.graphics-template"));
-
-			SnippetMode = true;
-			odtFormat = false;
 		}
 		
 		// Parse the "style" nodes and mark appropriate styles as *HOT*
@@ -498,8 +499,8 @@ namespace Beagle.Filters {
 			try {
 				zip = new ZipFile (info.FullName);
 
-				if (MimeType.StartsWith ("application/vnd.oasis.opendocument."))
-					odtFormat = true;
+				//if (MimeType.StartsWith ("application/vnd.oasis.opendocument."))
+				//	odtFormat = true;
 
 			} catch (Exception) {
 				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.", 

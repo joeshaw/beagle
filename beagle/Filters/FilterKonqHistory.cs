@@ -44,7 +44,6 @@ namespace Beagle.Filters {
 
 		public FilterKonqHistory ()
 		{
-			RegisterSupportedTypes ();
 		}
 
 		override protected void DoOpen (FileInfo info)

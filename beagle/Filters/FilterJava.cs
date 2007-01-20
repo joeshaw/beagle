@@ -113,6 +113,10 @@ namespace Beagle.Filters {
 
 		public FilterJava ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-java"));
 		}
 

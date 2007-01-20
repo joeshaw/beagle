@@ -136,6 +136,10 @@ namespace Beagle.Filters {
 
 		public FilterScheme ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-scheme"));
 		}
 

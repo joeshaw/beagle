@@ -56,7 +56,10 @@ namespace Beagle.Filters {
 			// 2: No need to separately add sanitized version of emails.
 			//    BeagleAnalyzer uses a tokenfilter taking care of this.
 			SetVersion (2);
+		}
 
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
 		}
 

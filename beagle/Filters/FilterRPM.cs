@@ -63,6 +63,10 @@ namespace Beagle.Filters {
 
 		public FilterRPM ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-rpm"));
 		}
 

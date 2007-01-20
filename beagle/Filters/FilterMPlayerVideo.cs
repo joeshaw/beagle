@@ -75,14 +75,17 @@ namespace Beagle.Filters {
 
 		public FilterMPlayerVideo ()
 		{
+			PreLoad = false;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			foreach (string s in mime_types) {
 				FilterFlavor flavor = FilterFlavor.NewFromMimeType (s);
 				flavor.Priority = -1; // Prefer Totem over this one
 
 				AddSupportedFlavor (flavor);
 			}
-
-			PreLoad = false;
 		}
 		
 		private string AspectString(float aspect) {

@@ -41,11 +41,13 @@ namespace Beagle.Filters {
 
 		public FilterKOrganizer ()
 		{
+			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KOrganizerEventMimeType));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KOrganizerTodoMimeType));
-			if (vCard_property_mapping == null)
-				SetupPropertyMapping ();
-			SnippetMode = true;
 		}
 
 		private static Hashtable vCard_property_mapping = null;
@@ -123,6 +125,12 @@ namespace Beagle.Filters {
 				if (dt != DateTime.MinValue)
                                         AddProperty (Beagle.Property.NewDate (property, dt));
                         }
+		}
+
+		override protected void DoOpen (FileInfo fi)
+		{
+			if (vCard_property_mapping == null)
+				SetupPropertyMapping ();
 		}
 
 		override protected void DoPull ()

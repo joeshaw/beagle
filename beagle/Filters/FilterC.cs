@@ -98,6 +98,10 @@ namespace Beagle.Filters {
 
 		public FilterC ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-csrc"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-chdr"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-c"));

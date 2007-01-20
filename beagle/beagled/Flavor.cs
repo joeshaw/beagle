@@ -157,10 +157,14 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////
 
-		static private ArrayList flavors = new ArrayList ();
+		private static Hashtable filter_types_by_flavor = new Hashtable ();
 		
-		static public ArrayList Flavors {
-			get { return flavors; }
+		public static Hashtable FilterTable {
+			get { return filter_types_by_flavor; }
+		}
+
+		public static ICollection Flavors {
+			get { return filter_types_by_flavor.Keys; }
 		}
 
 		public static FilterFlavor NewFromMimeType (string mime_type) {

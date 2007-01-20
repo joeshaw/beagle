@@ -43,6 +43,10 @@ namespace Beagle.Filters {
 
 		public FilterScribus ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-scribus"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".sla"));
 		}

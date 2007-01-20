@@ -20,8 +20,12 @@ namespace Beagle.Filters {
 
 		public FilterPdf ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/pdf"));
 			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/pdf"));
 		}
 
 		// FIXME: we should have a reasonable failure mode if pdftotext is

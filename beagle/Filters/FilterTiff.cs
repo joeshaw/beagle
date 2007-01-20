@@ -37,7 +37,11 @@ using SemWeb;
 
 namespace Beagle.Filters {
 	public class FilterTiff : FilterImage {
-		public FilterTiff () : base ()
+		public FilterTiff ()
+		{
+		}
+
+		protected override void RegisterSupportedTypes ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/tiff"));
 		}

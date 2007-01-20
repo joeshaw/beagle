@@ -51,7 +51,11 @@ namespace Beagle.Filters {
 
 		static public bool Debug = false;
 
-		public FilterGif () : base ()
+		public FilterGif ()
+		{
+		}
+
+		protected override void RegisterSupportedTypes ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/gif"));
 		}

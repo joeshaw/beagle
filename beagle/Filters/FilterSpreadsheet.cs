@@ -41,6 +41,10 @@ namespace Beagle.Filters {
 		public FilterSpreadsheet () 
 		{
 			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-gnumeric"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/csv"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/tab-separated-values"));

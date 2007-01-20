@@ -44,7 +44,8 @@ namespace Beagle.Filters {
 			// 1: Base
 			// 2: Added fspot:IsIndexed field, added width & height properties
 			// 3: Add Digikam tags and caption
-			SetVersion (3);
+			// 4: Index IPTC keywords
+			SetVersion (4);
 		}
 
 		protected virtual void PullImageProperties () { }

@@ -43,6 +43,10 @@ namespace Beagle.Filters {
 
 		public FilterMonodoc ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/monodoc"));
 			// FIXME: Autoconf to find the monodoc prefix
 			AddSupportedFlavor (new FilterFlavor ("file:///usr/lib/monodoc/sources/*", ".zip", null, 0));

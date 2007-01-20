@@ -39,6 +39,10 @@ namespace Beagle.Filters {
 
 		public FilterPng () : base ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/png"));
 		}
 

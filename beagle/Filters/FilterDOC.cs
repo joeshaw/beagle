@@ -42,10 +42,14 @@ namespace Beagle.Filters {
 
 		public FilterDOC () 
 		{
+			SnippetMode = true;
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/msword"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/vnd.ms-word"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-msword"));
-			SnippetMode = true;
 		}
 		
 		override protected void OpenStorage (FileInfo info)

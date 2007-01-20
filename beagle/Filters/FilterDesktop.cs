@@ -44,7 +44,10 @@ namespace Beagle.Filters {
 			// 1: Added Categories field
 			// 2: Added Type field
 			SetVersion (2);
+		}
 
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-desktop"));
 		}
 

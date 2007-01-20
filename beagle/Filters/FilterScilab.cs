@@ -99,6 +99,10 @@ namespace Beagle.Filters {
 
 		public FilterScilab ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".sci"));
 		}
 

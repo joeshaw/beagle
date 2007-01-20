@@ -134,6 +134,10 @@ namespace Beagle.Filters {
 
 		public FilterBoo ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-boo"));
 		}
 

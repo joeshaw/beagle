@@ -90,6 +90,10 @@ namespace Beagle.Filters {
 
 		public FilterPython ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-python"));
 		}
 

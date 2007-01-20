@@ -44,6 +44,10 @@ namespace Beagle.Filters {
 		
 		public FilterSvg ()
 		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/svg+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".svg"));
 		}

@@ -42,7 +42,11 @@ namespace Beagle.Filters {
 	[PropertyKeywordMapping (Keyword="imagemodel",     PropertyName="exif:Model",    IsKeyword=true)]
 	public class FilterJpeg : FilterImage {
 
-		public FilterJpeg () : base ()
+		public FilterJpeg ()
+		{
+		}
+
+		protected override void RegisterSupportedTypes ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/jpeg"));
 		}

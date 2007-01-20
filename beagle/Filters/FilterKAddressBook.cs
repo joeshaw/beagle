@@ -42,10 +42,12 @@ namespace Beagle.Filters {
 		{
 			// 1: Store a prefemail as well, store URL as text.
 			SetVersion (1);
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KabcMimeType));
 			SnippetMode = false;
-			if (vCard_property_mapping == null)
-				SetupPropertyMapping ();
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType (ICalParser.KabcMimeType));
 		}
 
 		private static Hashtable vCard_property_mapping = null;
@@ -97,6 +99,12 @@ namespace Beagle.Filters {
 
 		private string pref_email;
 		private bool pref_email_set;
+
+		override protected void DoOpen (FileInfo fi)
+		{
+			if (vCard_property_mapping == null)
+				SetupPropertyMapping ();
+		}
 
 		override protected void DoPullProperties ()
 		{
