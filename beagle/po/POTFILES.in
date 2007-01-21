@@ -63,5 +63,7 @@ tools/beagle-settings.desktop.in.in
 Util/ChmFile.cs
 Util/Conf.cs
 Util/Evolution.cs
-Util/ExifData.cs
+Util/F-Spot/Exif.cs
+Util/F-Spot/IptcFile.cs
+Util/F-Spot/MetadataStore.cs
 Util/StringFu.cs

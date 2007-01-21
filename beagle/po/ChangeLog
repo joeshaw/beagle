@@ -1,3 +1,8 @@
+2007-01-21  Daniel Nylander <po@danielnylander.se>
+
+	* sv.po: Updated Swedish translation.
+	* POTFILES.in: Added missing files.
+	
 2006-01-13  Takeshi AIHANA <takeshi.aihana@gmail.com>
 
 	* ja.po: Updated Japanese translation.
