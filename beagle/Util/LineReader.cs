@@ -395,6 +395,7 @@ namespace System.IO {
 				parse_start = 0;
 			} while (decoded_count == 0);
 
+			//Console.WriteLine ("Read {0}", decoded_count);
 			return decoded_count;
 		}
 
