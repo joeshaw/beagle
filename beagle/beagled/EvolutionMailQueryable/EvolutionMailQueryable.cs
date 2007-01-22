@@ -203,8 +203,12 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 		public static Uri EmailUri (string accountName, string folderName, string uid)
 		{
+			// Set the "don't escape" flag on the Uri constructor
+			// so that the hostname part of the URI isn't
+			// automatically lowercased.  Evolution is case-
+			// sensitive with the whole URI.
 			return new Uri (String.Format ("email://{0}/{1};uid={2}",
-						       accountName, folderName, uid));
+						       accountName, folderName, uid), true);
 		}
 	}
 }
