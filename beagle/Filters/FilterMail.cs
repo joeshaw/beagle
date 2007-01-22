@@ -342,7 +342,14 @@ namespace Beagle.Filters {
 							child.MimeType = mime_type;
 							child.CacheContent = false;
 
-							child.AddProperty (Property.NewKeyword ("fixme:attachment_title", ((GMime.Part)part).Filename));
+							string filename = ((GMime.Part) part).Filename;
+
+							if (! String.IsNullOrEmpty (filename)) {
+								child.AddProperty (Property.NewKeyword ("fixme:attachment_title", filename));
+
+								foreach (Property prop in Property.StandardFileProperties (filename, false))
+									child.AddProperty (prop);
+							}
 
 							if (part.ContentType.Type.ToLower () == "text")
 								child.SetTextReader (new StreamReader (stream));
