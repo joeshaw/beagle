@@ -122,7 +122,7 @@ namespace Beagle.Filters {
 
 				// There have been reports of mplayer eating
 				// tons of memory.  So limit it to 100 megs.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace (100*1024*1024);
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace, 100*1024*1024);
 			};
 
 			try {
