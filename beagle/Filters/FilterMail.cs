@@ -55,7 +55,8 @@ namespace Beagle.Filters {
 			//    for eaching for parts of an email address.
 			// 2: No need to separately add sanitized version of emails.
 			//    BeagleAnalyzer uses a tokenfilter taking care of this.
-			SetVersion (2);
+			// 3: Add standard file properties to attachments.
+			SetVersion (3);
 		}
 
 		protected override void RegisterSupportedTypes ()
