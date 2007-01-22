@@ -1,6 +1,7 @@
 // HtmlAgilityPack V1.0 - Simon Mourier <simonm@microsoft.com>
 
 /*
+ * Copyright (C) 2005-2007 Debajyoti Bera <dbera.web@gmail.com>
 Copyright (C) 2003 Simon Mourier <simonm@microsoft.com>
 All rights reserved.
 
@@ -370,6 +371,8 @@ namespace HtmlAgilityPack
 		// misnomer ... should be called event_driven_mode
 		private bool _streammode = false;
 		private bool _stop_parsing = false;
+		private bool _pause_parsing = false;
+		private bool _done_parsing = false;
 
 		internal static readonly string HtmlExceptionRefNotChild = "Reference node must be a child of this node";
 		internal static readonly string HtmlExceptionUseIdAttributeFalse = "You need to set UseIdAttribute property to true to enable this feature";
@@ -395,6 +398,11 @@ namespace HtmlAgilityPack
 		private Crc32 _crc32 = null;
 		private bool _onlyDetectEncoding = false;
 		private int _pcdata_quote_char = '\0';
+
+		struct HtmlParserState {
+			internal int _lastquote;
+		}
+		private HtmlParserState _parserState;
 
 		private static bool _debug = false;
 		internal static void Debug (string s)
@@ -519,12 +527,21 @@ namespace HtmlAgilityPack
 			}
 		}
 
+		public bool DoneParsing {
+			get
+			{
+				return _done_parsing;
+			}
+		}
+
 		/// <summary>
 		/// Creates an instance of an HTML document.
 		/// </summary>
 		public HtmlDocument()
 		{
 			_documentnode = CreateNode(HtmlNodeType.Document, 0);
+			_parserState = new HtmlParserState ();
+			_parserState._lastquote = -1;
 		}
 
 		internal HtmlNode GetXmlDeclaration()
@@ -962,6 +979,28 @@ namespace HtmlAgilityPack
 			}
 		}
 
+		public void PauseLoad()
+		{
+			_pause_parsing = true;
+		}
+
+		public void ResumeLoad()
+		{
+			if (! _pause_parsing || _parserState._lastquote == -1)
+				throw new Exception ("Load() was not paused previously");
+
+			if (_done_parsing)
+				return;
+
+			// Reset the old states and values
+			int _lastquote = _parserState._lastquote;
+			_parserState._lastquote = -1;
+			_pause_parsing = false;
+
+			Debug ("Resuming parsing");
+			DoParse (_lastquote);
+		}
+
 		internal System.Text.Encoding GetOutEncoding()
 		{
 			// when unspecified, use the stream encoding first
@@ -1391,8 +1430,14 @@ namespace HtmlAgilityPack
 
 			_index = 0;
 			PushNodeStart(HtmlNodeType.Text, 0);
+
+			DoParse (lastquote);
+		}
+
+		private void DoParse (int lastquote)
+		{
 			// SLIM: while (_index<_text.Length)
-			while (! _stop_parsing && ! _text.Eof (_index))
+			while (! _pause_parsing && ! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
 				IncrementPosition();
@@ -1714,15 +1759,28 @@ namespace HtmlAgilityPack
 				}
 			}
 
-			// finish the current work
-			if (_currentnode._namestartindex > 0)
+			if (_pause_parsing)
 			{
-				PushNodeNameEnd(_index);
+				_parserState._lastquote = lastquote;
+				Debug ("Pausing parsing");
 			}
-			PushNodeEnd(_index, false);
 
-			// we don't need this anymore
-			_lastnodes.Clear();
+			if (_stop_parsing || _text.Eof (_index))
+			{
+				// Mark that parsing is over
+				_done_parsing = true;
+				Debug ("Done parsing");
+
+				// finish the current work
+				if (_currentnode._namestartindex > 0)
+				{
+					PushNodeNameEnd(_index);
+				}
+				PushNodeEnd(_index, false);
+
+				// we don't need this anymore
+				_lastnodes.Clear();
+			}
 		}
 
 		private bool NewCheck()

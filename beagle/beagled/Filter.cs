@@ -348,6 +348,7 @@ namespace Beagle.Daemon {
 
 			if (IsHot) {
 				hotPool.Add (words);
+				hotPool.Add (WHITESPACE);
 				hotword_count += StringFu.CountWords (words, 3, -1);
 			}
 
