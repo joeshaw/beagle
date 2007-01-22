@@ -250,8 +250,17 @@ namespace Search {
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
 
-				// Attach the hide/show keybinding
-				keybinder.Bind (Conf.Searching.ShowSearchWindowBinding.ToString (), OnTrayActivated);
+				string binding = Conf.Searching.ShowSearchWindowBinding.ToString ();
+				string tip_text = Catalog.GetString ("Desktop Search");
+
+				if (binding != String.Empty) {
+					tip_text += String.Format (" ({0})", binding);
+
+					// Attach the hide/show keybinding
+					keybinder.Bind (Conf.Searching.ShowSearchWindowBinding.ToString (), OnTrayActivated);
+				}
+
+				tray.TooltipText = tip_text;
 			} else {
 				ShowAll ();
 			}

@@ -19,6 +19,7 @@ namespace Search.Tray
 	public class TrayIcon
 	{
 		private EventBox eventbox;
+		private Tooltips tips;
 		private NotificationArea notification_area;
 		private Menu popup;
 		private ArrayList recent_searches;
@@ -43,6 +44,17 @@ namespace Search.Tray
 			recent_searches = new ArrayList ();
 
 			popup = MakeMenu (eventbox);
+		}
+
+		public string TooltipText {
+			set {
+				if (tips == null) {
+					tips = new Gtk.Tooltips ();
+					tips.Enable ();
+				}
+
+				tips.SetTip (eventbox, value, null);
+			}
 		}
 
 		private Gtk.Menu MakeMenu (Gtk.Widget parent) 
