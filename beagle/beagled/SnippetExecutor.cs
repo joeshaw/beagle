@@ -46,6 +46,10 @@ namespace Beagle.Daemon {
 			else
 				snippet = queryable.GetSnippet (request.QueryTerms, request.Hit);
 
+			// Before we send a snippet over the wire, clean up any
+			// characters that would be invalid in XML.
+			snippet = StringFu.CleanupInvalidXmlCharacters (snippet);
+
 			return new SnippetResponse (snippet);
 		}
 	}
