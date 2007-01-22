@@ -140,10 +140,13 @@ namespace Beagle.Util {
 					/* To translators: {0} is the time of the day, eg. 13:45 */
 					return String.Format (Catalog.GetString ("Yesterday, {0}"), short_time);
 				} else if (date.DayOfYear > now.DayOfYear - 6 && date.DayOfYear < now.DayOfYear) {
+					int days = now.DayOfYear - date.DayOfYear;
+
 					/* To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45 */
-					return String.Format (Catalog.GetString ("{0} days ago, {1}"),
-							      now.DayOfYear - date.DayOfYear,
-							      short_time);
+					return String.Format (Catalog.GetPluralString ("{0} day ago, {1}",
+										       "{0} days ago, {1}",
+										       days),
+							      days, short_time);
 				} else {
 					/* Translators: Example output: January 3, 3:45 PM */
 					return date.ToString (Catalog.GetString ("MMMM d, h:mm tt"));
@@ -202,7 +205,7 @@ namespace Beagle.Util {
 
 			if (len < 1024)
 				/* Translators: {0} is a file size in bytes */
-				return String.Format (Catalog.GetString ("{0} bytes"), len);
+				return String.Format (Catalog.GetPluralString ("{0} byte", "{0} bytes", (int) len), len);
 
 			if (len < oneMb)
 				/* Translators: {0} is a file size in kilobytes */
