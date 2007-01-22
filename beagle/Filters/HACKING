@@ -19,3 +19,4 @@ Some things that filter writers should be aware of:
 
 * AddProperty() handles null properties and properties with null or empty values. You need not add special checks for them in your filter.
 
+* DoPull() is called repeatedly to fetch extracted text. It is much better to send small amount of text data in each call of DoPull() rather than extracting all data in a single call to DoPull().
