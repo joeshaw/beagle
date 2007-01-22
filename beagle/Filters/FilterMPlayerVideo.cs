@@ -119,6 +119,10 @@ namespace Beagle.Filters {
 			pc.ChildProcessSetup += delegate {
 				// Let mplayer run for 10 seconds, max.
 				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 10);
+
+				// There have been reports of mplayer eating
+				// tons of memory.  So limit it to 100 megs.
+				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace (100*1024*1024);
 			};
 
 			try {

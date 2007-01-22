@@ -107,7 +107,7 @@ namespace Beagle.Filters {
 				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
 
 				// Some documents make wv1 go crazy with memory.
-				// Limit to 100 megs data size, too.
+				// Limit to 100 megs of address space, too.
 				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace, 100*1024*1024);
 			};
 
