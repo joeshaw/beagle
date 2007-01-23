@@ -902,8 +902,10 @@ namespace Beagle.Util {
 					// If we still need to wait a bit longer, wait for the appropriate
 					// amount of time and then re-start our while loop.
 					if (delay > 0.001) {
-						status_str = "Waiting for next task.";
-						Monitor.Wait (big_lock, TimeSpanFromSeconds (delay));
+						TimeSpan span = TimeSpanFromSeconds (delay);
+
+						status_str = String.Format ("Waiting for next task at {0}", now + span);
+						Monitor.Wait (big_lock, span);
 						executed_task_count = 0;
 						continue;
 					}
@@ -917,7 +919,7 @@ namespace Beagle.Util {
 
 					if (next_task.Collector == null) {
 
-							to_be_executed.Add (next_task);
+						to_be_executed.Add (next_task);
 
 					} else {
 
