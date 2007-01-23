@@ -215,11 +215,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				state = DirectoryState.PossiblyClean;
 			else
 				state = DirectoryState.Clean;
+
+			if (FileSystemQueryable.Debug)
+				Log.Debug ("Marked {0} as {1}", this, state);
 		}
 
 		public void MarkAsUncrawlable ()
 		{
 			state = DirectoryState.Uncrawlable;
+			
+			if (FileSystemQueryable.Debug)
+				Log.Debug ("Marked {0} as {1}", this, state);
 		}
 
 		///////////////////////////////////////////////////////////
@@ -465,6 +471,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 		
 		///////////////////////////////////////////////////////////
+
+		public override string ToString ()
+		{
+			return FullName;
+		}
+
+		///////////////////////////////////////////////////////////
 		
 		// Our implementation of IComparable
 
@@ -485,24 +498,32 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (cmp != 0)
 				return cmp;
 
-			// Special case: index all directories at depth 1
-			// before any others.
-			if (this.Depth <= 1 || other.Depth <= 1) {
-				cmp = other.Depth - this.Depth;
+			// Check depth before last crawl time only if the
+			// state is unknown or dirty.  At this point we
+			// know that the states are equal, so it doesn't
+			// matter which one we check.
+			if (this.state > DirectoryState.PossiblyClean) {
+				// We only care about depths up to 3.
+				// Anything beyond that and we prefer
+				// last crawl time first.
+				int this_depth = Math.Min (this.Depth, 3);
+				int other_depth = Math.Min (other.Depth, 3);
 
+				cmp = other_depth - this_depth;
 				if (cmp != 0)
 					return cmp;
 			}
-			
+
 			cmp = DateTime.Compare (other.last_crawl_time,
 						this.last_crawl_time);
 			if (cmp != 0)
 				return cmp;
-			
+
+			// Use real depths as an almost last resort.
 			cmp = other.Depth - this.Depth;
 			if (cmp != 0)
 				return cmp;
-			
+
 			return other.Name.CompareTo (this.Name);
 		}
 		

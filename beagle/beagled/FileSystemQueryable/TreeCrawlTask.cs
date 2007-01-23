@@ -80,7 +80,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return;
 				}
 				dir = to_be_crawled.Dequeue () as DirectoryModel;
-				Log.Debug ("Running tree crawl task");
+
+				if (FileSystemQueryable.Debug)
+					Log.Debug ("Running tree crawl task");
+
 				is_active = true;
 			}
 			

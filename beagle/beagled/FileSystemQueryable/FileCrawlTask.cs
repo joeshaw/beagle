@@ -93,8 +93,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 
-			if (FileSystemQueryable.Debug)
+			if (FileSystemQueryable.Debug) {
 				Logger.Log.Debug ("Starting crawl of '{0}'", current_dir.FullName);
+				
+				if (current_dir.State == DirectoryState.PossiblyClean)
+					Log.Debug ("It looks as though we've crawled '{0}' before", current_dir.FullName);
+			}
 
 			// Schedule a DirectoryIndexableGenerator
 			// for that directory, and then reschedule ourselves.

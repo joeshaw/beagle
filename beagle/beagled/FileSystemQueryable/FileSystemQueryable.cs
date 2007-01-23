@@ -83,6 +83,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
 		{
+			if (! Debug)
+				Debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FSQ") != null);
+
 			// Set up our event backend
 			if (Inotify.Enabled) {
                                 Logger.Log.Debug ("Starting Inotify FSQ file event backend");

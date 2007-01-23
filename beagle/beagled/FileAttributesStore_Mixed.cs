@@ -50,18 +50,13 @@ namespace Beagle.Daemon {
 			FileAttributes attr;
 			attr = store_sqlite.Read (path);
 
-			if (attr!= null) {
+			if (attr != null) {
 				// If we have write access to the path but it has attributes
 				// stored in the sqlite file attributes db, we should attach them
 				// to the file with EAs and delete the record from the db.
-				// Check if we have write access ?
+
 				if (! FileSystem.IsWritable (path))
 					return attr;
-
-				// What are the other cases when writing an xattr would fail ?
-				// FIXME: Should also check if extended attributes is supported ?
-				// Can that be done without incurring much cost, in which case
-				// we may try to write it anyway ?
 
 				bool success = store_ea.Write (attr);
 				if (success)
@@ -73,7 +68,13 @@ namespace Beagle.Daemon {
 
 		public bool Write (FileAttributes attr)
 		{
-			return store_ea.Write (attr) || store_sqlite.Write (attr);
+			if (store_ea.Write (attr)) {
+				// Drop any now-outdated information from the sqlite store.
+				store_sqlite.Drop (attr.Path);
+
+				return true;
+			} else
+				return store_sqlite.Write (attr);
 		}
 
 		public void Drop (string path)

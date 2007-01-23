@@ -86,6 +86,13 @@ namespace Beagle.IndexHelper {
 					LogLevel.Debug,
 					run_by_hand || log_in_fg);
 
+			Log.Always ("Starting Index Helper process (version {0})", ExternalStringsHack.Version);
+			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
+			Log.Always ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
+			Log.Always ("Extended attributes are {0}", ExtendedAttribute.Supported ? "supported" : "not supported");
+			Log.Always ("Command Line: {0}",
+				    Environment.CommandLine != null ? Environment.CommandLine : "(null)");
+
 			// Initialize GObject type system
 			g_type_init ();
 
@@ -121,7 +128,7 @@ namespace Beagle.IndexHelper {
 			Shutdown.RegisterMainLoop (main_loop);
 
 			// Start the server
-			Log.Always ("Starting messaging server");
+			Log.Debug ("Starting messaging server");
 			bool server_has_been_started = false;
 			try {
 				server = new Server ("socket-helper");
