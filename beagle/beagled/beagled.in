@@ -86,7 +86,7 @@ elif [ $heap_shot -eq 1 ]; then
       export BEAGLE_HEAP_SHOT_DIR=.
    fi
    MONO_EXTRA_ARGS="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS"
-   rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled_* $BEAGLE_HEAP_BUDDY_DIR/outfile.helper_*
+   rm -f $BEAGLE_HEAP_SHOT_DIR/outfile.beagled_* $BEAGLE_HEAP_SHOT_DIR/outfile.helper_*
 fi
 
 
