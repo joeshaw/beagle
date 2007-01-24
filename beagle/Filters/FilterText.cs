@@ -85,9 +85,6 @@ namespace Beagle.Filters {
 					n ++; // for the structural break
 				}
 			}
-
-			if (! AllowMoreWords ())
-				Finished ();
 		}
 	}
 }

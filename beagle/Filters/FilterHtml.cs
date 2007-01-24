@@ -299,8 +299,6 @@ namespace Beagle.Filters {
 				doc.PauseLoad ();
 			}
 
-			if (! AllowMoreWords ())
-				return false;
 			return true;
 		}
 
@@ -327,6 +325,8 @@ namespace Beagle.Filters {
 				break;
 			}
 
+			// HandleNodeEvent() does not use pause/resume parsing
+			// So, check if more words are allowed to be extracted
 			if (! AllowMoreWords ())
 				return false;
 			return true;

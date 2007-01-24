@@ -144,9 +144,6 @@ namespace Beagle.Filters {
 				AppendText (l, l);
 			} else
 				AppendText (line);
-
-			if (! AllowMoreWords ())
-				Finished ();
 		}
 
 		override protected void DoClose ()
