@@ -651,7 +651,7 @@ namespace Beagle.Daemon {
 
 		private bool Pull ()
 		{
-			if (IsFinished || HasError || ! AllowMoreWords ()) {
+			if (IsFinished || HasError) {
 				Close ();
 				return false;
 			}
