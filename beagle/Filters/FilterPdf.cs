@@ -145,16 +145,30 @@ namespace Beagle.Filters {
 			if (! pull_started && ! InitDoPull ())
 				return;
 
-			// FIXME:  I don't think this is really required
-			// Line by line parsing, however, we have to make
-			// sure, that "pdftotext" doesn't output any "New-lines".
-			string str = pout.ReadLine ();
-			if (str == null) {
-				Finished ();
-				return;
+			int n = 0;
+
+			// Using internal information: Lucene currently asks for char[2048] data
+			while (n <= 2048) {
+
+				// FIXME:  I don't think this is really required
+				// Line by line parsing, however, we have to make
+				// sure, that "pdftotext" doesn't output any "New-lines".
+				string str = pout.ReadLine ();
+				if (str == null) {
+					Finished ();
+					return;
+				} else {
+					AppendLine (str);
+					AppendStructuralBreak ();
+					// If we have added 2048 chars, stop
+					// DoPull is called repeatedly till the buffer is full,
+					// so stop after the buffer is full (and possibly overflown)
+					// to reduce number of function calls
+					n += str.Length;
+					n ++; // for the structural break
+				}
 			}
 
-			AppendLine (str);
 			if (! AllowMoreWords ())
 				Finished ();
 		}

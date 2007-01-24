@@ -94,18 +94,6 @@ namespace Beagle.Filters {
 
 		public FilterHtml () : this (true) {}
 
-		// Safeguard against spurious stack pop ups...
-		// caused by mismatched tags in bad html files
-		// FIXME: If matching elements is not required
-		// and if HtmlAgilityPack matches elements itself,
-		// then we can just use a counter hot_stack_depth
-		// instead of the hot_stack
-		private void SafePop (Stack st)
-		{
-			if (st != null && st.Count != 0)
-				st.Pop ();
-		}
-		
 		protected bool NodeIsHot (String nodeName) 
 		{
 			return nodeName == "b"

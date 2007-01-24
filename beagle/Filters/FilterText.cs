@@ -69,12 +69,13 @@ namespace Beagle.Filters {
 
 			// Using internal information: Lucene currently asks for char[2048] data
 			while (n <= 2048) {
+
 				string str = TextReader.ReadLine ();
 				if (str == null) {
 					Finished ();
 					return;
-				} else if (str.Length > 0) {
-					AppendText (str);
+				} else {
+					AppendLine (str);
 					AppendStructuralBreak ();
 					// If we have added 2048 chars, stop
 					// DoPull is called repeatedly till the buffer is full,
@@ -84,6 +85,9 @@ namespace Beagle.Filters {
 					n ++; // for the structural break
 				}
 			}
+
+			if (! AllowMoreWords ())
+				Finished ();
 		}
 	}
 }
