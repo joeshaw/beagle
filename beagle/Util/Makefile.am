@@ -208,9 +208,11 @@ uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET_CONFIG)
 
 
-COND_CS_FILES =			\
-	$(srcdir)/ChmFile.cs	\
-	$(srcdir)/Galago.cs
+COND_CS_FILES =				\
+	$(srcdir)/ChmFile.cs		\
+	$(srcdir)/Galago.cs		\
+	$(srcdir)/Mork.cs		\
+	$(srcdir)/Thunderbird.cs
 
 EXTRA_DIST =			\
 	$(EXTSTR_IN)		\

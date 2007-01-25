@@ -455,6 +455,8 @@ BACKEND_ASSEMBLIES =				\
 	$(BACKEND_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
 
+############################################################
+
 ###
 ### Evolution backend
 ###
@@ -488,6 +490,44 @@ $(EVO_DLL_TARGET): $(EVO_DLL_CSFILES) $(DAEMON_DLL_LOCAL_ASSEMBLIES) $(DAEMON_DL
 
 ############################################################
 
+###
+### Thunderbird backend
+###
+
+THUNDERBIRD_DIR = $(srcdir)/ThunderbirdQueryable
+
+THUNDERBIRD_TARGET = ThunderbirdBackends.dll
+
+THUNDERBIRD_CSFLAGS = $(BACKEND_CSFLAGS)
+
+THUNDERBIRD_CSFILES =						\
+	$(THUNDERBIRD_DIR)/LuceneAccess.cs			\
+	$(THUNDERBIRD_DIR)/ThunderbirdIndexer.cs   		\
+	$(THUNDERBIRD_DIR)/ThunderbirdIndexableGenerator.cs	\
+	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs		\
+	$(THUNDERBIRD_DIR)/ThunderbirdInotify.cs		\
+	$(THUNDERBIRD_DIR)/Mail.cs				\
+	$(THUNDERBIRD_DIR)/Contact.cs				\
+	$(THUNDERBIRD_DIR)/Rss.cs				\
+	$(THUNDERBIRD_DIR)/Nntp.cs				\
+	$(THUNDERBIRD_DIR)/MoveMail.cs
+
+THUNDERBIRD_LOCAL_ASSEMBLIES =		\
+	../Util/Util.dll		\
+	../BeagleClient/Beagle.dll	\
+	./BeagleDaemonLib.dll
+
+THUNDERBIRD_ASSEMBLIES =				\
+	-r:Mono.Posix				\
+	$(BEAGLED_LIBS)                 	\
+	$(THUNDERBIRD_LOCAL_ASSEMBLIES:%=-r:%)
+
+
+$(THUNDERBIRD_TARGET): $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(THUNDERBIRD_CSFLAGS) $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_ASSEMBLIES)
+
+############################################################
+
 DAEMON_WRAPPER = beagled
 DAEMON_WRAPPER_IN = beagled.in
 DAEMON_TARGET = BeagleDaemon.exe
@@ -518,41 +558,6 @@ DAEMON_ASSEMBLIES =				\
 
 $(DAEMON_TARGET): $(DAEMON_CSFILES) $(DAEMON_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DAEMON_CSFLAGS) $(DAEMON_CSFILES) $(DAEMON_ASSEMBLIES)
-
-if ENABLE_THUNDERBIRD	
-THUNDERBIRD_DIR = $(srcdir)/ThunderbirdQueryable
-
-THUNDERBIRD_TARGET = ThunderbirdBackends.dll
-
-THUNDERBIRD_CSFLAGS = -target:library
-
-
-THUNDERBIRD_CSFILES =						\
-	$(THUNDERBIRD_DIR)/LuceneAccess.cs			\
-	$(THUNDERBIRD_DIR)/ThunderbirdIndexer.cs   		\
-	$(THUNDERBIRD_DIR)/ThunderbirdIndexableGenerator.cs	\
-	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs		\
-	$(THUNDERBIRD_DIR)/ThunderbirdInotify.cs		\
-	$(THUNDERBIRD_DIR)/Mail.cs				\
-	$(THUNDERBIRD_DIR)/Contact.cs				\
-	$(THUNDERBIRD_DIR)/Rss.cs				\
-	$(THUNDERBIRD_DIR)/Nntp.cs				\
-	$(THUNDERBIRD_DIR)/MoveMail.cs
-
-THUNDERBIRD_LOCAL_ASSEMBLIES =		\
-	../Util/Util.dll		\
-	../BeagleClient/Beagle.dll	\
-	./BeagleDaemonLib.dll
-
-THUNDERBIRD_ASSEMBLIES =				\
-	-r:Mono.Posix				\
-	$(BEAGLED_LIBS)                 	\
-	$(THUNDERBIRD_LOCAL_ASSEMBLIES:%=-r:%)
-
-
-$(THUNDERBIRD_TARGET): $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(THUNDERBIRD_CSFLAGS) $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_ASSEMBLIES)
-endif
 
 ############################################################
 ############################################################
