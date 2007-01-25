@@ -1,4 +1,72 @@
 
+Version 0.2.15
+25 January 2007
+
+Notable changes:
+
+* Beagle now users the .NET 2.0 profile and is compiled with gmcs,
+  giving us access to generics.
+
+* Support added for Linux's relatively new SCHED_BATCH scheduler
+  policy.
+
+* Infrastructure added to limit helper programs in terms of CPU time
+  and address space using setrlimit(2).
+
+* Disabled building the Thunderbird backend by default; it's too
+  memory hungry and buggy at this point.
+
+* Added KOrganizer and Konversation backends.
+
+* Many memory usage improvements, especially with IMAP accounts in the
+  Evolution mail backend and when doing queries.
+
+* A rewritten and massively improved RTF filter.
+
+* The MS Word filter has been moved into an external process,
+  improving service reliability tremendously.
+
+* Dozens of improvements to the filter code, including single
+  instantiation of filter objects, reading smaller chunks of data from
+  files, and other bug fixes.
+
+* Fixed a problem where file attributes stored in the sqlite DB
+  weren't removed if we later stored them in extended attributes.
+
+* Removed the rarely-used Google backend, since Google stopped
+  providing API keys.
+
+* Install a greatly improved beagle-dump-index tool, for examining the
+  data inside indexes.
+
+* Many rendering improvements and bug fixes to the GUI.
+
+* Translations:
+
+  - [New] Slovenian  (Matic Zgur)
+  - British English  (David Lodge)
+  - Canadian English (Adam Weinberger)
+  - Catalan          (Jordi Mas)
+  - Czech            (Jakub Friedl)
+  - Hungarian        (Gabor Kelemen)
+  - Japanese         (Takeshi Aihana)
+  - Lithuanian       (Žygimantas Beručka)
+  - Macedonian       (Jovan Naumovski)
+  - Norwegian bokmål (Kjartan Maraas)
+  - Russian          (Leonid Kanter)
+  - Serbian          (Danilo Šegan)
+  - Swedish          (Daniel Nylander)
+
+Contributors to this release: Debajyoti Bera, Joe Shaw, Kevin Kubasik,
+Stephan Binner, Brian J. Murrell, Ed Catmur.
+
+29 Bugzilla bugs fixed in this release: http://tinyurl.com/2qwuk2
+
+Full set of changes:
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_15/ChangeLog
+
+------------------------------------------------------
+
 Version 0.2.14
 14 December 2006
 
