@@ -74,7 +74,7 @@ PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED)
 BEAGLE_DEFINES=""
 
 # check for various mono DLLs that we need.
-needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Runtime.Remoting System.Web System.Web.Services ICSharpCode.SharpZipLib"
+needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
   if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
@@ -402,7 +402,7 @@ PKG_CHECK_MODULES(BEAGLED,
 	gmime-sharp >= $GMIME_SHARP_REQUIRED
 	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
-	BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"
+BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`

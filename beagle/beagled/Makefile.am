@@ -202,7 +202,6 @@ LUCENE_1_9_CSFILES =							\
 	$(lucenedir)/Search/QueryTermVector.cs	\
 	$(lucenedir)/Search/RangeFilter.cs	\
 	$(lucenedir)/Search/RangeQuery.cs	\
-	$(lucenedir)/Search/RemoteSearchable.cs	\
 	$(lucenedir)/Search/ReqExclScorer.cs	\
 	$(lucenedir)/Search/ReqOptSumScorer.cs	\
 	$(lucenedir)/Search/ScoreDoc.cs	\
@@ -249,6 +248,11 @@ LUCENE_1_9_CSFILES =							\
 	$(lucenedir)/LucenePackage.cs	\
 	$(lucenedir)/SharpZipLibAdapter.cs	\
 	$(lucenedir)/SupportClass.cs
+
+# Stuff we don't build because we don't use it and it
+# introduces additional library dependencies.
+IGNORED_LUCENE_CSFILES =			\
+        $(lucenedir)/Search/RemoteSearchable.cs
 
 LUCENE_CSFILES = $(LUCENE_1_9_CSFILES)
 
@@ -424,9 +428,7 @@ DAEMON_DLL_ASSEMBLIES = 			\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)	\
 	$(SHARPZIPLIB_LIBS)		\
 	-r:Mono.Data.SqliteClient		\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting		\
-	-r:System.Web
+	-r:Mono.Posix
 
 if USE_LOCAL_SQLITE
 DAEMON_DLL_CSFILES += $(SQLITE_CSFILES)
@@ -593,8 +595,7 @@ INDEX_HELPER_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(INDEX_HELPER_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(INDEX_HELPER_TARGET): $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(INDEX_HELPER_CSFLAGS) $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_ASSEMBLIES)
@@ -625,8 +626,7 @@ EXTRACT_CONTENT_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(EXTRACT_CONTENT_TARGET): $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(EXTRACT_CONTENT_CSFLAGS) $(EXTRACT_CONTENT_CSFILES) $(EXTRACT_CONTENT_ASSEMBLIES)
@@ -656,8 +656,7 @@ DUMP_INDEX_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(DUMP_INDEX_TARGET): $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(DUMP_INDEX_CSFLAGS) $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_ASSEMBLIES)
@@ -716,8 +715,7 @@ MASTER_DELETE_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(MASTER_DELETE_TARGET): $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(MASTER_DELETE_CSFLAGS) $(MASTER_DELETE_CSFILES) $(MASTER_DELETE_ASSEMBLIES)
@@ -747,8 +745,7 @@ SNIPPET_TEST_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(SNIPPET_TEST_CSFLAGS) $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_ASSEMBLIES)
@@ -778,8 +775,7 @@ TERM_STATS_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(TERM_STATS_TARGET): $(TERM_STATS_CSFILES) $(TERM_STATS_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(TERM_STATS_CSFLAGS) $(TERM_STATS_CSFILES) $(TERM_STATS_ASSEMBLIES)
@@ -809,8 +805,7 @@ NAME_INDEX_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(NAME_INDEX_TARGET): $(NAME_INDEX_CSFILES) $(NAME_INDEX_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(NAME_INDEX_CSFLAGS) $(NAME_INDEX_CSFILES) $(NAME_INDEX_ASSEMBLIES)
@@ -840,8 +835,7 @@ FS_SANITY_CHECK_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix				\
-	-r:System.Runtime.Remoting
+	-r:Mono.Posix
 
 $(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
