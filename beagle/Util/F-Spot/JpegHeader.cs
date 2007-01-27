@@ -391,9 +391,13 @@ public class JpegHeader : SemWeb.StatementSource {
 				Bim.BimFile bim = new Bim.BimFile (bimstream);
 				// FIXME: What about EntryType.XMP ?
 				Bim.Entry iptc_entry = bim.FindEntry (Bim.EntryType.IPTCNAA);
-				System.IO.Stream iptcstream = new System.IO.MemoryStream (iptc_entry.Data);
-				Iptc.IptcFile iptc = new Iptc.IptcFile (iptcstream);
-				return iptc;
+				if (iptc_entry == null)
+					return null;
+
+				using (System.IO.Stream iptcstream = new System.IO.MemoryStream (iptc_entry.Data)) {
+					Iptc.IptcFile iptc = new Iptc.IptcFile (iptcstream);
+					return iptc;
+				}
 			}
 		}
 		return null;
