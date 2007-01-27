@@ -249,7 +249,7 @@ public class JpegHeader : SemWeb.StatementSource {
 	}
 
 	public static Signature JfifSignature = new Signature (JpegMarker.App0, "JFIF\0");
-	public static Signature ComSignature = new Signature (JpegMarker.Com, "COM\0");
+	public static Signature ComSignature = new Signature (JpegMarker.Com, null);
 	public static Signature JfxxSignature = new Signature (JpegMarker.App0, "JFXX\0");
 	public static Signature XmpSignature = new Signature (JpegMarker.App1, "http://ns.adobe.com/xap/1.0/\0");
 	public static Signature ExifSignature = new Signature (JpegMarker.App1, "Exif\0\0");
