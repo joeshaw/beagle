@@ -249,7 +249,7 @@ namespace Beagle.Filters {
 
 		protected bool HandleNodeEventHead (HtmlNode node)
 		{
-			//Log.Debug ("HandleNodeEventBody (<{0}{1}>)", (node.StartTag ? "" : "/"), node.Name);
+			//Log.Debug ("HandleNodeEventHead (<{0}{1}>)", (node.StartTag ? "" : "/"), node.Name);
 			switch (node.NodeType) {
 				
 			case HtmlNodeType.Document:

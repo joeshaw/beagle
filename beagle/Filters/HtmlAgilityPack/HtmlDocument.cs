@@ -981,6 +981,7 @@ namespace HtmlAgilityPack
 
 		public void PauseLoad()
 		{
+			Debug ("Pausing load");
 			_pause_parsing = true;
 		}
 
@@ -1365,6 +1366,8 @@ namespace HtmlAgilityPack
 			QuotedAttributeValue,
 			ServerSideCode,
 			PcDataQuote,
+			PcDataCommentSingleLine,
+			PcDataCommentMultiLine,
 			PcData
 		}
 
@@ -1440,7 +1443,9 @@ namespace HtmlAgilityPack
 			while (! _pause_parsing && ! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
+				Debug (String.Format ("_index : {0}({2})({1}) -> ", _index, (char)_c, _state));
 				IncrementPosition();
+				Debug (String.Format ("{0}", _index));
 
 				switch(_state)
 				{
@@ -1719,11 +1724,28 @@ namespace HtmlAgilityPack
 						}
 						break;
 
+					// handle // abcd A's webpage
+					case ParseState.PcDataCommentSingleLine:
+						if (_c == '\n')
+							_state = ParseState.PcData;
+						break;
+
+					// handle /* multiple lines */
+					case ParseState.PcDataCommentMultiLine:
+						if (_c == '/' && _text [_index - 2] == '*')
+							_state = ParseState.PcData;
+						break;
 					case ParseState.PcData:
-						Debug ("PCDATA " + _currentnode.Name + " " + _text.Substring(_index-1,  _currentnode._namelength+2));
+						Debug (String.Format ("PCDATA ({0}) {1} {2}", _index, _currentnode.Name, _text.Substring(_index-1,  _currentnode._namelength+2)));
 						if (_c == '\"' || _c == '\''){
 							_pcdata_quote_char = _c;
 							_state = ParseState.PcDataQuote;
+							break;
+						} else if (_c == '/' && _text [_index - 2] == '/') {
+							_state = ParseState.PcDataCommentSingleLine;
+							break;
+						} else if (_c == '*' && _text [_index - 2] == '/') {
+							_state = ParseState.PcDataCommentMultiLine;
 							break;
 						}
 						// look for </tag + 1 char
