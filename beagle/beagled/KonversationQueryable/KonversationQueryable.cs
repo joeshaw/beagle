@@ -88,7 +88,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 
 		protected override bool IsIndexing {
 			// FIXME: Set proper value
-			get { return true; }
+			get { return false; }
 		}
 
 		// FIXME: Improve this by storing the data on disk. Then scan the data on startup
