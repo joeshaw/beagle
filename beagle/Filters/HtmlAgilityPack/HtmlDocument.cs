@@ -987,11 +987,11 @@ namespace HtmlAgilityPack
 
 		public void ResumeLoad()
 		{
-			if (! _pause_parsing || _parserState._lastquote == -1)
-				throw new Exception ("Load() was not paused previously");
-
 			if (_done_parsing)
 				return;
+
+			if (! _pause_parsing || _parserState._lastquote == -1)
+				throw new Exception ("Load() was not paused previously");
 
 			// Reset the old states and values
 			int _lastquote = _parserState._lastquote;
@@ -1443,9 +1443,8 @@ namespace HtmlAgilityPack
 			while (! _pause_parsing && ! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
-				Debug (String.Format ("_index : {0}({2})({1}) -> ", _index, (char)_c, _state));
+				Debug (String.Format ("_index : {0}({2})({1}) ", _index, (char)_c, _state));
 				IncrementPosition();
-				Debug (String.Format ("{0}", _index));
 
 				switch(_state)
 				{
