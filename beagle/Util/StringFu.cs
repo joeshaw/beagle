@@ -90,7 +90,17 @@ namespace Beagle.Util {
 			if (str == null || str == String.Empty)
 				return new DateTime ();
 
-			return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			// FIXME: Workaround for http://bugzilla.ximian.com/show_bug.cgi?id=80320
+			// ArgumentOutOfRangeException is incorrectly thrown for
+			// DateTime.MinValue.ToLocalTime() in timezones with a negative offset
+			// from UTC, and DateTime.MinValue.ToUniversalTime() in timezones with a
+			// positive offset from UTC.  Note that Mono works correctly for going
+			// beyond MaxValue, so we only need to deal with the lower bound.
+			try {
+				return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			} catch (ArgumentOutOfRangeException) {
+				return DateTime.MinValue;
+			}
                 }
 
 		static public string DateTimeToFuzzy (DateTime dt)
