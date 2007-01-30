@@ -2,8 +2,7 @@
 Encoding=UTF-8
 X-SuSE-translate=true
 _Name=Search & Indexing
-_GenericName=Configure Desktop Search & Indexing
-_Comment=Configure search & indexing properties
+_GenericName=Configure Desktop Search
 Exec=beagle-settings
 Icon=system-search
 Type=Application
