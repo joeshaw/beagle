@@ -38,22 +38,25 @@ namespace Beagle.Util {
 
 		public static int DoNonQuery (SqliteConnection connection, string command_text)
 		{
-			SqliteCommand command;
-			command = new SqliteCommand ();
-			command.Connection = connection;
-			command.CommandText = command_text;
 			int ret = 0;
 
-			while (true) {
-				try {
-					ret = command.ExecuteNonQuery ();
-					break;
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
+			using (SqliteCommand command = new SqliteCommand ()) {
+				command.Connection = connection;
+				command.CommandText = command_text;
+
+				while (true) {
+					try {
+						ret = command.ExecuteNonQuery ();
+						break;
+					} catch (SqliteBusyException ex) {
+						Thread.Sleep (50);
+					} catch (Exception e) {
+						Log.Error (e, "SQL that caused the exception: {0}", command_text);
+						throw;
+					}
 				}
 			}
 
-			command.Dispose ();
 			return ret;
 		}
 			
