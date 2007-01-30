@@ -55,7 +55,6 @@ namespace Beagle.Filters {
 		{
 			// 1: Store entry names as text content
 			SetVersion (1);
-
 		}
 
 		protected override void RegisterSupportedTypes ()
@@ -122,6 +121,16 @@ namespace Beagle.Filters {
 			int count = 0;
 
 			while ((a_entry = this.get_next_entry ()) != null && count < MAX_CHILDREN) {
+				++count;
+
+				// Store file names in the archive
+				AppendText (Path.GetFileName (a_entry.Name));
+				AppendWhiteSpace ();
+
+				// If this is an invalid entry (corrupt archive), skip it.
+				if (a_entry.TempFile == null)
+					continue;
+
 				// FIXME: For nested archives, create uid:foo#bar
 				// instead of uid:foo#xxx#bar (avoid duplicates ?)
 				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name, true));
@@ -142,12 +151,6 @@ namespace Beagle.Filters {
 					child.AddProperty (prop);
 
 				AddChildIndexable (child);
-
-				// Store file names in the archive
-				AppendText (Path.GetFileName (a_entry.Name));
-				AppendWhiteSpace ();
-
-				++count;
 			}
 		}
 
@@ -173,15 +176,34 @@ namespace Beagle.Filters {
 			BufferedStream buffered_stream = new BufferedStream (file_stream);
 
 			byte [] buffer = new byte [8192];
+			long prev_pos = 0;
 			int read;
+			bool broken_file = false;
 
 			do {
 				read = stream.Read (buffer, 0, buffer.Length);
 				if (read > 0)
 					buffered_stream.Write (buffer, 0, read);
+
+				// Certain files cause SharpZipLib to loop forever.
+				// Check to make sure we're making actual progress
+				// reading from the archive.
+				if (read == buffer.Length) {
+					if (stream.Position == prev_pos) {
+						broken_file = true;
+						break;
+					}
+
+					prev_pos = stream.Position;
+				}
 			} while (read > 0);
 
 			buffered_stream.Close ();
+
+			if (broken_file) {
+				File.Delete (filename);
+				return null;
+			}
 
 			File.SetLastWriteTimeUtc (filename, mtime);
 
