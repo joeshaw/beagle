@@ -177,26 +177,32 @@ namespace Beagle.Daemon {
 			if (indexable.ContentUri.IsFile) {
 				path = indexable.ContentUri.LocalPath;
 
-				// Otherwise sniff the mime-type from the file
-				if (indexable.MimeType == null)
-					indexable.MimeType = XdgMime.GetMimeType (path);
-
-				if (filters == null || filters.Count == 0) {
-					filters = CreateFiltersFromIndexable (indexable);
-				}
-
+				// Otherwise, set the mime type for a directory,
+				// or sniff it from the file.
 				if (Directory.Exists (path)) {
 					indexable.MimeType = "inode/directory";
 					indexable.NoContent = true;
-					if (! indexable.ValidTimestamp && indexable.IsNonTransient)
-						indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
 				} else if (File.Exists (path)) {
-					// Set the timestamp to the best possible estimate (if no timestamp was set by the backend)
-					if (! indexable.ValidTimestamp && indexable.IsNonTransient)
-						indexable.Timestamp = File.GetLastWriteTimeUtc (path);
+					indexable.MimeType = XdgMime.GetMimeType (path);
 				} else {
-					Logger.Log.Warn ("No such file: {0}", path);
+					Log.Warn ("Unable to filter {0}.  {1} not found.", indexable.DisplayUri, path);
 					return false;
+				}
+
+				// Set the timestamp to the last write time, if it isn't
+				// set by the backend.
+				if (! indexable.ValidTimestamp && indexable.IsNonTransient)
+					indexable.Timestamp = FileSystem.GetLastWriteTimeUtc (path);
+
+				// Check the timestamp to make sure the file hasn't
+				// disappeared from underneath us.
+				if (! FileSystem.ExistsByDateTime (indexable.Timestamp)) {
+					Log.Warn ("Unable to filter {0}.  {1} appears to have disappeared from underneath us", indexable.DisplayUri, path);
+					return false;
+				}
+
+				if (filters == null || filters.Count == 0) {
+					filters = CreateFiltersFromIndexable (indexable);
 				}
 			}
 

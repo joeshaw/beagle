@@ -97,7 +97,7 @@ namespace Beagle.Util {
 			// positive offset from UTC.  Note that Mono works correctly for going
 			// beyond MaxValue, so we only need to deal with the lower bound.
 			try {
-				return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+				return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
 			} catch (ArgumentOutOfRangeException) {
 				return DateTime.MinValue;
 			}

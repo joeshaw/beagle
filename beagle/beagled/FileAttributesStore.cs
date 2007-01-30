@@ -120,8 +120,7 @@ namespace Beagle.Daemon {
 			if (attr == null)
 				return false;
 
-			// FIXME:.Net-2.0 DateTime - Compare attr.LastWriteTime without converting to UTC
-			return (attr.LastWriteTime.ToUniversalTime () >= FileSystem.GetLastWriteTimeUtc (path));
+			return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
 		}
 
 		public bool IsUpToDate (string path, Filter filter)

@@ -127,9 +127,9 @@ namespace Beagle.Daemon {
 			if (info.Path == null)
 				return true;
 
-			try {
-				info.Mtime = FileSystem.GetLastWriteTimeUtc (info.Path);
-			} catch (FileNotFoundException ex) {
+			info.Mtime = FileSystem.GetLastWriteTimeUtc (info.Path);
+
+			if (! FileSystem.ExistsByDateTime (info.Mtime)) {
 				// If we can't get an mtime for the file, it must
 				// have disappeared out from under us.  In that case,
 				// don't bother adding anything.

@@ -178,16 +178,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							      DirectoryModel parent)
 		{
 			Indexable indexable;
-			try {
-				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
-				indexable.MimeType = "inode/directory";
-				indexable.NoContent = true;
-				indexable.DisplayUri = UriFu.PathToFileUri (path);
-				indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
-			} catch (IOException) {
-				// Looks like the directory was deleted.
+			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
+			indexable.Timestamp = Directory.GetLastWriteTimeUtc (path);
+
+			// If the directory was deleted, we'll bail out.
+			if (! FileSystem.ExistsByDateTime (indexable.Timestamp))
 				return null;
-			}
+
+			indexable.MimeType = "inode/directory";
+			indexable.NoContent = true;
+			indexable.DisplayUri = UriFu.PathToFileUri (path);
 
 			string name;
 			if (parent == null)
@@ -213,17 +213,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			Indexable indexable;
 
-			try {
-				indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
-				indexable.Timestamp = File.GetLastWriteTimeUtc (path);
-				indexable.ContentUri = UriFu.PathToFileUri (path);
-				indexable.DisplayUri = UriFu.PathToFileUri (path);
-				indexable.Crawled = crawl_mode;
-				indexable.Filtering = Beagle.IndexableFiltering.Always;
-			} catch (IOException) {
-				// Looks like the file was deleted.
+			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
+			indexable.Timestamp = File.GetLastWriteTimeUtc (path);
+
+			// If the file was deleted, bail out.
+			if (! FileSystem.ExistsByDateTime (indexable.Timestamp))
 				return null;
-			}
+
+			indexable.ContentUri = UriFu.PathToFileUri (path);
+			indexable.DisplayUri = UriFu.PathToFileUri (path);
+			indexable.Crawled = crawl_mode;
+			indexable.Filtering = Beagle.IndexableFiltering.Always;
 
 			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent, true);
 
@@ -553,11 +553,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Logger.Log.Debug ("Registered directory '{0}' ({1})", path, attr.UniqueId);
 
-			DateTime mtime;
+			DateTime mtime = Directory.GetLastWriteTimeUtc (path);
 
-			try {
-				mtime = Directory.GetLastWriteTimeUtc (path);
-			} catch (IOException) {
+			if (! FileSystem.ExistsByDateTime (mtime)) {
 				Log.Debug ("Directory '{0}' ({1}) appears to have gone away", path, attr.UniqueId);
 				return false;
 			}

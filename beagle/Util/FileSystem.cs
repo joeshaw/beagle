@@ -31,6 +31,11 @@ namespace Beagle.Util {
 	
 	public class FileSystem {
 
+		// Value returned by GetLastWriteTimeUtc() for files which
+		// don't exist.  Allows us to do non-racy existence checks if
+		// we're getting the last write time
+		static private DateTime nonexistent_file_datetime = new DateTime (1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
 		static public bool Exists (string path)
 		{
 			return File.Exists (path) || Directory.Exists (path);
@@ -47,6 +52,15 @@ namespace Beagle.Util {
 				return Directory.GetLastWriteTimeUtc (path);
 			else
 				throw new FileNotFoundException (path);
+		}
+
+		// Assumes input is UTC
+		static public bool ExistsByDateTime (DateTime date)
+		{
+			if (date != nonexistent_file_datetime)
+				return true;
+			else
+				return false;
 		}
 
 		static public FileSystemInfo New (string path)
