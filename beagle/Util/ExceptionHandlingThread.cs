@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -47,7 +48,10 @@ namespace Beagle.Util {
 
 		private void ThreadStarted ()
 		{
-			this.thread.Name = String.Format ("EHT {0:00000} {1}:{2}", wrap_gettid (), method.Target == null ? method.Method.DeclaringType.ToString () : method.Target.ToString (), method.Method);
+			Process proc = Process.GetCurrentProcess ();
+
+			this.thread.Name = String.Format ("EHT {0:00000} [{1:00000} {2}] {3}:{4}", wrap_gettid (), proc.Id, proc.ProcessName,
+							  method.Target == null ? method.Method.DeclaringType.ToString () : method.Target.ToString (), method.Method.Name);
 
 			try {
 				this.method ();
