@@ -504,7 +504,7 @@ public class JpegHeader : SemWeb.StatementSource {
 		bool at_image = false;
 
 		Marker marker = Marker.Load (stream);
-		if (marker.Type != JpegMarker.Soi)
+		if (marker == null || marker.Type != JpegMarker.Soi)
 			throw new System.Exception ("This doesn't appear to be a jpeg stream");
 		
 		this.Markers.Add (marker);

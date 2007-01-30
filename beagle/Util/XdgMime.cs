@@ -64,10 +64,16 @@ namespace Beagle.Util {
 
 		private static bool ValidateUTF8 (string file_path)
 		{
-			FileStream fs;
+			FileStream fs = null;
 
 			try {
 				fs = new FileStream (file_path, FileMode.Open, FileAccess.Read, FileShare.Read);
+			} catch (UnauthorizedAccessException) {
+				return false;
+			} catch (System.Security.SecurityException) {
+				return false;
+			} catch (FileNotFoundException) {
+				return false;
 			} catch (IOException) {
 				return false;
 			}
