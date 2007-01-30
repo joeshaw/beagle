@@ -120,7 +120,7 @@ namespace Beagle.Filters {
 			ArchiveEntry a_entry;
 			int count = 0;
 
-			while ((a_entry = this.get_next_entry ()) != null && count < MAX_CHILDREN) {
+			while (count < MAX_CHILDREN && (a_entry = this.get_next_entry ()) != null) {
 				++count;
 
 				// Store file names in the archive
@@ -170,14 +170,17 @@ namespace Beagle.Filters {
 
 			string filename = Path.GetTempFileName ();
 			FileStream file_stream = File.OpenWrite (filename);
+
+			//Log.Debug ("Storing archive contents in {0}", filename);
 			
 			Mono.Unix.Native.Syscall.chmod (filename, (Mono.Unix.Native.FilePermissions) 384); // 384 is 0600
 			
 			BufferedStream buffered_stream = new BufferedStream (file_stream);
 
 			byte [] buffer = new byte [8192];
-			long prev_pos = 0;
+			long prev_pos = -1;
 			int read;
+			int broken_count = 0;
 			bool broken_file = false;
 
 			do {
@@ -185,16 +188,15 @@ namespace Beagle.Filters {
 				if (read > 0)
 					buffered_stream.Write (buffer, 0, read);
 
-				// Certain files cause SharpZipLib to loop forever.
-				// Check to make sure we're making actual progress
-				// reading from the archive.
-				if (read == buffer.Length) {
+				// Lame workaround for some gzip files which loop
+				// forever with SharpZipLib.  We have to check for
+				// 
+				if (stream is GZipInputStream && read == buffer.Length) {
 					if (stream.Position == prev_pos) {
 						broken_file = true;
 						break;
-					}
-
-					prev_pos = stream.Position;
+					} else
+						prev_pos = stream.Position;
 				}
 			} while (read > 0);
 

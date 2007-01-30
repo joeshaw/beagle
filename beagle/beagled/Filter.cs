@@ -38,6 +38,7 @@ namespace Beagle.Daemon {
 	public class Filter {
 
 		static private bool Debug = false;
+
 		// Lucene fields allow a maximum of 10000 words
 		// Some of the words will be stop words... so a failsafe maximum of 40000 words
 		// Dont accept more words than that
