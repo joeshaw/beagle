@@ -730,9 +730,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			FileAttributes attr;
 			attr = FileAttributesStore.Read (dir.FullName);
 
-			// Don't mark ourselves; let the crawler redo us
-			if (attr == null)
+			// We couldn't read our attribute back in for some
+			// reason.  Complain loudly.
+			if (attr == null) {
+				Log.Error ("Unable to read attributes for recently crawled directory {0}", dir.FullName);
+				dir.MarkAsClean ();
 				return;
+			}
 
 			// We don't have to be super-careful about this since
 			// we only use the FileAttributes mtime on a directory
