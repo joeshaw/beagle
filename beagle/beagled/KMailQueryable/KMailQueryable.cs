@@ -266,7 +266,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				string indexfile = Path.Combine (path, "." + subdirname + ".index");
 				if (! File.Exists (indexfile)) {
 					flag = false;
-					Logger.Log.Warn ( "KMail backend: " + 
+					Logger.Log.Debug ( "KMail backend: " + 
 						path + 
 						" contains a maildir directory but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
 					break;
@@ -289,7 +289,7 @@ namespace Beagle.Daemon.KMailQueryable {
 					continue;
 
 				flag = false;
-				Logger.Log.Warn ( "KMail backend: " + 
+				Logger.Log.Debug ( "KMail backend: " + 
 					path + 
 					" contains an mbox file but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
 				break;
