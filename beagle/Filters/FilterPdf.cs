@@ -18,12 +18,6 @@ namespace Beagle.Filters {
 
 	public class FilterPdf : Beagle.Daemon.Filter {
 
-		private SafeProcess pc;
-		private StreamReader pout;
-		private StreamReader perr;
-		private bool pull_started;
-		private string last_err_line;
-
 		public FilterPdf ()
 		{
 			SnippetMode = true;
@@ -36,6 +30,9 @@ namespace Beagle.Filters {
 
 		// FIXME: we should have a reasonable failure mode if pdftotext is
 		// not installed.
+
+		SafeProcess pc = null;
+		StreamReader pout = null;
 
 		protected override void DoPullProperties ()
 		{
@@ -111,13 +108,21 @@ namespace Beagle.Filters {
 			pc.Close ();
 		}
 		
+		bool pull_started = false;
+
 		private bool InitDoPull ()
 		{
 			// create new external process
 			pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdftotext", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
 			pc.RedirectStandardOutput = true;
-			pc.RedirectStandardError = true;
+
+			// FIXME: This should really be true, and we should
+			// process the output.  But we can deadlock when
+			// pdftotext is blocked writing to stderr because of a
+			// full buffer and we're blocking while reading from
+			// stdout.
+			pc.RedirectStandardError = false;
 
 			// Runs inside the child process after form() but before exec()
 			pc.ChildProcessSetup += delegate {
@@ -135,7 +140,6 @@ namespace Beagle.Filters {
 
 			// add pdftotext's output to pool
 			pout = new StreamReader (pc.StandardOutput);
-			perr = new StreamReader (pc.StandardError);
 			pull_started = true;
 
 			return true;
@@ -147,14 +151,6 @@ namespace Beagle.Filters {
 			if (! pull_started && ! InitDoPull ())
 				return;
 
-			string str;
-
-			while ((str = perr.ReadLine ()) != null) {
-				if (str != last_err_line)
-					Log.Warn ("pdftotext [{0}]: {1}", Uri, str);
-				last_err_line = str;
-			}
-				
 			int n = 0;
 
 			// Using internal information: Lucene currently asks for char[2048] data
@@ -163,7 +159,7 @@ namespace Beagle.Filters {
 				// FIXME:  I don't think this is really required
 				// Line by line parsing, however, we have to make
 				// sure, that "pdftotext" doesn't output any "New-lines".
-				str = pout.ReadLine ();
+				string str = pout.ReadLine ();
 				if (str == null) {
 					Finished ();
 					return;
@@ -186,7 +182,16 @@ namespace Beagle.Filters {
 				return;
 
 			pout.Close ();
-			perr.Close ();
+#if false
+			// FIXME: See FIXME above.
+			pout = new StreamReader (pc.StandardError);
+
+			string str;
+			while ((str = pout.ReadLine ()) != null)
+				Log.Warn ("pdftotext [{0}]: {1}", Uri, str);
+
+			pout.Close ();
+#endif
 			pc.Close ();
 		}
 	}
