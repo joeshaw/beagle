@@ -114,7 +114,7 @@ namespace Beagle.Filters {
 		{
 			// create new external process
 			pc = new SafeProcess ();
-			pc.Arguments = new string [] { "pdftotext", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
+			pc.Arguments = new string [] { "pdftotext", "-q", "-nopgbrk", "-enc", "UTF-8", FileInfo.FullName, "-" };
 			pc.RedirectStandardOutput = true;
 
 			// FIXME: This should really be true, and we should
