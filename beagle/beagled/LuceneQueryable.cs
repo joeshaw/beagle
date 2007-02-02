@@ -388,6 +388,7 @@ namespace Beagle.Daemon {
 			return status;
 		}
 
+		// Reports whether the backend is performing the initial crawling and indexing
 		protected virtual bool IsIndexing {
 			get { return false; }
 		}
