@@ -1,6 +1,6 @@
 # Swedish messages for beagle.
-# Copyright (C) 2005, Novell Inc.
-# Daniel Nylander <po@danielnylander.se>, 2006.
+# Copyright (C) 2005, 2006, 2007 Novell Inc.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007.
 # Fredrik Hedberg <fredrik@avafan.com>, 2005.
 #
 # $Id: sv.po,v 1.16 2006/12/28 06:51:25 dnylande Exp $
@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-21 22:13+0100\n"
-"PO-Revision-Date: 2007-01-21 22:13+0100\n"
+"POT-Creation-Date: 2007-01-23 03:19+0000\n"
+"PO-Revision-Date: 2007-02-03 00:29+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -18,7 +18,8 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
+#: ../glue/eggtrayicon.c:127
+#: ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
 msgstr "Orientering"
 
@@ -30,7 +31,8 @@ msgstr "Lådans orientering."
 msgid "Open..."
 msgstr "Öppna..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+#: ../ContactViewer/ContactWindow.cs:76
+#: ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
 msgstr "Avsluta"
 
@@ -38,7 +40,8 @@ msgstr "Avsluta"
 msgid "About"
 msgstr "Om"
 
-#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+#: ../ContactViewer/ContactWindow.cs:95
+#: ../search/Tiles/Utils.cs:26
 msgid "Contacts"
 msgstr "Kontakter"
 
@@ -207,7 +210,8 @@ msgstr "Detaljerad vy"
 msgid "Display:"
 msgstr "Visa:"
 
-#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
+#: ../ContactViewer/contactviewer.glade.h:23
+#: ../search/Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-post:"
 
@@ -263,9 +267,12 @@ msgid "State/Province:"
 msgstr "Län/Region:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/ArchivedFile.cs:76
+#: ../search/Tiles/Calendar.cs:51
+#: ../search/Tiles/File.cs:140
+#: ../search/Tiles/Note.cs:62
+#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Titel:"
 
@@ -304,7 +311,8 @@ msgstr "<b>Konversationshistorik</b>"
 msgid "IM Viewer"
 msgstr "IM-visare"
 
-#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
+#: ../ImLogViewer/ImLogWindow.cs:106
+#: ../ImLogViewer/ImLogWindow.cs:118
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Konversationer i {0}"
@@ -319,7 +327,8 @@ msgstr "Konversationer i {0} ({1})"
 msgid "Conversations with {0}"
 msgstr "Konversationer med {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+#: ../search/beagle-search.desktop.in.in.h:1
+#: ../tools/settings.glade.h:22
 msgid "Search"
 msgstr "Sök"
 
@@ -349,49 +358,32 @@ msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Din sökning efter \"{0}\" träffade inte några filer på din dator."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid ""
-"You can change the scope of your search using the \"Search\" menu. A broader "
-"search scope might produce more results."
-msgstr ""
-"Du kan ändra omfånget för din sökning genom att använda \"Sök\"-menyn. Ett "
-"bredare sökomfång kan ge fler resultat."
+msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
+msgstr "Du kan ändra omfånget för din sökning genom att använda \"Sök\"-menyn. Ett bredare sökomfång kan ge fler resultat."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid ""
-"You should check the spelling of your search words to see if you "
-"accidentally misspelled any words."
-msgstr ""
-"Du bör kontrollera stavningen på dina sökord för att se om du av misstag "
-"stavade några ord fel."
+msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
+msgstr "Du bör kontrollera stavningen på dina sökord för att se om du av misstag stavade några ord fel."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
-"Du kan använda både gemener och versaler; sökningar är inte "
-"skiftlägeskänsliga."
+msgstr "Du kan använda både gemener och versaler; sökningar är inte skiftlägeskänsliga."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
-"För att söka efter ytterligare termer, använd OR. exempelvis: <b>Björn OR "
-"Benny</b>"
+msgstr "För att söka efter ytterligare termer, använd OR. exempelvis: <b>Björn OR Benny</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
-"För att utesluta söktermer, använd minustecknet i början, såsom <b>-katter</"
-"b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "För att utesluta söktermer, använd minustecknet i början, såsom <b>-katter</b>"
 
 # I brist på en bättre förmaning från medeltiden..
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Vid sökning efter en fras, lägg till citattecken. exempelvis: <b>\"Det finns "
-"drakar\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Vid sökning efter en fras, lägg till citattecken. exempelvis: <b>\"Det finns drakar\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
+#: ../search/Pages/QuickTips.cs:19
+#: ../search/UIManager.cs:92
 msgid "Quick Tips"
 msgstr "Snabbtips"
 
@@ -400,12 +392,8 @@ msgid "Beagle cannot be run as root"
 msgstr "Beagle kan inte köras som root"
 
 #: ../search/Pages/RootUser.cs:13
-msgid ""
-"For security reasons, Beagle cannot be run as root.  You should restart as a "
-"regular user."
-msgstr ""
-"Av säkerhetsskäl kan Beagle inte köras som root.  Du bör starta om som en "
-"vanlig användare."
+msgid "For security reasons, Beagle cannot be run as root.  You should restart as a regular user."
+msgstr "Av säkerhetsskäl kan Beagle inte köras som root.  Du bör starta om som en vanlig användare."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -415,7 +403,9 @@ msgstr "Söktjänsten kör inte"
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
-#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138
+#: ../search/Search.cs:254
+#: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Skrivbordssökning"
 
@@ -435,32 +425,32 @@ msgstr "Skriv in söktermer"
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
-#: ../search/Search.cs:264
+#: ../search/Search.cs:273
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivbordssökning: {0}"
 
-#: ../search/Search.cs:280
+#: ../search/Search.cs:289
 #, csharp-format
-msgid "Showing all {0} matches"
-msgstr "Visar alla {0} träffar"
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Visar {0} träff"
+msgstr[1] "Visar alla {0} träffar"
 
-#: ../search/Search.cs:282
+#: ../search/Search.cs:291
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr "Visar de första {0} av totalt {1} träffar"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "Visar den första {0} av totalt {1} träffar"
+msgstr[1] "Visar de första {0} av totalt {1} träffar"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:564
 msgid "Your data is being indexed"
 msgstr "Ditt data håller på att indexeras"
 
-#: ../search/Search.cs:556
-msgid ""
-"The search service is in the process of indexing your data.  Search results "
-"may be incomplete until indexing has finished."
-msgstr ""
-"Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara "
-"inkompletta tills indexeringar har färdigställts."
+#: ../search/Search.cs:565
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
 
 #: ../search/Tiles/ArchivedFile.cs:39
 #, csharp-format
@@ -476,7 +466,8 @@ msgstr "Filnamn:"
 msgid "Inside File:"
 msgstr "inne i filen:"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+#: ../search/Tiles/ArchivedFile.cs:81
+#: ../search/Tiles/File.cs:144
 msgid "Author:"
 msgstr "Upphovsman:"
 
@@ -519,16 +510,19 @@ msgstr "E-post"
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:37
+#: ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
-#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:141
+#: ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
-#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/File.cs:146
+#: ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:84
 msgid "Full Path:"
 msgstr "Fullständig sökväg:"
@@ -569,7 +563,8 @@ msgstr "IM-konversation"
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:93
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
@@ -700,17 +695,20 @@ msgstr "Nyhetskanaler"
 msgid "Archives"
 msgstr "Arkiv"
 
-#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
+#: ../search/Tiles/Utils.cs:133
+#: ../search/Tiles/Utils.cs:215
 #: ../Util/StringFu.cs:106
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
+#: ../search/Tiles/Utils.cs:135
+#: ../search/Tiles/Utils.cs:217
 #: ../Util/StringFu.cs:104
 msgid "Today"
 msgstr "Idag"
 
-#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
+#: ../search/Tiles/Utils.cs:137
+#: ../search/Tiles/Utils.cs:219
 msgid "Tomorrow"
 msgstr "Imorgon"
 
@@ -772,15 +770,15 @@ msgstr "Url:"
 msgid "Accessed:"
 msgstr "Kom åt:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "Inga tidigare sökningar"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Tidigare sökningar"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
 msgstr "Töm"
 
@@ -987,7 +985,8 @@ msgstr ""
 msgid "Close Desktop Search"
 msgstr "Stäng skrivbordssökning"
 
-#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
+#: ../search/UIManager.cs:55
+#: ../search/UIManager.cs:80
 msgid "Exit Desktop Search"
 msgstr "Avsluta skrivbordssökning"
 
@@ -1156,12 +1155,8 @@ msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
 #: ../tools/Settings.cs:167
-msgid ""
-"The configuration file has been modified by another application. Do you wish "
-"to discard the currently displayed values and reload configuration from disk?"
-msgstr ""
-"Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från "
-"dina aktuella ändringar och läsa om inställningarna från disk?"
+msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
+msgstr "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från dina aktuella ändringar och läsa om inställningarna från disk?"
 
 #: ../tools/Settings.cs:305
 msgid "Select Path"
@@ -1172,12 +1167,8 @@ msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
 #: ../tools/Settings.cs:327
-msgid ""
-"The selected path wasn't added. The list contains items that supersedes it "
-"and the data is already being indexed."
-msgstr ""
-"Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer "
-"den och datat blir redan indexerat."
+msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
+msgstr "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer den och datat blir redan indexerat."
 
 #: ../tools/Settings.cs:338
 msgid "Path not added"
@@ -1188,39 +1179,28 @@ msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
 #: ../tools/Settings.cs:348
-msgid ""
-"Adding this path will obsolete some of the existing include paths. This will "
-"result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr ""
-"Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna "
-"föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas "
-"bort. Vill du fortfarande lägga till den?"
+msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas bort. Vill du fortfarande lägga till den?"
 
 #: ../tools/Settings.cs:374
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
 #: ../tools/Settings.cs:375
-msgid ""
-"Are you sure you wish to remove this path from the list of directories to be "
-"included for indexing?"
-msgstr ""
-"Är du säker på att du vill ta bort denna sökväg från listan över kataloger "
-"som skall indexeras?"
+msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+msgstr "Är du säker på att du vill ta bort denna sökväg från listan över kataloger som skall indexeras?"
 
 #: ../tools/Settings.cs:404
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
 #: ../tools/Settings.cs:405
-msgid ""
-"Are you sure you wish to remove this item from the list of data to be "
-"excluded from indexing?"
-msgstr ""
-"Är du säker på att du vill ta bort det här objektet från listan över data "
-"som skall undanhållas från indexering."
+msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+msgstr "Är du säker på att du vill ta bort det här objektet från listan över data som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
+#: ../tools/Settings.cs:455
+#: ../tools/Settings.cs:544
+#: ../tools/Settings.cs:631
 #: ../tools/Settings.cs:970
 msgid "Name"
 msgstr "Namn"
@@ -1245,7 +1225,8 @@ msgstr "E-postmapp:"
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:904
+#: ../tools/settings.glade.h:19
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
@@ -1262,12 +1243,8 @@ msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
 #: ../tools/Settings.cs:939
-msgid ""
-"The specified path could not be found and therefore it could not be added to "
-"the list of resources excluded for indexing."
-msgstr ""
-"Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i "
-"listan på resurser som ska undanhållas från indexering."
+msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
+msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i listan på resurser som ska undanhållas från indexering."
 
 #: ../tools/Settings.cs:969
 msgid "Show"
@@ -1306,12 +1283,8 @@ msgid "Add any additional paths to be included for indexing."
 msgstr "Lägg till ytterligare sökvägar för indexering."
 
 #: ../tools/settings.glade.h:9
-msgid ""
-"Adjust which types of results should be visible, and in what order they "
-"should be presented when grouped by type."
-msgstr ""
-"Justera vilka typer av resultat som ska visas och i vilken ordning de ska "
-"presenteras när de grupperas efter typ."
+msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
+msgstr "Justera vilka typer av resultat som ska visas och i vilken ordning de ska presenteras när de grupperas efter typ."
 
 #: ../tools/settings.glade.h:10
 msgid "Alt"
@@ -1366,12 +1339,8 @@ msgid "Select Mail Folder"
 msgstr "Välj e-postmapp"
 
 #: ../tools/settings.glade.h:25
-msgid ""
-"Specify any resources, such as paths, patterns, mail folders or type of "
-"objects you wish to exclude from indexing."
-msgstr ""
-"Lägg till resurser såsom sökvägar, mönster och e-postmappar eller "
-"objekttyper som du vill undanhålla från indexering."
+msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
+msgstr "Lägg till resurser såsom sökvägar, mönster och e-postmappar eller objekttyper som du vill undanhålla från indexering."
 
 #: ../tools/settings.glade.h:26
 msgid "Type:"
@@ -1409,7 +1378,8 @@ msgstr "Konfigurera söknings- och indexeringsegenskaper"
 msgid "Search & Indexing"
 msgstr "Sökning och indexering"
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45
+#: ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "På den här datorn"
 
@@ -1462,21 +1432,16 @@ msgid "A unique number"
 msgstr "Ett unikt nummer"
 
 #: ../Util/F-Spot/IptcFile.cs:187
-msgid ""
-"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
-"Kuverthanteringens prioritet, mellan 1 (mest brådskande) och 9 (minst "
-"brådskande)"
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr "Kuverthanteringens prioritet, mellan 1 (mest brådskande) och 9 (minst brådskande)"
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
 msgstr "Året, månaden och dagen (ÅÅÅÅMMDD) som tjänsten skickade materialet"
 
 #: ../Util/F-Spot/IptcFile.cs:191
-msgid ""
-"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
-"Timmen, minuten och sekunden (HHMMSS+HHMM) som tjänsten skickade materialet"
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr "Timmen, minuten och sekunden (HHMMSS+HHMM) som tjänsten skickade materialet"
 
 #: ../Util/F-Spot/IptcFile.cs:193
 msgid "The character set designation"
@@ -1506,7 +1471,8 @@ msgstr "Objekttypreferens"
 msgid "Object attribute reference"
 msgstr "Objektattributreferens"
 
-#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
+#: ../Util/F-Spot/IptcFile.cs:218
+#: ../Util/F-Spot/IptcFile.cs:222
 msgid "Object name"
 msgstr "Objektnamn"
 
@@ -1531,10 +1497,8 @@ msgid "Full name of the country of the focus of the content"
 msgstr "Hela namn på landet som står i fokus för innehållet"
 
 #: ../Util/F-Spot/IptcFile.cs:236
-msgid ""
-"Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
-"Två eller tre teckens ISO3166-kod för landet som står i fokus för innehållet"
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr "Två eller tre teckens ISO3166-kod för landet som står i fokus för innehållet"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
@@ -1549,22 +1513,16 @@ msgid "The title of the author or creator"
 msgstr "Titel för upphovsman eller skapare"
 
 #: ../Util/F-Spot/IptcFile.cs:248
-msgid ""
-"The person involved in writing, editing or correcting the object data or "
-"caption/abstract"
-msgstr ""
-"Personen involverad i skrivning, redigering eller korrigering av objektdata "
-"eller text/utdrag"
+msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
+msgstr "Personen involverad i skrivning, redigering eller korrigering av objektdata eller text/utdrag"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
 msgstr "Rubrik för innehållet"
 
 #: ../Util/F-Spot/IptcFile.cs:255
-msgid ""
-"Instructions from the creator to the receiver not covered by other fields"
-msgstr ""
-"Instruktioner från skaparen till mottagaren som inte täckts av övriga fält"
+msgid "Instructions from the creator to the receiver not covered by other fields"
+msgstr "Instruktioner från skaparen till mottagaren som inte täckts av övriga fält"
 
 #: ../Util/F-Spot/IptcFile.cs:258
 msgid "Intellectual genre of the object"
@@ -1708,29 +1666,31 @@ msgid "Yesterday, {0}"
 msgstr "Igår, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:146
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "{0} dagar sedan, {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} dag sedan, {1}"
+msgstr[1] "{0} dagar sedan, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:152
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:154
+#: ../Util/StringFu.cs:157
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} timme"
 msgstr[1] "{0} timmar"
 
-#: ../Util/StringFu.cs:171
+#: ../Util/StringFu.cs:174
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1738,19 +1698,21 @@ msgstr[0] "{0} minut"
 msgstr[1] "{0} minuter"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:205
+#: ../Util/StringFu.cs:208
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0} byte"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} byte"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:209
+#: ../Util/StringFu.cs:212
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:215
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
@@ -1761,246 +1723,170 @@ msgstr "{0:0.0} MB"
 #~ msgstr ""
 #~ "Om du undrar om Best fungerar så kan du hitta den i din notifieringsyta "
 #~ "(system tray)"
-
 #~ msgid "Disable Searching"
 #~ msgstr "Inaktivera sökning"
-
 #~ msgid "Anywhere"
 #~ msgstr "Överallt"
-
 #~ msgid "in Files"
 #~ msgstr "i filer"
-
 #~ msgid "in Addressbook"
 #~ msgstr "i adressboken"
-
 #~ msgid "in Mail"
 #~ msgstr "i e-post"
-
 #~ msgid "in Web Pages"
 #~ msgstr "på webbsidor"
-
 #~ msgid "in Chats"
 #~ msgstr "i snabbmeddelanden"
-
 #~ msgid "Search terms:"
 #~ msgstr "Söktermer:"
-
 #~ msgid "Find"
 #~ msgstr "Sök"
-
 #~ msgid "Show More Results"
 #~ msgstr "Visa fler träffar"
-
 #~ msgid "Show Previous Results"
 #~ msgstr "Visa tidigare träffar"
-
 #~ msgid "No results."
 #~ msgstr "Inga resultat."
-
 #~ msgid "Best <b>{0} results of {1}</b> are shown."
 #~ msgstr "Bästa <b>{0} av {1}</b> träffar visas."
-
 #~ msgid "Results <b>{0} through {1} of {2}</b> are shown."
 #~ msgstr "Visar träffarna <b>{0} till {1}</b> av totalt {2}."
-
 #~ msgid ""
 #~ "The query for <i>{0}</i> failed.<br>The likely cause is that the beagle "
 #~ "daemon isn't running."
 #~ msgstr ""
 #~ "Sökningen efter <i>{0}</i> gick ej att genomföra.<br>Söktjänsten är inte "
 #~ "startad."
-
 #~ msgid "The query for <i>{0}</i> failed with error:<br>{1}<br>"
 #~ msgstr "Sökningen efter <i>{0}</i> gick ej att genomföra:<br>{1}"
-
 #~ msgid "Beagle Search"
 #~ msgstr "Beagle-sökning"
-
 #~ msgid "Pages:"
 #~ msgstr "Sidor:"
-
 #~ msgid "Words:"
 #~ msgstr "Ord:"
-
 #~ msgid "Send IM"
 #~ msgstr "Skicka snabbmeddelande"
-
 #~ msgid "Conversation in {0}"
 #~ msgstr "Konversation i {0}"
-
 #~ msgid "Conversation with {0}"
 #~ msgstr "Samtal med {0}"
-
 #~ msgid "No Subject"
 #~ msgstr "Inget ämne"
-
 #~ msgid "To"
 #~ msgstr "Till"
-
 #~ msgid "From"
 #~ msgstr "Från"
-
 #~ msgid "Sent"
 #~ msgstr "Skickat"
-
 #~ msgid "Received"
 #~ msgstr "Mottaget"
-
 #~ msgid "Email attachment"
 #~ msgstr "E-postbilaga"
-
 #~ msgid "Weblog:"
 #~ msgstr "Blogg:"
-
 #~ msgid "by"
 #~ msgstr "efter"
-
 #~ msgid "Published:"
 #~ msgstr "Publicerad:"
-
 #~ msgid "in folder"
 #~ msgstr "i mappen"
-
 #~ msgid "Last modified"
 #~ msgstr "Senast ändrad"
-
 #~ msgid "Send to..."
 #~ msgstr "Skicka till..."
-
 #~ msgid "Reveal in file manager"
 #~ msgstr "Visa i filhanterare"
-
 #~ msgid "Application:"
 #~ msgstr "Program:"
-
 #~ msgid "Email subject:"
 #~ msgstr "E-postämne:"
-
 #~ msgid "Track"
 #~ msgstr "Spår"
-
 #~ msgid "from"
 #~ msgstr "från"
-
 #~ msgid "Enqueue"
 #~ msgstr "Köa"
-
 #~ msgid "last modified"
 #~ msgstr "senast ändrad"
-
 #~ msgid "Slides:"
 #~ msgstr "Bilder:"
-
 #~ msgid "Last viewed:"
 #~ msgstr "Senast visad:"
-
 #~ msgid "Invalid host entry"
 #~ msgstr "Ogiltig värdpost"
-
 #~ msgid "Remote host already present in the list."
 #~ msgstr "Fjärrvärden finns redan i listan."
-
 #~ msgid "Netbeagle Node not added"
 #~ msgstr "Netbeaglenod lades inte till"
-
 #~ msgid "Remove host"
 #~ msgstr "Ta bort värd"
-
 #~ msgid "Are you sure you wish to remove this host from the list?"
 #~ msgstr "Är du säker på att du vill ta bort denna värd från listan?"
-
 #~ msgid "Select path"
 #~ msgstr "Välj sökväg"
-
 #~ msgid "The selected path is already configured for external access."
 #~ msgstr "Den valda sökvägen är redan konfigurerad för extern åtkomst."
-
 #~ msgid "Remove public path"
 #~ msgstr "Ta bort publik sökväg"
-
 #~ msgid ""
 #~ "Are you sure you wish to remove this entry from the list of public paths?"
 #~ msgstr ""
 #~ "Är du säker på att du vill ta bort det här objektet från listan på "
 #~ "publika sökvägar?"
-
 #~ msgid "<b>Add Remote Host</b>"
 #~ msgstr "<b>Lägg till fjärrvärd</b>"
-
 #~ msgid "<b>Networking</b>"
 #~ msgstr "<b>Nätverk</b>"
-
 #~ msgid "Add Remote Host"
 #~ msgstr "Lägg till fjärrvärd"
-
 #~ msgid ""
 #~ "Add a remote search-enabled host you wish \n"
 #~ "to network with."
 #~ msgstr ""
 #~ "Lägg till en fjärrvärd aktiverad för sökning som du\n"
 #~ "önskar nätverka med."
-
 #~ msgid "Add any remote search-enabled hosts you wish to network with."
 #~ msgstr ""
 #~ "Lägg till fjärrvärdar aktiverade för sökning som du önskar nätverka med."
-
 #~ msgid "Allow _external access to local search services"
 #~ msgstr "Tillåt _extern åtkomst till lokala söktjänster"
-
 #~ msgid "Networking"
 #~ msgstr "Nätverk"
-
 #~ msgid "Specify paths that should be available for external access."
 #~ msgstr "Ange sökvägar som ska vara tillgängliga för extern åtkomst."
-
 #~ msgid "_Address:"
 #~ msgstr "_Adress:"
-
 #~ msgid "_Maximum number of results displayed:"
 #~ msgstr "_Maximalt antal visade resultat:"
-
 #~ msgid "DisplayName"
 #~ msgstr "Visningsnamn"
-
 #~ msgid "FirstName"
 #~ msgstr "Förnamn"
-
 #~ msgid "NickName"
 #~ msgstr "Smeknamn"
-
 #~ msgid "LastName"
 #~ msgstr "Efternamn"
-
 #~ msgid "PrimaryEmail"
 #~ msgstr "Primär e-postadress"
-
 #~ msgid "_AimScreenName"
 #~ msgstr "_Skärmnamn för AIM"
-
 #~ msgid "HomePhone"
 #~ msgstr "Hemtelefon"
-
 #~ msgid "CellularNumber"
 #~ msgstr "Mobilnummer"
-
 #~ msgid "WebPage2"
 #~ msgstr "Webbsida2"
-
 #~ msgid "Sor_t"
 #~ msgstr "Sor_tera"
-
 #~ msgid "Search everywhere"
 #~ msgstr "Sök överallt"
-
 #~ msgid "_Applications"
 #~ msgstr "_Program"
-
 #~ msgid "Image"
 #~ msgstr "Bild"
-
 #~ msgid "Directory Path"
 #~ msgstr "Katalog"
-
 #~ msgid "Local"
 #~ msgstr "Den här datorn"
+
