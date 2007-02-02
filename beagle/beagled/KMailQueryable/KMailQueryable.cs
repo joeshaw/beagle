@@ -62,11 +62,11 @@ namespace Beagle.Daemon.KMailQueryable {
 		public KMailQueryable () : base ("KMailIndex")
 		{
 			// the local mail path is different for different distributions
-			local_path = GuessLocalFolderPath ();
+			local_path = GuessLocalFolderPath (true);
 			if (local_path == null) {
-				Logger.Log.Info ("KMail folders not found. Will keep trying ");
+				Log.Debug ("KMail folders not found. Will keep trying ");
 			} else
-				Logger.Log.Info ("Guessing for location of KMail folders ... found at " + local_path);
+				Log.Debug ("Guessing location of KMail folders: found at " + local_path);
 			// I hope there is no ambiguity over imap path :P
 			dimap_path = Path.Combine (PathFinder.HomeDir, ".kde");
 			dimap_path = Path.Combine (dimap_path, "share");
@@ -111,7 +111,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		private void StartWorker ()
 		{
-			Logger.Log.Info ("Starting KMail backend");
+			Log.Debug ("Starting KMail backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -119,11 +119,11 @@ namespace Beagle.Daemon.KMailQueryable {
 			// check if there is at all anything to crawl
                         if ( local_path == null && (!Directory.Exists (dimap_path))) {
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
-				Logger.Log.Debug ("KMail directories (local mail) " + dimap_path + " not found, will repoll.");
+				Log.Debug ("KMail directories (local mail) " + dimap_path + " not found, will repoll.");
                                 return;
 			}
 
-			Logger.Log.Debug ("Starting mail crawl");
+			Log.Debug ("Starting mail crawl");
 			if (local_path != null) {
 				local_indexer = new KMailIndexer (this, "local", local_path);
 				local_indexer.Crawl ();
@@ -133,7 +133,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				dimap_indexer = new KMailIndexer (this, "dimap", dimap_path);
 				dimap_indexer.Crawl ();
 			}
-			Logger.Log.Debug ("Mail crawl done");
+			Log.Debug ("Mail crawl done");
 
 			if (! Inotify.Enabled) {
 				Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
@@ -144,7 +144,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			}
 
 			stopwatch.Stop ();
-			Logger.Log.Info ("KMail driver worker thread done in {0}", stopwatch);
+			Log.Debug ("KMail driver worker thread done in {0}", stopwatch);
 		}
 
 		/** 
@@ -152,7 +152,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		private bool CheckForExistence ()
                 {
-			local_path = GuessLocalFolderPath ();
+			local_path = GuessLocalFolderPath (false);
                         if (local_path == null && (!Directory.Exists (dimap_path)))
                                 return true;
 
@@ -164,7 +164,7 @@ namespace Beagle.Daemon.KMailQueryable {
 
 		override public string GetSnippet (string[] query_terms, Hit hit)
 		{
-			Logger.Log.Debug ("Fetching snippet for " + hit.Uri.LocalPath);
+			Log.Debug ("Fetching snippet for " + hit.Uri.LocalPath);
 			// FIXME: Also handle mbox emails
 			if (! hit.Uri.IsFile)
 				return null;
@@ -188,7 +188,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			string body = message.GetBody (true, out html);
 			// FIXME: Also handle snippets from html message parts - involves invoking html filter
 			if (html) {
-				Logger.Log.Debug ("No text/plain message part in " + hit.Uri);
+				Log.Debug ("No text/plain message part in " + hit.Uri);
 				message.Dispose ();
 				return null;
 			}
@@ -222,10 +222,10 @@ namespace Beagle.Daemon.KMailQueryable {
 		 * first try ~/.Mail, then try ~/Mail
 		 * then try ~/.kde/share/apps/kmail/mail
 		 */
-		private string GuessLocalFolderPath ()
+		private string GuessLocalFolderPath (bool verbose)
 		{
 			string locationrc = GetLocalFolderPathFromKmailrc ();
-			//Logger.Log.Debug ("Reading kmail local-mail location from kmailrc: " + 
+			//Log.Debug ("Reading kmail local-mail location from kmailrc: " + 
 			//		    (locationrc == null ? "Unavailable" : locationrc));
 			string location1 = Path.Combine (PathFinder.HomeDir, "Mail");
 			string location2 = Path.Combine (PathFinder.HomeDir, ".Mail");
@@ -236,71 +236,60 @@ namespace Beagle.Daemon.KMailQueryable {
 			location3 = Path.Combine (location3, "kmail");
 			location3 = Path.Combine (location3, "mail");
 
-			if (locationrc != null && GuessLocalFolder (locationrc))
+			if (locationrc != null && GuessLocalFolder (locationrc, verbose))
 				return locationrc;
-			else if (GuessLocalFolder (location1))
+			else if (GuessLocalFolder (location1, verbose))
 				return location1;
-			else if (GuessLocalFolder (location2))
+			else if (GuessLocalFolder (location2, verbose))
 				return location2;
-			else if (GuessLocalFolder (location3))
+			else if (GuessLocalFolder (location3, verbose))
 				return location3;
 			else 
 				return null;
 		}
 
 		/**
-		 * to check if the path represents a kmail directory:
+		 * To check if the path represents a kmail directory:
 		 * for all directories and files named "ddd" and not starting with a '.',
 		 * there should be matching index file named .ddd.index
+		 * Ignore zero length files; zero-length mbox files might not have index files.
 		 */
-		private bool GuessLocalFolder (string path)
+		private bool GuessLocalFolder (string path, bool verbose)
 		{
 			if (! Directory.Exists (path))
 				return false;
-			bool flag = true;
 
-			foreach (string subdirname in DirectoryWalker.GetDirectoryNames (path)) {
-				if (subdirname.StartsWith ("."))
+			if (verbose)
+				Log.Debug ("Checking if {0} is kmail local mail directory ?", path);
+
+			bool no_content = true;
+
+			foreach (string entry in DirectoryWalker.GetItemNames (path, null)) {
+				if (entry.StartsWith ("."))
 					continue;
-				// index-file name is of pattern .name.index
-				string indexfile = Path.Combine (path, "." + subdirname + ".index");
-				if (! File.Exists (indexfile)) {
-					flag = false;
-					Logger.Log.Debug ( "KMail backend: " + 
-						path + 
-						" contains a maildir directory but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
-					break;
+
+				// Ignore zero size mbox files
+				string fullpath = Path.Combine (path, entry);
+				if (File.Exists (fullpath)) {
+					FileInfo fi = new FileInfo (fullpath);
+					if (fi.Length == 0)
+						continue;
 				}
-			}
-
-			if (! flag)
-				return false;
-
-			bool found_no_good_mbox = true;
-			foreach (FileInfo file in DirectoryWalker.GetFileInfos (path)) {
-				if (file.Name.StartsWith ("."))
-					continue;
 
 				// index-file name is of pattern .name.index
-				string indexfile = Path.Combine (path, "." + file.Name + ".index");
-				found_no_good_mbox = (found_no_good_mbox && (file.Length == 0));
-
-				if (File.Exists (indexfile) || file.Length == 0)
-					continue;
-
-				flag = false;
-				Logger.Log.Debug ( "KMail backend: " + 
-					path + 
-					" contains an mbox file but no corresponding index file. Probably not a KMail mail directory. Ignoring this location!");
-				break;
+				string indexfile = Path.Combine (path, "." + entry + ".index");
+				if (! File.Exists (indexfile)) {
+					if (verbose)
+						Log.Warn ( String.Format (
+							"KMail backend: No index file for {0}." +
+							"Ignoring {1}, probably not a kmail directory.",
+							fullpath, path));
+					return false;
+				} else
+					no_content = false;
 			}
-			
-			// If found a non-empty file without any index file OR
-			// all files were zero size, return false
-			if (! flag || found_no_good_mbox)
-				return false;
 
-			return true;
+			return (! no_content);
 		}
 
 		/**

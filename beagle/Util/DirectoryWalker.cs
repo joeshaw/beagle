@@ -277,6 +277,14 @@ namespace Beagle.Util {
 			return new FileEnumerable (path, filter, null);
 		}
 
+		static public IEnumerable GetItemNames (string path, FileFilter filter)
+		{
+			FileEnumerable fe;
+			fe = new FileEnumerable (path, filter, null);
+			fe.NamesOnly = true;
+			return fe;
+		}
+
 		static public IEnumerable GetFileInfosRecursive (string path)
 		{
 			foreach (FileInfo i in DirectoryWalker.GetFileInfos (path))
