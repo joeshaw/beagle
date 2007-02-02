@@ -349,11 +349,17 @@ namespace Beagle.Daemon.KonversationQueryable {
 				if (! is_good_line)
 					return true;
 
-				line_dt = DateTime.ParseExact (
-					dt_string,
-					KonversationLog.LogTimeFormatString,
-					CultureInfo.InvariantCulture,
-					DateTimeStyles.AssumeLocal);
+				try {
+					line_dt = DateTime.ParseExact (
+						dt_string,
+						KonversationLog.LogTimeFormatString,
+						CultureInfo.InvariantCulture,
+						DateTimeStyles.AssumeLocal);
+				} catch (FormatException) {
+					// Old log files had date strings as
+					// [11:05:08] <berkus>  ...
+					return true;
+				}
 
 				// On first scan, set the session_begin_time
 				if (session_begin_time == DateTime.MinValue) {
