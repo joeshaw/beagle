@@ -42,11 +42,8 @@ namespace Beagle.Filters {
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
-			// Runs inside the child process after form() but before exec()
-			pc.ChildProcessSetup += delegate {
-				// Let pdfinfo run for 10 CPU seconds, max.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 10);
-			};
+			// Let pdfinfo run for 10 CPU seconds, max.
+			pc.CpuLimit = 90;
 
 			try {
 				pc.Start ();
@@ -124,11 +121,8 @@ namespace Beagle.Filters {
 			// stdout.
 			pc.RedirectStandardError = false;
 
-			// Runs inside the child process after form() but before exec()
-			pc.ChildProcessSetup += delegate {
-				// Let pdftotext run for 90 CPU seconds, max.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
-			};
+			// Let pdftotext run for 90 CPU seconds, max.
+			pc.CpuLimit = 90;
 
 			try {
 				pc.Start ();

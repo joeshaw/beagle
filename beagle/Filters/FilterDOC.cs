@@ -101,15 +101,12 @@ namespace Beagle.Filters {
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
-			// Runs inside the child process after form() but before exec()
-			pc.ChildProcessSetup += delegate {
-				// Let beagle-doc-extractor run for 90 CPU seconds, max.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 90);
+			// Let beagle-doc-extractor run for 90 CPU seconds, max.
+			pc.CpuLimit = 90;
 
-				// Some documents make wv1 go crazy with memory.
-				// Limit to 100 megs of address space, too.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace, 100*1024*1024);
-			};
+			// Some documents make wv1 go crazy with memory.  Limit
+			// it to 100 megs of address space, too.
+			pc.MemLimit = 100*1024*1024;
 
 			try {
 				pc.Start ();

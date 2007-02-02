@@ -115,15 +115,12 @@ namespace Beagle.Filters {
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
-			// Runs inside the child process after fork() but before exec()
-			pc.ChildProcessSetup += delegate {
-				// Let mplayer run for 10 seconds, max.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 10);
+			// Let mplayer run for 10 seconds, max.
+			pc.CpuLimit = 10;
 
-				// There have been reports of mplayer eating
-				// tons of memory.  So limit it to 100 megs.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.AddressSpace, 100*1024*1024);
-			};
+			// There have been reports of mplayer eating tons of
+			// memory.  So limit it to 100 megs too.
+			pc.MemLimit = 100*1024*1024;
 
 			try {
 				pc.Start ();

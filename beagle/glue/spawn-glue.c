@@ -1,5 +1,5 @@
 /*
- * rlimit-glue.c: Functions for setting rlimits
+ * spawn-glue.c: Functions for spawning processes with limits
  *
  * Copyright (C) 2007 Novell, Inc.
  *
@@ -22,44 +22,60 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <errno.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 
-/*
- * Define a resouce mapping to something isn't system dependent.  If you
- * change these, make sure to adjust them in Util/SystemPriorities.cs too.
- */
-enum {
-	BEAGLE_RLIMIT_CPU  = 0,
-	BEAGLE_RLIMIT_AS = 1
-};
+#include <glib.h>
 
 /*
- * Simple wrapper around setrlimit(2) that does what we need.  Avoids
- * 64-bit issues in pinvoking and dealing with structures.
+ * A specialized version of g_spawn_async_with_pipes that sets up rlimits.
  */
-int set_rlimit (int beagle_resource, int limit)
+
+typedef struct {
+	int cpu_limit;
+	int mem_limit;
+} LimitInfo;
+
+static void limit_setup_func (gpointer user_data)
 {
-	int resource;
+	LimitInfo *info = user_data;
 	struct rlimit rlim;
 
-	switch (beagle_resource) {
-	case BEAGLE_RLIMIT_CPU:
-		resource = RLIMIT_CPU;
-		break;
-
-	case BEAGLE_RLIMIT_AS:
-		resource = RLIMIT_AS;
-		break;
-
-	default:
-		errno = EINVAL;
-		return -1;
+	if (info->cpu_limit > 0) {
+		rlim.rlim_cur = rlim.rlim_max = info->cpu_limit;
+		setrlimit (RLIMIT_CPU, &rlim);
 	}
-	
-	rlim.rlim_cur = limit;
-	rlim.rlim_max = limit;
 
-	return setrlimit (resource, &rlim);
+	if (info->mem_limit > 0) {
+		rlim.rlim_cur = rlim.rlim_max = info->mem_limit;
+		setrlimit (RLIMIT_AS, &rlim);
+	}
+}	
+
+void
+spawn_async_with_pipes_and_limits (char   **argv,
+				   int      cpu_limit,
+				   int      mem_limit,
+				   GPid    *child_pid,
+				   int     *stdin,
+				   int     *stdout,
+				   int     *stderr,
+				   GError **error)
+{
+	LimitInfo info;
+
+	info.cpu_limit = cpu_limit;
+	info.mem_limit = mem_limit;
+
+	g_spawn_async_with_pipes (NULL,
+				  argv,
+				  NULL,
+				  G_SPAWN_SEARCH_PATH,
+				  limit_setup_func,
+				  &info,
+				  child_pid,
+				  stdin,
+				  stdout,
+				  stderr,
+				  error);
 }

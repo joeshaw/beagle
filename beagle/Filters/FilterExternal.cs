@@ -176,11 +176,8 @@ namespace Beagle.Filters {
 			pc.Arguments = argv;
 			pc.RedirectStandardOutput = true;
 
-			// Runs inside the child process after fork() but before exec()
-			pc.ChildProcessSetup += delegate {
-				// Let the external filter run for 2 minutes, max.
-				SystemPriorities.SetResourceLimit (SystemPriorities.Resource.Cpu, 120);
-			};
+			// Let the external filter run for 2 minutes, max.
+			pc.CpuLimit = 120;
 
 			try {
 				pc.Start ();

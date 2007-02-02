@@ -34,15 +34,11 @@ namespace Beagle.Util {
 
 	public class SafeProcess {
 
-		private delegate void ChildProcessSetupWrapperDelegate (IntPtr user_data);
-		public delegate void ChildProcessSetupDelegate ();
-
 		private bool redirect_stdin, redirect_stdout, redirect_stderr;
 		private string[] args;
 		private UnixStream stdin_stream, stdout_stream, stderr_stream;
 		private int pid;
-
-		public ChildProcessSetupDelegate ChildProcessSetup;
+		private int cpu_limit, mem_limit;
 
 		public string[] Arguments {
 			get { return args; }
@@ -80,18 +76,25 @@ namespace Beagle.Util {
 			get { return pid; }
 		}
 
-		[DllImport ("libglib-2.0.so.0")]
-		static extern bool g_spawn_async_with_pipes (string working_directory,
-							     string[] argv,
-							     string[] envp,
-							     int flags,
-							     ChildProcessSetupWrapperDelegate child_setup,
-							     IntPtr child_data,
-							     out int pid,
-							     [In,Out] IntPtr standard_input,
-							     [In,Out] IntPtr standard_output,
-							     [In,Out] IntPtr standard_error,
-							     out IntPtr error);
+		public int CpuLimit {
+			get { return cpu_limit; }
+			set { cpu_limit = value; }
+		}
+
+		public int MemLimit {
+			get { return mem_limit; }
+			set { mem_limit = value; }
+		}
+
+		[DllImport ("libbeagleglue")]
+		static extern void spawn_async_with_pipes_and_limits (string[] argv,
+								      int cpu_limit,
+								      int mem_limit,
+								      out int pid,
+								      [In,Out] IntPtr standard_input,
+								      [In,Out] IntPtr standard_output,
+								      [In,Out] IntPtr standard_error,
+								      out IntPtr error);
 
 		public void Start ()
 		{
@@ -108,7 +111,6 @@ namespace Beagle.Util {
 			}
 
 			IntPtr in_ptr = IntPtr.Zero, out_ptr = IntPtr.Zero, err_ptr = IntPtr.Zero;
-			ChildProcessSetupWrapperDelegate setup_func = null;
 
 			try {
 				if (RedirectStandardInput)
@@ -120,25 +122,14 @@ namespace Beagle.Util {
 				if (RedirectStandardError)
 					err_ptr = Marshal.AllocHGlobal (IntPtr.Size);
 
-				if (ChildProcessSetup != null) {
-					setup_func = delegate { 
-						// Exceptions in here go to stderr
-						try {
-							ChildProcessSetup ();
-						} catch (Exception e) {
-							Console.Error.WriteLine ("Exception caught in child setup function:");
-							Console.Error.WriteLine (e);
-						}
-					};
-				}
-
-				g_spawn_async_with_pipes (null, args, null,
-							  1 << 2, // G_SPAWN_SEARCH_PATH
-							  setup_func,
-							  IntPtr.Zero,
-							  out pid,
-							  in_ptr, out_ptr, err_ptr,
-							  out error);
+				spawn_async_with_pipes_and_limits (args,
+								   cpu_limit,
+								   mem_limit,
+								   out pid,
+								   in_ptr,
+								   out_ptr,
+								   err_ptr,
+								   out error);
 
 				if (error != IntPtr.Zero)
 					throw new SafeProcessException (new GException (error));
