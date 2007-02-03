@@ -56,7 +56,8 @@ namespace Beagle.Daemon {
 		{
 			// Add flavor only when called from RegisterSupportedTypes
 			if (supported_flavors == null)
-				return;
+				throw new Exception ("AddSupportedFlavor() should be only called from RegisterSupportedTypes()");
+
 			supported_flavors.Add (flavor);
 		}
 
