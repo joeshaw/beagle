@@ -312,7 +312,8 @@ namespace Beagle.Daemon {
 				// If we have content, try to find a filter
 				// which we can use to process the indexable.
 				try {
-					FilterFactory.FilterIndexable (indexable, text_cache, out filter);
+					if (! FilterFactory.FilterIndexable (indexable, text_cache, out filter))
+						indexable.NoContent = true;
 				} catch (Exception e) {
 					Logger.Log.Error (e, "Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					indexable.NoContent = true;

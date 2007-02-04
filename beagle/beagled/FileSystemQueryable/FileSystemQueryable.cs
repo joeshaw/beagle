@@ -875,6 +875,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return RequiredAction.Index;
 			}
 
+			// If this was not indexed before, try again
+			if (! attr.HasFilterInfo)
+				return RequiredAction.Index;
+
 			// FIXME: This does not take in to account that we might have a better matching filter to use now
 			// That, however, is kind of expensive to figure out since we'd have to do mime-sniffing and shit.
 			if (attr.FilterName != null && attr.FilterVersion > 0) {
@@ -1252,7 +1256,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string path;
 			path = (string) indexable.LocalState ["Path"];
 			if (Debug)
-				Log.Debug ("PostChildrenIndexedHook for {0} ({1}) and receipt uri={2}", indexable.Uri, path, receipt.Uri);
+				Log.Debug ("PostChildrenIndexedHook for {0} ({1}) and receipt uri={2}, (filter={3},{4})", indexable.Uri, path, receipt.Uri, receipt.FilterName, receipt.FilterVersion);
 
 			ForgetId (path);
 

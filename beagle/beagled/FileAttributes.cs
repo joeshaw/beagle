@@ -78,7 +78,7 @@ namespace Beagle.Daemon {
 		}
 
 		public bool HasFilterInfo {
-			get { return filter_name != null && filter_version > 0; }
+			get { return filter_name != null && filter_version >= 0; }
 		}
 		
 		public string FilterName {

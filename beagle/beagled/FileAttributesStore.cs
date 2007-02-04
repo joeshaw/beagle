@@ -159,16 +159,15 @@ namespace Beagle.Daemon {
 
 			// If there are no attributes set on the file, there is no
 			// way that we can be up-to-date.
-			if (attr == null)
+			// Also, if attribute has no filter information, try once
+			// again.
+			if (attr == null || ! attr.HasFilterInfo)
 				return false;
 
 			// Note that when filter is set to null, we ignore
 			// any existing filter data.  That might not be the
 			// expected behavior...
 			if (filter != null) {
-
-				if (! attr.HasFilterInfo)
-					return false;
 
 				if (attr.FilterName != filter.Name)
 					return false;
