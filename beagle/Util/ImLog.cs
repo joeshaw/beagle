@@ -428,7 +428,10 @@ namespace Beagle.Util {
 
 			try {
 				while ((line_sb = reader.ReadLineAsStringBuilder ()) != null) {
-					if (ProcessLine (line_sb, out text, out dt_string, ref speaker)) {
+					if (! ProcessLine (line_sb, out text, out dt_string, ref speaker))
+						continue;
+
+					try {
 						DateTime dt = DateTime.ParseExact (
 							dt_string,
 							LogTimeFormatString,
@@ -436,7 +439,7 @@ namespace Beagle.Util {
 							DateTimeStyles.AssumeLocal);
 
 						AddUtterance (dt, speaker, text);
-					}
+					} catch (FormatException) { }
 				}
 			} catch {
 				if (line_sb != null)
@@ -456,30 +459,41 @@ namespace Beagle.Util {
 		{
 			text = dt_string = null;
 
-			// Ignore empty lines or non-chat lines
-			if (log_line_sb.Length == 0 || log_line_sb [0] != '[')
-				return false;
-
 			// Proper log line looks like
 			//
 			//[Mon Nov 1 2005] [14:09:32] <dBera>    can yo...
 
 			int bracket_begin_index, bracket_end_index;
+
+			// Ignore empty lines or non-chat lines
+			if (log_line_sb.Length == 0 || log_line_sb [0] != '[')
+				return false;
 			bracket_begin_index = 0;
 
 			bracket_end_index = IndexOfSB (log_line_sb, ']', bracket_begin_index + 1);
-			bracket_end_index = IndexOfSB (log_line_sb, '[', bracket_end_index + 1);
-			bracket_end_index = IndexOfSB (log_line_sb, ']', bracket_end_index + 1);
+			if (bracket_end_index == -1)
+				return false;
+
+			bracket_end_index += 2;
+			if (bracket_end_index >= log_line_sb.Length || log_line_sb [bracket_end_index] != '[')
+				return false;
+
+			bracket_end_index += 9;
+			if (bracket_end_index >= log_line_sb.Length || log_line_sb [bracket_end_index] != ']')
+				return false;
 
 			// Ignore lines like '[Tue Nov 8 2005] [17:53:14]   * joe nods'
-			if (log_line_sb.Length < bracket_end_index + 3 || log_line_sb [bracket_end_index + 2] != '<')
+			// Good line should have name of speaker '<foobar>' after the time
+			bracket_begin_index = bracket_end_index + 2;
+			if (bracket_begin_index >= log_line_sb.Length || log_line_sb [bracket_begin_index] != '<')
 				return false;
 
 			dt_string = log_line_sb.ToString (0, bracket_end_index + 1);
 
 			// Search for name of speaker '<foobar>'
-			bracket_begin_index = IndexOfSB (log_line_sb, '<', bracket_end_index + 1);
 			bracket_end_index = IndexOfSB (log_line_sb, '>', bracket_begin_index + 1);
+			if (bracket_end_index == -1)
+				return false;
 
 			if (speaker != null)
 				speaker = log_line_sb.ToString (bracket_begin_index + 1, bracket_end_index - bracket_begin_index - 1);

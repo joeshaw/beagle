@@ -165,8 +165,6 @@ namespace Beagle.Daemon.KonversationQueryable {
 				this.file_index = 0;
 				this.log_dir = log_dir;
 				this.generator = null;
-				if (MoveToNextFile ())
-					generator = new SessionIndexableGenerator (queryable, files [file_index], 0);
 			}
 
 			private bool MoveToNextFile ()
@@ -189,12 +187,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 
 			public bool HasNextIndexable ()
 			{
-				if (generator == null) {
-					queryable.initial_indexing = false;
-					return false;
-				}
-
-				if (generator.HasNextIndexable ())
+				if (generator != null && generator.HasNextIndexable ())
 					return true;
 
 				// Move to the next file
