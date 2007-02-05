@@ -35,7 +35,7 @@ using Beagle.Daemon;
 namespace Beagle.Daemon.EvolutionMailQueryable {
 	
 	class MailCrawler {
-		public delegate void ItemAddedHandler (FileInfo file);
+		public delegate void ItemAddedHandler (FileInfo file, bool inotify_event);
 
 		private static bool Debug = false;
 
@@ -94,14 +94,14 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 					// IMAP summary
 					if (SummaryAddedEvent != null && File.Exists (full_path)) {
 						Logger.Log.Info ("Reindexing updated IMAP summary: {0}", full_path);
-						SummaryAddedEvent (new FileInfo (full_path));
+						SummaryAddedEvent (new FileInfo (full_path), true);
 					}
 				} else if (Path.GetExtension (full_path) == ".ev-summary") {
 					// mbox summary
 					string mbox_file = Path.ChangeExtension (full_path, null);
 					if (MboxAddedEvent != null && File.Exists (mbox_file)) {
 						Logger.Log.Info ("Reindexing updated mbox: {0}", mbox_file);
-						MboxAddedEvent (new FileInfo (mbox_file));
+						MboxAddedEvent (new FileInfo (mbox_file), true);
 					}
 				}
 			}
@@ -143,13 +143,13 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 					if (file.Name == "summary") {
 						if (SummaryAddedEvent != null && FileIsInteresting (file))
-							SummaryAddedEvent (file);
+							SummaryAddedEvent (file, false);
 					} else if (file.Extension == ".ev-summary") {
 						string mbox_name = Path.Combine (file.DirectoryName,
 										 Path.GetFileNameWithoutExtension (file.Name));
 						FileInfo mbox_file = new FileInfo (mbox_name);
 						if (MboxAddedEvent != null && FileIsInteresting (mbox_file))
-							MboxAddedEvent (mbox_file);
+							MboxAddedEvent (mbox_file, false);
 					}
 				}
 				watch.Stop ();
