@@ -390,9 +390,6 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		public delegate void IndexingStateChangedHandler (bool new_value);
-		public IndexingStateChangedHandler IndexingStateChanged;
-
 		private bool is_indexing = false;
 
 		// Reports whether the backend is performing the initial crawling and indexing
