@@ -271,8 +271,8 @@ namespace SemWeb {
 
 			string ID = xml.GetAttribute("ID", NS.RDF);
 
-			Console.WriteLine ("({0})({1})({2})({3})({4})({5})({6})",
-				nodeID, resource, parseType, datatype, lang, predicate, ID);
+			//Console.WriteLine ("({0})({1})({2})({3})({4})({5})({6})",
+			//	nodeID, resource, parseType, datatype, lang, predicate, ID);
 
 			if (nodeID != null && !IsValidXmlName(nodeID))
 				OnWarning("'" + nodeID + "' is not a valid XML Name");
