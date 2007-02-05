@@ -7,16 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-13 19:28+0900\n"
-"PO-Revision-Date: 2007-01-13 19:28+0900\n"
+"POT-Creation-Date: 2007-02-05 21:34+0900\n"
+"PO-Revision-Date: 2007-02-05 21:29+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../glue/eggtrayicon.c:127
+#: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
 msgstr "向き"
 
@@ -28,7 +28,7 @@ msgstr "検索トレイの向きです"
 msgid "Open..."
 msgstr "開く..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
 msgstr "終了"
 
@@ -76,6 +76,7 @@ msgstr "このデータベースには指定した ID はありません！"
 msgid "Added {0} contact"
 msgid_plural "Added {0} contacts"
 msgstr[0] "{0}個の連絡先を追加しました"
+msgstr[1] "{0}個の連絡先を追加しました"
 
 #: ../ContactViewer/ContactWindow.cs:204
 #, csharp-format
@@ -301,12 +302,17 @@ msgstr "<b>会話の履歴</b>"
 msgid "IM Viewer"
 msgstr "IM ビューア"
 
-#: ../ImLogViewer/ImLogWindow.cs:102
+#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "\"{0}\" についての会話記録"
 
 #: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "\"{0}\" ({1}) についての会話記録"
+
+#: ../ImLogViewer/ImLogWindow.cs:125
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "\"{0}\" さんとの会話記録"
@@ -324,6 +330,7 @@ msgstr "デスクトップ上のデータを検索します"
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "検索結果: {0}個"
+msgstr[1] "検索結果: {0}個"
 
 #: ../search/Category.cs:134
 #, csharp-format
@@ -403,7 +410,8 @@ msgstr "検索サービスが起動されていません"
 msgid "Start search service"
 msgstr "検索サービスを起動する"
 
-#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138 ../search/Search.cs:254
+#: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "デスクトップの検索"
 
@@ -423,32 +431,36 @@ msgstr "検索する語句を入力して下さい"
 msgid "Start searching"
 msgstr "検索を始めます"
 
-#: ../search/Search.cs:264
+#: ../search/Search.cs:273
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "デスクトップの検索: {0}"
 
-#: ../search/Search.cs:280
+#: ../search/Search.cs:289
 #, csharp-format
-msgid "Showing all {0} matches"
-msgstr "{0}個の検索結果を全て表示しています"
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "{0}個の検索結果を全て表示しています"
+msgstr[1] "全 {0}個の検索結果を全て表示しています"
 
-#: ../search/Search.cs:282
+#: ../search/Search.cs:291
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr "{1}個の検索結果のうち上位 {0}個を表示しています"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "{1}個の検索結果のうち上位 {0}個を表示しています"
+msgstr[1] "{1}個の検索結果のうち上位 {0}個を表示しています"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:564
 msgid "Your data is being indexed"
 msgstr "データのインデックスを作成中です"
 
-#: ../search/Search.cs:556
+#: ../search/Search.cs:565
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
 msgstr ""
 "検索サービスでデータのインデックスを作成しています。インデックスの作成が完了"
-"するまで検索結果が不完全なものになる場合があります。"
+"するまで不完全な検索結果になるかもしれません。"
 
 #: ../search/Tiles/ArchivedFile.cs:39
 #, csharp-format
@@ -530,6 +542,7 @@ msgstr "空"
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "{0}個のアイテムがあります"
+msgstr[1] "{0}個のアイテムがあります"
 
 #. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
@@ -621,6 +634,7 @@ msgstr "別のアプリで開く"
 msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0}個のスライド"
+msgstr[1] "{0}個のスライド"
 
 #: ../search/Tiles/RSSFeed.cs:49
 msgid "Site:"
@@ -635,6 +649,7 @@ msgstr "訪問した日:"
 msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "{0}ページ"
+msgstr[1] "{0}ページ"
 
 #: ../search/Tiles/Tile.cs:179
 msgid "Open"
@@ -685,12 +700,12 @@ msgid "Archives"
 msgstr "書庫"
 
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
+#: ../Util/StringFu.cs:116
 msgid "Yesterday"
 msgstr "昨日"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
+#: ../Util/StringFu.cs:114
 msgid "Today"
 msgstr "今日"
 
@@ -703,12 +718,14 @@ msgstr "明日"
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0}週間前"
+msgstr[1] "{0}週間前"
 
 #: ../search/Tiles/Utils.cs:237
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
 msgstr[0] "{0}週間以内"
+msgstr[1] "{0}週間以内"
 
 #. Let's say a year and a half to stop saying months
 #: ../search/Tiles/Utils.cs:239
@@ -716,24 +733,28 @@ msgstr[0] "{0}週間以内"
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0}ヶ月前"
+msgstr[1] "{0}ヶ月前"
 
 #: ../search/Tiles/Utils.cs:241
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0}ヶ月以内"
+msgstr[1] "{0}ヶ月以内"
 
 #: ../search/Tiles/Utils.cs:243
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0}年前"
+msgstr[1] "{0}年前"
 
 #: ../search/Tiles/Utils.cs:245
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "{0}年以内"
+msgstr[1] "{0}年以内"
 
 #. FIXME: We need filters for video in Beagle.
 #. They should land soon when entagged-sharp gets video support.
@@ -749,15 +770,15 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "アクセスした日付:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "\"最近検索したエントリ\" はありません"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "最近検索したエントリ"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
 msgstr "エントリをクリアする"
 
@@ -1347,14 +1368,10 @@ msgid "_Start search & indexing services automatically "
 msgstr "自動的に検索＆インデックス作成サービスを起動する(_S)"
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "デスクトップ検索とインデックス化の設定"
+msgid "Configure Desktop Search"
+msgstr "デスクトップ検索の設定"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "検索とインデックス作成のプロパティを設定します"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "検索とインデックスの作成"
 
@@ -1362,105 +1379,341 @@ msgstr "検索とインデックスの作成"
 msgid "On This Computer"
 msgstr "このコンピュータ"
 
-#: ../Util/ExifData.cs:226
+#: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
 msgstr "画像のフォルダ"
 
-#: ../Util/ExifData.cs:228
+#: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
 msgstr "サムネイルのフォルダ"
 
-#: ../Util/ExifData.cs:230
+#: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
 msgstr "Exif のフォルダ"
 
-#: ../Util/ExifData.cs:232
+#: ../Util/F-Spot/Exif.cs:254
 msgid "GPS Directory"
 msgstr "GPS のフォルダ"
 
-#: ../Util/ExifData.cs:234
+#: ../Util/F-Spot/Exif.cs:256
 msgid "InterOperability Directory"
 msgstr "InterOperability のフォルダ"
 
-#: ../Util/ExifData.cs:236
+#: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
 msgstr "不明なフォルダ"
 
+#: ../Util/F-Spot/IptcFile.cs:175
+msgid "IPTC Information Interchange Model (IIM) Version number"
+msgstr "IPTC Information Interchange Model (IIM) のバージョン番号"
+
+#: ../Util/F-Spot/IptcFile.cs:177
+msgid "OSI Destination routing information"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:179
+msgid "IPTC file format"
+msgstr "IPTC ファイル形式"
+
+#: ../Util/F-Spot/IptcFile.cs:181
+msgid "Identifies the provider and product"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:183
+msgid "A unique number identifying the envelope"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:185
+msgid "A unique number"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:187
+msgid ""
+"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:189
+msgid "The year month and day (CCYYMMDD) the service sent the material"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:191
+msgid ""
+"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:193
+msgid "The character set designation"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:195
+msgid "External globally unique object identifier"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:200
+msgid "Abstract Relationship Method (ARM) identifier"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:202
+msgid "Abstract Relationship Method (ARM) version number."
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:205
+msgid "Number identifying the IIM version this application record uses"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:207
+msgid "Object type reference"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:212
+msgid "Object attribute reference"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
+msgid "Object name"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:220
+msgid "Status of the objectdata according to the provider"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:224
+msgid "Location within a city or area where the object originates"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:227
+msgid "Name of the city the content is focussing on"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:230
+msgid "Copyright information for"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:233
+msgid "Full name of the country of the focus of the content"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:236
+msgid ""
+"Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:239
+msgid "Creator of the content"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:242
+msgid "Provider of the object"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:245
+msgid "The title of the author or creator"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:248
+msgid ""
+"The person involved in writing, editing or correcting the object data or "
+"caption/abstract"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:252
+msgid "Headline of the content"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:255
+msgid ""
+"Instructions from the creator to the receiver not covered by other fields"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:258
+msgid "Intellectual genre of the object"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:271
+msgid "Unknown IIM DataSet"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:46
+msgid "Creator"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:47
+msgid "Title"
+msgstr "タイトル"
+
+#: ../Util/F-Spot/MetadataStore.cs:48
+msgid "Copyright"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:49
+msgid "Subject and Keywords"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:50
+msgid "Compression"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:52
+msgid "Planar Configuration"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:56
+msgid "Photometric Interpretation"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:58
+msgid "Resolution Unit"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:60
+msgid "Exposure Program"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:62
+msgid "Metering Mode"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:64
+msgid "Exposure Mode"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:66
+msgid "Custom Rendered"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:68
+msgid "Components Configuration"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:70
+msgid "Light Source"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:72
+msgid "Sensing Method"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:74
+msgid "Color Space"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:76
+msgid "White Balance"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:78
+msgid "Focal Plane Resolution Unit"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:80
+msgid "File Source Type"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:82
+msgid "Scene Capture Type"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:84
+msgid "Gain Control"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:86
+msgid "Contrast"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:88
+msgid "Saturation"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:90
+msgid "Sharpness"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:92
+msgid "Scene Type"
+msgstr ""
+
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:119
 msgid "MMM d"
 msgstr "MMM月d日"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:122
 msgid "MMM d, yyyy"
 msgstr "yyyy年MMM月d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:131
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} の {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
 msgstr "今日の {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "昨日の {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:156
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "{0}日前の {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0}日前の {1}"
+msgstr[1] "{0}日前の {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM月d日 h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:154
+#: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy年MMMM月d日 h:mm tt"
 
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:177
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0}時間"
+msgstr[1] "{0}時間"
 
-#: ../Util/StringFu.cs:171
+#: ../Util/StringFu.cs:184
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "{0}分"
+msgstr[1] "{0}分"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:205
+#: ../Util/StringFu.cs:218
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0}バイト"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0}バイト"
+msgstr[1] "{0}バイト"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:209
+#: ../Util/StringFu.cs:222
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0}Kバイト"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:225
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0}Mバイト"
