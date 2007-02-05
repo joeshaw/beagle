@@ -352,6 +352,9 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 	g_string_append_printf (data, " Uri=\"%s\" Type=\"%s\" MimeType=\"%s\"", 
 				hit->uri, hit->type, hit->mime_type);
 
+	g_string_append_printf (data, " ParentUri=\"%s\"", 
+				hit->parent_uri);
+
 	g_string_append_printf (data, " Source=\"%s\"", 
 				hit->source);
 
