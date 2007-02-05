@@ -49,6 +49,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 		{
 			initial_indexing = false;
 
+			//log_dir = Path.Combine (PathFinder.HomeDir, "konv");
 			log_dir = Path.Combine (PathFinder.HomeDir, ".kde");
 			log_dir = Path.Combine (log_dir, "share");
 			log_dir = Path.Combine (log_dir, "apps");
@@ -233,7 +234,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 			private StringBuilder log_line_as_sb;
 			private StringBuilder data_sb;
 			private Dictionary<string, bool> speakers; // list of speakers in the session
-			private string channel_name, speaking_to;
+			private string server_name, speaking_to;
 
 			// Split log into 6 hour sessions or 50 lines, which ever is larger
 			private DateTime session_begin_time;
@@ -255,7 +256,8 @@ namespace Beagle.Daemon.KonversationQueryable {
 				this.session_begin_time = DateTime.MinValue;
 				this.speakers = new Dictionary<string, bool> (10); // rough default value
 
-				Log.Debug ("Reading from konversation log " + log_file);
+				KonversationLog.ParseFilename (Path.GetFileName (log_file), out server_name, out speaking_to);
+				Log.Debug ("Reading from konversation log {0} (server={1}, channel={1})", log_file, server_name, speaking_to);
 			}
 
 			public void PostFlushHook ()
@@ -411,16 +413,12 @@ namespace Beagle.Daemon.KonversationQueryable {
 
 			private void AddChannelInformation (Indexable indexable)
 			{
-				// Parse identity information from konversation .config file
+				// FIXME: Parse identity information from konversation .config file
 				//AddProperty (Beagle.Property.NewUnsearched ("fixme:identity", log.Identity));
 
 				// Get server name, channel name from the filename and add it here
-				//indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:server", server_name));
-
-				if (channel_name != null)
-					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:channel", channel_name));
-				if (speaking_to != null)
-					indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto", speaking_to));
+				indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:server", server_name));
+				indexable.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto", speaking_to));
 			}
 		}
 

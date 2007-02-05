@@ -516,6 +516,23 @@ namespace Beagle.Util {
 
 			return pos;
 		}
+
+		public static void ParseFilename (string filename, out string server, out string channel)
+		{
+			server = channel = null;
+
+			if (string.IsNullOrEmpty (filename))
+				return;
+
+			filename = Path.GetFileNameWithoutExtension (filename);
+			int index_ = filename.IndexOf ('_');
+			if (index_ == -1) {
+				channel = filename;
+			} else {
+				server = filename.Substring (0, index_);
+				channel = filename.Substring (index_ + 1);
+			}
+		}
 	}
 }
 
