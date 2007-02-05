@@ -894,15 +894,15 @@ namespace Beagle.Util {
 #if false		       
 				if (chunk is TextChunk) {
 					TextChunk text = (TextChunk) chunk;
-					System.Console.Write (" Text Chunk {0} {1}", 
-							      text.Keyword, "", "");
+					//System.Console.Write (" Text Chunk {0} {1}", 
+					//		      text.Keyword, "", "");
 				}
 				
 				TimeChunk time = chunk as TimeChunk;
-				if (time != null)
-					System.Console.Write(" Time {0}", time.Time);
+				//if (time != null)
+				//	System.Console.Write(" Time {0}", time.Time);
 
-				System.Console.WriteLine ("");
+				//System.Console.WriteLine ("");
 #endif
 				
 				if (chunk.Name == "IEND")
@@ -1068,18 +1068,18 @@ namespace Beagle.Util {
 				} catch (System.Exception e) {
 					failed.Add (path);
 					//System.Console.WriteLine ("Error loading {0}", path);
-					System.Console.WriteLine (e.ToString ());
+					//System.Console.WriteLine (e.ToString ());
 				}
 
-				System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
+				//System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
 				box.PackStart (image);
 				win.ShowAll ();
 			}
 			
-			System.Console.WriteLine ("{0} Failed to Load", failed.Count);
-			foreach (string fail_path in failed) {
-				System.Console.WriteLine (fail_path);
-			}
+			//System.Console.WriteLine ("{0} Failed to Load", failed.Count);
+			//foreach (string fail_path in failed) {
+			//	System.Console.WriteLine (fail_path);
+			//}
 
 			Gtk.Application.Run ();
 		}

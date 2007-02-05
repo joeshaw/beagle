@@ -229,7 +229,7 @@ namespace Beagle.Util {
 					if (stream != null) {
 						descriptions.Import (new RdfXmlReader (stream));
 					} else {
-						System.Console.WriteLine ("Can't find resource");
+						//System.Console.WriteLine ("Can't find resource");
 					}
 				}
 				
@@ -306,7 +306,7 @@ namespace Beagle.Util {
 		public static void Add (StatementSink sink, Entity subject, string predicate, string type, string [] values)
 		{
 			if (values == null) {
-				System.Console.WriteLine ("{0} has no values; skipping", predicate);
+				//System.Console.WriteLine ("{0} has no values; skipping", predicate);
 				return;
 			}
 
@@ -337,8 +337,8 @@ namespace Beagle.Util {
 			{
 				string predicate = stmt.Predicate.ToString ();
 
-				if (predicate.StartsWith (name))
-					System.Console.WriteLine ("----------- {0}", stmt);
+				//if (predicate.StartsWith (name))
+				//	System.Console.WriteLine ("----------- {0}", stmt);
 
 				return true;
 			}

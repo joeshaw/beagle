@@ -454,7 +454,7 @@ namespace Beagle.Util.Tiff {
 			enc.GetBytes (Value, 0, Value.Length, data, heading.Length);
 			
 			UserComment c = new UserComment (data, is_little);
-			System.Console.WriteLine ("old = \"{0}\" new = \"{1}\" heading = \"{2}\"", c.Value, description, heading);
+			//System.Console.WriteLine ("old = \"{0}\" new = \"{1}\" heading = \"{2}\"", c.Value, description, heading);
 			return data;
 		}
 
@@ -856,13 +856,13 @@ namespace Beagle.Util.Tiff {
 				//System.Console.WriteLine ("Found Standard Tiff Marker {0}", marker);
 				break;
 			case 0x4f52:
-				System.Console.WriteLine ("Found Olympus Tiff Marker {0}", marker.ToString ("x"));
+				//System.Console.WriteLine ("Found Olympus Tiff Marker {0}", marker.ToString ("x"));
 				break;
 			case 0x4e31:
-				System.Console.WriteLine ("Found Navy Interchange File Format Tiff Marker {0}", marker.ToString ("x")); 
+				//System.Console.WriteLine ("Found Navy Interchange File Format Tiff Marker {0}", marker.ToString ("x")); 
 				break;
 			default:
-				System.Console.WriteLine ("Found Unknown Tiff Marker {0}", marker.ToString ("x"));
+				//System.Console.WriteLine ("Found Unknown Tiff Marker {0}", marker.ToString ("x"));
 				break;
 			}
 
@@ -873,7 +873,7 @@ namespace Beagle.Util.Tiff {
 				throw new System.Exception ("Invalid IFD0 Offset [" + directory_offset.ToString () + "]"); 
 			
 #if DEBUG_LOADER
-			System.Console.WriteLine ("Reading First IFD");
+			//System.Console.WriteLine ("Reading First IFD");
 #endif
 			Directory = new ImageDirectory (stream, directory_offset, endian); 
 			//}
@@ -891,7 +891,7 @@ namespace Beagle.Util.Tiff {
 		{
 			foreach (DirectoryEntry e in dir.Entries) {
 #if DEBUG_LOADER
-				System.Console.WriteLine ("{0}", e.Id);
+				//System.Console.WriteLine ("{0}", e.Id);
 #endif
 				switch (e.Id) {
 				case TagId.IPTCNAA:
@@ -1204,7 +1204,7 @@ namespace Beagle.Util.Tiff {
 					case ColorSpace.AdobeRGB:
 						return Cms.Profile.CreateAlternateRgb ();
 					case ColorSpace.Uncalibrated:
-						System.Console.WriteLine ("Uncalibrated colorspace");
+						//System.Console.WriteLine ("Uncalibrated colorspace");
 						break;
 					}
 					break;
@@ -1233,7 +1233,7 @@ namespace Beagle.Util.Tiff {
 					ushort [] trns = e.ShortValue;
 					ushort gamma_count = (ushort) (1 << bits_per_sample);
 					Cms.GammaTable [] tables = new Cms.GammaTable [3];
-					System.Console.WriteLine ("Parsing transfer function: count = {0}", trns.Length);
+					//System.Console.WriteLine ("Parsing transfer function: count = {0}", trns.Length);
 
 					// FIXME we should use the TransferRange here
 					// FIXME we should use bits per sample here
@@ -1366,7 +1366,7 @@ namespace Beagle.Util.Tiff {
 		public SubdirectoryEntry (byte [] data, int offset, Endian endian) : base (data, offset, endian)
 		{
 			if (this.GetEntryCount () > 1) {
-				System.Console.WriteLine ("Count is greater than 1 ({1}) on Subdirectory {0} interesting", tagid, count);
+				//System.Console.WriteLine ("Count is greater than 1 ({1}) on Subdirectory {0} interesting", tagid, count);
 			}
 		}
 
@@ -1579,10 +1579,10 @@ namespace Beagle.Util.Tiff {
 #if false
 			switch ((int)this.Id) {
 			case (int)TagId.NewSubfileType:
-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new NewSubFileType {0}", (NewSubfileType) this.ValueAsLong [0]);
+				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new NewSubFileType {0}", (NewSubfileType) this.ValueAsLong [0]);
 				break;
 			case (int)TagId.SubfileType:
-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new SubFileType {0}", (SubfileType) this.ValueAsLong [0]);
+				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new SubFileType {0}", (SubfileType) this.ValueAsLong [0]);
 				break;
 			case (int)TagId.Compression:
 				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new Compression {0}", (Compression) this.ValueAsLong [0]);
@@ -1602,23 +1602,23 @@ namespace Beagle.Util.Tiff {
 			case 50648:
 			case 50656:
 			case 50752:
-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX {0}({1}) - {2} {3}", this.Id, this.Id.ToString ("x"), this.type, raw_data.Length);
-				System.Console.WriteLine ("XXXX ", System.Text.Encoding.ASCII.GetString (raw_data));
+				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX {0}({1}) - {2} {3}", this.Id, this.Id.ToString ("x"), this.type, raw_data.Length);
+				//System.Console.WriteLine ("XXXX ", System.Text.Encoding.ASCII.GetString (raw_data));
 				switch (this.type) {
 				case EntryType.Long:
-					foreach (uint val in ((LongEntry)this).Value)
-						System.Console.Write (" {0}", val);
+					//foreach (uint val in ((LongEntry)this).Value)
+						//System.Console.Write (" {0}", val);
 					break;
 				case EntryType.Short:
-					foreach (ushort val in ((ShortEntry)this).ShortValue)
-						System.Console.Write (" {0}", val);
+					//foreach (ushort val in ((ShortEntry)this).ShortValue)
+						//System.Console.Write (" {0}", val);
 					break;
 				case EntryType.Byte:
-					foreach (byte val in this.RawData)
-						System.Console.Write (" {0}", val);
+					//foreach (byte val in this.RawData)
+						//System.Console.Write (" {0}", val);
 					break;
 				}
-				System.Console.WriteLine ("");
+				//System.Console.WriteLine ("");
 				break;
 			}
 #endif
@@ -1630,17 +1630,17 @@ namespace Beagle.Util.Tiff {
 			case EntryType.Short:
 			case EntryType.Long:
 				uint [] vals = this.ValueAsLong;
-				System.Console.Write ("{3}{1}({2}) [{0}] (", vals.Length, this.Id, this.Type, name);
-				for (int i = 0; i < System.Math.Min (15, vals.Length); i++) {
-					System.Console.Write (" {0}", vals [i]);
-				}
-				System.Console.WriteLine (")");
+				//System.Console.Write ("{3}{1}({2}) [{0}] (", vals.Length, this.Id, this.Type, name);
+				//for (int i = 0; i < System.Math.Min (15, vals.Length); i++) {
+				//	System.Console.Write (" {0}", vals [i]);
+				//}
+				//System.Console.WriteLine (")");
 				break;
 			case EntryType.Ascii:
-				System.Console.WriteLine ("{3}{1}({2}) (\"{0}\")", this.StringValue, this.Id, this.Type, name);
+				//System.Console.WriteLine ("{3}{1}({2}) (\"{0}\")", this.StringValue, this.Id, this.Type, name);
 				break;
 			default:
-				System.Console.WriteLine ("{3}{1}({2}) [{0}]", this.Count, this.Id, this.Type, name);
+				//System.Console.WriteLine ("{3}{1}({2}) [{0}]", this.Count, this.Id, this.Type, name);
 				break;
 			}
 		}
@@ -1667,7 +1667,7 @@ namespace Beagle.Util.Tiff {
 			byte [] tmp = new byte [len + 1];
 			System.Text.Encoding.UTF8.GetBytes (value, 0, value.Length, tmp, 0);
 			tmp[len] = 0;
-			System.Console.WriteLine ("SetData: value = {0} len = {1}", value, len);
+			//System.Console.WriteLine ("SetData: value = {0} len = {1}", value, len);
 			SetData (tmp);
 		}
 	
@@ -1710,7 +1710,7 @@ namespace Beagle.Util.Tiff {
 				return StringValue.Split ('\0');
 				break;
 			default:
-				System.Console.WriteLine ("{1}({2}) [{0}]", this.Count, this.Id, this.Type);
+				//System.Console.WriteLine ("{1}({2}) [{0}]", this.Count, this.Id, this.Type);
 				break;
 
 				}
@@ -1753,7 +1753,7 @@ namespace Beagle.Util.Tiff {
 					case TagId.ComponentsConfiguration:
 						return ArrayToString (ValueAsLong);
 					default:
-						System.Console.WriteLine ("Cannot convert type \"{0}\" to string", Id);
+						//System.Console.WriteLine ("Cannot convert type \"{0}\" to string", Id);
 						break;
 					}
 					break;

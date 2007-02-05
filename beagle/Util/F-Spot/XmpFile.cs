@@ -64,7 +64,7 @@ namespace Beagle.Util.Xmp {
 				store.Import (reader);
 				//Dump ();
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e.ToString ());
+				//System.Console.WriteLine (e.ToString ());
 			}
 		}
 
@@ -119,7 +119,7 @@ namespace Beagle.Util.Xmp {
 				text.Close ();
 				
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e);
+				//System.Console.WriteLine (e);
 			}
 		}
 
