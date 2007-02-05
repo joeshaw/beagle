@@ -1,13 +1,13 @@
 #
-# Copyright (C) 2005-2006 Jordi Mas i Hernàndez, jmas@softcatala.org
+# Copyright (C) 2005-2007 Jordi Mas i Hernàndez, jmas@softcatala.org
 # Traducció del Beagle al català
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-21 22:38+0100\n"
-"PO-Revision-Date: 2006-12-05 18:31+0200\n"
+"POT-Creation-Date: 2007-02-05 22:52+0100\n"
+"PO-Revision-Date: 2007-02-04 18:31+0200\n"
 "Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
 "Language-Team: tradgnome@softcatala.net\n"
 "MIME-Version: 1.0\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../glue/eggtrayicon.c:127
+#: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
 msgstr "Orientació"
 
@@ -28,7 +28,7 @@ msgstr "Orientació de la safata."
 msgid "Open..."
 msgstr "Obre..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
 msgstr "Surt"
 
@@ -332,12 +332,17 @@ msgstr "<b>Historial de converses</b>"
 msgid "IM Viewer"
 msgstr "Visualitzador de MI"
 
-#: ../ImLogViewer/ImLogWindow.cs:102
+#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Converses a {0}"
 
 #: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Converses a {0} ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:125
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Converses amb {0}"
@@ -439,14 +444,15 @@ msgstr "El servei de cerca no s'està executant"
 msgid "Start search service"
 msgstr "Inicia el servei de cerca"
 
-#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138 ../search/Search.cs:254
+#: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Cerca a l'escriptori"
 
 #
 #: ../search/Search.cs:157
 msgid "_Find:"
-msgstr "_Cerca:"
+msgstr "C_erca:"
 
 #: ../search/Search.cs:178
 msgid "Find Now"
@@ -460,26 +466,31 @@ msgstr "Introduïu els termes de la cerca"
 msgid "Start searching"
 msgstr "Inicia la cerca"
 
-#: ../search/Search.cs:264
+#: ../search/Search.cs:273
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Cerca a l'escriptori: {0}"
 
-#: ../search/Search.cs:280
+#: ../search/Search.cs:289
 #, csharp-format
-msgid "Showing all {0} matches"
-msgstr "S'estan mostrant les {0} coincidències"
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "S'està mostrant {0} coincidència"
+msgstr[1] "S'estan mostrant totes les {0} coincidències"
 
-#: ../search/Search.cs:282
+#: ../search/Search.cs:291
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr "S'estan mostrant les {0} coincidències més rellevants de les {1} totals"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "S'està mostrant {0} coincidència més rellevant de les {1} totals"
+msgstr[1] ""
+"S'estan mostrant les {0} coincidències més rellevants de les {1} totals"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:564
 msgid "Your data is being indexed"
 msgstr "S'estant indexant les dades"
 
-#: ../search/Search.cs:556
+#: ../search/Search.cs:565
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -492,14 +503,14 @@ msgstr ""
 msgid "Inside archive {0}"
 msgstr "Dins de l'arxiu {0}"
 
-#: ../search/Tiles/ArchivedFile.cs:77
 #
+#: ../search/Tiles/ArchivedFile.cs:77
 msgid "File Name:"
 msgstr "Nom del fitxer:"
 
+#
 #. Substring to move past the initial #
 #: ../search/Tiles/ArchivedFile.cs:78
-#
 msgid "Inside File:"
 msgstr "Dins del fitxer:"
 
@@ -561,7 +572,7 @@ msgid "Last Edited:"
 msgstr "Última edició:"
 
 #: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:80
+#: ../search/Tiles/Image.cs:84
 msgid "Full Path:"
 msgstr "Camí complet:"
 
@@ -581,9 +592,21 @@ msgstr[1] "Conté {0} elements"
 msgid "Set as Wallpaper"
 msgstr "Defineix com a fons d'escriptori"
 
-#: ../search/Tiles/Image.cs:79
+#
+#
+#
+#: ../search/Tiles/Image.cs:81
+msgid "Tags:"
+msgstr "Etiquetes:"
+
+#: ../search/Tiles/Image.cs:83
 msgid "Modified:"
 msgstr "Modificat:"
+
+#
+#: ../search/Tiles/Image.cs:93
+msgid "Comment:"
+msgstr "Comentari:"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -728,12 +751,12 @@ msgid "Archives"
 msgstr "Arxius"
 
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
+#: ../Util/StringFu.cs:116
 msgid "Yesterday"
 msgstr "Ahir"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
+#: ../Util/StringFu.cs:114
 msgid "Today"
 msgstr "Avui"
 
@@ -801,15 +824,15 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Accedit:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "No hi ha cerques recents"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Cerques recents"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
 msgstr "Neteja"
 
@@ -1431,15 +1454,12 @@ msgstr "_Carpeta del correu"
 msgid "_Start search & indexing services automatically "
 msgstr "_Inicia automàticament els serveis de cerca i d'indexació"
 
+#
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Configura la cerca i la indexació de l'escriptori"
+msgid "Configure Desktop Search"
+msgstr "Configura la cerca a l'escriptori"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Configura les propietats de la cerca i de la indexació"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "Cerca i indexació"
 
@@ -1447,87 +1467,335 @@ msgstr "Cerca i indexació"
 msgid "On This Computer"
 msgstr "En aquest ordinador"
 
-#: ../Util/ExifData.cs:226
+#: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
 msgstr "Directori d'imatges"
 
-#: ../Util/ExifData.cs:228
+#: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
 msgstr "Directori de miniatures"
 
-#: ../Util/ExifData.cs:230
+#: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
 msgstr "Directori Exif"
 
-#: ../Util/ExifData.cs:232
+#: ../Util/F-Spot/Exif.cs:254
 msgid "GPS Directory"
 msgstr "Directori GPS"
 
-#: ../Util/ExifData.cs:234
+#: ../Util/F-Spot/Exif.cs:256
 msgid "InterOperability Directory"
 msgstr "Directori d'interoperabilitat"
 
-#: ../Util/ExifData.cs:236
+#: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
 msgstr "Directori desconegut"
 
+#: ../Util/F-Spot/IptcFile.cs:175
+msgid "IPTC Information Interchange Model (IIM) Version number"
+msgstr "Número de versió de l'IPTC Information Interchange Model (IIM)"
+
+#: ../Util/F-Spot/IptcFile.cs:177
+msgid "OSI Destination routing information"
+msgstr "Informació de l'enrutament de destí OSI"
+
+#
+#: ../Util/F-Spot/IptcFile.cs:179
+msgid "IPTC file format"
+msgstr "Format de fitxer IPTC"
+
+#: ../Util/F-Spot/IptcFile.cs:181
+msgid "Identifies the provider and product"
+msgstr "Identifica el proveïdor i el producte"
+
+#: ../Util/F-Spot/IptcFile.cs:183
+msgid "A unique number identifying the envelope"
+msgstr "Un número únic que identifica el sobre"
+
+#: ../Util/F-Spot/IptcFile.cs:185
+msgid "A unique number"
+msgstr "Un número únic"
+
+#: ../Util/F-Spot/IptcFile.cs:187
+msgid ""
+"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr ""
+"El sobre que gestiona la prioritat entre 1 (més urgent) i 9 (menys urgent)"
+
+#: ../Util/F-Spot/IptcFile.cs:189
+msgid "The year month and day (CCYYMMDD) the service sent the material"
+msgstr "L'any, mes i dia (CCYYMMDD) que el servei va enviar el material"
+
+#: ../Util/F-Spot/IptcFile.cs:191
+msgid ""
+"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr ""
+"L'hora, minut i segon (HHMMSS+HHMM) que el servei va enviar el material"
+
+#: ../Util/F-Spot/IptcFile.cs:193
+msgid "The character set designation"
+msgstr "Designació del joc de caràcters"
+
+#: ../Util/F-Spot/IptcFile.cs:195
+msgid "External globally unique object identifier"
+msgstr "Identificador de l'objecte únic globalment extern"
+
+#: ../Util/F-Spot/IptcFile.cs:200
+msgid "Abstract Relationship Method (ARM) identifier"
+msgstr "Identificador del mètode de relació abstracte (ARM)"
+
+#: ../Util/F-Spot/IptcFile.cs:202
+msgid "Abstract Relationship Method (ARM) version number."
+msgstr "Número de versió del mètode de relació abstracte (ARM)."
+
+#: ../Util/F-Spot/IptcFile.cs:205
+msgid "Number identifying the IIM version this application record uses"
+msgstr ""
+"Número d'identificació de la versió de l'IMM que aquesta aplicació utilitza"
+
+#
+#
+#: ../Util/F-Spot/IptcFile.cs:207
+msgid "Object type reference"
+msgstr "Referència del tipus d'objecte"
+
+#: ../Util/F-Spot/IptcFile.cs:212
+msgid "Object attribute reference"
+msgstr "Referència de l'atribut de l'objecte"
+
+#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
+msgid "Object name"
+msgstr "Nom de l'objecte"
+
+#: ../Util/F-Spot/IptcFile.cs:220
+msgid "Status of the objectdata according to the provider"
+msgstr "Estat de les dades de l'objecte d'acord amb el proveïdor"
+
+#: ../Util/F-Spot/IptcFile.cs:224
+msgid "Location within a city or area where the object originates"
+msgstr "Ubicació dins de la ciutat o àrea on l'objecte s'origina"
+
+#: ../Util/F-Spot/IptcFile.cs:227
+msgid "Name of the city the content is focussing on"
+msgstr "Nom de la ciutat on es focalitza el contingut"
+
+#: ../Util/F-Spot/IptcFile.cs:230
+msgid "Copyright information for"
+msgstr "Informació del copyright per"
+
+#: ../Util/F-Spot/IptcFile.cs:233
+msgid "Full name of the country of the focus of the content"
+msgstr "Nom complet del país on es focalitza el contingut"
+
+#: ../Util/F-Spot/IptcFile.cs:236
+msgid ""
+"Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr ""
+"Codi ISO3166 de dues o tres lletres del país on es focalitza el contingut"
+
+#: ../Util/F-Spot/IptcFile.cs:239
+msgid "Creator of the content"
+msgstr "Creador del contingut"
+
+#: ../Util/F-Spot/IptcFile.cs:242
+msgid "Provider of the object"
+msgstr "Proveïdor de l'objecte"
+
+#: ../Util/F-Spot/IptcFile.cs:245
+msgid "The title of the author or creator"
+msgstr "El títol de l'autor o creador"
+
+#: ../Util/F-Spot/IptcFile.cs:248
+msgid ""
+"The person involved in writing, editing or correcting the object data or "
+"caption/abstract"
+msgstr ""
+"La persona involucrada en escriure, editar o corregir les dades de l'objecte "
+"o el títol o resum"
+
+#
+#: ../Util/F-Spot/IptcFile.cs:252
+msgid "Headline of the content"
+msgstr "Titular del contingut"
+
+#: ../Util/F-Spot/IptcFile.cs:255
+msgid ""
+"Instructions from the creator to the receiver not covered by other fields"
+msgstr "Instruccions del creador o el receptor no cobertes pels altres camps"
+
+#: ../Util/F-Spot/IptcFile.cs:258
+msgid "Intellectual genre of the object"
+msgstr "Gènere intel·lectual de l'objecte"
+
+#
+#: ../Util/F-Spot/IptcFile.cs:271
+msgid "Unknown IIM DataSet"
+msgstr "Conjunt de dades IIM desconegut"
+
+#
+#: ../Util/F-Spot/MetadataStore.cs:46
+msgid "Creator"
+msgstr "Creador"
+
+#
+#: ../Util/F-Spot/MetadataStore.cs:47
+msgid "Title"
+msgstr "Títol"
+
+#: ../Util/F-Spot/MetadataStore.cs:48
+msgid "Copyright"
+msgstr "Copyright"
+
+#: ../Util/F-Spot/MetadataStore.cs:49
+msgid "Subject and Keywords"
+msgstr "Assumpte i paraules clau"
+
+#: ../Util/F-Spot/MetadataStore.cs:50
+msgid "Compression"
+msgstr "Compressió"
+
+#: ../Util/F-Spot/MetadataStore.cs:52
+#, fuzzy
+msgid "Planar Configuration"
+msgstr "Actualitza la configuració"
+
+#: ../Util/F-Spot/MetadataStore.cs:56
+msgid "Photometric Interpretation"
+msgstr "Interpretació fotomètrica"
+
+#: ../Util/F-Spot/MetadataStore.cs:58
+msgid "Resolution Unit"
+msgstr "Unitat de resolució"
+
+#: ../Util/F-Spot/MetadataStore.cs:60
+msgid "Exposure Program"
+msgstr "Programa d'exposició"
+
+#: ../Util/F-Spot/MetadataStore.cs:62
+msgid "Metering Mode"
+msgstr "Mode de comptatge"
+
+#: ../Util/F-Spot/MetadataStore.cs:64
+msgid "Exposure Mode"
+msgstr "Mode d'exposició"
+
+#: ../Util/F-Spot/MetadataStore.cs:66
+msgid "Custom Rendered"
+msgstr "Renderització personalitzada"
+
+#
+#: ../Util/F-Spot/MetadataStore.cs:68
+msgid "Components Configuration"
+msgstr "Configuració dels components"
+
+#: ../Util/F-Spot/MetadataStore.cs:70
+msgid "Light Source"
+msgstr "Font de la llum"
+
+#: ../Util/F-Spot/MetadataStore.cs:72
+msgid "Sensing Method"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:74
+msgid "Color Space"
+msgstr "Espai de colors"
+
+#: ../Util/F-Spot/MetadataStore.cs:76
+msgid "White Balance"
+msgstr "Balanç del blanc"
+
+#: ../Util/F-Spot/MetadataStore.cs:78
+msgid "Focal Plane Resolution Unit"
+msgstr "Unitat de resolució del pla focal"
+
+#: ../Util/F-Spot/MetadataStore.cs:80
+msgid "File Source Type"
+msgstr "Tipus de font del fitxer"
+
+#: ../Util/F-Spot/MetadataStore.cs:82
+msgid "Scene Capture Type"
+msgstr "Tipus de captura de l'escena"
+
+#: ../Util/F-Spot/MetadataStore.cs:84
+msgid "Gain Control"
+msgstr "Control de guany"
+
+#
+#: ../Util/F-Spot/MetadataStore.cs:86
+msgid "Contrast"
+msgstr "Contrast"
+
+#: ../Util/F-Spot/MetadataStore.cs:88
+msgid "Saturation"
+msgstr "Saturació"
+
+#: ../Util/F-Spot/MetadataStore.cs:90
+msgid "Sharpness"
+msgstr "Nitidesa"
+
+#: ../Util/F-Spot/MetadataStore.cs:92
+msgid "Scene Type"
+msgstr "Tipus d'escena"
+
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:119
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:122
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:131
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Avui, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ahir, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:156
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "fa {0} dies, {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "fa {0} dia, {1}"
+msgstr[1] "fa {0} dies, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:154
+#: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:177
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} hores"
 
-#: ../Util/StringFu.cs:171
+#: ../Util/StringFu.cs:184
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1535,22 +1803,30 @@ msgstr[0] "{0} minut"
 msgstr[1] "{0} minuts"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:205
+#: ../Util/StringFu.cs:218
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0} bytes"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:209
+#: ../Util/StringFu.cs:222
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} kB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:225
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Configura la cerca i la indexació de l'escriptori"
+
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Configura les propietats de la cerca i de la indexació"
 
 #~ msgid "DisplayName"
 #~ msgstr "Nom a mostrar"
