@@ -39,11 +39,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private object big_lock = new object ();
 		private bool is_active = false;
+		private FileSystemQueryable queryable;
 		private Handler handler;
 		private Queue to_be_crawled = new Queue ();
 
-		public TreeCrawlTask (Handler handler)
+		public TreeCrawlTask (FileSystemQueryable queryable, Handler handler)
 		{
+			this.queryable = queryable;
 			this.handler = handler;
 			this.Tag = "Tree Crawler";
 			this.Priority = Scheduler.Priority.Delayed;
@@ -51,6 +53,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public bool IsActive {
 			get { lock (big_lock) return is_active; }
+		}
+
+		// Must be called from inside big_lock
+		private void SetIsActive (bool is_active)
+		{
+			this.is_active = is_active;
+
+			queryable.UpdateIsIndexing ();
 		}
 
 		// Returns 'true' if the queue was empty before adding
@@ -84,7 +94,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (FileSystemQueryable.Debug)
 					Log.Debug ("Running tree crawl task");
 
-				is_active = true;
+				SetIsActive (true);
 			}
 			
 			LuceneQueryable queryable = (LuceneQueryable) Source;
@@ -116,7 +126,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void DoneCrawling ()
 		{
 			Log.Debug ("Done crawling directory tree!!!");
-			is_active = false;
+			SetIsActive (false);
 		}
 
 	}

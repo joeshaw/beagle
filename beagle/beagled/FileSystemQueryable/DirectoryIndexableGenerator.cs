@@ -84,8 +84,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public string StatusName {
 			get { 
 				if (this.directory == null)
-					return "Crawling the null directory?";
-				return "Crawling " + this.directory.FullName;
+					return "Indexing files inside the null directory?";
+				return "Indexing files inside " + this.directory.FullName;
 			}
 		}
 

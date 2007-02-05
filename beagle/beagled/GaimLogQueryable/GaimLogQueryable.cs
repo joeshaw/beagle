@@ -43,8 +43,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private int polling_interval_in_seconds = 60;
 
-		private bool crawling = false;
-		
 		private GaimBuddyListReader list = new GaimBuddyListReader ();
 
 		public GaimLogQueryable () : base ("GaimLogIndex")
@@ -97,10 +95,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
-		protected override bool IsIndexing {
-			get { return crawling; }
-		}
-
 		/////////////////////////////////////////////////
 
 		private void AddCrawlTask ()
@@ -120,7 +114,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		private void Crawl (bool index)
 		{
-			this.crawling = true;
+			this.IsIndexing = true;
 
 			if (Inotify.Enabled)
 				Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
@@ -162,7 +156,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 					if (FileIsInteresting (file.Name))
 						IndexLog (file.FullName, Scheduler.Priority.Delayed);
 
-				crawling = false;
+				IsIndexing = false;
 			}
 		}
 
@@ -184,7 +178,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (log_files.MoveNext ())
 				return true;
 			else {
-				crawling = false;
+				IsIndexing = false;
 				return false;
 			}
 		}

@@ -171,15 +171,17 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		internal void AddGenerator (EvolutionMailIndexableGenerator generator)
 		{
 			running_generators.Add (generator);
+
+			if (running_generators.Count == 1)
+				IsIndexing = true;
 		}
 
 		internal void RemoveGenerator (EvolutionMailIndexableGenerator generator)
 		{
 			running_generators.Remove (generator);
-		}
 
-		protected override bool IsIndexing {
-			get { return running_generators.Count > 0; }
+			if (running_generators.Count == 0)
+				IsIndexing = false;
 		}
 
 		protected override int ProgressPercent {

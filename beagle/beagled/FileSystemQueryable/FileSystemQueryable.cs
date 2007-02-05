@@ -95,7 +95,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				event_backend = new NullFileEventBackend ();
                         }
 
-			tree_crawl_task = new TreeCrawlTask (new TreeCrawlTask.Handler (AddDirectory));
+			tree_crawl_task = new TreeCrawlTask (this, new TreeCrawlTask.Handler (AddDirectory));
 			tree_crawl_task.Source = this;
 
 			file_crawl_task = new FileCrawlTask (this);
@@ -478,6 +478,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Logger.Log.Error ("Trying to add an existing root: {0}", path);
 				return;
 			}
+
+			// If we're adding a root, this is probably a
+			// long-running indexing task.  Set IsIndexing.
+			IsIndexing = true;
 
 			// We need to have the path key in the roots hashtable
 			// for the filtering to work as we'd like before the root 
@@ -1189,17 +1193,31 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
+		public void UpdateIsIndexing ()
+		{
+			// If IsIndexing is false, then the indexing had
+			// finished previously and we don't really care about
+			// this call anymore.  It can be reset to true if a new
+			// root is added, however.
+			if (this.IsIndexing == false)
+				return;
+
+			DirectoryModel next_dir = GetNextDirectoryToCrawl ();
+
+			// If there are any "dirty" directories left, we're
+			// still indexing.  If not, check our crawl tasks to
+			// see if we're still working on the queue.
+			if (next_dir != null)
+				this.IsIndexing = (next_dir.State > DirectoryState.PossiblyClean);
+			else
+				this.IsIndexing = (file_crawl_task.IsActive || tree_crawl_task.IsActive);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		//
 		// Our magic LuceneQueryable hooks
 		//
-
-		override protected bool IsIndexing {
-			// FIXME: There is a small race window here, between the starting
-			// of the backend and when either of these tasks first starts
-			// running.  In reality it doesn't come up much, so it's not
-			// urgent to fix.
-			get { return file_crawl_task.IsActive || tree_crawl_task.IsActive; }
-		}
 
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{

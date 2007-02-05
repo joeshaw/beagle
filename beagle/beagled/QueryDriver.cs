@@ -134,19 +134,6 @@ namespace Beagle.Daemon {
 		static ArrayList queryables = new ArrayList ();
 		static Hashtable iqueryable_to_queryable = new Hashtable ();
 
-		static bool ThisApiSoVeryIsBroken (Type m, object criteria)
-		{
-			return m == (Type) criteria;
-		}
-
-		static bool TypeImplementsInterface (Type t, Type iface)
-		{
-			Type[] impls = t.FindInterfaces (new TypeFilter (ThisApiSoVeryIsBroken),
-							 iface);
-			return impls.Length > 0;
-		}
-
-		// Find the types in the assembly that
 		// (1) register themselves in AssemblyInfo.cs:IQueryableTypes and
 		// (2) has a QueryableFlavor attribute attached
 		// assemble a Queryable object and stick it into our list of queryables.

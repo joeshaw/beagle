@@ -388,9 +388,24 @@ namespace Beagle.Daemon {
 			return status;
 		}
 
+		/////////////////////////////////////////
+
+		public delegate void IndexingStateChangedHandler (bool new_value);
+		public IndexingStateChangedHandler IndexingStateChanged;
+
+		private bool is_indexing = false;
+
 		// Reports whether the backend is performing the initial crawling and indexing
-		protected virtual bool IsIndexing {
-			get { return false; }
+		protected bool IsIndexing {
+			get { return is_indexing; }
+			set {
+				bool changed = (is_indexing != value);
+
+				is_indexing = value;
+
+				if (changed)
+					QueryDriver.QueryableChanged (this, null);
+			}
 		}
 
 		protected virtual int ProgressPercent {

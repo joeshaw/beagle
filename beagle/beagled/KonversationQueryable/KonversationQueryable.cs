@@ -43,12 +43,9 @@ namespace Beagle.Daemon.KonversationQueryable {
 		private string log_dir;
 		private Dictionary<string, long> session_offset_table;
 		private ArrayList initial_log_files;
-		private bool initial_indexing;
 
 		public KonversationQueryable () : base ("KonversationIndex")
 		{
-			initial_indexing = false;
-
 			//log_dir = Path.Combine (PathFinder.HomeDir, "konv");
 			log_dir = Path.Combine (PathFinder.HomeDir, ".kde");
 			log_dir = Path.Combine (log_dir, "share");
@@ -83,17 +80,12 @@ namespace Beagle.Daemon.KonversationQueryable {
 			initial_log_files = new ArrayList (Directory.GetFiles (log_dir));
 			Log.Debug ("Konversation backend: found {0} log files", initial_log_files.Count);
 
-			initial_indexing = true;
+			IsIndexing = true;
 			LogIndexableGenerator generator = new LogIndexableGenerator (this, log_dir);
 			Scheduler.Task task = NewAddTask (generator);
 			task.Tag = log_dir;
 			task.Source = this;
 			ThisScheduler.Add (task);
-		}
-
-		protected override bool IsIndexing {
-			// FIXME: Set proper value
-			get { return initial_indexing; }
 		}
 
 		// FIXME: Improve this by storing the data on disk. Then scan the data on startup
@@ -193,14 +185,14 @@ namespace Beagle.Daemon.KonversationQueryable {
 
 				// Move to the next file
 				if (! MoveToNextFile ()) {
-					queryable.initial_indexing = false;
+					queryable.IsIndexing = false;
 					return false;
 				}
 
 				generator = new SessionIndexableGenerator (queryable, files [file_index], 0);
 				file_index ++;
 				if (! generator.HasNextIndexable ()) {
-					queryable.initial_indexing = false;
+					queryable.IsIndexing = false;
 					return false;
 				}
 

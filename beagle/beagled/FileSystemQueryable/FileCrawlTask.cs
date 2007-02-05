@@ -56,6 +56,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			get { lock (big_lock) return is_active; }
 		}
 
+		// Must be called from inside big_lock
+		private void SetIsActive (bool is_active)
+		{
+			this.is_active = is_active;
+
+			queryable.UpdateIsIndexing ();
+		}
+
 		private void PostCrawlHook ()
 		{
 			Logger.Log.Debug ("Done crawling '{0}'", current_dir.FullName);
@@ -79,11 +87,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			lock (big_lock) {
 				Log.Debug ("Running file crawl task");
-				is_active = true;
+				SetIsActive (true);
 				current_dir = queryable.GetNextDirectoryToCrawl ();
 				if (current_dir == null) {
 					Log.Debug ("Done crawling files!!!");
-					is_active = false;
+					SetIsActive (false);
 					return;
 				}
 			}

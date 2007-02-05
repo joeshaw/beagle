@@ -43,8 +43,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 	public class EvolutionDataServerQueryable : LuceneQueryable {
 		private string photo_dir;
 
-		private bool initial_crawl = false;
-
 		// Index versions
 		// 1: Original version
 		// 2: Updated URI scheme for Evolution 2.4/EDS 1.4
@@ -76,7 +74,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
 
-			initial_crawl = true;
+			IsIndexing = true;
 
 			bool success = false;
 
@@ -93,7 +91,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
 				return;
 			} finally {
-				initial_crawl = false;
+				IsIndexing = false;
 				timer.Stop ();
 			}
 
@@ -108,16 +106,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			} catch (DllNotFoundException ex) {
 				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
 			} finally {
-				initial_crawl = false;
+				IsIndexing = false;
 				timer.Stop ();
 			}
 			
 			if (success)
 				Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
-		}
-
-		override protected bool IsIndexing {
-			get { return initial_crawl; }
 		}
 
 		public void AddIndexable (Indexable indexable, Scheduler.Priority priority)
