@@ -97,7 +97,7 @@ class ExtractContentTool {
 		watch.Stop ();
 
 		Console.WriteLine ("Filter: {0} (determined in {1})", filter, watch);
-		Console.WriteLine ("MimeType: {0}", filter.MimeType);
+		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
 		Console.WriteLine ();
 
 		if (filter.ChildIndexables != null && filter.ChildIndexables.Count > 0) {
