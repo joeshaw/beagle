@@ -179,14 +179,16 @@ namespace Beagle.Daemon {
 
 				// Otherwise, set the mime type for a directory,
 				// or sniff it from the file.
-				if (Directory.Exists (path)) {
-					indexable.MimeType = "inode/directory";
-					indexable.NoContent = true;
-				} else if (File.Exists (path)) {
-					indexable.MimeType = XdgMime.GetMimeType (path);
-				} else {
-					Log.Warn ("Unable to filter {0}.  {1} not found.", indexable.DisplayUri, path);
-					return false;
+				if (indexable.MimeType == null) {
+					if (Directory.Exists (path)) {
+						indexable.MimeType = "inode/directory";
+						indexable.NoContent = true;
+					} else if (File.Exists (path)) {
+						indexable.MimeType = XdgMime.GetMimeType (path);
+					} else {
+						Log.Warn ("Unable to filter {0}.  {1} not found.", indexable.DisplayUri, path);
+						return false;
+					}
 				}
 
 				// Set the timestamp to the last write time, if it isn't
