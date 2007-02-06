@@ -54,126 +54,146 @@ namespace Beagle.Filters {
 
 		override protected void DoPullProperties ()
 		{
-			XmlTextReader reader = new XmlTextReader (Stream);
-			reader.XmlResolver = null;
+			XmlReaderSettings reader_settings = new XmlReaderSettings ();
+			reader_settings.ProhibitDtd = false;
+
+			XmlReader reader = XmlReader.Create (Stream, reader_settings);
 
 			string current_tag_name = String.Empty;
 			bool grab_property = false;
 			bool grab_text = false;
 
-			try {
-				while (reader.Read ()) {
-					switch (reader.NodeType) {
-					case XmlNodeType.Element:
-						if (grab_text)
-							break;
-						if (reader.IsEmptyElement)
-							break;
-						
-						if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
-							break;
-						else if (reader.LocalName == "title") {
-							grab_property = true;
-							current_tag_name = "title";
-						} else if (reader.LocalName == "desc") {
-							grab_property = true;
-							current_tag_name = "description";
-						} else if (reader.LocalName == "text") {
-							grab_text = true;
-							current_tag_name = "text";
-						} else if (reader.LocalName == "RDF") {
-							PullRdfProperties (reader, reader.Depth);
-						}
-						break;
-
-					case XmlNodeType.Text:
-						if (grab_property)
-							AddProperty (Property.New ("dc:" + current_tag_name , reader.Value));
-						else if (grab_text) {
-							sb.Append (reader.Value);
-						}
-						break;
-
-					case XmlNodeType.Comment:
-						AppendText (reader.Value.Trim ());
-						AppendStructuralBreak ();
-						break;
-
-					case XmlNodeType.EndElement:
-						if (reader.LocalName != current_tag_name)
+			
+			while (reader.ReadState == ReadState.Initial || reader.ReadState == ReadState.Interactive) {
+				try {
+					while (reader.Read ()) {
+						switch (reader.NodeType) {
+						case XmlNodeType.Element:
+							if (grab_text)
+								break;
+							if (reader.IsEmptyElement)
+								break;
+							
+							if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
+								break;
+							else if (reader.LocalName == "title") {
+								grab_property = true;
+								current_tag_name = "title";
+							} else if (reader.LocalName == "desc") {
+								grab_property = true;
+								current_tag_name = "description";
+							} else if (reader.LocalName == "text") {
+								grab_text = true;
+								current_tag_name = "text";
+							} else if (reader.LocalName == "RDF") {
+								PullRdfProperties (reader, reader.Depth);
+							}
 							break;
 
-						if(grab_text) {
-							AppendText (sb.ToString());
+						case XmlNodeType.Text:
+							if (grab_property)
+								AddProperty (Property.New ("dc:" + current_tag_name , reader.Value));
+							else if (grab_text) {
+								sb.Append (reader.Value);
+							}
+							break;
+
+						case XmlNodeType.Comment:
+							AppendText (reader.Value.Trim ());
 							AppendStructuralBreak ();
-						}
+							break;
 
-						grab_text = grab_property = false;
-						break;
+						case XmlNodeType.EndElement:
+							if (reader.LocalName != current_tag_name)
+								break;
+
+							if (grab_text) {
+								AppendText (sb.ToString());
+								AppendStructuralBreak ();
+								sb.Length = 0;
+							}
+
+							grab_text = grab_property = false;
+							break;
+						}
+					}
+				} catch (System.Xml.XmlException e) {
+					if (reader.ReadState == ReadState.Error) {
+						Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
+						Logger.Log.Debug (e);
+						Error ();
+						return;
+					} else {
+						Logger.Log.Debug ("Non-Fatal error parsing xml file {0}", FileInfo.FullName);
+						Logger.Log.Debug (e.Message);
 					}
 				}
-
-				Finished ();
-			} catch (System.Xml.XmlException e) {
-				Logger.Log.Error ("Error parsing xml file {0}", FileInfo.FullName);
-				Logger.Log.Debug (e);
-				Error ();
 			}
+			
+			Finished ();
 		}
 
-		protected void PullRdfProperties (XmlTextReader reader, int depth)
+		protected void PullRdfProperties (XmlReader reader, int depth)
 		{
 			string current_tag_name = String.Empty;
 			bool grab_text = false;
 			bool grab_date = false;
 
-			try {
-				while (reader.Read ()) {
-					if (depth == reader.Depth)
-						return;			
+			while (reader.ReadState == ReadState.Initial || reader.ReadState == ReadState.Interactive) {
+				try {
+					while (reader.Read ()) {
+						if (depth == reader.Depth)
+							return;			
 
-					switch (reader.NodeType) {
-					case XmlNodeType.Element:
-						if (grab_text)
-							break;
-						
-						if (reader.IsEmptyElement)
-							break;
+						switch (reader.NodeType) {
+						case XmlNodeType.Element:
+							if (grab_text)
+								break;
+							
+							if (reader.IsEmptyElement)
+								break;
 
-						if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
-							break;
-						else if (reader.NamespaceURI == dcnamespace) {
-							if (reader.LocalName == "date")
-								grab_date = true;
-							else
-								grab_text = true;
-						}
-
-						current_tag_name = reader.LocalName;
-						break;
-
-					case XmlNodeType.Text:
-						if (grab_text)
-							AddProperty (Property.New ("dc:" + current_tag_name, reader.Value));
-						else if (grab_date) {
-							try {
-								AddProperty (Property.NewDate ("dc:date", System.Convert.ToDateTime (reader.Value.Trim())));
-							} catch (FormatException) {
-								AddProperty (Property.New ("dc:date", reader.Value));
+							if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
+								break;
+							else if (reader.NamespaceURI == dcnamespace) {
+								if (reader.LocalName == "date")
+									grab_date = true;
+								else
+									grab_text = true;
 							}
-						}
-						break;
 
-					case XmlNodeType.EndElement:
-						if(reader.LocalName == current_tag_name)
-							grab_text = grab_date = false;
-						break;
+							current_tag_name = reader.LocalName;
+							break;
+
+						case XmlNodeType.Text:
+							if (grab_text)
+								AddProperty (Property.New ("dc:" + current_tag_name, reader.Value));
+							else if (grab_date) {
+								try {
+									AddProperty (Property.NewDate ("dc:date", System.Convert.ToDateTime (reader.Value.Trim())));
+								} catch (FormatException) {
+									AddProperty (Property.New ("dc:date", reader.Value));
+								}
+							}
+							break;
+
+						case XmlNodeType.EndElement:
+							if(reader.LocalName == current_tag_name)
+								grab_text = grab_date = false;
+							break;
+						}
+					}
+				} catch (System.Xml.XmlException e) {
+					if (reader.ReadState == ReadState.Error) {
+						Logger.Log.Error ("Fatal error parsing embedded RDF {0}", FileInfo.FullName);
+						Logger.Log.Debug (e);
+						Error ();
+						return;
+					} else {
+						Logger.Log.Debug ("Non-Fatal error parsing embedded RDF {0}", FileInfo.FullName);
+						Logger.Log.Debug (e.Message);
 					}
 				}
-			} catch (System.Xml.XmlException e) {
-				Logger.Log.Error ("error parsing embedded RDF {0}", FileInfo.FullName);
-				Logger.Log.Debug (e);
-				Error ();
 			}
 		}
 	}
