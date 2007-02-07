@@ -1,4 +1,367 @@
 ------------------------------------------------------------------------
+r3394 | joeshaw | 2007-02-07 11:28:58 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Update for 0.2.16 release
+------------------------------------------------------------------------
+r3393 | joeshaw | 2007-02-07 11:24:36 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Temporarily back out the opera backend for the 0.2.16 release
+------------------------------------------------------------------------
+r3392 | joeshaw | 2007-02-07 11:16:43 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Bump version number on SVG filter
+------------------------------------------------------------------------
+r3391 | kkubasik | 2007-02-06 23:23:46 -0500 (Tue, 06 Feb 2007) | 3 lines
+
+ r195@kjk38-laptop:  kjk38 | 2007-02-06 23:24:16 -0500
+ Initial import of the opera history backend
+
+------------------------------------------------------------------------
+r3390 | leonardof | 2007-02-06 21:38:58 -0500 (Tue, 06 Feb 2007) | 6 lines
+
+2007-02-07  Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation by Igor Pires
+	Soares <igor@projetofedora.org>.
+
+
+------------------------------------------------------------------------
+r3389 | dbera | 2007-02-06 19:27:30 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+Batik svg files do not declare xlink namespace. Handle that explicitly.
+
+------------------------------------------------------------------------
+r3388 | joeshaw | 2007-02-06 18:19:13 -0500 (Tue, 06 Feb 2007) | 1 line
+
+Updated SVG filter, from Alex Macdonald
+------------------------------------------------------------------------
+r3387 | joeshaw | 2007-02-06 18:17:52 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+Use indexable.MimeType rather than filter.MimeType, which isn't canonical and
+shouldn't really be used outside of the filter itself
+------------------------------------------------------------------------
+r3386 | joeshaw | 2007-02-06 15:31:43 -0500 (Tue, 06 Feb 2007) | 1 line
+
+Roll back our mono requirement to 1.1.13.5
+------------------------------------------------------------------------
+r3385 | joeshaw | 2007-02-06 11:38:13 -0500 (Tue, 06 Feb 2007) | 5 lines
+
+Only set the mime type in the indexable.ContentUri.IsFile block if it
+hasn't already been set by a backend.  Fixes the problem where
+Thunderbird mails were being stored as text/plain.
+
+
+------------------------------------------------------------------------
+r3384 | dbera | 2007-02-06 11:24:12 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+beagle-hit.c: "(null)" does not deserialize to null Uri. Watch for null ParentUri when serializing.
+
+------------------------------------------------------------------------
+r3383 | pgeyleg | 2007-02-06 00:26:45 -0500 (Tue, 06 Feb 2007) | 1 line
+
+dzongkha translation added
+------------------------------------------------------------------------
+r3382 | dbera | 2007-02-05 17:10:20 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+Remove debug messages from Semweb.
+
+------------------------------------------------------------------------
+r3381 | jmas | 2007-02-05 16:55:18 -0500 (Mon, 05 Feb 2007) | 5 lines
+
+2007-02-05  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation.
+
+
+------------------------------------------------------------------------
+r3380 | dbera | 2007-02-05 16:06:43 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+Remove some debug messages while parsing image files.
+
+------------------------------------------------------------------------
+r3379 | joeshaw | 2007-02-05 15:57:03 -0500 (Mon, 05 Feb 2007) | 1 line
+
+Don't set IsIndexing if a folder is being recrawled due to an inotify event
+------------------------------------------------------------------------
+r3378 | joeshaw | 2007-02-05 15:36:43 -0500 (Mon, 05 Feb 2007) | 1 line
+
+Remove some unused code I accidentally committed
+------------------------------------------------------------------------
+r3377 | joeshaw | 2007-02-05 14:58:03 -0500 (Mon, 05 Feb 2007) | 21 lines
+
+Rework the way we do reporting of whether or not we're indexing to make
+it a more active task for backends, rather than passive.  This fixes
+problems trying to deal with this sanely in the file system backend.
+
+* Remove some dead code from QueryDriver.cs.
+
+* No longer declare IsIndexing_get as virtual, and replace it with a
+private instance variable.  It's now the backends' responsibility to
+set IsIndexing as the status changes, rather than waiting for the
+getter to be called and reporting the current state of things.
+
+* Update the file system backend to the new scheme.  Should fix problems
+where the "currently indexing" info box stays on in beagle-search even
+after the initial crawl has finished.
+
+* Also update Evolution mail, EDS, Gaim, and Konversation backends to
+the new scheme.
+
+* Improve the status message when indexing files inside a directory.
+
+
+------------------------------------------------------------------------
+r3376 | dbera | 2007-02-05 13:12:15 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+* libbeagle/beagle/beagle-hit.c: Add ParentUri to snippet_request->hit. This is needed by some backends that check for parent uri while generating snippets.
+
+------------------------------------------------------------------------
+r3375 | dbera | 2007-02-05 12:11:20 -0500 (Mon, 05 Feb 2007) | 4 lines
+
+* Konversation backend: Add server and channel name as properties. Somehow missed this before.
+* LuceneIndexingDriver: Back out a change from yesterday. Its incorrect.
+
+
+------------------------------------------------------------------------
+r3374 | aihana | 2007-02-05 07:30:59 -0500 (Mon, 05 Feb 2007) | 4 lines
+
+2007-02-05  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+        * ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r3373 | dbera | 2007-02-04 17:23:12 -0500 (Sun, 04 Feb 2007) | 4 lines
+
+Correctly handle filter versions while indexing.
+* FileSystemQueryable.cs, FileAttributesStore.cs: If filter information is not present for a file, resubmit it for indexing. Ideally, we would like to resubmit whenever a new filter version is present, but that is becoming too costly.
+* FileAttributes.cs: Valid filter can have version 0+. Fix the version checking.
+
+------------------------------------------------------------------------
+r3372 | dbera | 2007-02-04 12:21:51 -0500 (Sun, 04 Feb 2007) | 2 lines
+
+Konversation backend: Better protection against old log files. Also, fix a bug where one log file would be indexed twice.
+
+------------------------------------------------------------------------
+r3369 | dbera | 2007-02-03 18:20:51 -0500 (Sat, 03 Feb 2007) | 2 lines
+
+Filter.cs: Explicitly warn Filters if they try to register a type in constructor.
+
+------------------------------------------------------------------------
+r3368 | dnylande | 2007-02-02 18:45:45 -0500 (Fri, 02 Feb 2007) | 1 line
+
+sv.po: Swedish translation updated
+------------------------------------------------------------------------
+r3367 | dbera | 2007-02-02 18:06:38 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+KMailQueryable.cs: Fix checking whether a directory is a valid kmail directory. Fixes #401767 and #391647.
+
+------------------------------------------------------------------------
+r3366 | dbera | 2007-02-02 16:10:32 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Konversation backend: return true for IsIndexing when performing initial indexing.
+
+------------------------------------------------------------------------
+r3365 | dbera | 2007-02-02 15:13:17 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Really old konversation logfiles have bad timestamp strings. Ignore those lines completely, preventing crash if you have these old files.
+
+------------------------------------------------------------------------
+r3364 | joeshaw | 2007-02-02 13:54:11 -0500 (Fri, 02 Feb 2007) | 6 lines
+
+Mono doesn't handle JITted code running in a child process after a
+fork() very well, and can often hang.  Change our process limiting code
+to execute in C after the fork, rather than in C# in the runtime.  It's
+a little less flexible in theory, but has higher reliability.
+
+
+------------------------------------------------------------------------
+r3363 | icq | 2007-02-02 09:12:23 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Updated Galician Translation
+
+------------------------------------------------------------------------
+r3362 | joeshaw | 2007-02-01 16:07:35 -0500 (Thu, 01 Feb 2007) | 1 line
+
+Also run pdftotext -q (for quiet) again
+------------------------------------------------------------------------
+r3361 | joeshaw | 2007-02-01 16:05:29 -0500 (Thu, 01 Feb 2007) | 2 lines
+
+Bleh, r3360 didn't work and just inverted the deadlock.  Just ignore and
+don't redirect stderr for now
+------------------------------------------------------------------------
+r3360 | joeshaw | 2007-02-01 15:50:24 -0500 (Thu, 01 Feb 2007) | 7 lines
+
+pdftotext completely spams stderr on some documents, which causes a
+deadlock between beagled-helper and pdftotext: pdftotext is blocking on
+additional buffer space to write out more warnings while beagled-helper
+is blocking on data from stdout.  Fix this by processing data from
+stderr before processing stdout in DoPull(), rather than deferring it
+all until DoClose().  Fixes Jan's part of bnc #402065
+
+------------------------------------------------------------------------
+r3357 | joeshaw | 2007-01-31 18:44:13 -0500 (Wed, 31 Jan 2007) | 2 lines
+
+Don't include a pre-configured beagle-crawl-system in the tarball.  Fixes
+bgo #401504
+------------------------------------------------------------------------
+r3356 | joeshaw | 2007-01-31 16:07:31 -0500 (Wed, 31 Jan 2007) | 1 line
+
+Change a couple of chatty Warns to Debugs in the KMail backend
+------------------------------------------------------------------------
+r3355 | joeshaw | 2007-01-31 15:08:29 -0500 (Wed, 31 Jan 2007) | 4 lines
+
+Add --no-snapshot to beagled to keep it from automatically snapshotting
+when --heap-shot is provided.
+
+
+------------------------------------------------------------------------
+r3354 | joeshaw | 2007-01-31 14:56:27 -0500 (Wed, 31 Jan 2007) | 17 lines
+
+Put the looping bug out to pasture once and for all.
+
+In FSQ.DoneCrawlingOneDirectory(), in the event that we get a null file
+attribute back -- which should no longer happen -- complain loudly but 
+still mark the directory as clean.  This will prevent the daemon from
+looping on that one directory.
+
+Fix our sqlite schema for our fallback FileAttributesStore.  We were
+declaring our columns as STRING -- which isn't valid -- instead of TEXT.
+This meant that fields were defaulting to being integer-like.  Filenames
+like "0009" became "9" in the database.  Bump up the schema version and
+fix that.  Also make our file_path index unique, so we don't have to
+deal with potential multiple entries in the database.
+
+Add debugging output to the FileAttributesStore.
+
+
+------------------------------------------------------------------------
+r3353 | joeshaw | 2007-01-30 17:32:00 -0500 (Tue, 30 Jan 2007) | 2 lines
+
+Use a better GenericName in the beagle-settings .desktop file, lose the
+redundant comment
+------------------------------------------------------------------------
+r3352 | joeshaw | 2007-01-30 16:34:22 -0500 (Tue, 30 Jan 2007) | 10 lines
+
+Only do the position check hack in the archive filter for gzip archives;
+looks like the position is pretty much worthless for bzip2 archives and
+it triggers this code path.
+
+Fix a bug where we were leaking a tempfile when decompressing archives
+of more than 30 files.
+
+Improve debug output when storing streams in Indexable.cs.
+
+
+------------------------------------------------------------------------
+r3351 | joeshaw | 2007-01-30 16:07:16 -0500 (Tue, 30 Jan 2007) | 6 lines
+
+Workaround archive files that cause infinite loops.  When reading from
+an archive stream, if we are extracting the maximum amount of data and
+our position in the stream isn't moving, break out of the loop and flag
+the file as bad.  Don't create child indexables for such entries.
+
+
+------------------------------------------------------------------------
+r3350 | joeshaw | 2007-01-30 15:37:11 -0500 (Tue, 30 Jan 2007) | 1 line
+
+Add more info to the ExceptionHandlingThread name
+------------------------------------------------------------------------
+r3349 | joeshaw | 2007-01-30 15:11:13 -0500 (Tue, 30 Jan 2007) | 4 lines
+
+Always dispose of the SqliteCommand, even if we get an exception.  Log
+the SQL that caused an exception inside of DoNonQuery()
+
+
+------------------------------------------------------------------------
+r3348 | joeshaw | 2007-01-30 15:01:05 -0500 (Tue, 30 Jan 2007) | 20 lines
+
+GetLastWriteTimeUtc() no longer throws an IOException if the file isn't
+there in 2.0.  It returns a silly date from 1601.  Fix various places
+(mostly in the file system backend) where we were depending on that
+behavior.
+
+Slightly reorder the flow in FilterFactory.FilterIndexable so that we
+avoid unnecessary work, and also check in here if the file has
+disappeared out from underneath us.
+
+Fix a DateTime UTC conversion problem that was still hanging around in
+FileAttributesStore.
+
+Fix our ParseExact() in StringFu.  We want to AssumeUniversal AND
+AdjustToUniversal so that dates we get back are right.  Mono is broken
+with these options right now -- see
+http://bugzilla.ximian.com/show_bug.cgi?id=80677 -- but things work well
+enough now with the broken behavior, and the AdjustToUniversal is
+necessary for when it's fixed.
+
+
+------------------------------------------------------------------------
+r3347 | dbera | 2007-01-30 12:14:11 -0500 (Tue, 30 Jan 2007) | 3 lines
+
+* F-Spot code: More protection against bad jpegs.
+* XdgMime.cs: Catch other valid exceptions when detecting mimetype.
+
+------------------------------------------------------------------------
+r3346 | joeshaw | 2007-01-29 15:52:35 -0500 (Mon, 29 Jan 2007) | 3 lines
+
+Always return false instead of true from KonversationQueryable.IsIndexing,
+because otherwise the 'your data is being indexed' info box is always
+present.
+------------------------------------------------------------------------
+r3345 | joeshaw | 2007-01-29 14:17:01 -0500 (Mon, 29 Jan 2007) | 1 line
+
+Workaround a mono bug (bxc #80320) when dealing with dates around MinValue
+------------------------------------------------------------------------
+r3344 | dbera | 2007-01-28 22:14:18 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Fix crash when parsing extremely small files with no head or body.
+
+------------------------------------------------------------------------
+r3343 | dbera | 2007-01-28 11:30:59 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Ignore Bim entries with marker PHUT. F-Spot Bim parser does not recognise them.
+
+------------------------------------------------------------------------
+r3342 | dbera | 2007-01-28 11:13:07 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Handle javascript comments properly, namely the comments can contain quote characters which should be ignored and not assumed part of a quote. Error in original HtmlAgilityPack. There is still scope of error in script and style elements. They will be reported as "System.Exception: Load() was not paused previously" and need to be fixed on demand.
+
+------------------------------------------------------------------------
+r3341 | dbera | 2007-01-27 13:39:27 -0500 (Sat, 27 Jan 2007) | 2 lines
+
+Add the changes.
+
+------------------------------------------------------------------------
+r3340 | dbera | 2007-01-27 13:35:34 -0500 (Sat, 27 Jan 2007) | 2 lines
+
+Check iptc entry for null before trying to parse it. Close memorystream after use.
+
+------------------------------------------------------------------------
+r3339 | dbera | 2007-01-26 19:57:06 -0500 (Fri, 26 Jan 2007) | 2 lines
+
+Fix a bug in extraction of JFIF comments from Jpeg files.
+
+------------------------------------------------------------------------
+r3338 | joeshaw | 2007-01-26 16:16:26 -0500 (Fri, 26 Jan 2007) | 4 lines
+
+Update some assembly requirements in configure.in, and remove some
+unnecessary ones from beagled/Makefile.am
+
+
+------------------------------------------------------------------------
+r3336 | joeshaw | 2007-01-25 18:40:53 -0500 (Thu, 25 Jan 2007) | 1 line
+
+0.2.15.1, brown paper bag release
+------------------------------------------------------------------------
+r3335 | joeshaw | 2007-01-25 18:35:51 -0500 (Thu, 25 Jan 2007) | 2 lines
+
+We need to bundle the thunderbird files in any case, regardless of whether or
+not it's enabled.
+------------------------------------------------------------------------
+r3332 | joeshaw | 2007-01-25 17:36:12 -0500 (Thu, 25 Jan 2007) | 1 line
+
+Update changelog for 0.2.15
+------------------------------------------------------------------------
 r3331 | joeshaw | 2007-01-25 17:35:40 -0500 (Thu, 25 Jan 2007) | 1 line
 Changed paths:
    M /trunk/beagle/NEWS
@@ -2751,4 +3114,368 @@ Changed paths:
 
 Update for 0.2.13 release
 
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+r3394 | joeshaw | 2007-02-07 11:28:58 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Update for 0.2.16 release
+------------------------------------------------------------------------
+r3393 | joeshaw | 2007-02-07 11:24:36 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Temporarily back out the opera backend for the 0.2.16 release
+------------------------------------------------------------------------
+r3392 | joeshaw | 2007-02-07 11:16:43 -0500 (Wed, 07 Feb 2007) | 1 line
+
+Bump version number on SVG filter
+------------------------------------------------------------------------
+r3391 | kkubasik | 2007-02-06 23:23:46 -0500 (Tue, 06 Feb 2007) | 3 lines
+
+ r195@kjk38-laptop:  kjk38 | 2007-02-06 23:24:16 -0500
+ Initial import of the opera history backend
+
+------------------------------------------------------------------------
+r3390 | leonardof | 2007-02-06 21:38:58 -0500 (Tue, 06 Feb 2007) | 6 lines
+
+2007-02-07  Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation by Igor Pires
+	Soares <igor@projetofedora.org>.
+
+
+------------------------------------------------------------------------
+r3389 | dbera | 2007-02-06 19:27:30 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+Batik svg files do not declare xlink namespace. Handle that explicitly.
+
+------------------------------------------------------------------------
+r3388 | joeshaw | 2007-02-06 18:19:13 -0500 (Tue, 06 Feb 2007) | 1 line
+
+Updated SVG filter, from Alex Macdonald
+------------------------------------------------------------------------
+r3387 | joeshaw | 2007-02-06 18:17:52 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+Use indexable.MimeType rather than filter.MimeType, which isn't canonical and
+shouldn't really be used outside of the filter itself
+------------------------------------------------------------------------
+r3386 | joeshaw | 2007-02-06 15:31:43 -0500 (Tue, 06 Feb 2007) | 1 line
+
+Roll back our mono requirement to 1.1.13.5
+------------------------------------------------------------------------
+r3385 | joeshaw | 2007-02-06 11:38:13 -0500 (Tue, 06 Feb 2007) | 5 lines
+
+Only set the mime type in the indexable.ContentUri.IsFile block if it
+hasn't already been set by a backend.  Fixes the problem where
+Thunderbird mails were being stored as text/plain.
+
+
+------------------------------------------------------------------------
+r3384 | dbera | 2007-02-06 11:24:12 -0500 (Tue, 06 Feb 2007) | 2 lines
+
+beagle-hit.c: "(null)" does not deserialize to null Uri. Watch for null ParentUri when serializing.
+
+------------------------------------------------------------------------
+r3383 | pgeyleg | 2007-02-06 00:26:45 -0500 (Tue, 06 Feb 2007) | 1 line
+
+dzongkha translation added
+------------------------------------------------------------------------
+r3382 | dbera | 2007-02-05 17:10:20 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+Remove debug messages from Semweb.
+
+------------------------------------------------------------------------
+r3381 | jmas | 2007-02-05 16:55:18 -0500 (Mon, 05 Feb 2007) | 5 lines
+
+2007-02-05  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation.
+
+
+------------------------------------------------------------------------
+r3380 | dbera | 2007-02-05 16:06:43 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+Remove some debug messages while parsing image files.
+
+------------------------------------------------------------------------
+r3379 | joeshaw | 2007-02-05 15:57:03 -0500 (Mon, 05 Feb 2007) | 1 line
+
+Don't set IsIndexing if a folder is being recrawled due to an inotify event
+------------------------------------------------------------------------
+r3378 | joeshaw | 2007-02-05 15:36:43 -0500 (Mon, 05 Feb 2007) | 1 line
+
+Remove some unused code I accidentally committed
+------------------------------------------------------------------------
+r3377 | joeshaw | 2007-02-05 14:58:03 -0500 (Mon, 05 Feb 2007) | 21 lines
+
+Rework the way we do reporting of whether or not we're indexing to make
+it a more active task for backends, rather than passive.  This fixes
+problems trying to deal with this sanely in the file system backend.
+
+* Remove some dead code from QueryDriver.cs.
+
+* No longer declare IsIndexing_get as virtual, and replace it with a
+private instance variable.  It's now the backends' responsibility to
+set IsIndexing as the status changes, rather than waiting for the
+getter to be called and reporting the current state of things.
+
+* Update the file system backend to the new scheme.  Should fix problems
+where the "currently indexing" info box stays on in beagle-search even
+after the initial crawl has finished.
+
+* Also update Evolution mail, EDS, Gaim, and Konversation backends to
+the new scheme.
+
+* Improve the status message when indexing files inside a directory.
+
+
+------------------------------------------------------------------------
+r3376 | dbera | 2007-02-05 13:12:15 -0500 (Mon, 05 Feb 2007) | 2 lines
+
+* libbeagle/beagle/beagle-hit.c: Add ParentUri to snippet_request->hit. This is needed by some backends that check for parent uri while generating snippets.
+
+------------------------------------------------------------------------
+r3375 | dbera | 2007-02-05 12:11:20 -0500 (Mon, 05 Feb 2007) | 4 lines
+
+* Konversation backend: Add server and channel name as properties. Somehow missed this before.
+* LuceneIndexingDriver: Back out a change from yesterday. Its incorrect.
+
+
+------------------------------------------------------------------------
+r3374 | aihana | 2007-02-05 07:30:59 -0500 (Mon, 05 Feb 2007) | 4 lines
+
+2007-02-05  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+        * ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r3373 | dbera | 2007-02-04 17:23:12 -0500 (Sun, 04 Feb 2007) | 4 lines
+
+Correctly handle filter versions while indexing.
+* FileSystemQueryable.cs, FileAttributesStore.cs: If filter information is not present for a file, resubmit it for indexing. Ideally, we would like to resubmit whenever a new filter version is present, but that is becoming too costly.
+* FileAttributes.cs: Valid filter can have version 0+. Fix the version checking.
+
+------------------------------------------------------------------------
+r3372 | dbera | 2007-02-04 12:21:51 -0500 (Sun, 04 Feb 2007) | 2 lines
+
+Konversation backend: Better protection against old log files. Also, fix a bug where one log file would be indexed twice.
+
+------------------------------------------------------------------------
+r3369 | dbera | 2007-02-03 18:20:51 -0500 (Sat, 03 Feb 2007) | 2 lines
+
+Filter.cs: Explicitly warn Filters if they try to register a type in constructor.
+
+------------------------------------------------------------------------
+r3368 | dnylande | 2007-02-02 18:45:45 -0500 (Fri, 02 Feb 2007) | 1 line
+
+sv.po: Swedish translation updated
+------------------------------------------------------------------------
+r3367 | dbera | 2007-02-02 18:06:38 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+KMailQueryable.cs: Fix checking whether a directory is a valid kmail directory. Fixes #401767 and #391647.
+
+------------------------------------------------------------------------
+r3366 | dbera | 2007-02-02 16:10:32 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Konversation backend: return true for IsIndexing when performing initial indexing.
+
+------------------------------------------------------------------------
+r3365 | dbera | 2007-02-02 15:13:17 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Really old konversation logfiles have bad timestamp strings. Ignore those lines completely, preventing crash if you have these old files.
+
+------------------------------------------------------------------------
+r3364 | joeshaw | 2007-02-02 13:54:11 -0500 (Fri, 02 Feb 2007) | 6 lines
+
+Mono doesn't handle JITted code running in a child process after a
+fork() very well, and can often hang.  Change our process limiting code
+to execute in C after the fork, rather than in C# in the runtime.  It's
+a little less flexible in theory, but has higher reliability.
+
+
+------------------------------------------------------------------------
+r3363 | icq | 2007-02-02 09:12:23 -0500 (Fri, 02 Feb 2007) | 2 lines
+
+Updated Galician Translation
+
+------------------------------------------------------------------------
+r3362 | joeshaw | 2007-02-01 16:07:35 -0500 (Thu, 01 Feb 2007) | 1 line
+
+Also run pdftotext -q (for quiet) again
+------------------------------------------------------------------------
+r3361 | joeshaw | 2007-02-01 16:05:29 -0500 (Thu, 01 Feb 2007) | 2 lines
+
+Bleh, r3360 didn't work and just inverted the deadlock.  Just ignore and
+don't redirect stderr for now
+------------------------------------------------------------------------
+r3360 | joeshaw | 2007-02-01 15:50:24 -0500 (Thu, 01 Feb 2007) | 7 lines
+
+pdftotext completely spams stderr on some documents, which causes a
+deadlock between beagled-helper and pdftotext: pdftotext is blocking on
+additional buffer space to write out more warnings while beagled-helper
+is blocking on data from stdout.  Fix this by processing data from
+stderr before processing stdout in DoPull(), rather than deferring it
+all until DoClose().  Fixes Jan's part of bnc #402065
+
+------------------------------------------------------------------------
+r3357 | joeshaw | 2007-01-31 18:44:13 -0500 (Wed, 31 Jan 2007) | 2 lines
+
+Don't include a pre-configured beagle-crawl-system in the tarball.  Fixes
+bgo #401504
+------------------------------------------------------------------------
+r3356 | joeshaw | 2007-01-31 16:07:31 -0500 (Wed, 31 Jan 2007) | 1 line
+
+Change a couple of chatty Warns to Debugs in the KMail backend
+------------------------------------------------------------------------
+r3355 | joeshaw | 2007-01-31 15:08:29 -0500 (Wed, 31 Jan 2007) | 4 lines
+
+Add --no-snapshot to beagled to keep it from automatically snapshotting
+when --heap-shot is provided.
+
+
+------------------------------------------------------------------------
+r3354 | joeshaw | 2007-01-31 14:56:27 -0500 (Wed, 31 Jan 2007) | 17 lines
+
+Put the looping bug out to pasture once and for all.
+
+In FSQ.DoneCrawlingOneDirectory(), in the event that we get a null file
+attribute back -- which should no longer happen -- complain loudly but 
+still mark the directory as clean.  This will prevent the daemon from
+looping on that one directory.
+
+Fix our sqlite schema for our fallback FileAttributesStore.  We were
+declaring our columns as STRING -- which isn't valid -- instead of TEXT.
+This meant that fields were defaulting to being integer-like.  Filenames
+like "0009" became "9" in the database.  Bump up the schema version and
+fix that.  Also make our file_path index unique, so we don't have to
+deal with potential multiple entries in the database.
+
+Add debugging output to the FileAttributesStore.
+
+
+------------------------------------------------------------------------
+r3353 | joeshaw | 2007-01-30 17:32:00 -0500 (Tue, 30 Jan 2007) | 2 lines
+
+Use a better GenericName in the beagle-settings .desktop file, lose the
+redundant comment
+------------------------------------------------------------------------
+r3352 | joeshaw | 2007-01-30 16:34:22 -0500 (Tue, 30 Jan 2007) | 10 lines
+
+Only do the position check hack in the archive filter for gzip archives;
+looks like the position is pretty much worthless for bzip2 archives and
+it triggers this code path.
+
+Fix a bug where we were leaking a tempfile when decompressing archives
+of more than 30 files.
+
+Improve debug output when storing streams in Indexable.cs.
+
+
+------------------------------------------------------------------------
+r3351 | joeshaw | 2007-01-30 16:07:16 -0500 (Tue, 30 Jan 2007) | 6 lines
+
+Workaround archive files that cause infinite loops.  When reading from
+an archive stream, if we are extracting the maximum amount of data and
+our position in the stream isn't moving, break out of the loop and flag
+the file as bad.  Don't create child indexables for such entries.
+
+
+------------------------------------------------------------------------
+r3350 | joeshaw | 2007-01-30 15:37:11 -0500 (Tue, 30 Jan 2007) | 1 line
+
+Add more info to the ExceptionHandlingThread name
+------------------------------------------------------------------------
+r3349 | joeshaw | 2007-01-30 15:11:13 -0500 (Tue, 30 Jan 2007) | 4 lines
+
+Always dispose of the SqliteCommand, even if we get an exception.  Log
+the SQL that caused an exception inside of DoNonQuery()
+
+
+------------------------------------------------------------------------
+r3348 | joeshaw | 2007-01-30 15:01:05 -0500 (Tue, 30 Jan 2007) | 20 lines
+
+GetLastWriteTimeUtc() no longer throws an IOException if the file isn't
+there in 2.0.  It returns a silly date from 1601.  Fix various places
+(mostly in the file system backend) where we were depending on that
+behavior.
+
+Slightly reorder the flow in FilterFactory.FilterIndexable so that we
+avoid unnecessary work, and also check in here if the file has
+disappeared out from underneath us.
+
+Fix a DateTime UTC conversion problem that was still hanging around in
+FileAttributesStore.
+
+Fix our ParseExact() in StringFu.  We want to AssumeUniversal AND
+AdjustToUniversal so that dates we get back are right.  Mono is broken
+with these options right now -- see
+http://bugzilla.ximian.com/show_bug.cgi?id=80677 -- but things work well
+enough now with the broken behavior, and the AdjustToUniversal is
+necessary for when it's fixed.
+
+
+------------------------------------------------------------------------
+r3347 | dbera | 2007-01-30 12:14:11 -0500 (Tue, 30 Jan 2007) | 3 lines
+
+* F-Spot code: More protection against bad jpegs.
+* XdgMime.cs: Catch other valid exceptions when detecting mimetype.
+
+------------------------------------------------------------------------
+r3346 | joeshaw | 2007-01-29 15:52:35 -0500 (Mon, 29 Jan 2007) | 3 lines
+
+Always return false instead of true from KonversationQueryable.IsIndexing,
+because otherwise the 'your data is being indexed' info box is always
+present.
+------------------------------------------------------------------------
+r3345 | joeshaw | 2007-01-29 14:17:01 -0500 (Mon, 29 Jan 2007) | 1 line
+
+Workaround a mono bug (bxc #80320) when dealing with dates around MinValue
+------------------------------------------------------------------------
+r3344 | dbera | 2007-01-28 22:14:18 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Fix crash when parsing extremely small files with no head or body.
+
+------------------------------------------------------------------------
+r3343 | dbera | 2007-01-28 11:30:59 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Ignore Bim entries with marker PHUT. F-Spot Bim parser does not recognise them.
+
+------------------------------------------------------------------------
+r3342 | dbera | 2007-01-28 11:13:07 -0500 (Sun, 28 Jan 2007) | 2 lines
+
+Handle javascript comments properly, namely the comments can contain quote characters which should be ignored and not assumed part of a quote. Error in original HtmlAgilityPack. There is still scope of error in script and style elements. They will be reported as "System.Exception: Load() was not paused previously" and need to be fixed on demand.
+
+------------------------------------------------------------------------
+r3341 | dbera | 2007-01-27 13:39:27 -0500 (Sat, 27 Jan 2007) | 2 lines
+
+Add the changes.
+
+------------------------------------------------------------------------
+r3340 | dbera | 2007-01-27 13:35:34 -0500 (Sat, 27 Jan 2007) | 2 lines
+
+Check iptc entry for null before trying to parse it. Close memorystream after use.
+
+------------------------------------------------------------------------
+r3339 | dbera | 2007-01-26 19:57:06 -0500 (Fri, 26 Jan 2007) | 2 lines
+
+Fix a bug in extraction of JFIF comments from Jpeg files.
+
+------------------------------------------------------------------------
+r3338 | joeshaw | 2007-01-26 16:16:26 -0500 (Fri, 26 Jan 2007) | 4 lines
+
+Update some assembly requirements in configure.in, and remove some
+unnecessary ones from beagled/Makefile.am
+
+
+------------------------------------------------------------------------
+r3336 | joeshaw | 2007-01-25 18:40:53 -0500 (Thu, 25 Jan 2007) | 1 line
+
+0.2.15.1, brown paper bag release
+------------------------------------------------------------------------
+r3335 | joeshaw | 2007-01-25 18:35:51 -0500 (Thu, 25 Jan 2007) | 2 lines
+
+We need to bundle the thunderbird files in any case, regardless of whether or
+not it's enabled.
+------------------------------------------------------------------------
+r3332 | joeshaw | 2007-01-25 17:36:12 -0500 (Thu, 25 Jan 2007) | 1 line
+
+Update changelog for 0.2.15
 ------------------------------------------------------------------------
