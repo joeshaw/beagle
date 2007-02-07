@@ -359,6 +359,12 @@ indexingservicequeryable = $(srcdir)/IndexingServiceQueryable
 INDEXING_SERVICE_QUERYABLE_CSFILES =			\
 	$(indexingservicequeryable)/IndexingServiceQueryable.cs
 
+operaqueryable = $(srcdir)/OperaQueryable
+OPERA_QUERYABLE_CSFILES =				\
+	$(operaqueryable)/OperaIndexableGenerator.cs	\
+	$(operaqueryable)/OperaIndexer.cs		\
+	$(operaqueryable)/OperaQueryable.cs
+
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(KMAIL_QUERYABLE_CSFILES)				\
@@ -377,6 +383,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KABC_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
+	$(OPERA_QUERYABLE_CSFILES)			\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
