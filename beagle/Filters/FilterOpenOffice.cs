@@ -483,7 +483,7 @@ namespace Beagle.Filters {
 				case "meta:keyword":
 					reader.Read ();
 					AddProperty (Beagle.Property.New ("fixme:keywords",
-									  +  reader.Value));
+									  reader.Value));
 					break;
 				}
 				
