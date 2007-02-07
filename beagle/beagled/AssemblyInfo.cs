@@ -68,6 +68,5 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
 	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
 	typeof (Beagle.Daemon.KonversationQueryable.KonversationQueryable),
-	typeof (Beagle.Daemon.StaticQueryable),
-	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable)
+	typeof (Beagle.Daemon.StaticQueryable)
 )]
