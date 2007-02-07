@@ -44,6 +44,7 @@ namespace Beagle.Filters {
 		
 		public FilterSvg ()
 		{
+			SetVersion (1);
 		}
 
 		protected override void RegisterSupportedTypes ()
