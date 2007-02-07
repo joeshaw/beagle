@@ -56,8 +56,13 @@ namespace Beagle.Filters {
 		{
 			XmlReaderSettings reader_settings = new XmlReaderSettings ();
 			reader_settings.ProhibitDtd = false;
+			
+			XmlNamespaceManager mngr = new XmlNamespaceManager (new NameTable ());
+			// SVG created by batik has does not declare xlink
+			mngr.AddNamespace ("xlink", "http://www.w3.org/1999/xlink");
+			XmlParserContext pc = new XmlParserContext (null, mngr, null, XmlSpace.Default);
 
-			XmlReader reader = XmlReader.Create (Stream, reader_settings);
+			XmlReader reader = XmlReader.Create (Stream, reader_settings, pc);
 
 			string current_tag_name = String.Empty;
 			bool grab_property = false;
