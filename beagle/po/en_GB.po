@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-23 21:33+0000\n"
-"PO-Revision-Date: 2007-01-23 21:34-0000\n"
+"POT-Creation-Date: 2007-02-09 10:51+0000\n"
+"PO-Revision-Date: 2007-02-09 10:51-0000\n"
 "Last-Translator: David Lodge <dave@cirt.net>\n"
 "Language-Team: English/GB <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -694,13 +694,13 @@ msgstr "Archives"
 
 #: ../search/Tiles/Utils.cs:133
 #: ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
+#: ../Util/StringFu.cs:116
 msgid "Yesterday"
 msgstr "Yesterday"
 
 #: ../search/Tiles/Utils.cs:135
 #: ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
+#: ../Util/StringFu.cs:114
 msgid "Today"
 msgstr "Today"
 
@@ -1338,14 +1338,10 @@ msgid "_Start search & indexing services automatically "
 msgstr "_Start search & indexing services automatically "
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Configure Desktop Search & Indexing"
+msgid "Configure Desktop Search"
+msgstr "Configure Desktop Search"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Configure search & indexing properties"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "Search & Indexing"
 
@@ -1604,40 +1600,40 @@ msgid "Scene Type"
 msgstr "Scene Type"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:119
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:122
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:131
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Today, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Yesterday, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:156
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -1645,23 +1641,23 @@ msgstr[0] "{0} days ago, {1}"
 msgstr[1] "{0} days ago, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:157
+#: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:177
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hour"
 msgstr[1] "{0} hours"
 
-#: ../Util/StringFu.cs:174
+#: ../Util/StringFu.cs:184
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1669,7 +1665,7 @@ msgstr[0] "{0} minute"
 msgstr[1] "{0} minutes"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:208
+#: ../Util/StringFu.cs:218
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -1677,17 +1673,21 @@ msgstr[0] "{0} bytes"
 msgstr[1] "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:222
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:215
+#: ../Util/StringFu.cs:225
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Configure Desktop Search & Indexing"
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Configure search & indexing properties"
 #~ msgid "DisplayName"
 #~ msgstr "DisplayName"
 #~ msgid "FirstName"
