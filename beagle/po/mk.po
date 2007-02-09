@@ -1,19 +1,19 @@
-# translation of beagle.HEAD.mk.po to Macedonian
+# translation of mk.po to Macedonian
 # translation of beagle.HEAD.mk.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER.
 #
 # Арангел Ангов <ufo@linux.net.mk>, 2005, 2006.
 # Ivica Micev <icko@elfasko.org.mk>, 2006.
-# Arangel Angov <ufo@linux.net.mk>, 2006.
+# Arangel Angov <ufo@linux.net.mk>, 2006, 2007.
 # Jovan Naumovski <jovan@lugola.net>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD.mk\n"
+"Project-Id-Version: mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-14 19:39+0100\n"
-"PO-Revision-Date: 2006-12-14 20:41+0100\n"
-"Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
+"POT-Creation-Date: 2007-01-31 03:19+0000\n"
+"PO-Revision-Date: 2007-02-09 13:06+0100\n"
+"Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural= n==1 || n%10==1 ? 0 : 1\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../glue/eggtrayicon.c:127
+#: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
 msgstr "Ориентација"
 
@@ -33,7 +33,7 @@ msgstr "Ориентацијата на просторот за спуштање
 msgid "Open..."
 msgstr "Отвори..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:86
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
 msgstr "Излез"
 
@@ -308,12 +308,17 @@ msgstr "<b>Историја на разговори</b>"
 msgid "IM Viewer"
 msgstr "Прегледувач на инстант пораки"
 
-#: ../ImLogViewer/ImLogWindow.cs:102
+#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Разговори во {0}"
 
 #: ../ImLogViewer/ImLogWindow.cs:109
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Разговори во {0} ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:125
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Разговори со {0}"
@@ -406,7 +411,8 @@ msgstr "Сервисот за пребарување не се извршува"
 msgid "Start search service"
 msgstr "Пушти го сервисот за пребарување"
 
-#: ../search/Search.cs:138 ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:138 ../search/Search.cs:254
+#: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Десктоп пребарување"
 
@@ -426,32 +432,39 @@ msgstr "Внесете пребарувачки термини"
 msgid "Start searching"
 msgstr "Почни со пребарување"
 
-#: ../search/Search.cs:264
+#: ../search/Search.cs:273
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Десктоп пребарување: {0}"
 
-#: ../search/Search.cs:280
+#: ../search/Search.cs:289
 #, csharp-format
-msgid "Showing all {0} matches"
-msgstr "Ги прикажувам сите {0} совпаѓања"
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Прикажувам {0} совпаѓање"
+msgstr[1] "Ги прикажувам сите {0} совпаѓања"
+msgstr[2] "Ги прикажувам сите {0} совпаѓања"
 
-#: ../search/Search.cs:282
+#: ../search/Search.cs:291
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr "Ги прикажувам најгорните {0} од {1} вкупно совпаѓања"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "Го прикажувам најгорното {0} од {1} вкупно совпаѓања"
+msgstr[1] "Ги прикажувам најгорните {0} од {1} вкупно совпаѓања"
+msgstr[2] "Ги прикажувам најгорните {0} од {1} вкупно совпаѓања"
 
-#: ../search/Search.cs:553
+#: ../search/Search.cs:564
 msgid "Your data is being indexed"
 msgstr "Вашите податоци се индексираат"
 
-#: ../search/Search.cs:554
+#: ../search/Search.cs:565
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
 msgstr ""
-"Сервисот за пребарување е во процес на индексирање на Вашите податоц.  Резултатуте од "
-"пребарувањата може да бидат нецелосни сѐ додека не заврши индексирањето."
+"Сервисот за пребарување е во процес на индексирање на Вашите податоц.  "
+"Резултатуте од пребарувањата може да бидат нецелосни сѐ додека не заврши "
+"индексирањето."
 
 #: ../search/Tiles/ArchivedFile.cs:39
 #, csharp-format
@@ -520,7 +533,7 @@ msgid "Last Edited:"
 msgstr "Последен пат уредено:"
 
 #: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:80
+#: ../search/Tiles/Image.cs:84
 msgid "Full Path:"
 msgstr "Цела патека:"
 
@@ -541,9 +554,17 @@ msgstr[2] "Содржи {0} предмети"
 msgid "Set as Wallpaper"
 msgstr "Постави како позадина"
 
-#: ../search/Tiles/Image.cs:79
+#: ../search/Tiles/Image.cs:81
+msgid "Tags:"
+msgstr "Етикети:"
+
+#: ../search/Tiles/Image.cs:83
 msgid "Modified:"
 msgstr "Променето:"
+
+#: ../search/Tiles/Image.cs:93
+msgid "Comment:"
+msgstr "Коментар:"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -686,12 +707,12 @@ msgid "Archives"
 msgstr "Архиви"
 
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:88
+#: ../Util/StringFu.cs:116
 msgid "Yesterday"
 msgstr "Вчера"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:86
+#: ../Util/StringFu.cs:114
 msgid "Today"
 msgstr "Денес"
 
@@ -762,15 +783,15 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Пристапено:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "Нема скорешни пребарувања"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Скорешни пребарувања"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
 msgstr "Исчисти"
 
@@ -1364,14 +1385,10 @@ msgid "_Start search & indexing services automatically "
 msgstr "_Автоматски започни пребарување и индексирање."
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Конфигурирај пребарување и индексирање за работната површина"
+msgid "Configure Desktop Search"
+msgstr "Конфигурација за пребарување"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Конфигурирај својства з пребарување и индексирање"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "Барам и индексирам"
 
@@ -1379,80 +1396,311 @@ msgstr "Барам и индексирам"
 msgid "On This Computer"
 msgstr "На овој компјутер"
 
-#: ../Util/ExifData.cs:226
+#: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
 msgstr "Директориум за слики"
 
-#: ../Util/ExifData.cs:228
+#: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
 msgstr "Директориум за сликички"
 
-#: ../Util/ExifData.cs:230
+#: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
 msgstr "Директориум за exif"
 
-#: ../Util/ExifData.cs:232
+#: ../Util/F-Spot/Exif.cs:254
 msgid "GPS Directory"
 msgstr "Директориум за GPS"
 
-#: ../Util/ExifData.cs:234
+#: ../Util/F-Spot/Exif.cs:256
 msgid "InterOperability Directory"
 msgstr "Директориум за меѓуоперативност"
 
-#: ../Util/ExifData.cs:236
+#: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
 msgstr "Непознат директориум"
 
+#: ../Util/F-Spot/IptcFile.cs:175
+msgid "IPTC Information Interchange Model (IIM) Version number"
+msgstr "IPTC Information Interchange Model (IIM) Version number"
+
+#: ../Util/F-Spot/IptcFile.cs:177
+msgid "OSI Destination routing information"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:179
+msgid "IPTC file format"
+msgstr "IPTC формат на датотеки"
+
+#: ../Util/F-Spot/IptcFile.cs:181
+msgid "Identifies the provider and product"
+msgstr "Го идентификува провајдерот и производот"
+
+#: ../Util/F-Spot/IptcFile.cs:183
+msgid "A unique number identifying the envelope"
+msgstr "Уникатен број за идентификација на пликото"
+
+#: ../Util/F-Spot/IptcFile.cs:185
+msgid "A unique number"
+msgstr "Уникатен број"
+
+#: ../Util/F-Spot/IptcFile.cs:187
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:189
+msgid "The year month and day (CCYYMMDD) the service sent the material"
+msgstr "Година, месец и ден (ГГММДД) кога сервисот го испратил материјалот"
+
+#: ../Util/F-Spot/IptcFile.cs:191
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr "Час, минута и секунда (ЧЧММСС+ЧЧММ) кога сервисот го испратил материјалот"
+
+#: ../Util/F-Spot/IptcFile.cs:193
+msgid "The character set designation"
+msgstr "Ознаката за збирот на знаци"
+
+#: ../Util/F-Spot/IptcFile.cs:195
+msgid "External globally unique object identifier"
+msgstr "Надворешен глобален уникатен идентификатор за објекти"
+
+#: ../Util/F-Spot/IptcFile.cs:200
+msgid "Abstract Relationship Method (ARM) identifier"
+msgstr "Идентификатор за апстрактен метод за врски (ARM)"
+
+#: ../Util/F-Spot/IptcFile.cs:202
+msgid "Abstract Relationship Method (ARM) version number."
+msgstr "Број на верзија на апстрактниот метод за врски (ARM)."
+
+#: ../Util/F-Spot/IptcFile.cs:205
+msgid "Number identifying the IIM version this application record uses"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:207
+msgid "Object type reference"
+msgstr "Референца за тип на објект"
+
+#: ../Util/F-Spot/IptcFile.cs:212
+msgid "Object attribute reference"
+msgstr "Референца за атрибутите на објектот"
+
+#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
+msgid "Object name"
+msgstr "Име на објект"
+
+#: ../Util/F-Spot/IptcFile.cs:220
+msgid "Status of the objectdata according to the provider"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:224
+msgid "Location within a city or area where the object originates"
+msgstr "Локација на град или област од каде што потекнува објектот"
+
+#: ../Util/F-Spot/IptcFile.cs:227
+msgid "Name of the city the content is focussing on"
+msgstr "Име на градот на кој што се фокусира содржината"
+
+#: ../Util/F-Spot/IptcFile.cs:230
+msgid "Copyright information for"
+msgstr "Информации за Copyright за"
+
+#: ../Util/F-Spot/IptcFile.cs:233
+msgid "Full name of the country of the focus of the content"
+msgstr "Целосно име на земјата на која што се фокусира содржината"
+
+#: ../Util/F-Spot/IptcFile.cs:236
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr ""
+
+#: ../Util/F-Spot/IptcFile.cs:239
+msgid "Creator of the content"
+msgstr "Креатор на содржината"
+
+#: ../Util/F-Spot/IptcFile.cs:242
+msgid "Provider of the object"
+msgstr "Провајдер на објектот"
+
+#: ../Util/F-Spot/IptcFile.cs:245
+msgid "The title of the author or creator"
+msgstr "Насловот на авторот или креаторот"
+
+#: ../Util/F-Spot/IptcFile.cs:248
+msgid ""
+"The person involved in writing, editing or correcting the object data or "
+"caption/abstract"
+msgstr ""
+"Личноста вклучена во пишување, уредување или корегирање на податоците "
+"за објектот"
+
+#: ../Util/F-Spot/IptcFile.cs:252
+msgid "Headline of the content"
+msgstr "Наслов на содржината"
+
+#: ../Util/F-Spot/IptcFile.cs:255
+msgid "Instructions from the creator to the receiver not covered by other fields"
+msgstr "Инструкции од креаторот до примачот"
+
+#: ../Util/F-Spot/IptcFile.cs:258
+msgid "Intellectual genre of the object"
+msgstr "Интелектуален жанр на објектот"
+
+#: ../Util/F-Spot/IptcFile.cs:271
+msgid "Unknown IIM DataSet"
+msgstr "Непознат IIM збир на податоци"
+
+#: ../Util/F-Spot/MetadataStore.cs:46
+msgid "Creator"
+msgstr "Креатор"
+
+#: ../Util/F-Spot/MetadataStore.cs:47
+msgid "Title"
+msgstr "Наслов"
+
+#: ../Util/F-Spot/MetadataStore.cs:48
+msgid "Copyright"
+msgstr "Copyright"
+
+#: ../Util/F-Spot/MetadataStore.cs:49
+msgid "Subject and Keywords"
+msgstr "Наслов и клучни зборови"
+
+#: ../Util/F-Spot/MetadataStore.cs:50
+msgid "Compression"
+msgstr "Компресија"
+
+#: ../Util/F-Spot/MetadataStore.cs:52
+msgid "Planar Configuration"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:56
+msgid "Photometric Interpretation"
+msgstr "Фотометричка интерпретација"
+
+#: ../Util/F-Spot/MetadataStore.cs:58
+msgid "Resolution Unit"
+msgstr "Единица за резолуција"
+
+#: ../Util/F-Spot/MetadataStore.cs:60
+msgid "Exposure Program"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:62
+msgid "Metering Mode"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:64
+msgid "Exposure Mode"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:66
+msgid "Custom Rendered"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:68
+msgid "Components Configuration"
+msgstr "Конфигурација на компонентите"
+
+#: ../Util/F-Spot/MetadataStore.cs:70
+msgid "Light Source"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:72
+msgid "Sensing Method"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:74
+msgid "Color Space"
+msgstr "Место за боја"
+
+#: ../Util/F-Spot/MetadataStore.cs:76
+msgid "White Balance"
+msgstr "Бел баланс"
+
+#: ../Util/F-Spot/MetadataStore.cs:78
+msgid "Focal Plane Resolution Unit"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:80
+msgid "File Source Type"
+msgstr "Изворен тип на датотека"
+
+#: ../Util/F-Spot/MetadataStore.cs:82
+msgid "Scene Capture Type"
+msgstr ""
+
+#: ../Util/F-Spot/MetadataStore.cs:84
+msgid "Gain Control"
+msgstr "Добиј контрола"
+
+#: ../Util/F-Spot/MetadataStore.cs:86
+msgid "Contrast"
+msgstr "Контраст"
+
+#: ../Util/F-Spot/MetadataStore.cs:88
+msgid "Saturation"
+msgstr "Заситување"
+
+#: ../Util/F-Spot/MetadataStore.cs:90
+msgid "Sharpness"
+msgstr "Острина"
+
+#: ../Util/F-Spot/MetadataStore.cs:92
+msgid "Scene Type"
+msgstr "Тип на сцена"
+
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:91
+#: ../Util/StringFu.cs:119
 msgid "MMM d"
 msgstr "МММ д"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:94
+#: ../Util/StringFu.cs:122
 msgid "MMM d, yyyy"
 msgstr "МММ д, гггг"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:97
+#: ../Util/StringFu.cs:125
 msgid "h:mm tt"
 msgstr "ч:мм: tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:103
+#: ../Util/StringFu.cs:131
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Денес, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Вчера, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:156
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "пред {0} дена, {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "пред {0} ден, {1}"
+msgstr[1] "пред {0} дена, {1}"
+msgstr[2] "пред {0} дена, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
 msgstr "ММММ д, ч:мм tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:136
+#: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "ММММ д гггг, ч:мм tt"
 
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:177
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -1460,7 +1708,7 @@ msgstr[0] "{0} час"
 msgstr[1] "{0} часа"
 msgstr[2] "{0} часа"
 
-#: ../Util/StringFu.cs:153
+#: ../Util/StringFu.cs:184
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1469,19 +1717,22 @@ msgstr[1] "{0} минути"
 msgstr[2] "{0} минути"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:187
+#: ../Util/StringFu.cs:218
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0} бајти"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} бајт"
+msgstr[1] "{0} бајти"
+msgstr[2] "{0} бајти"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:191
+#: ../Util/StringFu.cs:222
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} КБ"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:194
+#: ../Util/StringFu.cs:225
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} МБ"
