@@ -1,4 +1,4 @@
-# translation of mk.po to Macedonian
+# translation of beagle.HEAD.mk.po to Macedonian
 # translation of beagle.HEAD.mk.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER.
@@ -6,14 +6,14 @@
 # Арангел Ангов <ufo@linux.net.mk>, 2005, 2006.
 # Ivica Micev <icko@elfasko.org.mk>, 2006.
 # Arangel Angov <ufo@linux.net.mk>, 2006, 2007.
-# Jovan Naumovski <jovan@lugola.net>, 2006.
+# Jovan Naumovski <jovan@lugola.net>, 2006, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: mk\n"
+"Project-Id-Version: beagle.HEAD.mk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-31 03:19+0000\n"
-"PO-Revision-Date: 2007-02-09 13:06+0100\n"
-"Last-Translator: Arangel Angov <ufo@linux.net.mk>\n"
+"POT-Creation-Date: 2007-02-09 11:53+0000\n"
+"PO-Revision-Date: 2007-02-09 19:24+0100\n"
+"Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1426,7 +1426,7 @@ msgstr "IPTC Information Interchange Model (IIM) Version number"
 
 #: ../Util/F-Spot/IptcFile.cs:177
 msgid "OSI Destination routing information"
-msgstr ""
+msgstr "Информации за дестинацијата на рутирање на OSI"
 
 #: ../Util/F-Spot/IptcFile.cs:179
 msgid "IPTC file format"
@@ -1446,7 +1446,7 @@ msgstr "Уникатен број"
 
 #: ../Util/F-Spot/IptcFile.cs:187
 msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
+msgstr "Приоритет за справување со пликови помеѓу 1 (најитно) и 9 (најмалку итно)"
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
@@ -1474,7 +1474,7 @@ msgstr "Број на верзија на апстрактниот метод з
 
 #: ../Util/F-Spot/IptcFile.cs:205
 msgid "Number identifying the IIM version this application record uses"
-msgstr ""
+msgstr "Бројот кој ја кажува IIM верзијата која го користи записот на оваа апликација"
 
 #: ../Util/F-Spot/IptcFile.cs:207
 msgid "Object type reference"
@@ -1490,7 +1490,7 @@ msgstr "Име на објект"
 
 #: ../Util/F-Spot/IptcFile.cs:220
 msgid "Status of the objectdata according to the provider"
-msgstr ""
+msgstr "Статус на објектните податоци според провајдерот"
 
 #: ../Util/F-Spot/IptcFile.cs:224
 msgid "Location within a city or area where the object originates"
@@ -1510,7 +1510,7 @@ msgstr "Целосно име на земјата на која што се фо
 
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid "Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
+msgstr "ISO3166 Код со две или три букви на државата од фокусот на содржината"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
@@ -1529,8 +1529,8 @@ msgid ""
 "The person involved in writing, editing or correcting the object data or "
 "caption/abstract"
 msgstr ""
-"Личноста вклучена во пишување, уредување или корегирање на податоците "
-"за објектот"
+"Личноста вклучена во пишување, уредување или корегирање на податоците за "
+"објектот"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
@@ -1570,7 +1570,7 @@ msgstr "Компресија"
 
 #: ../Util/F-Spot/MetadataStore.cs:52
 msgid "Planar Configuration"
-msgstr ""
+msgstr "Планарна конфигурација"
 
 #: ../Util/F-Spot/MetadataStore.cs:56
 msgid "Photometric Interpretation"
@@ -1582,19 +1582,19 @@ msgstr "Единица за резолуција"
 
 #: ../Util/F-Spot/MetadataStore.cs:60
 msgid "Exposure Program"
-msgstr ""
+msgstr "Програм на изложеност"
 
 #: ../Util/F-Spot/MetadataStore.cs:62
 msgid "Metering Mode"
-msgstr ""
+msgstr "Режим за одредување на изложеност"
 
 #: ../Util/F-Spot/MetadataStore.cs:64
 msgid "Exposure Mode"
-msgstr ""
+msgstr "Режим на изложеност"
 
 #: ../Util/F-Spot/MetadataStore.cs:66
 msgid "Custom Rendered"
-msgstr ""
+msgstr "Сопствено исцртано"
 
 #: ../Util/F-Spot/MetadataStore.cs:68
 msgid "Components Configuration"
@@ -1602,11 +1602,11 @@ msgstr "Конфигурација на компонентите"
 
 #: ../Util/F-Spot/MetadataStore.cs:70
 msgid "Light Source"
-msgstr ""
+msgstr "Светлински извор"
 
 #: ../Util/F-Spot/MetadataStore.cs:72
 msgid "Sensing Method"
-msgstr ""
+msgstr "Метод на осет"
 
 #: ../Util/F-Spot/MetadataStore.cs:74
 msgid "Color Space"
@@ -1618,7 +1618,7 @@ msgstr "Бел баланс"
 
 #: ../Util/F-Spot/MetadataStore.cs:78
 msgid "Focal Plane Resolution Unit"
-msgstr ""
+msgstr "Резолуциска единица на фокалната рамнина"
 
 #: ../Util/F-Spot/MetadataStore.cs:80
 msgid "File Source Type"
@@ -1626,7 +1626,7 @@ msgstr "Изворен тип на датотека"
 
 #: ../Util/F-Spot/MetadataStore.cs:82
 msgid "Scene Capture Type"
-msgstr ""
+msgstr "Тип на сликање на сцената"
 
 #: ../Util/F-Spot/MetadataStore.cs:84
 msgid "Gain Control"
