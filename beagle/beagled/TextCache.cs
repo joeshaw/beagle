@@ -44,6 +44,10 @@ namespace Beagle.Daemon {
 		public const string SELF_CACHE_TAG = "*self*";
 
 		private string text_cache_dir;
+		internal string TextCacheDir {
+			get { return text_cache_dir; }
+		}
+
 		private SqliteConnection connection;
 
 		private enum TransactionState {
@@ -183,6 +187,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		// Returns raw path as stored in the db i.e. relative path wrt the text_cache_dir
 		private string LookupPathRawUnlocked (Uri uri, bool create_if_not_found)
 		{
 			SqliteCommand command;
@@ -206,7 +211,7 @@ namespace Beagle.Daemon {
 			if (path == SELF_CACHE_TAG)
 				return SELF_CACHE_TAG;
 
-			return path != null ? Path.Combine (text_cache_dir, path) : null;
+			return path;
 		}
 
 		// Don't do this unless you know what you are doing!  If you
@@ -236,7 +241,7 @@ namespace Beagle.Daemon {
 					}
 					return uri.LocalPath;
 				}
-				return path;
+				return path != null ? Path.Combine (text_cache_dir, path) : null;
 			}
 		}
 		
@@ -346,7 +351,7 @@ namespace Beagle.Daemon {
 								"DELETE FROM uri_index WHERE uri='{0}' AND filename='{1}'", 
 								UriToString (uri), path);
 					if (path != SELF_CACHE_TAG)
-						File.Delete (path);
+						File.Delete (Path.Combine (text_cache_dir, path));
 				}
 			}
 		}

@@ -1440,6 +1440,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (path == TextCache.SELF_CACHE_TAG)
 				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath);
 
+			path = Path.Combine (TextCache.UserCache.TextCacheDir, path);
 			return SnippetFu.GetSnippetFromTextCache (query_terms, path);
 		}
 
