@@ -219,8 +219,10 @@ namespace Beagle.Daemon.KMailQueryable {
 		 * Till then, using a guesser to find out which of ~/.Mail and ~/Mail
 		 * is valid.
 		 * Guesses the kmail local folder path
-		 * first try ~/.Mail, then try ~/Mail
-		 * then try ~/.kde/share/apps/kmail/mail
+		 * first try ~/.kde/share/apps/kmail/mail
+		 * then try ~/.Mail, then try ~/Mail
+		 * Also do not try to "guess" for folder location specified
+		 * in config or the .kde/share/... location
 		 */
 		private string GuessLocalFolderPath (bool verbose)
 		{
@@ -236,14 +238,19 @@ namespace Beagle.Daemon.KMailQueryable {
 			location3 = Path.Combine (location3, "kmail");
 			location3 = Path.Combine (location3, "mail");
 
-			if (locationrc != null && GuessLocalFolder (locationrc, verbose))
-				return locationrc;
+			if (locationrc != null) {
+				// If location is present in config file,
+				// do not check for other locations.
+				if (GuessLocalFolder (locationrc, verbose))
+					return locationrc;
+				return null;
+			} else if (! Directory.Exists (location3))
+			// ~/.kde/share/apps/kmail/mail get preference
+				return location3;
 			else if (GuessLocalFolder (location1, verbose))
 				return location1;
 			else if (GuessLocalFolder (location2, verbose))
 				return location2;
-			else if (GuessLocalFolder (location3, verbose))
-				return location3;
 			else 
 				return null;
 		}
