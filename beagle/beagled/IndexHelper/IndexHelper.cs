@@ -51,6 +51,13 @@ namespace Beagle.IndexHelper {
 		public static Uri CurrentUri;
 		public static Filter CurrentFilter;
 
+		// DisableTextcache does more than merely ignoring
+		// textcache; see FilterFactory and LuceneIndexingDriver
+		private static bool disable_textcache;
+		public static bool DisableTextCache {
+			get { return disable_textcache; }
+		}
+
 		[DllImport ("libc")]
 		extern static private int unsetenv (string name);
 
@@ -73,6 +80,11 @@ namespace Beagle.IndexHelper {
 
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
+
+			if (args.Length == 1 && args [0] == "--disable-textcache")
+				disable_textcache = true;
+			else
+				disable_textcache = false;
 			
 			// FIXME: We always turn on full debugging output!  We are still
 			// debugging this code, after all...
@@ -92,6 +104,8 @@ namespace Beagle.IndexHelper {
 			Log.Always ("Extended attributes are {0}", ExtendedAttribute.Supported ? "supported" : "not supported");
 			Log.Always ("Command Line: {0}",
 				    Environment.CommandLine != null ? Environment.CommandLine : "(null)");
+			if (disable_textcache)
+				Log.Always ("Text cache is disabled.");
 
 			// Initialize GObject type system
 			g_type_init ();

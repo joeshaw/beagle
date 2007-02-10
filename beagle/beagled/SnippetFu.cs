@@ -206,6 +206,8 @@ namespace Beagle.Daemon {
 		static public string GetSnippetFromTextCache (string[] query_terms, string filename)
 		{
 			TextReader reader = TextCache.UserCache.GetReader (filename);
+			if (reader == null)
+				return null;
 			return GetSnippet (query_terms, reader);
 		}
 	}

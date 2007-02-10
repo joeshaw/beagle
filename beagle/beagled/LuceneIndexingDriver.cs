@@ -75,6 +75,29 @@ namespace Beagle.Daemon {
 
 		public LuceneIndexingDriver (string index_name) 
 			: this (index_name, -1, true) { }
+
+		////////////////////////////////////////////////////////////////
+		// DisableTextCache will disable text cache (surprise!) for the documents
+		// indexed in this session of beagle-index-helper.
+		// To consistently handle correct snippets where,
+		// some sessions were called with disable-textcache and some without
+		// when DisableTextCache is set, not only is no textcache is stored,
+		// but any previous textcache entry is removed.
+		// This is important, because otherwise snippets might be returned
+		// for old versions of documents.
+		// Note that, disable_textcache merely disables text-cache for documents indexed in the current session,
+		// so you would still get snippets on documents that do not use
+		// text cache for storing snippets, e.g. IM logs, KMail emails
+		// and documents that were indexed in previous sessions.
+		// To get rid of text cache completely, delete TextCache directory
+		// and always run beagled with --disable-textcache.
+		// Of course, if you ask to disable text-cache and then request snippets,
+		// you will look dumb. But that's your choice. We love choice.
+		private bool disable_textcache = false;
+		public bool DisableTextCache {
+			get { return disable_textcache; }
+			set { disable_textcache = value; }
+		}
 	
 		////////////////////////////////////////////////////////////////
 
@@ -312,7 +335,7 @@ namespace Beagle.Daemon {
 				// If we have content, try to find a filter
 				// which we can use to process the indexable.
 				try {
-					FilterFactory.FilterIndexable (indexable, text_cache, out filter);
+					FilterFactory.FilterIndexable (indexable, (disable_textcache ? null : text_cache), out filter);
 				} catch (Exception e) {
 					Logger.Log.Error (e, "Unable to filter {0} (mimetype={1})", indexable.DisplayUri, indexable.MimeType);
 					indexable.NoContent = true;
@@ -376,6 +399,10 @@ namespace Beagle.Daemon {
 
 				// Clean up any temporary files associated with filtering this indexable.
 				indexable.Cleanup ();
+
+				// Remove any existing text cache for this item
+				if (disable_textcache && text_cache != null)
+					text_cache.Delete (indexable.Uri);
 			}
 
 			if (text_cache != null)

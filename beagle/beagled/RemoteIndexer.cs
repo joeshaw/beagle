@@ -223,7 +223,10 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Launching helper process");
 
 				SafeProcess p = new SafeProcess ();
-				p.Arguments = new string [] { helper_path };
+				if (BeagleDaemon.DisableTextCache)
+					p.Arguments = new string [] { helper_path, "--disable-textcache" };
+				else
+					p.Arguments = new string [] { helper_path };
 				p.Start ();
 
 				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);

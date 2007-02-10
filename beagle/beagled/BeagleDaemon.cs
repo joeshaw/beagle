@@ -52,6 +52,12 @@ namespace Beagle.Daemon {
 		private static bool arg_heap_shot = false;
 		private static bool arg_heap_shot_snapshots = true;
 
+		private static bool disable_textcache = false;
+		public static bool DisableTextCache {
+			get { return disable_textcache; }
+			set { disable_textcache = value; }
+		}
+
 		public static bool StartServer ()
 		{
 			Logger.Log.Debug ("Starting messaging server");
@@ -155,6 +161,8 @@ namespace Beagle.Daemon {
 				"  --list-backends\tList all the available backends.\n" +
 				"  --add-static-backend\tAdd a static backend by path.\n" + 
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
+				// FIXME: Expose this to the user ?
+				//"  --disable-textcache\tDisable the use of the text cache used to provide snippets
 				"  --help\t\tPrint this usage message.\n";
 
 			Console.WriteLine (usage);
@@ -358,6 +366,7 @@ namespace Beagle.Daemon {
 					break;
 				
 				case "--allow-backend":
+					// FIXME: This option is deprecated and will be removed in a future release.
 					// --allow-backend is deprecated, use --backends 'name' instead
 					// it will disable reading the list of enabled/disabled backends
 					// from conf and start the backend given
@@ -367,6 +376,7 @@ namespace Beagle.Daemon {
 					break;
 					
 				case "--deny-backend":
+					// FIXME: This option is deprecated and will be removed in a future release.
 					// deprecated: use --backends -'name' instead
 					if (next_arg != null)
 						QueryDriver.Deny (next_arg);
@@ -398,6 +408,10 @@ namespace Beagle.Daemon {
 
 				case "--autostarted":
 					// FIXME: This option is deprecated and will be removed in a future release.
+					break;
+
+				case "--disable-textcache":
+					disable_textcache = true;
 					break;
 
 				default:
@@ -457,6 +471,11 @@ namespace Beagle.Daemon {
 			if (! ExtendedAttribute.Supported) {
 				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +
 						 "Performance will suffer as a result.");
+			}
+
+			if (disable_textcache) {
+				Log.Warn ("Running with text-cache disabled!");
+				Log.Warn ("*** Snippets will not be returned for documents indexed in this session.");
 			}
 
 			// Start our memory-logging thread
