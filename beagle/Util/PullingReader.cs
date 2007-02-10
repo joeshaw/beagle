@@ -34,14 +34,19 @@ namespace Beagle.Util {
 	public class PullingReader : TextReader {
 
 		public delegate bool Pull (StringBuilder buffer);
+		public delegate void DoClose ();
 
 		Pull pull;
+		DoClose close;
 		StringBuilder pullBuffer = new StringBuilder ();
 		bool done = false;
 
-		public PullingReader (Pull _pull) : base ()
+		public PullingReader (Pull _pull) : this (_pull, null) { }
+
+		public PullingReader (Pull _pull, DoClose _close) : base ()
 		{
 			pull = _pull;
+			close = _close;
 		}
 
 		private void DoPull (int neededSize)
@@ -57,7 +62,8 @@ namespace Beagle.Util {
 
 		public override void Close ()
 		{
-
+			if (close != null)
+				close ();
 		}
 
 		public override int Peek ()

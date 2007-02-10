@@ -654,7 +654,6 @@ namespace Beagle.Daemon {
 		private bool Pull ()
 		{
 			if (IsFinished || HasError) {
-				Close ();
 				return false;
 			}
 
@@ -666,8 +665,13 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		private bool closed = false;
+
 		private void Close ()
 		{
+			if (closed)
+				return;
+
 			Cleanup ();
 
 			DoClose ();
@@ -687,6 +691,8 @@ namespace Beagle.Daemon {
 
 			if (snippetWriter != null)
 				snippetWriter.Close ();
+
+			closed = true;
 		}
 
 		public void Cleanup ()
@@ -747,7 +753,9 @@ namespace Beagle.Daemon {
 
 		public TextReader GetTextReader ()
 		{
-			PullingReader pr = new PullingReader (new PullingReader.Pull (PullText));
+			PullingReader pr = new PullingReader (
+				new PullingReader.Pull (PullText),
+				new PullingReader.DoClose (Close));
 			return pr;
 		}
 

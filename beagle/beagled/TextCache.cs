@@ -272,7 +272,7 @@ namespace Beagle.Daemon {
 			}
 
 			StreamWriter writer;
-			writer = new StreamWriter (stream);
+			writer = new StreamWriter (new BufferedStream (stream));
 			return writer;
 		}
 
@@ -321,7 +321,7 @@ namespace Beagle.Daemon {
 			StreamReader reader = null;
 			try {
 				Stream stream = new GZipInputStream (file_stream);
-				reader = new StreamReader (stream);
+				reader = new StreamReader (new BufferedStream (stream));
 
 				// This throws an exception if the file isn't compressed as follows:
 				// 1.) IOException on older versions of SharpZipLib

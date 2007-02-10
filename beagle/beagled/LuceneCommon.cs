@@ -678,12 +678,15 @@ namespace Beagle.Daemon {
 
 				TextReader reader;
 				
+				// Add the field "Text" first
+				// It is important that the order is preserved
 				reader = indexable.GetTextReader ();
 				if (reader != null) {
 					f = new Field ("Text", reader);
 					primary_doc.Add (f);
 				}
 			
+				// Then add "HotText"
 				reader = indexable.GetHotTextReader ();
 				if (reader != null) {
 					f = new Field ("HotText", reader);
