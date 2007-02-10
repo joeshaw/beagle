@@ -241,11 +241,8 @@ namespace Beagle.Daemon.KMailQueryable {
 			if (locationrc != null) {
 				// If location is present in config file,
 				// do not check for other locations.
-				if (GuessLocalFolder (locationrc, verbose))
-					return locationrc;
-				return null;
-			} else if (! Directory.Exists (location3))
-			// ~/.kde/share/apps/kmail/mail get preference
+				return locationrc;
+			} else if (Directory.Exists (location3))
 				return location3;
 			else if (GuessLocalFolder (location1, verbose))
 				return location1;
