@@ -176,8 +176,9 @@ public class JpegHeader : SemWeb.StatementSource {
 
 			while (pos < len) {
 				int read = stream.Read (dest, pos + start, len - pos);
-				if (read < 0)
+				if (read <= 0)
 					break;
+
 				pos += read;
 			}
 			return pos;
