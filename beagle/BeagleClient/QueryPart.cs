@@ -31,7 +31,7 @@ using System.Collections;
 using System.Text;
 using System.Xml.Serialization;
 
-using BU = Beagle.Util;
+using Beagle.Util;
 
 namespace Beagle {
 
@@ -154,14 +154,28 @@ namespace Beagle {
 			set { key = value; }
 		}
 
+		[XmlIgnore]
 		public DateTime StartDate {
 			get { return start_date; }
 			set { start_date = value; }
 		}
 
+		[XmlAttribute ("StartDate")]
+		public string StartDateAsString {
+			get { return StringFu.DateTimeToString (start_date); }
+			set { start_date = StringFu.StringToDateTime (value); }
+		}
+
+		[XmlIgnore]
 		public DateTime EndDate {
 			get { return end_date; }
 			set { end_date = value; }
+		}
+
+		[XmlAttribute ("EndDate")]
+		public string EndDateAsLocal {
+			get { return StringFu.DateTimeToString (end_date); }
+			set { end_date = StringFu.StringToDateTime (value); }
 		}
 
 		public override string ToString ()

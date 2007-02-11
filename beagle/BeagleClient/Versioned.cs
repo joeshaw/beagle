@@ -28,6 +28,8 @@
 using System;
 using System.Xml.Serialization;
 
+using Beagle.Util;
+
 namespace Beagle {
 
 	public class Versioned {
@@ -38,10 +40,16 @@ namespace Beagle {
 			get { return timestamp.Ticks > 0; }
 		}
 
-		[XmlAttribute]
+		[XmlIgnore]
 		public DateTime Timestamp {
 			get { return timestamp; }
 			set { timestamp = value; }
+		}
+
+		[XmlAttribute ("Timestamp")]
+		public string TimestampAsString {
+			get { return StringFu.DateTimeToString (timestamp); }
+			set { timestamp = StringFu.StringToDateTime (value); }
 		}
 
 		public bool IsObsoletedBy (DateTime timestamp)

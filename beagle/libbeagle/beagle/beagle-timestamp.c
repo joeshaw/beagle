@@ -2,6 +2,7 @@
  * beagle-timestamp.c
  *
  * Copyright (C) 2005 Novell, Inc.
+ * Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
  *
  */
 
@@ -35,10 +36,6 @@ struct _BeagleTimestamp {
 	int year, month, day;
 
 	int hour, minute, second;
-
-	int ticks;
-
-	int tz_hour, tz_minute;
 };
 
 static BeagleTimestamp *
@@ -55,7 +52,7 @@ beagle_timestamp_new (void)
  * beagle_timestamp_new_from_string:
  * @str: a string
  *
- * Creates a newly allocated #BeagleTimestamp from the given string. The string should be of the following format, "2005-06-23T10:05:11.0000000+01:00".
+ * Creates a newly allocated #BeagleTimestamp from the given string. The string should be of the following format, "20050623100511" and represents a timestamp in UTC.
  *
  * Return value: the newly allocated #BeagleTimestamp.
  **/
@@ -67,12 +64,11 @@ beagle_timestamp_new_from_string (const char *str)
 
 	timestamp = beagle_timestamp_new ();
 
-	consumed = sscanf (str, "%04d-%02d-%02dT%02d:%02d:%02d.%07d%03d:%02d", 
+	consumed = sscanf (str, "%04d%02d%02d%02d%02d%02d", 
 			   &timestamp->year, &timestamp->month, &timestamp->day,
-			   &timestamp->hour, &timestamp->minute, &timestamp->second,
-			   &timestamp->ticks, &timestamp->tz_hour, &timestamp->tz_minute);
+			   &timestamp->hour, &timestamp->minute, &timestamp->second);
 	
-	if (consumed != 9) {
+	if (consumed != 6) {
 		beagle_timestamp_free (timestamp);
 		return NULL;
 	}
@@ -94,13 +90,8 @@ beagle_timestamp_new_from_unix_time (time_t time)
 {
 	BeagleTimestamp *timestamp;
 	struct tm *result;
-	gboolean before_utc;
-	int offset_mins, tz_hour, tz_min;
 
-	/* Send everything in localtime since XmlSerializer .Net-1.0 likes that.
-	 * FIXED: To be changed back to gmtime() in .Net-2.0 era.
-	 */
-	result = localtime (&time);
+	result = gmtime (&time);
 
 	timestamp = beagle_timestamp_new ();
 
@@ -111,23 +102,6 @@ beagle_timestamp_new_from_unix_time (time_t time)
 	timestamp->hour = result->tm_hour;
 	timestamp->minute = result->tm_min;
 	timestamp->second = result->tm_sec;
-
-	/* Compute timezone offset. */
-	time = 0;
-	result = localtime (&time);
-	before_utc = (result->tm_mday == 1);
-
-	offset_mins = 60 * result->tm_hour + result->tm_min;
-	if (before_utc == FALSE)
-		offset_mins = 1440 - offset_mins; /* 1440 = mins in 1 day */
-	
-	tz_hour = offset_mins/60;
-	tz_min = offset_mins % 60;
-	if (before_utc == FALSE)
-		tz_hour = -tz_hour;
-
-	timestamp->tz_hour = tz_hour;
-	timestamp->tz_minute = tz_min;
 
 	return timestamp;
 }
@@ -174,13 +148,12 @@ give_me_a_time_t_that_is_utc (struct tm *tm) {
 gboolean
 beagle_timestamp_to_unix_time (BeagleTimestamp *timestamp, time_t *time)
 {
-	time_t result, tz;
+	time_t result;
 	struct tm tm_time;
 	
 	/* We special-case the timestamp "epoch" and use the unix epoch */
 	if (timestamp->year == 0 && timestamp->month == 0 && timestamp->day == 0 &&
-	    timestamp->hour == 0 && timestamp->minute == 0 && timestamp->second == 0 &&
-	    timestamp->ticks == 0 && timestamp->tz_hour == 0 && timestamp->tz_minute == 0) {
+	    timestamp->hour == 0 && timestamp->minute == 0 && timestamp->second == 0) {
 		*time = 0;
 		return TRUE;
 	}
@@ -199,19 +172,6 @@ beagle_timestamp_to_unix_time (BeagleTimestamp *timestamp, time_t *time)
 
 	result = give_me_a_time_t_that_is_utc (&tm_time);
 
-	if (result == -1)
-		return FALSE;
-
-	/* Add timezone */
-	if (timestamp->tz_hour > 0) 
-		tz = timestamp->tz_hour * 60 + timestamp->tz_minute;
-	else
-		tz = timestamp->tz_hour *60 - timestamp->tz_minute;
-
-	tz *= 60;
-
-        result += tz;
-	
 	/* Check for overflow */
 	if (result < 0)
 		return FALSE;
@@ -224,10 +184,9 @@ beagle_timestamp_to_unix_time (BeagleTimestamp *timestamp, time_t *time)
 char *
 _beagle_timestamp_to_string (BeagleTimestamp *timestamp)
 {
-	return g_strdup_printf ("%04d-%02d-%02dT%02d:%02d:%02d.%07d%+03d:%02d",
+	return g_strdup_printf ("%04d%02d%02d%02d%02d%02d",
 				timestamp->year, timestamp->month, timestamp->day,
-				timestamp->hour, timestamp->minute, timestamp->second,
-				timestamp->ticks, timestamp->tz_hour, timestamp->tz_minute);
+				timestamp->hour, timestamp->minute, timestamp->second);
 	
 }
 
