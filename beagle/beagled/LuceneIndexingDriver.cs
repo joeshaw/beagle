@@ -287,6 +287,14 @@ namespace Beagle.Daemon {
 			secondary_writer = null;
 
 			foreach (Indexable indexable in request_indexables) {
+				// If shutdown has been started, break here
+				// FIXME: Some more processing will continue, a lot of them
+				// concerning receipts, but the daemon will anyway ignore receipts
+				// now, what is the fastest way to stop from here ?
+				if (Shutdown.ShutdownRequested) {
+					Log.Debug ("Shutdown initiated. Breaking while flushing indexables.");
+					break;
+				}
 				
 				if (indexable.Type == IndexableType.Remove)
 					continue;
@@ -403,6 +411,20 @@ namespace Beagle.Daemon {
 				// Remove any existing text cache for this item
 				if (disable_textcache && text_cache != null)
 					text_cache.Delete (indexable.Uri);
+			}
+
+			if (Shutdown.ShutdownRequested) {
+				foreach (Indexable indexable in request_indexables)
+					indexable.Cleanup ();
+
+				if (text_cache != null)
+					text_cache.CommitTransaction ();
+
+				primary_writer.Close ();
+				if (secondary_writer != null)
+					secondary_writer.Close ();
+			
+				return null;
 			}
 
 			if (text_cache != null)

@@ -79,7 +79,7 @@ namespace Beagle.IndexHelper {
 			// Child indexables probably have streams
 			// associated with them.  We need to store them before
 			// sending them back to the daemon.
-			if (receipts != null) {
+			if (receipts != null && ! Shutdown.ShutdownRequested) {
 				foreach (IndexerReceipt r in receipts) {
 					IndexerChildIndexablesReceipt cir;
 					cir = r as IndexerChildIndexablesReceipt;
