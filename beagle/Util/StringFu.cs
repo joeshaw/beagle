@@ -101,7 +101,6 @@ namespace Beagle.Util {
 			sec   = int.Parse (str.Substring (12, 2));
 
 			DateTime dt = new DateTime (year, month, day, hour, min, sec, DateTimeKind.Utc);
-			Log.Debug ("Parsed [{0}] as {1}", str, DateTimeUtil.ToString (dt));
 			return dt;
                 }
 
