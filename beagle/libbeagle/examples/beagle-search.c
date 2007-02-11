@@ -47,9 +47,9 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response, BeagleClie
 	gint    i;
 	gint    nr_hits;
 	gint    total_matches;
+	GError  *err;
 	BeagleSnippetRequest *snippetrequest;
-	GError *gerr;
-	BeagleResponse *response;
+	BeagleResponse *snippetresponse;
 
 	hits = beagle_hits_added_response_get_hits (response);
 	total_matches = beagle_hits_added_response_get_num_matches (response);
@@ -72,14 +72,14 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response, BeagleClie
 
 		beagle_snippet_request_set_hit(snippetrequest, BEAGLE_HIT (l->data));
 		err = NULL;
-		response = beagle_client_send_request (client, BEAGLE_REQUEST (snippetrequest), &err);
+		snippetresponse = beagle_client_send_request (client, BEAGLE_REQUEST (snippetrequest), &err);
 		if (err) {
 			g_error_free (err);
 			g_print (" no snippet");
 		}
-		else if (response) {
-			g_print ("snippet: %s", beagle_snippet_response_get_snippet( BEAGLE_SNIPPET_RESPONSE(response)) );
-                        g_object_unref(response);
+		else if (snippetresponse) {
+			g_print ("snippet: %s", beagle_snippet_response_get_snippet( BEAGLE_SNIPPET_RESPONSE(snippetresponse)) );
+                        g_object_unref(snippetresponse);
 		}
 
 	}
