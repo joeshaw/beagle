@@ -93,7 +93,9 @@ class QueryTool {
 					Console.WriteLine (" Time: {0}", DateTimeUtil.ToString (hit.Timestamp));
 				
 				foreach (Property prop in hit.Properties)
-					Console.WriteLine ("    {0} = '{1}'", prop.Key, prop.Value);
+					Console.WriteLine ("    {0} = '{1}'",
+						prop.Key,
+						(prop.Type != PropertyType.Date ? prop.Value : DateTimeUtil.ToString (StringFu.StringToDateTime (prop.Value))));
 				
 				Console.WriteLine ();
 			}
