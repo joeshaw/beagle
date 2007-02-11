@@ -805,6 +805,8 @@ namespace Beagle.Daemon {
 
 			d.Start ();
 
+			int total_number_of_matches = primary_matches.TrueCount;
+
 			// If we have a hit_filter, use it now.
 			if (hit_filter != null) {
 				for (int i = 0; i < final_list_of_hits.Count; ++i) {
@@ -814,6 +816,7 @@ namespace Beagle.Daemon {
 						if (Debug)
 							Logger.Log.Debug ("Filtered out {0}", hit.Uri);
 						final_list_of_hits [i] = null;
+						total_number_of_matches --;
 					}
 				}
 			}
@@ -837,7 +840,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			result.Add (final_list_of_hits, primary_matches.TrueCount);
+			result.Add (final_list_of_hits, total_number_of_matches);
 
 			d.Stop ();
 			total.Stop ();
