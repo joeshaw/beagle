@@ -1063,6 +1063,9 @@ namespace Beagle.Daemon {
 
 		static private LNS.Query NewDayQuery (string field_name, int d1, int d2)
 		{
+			if (d1 == d2)
+				return new LNS.TermQuery (NewDayTerm (field_name, d1));
+
 			return new LNS.RangeQuery (NewDayTerm (field_name, d1),
 						   NewDayTerm (field_name, d2),
 						   true); // query is inclusive
