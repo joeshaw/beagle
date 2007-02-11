@@ -60,7 +60,7 @@ namespace Search.Tiles {
 
 			From.LabelProp = "<b>" + GetAddress (hit) + "</b>";
 			try {
-				Timestamp = Utils.ParseTimestamp (Utils.GetFirstPropertyOfParent (hit, "fixme:date"));
+				Timestamp = StringFu.StringToDateTime (Utils.GetFirstPropertyOfParent (hit, "fixme:date"));
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 

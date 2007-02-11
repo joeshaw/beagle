@@ -87,20 +87,22 @@ namespace Beagle.Util {
 
                 static public DateTime StringToDateTime (string str)
                 {
-			if (str == null || str == String.Empty)
+			if (String.IsNullOrEmpty (str) || str.Length != 14)
 				return new DateTime ();
 
-			// FIXME: Workaround for http://bugzilla.ximian.com/show_bug.cgi?id=80320
-			// ArgumentOutOfRangeException is incorrectly thrown for
-			// DateTime.MinValue.ToLocalTime() in timezones with a negative offset
-			// from UTC, and DateTime.MinValue.ToUniversalTime() in timezones with a
-			// positive offset from UTC.  Note that Mono works correctly for going
-			// beyond MaxValue, so we only need to deal with the lower bound.
-			try {
-				return DateTime.ParseExact (str, TimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal);
-			} catch (ArgumentOutOfRangeException) {
-				return DateTime.MinValue;
-			}
+			int year, month, day, hour, min, sec;
+
+			// Pretty simple format, parse it ourself
+			year  = int.Parse (str.Substring (0, 4));
+			month = int.Parse (str.Substring (4, 2));
+			day   = int.Parse (str.Substring (6, 2));
+			hour  = int.Parse (str.Substring (8, 2));
+			min   = int.Parse (str.Substring (10, 2));
+			sec   = int.Parse (str.Substring (12, 2));
+
+			DateTime dt = new DateTime (year, month, day, hour, min, sec, DateTimeKind.Utc);
+			Log.Debug ("Parsed [{0}] as {1}", str, DateTimeUtil.ToString (dt));
+			return dt;
                 }
 
 		static public string DateTimeToFuzzy (DateTime dt)

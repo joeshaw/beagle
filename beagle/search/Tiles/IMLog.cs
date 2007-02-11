@@ -40,7 +40,7 @@ namespace Search.Tiles {
 				From.LabelProp = "(unknown)";
 
 			try {
-				Timestamp = Utils.ParseTimestamp (hit.GetFirstProperty ("fixme:starttime"));
+				Timestamp = StringFu.StringToDateTime (hit.GetFirstProperty ("fixme:starttime"));
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
 
