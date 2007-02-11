@@ -43,7 +43,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 		public TomboyQueryable () : base ("TomboyIndex")
 		{
-			tomboy_dir = Path.Combine (PathFinder.HomeDir, ".tomboy");
+			tomboy_dir = Environment.GetEnvironmentVariable ("TOMBOY_PATH");
+			if (tomboy_dir == null)
+				tomboy_dir = Path.Combine (PathFinder.HomeDir, ".tomboy");
 		}
 
 		public override void Start () 
