@@ -41,12 +41,15 @@ print_hit (BeagleHit *hit)
 }
 
 static void
-hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response) 
+hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response, BeagleClient *client) 
 {
 	GSList *hits, *l;
 	gint    i;
 	gint    nr_hits;
 	gint    total_matches;
+	BeagleSnippetRequest *snippetrequest;
+	GError *gerr;
+	BeagleResponse *response;
 
 	hits = beagle_hits_added_response_get_hits (response);
 	total_matches = beagle_hits_added_response_get_num_matches (response);
@@ -54,6 +57,11 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response)
 	nr_hits = g_slist_length (hits);
 	total_hits += nr_hits;
 	g_print ("Found hits (%d) out of total %d matches:\n", nr_hits, total_matches);
+
+	// This is necessary only once, not for each item
+	snippetrequest = beagle_snippet_request_new();
+	beagle_snippet_request_set_query(snippetrequest, query);
+
 	g_print ("-------------------------------------------\n");
 	for (l = hits, i = 1; l; l = l->next, ++i) {
 		g_print ("[%d] ", i);
@@ -61,6 +69,19 @@ hits_added_cb (BeagleQuery *query, BeagleHitsAddedResponse *response)
 		print_hit (BEAGLE_HIT (l->data));
 
 		g_print ("\n");
+
+		beagle_snippet_request_set_hit(snippetrequest, BEAGLE_HIT (l->data));
+		err = NULL;
+		response = beagle_client_send_request (client, BEAGLE_REQUEST (snippetrequest), &err);
+		if (err) {
+			g_error_free (err);
+			g_print (" no snippet");
+		}
+		else if (response) {
+			g_print ("snippet: %s", beagle_snippet_response_get_snippet( BEAGLE_SNIPPET_RESPONSE(response)) );
+                        g_object_unref(response);
+		}
+
 	}
 	g_print ("-------------------------------------------\n\n\n");
 }
