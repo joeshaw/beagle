@@ -273,7 +273,8 @@ namespace Beagle.Util.Exif {
 					Int32.Parse(dt_data[2]),
 					Int32.Parse(dt_data[3]),
 					Int32.Parse(dt_data[4]),
-					Int32.Parse(dt_data[5]));
+					Int32.Parse(dt_data[5]),
+					DateTimeKind.Local); // Assume local time
 			} catch (FormatException) {
 				result = DateTime.MinValue;
 			}
