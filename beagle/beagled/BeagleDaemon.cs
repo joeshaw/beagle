@@ -140,7 +140,7 @@ namespace Beagle.Daemon {
 			string usage =
 				"beagled: The daemon to the Beagle search system.\n" +
 				"Web page: http://beagle-project.org\n" +
-				"Copyright (C) 2004-2006 Novell, Inc.\n\n";
+				"Copyright (C) 2004-2007 Novell, Inc.\n\n";
 
 			usage +=
 				"Usage: beagled [OPTIONS]\n\n" +
@@ -161,6 +161,7 @@ namespace Beagle.Daemon {
 				"  --list-backends\tList all the available backends.\n" +
 				"  --add-static-backend\tAdd a static backend by path.\n" + 
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
+				"  --version\tShow version of daemon, Mono, and Sqlite.\n" +
 				// FIXME: Expose this to the user ?
 				//"  --disable-textcache\tDisable the use of the text cache used to provide snippets
 				"  --help\t\tPrint this usage message.\n";
@@ -412,6 +413,13 @@ namespace Beagle.Daemon {
 
 				case "--disable-textcache":
 					disable_textcache = true;
+					break;
+				
+				case "--version":
+					Console.WriteLine ("Beagle: " + ExternalStringsHack.Version);
+					Console.WriteLine ("Mono: " + SystemInformation.MonoRuntimeVersion);
+					Console.WriteLine ("Sqlite: " + ExternalStringsHack.SqliteVersion);
+					Environment.Exit (0);
 					break;
 
 				default:
