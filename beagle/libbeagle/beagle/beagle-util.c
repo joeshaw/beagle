@@ -61,6 +61,7 @@ char *
 beagle_util_get_socket_path (const char *client_name)
 {
 	const gchar *beagle_home;
+	const gchar *beagle_storage_dir;
 	gchar *socket_dir;
 	gchar *socket_path;
 	struct stat buf;
@@ -68,11 +69,21 @@ beagle_util_get_socket_path (const char *client_name)
 	if (!client_name) 
 		client_name = "socket";
 
-	beagle_home = g_getenv ("BEAGLE_HOME");
-	if (beagle_home == NULL)
-		beagle_home = g_get_home_dir ();
+	/* Follow the C# API: First try BEAGLE_STORAGE */
+	beagle_storage_dir = g_getenv ("BEAGLE_STORAGE");
 
-	if (! beagle_util_is_path_on_block_device (beagle_home) ||
+	/* Then try BEAGLE_HOME/.beagle */
+	if (beagle_storage_dir == NULL) {
+		beagle_home = g_getenv ("BEAGLE_HOME");
+	
+		/* Finally, beagle home is home dir */
+		if (beagle_home == NULL)
+			beagle_home = g_get_home_dir ();
+	}
+
+	if (beagle_storage_dir != NULL) {
+		socket_dir = g_build_filename (beagle_storage_dir, NULL);
+	} else if (! beagle_util_is_path_on_block_device (beagle_home) ||
 	    getenv ("BEAGLE_SYNCHRONIZE_LOCALLY") != NULL) {
 		gchar *remote_storage_dir = g_build_filename (beagle_home, ".beagle", "remote_storage_dir", NULL);
 		gchar *tmp;
