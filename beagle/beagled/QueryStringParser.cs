@@ -274,7 +274,7 @@ namespace Beagle.Daemon {
 
 			if (start_date == DateTime.MinValue && end_date == DateTime.MinValue)
 				throw new FormatException ();
-				
+
 			QueryPart_DateRange range_query = new QueryPart_DateRange ();
 			range_query.Key = QueryPart_DateRange.TimestampKey;
 			range_query.StartDate = start_date;
@@ -308,8 +308,16 @@ namespace Beagle.Daemon {
 			if (d == -1)
 				d = (start_date ? 1 : DateTime.DaysInMonth (y, m));
 
+			int hour = (start_date ? 0 : 23);
+			int min  = (start_date ? 0 : 59);
+			int sec  = (start_date ? 0 : 59);
+
 			// Create the date in local time
-			return new DateTime (y, m, d, 0, 0, 0, DateTimeKind.Local);
+			DateTime dt = new DateTime (y, m, d, hour, min, sec, DateTimeKind.Local);
+
+			// Dates could be in local or UTC
+			// Convert them to UTC
+			return dt.ToUniversalTime ();
 		}
 
 		private static QueryPart_DateRange DateToQueryPart (string dt_string)
