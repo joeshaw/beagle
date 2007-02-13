@@ -124,15 +124,10 @@ namespace Beagle.Filters {
 						}
 					}
 				} catch (System.Xml.XmlException e) {
-					if (reader.ReadState == ReadState.Error) {
-						Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
-						Logger.Log.Debug (e);
-						Error ();
-						return;
-					} else {
-						Logger.Log.Debug ("Non-Fatal error parsing xml file {0}", FileInfo.FullName);
-						Logger.Log.Debug (e.Message);
-					}
+					Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
+					Logger.Log.Debug (e);
+					Error ();
+					return;
 				}
 			}
 			
