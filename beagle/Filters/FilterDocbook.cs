@@ -66,8 +66,19 @@ namespace Beagle.Filters
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/docbook+xml"));
 			AddSupportedFlavor (FilterFlavor.NewFromExtension (".docbook"));
 
-			// FIXME: Uri/Extension mapping?
-			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/doc/*", ".xml", null, 0));
+			// Hack for detecting Docbook files in certain
+			// well-known locations.  These roughly map to the
+			// directories in crawl-rules/crawl-documentation
+			//
+			// xdgmime/shared-mime-info don't dive into XML files
+			// to see what they really are, so the mime type is
+			// just application/xml.  We know most of these are
+			// docbook.
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/doc/*",              ".xml", null, 0));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/local/share/doc/*",        ".xml", null, 0));
+			AddSupportedFlavor (new FilterFlavor ("file:///opt/kde3/share/doc/*",         ".xml", null, 0));
+			AddSupportedFlavor (new FilterFlavor ("file:///opt/gnome/share/gnome/help/*", ".xml", null, 0));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/gnome/help/*",       ".xml", null, 0));
 		}
 
 		///////////////////////////////////////////////////
