@@ -163,7 +163,7 @@ namespace Beagle.Daemon {
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
 				"  --version\tShow version of daemon, Mono, and Sqlite.\n" +
 				// FIXME: Expose this to the user ?
-				//"  --disable-textcache\tDisable the use of the text cache used to provide snippets
+				//"  --disable-text-cache\tDisable the use of the text cache used to provide snippets
 				"  --help\t\tPrint this usage message.\n";
 
 			Console.WriteLine (usage);
@@ -411,7 +411,7 @@ namespace Beagle.Daemon {
 					// FIXME: This option is deprecated and will be removed in a future release.
 					break;
 
-				case "--disable-textcache":
+				case "--disable-text-cache":
 					disable_textcache = true;
 					break;
 				
