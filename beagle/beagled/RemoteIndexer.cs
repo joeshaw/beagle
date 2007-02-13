@@ -224,7 +224,7 @@ namespace Beagle.Daemon {
 
 				SafeProcess p = new SafeProcess ();
 				if (BeagleDaemon.DisableTextCache)
-					p.Arguments = new string [] { helper_path, "--disable-textcache" };
+					p.Arguments = new string [] { helper_path, "--disable-text-cache" };
 				else
 					p.Arguments = new string [] { helper_path };
 				p.Start ();

@@ -81,7 +81,7 @@ namespace Beagle.IndexHelper {
 			bool run_by_hand = (Environment.GetEnvironmentVariable ("BEAGLE_RUN_HELPER_BY_HAND") != null);
 			bool log_in_fg = (Environment.GetEnvironmentVariable ("BEAGLE_LOG_IN_THE_FOREGROUND_PLEASE") != null);
 
-			if (args.Length == 1 && args [0] == "--disable-textcache")
+			if (args.Length == 1 && args [0] == "--disable-text-cache")
 				disable_textcache = true;
 			else
 				disable_textcache = false;
