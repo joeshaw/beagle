@@ -1263,16 +1263,22 @@ namespace Beagle.Daemon {
 				LNS.BooleanQuery p_query = new LNS.BooleanQuery ();
 				LNS.BooleanQuery s_query = new LNS.BooleanQuery ();
 
+				bool added_subquery = false;
+
 				if (part.SearchFullText) {
 					LNS.Query subquery;
 					subquery = StringToQuery ("Text", part.Text, term_list);
-					if (subquery != null)
+					if (subquery != null) {
 						p_query.Add (subquery, false, false);
+						added_subquery = true;
+					}
 
 					// FIXME: HotText is ignored for now!
 					// subquery = StringToQuery ("HotText", part.Text);
-					// if (subquery != null) 
+					// if (subquery != null) {
 					//    p_query.Add (subquery, false, false);
+					//    added_subquery = true;
+					// }
 				}
 
 				if (part.SearchTextProperties) {
@@ -1283,20 +1289,45 @@ namespace Beagle.Daemon {
 						// Properties can live in either index
 						if (! only_build_primary_query)
 							s_query.Add (subquery.Clone () as LNS.Query, false, false);
+						added_subquery = true;
 					}
 
-					Term term;
-					term = new Term ("PropertyKeyword", part.Text.ToLower ()); // make sure text is lowercased
-					// FIXME: terms are already added in term_list. But they may have been tokenized
-					// The term here is non-tokenized version. Should this be added to term_list ?
-					// term_list is used to calculate scores
-					if (term_list != null)
-						term_list.Add (term);
-					subquery = new LNS.TermQuery (term);
-					p_query.Add (subquery, false, false);
-					// Properties can live in either index
-					if (! only_build_primary_query)
-						s_query.Add (subquery.Clone () as LNS.Query, false, false);
+					// The "added_subquery" check is to handle the situation where
+					// a part of the text is a stop word.  Normally, a search for
+					// "hello world" would break down into this query:
+					//
+					// (Text:hello OR PropertyText:hello OR PropertyKeyword:hello)
+					// AND (Text:world OR PropertText:world OR PropertyKeyword:world)
+					//
+					// This fails with stop words, though.  Let's assume that "world"
+					// is a stop word.  You would end up with:
+					//
+					// (Text:hello OR PropertyText:hello OR PropertyKeyword:hello)
+					// AND (PropertyKeyword:world)
+					//
+					// Which is not what we want.  We'd want to match documents that
+					// had only "hello" without also having a keyword "world".  In
+					// this case, don't create the PropertyKeyword part of the query,
+					// since it would be included in the larger set if it weren't
+					// required anyway.
+					if (added_subquery) {
+						Term term;
+						term = new Term ("PropertyKeyword", part.Text.ToLower ()); // make sure text is lowercased
+						// FIXME: terms are already added in term_list. But they may have been tokenized
+						// The term here is non-tokenized version. Should this be added to term_list ?
+						// term_list is used to calculate scores
+						if (term_list != null)
+							term_list.Add (term);
+						subquery = new LNS.TermQuery (term);
+						p_query.Add (subquery, false, false);
+						// Properties can live in either index
+						if (! only_build_primary_query)
+							s_query.Add (subquery.Clone () as LNS.Query, false, false);
+					} else {
+						// Reset these so we return a null query
+						p_query = null;
+						s_query = null;
+					}
 				}
 
 				primary_query = p_query;
