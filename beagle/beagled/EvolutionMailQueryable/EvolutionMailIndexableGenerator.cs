@@ -322,7 +322,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			indexable.Timestamp = message.Date.ToUniversalTime ();
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
-			indexable.CacheContent = false;
+			indexable.CacheContent = true;
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "evolution"));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:account", "Local"));
