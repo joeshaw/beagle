@@ -42,8 +42,10 @@ namespace Beagle.Filters {
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
-			// Let pdfinfo run for 10 CPU seconds, max.
+			// Let pdfinfo run for at most 10 CPU seconds, and not
+			// use more than 100 megs memory.
 			pc.CpuLimit = 90;
+			pc.MemLimit = 100*1024*1024;
 
 			try {
 				pc.Start ();
@@ -121,8 +123,10 @@ namespace Beagle.Filters {
 			// stdout.
 			pc.RedirectStandardError = false;
 
-			// Let pdftotext run for 90 CPU seconds, max.
+			// Let pdftotext run for at most 90 CPU seconds, and not
+			// use more than 100 megs memory.
 			pc.CpuLimit = 90;
+			pc.MemLimit = 100*1024*1024;
 
 			try {
 				pc.Start ();
