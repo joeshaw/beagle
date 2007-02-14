@@ -50,6 +50,9 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_DISABLE_DIRECTORIES" -a "$CRAWL_DISABLE_DIRECTORIES" = "yes" && \
                      echo --disable-directories`"
 
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_DISABLE_ON_BATTERY" -a "$CRAWL_DISABLE_ON_BATTERY" = "yes" && \
+                     echo --disable-on-battery`"
+
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_RECURSIVE" -a "$CRAWL_RECURSIVE" = "yes" && \
                      echo --recursive`"
 

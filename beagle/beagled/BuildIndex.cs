@@ -49,10 +49,12 @@ namespace Beagle.Daemon
 	class BuildIndex 
 	{
 		static string [] argv;
-
-		static bool arg_recursive = false, arg_delete = false, arg_debug = false, arg_cache_text = false, arg_disable_filtering = false, arg_disable_restart = false, arg_disable_directories = false;
-
 		static Hashtable remap_table = new Hashtable ();
+
+		static bool arg_recursive, arg_delete, arg_debug;
+		static bool arg_cache_text, arg_disable_filtering;
+		static bool arg_disable_restart, arg_disable_directories;
+		static bool arg_disable_on_battery;
 
 		static string arg_output, arg_tag, arg_source;
 
@@ -163,6 +165,7 @@ namespace Beagle.Daemon
 					++i;
 					break;
 				*/
+
 				case "--target":
 					if (next_arg != null)
 						arg_output = Path.IsPathRooted (next_arg) ? next_arg : Path.GetFullPath (next_arg);
@@ -171,6 +174,10 @@ namespace Beagle.Daemon
 
 				case "--disable-filtering":
 					arg_disable_filtering = true;
+					break;
+
+				case "--disable-on-battery":
+					arg_disable_on_battery = true;
 					break;
 
 				case "--allow-pattern":
@@ -274,6 +281,11 @@ namespace Beagle.Daemon
 						Environment.Exit (1);
 					}
 				}
+			}
+
+			if (SystemInformation.UsingBattery && arg_disable_on_battery) {
+				Log.Always ("Indexer is disabled when on battery power (--disable-on-battery)");
+				Environment.Exit (0);
 			}
 
 			// Set system priorities so we don't slow down the system
