@@ -164,12 +164,13 @@ namespace Beagle.Daemon.KMailQueryable {
 
 		override public string GetSnippet (string[] query_terms, Hit hit)
 		{
-			Log.Debug ("Fetching snippet for " + hit.Uri.LocalPath);
-			// FIXME: Also handle mbox emails
+			Log.Debug ("KMail: Fetching snippet for " + hit.Uri.LocalPath);
+			// FIXME: mbox emails are text-cached
+			// Call GetSnippets on text-cache. But nobody anyway uses kmail mbox emails.
 			if (! hit.Uri.IsFile)
 				return null;
 
-			// Dont get snippets from attachments, they arent even indexed currently
+			// FIXME: Get snippets from attachments
 			if (hit.ParentUri != null)
 				return null;
 			
@@ -186,7 +187,7 @@ namespace Beagle.Daemon.KMailQueryable {
 
 			bool html = false;
 			string body = message.GetBody (true, out html);
-			// FIXME: Also handle snippets from html message parts - involves invoking html filter
+			// FIXME: Also handle snippets from html message parts using HtmlRemovingReader
 			if (html) {
 				Log.Debug ("No text/plain message part in " + hit.Uri);
 				message.Dispose ();

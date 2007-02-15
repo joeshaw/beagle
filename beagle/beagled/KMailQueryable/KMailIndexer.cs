@@ -71,7 +71,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			account_name = account;
 			mail_root = root;
 			mail_directories = new ArrayList ();
-			Logger.Log.Debug ("mail_directories created for:" + mail_root + " (" + mail_directories.Count + ")");
+			Log.Debug ("{1} mail_directories created for {0}", mail_root, mail_directories.Count);
 			folder_directories = new ArrayList ();
 			mbox_files = new ArrayList ();
 
@@ -80,6 +80,10 @@ namespace Beagle.Daemon.KMailQueryable {
 			excludes.Add ("outbox");
 			excludes.Add ("trash");
 			excludes.Add ("drafts");
+
+			foreach (ExcludeItem item in Conf.Indexing.Excludes)
+				if (item.Type == ExcludeType.MailFolder)
+					excludes.Add (item.Value.ToLower ());
 		}
 
 		/**
@@ -393,7 +397,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			indexable.Timestamp = message.Date.ToUniversalTime ();
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
-			indexable.CacheContent = false;
+			indexable.CacheContent = true;
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:account", account_name));
