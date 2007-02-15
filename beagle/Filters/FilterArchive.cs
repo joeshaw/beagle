@@ -47,9 +47,12 @@ namespace Beagle.Filters {
 		private FileInfo file_info;
 		private Stream archive_stream;
 		private GetNextEntry get_next_entry;
+		private int total_bytes_read;
 
-		// Fairly arbitrary number of files to limit
-		private const int MAX_CHILDREN = 30;
+		// Fairly arbitrary limits
+		private const int  MAX_CHILDREN    = 30;
+		private const long MAX_SINGLE_FILE = 10*1024*1024;
+		private const long MAX_ALL_FILES   = 25*1024*1024;
 
 		public FilterArchive ()
 		{
@@ -71,6 +74,7 @@ namespace Beagle.Filters {
 		protected override void DoOpen (FileInfo file_info)
 		{
 			this.file_info = file_info;
+			this.total_bytes_read = 0;
 
 			switch (MimeType) {
 			case "application/zip":
@@ -107,7 +111,6 @@ namespace Beagle.Filters {
 			default:
 				throw new ArgumentException ("Invalid or unsupported mime type.");
 			}
-
 		}
 				
 		protected override void DoPullProperties ()
@@ -119,17 +122,22 @@ namespace Beagle.Filters {
 		{
 			ArchiveEntry a_entry;
 			int count = 0;
+			long total_size = 0;
 
-			while (count < MAX_CHILDREN && (a_entry = this.get_next_entry ()) != null) {
-				++count;
+			while (count < MAX_CHILDREN
+			       && total_size <= MAX_ALL_FILES
+			       && (a_entry = this.get_next_entry ()) != null) {
 
 				// Store file names in the archive
 				AppendText (Path.GetFileName (a_entry.Name));
 				AppendWhiteSpace ();
 
-				// If this is an invalid entry (corrupt archive), skip it.
+				// If this is an invalid or oversized entry, skip it.
 				if (a_entry.TempFile == null)
 					continue;
+
+				++count;
+				total_size += a_entry.Size;
 
 				// FIXME: For nested archives, create uid:foo#bar
 				// instead of uid:foo#xxx#bar (avoid duplicates ?)
@@ -152,6 +160,17 @@ namespace Beagle.Filters {
 
 				AddChildIndexable (child);
 			}
+
+			if (total_size > MAX_ALL_FILES)
+				Log.Debug ("Archive {0} crossed our max uncompressed size threshold.  Only {1} files extracted", this.file_info, count);
+		}
+
+		protected override void DoClose ()
+		{
+			// We don't close the archive stream, since it closes
+			// the underlying stream.
+			archive_stream = null;
+			file_info = null;
 		}
 
 		internal class ArchiveEntry {
@@ -159,11 +178,12 @@ namespace Beagle.Filters {
 			public string MimeType;
 			public DateTime Modified;
 			public string Comment;
+			public long Size;
 
 			public string TempFile;
 		}
 
-		private static string StoreStreamInTempFile (Stream stream, DateTime mtime)
+		private string StoreStreamInTempFile (Stream stream, DateTime mtime)
 		{
 			if (stream == null)
 				return null;
@@ -179,30 +199,49 @@ namespace Beagle.Filters {
 
 			byte [] buffer = new byte [8192];
 			long prev_pos = -1;
-			int read;
-			int broken_count = 0;
-			bool broken_file = false;
+			int read, total_bytes_read = 0;
+			bool skip_file = false;
+			int stuck_count = 0;
 
 			do {
 				read = stream.Read (buffer, 0, buffer.Length);
+
+				total_bytes_read += read;
+
+				// Don't extract big files, to avoid filling up /tmp
+				if (total_bytes_read > MAX_SINGLE_FILE) {
+					Log.Debug ("10 meg threshold hit, skipping over {0}", this.file_info);
+					skip_file = true;
+					break;
+				}
+
 				if (read > 0)
 					buffered_stream.Write (buffer, 0, read);
 
 				// Lame workaround for some gzip files which loop
 				// forever with SharpZipLib.  We have to check for
-				// 
+				// the parser getting stuck on a certain stream
+				// position.
 				if (stream is GZipInputStream && read == buffer.Length) {
 					if (stream.Position == prev_pos) {
-						broken_file = true;
-						break;
-					} else
+						stuck_count++;
+
+						// 20 is a fairly arbitrary value
+						if (stuck_count == 20) {
+							Log.Debug ("{0} appears to be broken, skipping", this.file_info);
+							skip_file = true;
+							break;
+						}
+					} else {
+						stuck_count = 0;
 						prev_pos = stream.Position;
+					}
 				}
 			} while (read > 0);
 
 			buffered_stream.Close ();
 
-			if (broken_file) {
+			if (skip_file) {
 				File.Delete (filename);
 				return null;
 			}
@@ -231,9 +270,14 @@ namespace Beagle.Filters {
 			entry.Name = zip_entry.Name;
 			entry.Modified = zip_entry.DateTime; // FIXME: Not sure zip_entry.DateTime is UTC.
 			entry.Comment = zip_entry.Comment;
+			entry.Size = zip_entry.Size;
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
-			entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
+			// Only index smaller subfiles, to avoid filling /tmp
+			if (entry.Size <= MAX_SINGLE_FILE) {
+				entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
+				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
+			} else
+				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
 
 			return entry;
 		}
@@ -254,9 +298,14 @@ namespace Beagle.Filters {
 			ArchiveEntry entry = new ArchiveEntry ();
 			entry.Name = tar_entry.Name;
 			entry.Modified = tar_entry.ModTime;
+			entry.Size = tar_entry.Size;
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
-			entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
+			// Only index smaller subfiles, to avoid filling /tmp
+			if (entry.Size <= MAX_SINGLE_FILE) {
+				entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
+				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
+			} else
+				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
 
 			return entry;
 		}
@@ -274,6 +323,9 @@ namespace Beagle.Filters {
 
 			entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
 			entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
+
+			if (entry.TempFile != null)
+				entry.Size = new FileInfo (entry.TempFile).Length;
 
 			handled_single = true;
 
