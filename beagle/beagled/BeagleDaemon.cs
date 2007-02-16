@@ -145,26 +145,25 @@ namespace Beagle.Daemon {
 			usage +=
 				"Usage: beagled [OPTIONS]\n\n" +
 				"Options:\n" +
+				"  --version\t\tShow version of daemon, Mono, and Sqlite.\n" +
 				"  --foreground, --fg\tRun the daemon in the foreground.\n" +
 				"  --background, --bg\tRun the daemon in the background.\n" +
-				"  --replace\t\tReplace a running daemon with a new instance.\n" +
-				"  --debug\t\tWrite out debugging information.\n" +
-				"  --debug-memory\tWrite out debugging information about memory use.\n" +
-				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
-				"  --indexing-delay\tTime to wait before indexing.  (Default 60 seconds)\n" +
 				"  --backend\t\tConfigure which backends to use.  Specifically:\n" +
 				"    --backend <name>\tOnly start backend 'name'\n" +
 				"    --backend +<name>\tAdditionally start backend 'name'\n" +
 				"    --backend -<name>\tDisable backend 'name'\n" +
-				"  --allow-backend\t(DEPRECATED) Start only the specific backend.\n" +
-				"  --deny-backend\t(DEPRECATED) Deny a specific backend.\n" +
+				"  --replace\t\tReplace a running daemon with a new instance.\n" +
 				"  --list-backends\tList all the available backends.\n" +
 				"  --add-static-backend\tAdd a static backend by path.\n" + 
+				"  --help\t\tPrint this usage message.\n" +
+				"\n" +
+				"Advance options:\n" +
+				"  --debug\t\tWrite out debugging information.\n" +
+				"  --debug-memory\tWrite out debugging information about memory use.\n" +
+				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
+				"  --indexing-delay <t>\tWait 't' seconds before indexing.  (Default 60 seconds)\n" +
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
-				"  --version\tShow version of daemon, Mono, and Sqlite.\n" +
-				// FIXME: Expose this to the user ?
-				//"  --disable-text-cache\tDisable the use of the text cache used to provide snippets
-				"  --help\t\tPrint this usage message.\n";
+				"  --disable-text-cache\tDisable the use of the text cache used to provide snippets.\n";
 
 			Console.WriteLine (usage);
 		}
