@@ -46,6 +46,7 @@ namespace Beagle.Daemon {
 		public StaticQueryable (string index_name, string index_path, bool read_only_mode) : base (index_path, read_only_mode)
 		{
 			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);
+			Started = true;
 
 			if (Directory.Exists (Path.Combine (index_path, "TextCache"))) {
 				try {
