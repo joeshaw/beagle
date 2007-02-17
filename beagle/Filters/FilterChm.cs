@@ -57,7 +57,9 @@ namespace Beagle.Filters {
 				return;
 			}
 
+			AddProperty (Beagle.Property.New ("dc:title", chmFile.Title));
 			chmFile.ParseContents (FilterFileContents);
+			Finished ();
 		}
 
 		public void FilterFileContents(TextReader text) {
@@ -77,16 +79,6 @@ namespace Beagle.Filters {
 			}
 					
 
-		}
-
-		override protected void DoPullProperties() 
-		{
-			AddProperty (Beagle.Property.New ("dc:title", chmFile.Title));
-		}
-
-		override protected void DoPull()
-		{
-			Finished ();
 		}
 
 		override protected void  DoClose() 
