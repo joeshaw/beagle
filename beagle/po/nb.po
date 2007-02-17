@@ -3,20 +3,22 @@
 # Copyright (C) 2005-2006, Novell Inc.
 # Terance Edward Sola <terance@lyse.net>, 2005.
 # Øivind Hoel <oivind.hoel@gmail.com>, 2006
-# Kjartan Maraas <kmaraas@gnome.org>, 2006.
-#
+# Kjartan Maraas <kmaraas@gnome.org>, 2006,2007.
+# Kjartan Maraas <kmaraas@gnome.org>, 2007.
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle\n"
+"Project-Id-Version: beagle 0.2.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-24 15:29+0100\n"
-"PO-Revision-Date: 2007-01-24 15:33+0100\n"
-"Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
-"Language-Team: Norwegian Bokmal <i18n-nb@lister.ping.uio.no>\n"
+"POT-Creation-Date: 2007-02-17 11:57+0100\n"
+"PO-Revision-Date: 2007-02-17 14:30+0100\n"
+"Last-Translator:  <>\n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Content-Type: text/plain; charset=\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);"
 
 #: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
@@ -38,7 +40,7 @@ msgstr "Avslutt"
 msgid "About"
 msgstr "Om"
 
-#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:27
 msgid "Contacts"
 msgstr "Kontakter"
 
@@ -560,9 +562,8 @@ msgid "Modified:"
 msgstr "Endret:"
 
 #: ../search/Tiles/Image.cs:93
-#, fuzzy
 msgid "Comment:"
-msgstr "Land:"
+msgstr "Kommentar:"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -658,72 +659,72 @@ msgstr[1] "{0} sider"
 msgid "Open"
 msgstr "Åpne"
 
-#: ../search/Tiles/Utils.cs:24
+#: ../search/Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "Programmer"
 
-#: ../search/Tiles/Utils.cs:28
+#: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "Kalenderhendelser"
 
-#: ../search/Tiles/Utils.cs:30
+#: ../search/Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "Mapper"
 
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Tiles/Utils.cs:33
 msgid "Images"
 msgstr "Bilder"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "Lyd"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:37
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "Dokumenter"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "Samtaler"
 
-#: ../search/Tiles/Utils.cs:42
+#: ../search/Tiles/Utils.cs:43
 msgid "Websites"
 msgstr "Nettsteder"
 
-#: ../search/Tiles/Utils.cs:44
+#: ../search/Tiles/Utils.cs:45
 msgid "News Feeds"
 msgstr "Nyhetsstrømmer"
 
-#: ../search/Tiles/Utils.cs:46
+#: ../search/Tiles/Utils.cs:47
 msgid "Archives"
 msgstr "Arkiver"
 
-#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
+#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
+#: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "I går"
 
-#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
+#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
+#: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "I dag"
 
-#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
+#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
 msgid "Tomorrow"
 msgstr "I morgen"
 
-#: ../search/Tiles/Utils.cs:235
+#: ../search/Tiles/Utils.cs:224
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} uke siden"
 msgstr[1] "{0} uker siden"
 
-#: ../search/Tiles/Utils.cs:237
+#: ../search/Tiles/Utils.cs:226
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -731,28 +732,28 @@ msgstr[0] "Om {0} uke"
 msgstr[1] "Om {0} uker"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:239
+#: ../search/Tiles/Utils.cs:228
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} måned siden"
 msgstr[1] "{0} måneder siden"
 
-#: ../search/Tiles/Utils.cs:241
+#: ../search/Tiles/Utils.cs:230
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} måned"
 msgstr[1] "Om {0} måneder"
 
-#: ../search/Tiles/Utils.cs:243
+#: ../search/Tiles/Utils.cs:232
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år siden"
 msgstr[1] "{0} år siden"
 
-#: ../search/Tiles/Utils.cs:245
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -1376,14 +1377,11 @@ msgid "_Start search & indexing services automatically "
 msgstr "_Start søke- og indekseringstjenesten automatisk "
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Konfigurer skrivebordssøk og indeksering"
+#, fuzzy
+msgid "Configure Desktop Search"
+msgstr "Lukk søk for skrivebordet"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Konfigurer egenskaper for søk og indeksering"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "Søk og indeksering"
 
@@ -1474,9 +1472,8 @@ msgid "Number identifying the IIM version this application record uses"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:207
-#, fuzzy
 msgid "Object type reference"
-msgstr "Brukervalg for søk"
+msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:212
 msgid "Object attribute reference"
@@ -1504,7 +1501,7 @@ msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
-msgstr ""
+msgstr "Fullt navn på landet som har fokus i innholdet"
 
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid ""
@@ -1649,40 +1646,40 @@ msgid "Scene Type"
 msgstr ""
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:120
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:123
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:126
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:132
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:149
 #, csharp-format
 msgid "Today, {0}"
 msgstr "I dag, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:152
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "I går, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:146
+#: ../Util/StringFu.cs:157
 #, fuzzy, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -1690,23 +1687,23 @@ msgstr[0] "{0} dager siden, {1}"
 msgstr[1] "{0} dager siden, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:163
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:157
+#: ../Util/StringFu.cs:168
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:178
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} time"
 msgstr[1] "{0} timer"
 
-#: ../Util/StringFu.cs:174
+#: ../Util/StringFu.cs:185
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1714,21 +1711,27 @@ msgstr[0] "{0} minutt"
 msgstr[1] "{0} minutter"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:208
-#, fuzzy, csharp-format
+#: ../Util/StringFu.cs:219
+#, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
 msgstr[0] "{0} byte"
 msgstr[1] "{0} byte"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:223
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:215
+#: ../Util/StringFu.cs:226
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Konfigurer skrivebordssøk og indeksering"
+
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Konfigurer egenskaper for søk og indeksering"
