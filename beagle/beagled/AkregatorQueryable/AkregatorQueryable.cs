@@ -99,6 +99,8 @@ namespace Beagle.Daemon.AkregatorQueryable {
                                 return;
 			}
 				
+			Started = true;
+
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite 
 							| Inotify.EventType.Delete;

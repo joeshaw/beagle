@@ -69,6 +69,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 			}
 
 			Log.Info ("Starting konversation backend; using log files from {0}", log_dir);
+			Started = true;
 
 			session_offset_table = new Dictionary<string, long> ();
 

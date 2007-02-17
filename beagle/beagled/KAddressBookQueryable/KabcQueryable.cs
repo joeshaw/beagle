@@ -78,6 +78,8 @@ namespace Beagle.Daemon.KabcQueryable {
 				return;
 			}
 
+			Started = true;
+
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.Create | Inotify.EventType.MovedTo;
 				Inotify.Subscribe (kabc_dir, OnInotifyEvent, mask);

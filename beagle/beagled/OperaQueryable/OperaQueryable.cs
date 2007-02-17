@@ -56,8 +56,10 @@ namespace Beagle.Daemon.OperaQueryable {
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
 				return;
 			}
-			
+
 			Logger.Log.Info ("Starting Opera history backend");
+			Started = true;
+
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			

@@ -95,6 +95,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				timer.Stop ();
 			}
 
+			Started = true;
+
 			// This is the first code which tries to open the
 			// evolution-data-server APIs.  Try to catch
 			// DllNotFoundException and bail out if things go

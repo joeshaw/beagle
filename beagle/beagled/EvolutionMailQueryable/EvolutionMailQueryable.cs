@@ -89,6 +89,8 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				return;
 			}
 
+			Started = true;
+
 			Logger.Log.Debug ("Starting mail crawl");
 			crawler = new MailCrawler (this.local_path, this.imap_path, this.imap4_path);
 			crawler.MboxAddedEvent += IndexMbox;
