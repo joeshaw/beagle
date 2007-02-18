@@ -206,11 +206,12 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			string prop_string = null;
+			string[] prop_string = null;
 			bool is_present;
-			PropertyType prop_type;
+			PropertyType[] prop_type;
+			int num;
 
-			is_present = PropertyKeywordFu.GetPropertyDetails (key, out prop_string, out prop_type);
+			is_present = PropertyKeywordFu.GetPropertyDetails (key, out num, out prop_string, out prop_type);
 			// if key is not present in the mapping, assume the query is a text query
 			// i.e. if token is foo:bar and there is no mappable property named foo,
 			// assume "foo:bar" as text query
@@ -224,18 +225,42 @@ namespace Beagle.Daemon {
 				return StringToQueryPart (query, IsProhibited);
 			}
 
-			QueryPart_Property query_part_prop = new QueryPart_Property ();
-			query_part_prop.Key = prop_string;
-			query_part_prop.Value = text;
-			query_part_prop.Type = prop_type;
-			query_part_prop.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
+			if (num == 1) {
+				QueryPart_Property query_part_prop = new QueryPart_Property ();
+				query_part_prop.Key = prop_string [0];
+				query_part_prop.Value = text;
+				query_part_prop.Type = prop_type [0];
+				query_part_prop.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 
-			Logger.Log.Debug ("Parsed query '"	    + query + 
-					  "' as prop query:key="    + query_part_prop.Key +
-					  ", value="		    + query_part_prop.Value +
-					  " and property type="	    + query_part_prop.Type);
+				Logger.Log.Debug ("Parsed query '"	    + query + 
+						  "' as prop query:key="    + query_part_prop.Key +
+						  ", value="		    + query_part_prop.Value +
+						  " and property type="	    + query_part_prop.Type);
 
-			return query_part_prop;
+				return query_part_prop;
+			}
+
+			// Multiple property queries are mapped to this keyword query
+			// Create an OR query from them
+			// FIXME: Would anyone want an AND query ?
+
+			QueryPart_Or query_part_or = new QueryPart_Or ();
+			query_part_or.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
+
+			Logger.Log.Debug ("Parsed query '{0}' as OR of {1} queries:", query, num);
+
+			for (int i = 0; i < num; ++i) {
+				QueryPart_Property query_part_prop = new QueryPart_Property ();
+				query_part_prop.Key = prop_string [i];
+				query_part_prop.Value = text;
+				query_part_prop.Type = prop_type [i];
+				query_part_prop.Logic = QueryPartLogic.Required;
+
+				Log.Debug ("\t:key={0}, value={1} and property type={2}", query_part_prop.Key, query_part_prop.Value, query_part_prop.Type);
+				query_part_or.Add (query_part_prop);
+			}
+
+			return query_part_or;
 		}
 
 		private static QueryPart DateQueryToQueryPart (string query)
