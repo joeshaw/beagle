@@ -165,12 +165,11 @@ class DumpIndexTool {
 			props = new ArrayList (hit.Properties);
 			props.Sort ();
 			foreach (Property prop in props) {
-				char [] legend = new char [4];
+				char [] legend = new char [3];
 
 				legend [0] = prop.IsMutable  ? 'm' : ' ';
-				legend [1] = prop.IsStored   ? 's' : ' ';
-				legend [2] = prop.IsSearched ? 's' : ' ';
-				legend [3] = prop.Type == PropertyType.Text ? 't' : ' ';
+				legend [1] = prop.IsSearched ? 's' : ' ';
+				legend [2] = prop.Type == PropertyType.Text ? 't' : ' ';
 
 				Console.WriteLine ("  Prop: [{0}] {1} = '{2}'", new String (legend), prop.Key, prop.Value);
 			}
@@ -242,13 +241,14 @@ class DumpIndexTool {
 
 	static void DumpIndexInformation (ArrayList indexes, ArrayList uris, bool show_properties, bool show_counts)
 	{
+		LuceneCommon.DumpIndexMode =  true;
+
 		foreach (IndexInfo info in indexes)
 			info.Count = DumpOneIndex_Metadata (info.Name, uris, show_properties);
 
 		if (show_properties) {
 			Console.WriteLine ("LEGEND:");
 			Console.WriteLine ("  m - mutable");
-			Console.WriteLine ("  s - stored");
 			Console.WriteLine ("  s - searched");
 			Console.WriteLine ("  t - tokenized");
 		}

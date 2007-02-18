@@ -572,6 +572,8 @@ namespace Beagle.Daemon {
 				AddDateFields (field_name, prop, doc);
 		}
 
+		public static bool DumpIndexMode = false;
+
 		static protected Property GetPropertyFromDocument (Field f, Document doc, bool from_primary_index)
 		{
 			// Note: we don't use the document that we pass in,
@@ -582,23 +584,37 @@ namespace Beagle.Daemon {
 			if (f == null)
 				return null;
 
+			bool internal_prop = false;
+
 			string field_name;
 			field_name = f.Name ();
 			if (field_name.Length < 7
-			    || ! field_name.StartsWith ("prop:"))
-				return null;
+			    || ! field_name.StartsWith ("prop:")) {
+				if (DumpIndexMode)
+					internal_prop = true;
+				else
+					return null;
+			}
 
 			string field_value;
 			field_value = f.StringValue ();
 
 			Property prop;
 			prop = new Property ();
-			prop.Type = CodeToType (field_name [5]);
-			prop.Key = field_name.Substring (7);
-			prop.Value = field_value.Substring (2);
+
+			if (DumpIndexMode) {
+				prop.Type = CodeToType ( internal_prop ? 'k' : field_name [5]);
+				prop.Key = (internal_prop ? field_name : field_name.Substring (7));
+				prop.Value = (internal_prop ? field_value : field_value.Substring (2));
+			} else {
+				prop.Type = CodeToType (field_name [5]);
+				prop.Key = field_name.Substring (7);
+				prop.Value = field_value.Substring (2);
+			}
+
 			prop.IsSearched = (field_value [0] == 's');
 			prop.IsMutable = ! from_primary_index;
-			prop.IsStored = f.IsStored ();
+			prop.IsStored = true; // Unstored fields cannot be retrieved
 
 			return prop;
 		}
