@@ -133,7 +133,7 @@ namespace Beagle {
 		{
 			this.type = type;
 			this.uri = uri;
-			this.hit_type = "File"; // FIXME: Why do we default to this?
+			this.hit_type = String.Empty;
 		}
 
 		public Indexable (Uri uri) : this (IndexableType.Add, uri)
