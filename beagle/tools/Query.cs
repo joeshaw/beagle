@@ -143,16 +143,12 @@ class QueryTool {
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
-			"  --mime <mime type>\t\tConstrain search results to the specified mime\n" +
-			"                    \t\ttype. Can be used multiply.\n" +
-			"  --type <hit type>\t\tConstrain search results to the specified hit\n" +
-			"                    \t\ttype. Can be used multiply.\n" +
-			"  --source <source>\t\tConstrain query to the specified source.\n" +
-			"                   \t\tSources list available from beagle-status.\n" +
-			"  --start <date>\t\tConstrain query to items after specified date.\n" +
-			"                \t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
-			"  --end <date>\t\t\tConstrain query to items before specified date.\n" +
-			"              \t\t\tDate must be in the form \"yyyyMMdd\" or \"yyyyMMddHHmmss\"\n" +
+			"  --mime <mime type>\t\t(DEPRECATED Use mimetype: property query.)\n" +
+			"  --type <hit type>\t\t(DEPRECATED Use hittype: property query.)\n" +
+			"  --source <source>\t\t(DEPRECATED Use source: property query.)\n" +
+			"                   \t\tSources list available from beagle-info --status.\n" +
+			"  --start <date>\t\t(DEPRECATED Use date range query syntax).\n" +
+			"  --end <date>\t\t\t(DEPRECATED Use date range query syntax).\n" +
 			"  --keywords\t\t\tLists the keywords allowed in 'query string'.\n" +
 			"            \t\t\tKeyword queries can be specified as keywordname:value e.g. ext:jpg\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
@@ -334,13 +330,13 @@ class QueryTool {
 
 				Console.WriteLine ("Supported query keywords are:");
 
-				IDictionaryEnumerator property_keyword_enum = PropertyKeywordFu.MappingEnumerator;
-				while (property_keyword_enum.MoveNext ()) {
-					PropertyDetail prop = property_keyword_enum.Value as PropertyDetail;
-					if (prop.Description != null)
-						Console.WriteLine ("  {0,-20} for {1}", property_keyword_enum.Key, prop.Description);
-					else
-						Console.WriteLine ("  {0,-20}", property_keyword_enum.Key);
+				foreach (string key in PropertyKeywordFu.Keys) {
+					foreach (PropertyDetail prop in PropertyKeywordFu.Properties (key)) {
+						// Dont print properties without description; they confuse people
+						if (string.IsNullOrEmpty (prop.Description))
+							continue;
+						Console.WriteLine ("  {0,-20} for {1}", key, prop.Description);
+					}
 				}
 
 				System.Environment.Exit (0);
