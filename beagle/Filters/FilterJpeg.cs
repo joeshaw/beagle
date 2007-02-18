@@ -40,6 +40,8 @@ using SemWeb;
 namespace Beagle.Filters {
 	
 	[PropertyKeywordMapping (Keyword="imagemodel",     PropertyName="exif:Model",    IsKeyword=true)]
+	[PropertyKeywordMapping (Keyword="imagetag", PropertyName="image:tag", IsKeyword=false, Description="FSpot, Digikam image tags")]
+	[PropertyKeywordMapping (Keyword="imagecomment", PropertyName="fixme:comment", IsKeyword=false, Description="User comments")]
 	public class FilterJpeg : FilterImage {
 
 		public FilterJpeg ()
@@ -153,6 +155,7 @@ namespace Beagle.Filters {
 
 				case DataSetID.Keywords:
 					AddProperty (Beagle.Property.NewKeyword ("iptc:keyword", data.XmpObject));
+					AddProperty (Beagle.Property.NewUnstored ("image:tag", data.XmpObject));
 					break;
 
 				default:
