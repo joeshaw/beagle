@@ -71,11 +71,13 @@ namespace Beagle.Filters {
 		private new HotCallback HotUp;
 		private new HotCallback HotDown;
 
+		// 1: Add meta keyword fields as meta:key
+		private int version = 1;
+
 		public FilterHtml (bool register_filter)
 		{
 			if (register_filter) {
-				// 1: Add meta keyword fields as meta:key
-				SetVersion (1);
+				base.SetVersion (version);
 				SnippetMode = true;
 
 				AppendText = new AppendTextCallback (base.AppendText);
@@ -93,6 +95,12 @@ namespace Beagle.Filters {
 		}
 
 		public FilterHtml () : this (true) {}
+
+		protected new void SetVersion (int version)
+		{
+			this.version += version;
+			base.SetVersion (this.version);
+		}
 
 		protected bool NodeIsHot (String nodeName) 
 		{

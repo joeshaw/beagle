@@ -31,6 +31,7 @@ using Beagle.Daemon;
 using Beagle.Util;
 
 namespace Beagle.Filters {
+	[PropertyKeywordMapping (Keyword="pkggroup", PropertyName="pkg:group", IsKeyword=false, Description="Group to which the package belongs e.g. System/Configuration/Packaging")]
 	public class FilterDeb : Beagle.Filters.FilterPackage {
 	
 		public FilterDeb ()
@@ -42,7 +43,7 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-deb"));
 		}
 		
-		protected override void PullPackageProperties ()
+		protected override bool PullPackageProperties ()
 		{
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "dpkg-deb", "-I", FileInfo.FullName};
@@ -52,8 +53,7 @@ namespace Beagle.Filters {
 				pc.Start ();
 			} catch (SafeProcessException e) {
 				Log.Warn (e.Message);
-				Error ();
-				return;
+				return false;
 			}
 			
 			StreamReader pout = new StreamReader (pc.StandardOutput);
@@ -71,18 +71,15 @@ namespace Beagle.Filters {
 				switch (tokens[0].Trim ()) {
 					
 				case "Package":
-					PackageName = tokens[1];
+					PackageName = tokens [1];
 					break;
 					
 				case "Maintainer":
-					list = tokens [1].Split ('<');
-					PackagerName = list [0];
-					if (list.Length > 1)
-						PackagerEmail = list [1].Replace ('>', ' ');
+					Packager = tokens [1];
 					break;
 					
 				case "Version":
-					PackageVersion = tokens[1];
+					PackageVersion = tokens [1];
 					break;
 					
 				case "Section":
@@ -143,6 +140,7 @@ namespace Beagle.Filters {
 
 			pout.Close ();
 			pc.Close ();
+			return true;
 		}
 	}
 }

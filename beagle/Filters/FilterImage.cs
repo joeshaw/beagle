@@ -37,13 +37,21 @@ namespace Beagle.Filters {
 
 	public abstract class FilterImage : Beagle.Daemon.Filter {
 
+		// 1: Base
+		// 2: Added fspot:IsIndexed field, added width & height properties
+		// 3: Add Digikam tags and caption
+		// 4: Index IPTC keywords
+		private int version = 4;
+
 		public FilterImage ()
 		{
-			// 1: Base
-			// 2: Added fspot:IsIndexed field, added width & height properties
-			// 3: Add Digikam tags and caption
-			// 4: Index IPTC keywords
-			SetVersion (4);
+			base.SetVersion (Version);
+		}
+
+		protected new void SetVersion (int version)
+		{
+			this.version += version;
+			base.SetVersion (version);
 		}
 
 		protected virtual void PullImageProperties () { }

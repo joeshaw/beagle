@@ -32,15 +32,30 @@ namespace Beagle.Filters {
 
 	public abstract class FilterPackage : Beagle.Daemon.Filter {
 
+		// 1. Store packager information as a single field
+		//    Store packager as dc:creator
+		//    Store license as dc:rights
+		//    Store homepage as searchable
+		private int version = 1;
+
 		public FilterPackage ()
 		{
 			SnippetMode = true;
+
+			base.SetVersion (version);
 		}
 
-		protected virtual void PullPackageProperties () { }
+		protected new void SetVersion (int version)
+		{
+			this.version += version;
+			base.SetVersion (version);
+		}
+
+		protected abstract bool PullPackageProperties ();
 
 		private string package_name, package_version, category;
-		private string homepage, summary, packager_name, packager_email, size;
+		private string homepage, summary, packager, license;
+		private long size;
 
 		/* Some of the metadata common in all packages.
 		 * Use them to display general package information in beagle frontends.
@@ -50,6 +65,7 @@ namespace Beagle.Filters {
 		 *  - Category - category of the package (if available)
 		 *  - Homepage - Homepage URL of the package/project (if available)
 		 *  - Packager - Packager information of the package (if available)
+		 *  - License - License of the package
 		 *  - Size - Size of the package (in bytes)
 		 */
 
@@ -66,8 +82,8 @@ namespace Beagle.Filters {
 		}
 
 		// A short summary. Some packages might not have this.
-		// The longer description stored as AppendText. When you request snippet, it is fetched from the description.
-		// It is not possible to retrieve the whole of description from frontends. Use summary for a short description.
+		// Some packages have a longer description which is not suitable for showing in the frontend.
+		// Use summary instead.
 		protected string Summary {
 			get { return summary; }
 			set { summary = value; }
@@ -85,37 +101,40 @@ namespace Beagle.Filters {
 			set { homepage = value; }
 		}
 
-		// Packager.
-		// Use either the homepage or packager to provide a external link for more information
-		// Not all packages have both set; however most have at least one
-		protected string PackagerName {
-			get { return packager_name; }
-			set { packager_name = value; }
+		// Packager. This is generally the name of a person or a company followed by the
+		// email address or homepage.
+		protected string Packager {
+			get { return packager; }
+			set { packager = value; }
 		}
 
-		protected string PackagerEmail {
-			get { return packager_email; }
-			set { packager_email = value; }
+		// License of the package. Not present in all packages.
+		protected string License {
+			get { return license; }
+			set { license = value; }
 		}
 
 		// Size of the package - in bytes.
 		// Depending on package, its either the installed size or the size of the package.
-		protected string Size {
+		protected long Size {
 			get { return size; }
 			set { size = value; }
 		}
 
 		protected override void DoPullProperties ()
 		{
-			PullPackageProperties ();
+			if (! PullPackageProperties ()) {
+				Error ();
+				return;
+			}
 
 			AddProperty (Beagle.Property.New ("dc:title", package_name));
 			AddProperty (Beagle.Property.NewKeyword ("fixme:version", package_version));
 			AddProperty (Beagle.Property.New ("dc:subject", summary));
-			AddProperty (Beagle.Property.New ("fixme:category", category));
-			AddProperty (Beagle.Property.NewUnsearched ("dc:source", homepage));
-			AddProperty (Beagle.Property.New ("fixme:packager_name", packager_name));
-			AddProperty (Beagle.Property.New ("fixme:packager_email", packager_email));
+			AddProperty (Beagle.Property.New ("pkg:group", category));
+			AddProperty (Beagle.Property.New ("dc:source", homepage));
+			AddProperty (Beagle.Property.New ("dc:creator", packager));
+			AddProperty (Beagle.Property.New ("dc:rights", license));
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:size", size));
 
 			Finished ();

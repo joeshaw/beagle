@@ -37,11 +37,11 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="mailfrom",     PropertyName="fixme:from_name",    IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="mailfromaddr", PropertyName="fixme:from_address", IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="mailto",       PropertyName="fixme:to_name",      IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="mailtoaddr",   PropertyName="fixme:to_address",   IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="mailinglist",  PropertyName="fixme:mlist",        IsKeyword=true, Description="Mailing list id")]
+	[PropertyKeywordMapping (Keyword="mailfrom",     PropertyName="fixme:from_name",    IsKeyword=false, Description="Name of email sender")]
+	[PropertyKeywordMapping (Keyword="mailfromaddr", PropertyName="fixme:from_address", IsKeyword=false, Description="Email address of sender")]
+	[PropertyKeywordMapping (Keyword="mailto",       PropertyName="fixme:to_name",      IsKeyword=false, Description="Name of receipient")]
+	[PropertyKeywordMapping (Keyword="mailtoaddr",   PropertyName="fixme:to_address",   IsKeyword=false, Description="Email address of receipient")]
+	[PropertyKeywordMapping (Keyword="mailinglist",  PropertyName="fixme:mlist",        IsKeyword=false, Description="Mailing list id e.g. dashboard-hackers.gnome.org")]
 	public class FilterMail : Beagle.Daemon.Filter, IDisposable {
 
 		private static bool gmime_initialized = false;
@@ -57,7 +57,8 @@ namespace Beagle.Filters {
 			//    BeagleAnalyzer uses a tokenfilter taking care of this.
 			// 3: Add standard file properties to attachments.
 			// 4: Store snippets
-			SetVersion (4);
+			// 5: Store mailing list id as tokenized
+			SetVersion (5);
 
 			SnippetMode = true;
 		}
@@ -159,10 +160,8 @@ namespace Beagle.Filters {
 				AddProperty (Property.NewUnsearched ("fixme:reference", refs.Msgid));
 
 			string list_id = this.message.GetHeader ("List-Id");
-			if (list_id != null) {
-				// FIXME: Might need some additional parsing.
-				AddProperty (Property.NewKeyword ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
-			}
+			if (list_id != null)
+				AddProperty (Property.New ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
 
 			// KMail can store replies in the same folder
 			// Use issent flag to distinguish between incoming

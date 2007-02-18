@@ -31,9 +31,9 @@ using Entagged;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="album", PropertyName="fixme:album", IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="artist", PropertyName="fixme:artist", IsKeyword=false)]
-	[PropertyKeywordMapping (Keyword="genre", PropertyName="fixme:genre", IsKeyword=true)]
+	[PropertyKeywordMapping (Keyword="album", PropertyName="fixme:album", IsKeyword=false, Description="Album name of the music")]
+	[PropertyKeywordMapping (Keyword="artist", PropertyName="fixme:artist", IsKeyword=false, Description="Artist of the music")]
+	[PropertyKeywordMapping (Keyword="genre", PropertyName="fixme:genre", IsKeyword=true, Description="Genre of the music")]
 	public class FilterMusic : Beagle.Daemon.Filter {
 	
 		public FilterMusic ()

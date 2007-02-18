@@ -58,6 +58,8 @@ namespace Beagle.Filters {
 		string StrConstIdentifier;
 		StringBuilder token;
 
+		private int version = 0;
+
 		public FilterSource ()
 		{
 			// Initialize the linetype member.
@@ -68,6 +70,12 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 			OriginalIsText = true;
 			token = new StringBuilder ();
+		}
+
+		protected new void SetVersion (int version)
+		{
+			this.version += version;
+			base.SetVersion (version);
 		}
 
 		protected abstract Dictionary<string, bool> KeyWordsHash {

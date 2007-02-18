@@ -68,7 +68,7 @@ namespace Beagle.Filters {
 					if (digest_parts[0].Equals ("MD5"))
 						download_size += Int64.Parse (digest_parts[3]);
 				}
-				Size = download_size.ToString ();
+				Size = download_size;
 				digest_reader.Close ();
 			}
 
@@ -133,7 +133,7 @@ namespace Beagle.Filters {
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_dir_count", dir_count));
 		}
 
-		override protected void PullPackageProperties () 
+		override protected bool PullPackageProperties () 
 		{
 			string str = null;
 			while ((str = TextReader.ReadLine ()) != null) {
@@ -165,7 +165,7 @@ namespace Beagle.Filters {
 						if (key.Equals ("DESCRIPTION"))
 							Summary = val; // Ebuild descriptions are short - use them as summary.
 						else if (key.Equals ("LICENSE"))
-							AddProperty (Beagle.Property.NewUnsearched ("dc:rights", val));
+							License = val;
 						else if (key.Equals ("HOMEPAGE"))
 							Homepage = val;
 					}
@@ -178,6 +178,7 @@ namespace Beagle.Filters {
 					}
 				}
 			}
+			return true;
 		}
 	}
 }

@@ -39,13 +39,16 @@ using SemWeb;
 
 namespace Beagle.Filters {
 	
-	[PropertyKeywordMapping (Keyword="imagemodel",     PropertyName="exif:Model",    IsKeyword=true)]
+	[PropertyKeywordMapping (Keyword="imagemodel", PropertyName="exif:Model", IsKeyword=false, Description="Camera model as specified in exif or IPTC tags")]
 	[PropertyKeywordMapping (Keyword="imagetag", PropertyName="image:tag", IsKeyword=false, Description="FSpot, Digikam image tags")]
 	[PropertyKeywordMapping (Keyword="imagecomment", PropertyName="fixme:comment", IsKeyword=false, Description="User comments")]
 	public class FilterJpeg : FilterImage {
 
 		public FilterJpeg ()
 		{
+			// Store exif model as tokenized word
+			// Store exif:Copyright as dc:rights
+			SetVersion (1);
 		}
 
 		protected override void RegisterSupportedTypes ()
@@ -111,10 +114,10 @@ namespace Beagle.Filters {
 			AddProperty (Beagle.Property.NewUnsearched ("exif:Flash", str));
 
 			str = exif.LookupFirstValue (ExifTag.Model);
-			AddProperty (Beagle.Property.NewKeyword ("exif:Model", str));
+			AddProperty (Beagle.Property.New ("exif:Model", str));
 
 			str = exif.LookupFirstValue (ExifTag.Copyright);
-			AddProperty (Beagle.Property.New ("exif:Copyright", str));
+			AddProperty (Beagle.Property.New ("dc:rights", str));
 
 			str = exif.LookupFirstValue (ExifTag.DateTime);
 			if (str != null && str != String.Empty) {
