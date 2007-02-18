@@ -98,7 +98,7 @@ namespace Beagle.Daemon {
 				throw new Exception (msg);
 			}
 
-			if (version != -1) {
+			if (v <= version) {
 				string msg;
 				msg = String.Format ("Attempt to re-set version from {0} to {1} on Filter {2}", version, v, Name);
 				throw new Exception (msg);
@@ -113,6 +113,7 @@ namespace Beagle.Daemon {
 
 		private string this_mime_type = null;
 		private string this_extension = null;
+		private string this_file_type = null;
 		private ArrayList indexable_properties = null;
 		private DateTime timestamp = DateTime.MinValue;
 
@@ -140,6 +141,16 @@ namespace Beagle.Daemon {
 			set { timestamp = value; }
 		}
 		
+		// Allow the filters to change the FileType
+		protected void SetFileType (string file_type)
+		{
+			this_file_type = file_type;
+		}
+
+		public string FileType {
+			get { return this_file_type; }
+		}
+
 		//////////////////////////
 		
 		private bool crawl_mode = false;
