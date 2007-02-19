@@ -50,7 +50,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		//    Make SplitFilenamePropKey unstored
 		// 5: Keyword properies in the private namespace are no longer lower cased; this is required to
 		//    offset the change in LuceneCommon.cs
-		const int MINOR_VERSION = 5;
+		// 6: Store beagle:FileType property denoting type of file like document, source, music etc.
+		const int MINOR_VERSION = 6;
 
 		private object big_lock = new object ();
 

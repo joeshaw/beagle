@@ -467,6 +467,9 @@ namespace Beagle {
 			if (!this.ValidTimestamp)
 				this.Timestamp = parent.Timestamp;
 
+			if (string.IsNullOrEmpty (this.HitType))
+				this.HitType = parent.HitType;
+
 			// FIXME: Set all of the parent's properties on the
 			// child so that we get matches against the child
 			// that otherwise would match only the parent, at

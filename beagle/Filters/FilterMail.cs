@@ -348,6 +348,8 @@ namespace Beagle.Filters {
 
 							child.DisplayUri = new Uri (this.filter.DisplayUri.ToString () + "#" + this.count);
 
+							// This is a special case.
+							// Even for mails found on disk, MailMessage hitype is set
 							child.HitType = "MailMessage";
 							child.MimeType = mime_type;
 							child.CacheContent = false;
