@@ -313,6 +313,9 @@ namespace Beagle.Daemon {
 		{
 			year = month = date = -1;
 
+			if (dt_string.Length != 4 && dt_string.Length != 6 && dt_string.Length != 8)
+				throw new FormatException ();
+
 			if (dt_string.Length >= 4)
 				year = Convert.ToInt32 (dt_string.Substring (0, 4));
 
@@ -321,9 +324,6 @@ namespace Beagle.Daemon {
 
 			if (dt_string.Length == 8)
 				date = Convert.ToInt32 (dt_string.Substring (6, 2));
-
-			if (dt_string.Length > 8 || year == -1)
-				throw new FormatException ();
 		}
 
 		private static DateTime CreateDateTime (int y, int m, int d, bool start_date)
