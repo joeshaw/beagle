@@ -59,6 +59,7 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 			// 1: Modified filter based on System.Windows.Forms.RTF
 			SetVersion (1);
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

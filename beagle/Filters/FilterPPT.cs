@@ -393,6 +393,7 @@ namespace Beagle.Filters {
 			file = null;
 			FileName = null;
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

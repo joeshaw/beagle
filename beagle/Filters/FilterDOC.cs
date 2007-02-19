@@ -43,6 +43,7 @@ namespace Beagle.Filters {
 		public FilterDOC () 
 		{
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

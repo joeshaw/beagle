@@ -45,6 +45,9 @@ namespace Beagle.Filters {
 		public FilterSvg ()
 		{
 			SetVersion (1);
+			// FIXME: Should really set FileType as "image"
+			// But this does not extract common image properties,
+			// so will confuse everybody
 		}
 
 		protected override void RegisterSupportedTypes ()

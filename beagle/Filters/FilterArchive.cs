@@ -59,6 +59,7 @@ namespace Beagle.Filters {
 		{
 			// 1: Store entry names as text content
 			SetVersion (1);
+			SetFileType ("archive");
 		}
 
 		protected override void RegisterSupportedTypes ()

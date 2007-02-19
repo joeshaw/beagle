@@ -41,6 +41,7 @@ namespace Beagle.Filters {
 		public FilterSpreadsheet () 
 		{
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

@@ -42,6 +42,7 @@ namespace Beagle.Filters {
 		public FilterTotem ()
 		{
 			PreLoad = false;
+			SetFileType ("video");
 		}
 
 		protected override void RegisterSupportedTypes ()

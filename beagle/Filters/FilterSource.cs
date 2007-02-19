@@ -70,6 +70,7 @@ namespace Beagle.Filters {
 			SnippetMode = true;
 			OriginalIsText = true;
 			token = new StringBuilder ();
+			SetFileType ("source");
 		}
 
 		protected new void SetVersion (int version)

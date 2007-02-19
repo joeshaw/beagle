@@ -76,6 +76,7 @@ namespace Beagle.Filters {
 		public FilterMPlayerVideo ()
 		{
 			PreLoad = false;
+			SetFileType ("video");
 		}
 
 		protected override void RegisterSupportedTypes ()

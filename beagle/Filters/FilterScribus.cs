@@ -43,6 +43,7 @@ namespace Beagle.Filters {
 
 		public FilterScribus ()
 		{
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

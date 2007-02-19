@@ -43,6 +43,8 @@ namespace Beagle.Filters {
 		
 		public FilterTexi ()
 		{
+			// FIXME: Should this be documentation ?
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

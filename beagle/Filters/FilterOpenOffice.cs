@@ -60,6 +60,7 @@ namespace Beagle.Filters {
 		public FilterOpenOffice () 
 		{
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

@@ -41,6 +41,7 @@ namespace Beagle.Filters {
 		public FilterPackage ()
 		{
 			SnippetMode = true;
+			SetFileType ("package");
 
 			base.SetVersion (version);
 		}

@@ -67,6 +67,7 @@ namespace Beagle.Filters {
 			SetVersion (5);
 
 			SnippetMode = true;
+			SetFileType ("mail");
 		}
 
 		protected override void RegisterSupportedTypes ()

@@ -47,6 +47,7 @@ namespace Beagle.Filters {
 		public FilterAbiWord () 
 		{
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

@@ -43,6 +43,7 @@ namespace Beagle.Filters {
 
 		public FilterMonodoc ()
 		{
+			SetFileType ("documentation");
 		}
 
 		protected override void RegisterSupportedTypes ()

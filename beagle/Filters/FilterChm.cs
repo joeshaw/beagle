@@ -41,6 +41,7 @@ namespace Beagle.Filters {
 		public FilterChm () : base()
 		{
 			SnippetMode = true;
+			SetFileType ("documentation");
 		}
 		
 		override protected void DoOpen (FileInfo info) 

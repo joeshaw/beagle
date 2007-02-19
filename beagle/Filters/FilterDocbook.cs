@@ -59,6 +59,7 @@ namespace Beagle.Filters
 		{
 			SnippetMode = false;
 			SetVersion (4);
+			SetFileType ("documentation");
 		}
 
 		protected override void RegisterSupportedTypes ()

@@ -37,6 +37,7 @@ namespace Beagle.Filters {
 		{
 			SnippetMode = true;
 			OriginalIsText = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()

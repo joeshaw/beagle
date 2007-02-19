@@ -46,6 +46,7 @@ namespace Beagle.Filters {
 		public FilterImage ()
 		{
 			base.SetVersion (Version);
+			SetFileType ("image");
 		}
 
 		protected new void SetVersion (int version)

@@ -43,6 +43,7 @@ namespace Beagle.Filters {
 		public FilterMan ()
 		{
 			SnippetMode = true;
+			SetFileType ("documentation");
 		}
 
 		protected override void RegisterSupportedTypes ()

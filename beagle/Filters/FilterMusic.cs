@@ -40,6 +40,7 @@ namespace Beagle.Filters {
 		{
 			// 1: Added duration and bitrate property
 			SetVersion (1);
+			SetFileType ("music");
 		}
 
 		protected override void RegisterSupportedTypes ()

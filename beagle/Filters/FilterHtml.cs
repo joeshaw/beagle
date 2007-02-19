@@ -79,6 +79,7 @@ namespace Beagle.Filters {
 			if (register_filter) {
 				base.SetVersion (version);
 				SnippetMode = true;
+				SetFileType ("document");
 
 				AppendText = new AppendTextCallback (base.AppendText);
 				AppendWord = new AppendTextCallback (base.AppendWord);

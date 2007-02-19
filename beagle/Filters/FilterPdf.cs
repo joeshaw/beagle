@@ -21,6 +21,7 @@ namespace Beagle.Filters {
 		public FilterPdf ()
 		{
 			SnippetMode = true;
+			SetFileType ("document");
 		}
 
 		protected override void RegisterSupportedTypes ()
