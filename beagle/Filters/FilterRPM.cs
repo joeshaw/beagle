@@ -1,7 +1,7 @@
 //
 // FilterRPM.cs
 //
-// Copyright (C) 2006 Debajyoti Bera <dbera.web@gmail.com>
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 //
 
 //
@@ -36,31 +36,6 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 	public class FilterRPM : FilterPackage {
-		
-		private class RpmPropertyInfo {
-			public string property_name;
-			public bool is_keyword;
-
-			public RpmPropertyInfo (string property_name, bool is_keyword)
-			{
-				this.property_name = property_name;
-				this.is_keyword = is_keyword;
-			}
-    		}
-    		
-    		private static Hashtable hash_property_list;
-    		static FilterRPM ()
-    		{
-		    hash_property_list = new Hashtable ();
-
-		    // mapping between rpm tagname and beagle property name
-    		    hash_property_list ["Release"]       = new RpmPropertyInfo ("fixme:release", true);
-    		    hash_property_list ["License"]       = new RpmPropertyInfo ("dc:rights", true);
-    		    hash_property_list ["Os"]            = new RpmPropertyInfo ("fixme:os", true);
-    		    hash_property_list ["Arch"]          = new RpmPropertyInfo ("fixme:arch", true);
-    		    hash_property_list ["Changelogtext"] = new RpmPropertyInfo ("fixme:changelog", false);
-    		}
-
 		public FilterRPM ()
 		{
 		}
@@ -70,13 +45,84 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-rpm"));
 		}
 
-		protected override void PullPackageProperties ()
+		private const string property_queryformat = "%{NAME}\n<>\n" +
+			"%{VERSION}\n<>\n" +
+			"%{SUMMARY}\n<>\n" +
+			"%{GROUP}\n<>\n" +
+			"%{LICENSE}\n<>\n" +
+			"%{PACKAGER}\n<>\n" +
+			"%{URL}\n<>\n" +
+			"%{SIZE}\n<>\n";
+
+		private const string text_queryformat = "%{DESCRIPTION}\n" +
+			"[%{OLDFILENAMES} ]\n" +
+			"[%{BASENAMES} ]\n";
+
+		protected override bool PullPackageProperties ()
 		{
 			SafeProcess pc = new SafeProcess ();
-			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", "[%{*:xml}\n]", FileInfo.FullName };
+			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", property_queryformat, FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 
-			// Let rpm run for 90 seconds, max.
+			// Let rpm run for 15 seconds for properties, max.
+			pc.CpuLimit = 15;
+			
+			try {
+				pc.Start ();
+			} catch (SafeProcessException e) {
+				Log.Warn (e.Message);
+				return false;
+			}
+
+			StreamReader pout = new StreamReader (pc.StandardOutput);
+
+			// Order is dependent on the queryformat string
+			PackageName = ReadString (pout);
+			PackageVersion = ReadString (pout);
+			Summary = ReadString (pout);
+			Category = ReadString (pout);
+			License = ReadString (pout);
+			Packager = ReadString (pout);
+			Homepage = ReadString (pout);
+			string size = ReadString (pout);
+			Size = Convert.ToInt64 (size);
+
+			pout.Close ();
+			pc.Close ();
+
+			return true;
+		}
+
+		StringBuilder sb = new StringBuilder ();
+		private string ReadString (StreamReader reader)
+		{
+			sb.Length = 0;
+			string s = reader.ReadLine ();
+			//Log.Debug ("Read : [{0}]", s);
+
+			while (s != null && s != "<>") {
+				if (s != "(none)") {
+					if (sb.Length != 0)
+						sb.Append ("\n");
+					sb.Append (s);
+				}
+				s = reader.ReadLine ();
+				//Log.Debug ("Read : [{0}]", s);
+			}
+
+			if (sb.Length == 0)
+				return null;
+
+			return sb.ToString ();
+		}
+
+		protected override void DoPull ()
+		{
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", text_queryformat, FileInfo.FullName };
+			pc.RedirectStandardOutput = true;
+
+			// Let rpm run for 90 seconds for text, max.
 			pc.CpuLimit = 90;
 			
 			try {
@@ -87,116 +133,20 @@ namespace Beagle.Filters {
 				return;
 			}
 
-			XmlTextReader reader = new XmlTextReader (new StreamReader (pc.StandardOutput));
-			reader.WhitespaceHandling = WhitespaceHandling.None;
+			StreamReader pout = new StreamReader (pc.StandardOutput);
 
-			try {
-				ParseRpmTags (reader);
-			} catch (XmlException e) {
-				Logger.Log.Warn (e, "FilterRPM: Error parsing output of rpmquery");
-				Error ();
-			} finally {
-				reader.Close ();
-				pc.Close ();
-			}
-		}
-
-		private void ParseRpmTags (XmlTextReader reader)
-		{
-			reader.Read ();
-			while (reader.Read ()) {
-				if (reader.IsEmptyElement || ! reader.IsStartElement ())
+			string s;
+			while ((s = pout.ReadLine ()) != null) {
+				if (s == "(none)")
 					continue;
-				else if (reader.Name != "rpmTag") {
-					reader.Skip ();
-					continue;
-				}
-				string attr_name = reader ["name"];
-				//Logger.Log.Debug ("Read element:" + reader.Name + " - " + attr_name);
-
-				ReadStringValues (reader, attr_name);
-			}
-		}
-
-		private void ReadStringValues (XmlTextReader reader, string attr_name)
-		{
-			RpmPropertyInfo prop_info = (RpmPropertyInfo) hash_property_list [attr_name];
-			if (attr_name != "Basenames" &&
-			    attr_name != "Name" &&
-			    attr_name != "Version" &&
-			    attr_name != "Summary" &&
-			    attr_name != "Description" &&
-			    attr_name != "Size" &&
-			    attr_name != "Packager" &&
-			    attr_name != "Group" &&
-			    attr_name != "Url" &&
-			    prop_info == null)
-				return;
-
-			reader.ReadStartElement ();
-
-			while (reader.IsStartElement ()) {
-				//Logger.Log.Debug ("        Reading value for:" + reader.Name);
-				if (reader.IsEmptyElement)
-					reader.Skip ();
-				
-				string content = HtmlAgilityPack.HtmlEntity.DeEntitize (reader.ReadInnerXml ());
-				
-				switch (attr_name) {
-					case "Name":
-						PackageName = content;
-						break;
-
-					case "Version":
-						PackageVersion = content;
-						break;
-
-					case "Summary":
-						Summary = content;
-						break;
-
-					case "Description":
-						AppendText (content);
-						AppendWhiteSpace ();
-						break;
-
-					case "Basenames":
-						AddProperty (Beagle.Property.NewUnstored ("fixme:files", content));
-						break;
-
-					case "Size":
-						Size = content;
-						break;
-
-					case "Group":
-						Category = content.Replace ('/', ' ');
-						break;
-
-					case "Url":
-						Homepage = content;
-						break;
-
-					case "Packager":
-						// FIXME: Not a correct way to extract name-email info.
-						string[] name_email = content.Split ('<');
-						PackagerName = name_email [0];
-						if (name_email.Length > 1)
-							PackagerEmail = name_email [1].Replace ('>', ' ');
-						break;
-
-					default:
-						if (prop_info == null)
-							break;
-						if (prop_info.is_keyword)
-							AddProperty (Beagle.Property.NewUnsearched (prop_info.property_name, content));
-						else
-							AddProperty (Beagle.Property.New (prop_info.property_name, content));
-						break;
-				}
+				AppendWord (s);
 			}
 
-			//Logger.Log.Debug ("    Done reading values. Now at " + 
-			//	(reader.IsStartElement () ? String.Empty : "/") + reader.Name);
+			pout.Close ();
+			pc.Close ();
+
+			Finished ();
 		}
+
 	}
 }
