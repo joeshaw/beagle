@@ -34,64 +34,111 @@ namespace Beagle.Util {
 	public class XdgMime {
 
 		[DllImport ("libbeagleglue")]
-		static extern IntPtr xdg_mime_get_mime_type_for_file (string file_path, IntPtr optional_stat_info);
+		static extern IntPtr xdg_mime_get_mime_type_from_file_name (string file_name);
 
 		[DllImport ("libbeagleglue")]
-		static extern IntPtr xdg_mime_get_mime_type_from_file_name (string file_name);
+		static extern IntPtr xdg_mime_get_mime_type_for_data ([In] byte[] data, IntPtr len);
+
+		[DllImport ("libbeagleglue")]
+		static extern bool xdg_mime_mime_type_subclass (string subclass, string superclass);
 
 		public static string GetMimeTypeFromFileName (string file_name)
 		{
 			return Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_name));
 		}
 
+		private const string UNKNOWN_MIME_TYPE = "application/octet-stream";
+
 		public static string GetMimeType (string file_path)
 		{
-			string mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_for_file (file_path, (IntPtr) null));
+			string content_mime_type, extension_mime_type;
 
-			if (mime_type != "application/octet-stream")
-				return mime_type;
+			FileStream fs = null;
+			byte[] buf = null;
+			int len = -1;
 
-			// xdgmime recognizes most files without extensions as
-			// application/octet-stream.  Check the first 256 bytes
-			// to see if it's really plain text.
-			if (ValidateUTF8 (file_path))
-				return "text/plain";
-			else
-				return mime_type;
+			try {
+				fs = new FileStream (file_path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096);
+
+				buf = new byte [4096];
+				len = fs.Read (buf, 0, 4096);
+
+				fs.Close ();
+
+				if (len == 0)
+					content_mime_type = UNKNOWN_MIME_TYPE;
+				else
+					content_mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_for_data (buf, new IntPtr (len)));
+				
+			} catch (UnauthorizedAccessException) {
+				content_mime_type = UNKNOWN_MIME_TYPE;
+			} catch (System.Security.SecurityException) {
+				content_mime_type = UNKNOWN_MIME_TYPE;
+			} catch (FileNotFoundException) {
+				content_mime_type = UNKNOWN_MIME_TYPE;
+			} catch (IOException) {
+				content_mime_type = UNKNOWN_MIME_TYPE;
+			}
+
+			extension_mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_path));
+
+			string mime_type = null;
+
+			if (content_mime_type == UNKNOWN_MIME_TYPE)
+				mime_type = extension_mime_type;
+			else {
+
+				// Fix up some container MIME types that are
+				// often wrong.
+				switch (content_mime_type) {
+
+				case "application/x-ole-storage": // MS Office
+				case "application/x-bzip":
+				case "application/x-gzip":
+				case "application/zip":
+				case "application/xml":
+				case "text/xml":
+				case "text/x-csrc": // JavaScript, C# others go to this
+
+					if (extension_mime_type != UNKNOWN_MIME_TYPE)
+						mime_type = extension_mime_type;
+
+					break;
+
+				default:
+					
+					if (xdg_mime_mime_type_subclass (extension_mime_type, content_mime_type))
+						mime_type = extension_mime_type;
+					else
+						mime_type = content_mime_type;
+					break;
+				}
+			}
+
+			// If at the very end we're still application/octet-stream,
+			// check the first handful of bytes to see if it's really
+			// text.
+			if (mime_type == UNKNOWN_MIME_TYPE
+			    && buf != null
+			    && len > 0
+			    && ValidateUTF8 (buf, len))
+				mime_type = "text/plain";
+
+			return mime_type;
 		}
 
 		private static UTF8Encoding validating_encoding = new UTF8Encoding (true, true);
 
-		private static bool ValidateUTF8 (string file_path)
+		private static bool ValidateUTF8 (byte[] byte_buf, int len)
 		{
-			FileStream fs = null;
+			int size = Math.Min (len, 256);
 
-			try {
-				fs = new FileStream (file_path, FileMode.Open, FileAccess.Read, FileShare.Read);
-			} catch (UnauthorizedAccessException) {
-				return false;
-			} catch (System.Security.SecurityException) {
-				return false;
-			} catch (FileNotFoundException) {
-				return false;
-			} catch (IOException) {
-				return false;
-			}
-
-			byte[] byte_buf = new byte [256];
-			char[] char_buf = new char [256];
-
-			int buf_length = fs.Read (byte_buf, 0, 256);
-
-			fs.Close ();
-
-			if (buf_length == 0)
-				return false; // Don't treat empty files as text/plain
+			char[] char_buf = new char [size];
 
 			Decoder d = validating_encoding.GetDecoder ();
 
 			try {
-				d.GetChars (byte_buf, 0, buf_length, char_buf, 0);
+				d.GetChars (byte_buf, 0, size, char_buf, 0);
 
 				// FIXME: UTF8 allows control characters in a file.
 				// Should we allow control characters in a text file?
