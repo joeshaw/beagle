@@ -82,7 +82,7 @@ namespace Beagle.Util {
 
 			extension_mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_path));
 
-			string mime_type = null;
+			string mime_type;
 
 			if (content_mime_type == UNKNOWN_MIME_TYPE)
 				mime_type = extension_mime_type;
@@ -102,6 +102,8 @@ namespace Beagle.Util {
 
 					if (extension_mime_type != UNKNOWN_MIME_TYPE)
 						mime_type = extension_mime_type;
+					else
+						mime_type = content_mime_type;
 
 					break;
 
