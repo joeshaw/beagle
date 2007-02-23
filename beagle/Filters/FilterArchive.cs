@@ -143,12 +143,12 @@ namespace Beagle.Filters {
 
 				// FIXME: For nested archives, create uid:foo#bar
 				// instead of uid:foo#xxx#bar (avoid duplicates ?)
-				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name, true));
+				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name));
 
 				child.CacheContent = true;
 				child.MimeType = a_entry.MimeType;
 
-				child.DisplayUri = new Uri (DisplayUri.ToString () + "#" + a_entry.Name, true);
+				child.DisplayUri = new Uri (DisplayUri.ToString () + "#" + a_entry.Name);
 				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
 				child.DeleteContent = true;
 
