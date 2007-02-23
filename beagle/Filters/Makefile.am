@@ -93,6 +93,7 @@ CSFILES = 				\
 	$(srcdir)/FilterEbuild.cs	\
 	$(srcdir)/FilterGif.cs		\
 	$(srcdir)/FilterXslt.cs		\
+	$(srcdir)/FilterRPM.cs		\
 	$(srcdir)/FilterPackage.cs	\
 	$(srcdir)/FilterDeb.cs		\
 	$(srcdir)/FilterBoo.cs		\

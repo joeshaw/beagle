@@ -77,6 +77,7 @@ using Beagle.Filters;
 	 typeof(FilterPPT),
 #endif
 	 typeof(FilterPython),
+	 typeof(FilterRPM),
 	 typeof(FilterRTF),
 	 typeof(FilterRuby),
 	 typeof(FilterScheme),
