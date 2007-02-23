@@ -138,8 +138,11 @@ namespace Beagle.Filters {
 			AddProperty (Beagle.Property.New ("dc:rights", license));
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:size", size));
 
-			Finished ();
 		}
 
+		protected override void DoPull ()
+		{
+			Finished ();
+		}
 	}
 }
