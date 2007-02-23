@@ -185,12 +185,12 @@ namespace Beagle.Filters {
 			public string TempFile;
 		}
 
-		private string StoreStreamInTempFile (Stream stream, DateTime mtime)
+		private string StoreStreamInTempFile (Stream stream, string extension, DateTime mtime)
 		{
 			if (stream == null)
 				return null;
 
-			string filename = Path.GetTempFileName ();
+			string filename = FileSystem.GetTempFileName (extension);
 			FileStream file_stream = File.OpenWrite (filename);
 
 			//Log.Debug ("Storing archive contents in {0}", filename);
@@ -276,7 +276,7 @@ namespace Beagle.Filters {
 
 			// Only index smaller subfiles, to avoid filling /tmp
 			if (entry.Size <= MAX_SINGLE_FILE) {
-				entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
+				entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
 				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
 			} else
 				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
@@ -304,7 +304,7 @@ namespace Beagle.Filters {
 
 			// Only index smaller subfiles, to avoid filling /tmp
 			if (entry.Size <= MAX_SINGLE_FILE) {
-				entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
+				entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
 				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
 			} else
 				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
@@ -323,7 +323,7 @@ namespace Beagle.Filters {
 			entry.Name = Path.GetFileNameWithoutExtension (this.file_info.Name);
 			entry.Modified = this.file_info.LastWriteTimeUtc;
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, entry.Modified);
+			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
 			entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
 
 			if (entry.TempFile != null)
