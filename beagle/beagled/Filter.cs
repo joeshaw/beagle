@@ -141,7 +141,8 @@ namespace Beagle.Daemon {
 			set { timestamp = value; }
 		}
 		
-		// Allow the filters to change the FileType
+		// Filter may set the filetype to document, source, music etc.
+		// Use lower case for file_type
 		protected void SetFileType (string file_type)
 		{
 			this_file_type = file_type;

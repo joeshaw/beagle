@@ -49,8 +49,24 @@ namespace Beagle.Util {
 
 		private const string UNKNOWN_MIME_TYPE = "application/octet-stream";
 
+		private static string GetMimeTypeFromXattr (string file_path)
+		{
+			try {
+				// According the shared-mime-info spec, user may specify the
+				// mimetype in user.mime_type xattr. This takes preference over
+				// any guesses.
+				return ExtendedAttribute.Get (file_path, "user.mime_type");
+			} catch (IOException) {
+				return null;
+			}
+		}
+
 		public static string GetMimeType (string file_path)
 		{
+			string mime_type = GetMimeTypeFromXattr (file_path);
+			if (mime_type != null)
+				return mime_type;
+
 			string content_mime_type, extension_mime_type;
 
 			FileStream fs = null;
@@ -81,8 +97,6 @@ namespace Beagle.Util {
 			}
 
 			extension_mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_path));
-
-			string mime_type;
 
 			if (content_mime_type == UNKNOWN_MIME_TYPE)
 				mime_type = extension_mime_type;
@@ -150,5 +164,17 @@ namespace Beagle.Util {
 
 			return true;
 		}
+
+#if true
+		public static void Main (string[] args)
+		{
+			if (args.Length != 1)
+				Console.WriteLine ("Required full path of file or directory");
+			else if (! File.Exists (args [0]) && ! Directory.Exists (args [0]))
+				Console.WriteLine ("Invalid path to file or directory: {0}", args [0]);
+			else
+				Console.WriteLine ("Mimetype for {0} is {1}", args [0], GetMimeType (args [0]));
+		}
+#endif
 	}
 }
