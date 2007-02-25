@@ -79,7 +79,6 @@ CSFILES = 				\
 	$(srcdir)/FilterDocbook.cs	\
 	$(srcdir)/FilterMonodoc.cs	\
 	$(srcdir)/FilterDesktop.cs	\
-	$(srcdir)/FilterDirectory.cs	\
 	$(srcdir)/FilterMail.cs		\
 	$(srcdir)/FilterMusic.cs	\
 	$(srcdir)/FilterImLog.cs	\

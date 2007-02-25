@@ -89,6 +89,11 @@ namespace Beagle.Filters {
 				// Something else wrong with the XML
 				Logger.Log.Error (ex, "Unable to parse {0}", path);
 			}
+
+			// This should be higher than the versions of the shipped filters
+			// That would allow anyone to use an external filter instead of a shipped one
+			// Current max version is 5. 10 seems reasonably high.
+			SetVersion (10);
 		}
 
 		protected override void RegisterSupportedTypes ()

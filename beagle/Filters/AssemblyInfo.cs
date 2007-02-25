@@ -42,7 +42,6 @@ using Beagle.Filters;
 	 typeof(FilterCSharp),
 	 typeof(FilterDeb),
 	 typeof(FilterDesktop),
-	 typeof(FilterDirectory),
 #if ENABLE_WV1
 	 typeof(FilterDOC),
 #endif
