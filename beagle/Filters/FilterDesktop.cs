@@ -44,6 +44,7 @@ namespace Beagle.Filters {
 			// 1: Added Categories field
 			// 2: Added Type field
 			SetVersion (2);
+			SetFileType ("application");
 		}
 
 		protected override void RegisterSupportedTypes ()

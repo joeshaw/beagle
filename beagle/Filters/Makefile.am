@@ -102,7 +102,8 @@ CSFILES = 				\
 	$(srcdir)/FilterKNotes.cs	\
 	$(srcdir)/FilterKOrganizer.cs	\
 	$(srcdir)/FilterLabyrinth.cs	\
-	$(srcdir)/FilterScribus.cs
+	$(srcdir)/FilterScribus.cs	\
+	$(srcdir)/FilterIgnore.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
