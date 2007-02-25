@@ -140,10 +140,16 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p = new SafeProcess ();
+
+			string log_path;
+			if (Hit.Source == "Konversation")
+				log_path = Hit.ParentUri.LocalPath;
+			else
+				log_path = Hit.Uri.LocalPath;
 			p.Arguments = new string [] { "beagle-imlogviewer",
 						      "--client", Hit ["fixme:client"],
 						      "--highlight-search", Query.QuotedText,
-						      Hit.Uri.LocalPath };
+						      log_path };
 
 			try {
 				p.Start ();
