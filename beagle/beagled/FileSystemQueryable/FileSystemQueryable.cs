@@ -190,6 +190,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.HitType = "File";
 			indexable.NoContent = true;
 			indexable.DisplayUri = UriFu.PathToFileUri (path);
+			indexable.AddProperty (Property.NewKeyword ("beagle:FileType", "directory"));
 
 			string name;
 			if (parent == null)
@@ -1336,16 +1337,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Guid hit_id;
 				hit_id = GuidFu.FromUri (hit.Uri);
 				path = UniqueIdToFullPath (hit_id);
+			} else if (hit [Property.IsDirectoryPropKey] == "true") {
+				// For directories, it is better to get the path directly from directory model
+				Guid hit_id;
+				hit_id = GuidFu.FromUri (hit.Uri);
+				path = UniqueIdToDirectoryName (hit_id);
 			} else {
 				string parent_id_uri = null;
 				parent_id_uri = hit [Property.ParentDirUriPropKey];
 				if (parent_id_uri == null)
 					parent_id_uri = hit ["parent:" + Property.ParentDirUriPropKey];
-				if (parent_id_uri == null)
-					return false;
 
-				Guid parent_id;
-				parent_id = GuidFu.FromUriString (parent_id_uri);
+				Guid parent_id = Guid.Empty;
+				if (parent_id_uri != null)
+					parent_id = GuidFu.FromUriString (parent_id_uri);
 			
 				path = ToFullPath (name, parent_id);
 				if (path == null)
