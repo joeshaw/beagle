@@ -823,22 +823,8 @@ namespace Beagle.Daemon {
 
 			// Before we broadcast a hit, we strip out any
 			// properties in the PrivateNamespace.  We
-			// manipulate the property ArrayList directory,
-			// which is pretty gross... but this is safe,
-			// since removing items will not change the sort
-			// order.
-			foreach (Hit hit in final_list_of_hits) {
-				if (hit == null)
-					continue;
-				int i = 0;
-				while (i < hit.Properties.Count) {
-					Property prop = hit.Properties [i] as Property;
-					if (prop.Key.StartsWith (Property.PrivateNamespace))
-						hit.Properties.RemoveAt (i);
-					else
-						++i;
-				}
-			}
+			// UPDATE: Private properties are not stripped here due to performance reasons
+			// They are removed in the serializer just before the hits are sent to the client
 
 			result.Add (final_list_of_hits, total_number_of_matches);
 
