@@ -33,30 +33,21 @@ namespace Beagle.Daemon {
 	
 	public class FileAttributesStore_ExtendedAttribute : IFileAttributesStore {
 
+		// Version history:
+		// 1: Original
+		// 2: Replace LastIndexedTime with LastAttrTime
+		// 3: Store EA's using a CSV format
+		//    Format: "Version[2] Fingerprint,Uid,LastWriteTime,LastAttrTime,FilterVersion[3] FilterName"
+		private const int EA_VERSION = 3;
+
 		public static bool Disable = false;
 
 		private string index_fingerprint;
-		
+
 		public FileAttributesStore_ExtendedAttribute (string index_fingerprint)
 		{
 			this.index_fingerprint = index_fingerprint;
 		}
-
-		// Version history:
-		// 1: Original
-		// 2: Replace LastIndexedTime with LastAttrTime
-		const int EA_VERSION = 2;
-
-		// FIXME: We should probably serialize the data into a lump and attach
-		// it to just one EA.  The current method has an inherent race condition:
-		// if the file changes out from under us mid-Read or mid-Write, all sorts
-		// of weirdness could ensue.
-
-		const string fingerprint_attr = "Fingerprint";
-		const string unique_id_attr = "Uid";
-		const string last_mtime_attr = "MTime";
-		const string last_attrtime_attr = "AttrTime";
-		const string filter_attr = "Filter";
 
 		public FileAttributes Read (string path)
 		{
@@ -64,27 +55,26 @@ namespace Beagle.Daemon {
 				return null;
 
 			try {
-				string tmp;
-				tmp = ExtendedAttribute.Get (path, fingerprint_attr);
-				if (tmp == null 
-				    || int.Parse (tmp.Substring (0, 2)) != EA_VERSION
-				    || (index_fingerprint != null && tmp.Substring (3) != index_fingerprint))
+				string tmp = ExtendedAttribute.Get (path);
+
+				if (tmp == null)
+					return null;
+
+				string[] csv = tmp.Split (',');
+
+				if (int.Parse (csv [0].Substring (0, 2)) != EA_VERSION
+				    || (index_fingerprint != null && csv [0].Substring (3) != index_fingerprint))
 					return null;
 
 				FileAttributes attr = new FileAttributes ();
-				
-				string uid_str = ExtendedAttribute.Get (path, unique_id_attr);
-				attr.UniqueId = GuidFu.FromShortString (uid_str);
-
+				attr.UniqueId = GuidFu.FromShortString (csv [1]);
 				attr.Path = path;
-				attr.LastWriteTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_mtime_attr));
-				
-				attr.LastAttrTime = StringFu.StringToDateTime (ExtendedAttribute.Get (path, last_attrtime_attr));
+				attr.LastWriteTime = StringFu.StringToDateTime (csv [2]);
+				attr.LastAttrTime = StringFu.StringToDateTime (csv [3]);
 
-				tmp = ExtendedAttribute.Get (path, filter_attr);
-				if (tmp != null) {
-					attr.FilterVersion = int.Parse (tmp.Substring (0, 3));
-					attr.FilterName = tmp.Substring (4);
+				if (! String.IsNullOrEmpty (csv [4])) {
+					attr.FilterVersion = int.Parse (csv [4].Substring (0, 3));
+					attr.FilterName = csv [4].Substring (4);
 				}
 				
 				return attr;
@@ -103,38 +93,24 @@ namespace Beagle.Daemon {
 				return false;
 
 			try {
-				string tmp;
-				
-				tmp = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
-				ExtendedAttribute.Set (attr.Path, fingerprint_attr, tmp);
+				if (ExtendedAttribute.OldExists (attr.Path, "Fingerprint"))
+					DropObsoleteAttributes (attr.Path);
 
-				// Try to read the EA we just set.  If we
-				// can't, they won't be much use to us --- so
-				// just return false.
-				string what_we_just_wrote;
-				try {
-					what_we_just_wrote = ExtendedAttribute.Get (attr.Path, fingerprint_attr);
-				} catch (Exception ex) {
-					return false;
-				}
-				if (what_we_just_wrote != tmp)
-					return false;
+				string fingerprint = String.Format ("{0:00} {1}", EA_VERSION, index_fingerprint);
+				string uid = GuidFu.ToShortString (attr.UniqueId);
+				string mtime = StringFu.DateTimeToString (attr.LastWriteTime);
 
-				ExtendedAttribute.Set (attr.Path, unique_id_attr, GuidFu.ToShortString (attr.UniqueId));
-				ExtendedAttribute.Set (attr.Path, last_mtime_attr,
-						       StringFu.DateTimeToString (attr.LastWriteTime));
+				string filter = String.Empty;
 
-				if (attr.HasFilterInfo) {
-					tmp = String.Format ("{0:000} {1}", attr.FilterVersion, attr.FilterName);
-					ExtendedAttribute.Set (attr.Path, filter_attr, tmp);
-				}
+				if (attr.HasFilterInfo)
+					filter = String.Format ("{0:000} {1}", attr.FilterVersion, attr.FilterName);
 
-				// This has to be the last thing we write out, to get LastAttrTime as close
-				// to the ctime as possible.
 				attr.LastAttrTime = DateTime.UtcNow;
-				ExtendedAttribute.Set (attr.Path, last_attrtime_attr,
-						       StringFu.DateTimeToString (attr.LastAttrTime));
-				
+				string attrtime = StringFu.DateTimeToString (attr.LastAttrTime);
+
+				string [] csv = {fingerprint, uid, mtime, attrtime, filter};
+				ExtendedAttribute.Set (attr.Path, String.Join (",", csv));
+							
 				return true;
 			} catch (IOException e) {
 				// An IOException here probably means that we don't have the right
@@ -143,7 +119,7 @@ namespace Beagle.Daemon {
 				//Logger.Log.Debug (e);
 				return false;
 			} catch (Exception e) {
-				Logger.Log.Debug (e, "Caught exception writing EAs to {0}", attr.Path);
+				//Logger.Log.Debug (e, "Caught exception writing EAs to {0}", attr.Path);
 				// FIXME: Do something smarter with the exception.
 				return false;
 			}
@@ -155,15 +131,26 @@ namespace Beagle.Daemon {
 				return;
 
 			try {
-				ExtendedAttribute.Remove (path, fingerprint_attr);
-				ExtendedAttribute.Remove (path, unique_id_attr);
-				ExtendedAttribute.Remove (path, last_mtime_attr);
-				ExtendedAttribute.Remove (path, last_attrtime_attr);
-				ExtendedAttribute.Remove (path, filter_attr);
-
-			} catch (Exception e) {
+				ExtendedAttribute.Remove (path);
+			} catch {
 				// FIXME: Do something smarter with the exception.
 			}
+		}
+
+		// IMPORTANT: Remove this post 0.3.3 release!
+		private void DropObsoleteAttributes (string path)
+		{
+			try {
+				ExtendedAttribute.RemoveOld (path, "Fingerprint");
+				ExtendedAttribute.RemoveOld (path, "Uid");
+				ExtendedAttribute.RemoveOld (path, "MTime");
+				ExtendedAttribute.RemoveOld (path, "AttrTime");
+				ExtendedAttribute.RemoveOld (path, "Filter");
+
+				// And some others from Joe's favorite list :-)
+				ExtendedAttribute.RemoveOld (path, "Name");
+				ExtendedAttribute.RemoveOld (path, "IndexTime");
+			} catch { }
 		}
 
 		// There are no transactions for EAs

@@ -36,19 +36,26 @@ namespace Beagle.Util {
 
 	public class ExtendedAttribute {
 
+		// FIXME: Deprecate post 0.3.3
 		private static string AddPrefix (string name)
 		{
 			return "user.Beagle." + name;
 		}
 
+		private const string AttrName = "user.Beagle";
+
 		static Encoding encoding = new UTF8Encoding ();
 
-		public static void Set (string path, string name, string value)
+		// Set a beagle attribute
+		public static void Set (string path, string value) {
+			Set (path, AttrName, value);
+		}
+
+		// Set a non-beagle attribute
+		private static void Set (string path, string name, string value)
 		{
 			if (! FileSystem.Exists (path))
 				throw new IOException (path);
-
-			name = AddPrefix (name);
 
 			byte[] buffer = encoding.GetBytes (value);
 			int retval = Syscall.lsetxattr (path, name, buffer);
@@ -56,7 +63,18 @@ namespace Beagle.Util {
 				throw new IOException ("Could not set extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
 		}
 
-		public static bool Exists (string path, string name)
+		// Check if a beagle attribute exists
+		public static bool Exists (string path)
+		{
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
+
+			long size = Syscall.lgetxattr (path, AttrName, null, 0);
+			return size >= 0;
+		}
+
+		// FIXME: Deprecate post 0.3.3
+		public static bool OldExists (string path, string name)
 		{
 			if (! FileSystem.Exists (path))
 				throw new IOException (path);
@@ -67,12 +85,17 @@ namespace Beagle.Util {
 			return size >= 0;
 		}
 
+		// Get a beagle attribute
+		public static string Get (string path)
+		{
+			return Get (path, AttrName);
+		}
+
+		// Get a non-beagle attribute
 		public static string Get (string path, string name)
 		{
 			if (! FileSystem.Exists (path))
 				throw new IOException (path);
-
-			name = AddPrefix (name);
 
 			byte[] buffer;
 			long size = Syscall.lgetxattr (path, name, out buffer);
@@ -81,13 +104,29 @@ namespace Beagle.Util {
 			return encoding.GetString (buffer);
 		}
 
-		public static void Remove (string path, string name)
+		// Remove a beagle attribute
+		public static void Remove (string path)
 		{
 			if (! FileSystem.Exists (path))
 				throw new IOException (path);
 			
-			name = AddPrefix (name);
+			int retval = Syscall.lremovexattr (path, AttrName);
+			if (retval != 0)
+				throw new IOException ("Could not remove extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
+		}
 
+		// FIXME: Deprecate post 0.3.3
+		public static void RemoveOld (string path, string name)
+		{
+			Remove (path, AddPrefix (name));
+		}
+
+		// Remove a non-beagle attribute
+		private static void Remove (string path, string name)
+		{
+			if (! FileSystem.Exists (path))
+				throw new IOException (path);
+			
 			int retval = Syscall.lremovexattr (path, name);
 			if (retval != 0)
 				throw new IOException ("Could not remove extended attribute on " + path + ": " + Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()));
@@ -96,7 +135,7 @@ namespace Beagle.Util {
 		// Check to see if it is possible to get and set attributes on a given file.
 		public static bool Test (string path)
 		{
-			const string test_key = "__test_key__";
+			const string test_key = "user.Beagle.__test_key__";
 			const string test_value = "__test_value__";
 
 			try {
