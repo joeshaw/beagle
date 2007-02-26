@@ -435,7 +435,7 @@ namespace Beagle.Util {
 						DateTime dt = DateTime.ParseExact (
 							dt_string,
 							LogTimeFormatString,
-							CultureInfo.InvariantCulture,
+							CultureInfo.CurrentCulture,
 							DateTimeStyles.AssumeLocal);
 
 						AddUtterance (dt, speaker, text);
