@@ -122,9 +122,18 @@ namespace Beagle.Daemon {
 			if (Debug)
 				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
 
-			Stopwatch sw;
-			sw = new Stopwatch ();
-			sw.Start ();
+			Stopwatch total, a, b, c, d, e, f;
+
+			total = new Stopwatch ();
+			a = new Stopwatch ();
+			b = new Stopwatch ();
+			c = new Stopwatch ();
+			d = new Stopwatch ();
+			e = new Stopwatch ();
+			f = new Stopwatch ();
+
+			total.Start ();
+			a.Start ();
 
 			// Assemble all of the parts into a bunch of Lucene queries
 
@@ -191,9 +200,15 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			a.Stop ();
+			if (Debug)
+				Log.Debug ("###### {0}: Building queries took {1}", IndexName, a);
+
 			// If we have no required parts, give up.
 			if (primary_required_part_queries == null)
 				return;
+
+			b.Start ();
 			
 			//
 			// Now that we have all of these nice queries, let's execute them!
@@ -220,9 +235,15 @@ namespace Beagle.Daemon {
 			if (secondary_reader != null)
 				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
 
+			b.Stop ();
+			if (Debug)
+				Log.Debug ("###### {0}: Readers/searchers built in {1}", IndexName, b);
 
-			// Possibly create our whitelists from the search subset.
+			// Build whitelists and blacklists for search subsets.
+			c.Start ();
 			
+			// Possibly create our whitelists from the search subset.
+
 			LuceneBitArray primary_whitelist = null;
 			LuceneBitArray secondary_whitelist = null;
 			
@@ -280,6 +301,13 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			c.Stop ();
+			if (Debug)
+				Log.Debug ("###### {0}: Whitelists and blacklists built in {1}", IndexName, c);
+
+			// Now run the low level queries against our indexes.
+			d.Start ();
+
 			BetterBitArray primary_matches = null;
 
 			if (primary_required_part_queries != null) {
@@ -298,12 +326,11 @@ namespace Beagle.Daemon {
 
 			} 
 
-			sw.Stop ();
+			d.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Finished low-level queries in {1}", IndexName, sw);
-			sw.Reset ();
-			sw.Start ();
+				Logger.Log.Debug ("###### {0}: Low-level queries finished in {1}", IndexName, d);
 
+			e.Start ();
 			// Only generate results if we got some matches
 			if (primary_matches != null && primary_matches.ContainsTrue ()) {
 				GenerateQueryResults (primary_reader,
@@ -318,9 +345,16 @@ namespace Beagle.Daemon {
 						      IndexName);
 			}
 
+			e.Stop ();
+
+			if (Debug)
+				Log.Debug ("###### {0}: Query results generated in {1}", IndexName, e);
+
 			//
 			// Finally, we clean up after ourselves.
 			//
+
+			f.Start ();
 			
 			primary_searcher.Close ();
 			if (secondary_searcher != null)
@@ -329,10 +363,24 @@ namespace Beagle.Daemon {
 			if (secondary_reader != null)
 				ReleaseReader (secondary_reader);
 
-
-			sw.Stop ();
+			f.Stop ();
+			
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Processed query in {1}", IndexName, sw);
+				Log.Debug ("###### {0}: Readers/searchers released in {1}", IndexName, f);
+
+			total.Stop ();
+			if (Debug) {
+				Log.Debug ("###### {0}: Query time breakdown:", IndexName);
+				Log.Debug ("###### {0}:    Build queries {1,6} ({2:0.0}%)", IndexName, a, 100 * a.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:      Got readers {1,6} ({2:0.0}%)", IndexName, b, 100 * b.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:       Whitelists {1,6} ({2:0.0}%)", IndexName, c, 100 * c.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:          Queries {1,6} ({2:0.0}%)", IndexName, d, 100 * d.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:    Gen'd Results {1,6} ({2:0.0}%)", IndexName, e, 100 * e.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:   Reader cleanup {1,6} ({2:0.0}%)", IndexName, f, 100 * f.ElapsedTime / total.ElapsedTime);
+				Log.Debug ("###### {0}:            TOTAL {1,6}", IndexName, total);
+
+				Logger.Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
+			}
 
 		}
 
@@ -478,12 +526,10 @@ namespace Beagle.Daemon {
 					       IndexReader reader,
 					       ICollection term_list)
 		{
-			Stopwatch sw;
-			sw = new Stopwatch ();
-			sw.Start ();
-
 			LNS.Similarity similarity;
 			similarity = LNS.Similarity.GetDefault ();
+
+			TermDocs term_docs = reader.TermDocs ();
 
 			foreach (Term term in term_list) {
 
@@ -493,8 +539,7 @@ namespace Beagle.Daemon {
 				int hit_count;
 				hit_count = hits_by_id.Count;
 
-				TermDocs term_docs;
-				term_docs = reader.TermDocs (term);
+				term_docs.Seek (term);
 				while (term_docs.Next () && hit_count > 0) {
 					
 					int id;
@@ -511,7 +556,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			sw.Stop ();
+			term_docs.Close ();
 		}
 
 		////////////////////////////////////////////////////////////////
@@ -580,12 +625,14 @@ namespace Beagle.Daemon {
 				top_docs = new TopScores (max_results);
 			}
 
-			Stopwatch total, a, b, c, d;
+			Stopwatch total, a, b, c, d, e, f;
 			total = new Stopwatch ();
 			a = null;
 			b = new Stopwatch ();
 			c = new Stopwatch ();
 			d = new Stopwatch ();
+			e = new Stopwatch ();
+			f = new Stopwatch ();
 
 			total.Start ();
 
@@ -659,7 +706,7 @@ namespace Beagle.Daemon {
 
 				a.Stop ();
 				if (Debug) {
-					Log.Debug (">>> {0}: Walked {1} items, populated an enum with {2} items", index_name, docs_walked, docs_found, a);
+					Log.Debug (">>> {0}: Walked {1} items, populated an enum with {2} items in {3}", index_name, docs_walked, docs_found, a);
 					
 					if (docs_found == max_results)
 						Log.Debug (">>> {0}: Successfully short circuited timestamp ordering!", index_name);
@@ -717,10 +764,11 @@ namespace Beagle.Daemon {
 					top_docs.Add (timestamp_num, doc_and_id);
 			}
 
-			if (Debug)
-				Log.Debug (">>> {0}: Processed roughly {1} documents", index_name, count);
-
 			b.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Instantiated {1} documents in {2}", index_name, count, b);
+
 
 			c.Start ();
 
@@ -752,50 +800,44 @@ namespace Beagle.Daemon {
 
 				if (Debug)
 					Logger.Log.Debug (">>> {0}: Performing cross-index Hit reunification", index_name);
-
-				Hashtable hits_by_uri;
-				hits_by_uri = UriFu.NewHashtable ();
-
-				LuceneBitArray secondary_matches;
-				secondary_matches = new LuceneBitArray (secondary_searcher);
-
-				foreach (DocAndId doc_and_id in final_list_of_docs) {
-					Hit hit;
-					hit = DocumentToHit (doc_and_id.Doc);
-					hits_by_id [doc_and_id.Id] = hit;
-					hits_by_uri [hit.Uri] = hit;
-					secondary_matches.AddUri (hit.Uri);
-				}
-
-				secondary_matches.FlushUris ();
 				
-				// Attach all of our secondary properties
-				// to the hits
-				int j = 0;
-				while (true) {
-					int i = secondary_matches.GetNextTrueIndex (j);
-					if (i >= secondary_matches.Count)
-						break;
-					j = i+1;
+				TermDocs term_docs = secondary_searcher.Reader.TermDocs ();
+				foreach (DocAndId doc_and_id in final_list_of_docs) {
+					Hit hit = DocumentToHit (doc_and_id.Doc);
+
+					// Get the stringified version of the URI
+					// exactly as it comes out of the index.
+					Term term = new Term ("Uri", doc_and_id.Doc.Get ("Uri"));
+					term_docs.Seek (term);
+
+					// Move to the first (and only) matching term doc
+					term_docs.Next ();
 
 					Document secondary_doc;
-					secondary_doc = secondary_searcher.Doc (i);
-					
-					Uri uri;
-					uri = GetUriFromDocument (secondary_doc);
-
-					Hit hit;
-					hit = hits_by_uri [uri] as Hit;
+					secondary_doc = secondary_searcher.Doc (term_docs.Doc ());
 
 					AddPropertiesToHit (hit, secondary_doc, false);
 
+					hits_by_id [doc_and_id.Id] = hit;
 					final_list_of_hits.Add (hit);
 				}
+
+				term_docs.Close ();
 			}
+			
+			c.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Converted docs to hits in {1}", index_name, c);
+
+			d.Start ();
 
 			ScoreHits (hits_by_id, primary_reader, query_term_list);
 
-			c.Stop ();
+			d.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Scored hits in {1}", index_name, d);
 
 			// If we used the TopScores object, we got our original
 			// list of documents sorted for us.  If not, sort the
@@ -803,7 +845,7 @@ namespace Beagle.Daemon {
 			if (top_docs == null)
 				final_list_of_hits.Sort ();
 
-			d.Start ();
+			e.Start ();
 
 			int total_number_of_matches = primary_matches.TrueCount;
 
@@ -821,23 +863,31 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			// Before we broadcast a hit, we strip out any
-			// properties in the PrivateNamespace.  We
-			// UPDATE: Private properties are not stripped here due to performance reasons
-			// They are removed in the serializer just before the hits are sent to the client
+			e.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Hit filters executed in {1}", index_name, e);
+
+			f.Start ();
 
 			result.Add (final_list_of_hits, total_number_of_matches);
 
-			d.Stop ();
+			f.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Hits added to result in {1}", index_name, f);
+
 			total.Stop ();
 
 			if (Debug) {
 				Logger.Log.Debug (">>> {0}: GenerateQueryResults time statistics:", index_name);
-				Logger.Log.Debug (">>> {0}: Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:    First pass {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:  Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:    Final pass {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:         TOTAL {1,6}", index_name, total);
+				Logger.Log.Debug (">>> {0}:   Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:     Scored hits {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:     Hit filters {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:   Add to result {1,6} ({2:0.0}%)", index_name, f, 100 * f.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:           TOTAL {1,6}", index_name, total);
 			}
 		}
 
