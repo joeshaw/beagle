@@ -353,7 +353,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 					line_dt = DateTime.ParseExact (
 						dt_string,
 						KonversationLog.LogTimeFormatString,
-						CultureInfo.InvariantCulture,
+						CultureInfo.CurrentCulture,
 						DateTimeStyles.AssumeLocal);
 				} catch (FormatException) {
 					// Old log files had date strings as
