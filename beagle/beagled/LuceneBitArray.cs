@@ -52,18 +52,13 @@ namespace Beagle.Daemon {
 
 		private static bool Debug = false;
 
-		LNS.IndexSearcher searcher;
-		BitArrayHitCollector collector;
-		BetterBitArray scratch;
+		private LNS.IndexSearcher searcher;
+		private BitArrayHitCollector collector;
+		private BetterBitArray scratch;
+		private ArrayList pending_uris = null;
 
-		LNS.BooleanQuery pending_uri_query = null;
-		int pending_clause_count = 0;
-		static int max_clause_count;
-
-		static LuceneBitArray ()
-		{
-			max_clause_count = LNS.BooleanQuery.GetMaxClauseCount ();
-		}
+		// To keep pending_uris a reasonable size
+		const int MAX_URI_COUNT = 1000;
 
 		public LuceneBitArray (LNS.IndexSearcher searcher) : base (searcher.MaxDoc ())
 		{
@@ -161,28 +156,44 @@ namespace Beagle.Daemon {
 
 		public void AddUri (string str)
 		{
-			Term term;
-			term = new Term ("Uri", str);
+			if (pending_uris == null)
+				pending_uris = new ArrayList ();
 
-			LNS.TermQuery q;
-			q = new LNS.TermQuery (term);
+			int pos;
 
-			if (pending_uri_query == null)
-				pending_uri_query = new LNS.BooleanQuery ();
-			pending_uri_query.Add (q, false, false);
-			++pending_clause_count;
+			// OrdinalComparer gives us the same order that the
+			// URIs are stored as terms in the index, so that our
+			// walk along them is linear.
+			pos = pending_uris.BinarySearch (str, StringFu.OrdinalComparer.Instance);
 
-			if (pending_clause_count == max_clause_count)
+			// Value is already present
+			if (pos >= 0)
+				return;
+
+			pending_uris.Insert (~pos, str);
+
+			if (pending_uris.Count == MAX_URI_COUNT)
 				FlushUris ();
 		}
 
 		public void FlushUris ()
 		{
-			if (pending_uri_query != null) {
-				this.Or (pending_uri_query);
-				pending_uri_query = null;
-				pending_clause_count = 0;
+			if (pending_uris == null)
+				return;
+
+			TermDocs term_docs = this.searcher.Reader.TermDocs ();
+
+			for (int i = 0; i < pending_uris.Count; i++) {
+				Term term = new Term ("Uri", (string) pending_uris [i]);
+				term_docs.Seek (term);
+
+				if (term_docs.Next ())
+					this.Set (term_docs.Doc (), true);
 			}
+
+			term_docs.Close ();
+
+			pending_uris = null;
 		}
 
 		////////////////////////////////////////////////////////////

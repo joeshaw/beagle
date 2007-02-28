@@ -750,6 +750,16 @@ namespace Beagle.Util {
 
 			return line;
   		}
+
+		public class OrdinalComparer : IComparer {
+
+			public static OrdinalComparer Instance = new OrdinalComparer ();
+
+			public int Compare (object a, object b)
+			{
+				return String.CompareOrdinal ((string) a, (string) b);
+			}
+		}
 	}
 
 	public class HtmlRemovingReader : TextReader {
