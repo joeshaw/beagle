@@ -110,7 +110,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// Do the right thing when paths expire
 			DirectoryModel.ExpireEvent +=
 				new DirectoryModel.ExpireHandler (ExpireDirectoryPath);
-			Started = true;
 		}
 
 

@@ -62,8 +62,6 @@ namespace Beagle.Daemon.TomboyQueryable {
 				return;
 			}
 
-			Started = true;
-
 			if (Inotify.Enabled) {			
 				Inotify.EventType mask = Inotify.EventType.Delete | 
 					Inotify.EventType.MovedTo |

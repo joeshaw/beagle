@@ -62,7 +62,6 @@ namespace Beagle.Daemon.KopeteQueryable {
 			}
 
 			Logger.Log.Info ("Starting Kopete log backend");
-			Started = true;
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();

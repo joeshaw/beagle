@@ -69,9 +69,6 @@ namespace Beagle.Daemon.BlamQueryable {
 				return;
 			}
 
-			// FIXME: Should be called from Index()
-			Started = true;
-
 			if (Inotify.Enabled) {
 				Inotify.EventType mask = Inotify.EventType.CloseWrite;
 				Inotify.Subscribe (blam_dir, OnInotifyEvent, mask);

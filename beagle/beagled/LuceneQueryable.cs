@@ -115,7 +115,6 @@ namespace Beagle.Daemon {
 			ScheduleOptimize ();
 
 			Shutdown.ShutdownEvent += new Shutdown.ShutdownHandler (OnShutdownEvent);
-			this.started = false;
 		}
 
 		public string IndexName {
@@ -166,15 +165,10 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		// Backend queryables should call Started=true when they find some data to index
-		private bool started;
-		protected bool Started {
-			set { started = value; }
-		}
-
 		virtual public bool AcceptQuery (Query query)
 		{
-			return started;
+			// Accept all queries by default.
+			return true;
 		}
 
 		/////////////////////////////////////////

@@ -77,8 +77,6 @@ namespace Beagle.Daemon.KonqQueryable {
                                 return;
 			}
 				
-			Started = true;
-
 			if (Inotify.Enabled) {
 				// watch konq_cache_dir for new directory creations
 				Inotify.EventType mask = Inotify.EventType.Create;

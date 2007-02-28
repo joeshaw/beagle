@@ -69,8 +69,6 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 
 		private void StartWorker ()
 		{
-			Started = true;
-
 			string index_path = Path.Combine (PathFinder.StorageDir, "ToIndex");
 
 			if (!Directory.Exists (index_path))

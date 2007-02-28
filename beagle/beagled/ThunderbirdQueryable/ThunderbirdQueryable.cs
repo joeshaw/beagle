@@ -77,8 +77,6 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				return;
 			}
 			
-			Started = true;
-
 			indexer = new ThunderbirdIndexer (this, Thunderbird.GetProfilePaths (root_path));
 			indexer.Crawl ();
 			

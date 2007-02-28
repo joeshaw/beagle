@@ -58,7 +58,6 @@ namespace Beagle.Daemon.LabyrinthQueryable {
 			}
 
 			Log.Info ("Starting Labyrinth backend");
-			Started = true;
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();

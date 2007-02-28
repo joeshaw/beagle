@@ -123,8 +123,6 @@ namespace Beagle.Daemon.KMailQueryable {
                                 return;
 			}
 
-			Started = true;
-
 			Log.Debug ("Starting mail crawl");
 			if (local_path != null) {
 				local_indexer = new KMailIndexer (this, "local", local_path);

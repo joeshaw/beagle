@@ -75,8 +75,6 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 				return;
 			}
 
-			Started = true;
-
 			if (Inotify.Enabled) {
 				Inotify.EventType mask =  Inotify.EventType.CloseWrite
 							| Inotify.EventType.MovedTo;

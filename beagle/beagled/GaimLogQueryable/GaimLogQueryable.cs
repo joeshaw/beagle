@@ -62,7 +62,6 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			}
 
 			Log.Info ("Starting Gaim log backend");
-			Started = true;
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -351,10 +350,8 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override public string GetSnippet (string [] query_terms, Hit hit)
 		{
-			if (! File.Exists (hit.Uri.LocalPath))
-				return null;
-
-			StreamReader reader = new StreamReader (hit.Uri.LocalPath);
+			TextReader reader;
+			reader = TextCache.UserCache.GetReader (hit.Uri);
 			if (reader == null)
 				return null;
 			HtmlRemovingReader html_removing_reader = new HtmlRemovingReader (reader);
