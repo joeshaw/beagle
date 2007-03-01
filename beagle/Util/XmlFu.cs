@@ -47,11 +47,19 @@ namespace Beagle.Util {
 			if (o == null)
 				throw new ArgumentNullException ("o");
 
+			UnclosableStream unclosable_stream = new UnclosableStream (stream);
+			BufferedStream buffered_stream = new BufferedStream (unclosable_stream, 8192);
+
 			Stopwatch w = new Stopwatch ();
 			w.Start ();
-			XmlTextWriter xml_writer = new XmlTextWriter (stream, Encoding.UTF8);
+			XmlTextWriter xml_writer = new XmlTextWriter (buffered_stream, Encoding.UTF8);
 			xml_writer.Formatting = Formatting.Indented;
 			serializer.Serialize (xml_writer, o);
+
+			// This will flush the stream and release the buffer.
+			// Normally it also closes the underlying stream,
+			// which is why it wraps an UnclosableStream.
+			buffered_stream.Dispose ();
 			w.Stop ();
 
 			if (Debug)
