@@ -625,14 +625,13 @@ namespace Beagle.Daemon {
 				top_docs = new TopScores (max_results);
 			}
 
-			Stopwatch total, a, b, c, d, e, f;
+			Stopwatch total, a, b, c, d, e;
 			total = new Stopwatch ();
 			a = null;
 			b = new Stopwatch ();
 			c = new Stopwatch ();
 			d = new Stopwatch ();
 			e = new Stopwatch ();
-			f = new Stopwatch ();
 
 			total.Start ();
 
@@ -824,6 +823,8 @@ namespace Beagle.Daemon {
 
 				term_docs.Close ();
 			}
+
+			final_list_of_docs = null;
 			
 			c.Stop ();
 
@@ -833,6 +834,7 @@ namespace Beagle.Daemon {
 			d.Start ();
 
 			ScoreHits (hits_by_id, primary_reader, query_term_list);
+			hits_by_id = null;
 
 			d.Stop ();
 
@@ -849,33 +851,42 @@ namespace Beagle.Daemon {
 
 			int total_number_of_matches = primary_matches.TrueCount;
 
-			// If we have a hit_filter, use it now.
-			if (hit_filter != null) {
-				for (int i = 0; i < final_list_of_hits.Count; ++i) {
-					Hit hit;
-					hit = final_list_of_hits [i] as Hit;
+			// 25 hits seems to be the sweet spot: anything lower
+			// and serialization overhead gets us, higher takes
+			// longer to send out.
+			const int MAX_QUEUED_HITS = 25;
+			int sent_index = 0;
+
+			// Break up the hits into reasonably sized chunks for
+			// sending over the wire.  Also run our hit_filter, if
+			// we have one.
+			for (int i = 0; i < final_list_of_hits.Count; ++i) {
+				if (hit_filter != null) {
+					Hit hit = (Hit) final_list_of_hits [i];
 					if (! hit_filter (hit)) {
 						if (Debug)
-							Logger.Log.Debug ("Filtered out {0}", hit.Uri);
+							Log.Debug ("Filtered out {0}", hit.Uri);
 						final_list_of_hits [i] = null;
 						total_number_of_matches --;
 					}
 				}
+
+				// Flush our hits
+				if (i > 0 && i % MAX_QUEUED_HITS == 0) {
+					result.Add (final_list_of_hits.GetRange (0, MAX_QUEUED_HITS));
+					final_list_of_hits.RemoveRange (0, MAX_QUEUED_HITS);
+					i -= MAX_QUEUED_HITS;
+				}
 			}
+
+			// Flush the remaining hits
+			result.Add (final_list_of_hits, total_number_of_matches);
+			final_list_of_hits = null;
 
 			e.Stop ();
 
 			if (Debug)
-				Log.Debug (">>> {0}: Hit filters executed in {1}", index_name, e);
-
-			f.Start ();
-
-			result.Add (final_list_of_hits, total_number_of_matches);
-
-			f.Stop ();
-
-			if (Debug)
-				Log.Debug (">>> {0}: Hits added to result in {1}", index_name, f);
+				Log.Debug (">>> {0}: Hit filters executed and results sent in {1}", index_name, e);
 
 			total.Stop ();
 
@@ -885,8 +896,7 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:     Scored hits {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:     Hit filters {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:   Add to result {1,6} ({2:0.0}%)", index_name, f, 100 * f.ElapsedTime / total.ElapsedTime);
+				Logger.Log.Debug (">>> {0}:    Results sent {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:           TOTAL {1,6}", index_name, total);
 			}
 		}
