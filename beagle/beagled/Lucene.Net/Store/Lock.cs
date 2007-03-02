@@ -71,7 +71,7 @@ namespace Lucene.Net.Store
 					// Try and be a little more verbose on failure
 					string lockpath = this.ToString ();
 					System.Text.StringBuilder ex = new System.Text.StringBuilder();
-					ex.Append ("Lock obain timed out: ");
+					ex.Append ("Lock obtain timed out: ");
 					ex.Append (lockpath);
 					if (System.IO.File.Exists (lockpath)) {
 						System.IO.FileStream fs = System.IO.File.Open (lockpath, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
