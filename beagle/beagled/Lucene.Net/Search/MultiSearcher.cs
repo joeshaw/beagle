@@ -119,6 +119,11 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
+			public override Document Doc(int i, string[] fields)
+			{
+				throw new System.NotSupportedException();
+			}
+			
 			public override Explanation Explain(Weight weight, int doc)
 			{
 				throw new System.NotSupportedException();
@@ -191,6 +196,12 @@ namespace Lucene.Net.Search
 		{
 			int i = SubSearcher(n); // find searcher index
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
+		}
+		
+		public override Document Doc(int n, string[] fields)
+		{
+			int i = SubSearcher(n); // find searcher index
+			return searchables[i].Doc(n - starts[i], fields); // dispatch to searcher
 		}
 		
 		/// <summary>Call {@link #subSearcher} instead.</summary>

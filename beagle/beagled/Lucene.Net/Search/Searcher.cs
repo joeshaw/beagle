@@ -206,6 +206,7 @@ namespace Lucene.Net.Search
 		abstract public int MaxDoc();
 		abstract public TopDocs Search(Weight weight, Filter filter, int n);
 		abstract public Document Doc(int i);
+		abstract public Document Doc(int i, string[] fields);
 		abstract public Query Rewrite(Query query);
 		abstract public Explanation Explain(Weight weight, int doc);
 		abstract public TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);

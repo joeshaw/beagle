@@ -115,6 +115,16 @@ namespace Lucene.Net.Search
 			return hitDoc.doc;
 		}
 		
+		/// <summary>Returns the requested fields of the n<sup>th</sup> document in this set.
+		/// <p>Documents are not cached since they could be fetched using different set of fields.
+		/// </summary>
+		public Document Doc(int n, string[] fields)
+		{
+			HitDoc hitDoc = HitDoc(n);
+			
+			return searcher.Doc(hitDoc.id, fields);
+		}
+		
 		/// <summary>Returns the score for the nth document in this set. </summary>
 		public float Score(int n)
 		{

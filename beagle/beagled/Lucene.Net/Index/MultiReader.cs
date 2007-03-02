@@ -116,6 +116,12 @@ namespace Lucene.Net.Index
 			return subReaders[i].Document(n - starts[i]); // dispatch to segment reader
 		}
 		
+		public override Document Document(int n, string[] fields)
+		{
+			int i = ReaderIndex(n); // find segment num
+			return subReaders[i].Document(n - starts[i], fields); // dispatch to segment reader
+		}
+		
 		public override bool IsDeleted(int n)
 		{
 			int i = ReaderIndex(n); // find segment num

@@ -201,6 +201,11 @@ namespace Lucene.Net.Search
 			return reader.Document(i);
 		}
 		
+		public override Document Doc(int i, string[] fields)
+		{
+			return reader.Document(i, fields);
+		}
+		
 		// inherit javadoc
 		public override int MaxDoc()
 		{

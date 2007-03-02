@@ -100,6 +100,11 @@ namespace Lucene.Net.Search
 			return local.Doc(i);
 		}
 		
+		public virtual Document Doc(int i, string[] fields)
+		{
+			return local.Doc(i, fields);
+		}
+		
 		public virtual Query Rewrite(Query original)
 		{
 			return local.Rewrite(original);

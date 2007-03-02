@@ -327,6 +327,16 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		public override Document Document(int n, string[] fields)
+		{
+			lock (this)
+			{
+				if (IsDeleted(n))
+					throw new System.ArgumentException("attempt to access a deleted document");
+				return fieldsReader.Doc(n, fields);
+			}
+		}
+		
 		public override bool IsDeleted(int n)
 		{
 			lock (this)

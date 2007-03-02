@@ -160,6 +160,11 @@ namespace Lucene.Net.Index
 			return result;
 		}
 		
+		public override Document Document(int n, string[] fields)
+		{
+			throw new System.NotSupportedException ();
+		}
+		
 		// get all vectors
 		public override TermFreqVector[] GetTermFreqVectors(int n)
 		{
