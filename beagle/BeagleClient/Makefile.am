@@ -1,5 +1,5 @@
 
-CSC = $(MCS) -debug
+CSC = $(MCS) -debug $(BEAGLE_DEFINES)
 
 TARGET = Beagle.dll
 
