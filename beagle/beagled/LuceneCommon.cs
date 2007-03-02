@@ -634,6 +634,11 @@ namespace Beagle.Daemon {
 
 			Field f;
 
+			// During querying, we retrieve a lucene document with only certain fields
+			// like Uri and Timestamp and quickly check if the document is a good one
+			// The field specified document constructor runs faster if the fields that
+			// are asked for are located at the beginning of the document.
+			// Hence it is better to keep "Uri" and "Timestamp" at the beginning.
 			f = new Field ("Uri", UriFu.UriToEscapedString (indexable.Uri),
 				       Field.Store.YES, Field.Index.NO_NORMS);
 			primary_doc.Add (f);

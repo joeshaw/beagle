@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -598,6 +599,10 @@ namespace Beagle.Daemon {
 		// results.
 		//
 
+		// Two arrays we need for quickly creating lucene documents and check if they are valid
+		static string[] fields_timestamp_uri = { "Timestamp", "Uri" };
+		static string[] fields_uri = {"Uri"};
+
 		private static void GenerateQueryResults (IndexReader       primary_reader,
 							  LNS.IndexSearcher primary_searcher,
 							  LNS.IndexSearcher secondary_searcher,
@@ -610,7 +615,7 @@ namespace Beagle.Daemon {
 							  string            index_name)
 		{
 			TopScores top_docs = null;
-			ArrayList all_docs = null;
+			List<int> all_docs = null;
 
 			if (Debug)
 				Logger.Log.Debug (">>> {0}: Initially handed {1} matches", index_name, primary_matches.TrueCount);
@@ -618,7 +623,7 @@ namespace Beagle.Daemon {
 			if (primary_matches.TrueCount <= max_results) {
 				if (Debug)
 					Logger.Log.Debug (">>> {0}: Initial count is within our limit of {1}", index_name, max_results);
-				all_docs = new ArrayList ();
+				all_docs = new List<int> (primary_matches.TrueCount);
 			} else {
 				if (Debug)
 					Logger.Log.Debug (">>> {0}: Number of hits is capped at {1}", index_name, max_results);
@@ -654,14 +659,14 @@ namespace Beagle.Daemon {
 			// If not, we'll fall back to creating documents
 			// for all of them.
 
-			int[] ordered_matches = null;
+			bool short_circuit_ok = false;
 			if (primary_matches.TrueCount > max_results) {
 				a = new Stopwatch ();
 				a.Start ();
 
 				TermDocs docs = primary_reader.TermDocs ();
 				TermEnum enumerator = primary_reader.Terms (new Term ("InvertedTimestamp", ""));
-				ordered_matches = new int [max_results];
+				all_docs = new List<int> (max_results);
 				int docs_found = 0;
 				int docs_walked = 0;
 				int max_docs = (int) (primary_matches.TrueCount * 1.25);
@@ -675,19 +680,27 @@ namespace Beagle.Daemon {
 					docs.Seek (enumerator);
 
 					while (docs.Next ()
-					       && docs_found < ordered_matches.Length
+					       && docs_found < max_results
 					       && docs_walked < max_docs) {
 						int doc_id = docs.Doc ();
 
 						if (primary_matches.Get (doc_id)) {
-							ordered_matches [docs_found] = docs.Doc ();
-							docs_found++;
+							Document doc = primary_searcher.Doc (doc_id, fields_uri);
+							// If we have a UriFilter, apply it.
+							if (uri_filter != null) {
+								Uri uri;
+								uri = GetUriFromDocument (doc);
+								if (uri_filter (uri)) {
+									all_docs.Add (doc_id);
+									docs_found++;
+								}
+							}
 						}
 				
 						docs_walked++;
 					}
 				} while (enumerator.Next ()
-					 && docs_found < ordered_matches.Length
+					 && docs_found < max_results
 					 && docs_walked < max_docs);
 
 				docs.Close ();
@@ -695,12 +708,12 @@ namespace Beagle.Daemon {
 				// We've found all the docs we can return in a subset!
 				// Fantastic, we've probably short circuited a slow search.
 				if (docs_found == max_results) {
-					all_docs = new ArrayList ();
+					short_circuit_ok = true;
 					top_docs = null;
 				} else {
 					// Bad luck! Not all docs found
 					// Start afresh - this time traversing all results
-					ordered_matches = null;
+					all_docs = null;
 				}
 
 				a.Stop ();
@@ -712,62 +725,57 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			b.Start ();
-			
-			int count = 0;
-			IEnumerable enumerable;
+			if (! short_circuit_ok) {
 
-			if (ordered_matches != null) {
-				enumerable = IterateOrderedMatches (ordered_matches);
-		       } else
+				b.Start ();
+				
+				int count = 0;
+				IEnumerable enumerable;
 				enumerable = IterateMatches (primary_matches);
 
-			foreach (int i in enumerable) {
-				count++;
+				foreach (int i in enumerable) {
+					count++;
 
-				Document doc;
-				doc = primary_searcher.Doc (i);
+					Document doc;
+					doc = primary_searcher.Doc (i, fields_timestamp_uri);
 
-				// Check the timestamp --- if we have already reached our
-				// limit, we might be able to reject it immediately.
-				string timestamp_str;
-				long timestamp_num = 0;
+					// Check the timestamp --- if we have already reached our
+					// limit, we might be able to reject it immediately.
+					string timestamp_str;
+					long timestamp_num = 0;
 
-				timestamp_str = doc.Get ("Timestamp");
-				if (timestamp_str == null) {
-					Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
-				} else {
-					timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
-					if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
-						continue;
+					timestamp_str = doc.Get ("Timestamp");
+					if (timestamp_str == null) {
+						Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
+					} else {
+						timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
+						if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
+							continue;
+					}
+
+					// If we have a UriFilter, apply it.
+					if (uri_filter != null) {
+						Uri uri;
+						uri = GetUriFromDocument (doc);
+						if (! uri_filter (uri))
+							continue;
+					}
+
+					// Add the document to the appropriate data structure.
+					// We use the timestamp_num as the score, so high
+					// scores correspond to more-recent timestamps.
+					if (all_docs != null)
+						all_docs.Add (i);
+					else
+						top_docs.Add (timestamp_num, i);
 				}
 
-				// If we have a UriFilter, apply it.
-				if (uri_filter != null) {
-					Uri uri;
-					uri = GetUriFromDocument (doc);
-					if (! uri_filter (uri)) 
-						continue;
-				}
+				b.Stop ();
 
-				DocAndId doc_and_id = new DocAndId ();
-				doc_and_id.Doc = doc;
-				doc_and_id.Id = i;
+				if (Debug)
+					Log.Debug (">>> {0}: Instantiated and scanned {1} documents in {2}", index_name, count, b);
 
-				// Add the document to the appropriate data structure.
-				// We use the timestamp_num as the score, so high
-				// scores correspond to more-recent timestamps.
-				if (all_docs != null)
-					all_docs.Add (doc_and_id);
-				else
-					top_docs.Add (timestamp_num, doc_and_id);
 			}
-
-			b.Stop ();
-
-			if (Debug)
-				Log.Debug (">>> {0}: Instantiated {1} documents in {2}", index_name, count, b);
-
 
 			c.Start ();
 
@@ -788,10 +796,11 @@ namespace Beagle.Daemon {
 			// very straightforward.
 			if (secondary_searcher == null) {
 
-				foreach (DocAndId doc_and_id in final_list_of_docs) {
+				foreach (int id in final_list_of_docs) {
 					Hit hit;
-					hit = DocumentToHit (doc_and_id.Doc);
-					hits_by_id [doc_and_id.Id] = hit;
+					Document primary_doc = primary_searcher.Doc (id);
+					hit = DocumentToHit (primary_doc);
+					hits_by_id [id] = hit;
 					final_list_of_hits.Add (hit);
 				}
 
@@ -801,12 +810,13 @@ namespace Beagle.Daemon {
 					Logger.Log.Debug (">>> {0}: Performing cross-index Hit reunification", index_name);
 				
 				TermDocs term_docs = secondary_searcher.Reader.TermDocs ();
-				foreach (DocAndId doc_and_id in final_list_of_docs) {
-					Hit hit = DocumentToHit (doc_and_id.Doc);
+				foreach (int id in final_list_of_docs) {
+					Document primary_doc = primary_searcher.Doc (id);
+					Hit hit = DocumentToHit (primary_doc);
 
 					// Get the stringified version of the URI
 					// exactly as it comes out of the index.
-					Term term = new Term ("Uri", doc_and_id.Doc.Get ("Uri"));
+					Term term = new Term ("Uri", primary_doc.Get ("Uri"));
 					term_docs.Seek (term);
 
 					// Move to the first (and only) matching term doc
@@ -817,7 +827,7 @@ namespace Beagle.Daemon {
 
 					AddPropertiesToHit (hit, secondary_doc, false);
 
-					hits_by_id [doc_and_id.Id] = hit;
+					hits_by_id [id] = hit;
 					final_list_of_hits.Add (hit);
 				}
 
