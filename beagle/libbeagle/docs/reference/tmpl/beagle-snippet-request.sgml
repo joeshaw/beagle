@@ -9,11 +9,12 @@ BeagleSnippetRequest
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### SECTION Stability_Level ##### -->
 
 
 <!-- ##### STRUCT BeagleSnippetRequest ##### -->
@@ -37,23 +38,5 @@ BeagleSnippetRequest
 
 @request: 
 @hit: 
-
-
-<!-- ##### FUNCTION beagle_snippet_request_add_query_term ##### -->
-<para>
-
-</para>
-
-@request: 
-@text: 
-
-
-<!-- ##### FUNCTION beagle_snippet_request_set_query_terms_from_query ##### -->
-<para>
-
-</para>
-
-@request: 
-@query: 
 
 

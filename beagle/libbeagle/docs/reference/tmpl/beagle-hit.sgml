@@ -9,11 +9,12 @@ BeagleHit
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### SECTION Stability_Level ##### -->
 
 
 <!-- ##### STRUCT BeagleHit ##### -->
@@ -84,77 +85,12 @@ BeagleHit
 @Returns: 
 
 
-<!-- ##### FUNCTION beagle_hit_get_source_object_name ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_revision ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_id ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
 <!-- ##### FUNCTION beagle_hit_get_score ##### -->
 <para>
 
 </para>
 
 @hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_score_multiplier ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_score_raw ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_property ##### -->
-<para>
-
-</para>
-
-@hit: 
-@key: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_lookup_property ##### -->
-<para>
-
-</para>
-
-@hit: 
-@key: 
 @Returns: 
 
 

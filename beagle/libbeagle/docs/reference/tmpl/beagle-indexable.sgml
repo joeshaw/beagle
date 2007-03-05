@@ -9,11 +9,12 @@ beagle-indexable
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### SECTION Stability_Level ##### -->
 
 
 <!-- ##### STRUCT BeagleIndexable ##### -->
@@ -28,6 +29,7 @@ beagle-indexable
 </para>
 
 @BEAGLE_INDEXABLE_FILTERING_ALWAYS: 
+@BEAGLE_INDEXABLE_FILTERING_ALREADY_FILTERED: 
 @BEAGLE_INDEXABLE_FILTERING_AUTOMATIC: 
 @BEAGLE_INDEXABLE_FILTERING_NEVER: 
 

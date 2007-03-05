@@ -9,11 +9,12 @@ beagle-timestamp
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### SECTION Stability_Level ##### -->
 
 
 <!-- ##### FUNCTION beagle_timestamp_new_from_string ##### -->

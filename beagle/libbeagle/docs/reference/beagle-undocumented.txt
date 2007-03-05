@@ -1,10 +1,10 @@
-71% symbol docs coverage.
-70 symbols documented.
-29 not documented.
+47% symbol docs coverage.
+61 symbols documented.
+2 symbols incomplete.
+69 not documented.
 
 
 BEAGLE_QUERY_PART_TARGET_ALL
-BeagleCancelledResponse
 BeagleClient
 BeagleDaemonInformationResponse
 BeagleEmptyResponse
@@ -18,7 +18,6 @@ BeagleIndexableFiltering
 BeagleIndexingServiceRequest
 BeagleProperty
 BeagleQuery
-BeagleQuery::cancelled
 BeagleQuery::finished
 BeagleQuery::hits-added
 BeagleQuery::hits-subtracted
@@ -32,4 +31,49 @@ BeagleResponse
 BeagleShutdownRequest
 BeagleSnippetRequest
 BeagleSnippetResponse
+beagle_daemon_information_request_new
+beagle_indexable_set_type (type)
+beagle_property_new (type)
 
+
+beagle-cancelled-response:Long_Description
+beagle-cancelled-response:Short_Description
+beagle-client:Long_Description
+beagle-client:Short_Description
+beagle-daemon-information-request:Long_Description
+beagle-daemon-information-request:Short_Description
+beagle-daemon-information-response:Long_Description
+beagle-daemon-information-response:Short_Description
+beagle-empty-response:Long_Description
+beagle-empty-response:Short_Description
+beagle-error-response:Long_Description
+beagle-error-response:Short_Description
+beagle-finished-response:Long_Description
+beagle-finished-response:Short_Description
+beagle-hit:Long_Description
+beagle-hit:Short_Description
+beagle-hits-added-response:Long_Description
+beagle-hits-added-response:Short_Description
+beagle-hits-subtracted-response:Long_Description
+beagle-hits-subtracted-response:Short_Description
+beagle-indexable:Short_Description
+beagle-indexing-service-request:Long_Description
+beagle-indexing-service-request:Short_Description
+beagle-property:Long_Description
+beagle-property:Short_Description
+beagle-query-part:Long_Description
+beagle-query-part:Short_Description
+beagle-query:Long_Description
+beagle-query:Short_Description
+beagle-request:Long_Description
+beagle-request:Short_Description
+beagle-response:Long_Description
+beagle-response:Short_Description
+beagle-shutdown-request:Long_Description
+beagle-shutdown-request:Short_Description
+beagle-snippet-request:Long_Description
+beagle-snippet-request:Short_Description
+beagle-snippet-response:Long_Description
+beagle-snippet-response:Short_Description
+beagle-timestamp:Long_Description
+beagle-timestamp:Short_Description

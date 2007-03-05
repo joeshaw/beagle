@@ -9,11 +9,12 @@ BeagleQuery
 
 </para>
 
-
 <!-- ##### SECTION See_Also ##### -->
 <para>
 
 </para>
+
+<!-- ##### SECTION Stability_Level ##### -->
 
 
 <!-- ##### STRUCT BeagleQuery ##### -->
@@ -21,14 +22,6 @@ BeagleQuery
 
 </para>
 
-
-<!-- ##### SIGNAL BeagleQuery::cancelled ##### -->
-<para>
-
-</para>
-
-@beaglequery: the object which received the signal.
-@arg1: 
 
 <!-- ##### SIGNAL BeagleQuery::finished ##### -->
 <para>
