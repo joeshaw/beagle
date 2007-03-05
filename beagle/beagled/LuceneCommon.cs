@@ -1431,17 +1431,16 @@ namespace Beagle.Daemon {
 
 				QueryPart_DateRange part = (QueryPart_DateRange) abstract_part;
 
+				// FIXME: We don't handle prohibited queries with sub-date
+				// accuracy.  For example, if we say we prohibit matches
+				// between 5 May 2007 at 2 PM and 8 May at 5 AM, we'll
+				// miss any matches that happen between midnight and 2 PM
+				// on 5 May 2007 and between midnight and 5 AM on 8 May.
+
 				primary_query = GetDateRangeQuery (part, out hit_filter);
 				// Date properties can live in either index
 				if (! only_build_primary_query && primary_query != null)
 					secondary_query = primary_query.Clone () as LNS.Query;
-
-				// If this is a prohibited part, invert our hit filter.
-				if (part.Logic == QueryPartLogic.Prohibited) {
-					NotHitFilter nhf;
-					nhf = new NotHitFilter (hit_filter);
-					hit_filter = new HitFilter (nhf.HitFilter);
-				}
 				
 				return;
 			}
