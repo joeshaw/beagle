@@ -79,6 +79,9 @@ namespace Beagle.Filters {
 				case TagId.ImageDescription:
 					filter.AddProperty (Beagle.Property.New ("exif:ImageDescription", e.ValueAsString [0]));
 					break;
+				case TagId.Model:
+					filter.AddProperty (Beagle.Property.New ("exif:Model", e.ValueAsString [0]));
+					break;
 				case TagId.UserComment:
 					filter.AddProperty (Beagle.Property.New ("exif:UserComment", e.ValueAsString [0]));
 					break;

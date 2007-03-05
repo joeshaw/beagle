@@ -1,7 +1,7 @@
 //
 // FilterXSLT.cs
 //
-// Copyright (C) 2006 Alexander Macdonald <alex@alexmac.cc>
+// Copyright (C) 2006,2007 Alexander Macdonald <alex@alexmac.cc>
 //
 
 //
@@ -37,7 +37,6 @@ namespace Beagle.Filters
 {
 	public class FilterXslt : Filter 
 	{
-		XmlTextReader reader;
 		Regex xpath_variables_regex = new Regex ("\\$(?<name>[\\wS][\\wS\\d-:]*)");
 		Regex xpath_functions_regex = new Regex ("(?<name>[\\wS][\\wS\\d-:]*)\\(");
 
@@ -53,15 +52,16 @@ namespace Beagle.Filters
 
 		override protected void DoPull()
 		{
-			reader = new XmlTextReader (Stream);
-			reader.XmlResolver = null;
+			XmlReaderSettings reader_settings = new XmlReaderSettings ();
+			reader_settings.ProhibitDtd = false;
+			XmlReader reader = XmlReader.Create (Stream, reader_settings);
 
 			try {
 				while (reader.Read ()) {
 					switch (reader.NodeType) {
 
 					case XmlNodeType.Element:
-						HandleElement ();
+						HandleElement (reader);
 						break;
 
 					case XmlNodeType.Text:
@@ -81,7 +81,8 @@ namespace Beagle.Filters
 					}
 				}
 			} catch (System.Xml.XmlException e) {
-				Logger.Log.Warn ("FilterXslt: error parsing xml file: {0}", e);
+				Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
+				Logger.Log.Debug (e);
 				Error ();
 				return;
 			}
@@ -89,7 +90,7 @@ namespace Beagle.Filters
 			Finished ();
 		}
 
-		protected void HandleElement()
+		protected void HandleElement(XmlReader reader)
 		{
 			for (int i = 0; i < reader.AttributeCount; i++) {
 				reader.MoveToAttribute (i);
