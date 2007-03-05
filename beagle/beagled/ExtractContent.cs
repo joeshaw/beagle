@@ -221,6 +221,8 @@ class ExtractContentTool {
 
 	static int Main (string[] args)
 	{
+		SystemInformation.SetProcessName ("beagle-extract-content");
+
 		if (Array.IndexOf (args, "--debug") == -1)
 			Log.Disable ();
 
