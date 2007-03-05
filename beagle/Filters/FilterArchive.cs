@@ -212,7 +212,13 @@ namespace Beagle.Filters {
 			int stuck_count = 0;
 
 			do {
-				read = stream.Read (buffer, 0, buffer.Length);
+				try {
+					read = stream.Read (buffer, 0, buffer.Length);
+				} catch (Exception e) {
+					Log.Error (e, "Caught exception extracting data from archive {0}", this.file_info);
+					skip_file = true;
+					break;
+				}
 
 				total_bytes_read += read;
 
