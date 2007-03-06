@@ -165,11 +165,12 @@ class DumpIndexTool {
 			props = new ArrayList (hit.Properties);
 			props.Sort ();
 			foreach (Property prop in props) {
-				char [] legend = new char [3];
+				char [] legend = new char [4];
 
 				legend [0] = prop.IsMutable  ? 'm' : ' ';
 				legend [1] = prop.IsSearched ? 's' : ' ';
-				legend [2] = prop.Type == PropertyType.Text ? 't' : ' ';
+				legend [2] = prop.IsPersistent ? 'p' : ' ';
+				legend [3] = prop.Type == PropertyType.Text ? 't' : ' ';
 
 				Console.WriteLine ("  Prop: [{0}] {1} = '{2}'", new String (legend), prop.Key, prop.Value);
 			}
@@ -250,6 +251,7 @@ class DumpIndexTool {
 			Console.WriteLine ("LEGEND:");
 			Console.WriteLine ("  m - mutable");
 			Console.WriteLine ("  s - searched");
+			Console.WriteLine ("  p - persistent");
 			Console.WriteLine ("  t - tokenized");
 		}
 

@@ -385,6 +385,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)			\
 	$(srcdir)/AssemblyInfo.cs				\
+	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
 	$(srcdir)/FileAttributesStore_ExtendedAttribute.cs	\
@@ -406,6 +407,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneQueryingDriver.cs			\
 	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
+	$(srcdir)/NautilusMetadataQueryable.cs			\
 	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/PropertyKeywordFu.cs				\
 	$(srcdir)/QueryDriver.cs				\

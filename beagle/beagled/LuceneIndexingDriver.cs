@@ -1,7 +1,7 @@
 //
 // LuceneIndexingDriver.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -133,41 +133,72 @@ namespace Beagle.Daemon {
 
 			// Step #1: Make our first pass over the list of
 			// indexables that make up our request.  For each add
-			// or remove in the request, delete the associated
-			// items from the index.  Assemble a query that will
-			// be used to find the secondary documents for any
-			// property change requests.
+			// or property change in the request, get the Lucene
+			// documents so we can move forward any persistent
+			// properties (for adds) or all old properties (for
+			// property changes).
+			//
+			// Then, for each add or remove in the request,
+			// delete the associated documents from the index.
+			// Note that we previously cached added documents so
+			// that we can move persistent properties forward.
 
-			LNS.BooleanQuery prop_change_query = null;
-			LNS.BooleanQuery prop_change_children_query = null;
+			Hashtable prop_change_docs = UriFu.NewHashtable ();
+			Hashtable prop_change_children_docs = UriFu.NewHashtable ();
+			TermDocs term_docs = secondary_reader.TermDocs ();
 			int delete_count = 0;
 
 			ICollection request_indexables = request.Indexables;
 
 			foreach (Indexable indexable in request_indexables) {
 
-				switch (indexable.Type) {
+				string uri_str = UriFu.UriToEscapedString (indexable.Uri);
 
-				case IndexableType.Add:
-				case IndexableType.Remove:
+				if (indexable.Type == IndexableType.Add ||
+				    indexable.Type == IndexableType.PropertyChange) {
 
-					string uri_str;
-					uri_str = UriFu.UriToEscapedString (indexable.Uri);
+					Term term = new Term ("Uri", uri_str);
+					term_docs.Seek (term);
+
+					if (term_docs.Next ())
+						prop_change_docs [indexable.Uri] = secondary_reader.Document (term_docs.Doc ());
+
+					// We'll remove it for adds in the next block.
+					if (indexable.Type == IndexableType.PropertyChange)
+						secondary_reader.Delete (term);
+
+					term = new Term ("ParentUri", uri_str);
+					term_docs.Seek (term);
+
+					while (term_docs.Next ()) {
+						if (prop_change_children_docs [indexable.Uri] == null)
+							prop_change_children_docs [indexable.Uri] = new ArrayList ();
+
+						Document doc = secondary_reader.Document (term_docs.Doc ());
+						string parent_uri_str = doc.Get ("ParentUri");
+						Uri parent_uri = UriFu.EscapedStringToUri (parent_uri_str);
+
+						ArrayList child_list = (ArrayList) prop_change_children_docs [parent_uri_str];
+
+						child_list.Add (indexable.Uri);
+					}
+				}
+
+				if (indexable.Type == IndexableType.Add ||
+				    indexable.Type == IndexableType.Remove) {
 
 					Logger.Log.Debug ("-{0}", indexable.DisplayUri);
 					
 					Term term;
 					term = new Term ("Uri", uri_str);
 					delete_count += primary_reader.Delete (term);
-					if (secondary_reader != null)
-						secondary_reader.Delete (term);
+					secondary_reader.Delete (term);
 
 					// When we delete an indexable, also delete any children.
 					// FIXME: Shouldn't we also delete any children of children, etc.?
 					term = new Term ("ParentUri", uri_str);
 					delete_count += primary_reader.Delete (term);
-					if (secondary_reader != null)
-						secondary_reader.Delete (term);
+					secondary_reader.Delete (term);
 
 					// If this is a strict removal (and not a deletion that
 					// we are doing in anticipation of adding something back),
@@ -177,106 +208,26 @@ namespace Beagle.Daemon {
 						r = new IndexerRemovedReceipt (indexable.Uri);
 						receipt_queue.Add (r);
 					}
-
-					break;
-
-				case IndexableType.PropertyChange:
-					if (prop_change_query == null) {
-						prop_change_query = new LNS.BooleanQuery ();
-						prop_change_children_query = new LNS.BooleanQuery ();
-					}
-
-					prop_change_query.Add (UriQuery ("Uri", indexable.Uri), false, false);
-					prop_change_children_query.Add (UriQuery ("ParentUri", indexable.Uri), false, false);
-					break;
 				}
 			}
+
+			term_docs.Close ();
 
 			if (HaveItemCount)
 				AdjustItemCount (-delete_count);
 			else
 				SetItemCount (primary_reader);
 			
-			// Step #2: If we have are doing any property changes,
-			// we read in the current secondary documents and
-			// store them in a hash table for use later.  Then we
-			// delete the current secondary documents.
-			Hashtable prop_change_docs = null;
-			Hashtable prop_change_children_docs = null;
-			if (prop_change_query != null) {
-				prop_change_docs = UriFu.NewHashtable ();
-
-				LNS.IndexSearcher secondary_searcher;
-				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
-
-				LNS.Hits hits;
-				hits = secondary_searcher.Search (prop_change_query);
-
-				ArrayList delete_terms;
-				delete_terms = new ArrayList ();
-
-				int N = hits.Length ();
-				Document doc;
-				for (int i = 0; i < N; ++i) {
-					doc = hits.Doc (i);
-					
-					string uri_str;
-					uri_str = doc.Get ("Uri");
-
-					Uri uri;
-					uri = UriFu.EscapedStringToUri (uri_str);
-					prop_change_docs [uri] = doc;
-						
-					Term term;
-					term = new Term ("Uri", uri_str);
-					delete_terms.Add (term);
-				}
-
-				secondary_searcher.Close ();
-
-				foreach (Term term in delete_terms)
-					secondary_reader.Delete (term);
-
-				// Step #2.5: Find all child indexables for this document
-				// Store them to send them later as IndexerChildIndexablesReceipts
-				prop_change_children_docs = UriFu.NewHashtable ();
-
-				hits = secondary_searcher.Search (prop_change_children_query);
-				N = hits.Length ();
-
-				for (int i = 0; i < N; ++i) {
-					doc = hits.Doc (i);
-					
-					string uri_str, parent_uri_str;
-					uri_str = doc.Get ("Uri");
-					parent_uri_str = doc.Get ("ParentUri");
-
-					Uri uri, parent_uri;
-					uri = UriFu.EscapedStringToUri (uri_str);
-					parent_uri = UriFu.EscapedStringToUri (parent_uri_str);
-
-					if (! prop_change_children_docs.Contains (parent_uri)) {
-						ArrayList c_list = new ArrayList ();
-						prop_change_children_docs [parent_uri] = c_list;
-					}
-
-					ArrayList children_list = (ArrayList) prop_change_children_docs [parent_uri];
-					children_list.Add (uri);
-				}
-
-				secondary_searcher.Close ();
-
-			}
-
 			// We are now done with the readers, so we close them.
 			primary_reader.Close ();
 			secondary_reader.Close ();
 
 			// FIXME: If we crash at exactly this point, we are in
 			// trouble.  Items will have been dropped from the index
-			// without the proper replacements being added.
+			// without the proper replacements being added.  We can
+			// hopefully fix this when we move to Lucene 2.1.
 
-			// Step #3: Make another pass across our list of indexables
+			// Step #2: Make another pass across our list of indexables
 			// and write out any new documents.
 
 			if (text_cache != null)
@@ -395,7 +346,10 @@ namespace Beagle.Daemon {
 
 				if (FileFilterNotifier != null)
 					FileFilterNotifier (null, null); // reset
-				
+
+				Document prop_change_doc = (Document) prop_change_docs [indexable.Uri];
+				secondary_doc = MergeDocuments (secondary_doc, prop_change_doc);
+
 				if (secondary_doc != null) {
 					if (secondary_writer == null)
 						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
@@ -413,12 +367,12 @@ namespace Beagle.Daemon {
 					text_cache.Delete (indexable.Uri);
 			}
 
+			if (text_cache != null)
+				text_cache.CommitTransaction ();
+
 			if (Shutdown.ShutdownRequested) {
 				foreach (Indexable indexable in request_indexables)
 					indexable.Cleanup ();
-
-				if (text_cache != null)
-					text_cache.CommitTransaction ();
 
 				primary_writer.Close ();
 				if (secondary_writer != null)
@@ -426,9 +380,6 @@ namespace Beagle.Daemon {
 			
 				return null;
 			}
-
-			if (text_cache != null)
-				text_cache.CommitTransaction ();
 
 			if (request.OptimizeIndex) {
 				Stopwatch watch = new Stopwatch ();

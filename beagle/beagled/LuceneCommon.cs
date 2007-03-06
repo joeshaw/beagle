@@ -1,7 +1,7 @@
 //
 // LuceneCommon.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -78,7 +78,10 @@ namespace Beagle.Daemon {
 		//     lower case so that we're truly case insensitive.
 		// 16: add inverted timestamp to make querying substantially faster
 		// 17: add boolean property to denote a child indexable
-		private const int MAJOR_VERSION = 17;
+		// 18: add IsPersistent to properties, and adjust coded values
+		//     in AddPropertyToDocument() and GetPropertyFromDocument();
+		//     changed subdate field format rules for better readability
+		private const int MAJOR_VERSION = 18;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -511,13 +514,13 @@ namespace Beagle.Daemon {
 			DateTime dt = StringFu.StringToDateTime (prop.Value);
 
 			Field f;
-			f = new Field ("YM:" + field_name,
+			f = new Field (field_name + "(YM)",
 				       StringFu.DateTimeToYearMonthString (dt),
 				       Field.Store.NO,
 				       Field.Index.NO_NORMS);
 			doc.Add (f);
 
-			f = new Field ("D:" + field_name,
+			f = new Field (field_name + "(D)",
 				       StringFu.DateTimeToDayString (dt),
 				       Field.Store.NO,
 				       Field.Index.NO_NORMS);
@@ -556,8 +559,9 @@ namespace Beagle.Daemon {
 			}
 
 			string coded_value;
-			coded_value = String.Format ("{0}:{1}",
+			coded_value = String.Format ("{0}{1}:{2}",
 						     prop.IsSearched ? 's' : '_',
+						     prop.IsPersistent ? 'p' : '_',
 						     prop.Value);
 
 			string field_name = PropertyToFieldName (prop.Type, prop.Key);
@@ -605,14 +609,15 @@ namespace Beagle.Daemon {
 			if (DumpIndexMode) {
 				prop.Type = CodeToType ( internal_prop ? 'k' : field_name [5]);
 				prop.Key = (internal_prop ? field_name : field_name.Substring (7));
-				prop.Value = (internal_prop ? field_value : field_value.Substring (2));
+				prop.Value = (internal_prop ? field_value : field_value.Substring (3));
 			} else {
 				prop.Type = CodeToType (field_name [5]);
 				prop.Key = field_name.Substring (7);
-				prop.Value = field_value.Substring (2);
+				prop.Value = field_value.Substring (3);
 			}
 
 			prop.IsSearched = (field_value [0] == 's');
+			prop.IsPersistent = (field_value [1] == 'p');
 			prop.IsMutable = ! from_primary_index;
 			prop.IsStored = true; // Unstored fields cannot be retrieved
 
@@ -671,16 +676,16 @@ namespace Beagle.Daemon {
 				primary_doc.Add (f);
 
 				str = StringFu.DateTimeToYearMonthString (indexable.Timestamp);
-				f = new Field ("YM:Timestamp", str, Field.Store.YES, Field.Index.NO_NORMS);
+				f = new Field ("Timestamp(YM)", str, Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
-				f = new Field ("YM:" + wildcard_field, str,
+				f = new Field (wildcard_field + "(YM)", str,
 					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
 				str = StringFu.DateTimeToDayString (indexable.Timestamp);
-				f = new Field ("D:Timestamp", str, Field.Store.YES, Field.Index.NO_NORMS);
+				f = new Field ("Timestamp(D)", str, Field.Store.YES, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
-				f = new Field ("D:" + wildcard_field, str,
+				f = new Field (wildcard_field + "(D)", str,
 					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 			}
@@ -819,6 +824,27 @@ namespace Beagle.Daemon {
 			}
 
 			return new_doc;
+		}
+
+		static protected Document MergeDocuments (Document doc,
+							  Document prop_change_doc)
+		{
+			if (doc == null)
+				return prop_change_doc;
+
+			if (prop_change_doc == null)
+				return doc;
+
+			foreach (Field f in prop_change_doc.Fields ()) {
+				Property prop = GetPropertyFromDocument (f, prop_change_doc, false);
+
+				if (prop != null && prop.IsPersistent) {
+					Log.Debug ("Moving old persistent prop '{0}' = '{1}' forward", prop.Key, prop.Value);
+					AddPropertyToDocument (prop, doc);
+				}
+			}
+
+			return doc;
 		}
 
 		static protected Uri GetUriFromDocument (Document doc)
@@ -1062,7 +1088,7 @@ namespace Beagle.Daemon {
 
 		static private Term NewYearMonthTerm (string field_name, int y, int m)
 		{
-			return new Term ("YM:" + field_name, String.Format ("{0}{1:00}", y, m));
+			return new Term (field_name + "(YM)", String.Format ("{0}{1:00}", y, m));
 		}
 
 		static private LNS.Query NewYearMonthQuery (string field_name, int y, int m)
@@ -1079,7 +1105,7 @@ namespace Beagle.Daemon {
 
 		static private Term NewDayTerm (string field_name, int d)
 		{
-			return new Term ("D:" + field_name, String.Format ("{0:00}", d));
+			return new Term (field_name + "(D)", String.Format ("{0:00}", d));
 		}
 
 		static private LNS.Query NewDayQuery (string field_name, int d1, int d2)

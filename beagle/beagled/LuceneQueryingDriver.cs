@@ -1,7 +1,7 @@
 //
 // LuceneQueryingDriver.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -79,35 +79,31 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
-
-		////////////////////////////////////////////////////////////////
-
 		public Uri[] PropertyQuery (Property prop)
 		{
 			// FIXME: Should we support scanning the secondary
 			// index as well?
 
 			IndexReader primary_reader;
-			LNS.IndexSearcher primary_searcher;
-
 			primary_reader = LuceneCommon.GetReader (PrimaryStore);
-			primary_searcher = new LNS.IndexSearcher (primary_reader);
 
-			Term term = new Term (PropertyToFieldName (prop.Type, prop.Key), prop.Value);
-			LNS.TermQuery query = new LNS.TermQuery (term);
-			LNS.Hits hits = primary_searcher.Search (query);
+			Term term;
+			term = new Term (PropertyToFieldName (prop.Type, prop.Key), prop.Value);
 
-			Uri[] uri_list = new Uri [hits.Length ()];
-			for (int i = 0; i < hits.Length (); i++) {
-				Document doc;
-				doc = hits.Doc (i);
-				uri_list [i] = GetUriFromDocument (doc);
+			TermDocs term_docs;
+			term_docs = primary_reader.TermDocs ();
+			term_docs.Seek (term);
+
+			ArrayList uri_list = new ArrayList ();
+			while (term_docs.Next ()) {
+				Document doc = primary_reader.Document (term_docs.Doc ());
+				uri_list.Add (GetUriFromDocument (doc));
 			}
 
-			primary_searcher.Close ();
-			ReleaseReader (primary_reader);
+			term_docs.Close ();
+			LuceneCommon.ReleaseReader (primary_reader);
 
-			return uri_list;
+			return (Uri[]) uri_list.ToArray (typeof (Uri));
 		}
 
 		////////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 //
 // AssemblyInfo.cs
 //
-// Copyright (C) 2006 Novell, Inc.
+// Copyright (C) 2006-2007 Novell, Inc.
 //
 
 //
@@ -69,5 +69,6 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
 	typeof (Beagle.Daemon.KonversationQueryable.KonversationQueryable),
 	typeof (Beagle.Daemon.StaticQueryable),
-	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable)
+	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable),
+	typeof (Beagle.Daemon.NautilusMetadataQueryable.NautilusMetadataQueryable)
 )]

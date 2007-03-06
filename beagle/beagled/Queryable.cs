@@ -1,7 +1,7 @@
 //
 // Queryable.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -57,6 +57,14 @@ namespace Beagle.Daemon {
 
 		public QueryDomain Domain {
 			get { return flavor.Domain; }
+		}
+
+		public string DependsOn {
+			get { return flavor.DependsOn; }
+		}
+
+		public IQueryable IQueryable {
+			get { return iqueryable; }
 		}
 
 		public bool AcceptQuery (Query query)

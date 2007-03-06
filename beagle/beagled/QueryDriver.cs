@@ -1,7 +1,7 @@
 //
 // QueryDriver.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -316,6 +316,8 @@ namespace Beagle.Daemon {
 			assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 		}
 
+		////////////////////////////////////////////////////////
+
 		private static bool queryables_started = false;
 
 		static public void Start ()
@@ -351,15 +353,54 @@ namespace Beagle.Daemon {
 		{
 			Logger.Log.Debug ("Starting queryables");
 
-			foreach (Queryable q in queryables) {
-				Logger.Log.Info ("Starting backend: '{0}'", q.Name);
-				q.Start ();
+			ArrayList started_queryables = new ArrayList ();
+			ArrayList delayed_queryables = new ArrayList ();
+
+			ICollection queryables_to_start = queryables;
+			int last_count;
+
+			do {
+				foreach (Queryable q in queryables_to_start) {
+					bool ready_to_start = true;
+
+					if (q.DependsOn != null && started_queryables.IndexOf (q.DependsOn) == -1) {
+						Log.Info ("Delaying backend '{0}' until after backend '{1}'",
+							  q.Name, q.DependsOn);
+						ready_to_start = false;
+						delayed_queryables.Add (q);
+					}
+
+					if (! ready_to_start)
+						continue;
+
+					Logger.Log.Info ("Starting backend: '{0}'", q.Name);
+					q.Start ();
+
+					started_queryables.Add (q.Name);
+				}
+
+				last_count = queryables_to_start.Count;
+
+				queryables_to_start = delayed_queryables;
+				delayed_queryables = new ArrayList ();
+			} while (queryables_to_start.Count > 0 && queryables_to_start.Count != last_count);
+
+			if (queryables_to_start.Count > 0) {
+				Log.Info ("Unable to start backends due to missing or circular dependencies:");
+
+				foreach (Queryable q in queryables_to_start) {
+					Log.Info ("  - {0}", q.Name);
+					queryables.Remove (q);
+					iqueryable_to_queryable.Remove (q.IQueryable);
+				}
 			}
 
 			queryables_started = true;
 
 			return false;
 		}
+
+		////////////////////////////////////////////////////////
 
 		static public string ListBackends ()
 		{

@@ -1,7 +1,7 @@
 //
 // Property.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -111,6 +111,7 @@ namespace Beagle {
 		bool         is_searched;
 		bool         is_mutable;
 		bool	     is_stored;
+		bool         is_persistent;
 
 		// Commonly used property keys
 		public const string PrivateNamespace = "_private:";
@@ -160,11 +161,20 @@ namespace Beagle {
 			set { is_mutable = value; }
 		}
 
-		// When IsStored is false, the property will be stored as an "unstored lucene field".
+		// When IsStored is false, the property will be stored as an
+		// "unstored lucene field".
 		[XmlAttribute]
 		public bool IsStored {
 			get { return is_stored; }
 			set { is_stored = value; }
+		}
+
+		// When true, this property is persisted across documents being
+		// readded, for instance if a file is touched on disk.
+		[XmlAttribute]
+		public bool IsPersistent {
+			get { return is_persistent; }
+			set { is_persistent = value; }
 		}
 
 		/////////////////////////////////////

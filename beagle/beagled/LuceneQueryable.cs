@@ -1,7 +1,7 @@
 //
 // LuceneQueryable.cs
 //
-// Copyright (C) 2004-2005 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -125,7 +125,7 @@ namespace Beagle.Daemon {
 			get { return driver.TopDirectory; }
 		}
 
-		protected string IndexFingerprint {
+		public string IndexFingerprint {
 			get { return driver.Fingerprint; }
 		}
 

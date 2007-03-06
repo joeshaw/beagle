@@ -1,7 +1,7 @@
 //
 // LuceneNameResolver.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2005-2007 Novell, Inc.
 //
 
 //
@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 using Lucene.Net.Documents;
@@ -107,46 +108,35 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		////////////////////////////////////////////////////////////////
 
-		// Pull a single record out of the index
-
-		private class SingletonCollector : LNS.HitCollector {
-			
-			public int MatchId = -1;
-
-			public override void Collect (int id, float score)
-			{
-				if (MatchId != -1)
-					Logger.Log.Error ("Duplicate name found: replacing MatchId {0} with {1}",
-							  MatchId, id);
-
-				MatchId = id;
-			}
-		}
-
 		public NameInfo GetNameInfoById (Guid id)
 		{
 			Uri uri;
 			uri = GuidFu.ToUri (id);
-			
-			LNS.Query query;
-			query = UriQuery ("Uri", uri);
-			
-			SingletonCollector collector;
-			collector = new SingletonCollector ();
 
-			LNS.IndexSearcher searcher;
-			searcher = LuceneCommon.GetSearcher (SecondaryStore);
-			searcher.Search (query, null, collector);
+			IndexReader reader;
+			reader = LuceneCommon.GetReader (SecondaryStore);
+
+			TermDocs term_docs;
+			term_docs = reader.TermDocs ();
+
+			Term term = new Term ("Uri", UriFu.UriToEscapedString (uri));
+			term_docs.Seek (term);
+
+			int match_id = -1;
+			if (term_docs.Next ())
+				match_id = term_docs.Doc ();
+
+			term_docs.Close ();
 
 			NameInfo info = null;
 
-			if (collector.MatchId != -1) {
+			if (match_id != -1) {
 				Document doc;
-				doc = searcher.Doc (collector.MatchId);
+				doc = reader.Document (match_id);
 				info = DocumentToNameInfo (doc);
 			}
 
-			LuceneCommon.ReleaseSearcher (searcher);
+			LuceneCommon.ReleaseReader (reader);
 			
 			return info;
 		}
@@ -158,39 +148,54 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string parent_uri_str;
 			parent_uri_str = GuidFu.ToUriString (parent_id);
 
-			string key1;
-			key1 = PropertyToFieldName (PropertyType.Keyword, Property.ParentDirUriPropKey);
+			string key1, key2;
 
-			string key2;
+			key1 = PropertyToFieldName (PropertyType.Keyword, Property.ParentDirUriPropKey);
 			key2 = PropertyToFieldName (PropertyType.Keyword, Property.ExactFilenamePropKey);
 
-			LNS.Query q1;
-			q1 = new LNS.TermQuery (new Term (key1, parent_uri_str));
+			Term term1, term2;
+
+			term1 = new Term (key1, parent_uri_str);
+			term2 = new Term (key2, name.ToLower ());
+
+			// Lets walk the exact file name terms first (term2)
+			// since there are probably fewer than parent directory
+			// Uri terms.
+			List <int> term2_doc_ids = new List <int> ();
+
+			IndexReader reader = LuceneCommon.GetReader (SecondaryStore);
+			TermDocs term_docs = reader.TermDocs ();
+
+			term_docs.Seek (term2);
+			while (term_docs.Next ())
+				term2_doc_ids.Add (term_docs.Doc ());
+
+			Log.Debug ("Found {0} docs for term {1}", term2_doc_ids.Count, name.ToLower ());
+
+			term_docs.Seek (term1);
 			
-			LNS.Query q2;
-			q2 = new LNS.TermQuery (new Term (key2, name.ToLower ()));
+			int match_id = -1;
 
-			LNS.BooleanQuery query;
-			query = new LNS.BooleanQuery ();
-			query.Add (q1, true, false);
-			query.Add (q2, true, false);
+			while (term_docs.Next ()) {
+				int doc_id = term_docs.Doc ();
 
-			SingletonCollector collector;
-			collector = new SingletonCollector ();
+				if (term2_doc_ids.BinarySearch (doc_id) >= 0) {
+					match_id = doc_id;
+					break;
+				}
+			}
 
-			LNS.IndexSearcher searcher;
-			searcher = LuceneCommon.GetSearcher (SecondaryStore);
-			searcher.Search (query, null, collector);
+			term_docs.Close ();
 
 			Guid id;
-			if (collector.MatchId != -1) {
+			if (match_id != -1) {
 				Document doc;
-				doc = searcher.Doc (collector.MatchId);
+				doc = reader.Document (match_id);
 				id = GuidFu.FromUriString (doc.Get ("Uri"));
 			} else 
 				id = Guid.Empty;
 
-			LuceneCommon.ReleaseSearcher (searcher);
+			LuceneCommon.ReleaseReader (reader);
 
 			return id;
 		}

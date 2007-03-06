@@ -1,7 +1,7 @@
 //
 // FileSystemQueryable.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -1228,18 +1228,23 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (indexable.ParentUri != null)
 				return;
 
-			// If we just changed properties, remap to our *old* external Uri
-			// to make notification work out property.
 			if (indexable.Type == IndexableType.PropertyChange) {
+				// If we were moved, remap to our *old* external Uri
+				// to make notification work out properly.  Otherwise,
+				// this is an in-place property change and we don't
+				// need to do anything.
 
 				string last_known_path;
 				last_known_path = (string) indexable.LocalState ["LastKnownPath"];
-				receipt.Uri = UriFu.PathToFileUri (last_known_path);
-				Logger.Log.Debug ("Last known path is {0}", last_known_path);
 
-				// This rename is now in the index, so we no longer need to keep
-				// track of the uid in memory.
-				ForgetId (last_known_path);
+				if (last_known_path != null) {
+					receipt.Uri = UriFu.PathToFileUri (last_known_path);
+					Logger.Log.Debug ("Last known path is {0}", last_known_path);
+
+					// This rename is now in the index, so we no
+					// longer need to keep track of the uid in memory.
+					ForgetId (last_known_path);
+				}
 
 				return;
 			}
@@ -1563,6 +1568,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Logger.Log.Debug ("Queue overflows suck");
 		}
 
+		//////////////////////////
+
+		public Uri ExternalToInternalUri (Uri external_uri)
+		{
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (external_uri.LocalPath);
+
+			if (attr == null)
+				return null;
+
+			Uri internal_uri = GuidFu.ToUri (attr.UniqueId);
+
+			return internal_uri;
+		}
 	}
 }
 	

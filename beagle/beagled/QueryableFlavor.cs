@@ -1,7 +1,7 @@
 //
 // QueryableFlavor.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -35,5 +35,6 @@ namespace Beagle.Daemon {
 		public QueryDomain Domain;
 		public bool        RequireInotify = true;
 		public bool        RequireExtendedAttributes = false;
+		public string      DependsOn;
 	}
 }

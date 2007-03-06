@@ -1,8 +1,7 @@
 //
 // NautilusTools.cs
 //
-// Copyright (C) 2004 Joe Gasiorek
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2007 Novell, Inc.
 //
 
 //
@@ -27,100 +26,120 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Xml;
 using System.Collections;
-using System.Collections.Specialized;
-using System.Text.RegularExpressions;
-using System.Runtime.InteropServices;
 
 namespace Beagle.Util {
 
-	public class NautilusTools {
+	public static class NautilusTools {
 
-		private class XmlDocCacheItem {
-			public XmlDocument doc;
-			public DateTime timestamp;
+		public class NautilusMetadata {
+			public Uri Uri;
+			public string Notes;
+			public ArrayList Emblems;
 		}
 
-		static private Hashtable cache = new Hashtable ();
-
-		private NautilusTools () { } // This class is static
-
-		static private string GetMetaFileName (string path)
+		static public IEnumerable GetMetadata (string metafile)
 		{
-			string nautilusDir = Environment.GetEnvironmentVariable ("HOME") +
-				"/.nautilus/metafiles/file:%2F%2F";
-
-			if (path.StartsWith ("file://"))
-				path = path.Substring ("file://".Length);
-			path = Path.GetDirectoryName (Path.GetFullPath (path));
-			path = path.Replace ("/", "%2F");
-
-			string name = nautilusDir + path + ".xml";
-
-			// If the filename is too long, ignore it.
-			if (Path.GetFileName (name).Length > 255)
-				return null;
-
-			return File.Exists (name) ? name : null;
+			return GetMetadata (metafile, DateTime.MinValue);
 		}
 
-		static public DateTime GetMetaFileTime (string path)
+		static public IEnumerable GetMetadata (string metafile, DateTime newer_than)
 		{
-			path = GetMetaFileName (path);
-			return path != null ? File.GetLastWriteTime (path) : new DateTime ();
-		}
+			string dir_name = GetDirectory (metafile);
 
-		static private XmlNode GetMetaFileNode (string path)
-		{
-			string metaFile = GetMetaFileName (path);
-			if (metaFile == null)
-				return null;
+			if (dir_name == null)
+				yield break;
 
-			DateTime lastWrite = File.GetLastWriteTime (metaFile);
+			XmlDocument doc = new XmlDocument ();
+			StreamReader reader = new StreamReader (metafile);
+			doc.Load (reader);
 
-			string name = Path.GetFileName (path);
+			foreach (XmlNode node in doc.SelectNodes ("/directory/file[@name]")) {
+				XmlNode timestamp_node = node.Attributes.GetNamedItem ("timestamp");
+				long time_t;
+				DateTime timestamp;
 
-			XmlDocCacheItem cached = (XmlDocCacheItem) cache [metaFile];
-			XmlDocument doc;
-			if (cached == null || lastWrite > cached.timestamp) {
-				doc = new XmlDocument ();
-				doc.Load (new StreamReader (metaFile));
+				// Intentionally give non-timestamped entries a
+				// timestamp of the Unix epoch rather than
+				// DateTime.MinValue, so that they are
+				// processed when newer_than is.
+				if (timestamp_node == null)
+					time_t = 0;
+				else
+					time_t = Int64.Parse ((string) timestamp_node.Value);
 
-				cached = new XmlDocCacheItem ();
-				cached.doc = doc;
-				cached.timestamp = lastWrite;
-				cache [metaFile] = cached;
+				timestamp = DateTimeUtil.UnixToDateTimeUtc (time_t);
+ 
+				if (timestamp <= newer_than)
+					continue;
+				
+				NautilusMetadata nm = new NautilusMetadata ();
 
-			} else {
-				doc = cached.doc;
+				string filename = Path.Combine (dir_name, (string) node.Attributes.GetNamedItem ("name").Value);
+
+				// The filename is already escaped for us.
+				nm.Uri = new Uri (filename, true);
+
+				XmlNode notes_node = node.Attributes.GetNamedItem ("annotation");
+
+				if (notes_node != null)
+					nm.Notes = (string) notes_node.Value;
+
+				nm.Emblems = new ArrayList ();
+
+				foreach (XmlNode emblem_node in node.SelectNodes ("keyword"))
+					nm.Emblems.Add (emblem_node.Attributes.GetNamedItem ("name").Value);
+
+				// If we have neither notes nor an emblem, this
+				// isn't an interesting node.
+				if (String.IsNullOrEmpty (nm.Notes) && nm.Emblems.Count == 0)
+					continue;
+
+				yield return nm;
 			}
 
-			string xpath = String.Format ("/directory/file[@name=\"{0}\"]", StringFu.HexEscape (name));
-			return doc.SelectSingleNode (xpath);
+			reader.Close ();
+
+			yield break;
 		}
 
-		static public string GetEmblem (string path)
+		static private string GetDirectory (string metafile)
 		{
-			XmlNode node = GetMetaFileNode (path);
-			if (node == null)
-				return null;
-			XmlNode subnode = node.SelectSingleNode ("keyword");
-			if (subnode == null)
+			string directory;
+
+			// Get only the name of the file, which represents
+			// the directory.  Also drop the .xml extension
+			directory = Path.GetFileNameWithoutExtension (metafile);
+
+			// We only care about file URIs right now.
+			if (! directory.StartsWith ("file:%2F%2F%2F"))
 				return null;
 
-			XmlNode attr = subnode.Attributes.GetNamedItem ("name");
-			return attr != null ? attr.Value : null;
+			// Unescape this mess.
+			directory = directory.Replace ("%25", "%");
+			directory = directory.Replace ("%2F", "/");
+
+			return directory;
 		}
 
-		static public string GetNotes (string path)
+		public static void Main (string[] args)
 		{
-			XmlNode node = GetMetaFileNode (path);
-			if (node == null)
-				return null;
-			XmlNode attr = node.Attributes.GetNamedItem ("annotation");
-			return attr != null ? attr.Value : null;
+			foreach (string a in args) {
+				Console.WriteLine ("{0}: {1}", a, GetDirectory (a));
+				
+				foreach (NautilusMetadata nm in GetMetadata (a)) {
+					Console.WriteLine ("  uri: {0}", nm.Uri);
+					Console.WriteLine ("  notes: {0}", nm.Notes);
+					Console.Write ("  emblems: ");
+
+					foreach (string e in nm.Emblems)
+						Console.Write (e + " ");
+
+					Console.WriteLine ();
+				}
+			}
+			
 		}
 	}
 }
