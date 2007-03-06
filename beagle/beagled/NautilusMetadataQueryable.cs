@@ -150,15 +150,25 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 
 			Property prop;
 
-			if (! String.IsNullOrEmpty (nm.Notes)) {
-				prop = Property.New ("nautilus:notes", nm.Notes);
+			// Reset the notes property.
+			if (nm.Notes == null)
+				nm.Notes = String.Empty;
+
+			prop = Property.New ("nautilus:notes", nm.Notes);
+			prop.IsMutable = true;
+			prop.IsPersistent = true;
+			indexable.AddProperty (prop);
+
+			foreach (string emblem in nm.Emblems) {
+				prop = Property.NewKeyword ("nautilus:emblem", emblem);
 				prop.IsMutable = true;
 				prop.IsPersistent = true;
 				indexable.AddProperty (prop);
 			}
 
-			foreach (string emblem in nm.Emblems) {
-				prop = Property.NewKeyword ("nautilus:emblem", emblem);
+			// We add an empty keyword so that the property is reset
+			if (nm.Emblems.Count == 0) {
+				prop = Property.NewKeyword ("nautilus:emblem", String.Empty);
 				prop.IsMutable = true;
 				prop.IsPersistent = true;
 				indexable.AddProperty (prop);

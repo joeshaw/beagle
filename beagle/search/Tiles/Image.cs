@@ -54,8 +54,11 @@ namespace Search.Tiles {
 				// FIXME: Ideally we'd composite into a fresh new pixbuf of
 				// the correct size in this case, but really, who's going to
 				// have images shorter or narrower than 16 pixels in f-spot??
-				if (icon.Height < emblem.Height || icon.Width < emblem.Width)
+				if (icon.Height < emblem.Height || icon.Width < emblem.Width) {
+					icon.Dispose ();
+					emblem.Dispose ();
 					return;
+				}
 
 				emblem.Composite (icon, 0,  icon.Height - emblem.Height, emblem.Width,
 						  emblem.Height, 0,  icon.Height - emblem.Height, 1,  1,

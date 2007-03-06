@@ -91,9 +91,10 @@ namespace Beagle.Util {
 				foreach (XmlNode emblem_node in node.SelectNodes ("keyword"))
 					nm.Emblems.Add (emblem_node.Attributes.GetNamedItem ("name").Value);
 
-				// If we have neither notes nor an emblem, this
-				// isn't an interesting node.
-				if (String.IsNullOrEmpty (nm.Notes) && nm.Emblems.Count == 0)
+				// If we don't have a timestamp, and have
+				// neither notes nor an emblem, this isn't an
+				// interesting node.
+				if (time_t == 0 && String.IsNullOrEmpty (nm.Notes) && nm.Emblems.Count == 0)
 					continue;
 
 				yield return nm;

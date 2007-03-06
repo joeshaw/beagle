@@ -529,7 +529,7 @@ namespace Beagle.Daemon {
 
 		static protected void AddPropertyToDocument (Property prop, Document doc)
 		{
-			if (prop == null || prop.Value == null)
+			if (prop == null || String.IsNullOrEmpty (prop.Value))
 				return;
 
 			// Don't actually put properties in the UnindexedNamespace
@@ -805,6 +805,14 @@ namespace Beagle.Daemon {
 			// return w/o doing anything.
 			foreach (Property prop in prop_only_indexable.Properties) {
 				seen_props [prop.Key] = prop;
+
+				// Don't add properties that are empty; they
+				// essentially mean "reset this property"
+				if (prop.Value == String.Empty) {
+					Log.Debug ("Resetting prop '{0}'", prop.Key);
+					continue;
+				}
+
 				AddPropertyToDocument (prop, new_doc);
 				Logger.Log.Debug ("New prop '{0}' = '{1}'", prop.Key, prop.Value);
 			}

@@ -45,6 +45,39 @@ namespace Search.Tiles {
 			// 48 is too small for thumbnails
 			if (!thumbnailer.SetThumbnailIcon (image, Hit, size))
 				base.LoadIcon (image, size);
+
+			// FIXME: Multiple emblems
+			string emblem = Hit.GetFirstProperty ("nautilus:emblem");
+			if (emblem == null)
+				return;
+
+			Gdk.Pixbuf icon_pixbuf = image.Pixbuf.Copy ();
+			Gdk.Pixbuf emblem_pixbuf = WidgetFu.LoadThemeIcon ("emblem-" + emblem, 24);
+
+			if (icon_pixbuf == null || emblem_pixbuf == null) {
+				if (icon_pixbuf != null)
+					icon_pixbuf.Dispose ();
+
+				if (emblem_pixbuf == null)
+					emblem_pixbuf.Dispose ();
+
+				return;
+			}
+
+			// If the icon itself is smaller than our requested
+			// emblem, just display the emblem.
+			if (icon_pixbuf.Height < emblem_pixbuf.Height || icon_pixbuf.Width < emblem_pixbuf.Width) {
+				icon_pixbuf.Dispose ();
+				image.Pixbuf.Dispose ();
+				image.Pixbuf = emblem_pixbuf;
+				return;
+			}
+
+			emblem_pixbuf.Composite (icon_pixbuf, 0, 0,
+						 emblem_pixbuf.Width, emblem_pixbuf.Height,
+						 0, 0, 1, 1, Gdk.InterpType.Bilinear, 255);
+			image.Pixbuf.Dispose ();
+			image.Pixbuf = icon_pixbuf;
 		}
 
 		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
