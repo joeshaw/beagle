@@ -287,8 +287,10 @@ namespace Beagle.Filters {
 			entry.Size = zip_entry.Size;
 
 			// Only index smaller subfiles, to avoid filling /tmp
-			if (entry.Size > MAX_SINGLE_FILE)
+			if (entry.Size > MAX_SINGLE_FILE) {
 				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
+				return entry;
+			}
 
 			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
 			if (entry.TempFile != null)
@@ -316,8 +318,10 @@ namespace Beagle.Filters {
 			entry.Size = tar_entry.Size;
 
 			// Only index smaller subfiles, to avoid filling /tmp
-			if (entry.Size > MAX_SINGLE_FILE)
+			if (entry.Size > MAX_SINGLE_FILE) {
 				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
+				return entry;
+			}
 
 			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
 			if (entry.TempFile != null)
