@@ -365,6 +365,10 @@ OPERA_QUERYABLE_CSFILES =				\
 	$(operaqueryable)/OperaIndexer.cs		\
 	$(operaqueryable)/OperaQueryable.cs
 
+nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
+NAUTILUS_QUERYABLE_CSFILES =					\
+	$(nautilusqueryable)/NautilusMetadataQueryable.cs
+
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(KMAIL_QUERYABLE_CSFILES)				\
@@ -383,7 +387,8 @@ DAEMON_DLL_CSFILES = 						\
 	$(KABC_QUERYABLE_CSFILES)				\
 	$(KOPETE_QUERYABLE_CSFILES)				\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
-	$(OPERA_QUERYABLE_CSFILES)			\
+	$(OPERA_QUERYABLE_CSFILES)				\
+	$(NAUTILUS_QUERYABLE_CSFILES)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
@@ -407,7 +412,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/LuceneQueryingDriver.cs			\
 	$(srcdir)/LuceneFileQueryable.cs			\
 	$(srcdir)/LuceneQueryable.cs				\
-	$(srcdir)/NautilusMetadataQueryable.cs			\
 	$(srcdir)/NoiseFilter.cs				\
 	$(srcdir)/PropertyKeywordFu.cs				\
 	$(srcdir)/QueryDriver.cs				\
