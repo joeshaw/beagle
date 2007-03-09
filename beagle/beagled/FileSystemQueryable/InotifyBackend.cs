@@ -36,12 +36,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	public class InotifyBackend : IFileEventBackend {
 		
 		FileSystemQueryable queryable;
+		Inotify.InotifyCallback inotify_callback;
+
+		public InotifyBackend ()
+		{
+			inotify_callback = new Inotify.InotifyCallback (OnInotifyEvent);
+		}
 
 		public object CreateWatch (string path)
 		{
 			object watch = null;
 			try {
-				watch = Inotify.Subscribe (path, OnInotifyEvent,
+				watch = Inotify.Subscribe (path, inotify_callback,
 							   Inotify.EventType.Create
 							   | Inotify.EventType.Delete
 							   | Inotify.EventType.CloseWrite
