@@ -960,6 +960,21 @@
   )
 )
 
+(define-method get_is_persistent
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_get_is_persistent")
+  (return-type "gboolean")
+)
+
+(define-method set_is_persistent
+  (of-object "BeagleProperty")
+  (c-name "beagle_property_set_is_persistent")
+  (return-type "none")
+  (parameters
+    '("gboolean" "is_persistent")
+  )
+)
+
 
 
 ;; From ../../libbeagle/beagle/beagle-queryable-status.h
