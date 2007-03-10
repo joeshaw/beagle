@@ -519,7 +519,7 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
-		static private void ScoreHits (Hashtable   hits_by_id,
+		static private void ScoreHits (Dictionary<int, Hit>   hits_by_id,
 					       IndexReader reader,
 					       ICollection term_list)
 		{
@@ -527,6 +527,7 @@ namespace Beagle.Daemon {
 			similarity = LNS.Similarity.GetDefault ();
 
 			TermDocs term_docs = reader.TermDocs ();
+			Hit hit;
 
 			foreach (Term term in term_list) {
 
@@ -542,9 +543,7 @@ namespace Beagle.Daemon {
 					int id;
 					id = term_docs.Doc ();
 
-					Hit hit;
-					hit = hits_by_id [id] as Hit;
-					if (hit != null) {
+					if (hits_by_id.TryGetValue (id, out hit)) {
 						double tf;
 						tf = similarity.Tf (term_docs.Freq ());
 						hit.Score += tf * idf;
@@ -557,33 +556,6 @@ namespace Beagle.Daemon {
 		}
 
 		////////////////////////////////////////////////////////////////
-
-		// Lame iterator methods because we use two different ones
-		// depending on which algorithm we use.
-		private static IEnumerable IterateMatches (BetterBitArray primary_matches)
-		{
-			int j = primary_matches.Count;
-
-			// Walk across the matches backwards, since newer
-			// documents are more likely to be at the end of
-			// the index.
-			while (true) {
-				int i = primary_matches.GetPreviousTrueIndex (j);
-				if (i < 0)
-					yield break;
-				j = i-1; // This way we can't forget to adjust i
-
-				yield return i;
-			}
-		}
-
-		private static IEnumerable IterateOrderedMatches (int[] ordered_matches)
-		{
-			int i;
-
-			for (i = 0; i < ordered_matches.Length; i++)
-				yield return ordered_matches [i];
-		}
 
 		private class DocAndId {
 			public Document Doc;
@@ -610,8 +582,7 @@ namespace Beagle.Daemon {
 							  HitFilter         hit_filter,
 							  string            index_name)
 		{
-			TopScores top_docs = null;
-			List<int> all_docs = null;
+			int num_hits;
 
 			if (Debug)
 				Logger.Log.Debug (">>> {0}: Initially handed {1} matches", index_name, primary_matches.TrueCount);
@@ -619,223 +590,44 @@ namespace Beagle.Daemon {
 			if (primary_matches.TrueCount <= max_results) {
 				if (Debug)
 					Logger.Log.Debug (">>> {0}: Initial count is within our limit of {1}", index_name, max_results);
-				all_docs = new List<int> (primary_matches.TrueCount);
+				num_hits = primary_matches.TrueCount;
 			} else {
 				if (Debug)
 					Logger.Log.Debug (">>> {0}: Number of hits is capped at {1}", index_name, max_results);
-				top_docs = new TopScores (max_results);
+				num_hits = max_results;
 			}
 
-			Stopwatch total, a, b, c, d, e;
+			Stopwatch total, d, e;
 			total = new Stopwatch ();
-			a = null;
-			b = new Stopwatch ();
-			c = new Stopwatch ();
 			d = new Stopwatch ();
 			e = new Stopwatch ();
 
 			total.Start ();
 
-			// There are two ways we can determine the max_results
-			// most recent items:  
-			//
-			// One is to instantiate Lucene documents for each of
-			// the document IDs in primary_matches.  This is a
-			// fairly expensive operation.
-			//
-			// The other is to walk through the list of all
-			// document IDs in descending time order.  This is
-			// a less expensive operation, but adds up over time
-			// on large data sets.
-			//
-			// We can walk about 2.5 docs for every Document we
-			// instantiate.  So what we'll do, if we have more
-			// matches than available hits, is walk (m * 1.25)
-			// docs to see if we can fill out the top 100 hits.
-			// If not, we'll fall back to creating documents
-			// for all of them.
-
-			bool short_circuit_ok = false;
-			if (primary_matches.TrueCount > max_results) {
-				a = new Stopwatch ();
-				a.Start ();
-
-				TermDocs docs = primary_reader.TermDocs ();
-				TermEnum enumerator = primary_reader.Terms (new Term ("InvertedTimestamp", ""));
-				all_docs = new List<int> (max_results);
-				int docs_found = 0;
-				int docs_walked = 0;
-				int max_docs = (int) (primary_matches.TrueCount * 1.25);
-
-				do {
-					Term term = enumerator.Term ();
-				
-					if (term.Field () != "InvertedTimestamp")
-						break;
-
-					docs.Seek (enumerator);
-
-					while (docs.Next ()
-					       && docs_found < max_results
-					       && docs_walked < max_docs) {
-						int doc_id = docs.Doc ();
-
-						if (primary_matches.Get (doc_id)) {
-							Document doc = primary_searcher.Doc (doc_id, fields_uri);
-							// If we have a UriFilter, apply it.
-							if (uri_filter != null) {
-								Uri uri;
-								uri = GetUriFromDocument (doc);
-								if (uri_filter (uri)) {
-									all_docs.Add (doc_id);
-									docs_found++;
-								}
-							}
-						}
-				
-						docs_walked++;
-					}
-				} while (enumerator.Next ()
-					 && docs_found < max_results
-					 && docs_walked < max_docs);
-
-				docs.Close ();
-
-				// We've found all the docs we can return in a subset!
-				// Fantastic, we've probably short circuited a slow search.
-				if (docs_found == max_results) {
-					short_circuit_ok = true;
-					top_docs = null;
-				} else {
-					// Bad luck! Not all docs found
-					// Start afresh - this time traversing all results
-					all_docs = null;
-				}
-
-				a.Stop ();
-				if (Debug) {
-					Log.Debug (">>> {0}: Walked {1} items, populated an enum with {2} items in {3}", index_name, docs_walked, docs_found, a);
-					
-					if (docs_found == max_results)
-						Log.Debug (">>> {0}: Successfully short circuited timestamp ordering!", index_name);
-				}
-			}
-
-			if (! short_circuit_ok) {
-
-				b.Start ();
-				
-				int count = 0;
-				IEnumerable enumerable;
-				enumerable = IterateMatches (primary_matches);
-
-				foreach (int i in enumerable) {
-					count++;
-
-					Document doc;
-					doc = primary_searcher.Doc (i, fields_timestamp_uri);
-
-					// Check the timestamp --- if we have already reached our
-					// limit, we might be able to reject it immediately.
-					string timestamp_str;
-					long timestamp_num = 0;
-
-					timestamp_str = doc.Get ("Timestamp");
-					if (timestamp_str == null) {
-						Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
-					} else {
-						timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
-						if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
-							continue;
-					}
-
-					// If we have a UriFilter, apply it.
-					if (uri_filter != null) {
-						Uri uri;
-						uri = GetUriFromDocument (doc);
-						if (! uri_filter (uri))
-							continue;
-					}
-
-					// Add the document to the appropriate data structure.
-					// We use the timestamp_num as the score, so high
-					// scores correspond to more-recent timestamps.
-					if (all_docs != null)
-						all_docs.Add (i);
-					else
-						top_docs.Add (timestamp_num, i);
-				}
-
-				b.Stop ();
-
-				if (Debug)
-					Log.Debug (">>> {0}: Instantiated and scanned {1} documents in {2}", index_name, count, b);
-
-			}
-
-			c.Start ();
-
-			ICollection final_list_of_docs;
-			if (all_docs != null)
-				final_list_of_docs = all_docs;
-			else
-				final_list_of_docs = top_docs.TopScoringObjects;
-
-			ArrayList final_list_of_hits;
-			final_list_of_hits = new ArrayList (final_list_of_docs.Count);
+			ArrayList final_list_of_hits = null;
 
 			// This is used only for scoring
-			Hashtable hits_by_id = null;
-			hits_by_id = new Hashtable ();
+			Dictionary<int, Hit> hits_by_id = new Dictionary<int, Hit> (num_hits);
 
-			// If we aren't using the secondary index, the next step is
-			// very straightforward.
-			if (secondary_searcher == null) {
+			if (primary_matches.TrueCount > max_results)
+				final_list_of_hits = ScanRecentDocs (primary_reader,
+					primary_searcher,
+					secondary_searcher,
+					primary_matches,
+					hits_by_id,
+					max_results,
+					uri_filter,
+					index_name);
 
-				foreach (int id in final_list_of_docs) {
-					Hit hit;
-					Document primary_doc = primary_searcher.Doc (id);
-					hit = DocumentToHit (primary_doc);
-					hits_by_id [id] = hit;
-					final_list_of_hits.Add (hit);
-				}
-
-			} else {
-
-				if (Debug)
-					Logger.Log.Debug (">>> {0}: Performing cross-index Hit reunification", index_name);
-				
-				TermDocs term_docs = secondary_searcher.Reader.TermDocs ();
-				foreach (int id in final_list_of_docs) {
-					Document primary_doc = primary_searcher.Doc (id);
-					Hit hit = DocumentToHit (primary_doc);
-
-					// Get the stringified version of the URI
-					// exactly as it comes out of the index.
-					Term term = new Term ("Uri", primary_doc.Get ("Uri"));
-					term_docs.Seek (term);
-
-					// Move to the first (and only) matching term doc
-					term_docs.Next ();
-
-					Document secondary_doc;
-					secondary_doc = secondary_searcher.Doc (term_docs.Doc ());
-
-					AddPropertiesToHit (hit, secondary_doc, false);
-
-					hits_by_id [id] = hit;
-					final_list_of_hits.Add (hit);
-				}
-
-				term_docs.Close ();
-			}
-
-			final_list_of_docs = null;
-			
-			c.Stop ();
-
-			if (Debug)
-				Log.Debug (">>> {0}: Converted docs to hits in {1}", index_name, c);
+			if (final_list_of_hits == null)
+				final_list_of_hits = FindRecentResults (primary_reader,
+					primary_searcher,
+					secondary_searcher,
+					primary_matches,
+					hits_by_id,
+					max_results,
+					uri_filter,
+					index_name);
 
 			d.Start ();
 
@@ -846,12 +638,6 @@ namespace Beagle.Daemon {
 
 			if (Debug)
 				Log.Debug (">>> {0}: Scored hits in {1}", index_name, d);
-
-			// If we used the TopScores object, we got our original
-			// list of documents sorted for us.  If not, sort the
-			// final list.
-			if (top_docs == null)
-				final_list_of_hits.Sort ();
 
 			e.Start ();
 
@@ -898,14 +684,231 @@ namespace Beagle.Daemon {
 
 			if (Debug) {
 				Logger.Log.Debug (">>> {0}: GenerateQueryResults time statistics:", index_name);
-				Logger.Log.Debug (">>> {0}:   Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
+				//Logger.Log.Debug (">>> {0}:   Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
+				//Logger.Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
+				//Logger.Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:     Scored hits {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:    Results sent {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
 				Logger.Log.Debug (">>> {0}:           TOTAL {1,6}", index_name, total);
 			}
 		}
 
+		// There are two ways we can determine the max_results
+		// most recent items:  
+		//
+		// One is to instantiate Lucene documents for each of
+		// the document IDs in primary_matches.  This is a
+		// fairly expensive operation.
+		//
+		// The other is to walk through the list of all
+		// document IDs in descending time order.  This is
+		// a less expensive operation, but adds up over time
+		// on large data sets.
+		//
+		// We can walk about 2.5 docs for every Document we
+		// instantiate.  So what we'll do, if we have more
+		// matches than available hits, is walk (m * 1.25)
+		// docs to see if we can fill out the top 100 hits.
+		// If not, we'll fall back to creating documents
+		// for all of them.
+
+		private static ArrayList ScanRecentDocs (IndexReader	    primary_reader,
+						    LNS.IndexSearcher	    primary_searcher,
+						    LNS.IndexSearcher	    secondary_searcher,
+						    BetterBitArray	    primary_matches,
+						    Dictionary<int, Hit>    hits_by_id,
+						    int			    max_results,
+						    UriFilter		    uri_filter,
+						    string		    index_name)
+		{
+			Stopwatch a = new Stopwatch ();
+			a.Start ();
+
+			TermDocs docs = primary_reader.TermDocs ();
+			TermEnum enumerator = primary_reader.Terms (new Term ("InvertedTimestamp", String.Empty));
+			ArrayList results = new ArrayList (max_results);
+			int docs_found = 0;
+			int docs_walked = 0;
+			int max_docs = (int) (primary_matches.TrueCount * 1.25);
+
+			Term term;
+			TermDocs secondary_term_docs = null;
+			if (secondary_searcher != null)
+				secondary_term_docs = secondary_searcher.Reader.TermDocs ();
+
+			do {
+				term = enumerator.Term ();
+			
+				if (term.Field () != "InvertedTimestamp")
+					break;
+
+				docs.Seek (enumerator);
+
+				while (docs.Next ()
+				       && docs_found < max_results
+				       && docs_walked < max_docs) {
+					int doc_id = docs.Doc ();
+
+					if (primary_matches.Get (doc_id)) {
+						Document doc = primary_searcher.Doc (doc_id);
+						// If we have a UriFilter, apply it.
+						if (uri_filter != null) {
+							Uri uri;
+							uri = GetUriFromDocument (doc);
+							if (uri_filter (uri)) {
+								Hit hit = CreateHit (doc, secondary_searcher, secondary_term_docs);
+								hits_by_id [doc_id] = hit;
+								// Add the result, last modified first
+								results.Add (hit);
+								docs_found++;
+							}
+						}
+					}
+			
+					docs_walked++;
+				}
+			} while (enumerator.Next ()
+				 && docs_found < max_results
+				 && docs_walked < max_docs);
+
+			docs.Close ();
+			if (secondary_term_docs != null)
+				secondary_term_docs.Close ();
+
+			// If we've found all the docs we can return in a subset!
+			// Fantastic, we've probably short circuited a slow search.
+			if (docs_found != max_results) {
+				// Otherwise bad luck! Not all docs found
+				// Start afresh - this time traversing all results
+				results = null;
+			}
+
+			a.Stop ();
+			if (Debug) {
+				Log.Debug (">>> {0}: Walked {1} items, populated an enum with {2} items in {3}", index_name, docs_walked, docs_found, a);
+				
+				if (docs_found == max_results)
+					Log.Debug (">>> {0}: Successfully short circuited timestamp ordering!", index_name);
+			}
+
+			return results;
+		}
+
+		private static ArrayList   FindRecentResults (IndexReader	    primary_reader,
+							      LNS.IndexSearcher primary_searcher,
+							      LNS.IndexSearcher	    secondary_searcher,
+							      BetterBitArray	    primary_matches,
+							      Dictionary<int, Hit>  hits_by_id,
+							      int		    max_results,
+							      UriFilter		    uri_filter,
+							      string		    index_name)
+		{
+			Stopwatch b = new Stopwatch ();
+			b.Start ();
+			
+			int count = 0;
+			Document doc;
+
+			ArrayList all_docs = null;
+			TopScores top_docs = null;
+			TermDocs term_docs = null;
+
+			if (primary_matches.TrueCount > max_results)
+				top_docs = new TopScores (max_results);
+			else
+				all_docs = new ArrayList (primary_matches.TrueCount);
+
+			if (secondary_searcher != null)
+				term_docs = secondary_searcher.Reader.TermDocs ();
+
+			for (int match_index = primary_matches.Count; ; match_index --) {
+				// Walk across the matches backwards, since newer
+				// documents are more likely to be at the end of
+				// the index.
+				match_index = primary_matches.GetPreviousTrueIndex (match_index);
+				if (match_index < 0)
+					break;
+
+				count++;
+
+				doc = primary_searcher.Doc (match_index, fields_timestamp_uri);
+
+				// Check the timestamp --- if we have already reached our
+				// limit, we might be able to reject it immediately.
+				string timestamp_str;
+				long timestamp_num = 0;
+
+				timestamp_str = doc.Get ("Timestamp");
+				if (timestamp_str == null) {
+					Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
+				} else {
+					timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
+					if (top_docs != null && ! top_docs.WillAccept (timestamp_num))
+						continue;
+				}
+
+				// If we have a UriFilter, apply it.
+				if (uri_filter != null) {
+					Uri uri;
+					uri = GetUriFromDocument (doc);
+					if (! uri_filter (uri))
+						continue;
+				}
+
+				// Get the actual hit now
+				// doc was created with only 2 fields, so first get the complete lucene document for primary document
+				Hit hit = CreateHit (primary_searcher.Doc (match_index), secondary_searcher, term_docs);
+				hits_by_id [match_index] = hit;
+
+				// Add the document to the appropriate data structure.
+				// We use the timestamp_num as the score, so high
+				// scores correspond to more-recent timestamps.
+				if (all_docs != null)
+					all_docs.Add (hit);
+				else
+					top_docs.Add (timestamp_num, hit);
+			}
+
+			if (term_docs != null)
+				term_docs.Close ();
+
+			b.Stop ();
+
+			if (Debug)
+				Log.Debug (">>> {0}: Instantiated and scanned {1} documents in {2}", index_name, count, b);
+
+			if (all_docs != null) {
+				// Sort results before sending
+				all_docs.Sort ();
+				return all_docs;
+			} else {
+				return top_docs.TopScoringObjects;
+			}
+		}
+
+		private static Hit CreateHit ( Document primary_doc,
+					LNS.IndexSearcher secondary_searcher,
+					TermDocs term_docs)
+		{
+			Hit hit = DocumentToHit (primary_doc);
+
+			if (secondary_searcher == null)
+				return hit;
+
+			// Get the stringified version of the URI
+			// exactly as it comes out of the index.
+			Term term = new Term ("Uri", primary_doc.Get ("Uri"));
+			term_docs.Seek (term);
+
+			// Move to the first (and only) matching term doc
+			term_docs.Next ();
+			Document secondary_doc = secondary_searcher.Doc (term_docs.Doc ());
+
+			// If we are using the secondary index, now we need to
+			// merge the properties from the secondary index
+			AddPropertiesToHit (hit, secondary_doc, false);
+
+			return hit;
+		}
 	}
 }

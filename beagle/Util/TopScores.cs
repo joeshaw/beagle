@@ -232,7 +232,7 @@ namespace Beagle.Util {
 		}
 
 		// Returns objects sorted from high to low scores
-		public ICollection TopScoringObjects {
+		public ArrayList TopScoringObjects {
 			get {
 				ArrayList array = new ArrayList ();
 				BuildArray (array, root_node);
