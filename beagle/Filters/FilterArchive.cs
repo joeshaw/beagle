@@ -81,33 +81,69 @@ namespace Beagle.Filters {
 			switch (MimeType) {
 			case "application/zip":
 				archive_stream = new ZipInputStream (Stream);
-				get_next_entry = GetNextEntryZip;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntryZip ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			case "application/x-bzip-compressed-tar":
 				archive_stream = new TarInputStream (new BZip2InputStream (Stream));
-				get_next_entry = GetNextEntryTar;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntryTar ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			case "application/x-compressed-tar":
 			case "application/x-tgz":
 				archive_stream = new TarInputStream (new GZipInputStream (Stream));
-				get_next_entry = GetNextEntryTar;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntryTar ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			case "application/x-tar":
 				archive_stream = new TarInputStream (Stream);
-				get_next_entry = GetNextEntryTar;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntryTar ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			case "application/x-gzip":
 				archive_stream = new GZipInputStream (Stream);
-				get_next_entry = GetNextEntrySingle;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntrySingle ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			case "application/x-bzip":
 				archive_stream = new BZip2InputStream (Stream);
-				get_next_entry = GetNextEntrySingle;
+				get_next_entry = delegate () {
+					try {
+						return GetNextEntrySingle ();
+					} catch {
+						return null;
+					}
+				};
 				break;
 
 			default:
