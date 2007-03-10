@@ -56,6 +56,7 @@ beagle_property_new (BeaglePropertyType type, const char *key, const char *value
 		prop->is_searched = FALSE;
 
 	prop->is_stored = TRUE;
+	prop->is_persistent = TRUE;
 
 	return prop;
 }
@@ -268,6 +269,39 @@ beagle_property_set_is_stored (BeagleProperty *prop, gboolean is_stored)
 }
 
 /**
+ * beagle_property_get_is_persistent:
+ * @prop: a #BeagleProperty
+ *
+ * Fetches whether the given #BeagleProperty will persist when the document is re-added
+ * for indexing e.g. if a file is modified on disk.
+ *
+ * Return value: whether the #BeagleProperty is stored.
+ **/
+gboolean 
+beagle_property_get_is_persistent (BeagleProperty *prop)
+{
+	g_return_val_if_fail (prop != NULL, FALSE);
+
+	return prop->is_persistent;
+}
+
+/**
+ * beagle_property_set_is_persistent:
+ * @prop: a #BeagleProperty
+ * @is_persistent: a boolean
+ *
+ * Sets whether the given #BeagleProperty will persist when the document is re-added
+ * for indexing. By default, properties are persistent.
+ **/
+void
+beagle_property_set_is_persistent (BeagleProperty *prop, gboolean is_persistent)
+{
+	g_return_if_fail (prop != NULL);
+
+	prop->is_persistent = is_persistent != FALSE;
+}
+
+/**
  * Compares two BeagleProperty based on their keys.
  */
 int
@@ -307,11 +341,12 @@ prop_to_xml (gpointer value, gpointer user_data)
 	g_string_append (data, "<Property ");
 
 	tmp = g_markup_printf_escaped ("Type=\"%s\" IsSearched=\"%s\" IsMutable=\"%s\" "
-				       "IsStored=\"%s\" Key=\"%s\" Value=\"%s\"/>",
+				       "IsStored=\"%s\" IsPersistent=\"%s\" Key=\"%s\" Value=\"%s\"/>",
 				       property_types[prop->type],
 				       prop->is_searched ? "true" : "false",
 				       prop->is_mutable ? "true" : "false",
 				       prop->is_stored ? "true" : "false",
+				       prop->is_persistent ? "true" : "false",
 				       prop->key, prop->value);
 
 	g_string_append (data, tmp);

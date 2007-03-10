@@ -64,5 +64,8 @@ void beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_keyword);
 gboolean beagle_property_get_is_stored (BeagleProperty *prop);
 void beagle_property_set_is_stored (BeagleProperty *prop, gboolean is_stored);
 
+gboolean beagle_property_get_is_persistent (BeagleProperty *prop);
+void beagle_property_set_is_persistent (BeagleProperty *prop, gboolean is_persistent);
+
 #endif /* __BEAGLE_PROPERTY_H */
 

@@ -63,6 +63,7 @@ struct _BeagleProperty {
 	gboolean is_searched;
 	gboolean is_mutable;
 	gboolean is_stored;
+	gboolean is_persistent;
 };
 
 struct _BeagleQueryableStatus {
