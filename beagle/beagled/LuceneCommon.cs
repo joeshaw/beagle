@@ -1462,8 +1462,8 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			if (abstract_part is QueryPart_DumpData) {
-				QueryPart_DumpData part = (QueryPart_DumpData) abstract_part;
+			if (abstract_part is QueryPart_Uri) {
+				QueryPart_Uri part = (QueryPart_Uri) abstract_part;
 
 				// Do a term query on the Uri field.
 				// This is probably less efficient that using a TermEnum;

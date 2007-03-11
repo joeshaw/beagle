@@ -1443,25 +1443,25 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		// Remap uri in dumpdata querypart
+		// Remap uri in querypart_uri
 		private void RemapQuery (ICollection parts)
 		{
 			foreach (QueryPart part in parts) {
 				if (part is QueryPart_Or)
 					RemapQuery (((QueryPart_Or)part).SubParts);
-				else if (part is QueryPart_DumpData) {
-					QueryPart_DumpData p =  (QueryPart_DumpData) part;
+				else if (part is QueryPart_Uri) {
+					QueryPart_Uri p =  (QueryPart_Uri) part;
 					RemapDumpDataUri (ref p);
 				}
 			}
 		}
 
-		private void RemapDumpDataUri (ref QueryPart_DumpData part)
+		private void RemapDumpDataUri (ref QueryPart_Uri part)
 		{
 			Uri new_uri = ExternalToInternalUri (part.Uri);
 			Log.Debug ("Remapping DumpData uri from {0} to {1}", part.Uri, new_uri);
 			// Do the right thing if the uri does not exist
-			// Remember QueryPart_DumpData can occur inside QueryPart_Or
+			// Remember QueryPart_Uri can occur inside QueryPart_Or
 			if (new_uri == null)
 				new_uri = new Uri ("file:///xxx"); // Will never match
 

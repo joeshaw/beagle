@@ -46,7 +46,7 @@ namespace Beagle {
 	 XmlInclude (typeof (QueryPart_Human)),
 	 XmlInclude (typeof (QueryPart_Wildcard)),
 	 XmlInclude (typeof (QueryPart_Or)),
-	 XmlInclude (typeof (QueryPart_DumpData))]
+	 XmlInclude (typeof (QueryPart_Uri))]
 	abstract public class QueryPart {
 
 		private QueryPartLogic logic = QueryPartLogic.Required;
@@ -271,11 +271,11 @@ namespace Beagle {
 	}
 
 	/* Get all indexed data about some uri. */
-	public class QueryPart_DumpData : QueryPart {
+	public class QueryPart_Uri : QueryPart {
 
 		private Uri uri;
 
-		public QueryPart_DumpData ()
+		public QueryPart_Uri ()
 		{ }
 
 		[XmlIgnore]
@@ -294,7 +294,7 @@ namespace Beagle {
 		{
 			return String.Format (
 				base.ToString () + 
-				"  DumpData: {0}",
+				"  Uri: {0}",
 				Uri);
 		}
 	}
