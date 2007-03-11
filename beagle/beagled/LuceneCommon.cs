@@ -670,11 +670,9 @@ namespace Beagle.Daemon {
 
 				// Create an inverted timestamp so that we can
 				// sort by timestamp at search-time.
-				int timeval = Convert.ToInt32 (str);
-				// Use the difference from 21000101 (2100/01/01) as the max timestamp value
-				// FIXME: Mark your calendar if you will use beagle in 2100 A.D. ?
+				long timeval = Convert.ToInt64 (str);
 				// Pad the inverted timestamp with zeroes for proper string comparison during termenum enumeration
-				f = new Field ("InvertedTimestamp", (21000101 - timeval).ToString ("d8"),
+				f = new Field ("InvertedTimestamp", (Int64.MaxValue - timeval).ToString ("d19"),
 					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
@@ -1461,6 +1459,23 @@ namespace Beagle.Daemon {
 				if (! only_build_primary_query && primary_query != null)
 					secondary_query = primary_query.Clone () as LNS.Query;
 
+				return;
+			}
+
+			if (abstract_part is QueryPart_DumpData) {
+				QueryPart_DumpData part = (QueryPart_DumpData) abstract_part;
+
+				// Do a term query on the Uri field.
+				// This is probably less efficient that using a TermEnum;
+				// but this is required for the query API where the uri query
+				// can be part of a prohibited query or a boolean or query.
+				Term term;
+				term = new Term ("Uri", UriFu.UriToEscapedString (part.Uri));
+				if (term_list != null)
+					term_list.Add (term);
+				primary_query = new LNS.TermQuery (term);
+
+				// Query only the primary index
 				return;
 			}
 

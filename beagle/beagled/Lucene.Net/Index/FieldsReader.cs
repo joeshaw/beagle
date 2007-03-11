@@ -149,7 +149,7 @@ namespace Lucene.Net.Index
 		
 		public /*internal*/ Document Doc(int n, string[] fields)
 		{
-			if (fields.Length == 0)
+			if (fields == null || fields.Length == 0)
 				return Doc (n);
 
 			// FIXME: use Hashset

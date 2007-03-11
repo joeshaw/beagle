@@ -45,7 +45,8 @@ namespace Beagle {
 	 XmlInclude (typeof (QueryPart_DateRange)),
 	 XmlInclude (typeof (QueryPart_Human)),
 	 XmlInclude (typeof (QueryPart_Wildcard)),
-	 XmlInclude (typeof (QueryPart_Or))]
+	 XmlInclude (typeof (QueryPart_Or)),
+	 XmlInclude (typeof (QueryPart_DumpData))]
 	abstract public class QueryPart {
 
 		private QueryPartLogic logic = QueryPartLogic.Required;
@@ -268,4 +269,34 @@ namespace Beagle {
 			return sb.ToString ();
 		}
 	}
+
+	/* Get all indexed data about some uri. */
+	public class QueryPart_DumpData : QueryPart {
+
+		private Uri uri;
+
+		public QueryPart_DumpData ()
+		{ }
+
+		[XmlIgnore]
+		public Uri Uri {
+			get { return uri; }
+			set { uri = value; }
+		}
+
+		[XmlElement ("Uri")]
+		public string UriString {
+			get { return UriFu.UriToEscapedString (uri); }
+			set { uri = UriFu.EscapedStringToUri (value); }
+		}
+
+		public override string ToString ()
+		{
+			return String.Format (
+				base.ToString () + 
+				"  DumpData: {0}",
+				Uri);
+		}
+	}
+
 }
