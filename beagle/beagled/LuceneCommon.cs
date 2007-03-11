@@ -670,8 +670,11 @@ namespace Beagle.Daemon {
 
 				// Create an inverted timestamp so that we can
 				// sort by timestamp at search-time.
-				long timeval = Convert.ToInt64 (str);
-				f = new Field ("InvertedTimestamp", (Int64.MaxValue - timeval).ToString (),
+				int timeval = Convert.ToInt32 (str);
+				// Use the difference from 21000101 (2100/01/01) as the max timestamp value
+				// FIXME: Mark your calendar if you will use beagle in 2100 A.D. ?
+				// Pad the inverted timestamp with zeroes for proper string comparison during termenum enumeration
+				f = new Field ("InvertedTimestamp", (21000101 - timeval).ToString ("d8"),
 					       Field.Store.NO, Field.Index.NO_NORMS);
 				primary_doc.Add (f);
 
