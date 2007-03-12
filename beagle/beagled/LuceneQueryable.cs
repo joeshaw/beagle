@@ -375,14 +375,7 @@ namespace Beagle.Daemon {
 			QueryableStatus status = new QueryableStatus ();
 
 			status.ProgressPercent = this.ProgressPercent;
-
-			// If we're in read-only mode, query the driver
-			// and not the indexer for the item count.
-			if (indexer == null)
-				status.ItemCount = driver.GetItemCount ();
-			else
-				status.ItemCount = indexer.GetItemCount ();
-
+			status.ItemCount = driver.GetItemCount ();
 			status.IsIndexing = this.IsIndexing;
 
 			return status;
