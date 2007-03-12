@@ -216,7 +216,16 @@ namespace Beagle.Daemon {
 				if (!WorkerStartNoLock (worker)) 
 					return;
 
-				ExceptionHandlingThread.Start (new ThreadStart (qwc.Start));
+				// Run our queries serially rather than in
+				// parallel with threads.  Since 98% of the
+				// time indexes will be stored on the same disk
+				// we gain nothing by parallelizing, even on
+				// multiprocessor/multicore systems.
+				//
+				// This also reduces memory usage considerably.
+
+				//ExceptionHandlingThread.Start (new ThreadStart (qwc.Start));
+				qwc.Start ();
 			}
 		}
 
