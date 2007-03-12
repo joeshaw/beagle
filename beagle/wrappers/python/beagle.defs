@@ -56,6 +56,13 @@
   (gtype-id "BEAGLE_TYPE_QUERY_PART_WILDCARD")
 )
 
+(define-object QueryPartUri
+  (in-module "Beagle")
+  (parent "BeagleQueryPart")
+  (c-name "BeagleQueryPartUri")
+  (gtype-id "BEAGLE_TYPE_QUERY_PART_URI")
+)
+
 (define-object Request
   (in-module "Beagle")
   (parent "GObject")
@@ -1339,6 +1346,30 @@
   (return-type "none")
   (parameters
     '("const-char*" "query_string")
+  )
+)
+
+
+
+;; From ../../libbeagle/beagle/beagle-query-part-uri.h
+
+(define-function beagle_query_part_uri_get_type
+  (c-name "beagle_query_part_uri_get_type")
+  (return-type "GType")
+)
+
+(define-function beagle_query_part_uri_new
+  (c-name "beagle_query_part_uri_new")
+  (is-constructor-of "BeagleQueryPartUri")
+  (return-type "BeagleQueryPartUri*")
+)
+
+(define-method set_string
+  (of-object "BeagleQueryPartUri")
+  (c-name "beagle_query_part_uri_set_string")
+  (return-type "none")
+  (parameters
+    '("const-char*" "string")
   )
 )
 
