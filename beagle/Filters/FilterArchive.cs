@@ -81,69 +81,33 @@ namespace Beagle.Filters {
 			switch (MimeType) {
 			case "application/zip":
 				archive_stream = new ZipInputStream (Stream);
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntryZip ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntryZip;
 				break;
 
 			case "application/x-bzip-compressed-tar":
 				archive_stream = new TarInputStream (new BZip2InputStream (Stream));
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntryTar ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntryTar;
 				break;
 
 			case "application/x-compressed-tar":
 			case "application/x-tgz":
 				archive_stream = new TarInputStream (new GZipInputStream (Stream));
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntryTar ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntryTar;
 				break;
 
 			case "application/x-tar":
 				archive_stream = new TarInputStream (Stream);
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntryTar ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntryTar;
 				break;
 
 			case "application/x-gzip":
 				archive_stream = new GZipInputStream (Stream);
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntrySingle ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntrySingle;
 				break;
 
 			case "application/x-bzip":
 				archive_stream = new BZip2InputStream (Stream);
-				get_next_entry = delegate () {
-					try {
-						return GetNextEntrySingle ();
-					} catch {
-						return null;
-					}
-				};
+				get_next_entry = GetNextEntrySingle;
 				break;
 
 			default:
@@ -164,7 +128,7 @@ namespace Beagle.Filters {
 
 			while (count < MAX_CHILDREN
 			       && total_size <= MAX_ALL_FILES
-			       && (a_entry = this.get_next_entry ()) != null) {
+			       && (a_entry = DoGetNextEntry ()) != null) {
 
 				// Store file names in the archive
 				AppendText (Path.GetFileName (a_entry.Name));
@@ -317,6 +281,16 @@ namespace Beagle.Filters {
 				return ".tar.bz2";
 			else
 				return ext;
+		}
+
+		private ArchiveEntry DoGetNextEntry ()
+		{
+			try {
+				return this.get_next_entry ();
+			} catch (Exception e) {
+				Log.Warn (e, "Unable to extract file from {0}", file_info);
+				return null;
+			}
 		}
 
 		private ArchiveEntry GetNextEntryZip ()
