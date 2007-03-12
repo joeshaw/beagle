@@ -111,7 +111,10 @@ test_live_query (BeagleClient *client)
 	g_signal_connect (query, "finished",
 			  G_CALLBACK (finished_cb), loop);
 
-	beagle_query_add_text (query, "gnome");
+	//beagle_query_add_text (query, "gnome");
+	BeagleQueryPartUri *part = beagle_query_part_uri_new ();
+	beagle_query_part_uri_set_uri (part, "file:///usr/share/devel/beagletest/doom1/index.html");
+	beagle_query_add_part (query, BEAGLE_QUERY_PART (part));
 
 	beagle_client_send_request_async (client, BEAGLE_REQUEST (query), NULL);
 
