@@ -303,6 +303,22 @@ namespace Beagle.Filters {
 			return filename;
 		}
 
+		// Special method to get ".tar.gz" and ".tar.bz2" instead of
+		// just ".gz" and ".bz2"
+		private string GetExtension (string filename)
+		{
+			string ext = Path.GetExtension (filename);
+			if (ext != ".gz" && ext != ".bz2")
+				return ext;
+
+			if (filename.EndsWith (".tar.gz"))
+				return ".tar.gz";
+			else if (filename.EndsWith (".tar.bz2"))
+				return ".tar.bz2";
+			else
+				return ext;
+		}
+
 		private ArchiveEntry GetNextEntryZip ()
 		{
 			ZipInputStream zip_stream = (ZipInputStream) archive_stream;
@@ -328,7 +344,7 @@ namespace Beagle.Filters {
 				return entry;
 			}
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
+			entry.TempFile = StoreStreamInTempFile (archive_stream, GetExtension (entry.Name), entry.Modified);
 			if (entry.TempFile != null)
 				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
 
@@ -359,7 +375,7 @@ namespace Beagle.Filters {
 				return entry;
 			}
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
+			entry.TempFile = StoreStreamInTempFile (archive_stream, GetExtension (entry.Name), entry.Modified);
 			if (entry.TempFile != null)
 				entry.MimeType = XdgMime.GetMimeType (entry.TempFile);
 
@@ -377,7 +393,7 @@ namespace Beagle.Filters {
 			entry.Name = Path.GetFileNameWithoutExtension (this.file_info.Name);
 			entry.Modified = this.file_info.LastWriteTimeUtc;
 
-			entry.TempFile = StoreStreamInTempFile (archive_stream, Path.GetExtension (entry.Name), entry.Modified);
+			entry.TempFile = StoreStreamInTempFile (archive_stream, GetExtension (entry.Name), entry.Modified);
 
 			if (entry.TempFile != null) {
 				entry.Size = new FileInfo (entry.TempFile).Length;
