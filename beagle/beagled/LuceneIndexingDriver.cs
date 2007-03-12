@@ -24,27 +24,11 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-//
-// This should be the only piece of source code that knows anything
-// about Lucene's internals.
-//
-
 using System;
 using System.Collections;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Xml;
-using System.Xml.Serialization;
 
-using Lucene.Net.Analysis;
-using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
-using LNS = Lucene.Net.Search;
 
 using Beagle.Util;
 using Stopwatch = Beagle.Util.Stopwatch;
@@ -107,6 +91,29 @@ namespace Beagle.Daemon {
 
 		public delegate void FileFilterDelegate (Uri display_uri, Filter filter);
 		public FileFilterDelegate FileFilterNotifier = null;
+
+		////////////////////////////////////////////////////////////////
+
+		private class DeferredInfo {
+			public Indexable Indexable;
+			public IndexerAddedReceipt Receipt;
+			public Document PersistentPropDoc;
+			public int Count;
+
+			public DeferredInfo (Indexable indexable,
+					     IndexerAddedReceipt receipt,
+					     Document persistent_prop_doc,
+					     int count)
+			{
+				Indexable = indexable;
+				Receipt = receipt;
+				PersistentPropDoc = persistent_prop_doc;
+				Count = count;
+			}
+		}
+
+		private Hashtable deferred_hash = UriFu.NewHashtable ();
+		private ArrayList deferred_queue = new ArrayList ();
 
 		////////////////////////////////////////////////////////////////
 
@@ -247,17 +254,21 @@ namespace Beagle.Daemon {
 					break;
 				}
 				
+				// Receipts for removes were generated in the
+				// previous block and require no further
+				// processing.  Just skip over them here.
 				if (indexable.Type == IndexableType.Remove)
 					continue;
 
 				IndexerAddedReceipt r;
-				r = new IndexerAddedReceipt (indexable.Uri);
-				receipt_queue.Add (r);
 
 				if (indexable.Type == IndexableType.PropertyChange) {
 
 					Logger.Log.Debug ("+{0} (props only)", indexable.DisplayUri);
+
+					r = new IndexerAddedReceipt (indexable.Uri);
 					r.PropertyChangesOnly = true;
+					receipt_queue.Add (r);
 
 					Document doc;
 					doc = prop_change_docs [indexable.Uri] as Document;
@@ -270,11 +281,12 @@ namespace Beagle.Daemon {
 						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
 					secondary_writer.AddDocument (new_doc);
 
-					// Add children property change indexables...
-					AddChildrenPropertyChange (
-						prop_change_children_docs,
-						indexable,
-						receipt_queue);
+					IndexerChildIndexablesReceipt cr;
+
+					// Get child property change indexables...
+					cr = GetChildPropertyChange (prop_change_children_docs, indexable);
+					if (cr != null)
+						receipt_queue.Add (cr);
 
 					continue; // ...and proceed to the next Indexable
 				}
@@ -284,8 +296,6 @@ namespace Beagle.Daemon {
 				if (indexable.Type != IndexableType.Add)
 					throw new Exception ("When I said it was an IndexableType.Add, I meant it!");
 				
-				Logger.Log.Debug ("+{0}", indexable.DisplayUri);
-
 				Filter filter = null;
 
 				if (FileFilterNotifier != null)
@@ -302,62 +312,63 @@ namespace Beagle.Daemon {
 
 				if (FileFilterNotifier != null)
 					FileFilterNotifier (indexable.DisplayUri, filter); // Update with our filter
-					
-				Document primary_doc = null, secondary_doc = null;
 
-				try {
-					BuildDocuments (indexable, out primary_doc, out secondary_doc);
-					primary_writer.AddDocument (primary_doc);
-				} catch (Exception ex) {
-					
-					// If an exception was thrown, something bad probably happened
-					// while we were filtering the content.  Set NoContent to true
-					// and try again -- that way it will at least end up in the index,
-					// even if we don't manage to extract the fulltext.
+				Document persistent_prop_doc = (Document) prop_change_docs [indexable.Uri];
+				bool deferred = false;
 
-					Logger.Log.Debug (ex, "First attempt to index {0} failed", indexable.DisplayUri);
-					
-					indexable.NoContent = true;
-						
-					try {
-						BuildDocuments (indexable, out primary_doc, out secondary_doc);
-						primary_writer.AddDocument (primary_doc);
-					} catch (Exception ex2) {
-						Logger.Log.Debug (ex2, "Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
-					}
-				}
-				
+				r = new IndexerAddedReceipt (indexable.Uri);
+
 				if (filter != null) {
-
 					// Force the clean-up of temporary files, just in case.
 					filter.Cleanup ();
 
 					r.FilterName = filter.GetType ().ToString ();
 					r.FilterVersion = filter.Version;
 
-					// Create a receipt containing any child indexables.
 					if (filter.ChildIndexables.Count > 0) {
-						Log.Debug ("Generated {0} child indexable{1} from {2} (filtered with {3})", filter.ChildIndexables.Count, filter.ChildIndexables.Count > 1 ? "s" : "", indexable.DisplayUri, r.FilterName);
+
+						Log.Debug ("Generated {0} child indexable{1} from {2} (filtered with {3}); deferring until later",
+							   filter.ChildIndexables.Count,
+							   filter.ChildIndexables.Count > 1 ? "s" : "",
+							   indexable.DisplayUri,
+							   filter.GetType ().ToString ());
+
+						IndexerDeferredReceipt dr;
+						dr = new IndexerDeferredReceipt (indexable.Uri);
+						receipt_queue.Add (dr);
+
 						IndexerChildIndexablesReceipt cr;
 						cr = new IndexerChildIndexablesReceipt (indexable, filter.ChildIndexables);
 						receipt_queue.Add (cr);
+
+						DeferredInfo di = new DeferredInfo (indexable, r, persistent_prop_doc, filter.ChildIndexables.Count);
+						foreach (Indexable child in filter.ChildIndexables)
+							deferred_hash [child.Uri] = di;
+						deferred = true;
 					}
 				}
 
-				if (FileFilterNotifier != null)
-					FileFilterNotifier (null, null); // reset
+				// If we haven't deferred our receipt, add it to the index.
+				if (! deferred) {
+					Logger.Log.Debug ("+{0}", indexable.DisplayUri);
+					AddDocumentToIndex (indexable, persistent_prop_doc, primary_writer, ref secondary_writer);
+					receipt_queue.Add (r);
 
-				Document prop_change_doc = (Document) prop_change_docs [indexable.Uri];
-				secondary_doc = MergeDocuments (secondary_doc, prop_change_doc);
+					// Lower the refcount on the deferred item, and
+					// move it into the queue to be processed if all
+					// the children have been indexed.
+					DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
+					if (di != null) {
+						di.Count--;
+						deferred_hash.Remove (indexable.Uri);
 
-				if (secondary_doc != null) {
-					if (secondary_writer == null)
-						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
-					
-					secondary_writer.AddDocument (secondary_doc);
+						if (di.Count == 0)
+							deferred_queue.Add (di);
+					}
 				}
 				
-				AdjustItemCount (1);
+				if (FileFilterNotifier != null)
+					FileFilterNotifier (null, null); // reset
 
 				// Clean up any temporary files associated with filtering this indexable.
 				indexable.Cleanup ();
@@ -366,6 +377,34 @@ namespace Beagle.Daemon {
 				if (disable_textcache && text_cache != null)
 					text_cache.Delete (indexable.Uri);
 			}
+
+			// Index any ready deferred items
+			for (int i = 0; i < deferred_queue.Count; i++) {
+				// We use for loop here rather than foreach so we can
+				// append items to the end of the list without
+				// exceptions being thrown.
+				DeferredInfo di = (DeferredInfo) deferred_queue [i];
+
+				Log.Debug ("+{0} (deferred)", di.Indexable.DisplayUri);
+				AddDocumentToIndex (di.Indexable, di.PersistentPropDoc, primary_writer, ref secondary_writer);
+				receipt_queue.Add (di.Receipt);
+
+				DeferredInfo ref_di = (DeferredInfo) deferred_hash [di.Indexable.Uri];
+				if (ref_di != null) {
+					ref_di.Count--;
+					deferred_hash.Remove (di.Indexable.Uri);
+
+					if (ref_di.Count == 0)
+						deferred_queue.Add (ref_di);
+				}
+
+				// Cleanup, and text cache maintenance.
+				di.Indexable.Cleanup ();
+
+				if (disable_textcache && text_cache != null)
+					text_cache.Delete (di.Indexable.Uri);
+			}
+			deferred_queue.Clear ();
 
 			if (text_cache != null)
 				text_cache.CommitTransaction ();
@@ -408,23 +447,63 @@ namespace Beagle.Daemon {
 			return receipt_array;
 		}
 
+		private void AddDocumentToIndex (Indexable indexable,
+						 Document persistent_prop_doc,
+						 IndexWriter primary_writer,
+						 ref IndexWriter secondary_writer)
+		{
+			Document primary_doc = null, secondary_doc = null;
+
+			try {
+				BuildDocuments (indexable, out primary_doc, out secondary_doc);
+				primary_writer.AddDocument (primary_doc);
+			} catch (Exception ex) {
+					
+				// If an exception was thrown, something bad probably happened
+				// while we were filtering the content.  Set NoContent to true
+				// and try again -- that way it will at least end up in the index,
+				// even if we don't manage to extract the fulltext.
+
+				Logger.Log.Debug (ex, "First attempt to index {0} failed", indexable.DisplayUri);
+					
+				indexable.NoContent = true;
+						
+				try {
+					BuildDocuments (indexable, out primary_doc, out secondary_doc);
+					primary_writer.AddDocument (primary_doc);
+				} catch (Exception ex2) {
+					Logger.Log.Debug (ex2, "Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
+				}
+			}
+
+			secondary_doc = MergeDocuments (secondary_doc, persistent_prop_doc);
+
+			if (secondary_doc != null) {
+				if (secondary_writer == null)
+					secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
+
+				secondary_writer.AddDocument (secondary_doc);
+			}
+
+			AdjustItemCount (1);
+		}
+
 		// Since some parent properties maybe stored in child properties
 		// as parent: property, any property change should be propagated
 		// to all its children as well.
-		private void AddChildrenPropertyChange (
-				Hashtable children_docs,
-				Indexable parent,
-				ArrayList receipt_queue)
+		private IndexerChildIndexablesReceipt GetChildPropertyChange (Hashtable children_docs,
+									      Indexable parent)
 		{
 			if (! children_docs.Contains (parent.Uri))
-				return;
+				return null;
 
-			ArrayList children_list = (ArrayList) children_docs [parent.Uri];
-			IndexerChildIndexablesReceipt child_r;
-			child_r = new IndexerChildIndexablesReceipt ();
+			IndexerChildIndexablesReceipt child_receipt;
+			child_receipt = new IndexerChildIndexablesReceipt ();
+
+			ArrayList child_uri_list = (ArrayList) children_docs [parent.Uri];
 			ArrayList child_indexable_list = new ArrayList ();
 
-			foreach (Uri uri in children_list) {
+			foreach (Uri uri in child_uri_list) {
 				Indexable child_indexable;
 				child_indexable = new Indexable (IndexableType.PropertyChange, uri);
 				Log.Debug ("Creating property change child indexable for {1} (parent {0})", parent.Uri, uri);
@@ -433,8 +512,9 @@ namespace Beagle.Daemon {
 				child_indexable_list.Add (child_indexable);
 			}
 
-			child_r.Children = child_indexable_list;
-			receipt_queue.Add (child_r);
+			child_receipt.Children = child_indexable_list;
+
+			return child_receipt;
 		}
 		
 		////////////////////////////////////////////////////////////////

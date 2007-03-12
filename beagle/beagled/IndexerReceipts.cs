@@ -34,7 +34,8 @@ namespace Beagle.Daemon {
 
 	[XmlInclude (typeof (IndexerAddedReceipt)),
 	 XmlInclude (typeof (IndexerRemovedReceipt)),
-	 XmlInclude (typeof (IndexerChildIndexablesReceipt))]
+	 XmlInclude (typeof (IndexerChildIndexablesReceipt)),
+	 XmlInclude (typeof (IndexerDeferredReceipt))]
 	public abstract class IndexerReceipt {
 		
 		public IndexerReceipt () { }
@@ -114,4 +115,22 @@ namespace Beagle.Daemon {
 		public ArrayList Children;
 	}
 
+	public class IndexerDeferredReceipt : IndexerReceipt {
+		
+		public IndexerDeferredReceipt () { }
+
+		public IndexerDeferredReceipt (Uri uri)
+		{
+			this.Uri = uri;
+		}
+		
+		[XmlIgnore]
+		public Uri Uri;
+		
+		[XmlAttribute ("Uri")]
+		public string UriString {
+			get { return UriFu.UriToEscapedString (Uri); }
+			set { Uri = UriFu.EscapedStringToUri (value); }
+		}
+	}
 }

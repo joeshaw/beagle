@@ -1251,38 +1251,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			string path;
 			path = (string) indexable.LocalState ["Path"];
+
 			if (Debug)
 				Log.Debug ("PostAddHook for {0} ({1}) and receipt uri={2}", indexable.Uri, path, receipt.Uri);
-
-			// Remap the Uri so that change notification will work properly
-			receipt.Uri = UriFu.PathToFileUri (path);
-		}
-
-		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
-		{
-			// Find the cached external Uri and remap the Uri in the receipt.
-			// We have to do this to make change notification work.
-			Uri external_uri;
-			external_uri = indexable.LocalState ["RemovedUri"] as Uri;
-			if (external_uri == null)
-				throw new Exception ("No cached external Uri for " + receipt.Uri);
-			receipt.Uri = external_uri;
-			ForgetId (external_uri.LocalPath);
-		}
-
-		override protected void PostChildrenIndexedHook (Indexable indexable,
-								 IndexerAddedReceipt receipt,
-								 DateTime Mtime)
-		{
-			// There is no business here for children or if only the property changed
-			if (indexable.Type == IndexableType.PropertyChange ||
-			    indexable.ParentUri != null)
-				return;
-
-			string path;
-			path = (string) indexable.LocalState ["Path"];
-			if (Debug)
-				Log.Debug ("PostChildrenIndexedHook for {0} ({1}) and receipt uri={2}, (filter={3},{4})", indexable.Uri, path, receipt.Uri, receipt.FilterName, receipt.FilterVersion);
 
 			ForgetId (path);
 
@@ -1300,7 +1271,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			attr = FileAttributesStore.ReadOrCreate (path, unique_id);
 
 			attr.Path = path;
-			// FIXME: Should timestamp be indexable.timestamp or parameter Mtime
 			attr.LastWriteTime = indexable.Timestamp;
 			
 			attr.FilterName = receipt.FilterName;
@@ -1315,6 +1285,21 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			FileAttributesStore.Write (attr);
+
+			// Remap the Uri so that change notification will work properly
+			receipt.Uri = UriFu.PathToFileUri (path);
+		}
+
+		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		{
+			// Find the cached external Uri and remap the Uri in the receipt.
+			// We have to do this to make change notification work.
+			Uri external_uri;
+			external_uri = indexable.LocalState ["RemovedUri"] as Uri;
+			if (external_uri == null)
+				throw new Exception ("No cached external Uri for " + receipt.Uri);
+			receipt.Uri = external_uri;
+			ForgetId (external_uri.LocalPath);
 		}
 
 		private bool RemapUri (Hit hit)
@@ -1347,7 +1332,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				hit_id = GuidFu.FromUri (hit.Uri);
 				path = UniqueIdToDirectoryName (hit_id);
 			} else {
-				string parent_id_uri = null;
+				string parent_id_uri;
 				parent_id_uri = hit [Property.ParentDirUriPropKey];
 				if (parent_id_uri == null)
 					parent_id_uri = hit ["parent:" + Property.ParentDirUriPropKey];
