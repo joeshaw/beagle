@@ -175,7 +175,7 @@ namespace Beagle.Filters {
 			// and outgoing message
 			string kmail_msg_sent = this.message.GetHeader ("X-KMail-Link-Type");
 			bool issent_is_set = false;
-			foreach (Property property in IndexableProperties) {
+			foreach (Property property in Indexable.Properties) {
 				if (property.Key == "fixme:isSent") {
 					issent_is_set = true;
 					break;
@@ -187,7 +187,7 @@ namespace Beagle.Filters {
 
 		protected override void DoPullSetup ()
 		{
-			this.handler = new PartHandler (this);
+			this.handler = new PartHandler (Indexable);
 			using (GMime.Object mime_part = this.message.MimePart)
 				this.handler.OnEachPart (mime_part);
 
@@ -229,7 +229,7 @@ namespace Beagle.Filters {
 		}
 
 		private class PartHandler {
-			private Beagle.Daemon.Filter filter;
+			private Indexable indexable;
 			private int count = 0; // parts handled so far
 			private int depth = 0; // part recursion depth
 			private ArrayList child_indexables = new ArrayList ();
@@ -246,9 +246,9 @@ namespace Beagle.Filters {
 				"text/x-vcard"
 			};
 
-			public PartHandler (Beagle.Daemon.Filter filter)
+			public PartHandler (Indexable parent_indexable)
 			{
-				this.filter = filter;
+				this.indexable = parent_indexable;
 			}
 
 			private bool IsMimeTypeHandled (string mime_type)
@@ -343,10 +343,10 @@ namespace Beagle.Filters {
 						// attachments along with (real) attachments.
 
 						if (Array.IndexOf (blacklisted_mime_types, mime_type) == -1) {
-							string sub_uri = this.filter.Uri.ToString () + "#" + this.count;
+							string sub_uri = this.indexable.Uri.ToString () + "#" + this.count;
 							Indexable child = new Indexable (new Uri (sub_uri));
 
-							child.DisplayUri = new Uri (this.filter.DisplayUri.ToString () + "#" + this.count);
+							child.DisplayUri = new Uri (this.indexable.DisplayUri.ToString () + "#" + this.count);
 
 							// This is a special case.
 							// Even for mails found on disk, MailMessage hitype is set
@@ -371,7 +371,7 @@ namespace Beagle.Filters {
 							this.child_indexables.Add (child);
 						} else {
 							Log.Debug ("Skipping attachment {0}#{1} with blacklisted mime type {2}",
-								   this.filter.Uri, this.count, mime_type);
+								   this.indexable.Uri, this.count, mime_type);
 						}
 					}
 

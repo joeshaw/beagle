@@ -345,7 +345,7 @@ namespace Beagle.Filters {
 		{
 			enc = null;
 
-			foreach (Property prop in IndexableProperties) {
+			foreach (Property prop in Indexable.Properties) {
 				if (prop.Key != StringFu.UnindexedNamespace + "encoding")
 					continue;
 

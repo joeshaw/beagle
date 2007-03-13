@@ -236,34 +236,25 @@ namespace Beagle.Daemon {
 
 				if (indexable.Crawled)
 					candidate_filter.EnableCrawlMode ();
-				
-				// Set the filter's URIs
-				candidate_filter.Uri = indexable.Uri;
-				candidate_filter.DisplayUri = indexable.DisplayUri;
 
-				// allow the filter access to the indexable's properties
-				candidate_filter.IndexableProperties = indexable.Properties;
-				
+				// Set the indexable on the filter.
+				candidate_filter.Indexable = indexable;
+
 				// Open the filter, copy the file's properties to the indexable,
 				// and hook up the TextReaders.
 
-				bool succesful_open = false;
+				bool successful_open = false;
 				TextReader text_reader;
 				Stream binary_stream;
 
 				if (path != null)
-					succesful_open = candidate_filter.Open (path);
+					successful_open = candidate_filter.Open (path);
 				else if ((text_reader = indexable.GetTextReader ()) != null)
-					succesful_open = candidate_filter.Open (text_reader);
+					successful_open = candidate_filter.Open (text_reader);
 				else if ((binary_stream = indexable.GetBinaryStream ()) != null)
-					succesful_open = candidate_filter.Open (binary_stream);
+					successful_open = candidate_filter.Open (binary_stream);
 					
-				if (succesful_open) {
-					// Copy some properties back from the filter to the indexable
-					if (candidate_filter.Timestamp != DateTime.MinValue)
-						indexable.Timestamp = candidate_filter.Timestamp;
-					foreach (Property prop in candidate_filter.Properties)
-						indexable.AddProperty (prop);
+				if (successful_open) {
 					// Set FileType
 					indexable.AddProperty (Property.NewKeyword ("beagle:FileType", candidate_filter.FileType));
 

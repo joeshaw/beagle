@@ -155,7 +155,7 @@ namespace Beagle.Filters {
 			
 			string line;
 			while ((line = pout.ReadLine ()) != null)
-				Log.Warn ("doc extractor [{0}]: {1}", Uri, line);
+				Log.Warn ("doc extractor [{0}]: {1}", Indexable.Uri, line);
 
 			pout.Close ();
 			pc.Close ();

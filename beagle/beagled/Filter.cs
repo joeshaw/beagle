@@ -114,8 +114,7 @@ namespace Beagle.Daemon {
 		private string this_mime_type = null;
 		private string this_extension = null;
 		private string this_file_type = null;
-		private ArrayList indexable_properties = null;
-		private DateTime timestamp = DateTime.MinValue;
+		private Indexable indexable = null;
 
 		public string MimeType {
 			get { return this_mime_type; }
@@ -127,20 +126,6 @@ namespace Beagle.Daemon {
 			set { this_extension = value; }
 		}
 
-		// Allow the filter to access the properties
-		// set by indexable
-		public ArrayList IndexableProperties {
-			get { return indexable_properties; }
-			set { indexable_properties = value; }
-		}
-
-		// Allow the filter to access the timestamp,
-		// sometime filters know better
-		public DateTime Timestamp {
-			get { return timestamp; }
-			set { timestamp = value; }
-		}
-		
 		// Filter may set the filetype to document, source, music etc.
 		// Use lower case for file_type
 		protected void SetFileType (string file_type)
@@ -152,6 +137,11 @@ namespace Beagle.Daemon {
 			get { return this_file_type; }
 		}
 
+		public Indexable Indexable {
+			get { return indexable; }
+			set { indexable = value; }
+		}
+		
 		//////////////////////////
 		
 		private bool crawl_mode = false;
@@ -239,7 +229,6 @@ namespace Beagle.Daemon {
 
 		private ArrayList textPool;
 		private ArrayList hotPool;
-		private ArrayList propertyPool;
 
 		private int word_count = 0;
 		private int hotword_count = 0;
@@ -429,14 +418,11 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		/*
-		 * Adds property prop.
-		 * prop can be null or can have null value; in both cases nothing is added.
-		 */
+		//////////////////////////
+
 		public void AddProperty (Property prop)
 		{
-			if (prop != null && ! string.IsNullOrEmpty (prop.Value))
-				propertyPool.Add (prop);
+			this.Indexable.AddProperty (prop);
 		}
 
 		//////////////////////////
@@ -580,7 +566,6 @@ namespace Beagle.Daemon {
 			isFinished = false;
 			textPool = new ArrayList ();
 			hotPool = new ArrayList ();
-			propertyPool = new ArrayList ();
 
 			currentInfo = info;
 
@@ -776,30 +761,6 @@ namespace Beagle.Daemon {
 			return new PullingReader (new PullingReader.Pull (PullHotText));
 		}
 
-		public IEnumerable Properties {
-			get { return propertyPool; }
-		}
-
-		//////////////////////////////
-
-		// This is used primarily for the generation of URIs for the
-		// child indexables that can be created as a result of the
-		// filtering process.
-
-		private Uri uri = null;
-
-		public Uri Uri {
-			get { return uri; }
-			set { uri = value; }
-		}
-
-		private Uri display_uri = null;
-
-		public Uri DisplayUri {
-			get { return display_uri; }
-			set { display_uri = value; }
-		}
-
 		//////////////////////////////
 
 		private ArrayList child_indexables = new ArrayList ();
@@ -808,7 +769,7 @@ namespace Beagle.Daemon {
 		{
 			this.child_indexables.Add (indexable);
 		}
-		
+
 		protected void AddChildIndexables (ICollection indexables)
 		{
 			this.child_indexables.AddRange (indexables);

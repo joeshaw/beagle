@@ -89,7 +89,7 @@ namespace Beagle.Filters {
 			else if (prop_name == "LAST-MODIFIED") {
 				DateTime dt = ProcessKCalDate (prop_value);
 				if (dt != DateTime.MinValue)
-					Timestamp = dt;
+					Indexable.Timestamp = dt;
 			} else if (prop_name == "CREATED") {
 				DateTime dt = ProcessKCalDate (prop_value);
 				if (dt != DateTime.MinValue)

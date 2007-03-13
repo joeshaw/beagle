@@ -55,7 +55,7 @@ namespace Beagle.Filters {
 
 			// read the charset hint from indexable
 			string charset = null;
-			foreach (Property property in IndexableProperties) {
+			foreach (Property property in Indexable.Properties) {
 				if (property.Key != (StringFu.UnindexedNamespace + "charset"))
 					continue;
 				charset = (string) property.Value;

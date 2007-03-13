@@ -149,12 +149,12 @@ namespace Beagle.Filters {
 				// If you read the Uri related FIXMEs and hacks in beagled/*Queryable,
 				// then you would see why creating Beagle.Uri class over System.Uri
 				// is not at all a bad idea :)
-				Indexable child = new Indexable (new Uri (Uri.ToString () + "#" + a_entry.Name));
+				Indexable child = new Indexable (new Uri (Indexable.Uri.ToString () + "#" + a_entry.Name));
 
 				child.CacheContent = true;
 				child.MimeType = a_entry.MimeType;
 
-				child.DisplayUri = new Uri (DisplayUri.ToString () + "#" + a_entry.Name);
+				child.DisplayUri = new Uri (Indexable.DisplayUri.ToString () + "#" + a_entry.Name);
 				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
 				child.DeleteContent = true;
 

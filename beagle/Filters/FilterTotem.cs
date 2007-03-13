@@ -80,7 +80,7 @@ namespace Beagle.Filters {
 		protected override void DoPullProperties ()
 		{
 			SafeProcess pc = new SafeProcess ();
-			pc.Arguments = new string [] { "totem-video-indexer", UriFu.UriToEscapedString (this.Uri) };
+			pc.Arguments = new string [] { "totem-video-indexer", UriFu.UriToEscapedString (this.Indexable.Uri) };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 

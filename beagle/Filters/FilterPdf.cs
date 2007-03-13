@@ -102,7 +102,7 @@ namespace Beagle.Filters {
 			// Log any errors or warnings from stderr
 			pout = new StreamReader (pc.StandardError);
 			while ((str = pout.ReadLine ()) != null)
-				Log.Warn ("pdfinfo [{0}]: {1}", Uri, str);
+				Log.Warn ("pdfinfo [{0}]: {1}", Indexable.Uri, str);
 
 			pout.Close ();
 			pc.Close ();
