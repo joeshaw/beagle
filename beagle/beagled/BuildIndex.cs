@@ -451,10 +451,10 @@ namespace Beagle.Daemon
 					Logger.Log.Debug ("Removing: '{0}'", path);
 					fa_store.Drop (path);
 
-				} else if (raw_r is IndexerChildIndexablesReceipt) {
-					// Add any child indexables back into our indexer
-					IndexerChildIndexablesReceipt r = (IndexerChildIndexablesReceipt) raw_r;
-					pending_children.AddRange (r.Children);
+				} else if (raw_r is IndexerIndexablesReceipt) {
+					// Add any filter-generated indexables back into our indexer
+					IndexerIndexablesReceipt r = (IndexerIndexablesReceipt) raw_r;
+					pending_children.AddRange (r.Indexables);
 				}
 			}
 

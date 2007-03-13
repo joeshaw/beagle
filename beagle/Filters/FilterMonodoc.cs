@@ -83,20 +83,22 @@ namespace Beagle.Filters {
 					continue;
 				
 				Indexable type_indexable = TypeNodeToIndexable (type, FileInfo);
-				AddChildIndexable (type_indexable);
+				type_indexable.SetChildOf (this.Indexable);
+				AddIndexable (type_indexable);
 				
 				foreach(XmlNode member in type.SelectNodes ("Members/Member")) {
 					Indexable member_indexable = MemberNodeToIndexable (member,
 											    FileInfo,
 											    type.Attributes ["FullName"].Value);
-					AddChildIndexable (member_indexable);
+					member_indexable.SetChildOf (this.Indexable);
+					AddIndexable (member_indexable);
 				}
 			}
 			
 			// If we've successfully crawled the file but haven't 
                         // found any indexables, we shouldn't consider it
                         // successfull at all.
-                        if (ChildIndexables.Count == 0) {
+                        if (GeneratedIndexables.Count == 0) {
                                 Error ();
                                 return;
                         }

@@ -191,7 +191,7 @@ namespace Beagle.Filters {
 			using (GMime.Object mime_part = this.message.MimePart)
 				this.handler.OnEachPart (mime_part);
 
-			AddChildIndexables (this.handler.ChildIndexables);
+			AddIndexables (this.handler.ChildIndexables);
 		}
 
 		protected override void DoPull ()
@@ -368,6 +368,7 @@ namespace Beagle.Filters {
 							else
 								child.SetBinaryStream (stream);
 
+							child.SetChildOf (this.indexable);
 							this.child_indexables.Add (child);
 						} else {
 							Log.Debug ("Skipping attachment {0}#{1} with blacklisted mime type {2}",

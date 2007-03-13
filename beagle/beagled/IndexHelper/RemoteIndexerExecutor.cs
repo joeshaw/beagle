@@ -76,15 +76,15 @@ namespace Beagle.IndexHelper {
 			if (remote_request.Request != null) // If we just want the item count, this will be null
 				receipts = indexer.Flush (remote_request.Request);
 
-			// Child indexables probably have streams
+			// Filter-generated indexables probably have streams
 			// associated with them.  We need to store them before
 			// sending them back to the daemon.
 			if (receipts != null && ! Shutdown.ShutdownRequested) {
 				foreach (IndexerReceipt r in receipts) {
-					IndexerChildIndexablesReceipt cir;
-					cir = r as IndexerChildIndexablesReceipt;
-					if (cir != null) {
-						foreach (Indexable i in cir.Children) {
+					IndexerIndexablesReceipt ir;
+					ir = r as IndexerIndexablesReceipt;
+					if (ir != null) {
+						foreach (Indexable i in ir.Indexables) {
 							i.StoreStream ();
 							i.CloseStreams ();
 						}

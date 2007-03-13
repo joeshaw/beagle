@@ -782,8 +782,8 @@ namespace Beagle.Daemon {
 		// Other hooks
 
 		// If this returns true, a task will automatically be created to
-		// add the child.
-		virtual protected bool PreChildAddHook (Indexable child)
+		// add the indexable
+		virtual protected bool PreFilterGeneratedAddHook (Indexable indexable)
 		{
 			return true;
 		}
@@ -938,31 +938,36 @@ namespace Beagle.Daemon {
 					// when we are remapping.
 					removed_uris.Add (r.Uri);
 					
-				} else if (receipts [i] is IndexerChildIndexablesReceipt) {
+				} else if (receipts [i] is IndexerIndexablesReceipt) {
 					
-					IndexerChildIndexablesReceipt r;
-					r = (IndexerChildIndexablesReceipt) receipts [i];
+					IndexerIndexablesReceipt r;
+					r = (IndexerIndexablesReceipt) receipts [i];
 
-					foreach (Indexable child in r.Children) {
+					foreach (Indexable indexable in r.Indexables) {
 						bool please_add_a_new_task = false;
 
 						try {
-							please_add_a_new_task = PreChildAddHook (child);
+							please_add_a_new_task = PreFilterGeneratedAddHook (indexable);
 						} catch (InvalidOperationException ex) {
 							// Queryable does not support adding children
 						} catch (Exception ex) {
-							Logger.Log.Warn (ex, "Caught exception in PreChildAddHook '{0}'", child.DisplayUri);
+							Logger.Log.Warn (ex, "Caught exception in PreFilterGeneratedAddHook '{0}'", indexable.DisplayUri);
 						}
 
 						if (please_add_a_new_task) {
-							if (Debug)
-								Logger.Log.Debug ("Adding child {0} to parent {1}", child.Uri, child.ParentUri);
+							if (Debug) {
+								if (indexable.IsChild)
+									Log.Debug ("Adding filter-generated child indexable {0} to parent {1}", indexable.Uri, indexable.ParentUri);
+								else
+									Log.Debug ("Adding filter-generated indexable {0}", indexable.Uri);
+							}
 
-							Scheduler.Task task = NewAddTask (child);
-							task.SubPriority = 1;
+							// FIXME: Maybe we should use an indexable generator instead?
+							Scheduler.Task task = NewAddTask (indexable);
+							task.SubPriority = 1; // So we jump ahead of other individual tasks
 							ThisScheduler.Add (task);
 						} else
-							child.Cleanup ();
+							indexable.Cleanup ();
 					}
 
 				} else if (receipts [i] is IndexerDeferredReceipt) {

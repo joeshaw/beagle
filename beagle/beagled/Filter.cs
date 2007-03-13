@@ -763,20 +763,20 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////
 
-		private ArrayList child_indexables = new ArrayList ();
+		private ArrayList generated_indexables = new ArrayList ();
 
-		protected void AddChildIndexable (Indexable indexable)
+		protected void AddIndexable (Indexable indexable)
 		{
-			this.child_indexables.Add (indexable);
+			this.generated_indexables.Add (indexable);
 		}
 
-		protected void AddChildIndexables (ICollection indexables)
+		protected void AddIndexables (ICollection indexables)
 		{
-			this.child_indexables.AddRange (indexables);
+			this.generated_indexables.AddRange (indexables);
 		}
 
-		public ArrayList ChildIndexables {
-			get { return this.child_indexables; }
+		public ArrayList GeneratedIndexables {
+			get { return this.generated_indexables; }
 		}
 	}
 

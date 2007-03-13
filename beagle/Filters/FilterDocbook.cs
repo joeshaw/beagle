@@ -180,8 +180,9 @@ namespace Beagle.Filters
 
 						StringReader content_reader = new StringReader (entry.Content.ToString ());
 						indexable.SetTextReader (content_reader);
-						
-						AddChildIndexable (indexable);
+						indexable.SetChildOf (this.Indexable);
+
+						AddIndexable (indexable);
 					}
 					break;
 				}
@@ -200,7 +201,7 @@ namespace Beagle.Filters
 			// successfull at all (unless we have a title, which
 			// means that it's actually a docbook file, just without
 			// sections.
-			if (ChildIndexables.Count == 0 && base_title == null) {
+			if (GeneratedIndexables.Count == 0 && base_title == null) {
 				Error ();
 				return;
 			}

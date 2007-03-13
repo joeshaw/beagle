@@ -37,7 +37,7 @@ using Beagle.Daemon;
 class ExtractContentTool {
 
 	static bool tokenize = false;
-	static bool show_children = false;
+	static bool show_generated = false;
 	static string mime_type = null;
 	static bool continue_last = false;
 
@@ -84,6 +84,9 @@ class ExtractContentTool {
 
 		Console.WriteLine ("Filename: " + indexable.Uri);
 
+		if (indexable.ParentUri != null)
+			Console.WriteLine ("Parent: " + indexable.ParentUri);
+
 		Stopwatch watch = new Stopwatch ();
 
 		Filter filter;
@@ -100,10 +103,10 @@ class ExtractContentTool {
 		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
 		Console.WriteLine ();
 
-		if (filter.ChildIndexables != null && filter.ChildIndexables.Count > 0) {
-			Console.WriteLine ("Child indexables ({0}):", filter.ChildIndexables.Count);
+		if (filter.GeneratedIndexables.Count > 0) {
+			Console.WriteLine ("Filter-generated indexables ({0}):", filter.GeneratedIndexables.Count);
 
-			foreach (Indexable i in filter.ChildIndexables)
+			foreach (Indexable i in filter.GeneratedIndexables)
 				Console.WriteLine ("  {0}", i.Uri);
 
 			Console.WriteLine ();
@@ -186,16 +189,14 @@ class ExtractContentTool {
 		// Clean up any temporary files associated with filtering this indexable.
 		indexable.Cleanup ();
 
-		if (filter.ChildIndexables != null) {
-			foreach (Indexable i in filter.ChildIndexables) {
-				if (! show_children) {
-					i.Cleanup ();
-					continue;
-				}
-
-				i.StoreStream ();
-				Display (i);
+		foreach (Indexable i in filter.GeneratedIndexables) {
+			if (! show_generated) {
+				i.Cleanup ();
+				continue;
 			}
+
+			i.StoreStream ();
+			Display (i);
 		}
 		
 		indexable.Cleanup ();
@@ -212,7 +213,7 @@ class ExtractContentTool {
 		Console.WriteLine ("Options:");
 		Console.WriteLine ("  --debug\t\t\tPrint debug info to the console");
 		Console.WriteLine ("  --tokenize\t\t\tTokenize the text before printing");
-		Console.WriteLine ("  --show-children\t\tShow filtering information for items created by filters");
+		Console.WriteLine ("  --show-generated\t\tShow filtering information for items created by filters");
 		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
 		Console.WriteLine ("  --outfile=<filename>\t\tOutput file name");
 		Console.WriteLine ("  --help\t\t\tShow this message");
@@ -234,8 +235,8 @@ class ExtractContentTool {
 		if (Array.IndexOf (args, "--tokenize") != -1)
 			tokenize = true;
 		
-		if (Array.IndexOf (args, "--show-children") != -1)
-			show_children = true;
+		if (Array.IndexOf (args, "--show-generated") != -1 || Array.IndexOf (args, "--show-children") != -1)
+			show_generated = true;
 
 		StreamWriter writer = null;
 		string outfile = null;

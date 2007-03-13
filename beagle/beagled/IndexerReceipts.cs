@@ -34,7 +34,7 @@ namespace Beagle.Daemon {
 
 	[XmlInclude (typeof (IndexerAddedReceipt)),
 	 XmlInclude (typeof (IndexerRemovedReceipt)),
-	 XmlInclude (typeof (IndexerChildIndexablesReceipt)),
+	 XmlInclude (typeof (IndexerIndexablesReceipt)),
 	 XmlInclude (typeof (IndexerDeferredReceipt))]
 	public abstract class IndexerReceipt {
 		
@@ -98,21 +98,28 @@ namespace Beagle.Daemon {
 		}
 	}
 			     
-	public class IndexerChildIndexablesReceipt : IndexerReceipt {
+	public class IndexerIndexablesReceipt : IndexerReceipt {
 
-		public IndexerChildIndexablesReceipt () { }
+		public IndexerIndexablesReceipt () { }
 
-		public IndexerChildIndexablesReceipt (Indexable parent, ArrayList children)
+		public IndexerIndexablesReceipt (Uri generating_uri, ArrayList indexables)
 		{
-			foreach (Indexable child in children)
-				child.SetChildOf (parent);
-
-			this.Children = children;
+			this.GeneratingUri = generating_uri;
+			this.Indexables = indexables;
 		}
 
-		[XmlArray (ElementName="Children")]
-		[XmlArrayItem (ElementName="Child", Type=typeof (Indexable))]
-		public ArrayList Children;
+		[XmlIgnore]
+		public Uri GeneratingUri;
+		
+		[XmlAttribute ("GeneratingUri")]
+		public string GeneratingUriString {
+			get { return UriFu.UriToEscapedString (GeneratingUri); }
+			set { GeneratingUri = UriFu.EscapedStringToUri (value); }
+		}
+
+		[XmlArray (ElementName="Indexables")]
+		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
+		public ArrayList Indexables;
 	}
 
 	public class IndexerDeferredReceipt : IndexerReceipt {

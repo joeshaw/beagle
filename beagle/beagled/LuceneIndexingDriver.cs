@@ -281,12 +281,12 @@ namespace Beagle.Daemon {
 						secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
 					secondary_writer.AddDocument (new_doc);
 
-					IndexerChildIndexablesReceipt cr;
+					IndexerIndexablesReceipt ir;
 
 					// Get child property change indexables...
-					cr = GetChildPropertyChange (prop_change_children_docs, indexable);
-					if (cr != null)
-						receipt_queue.Add (cr);
+					ir = GetChildPropertyChange (prop_change_children_docs, indexable);
+					if (ir != null)
+						receipt_queue.Add (ir);
 
 					continue; // ...and proceed to the next Indexable
 				}
@@ -325,11 +325,11 @@ namespace Beagle.Daemon {
 					r.FilterName = filter.GetType ().ToString ();
 					r.FilterVersion = filter.Version;
 
-					if (filter.ChildIndexables.Count > 0) {
+					if (filter.GeneratedIndexables.Count > 0) {
 
-						Log.Debug ("Generated {0} child indexable{1} from {2} (filtered with {3}); deferring until later",
-							   filter.ChildIndexables.Count,
-							   filter.ChildIndexables.Count > 1 ? "s" : "",
+						Log.Debug ("Got {0} filter-generated indexable{1} from {2} (filtered with {3}); deferring until later",
+							   filter.GeneratedIndexables.Count,
+							   filter.GeneratedIndexables.Count > 1 ? "s" : "",
 							   indexable.DisplayUri,
 							   filter.GetType ().ToString ());
 
@@ -337,13 +337,13 @@ namespace Beagle.Daemon {
 						dr = new IndexerDeferredReceipt (indexable.Uri);
 						receipt_queue.Add (dr);
 
-						IndexerChildIndexablesReceipt cr;
-						cr = new IndexerChildIndexablesReceipt (indexable, filter.ChildIndexables);
-						receipt_queue.Add (cr);
+						IndexerIndexablesReceipt ir;
+						ir = new IndexerIndexablesReceipt (indexable.Uri, filter.GeneratedIndexables);
+						receipt_queue.Add (ir);
 
-						DeferredInfo di = new DeferredInfo (indexable, r, persistent_prop_doc, filter.ChildIndexables.Count);
-						foreach (Indexable child in filter.ChildIndexables)
-							deferred_hash [child.Uri] = di;
+						DeferredInfo di = new DeferredInfo (indexable, r, persistent_prop_doc, filter.GeneratedIndexables.Count);
+						foreach (Indexable fi in filter.GeneratedIndexables)
+							deferred_hash [fi.Uri] = di;
 						deferred = true;
 					}
 				}
@@ -356,7 +356,8 @@ namespace Beagle.Daemon {
 
 					// Lower the refcount on the deferred item, and
 					// move it into the queue to be processed if all
-					// the children have been indexed.
+					// the filter-generated indexables have been
+					// indexed.
 					DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
 					if (di != null) {
 						di.Count--;
@@ -491,14 +492,14 @@ namespace Beagle.Daemon {
 		// Since some parent properties maybe stored in child properties
 		// as parent: property, any property change should be propagated
 		// to all its children as well.
-		private IndexerChildIndexablesReceipt GetChildPropertyChange (Hashtable children_docs,
-									      Indexable parent)
+		private IndexerIndexablesReceipt GetChildPropertyChange (Hashtable children_docs,
+									 Indexable parent)
 		{
 			if (! children_docs.Contains (parent.Uri))
 				return null;
 
-			IndexerChildIndexablesReceipt child_receipt;
-			child_receipt = new IndexerChildIndexablesReceipt ();
+			IndexerIndexablesReceipt receipt;
+			receipt = new IndexerIndexablesReceipt ();
 
 			ArrayList child_uri_list = (ArrayList) children_docs [parent.Uri];
 			ArrayList child_indexable_list = new ArrayList ();
@@ -512,9 +513,10 @@ namespace Beagle.Daemon {
 				child_indexable_list.Add (child_indexable);
 			}
 
-			child_receipt.Children = child_indexable_list;
+			receipt.GeneratingUri = parent.Uri;
+			receipt.Indexables = child_indexable_list;
 
-			return child_receipt;
+			return receipt;
 		}
 		
 		////////////////////////////////////////////////////////////////

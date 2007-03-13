@@ -166,7 +166,8 @@ namespace Beagle.Filters {
 				foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
 					child.AddProperty (prop);
 
-				AddChildIndexable (child);
+				child.SetChildOf (Indexable);
+				AddIndexable (child);
 			}
 
 			if (total_size > MAX_ALL_FILES)
