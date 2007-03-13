@@ -1,7 +1,7 @@
 //
 // FilterOle.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 //
 
 //
@@ -69,16 +69,14 @@ namespace Beagle.Filters {
 				}
 				
 				if (input == null || file == null) {
-					Logger.Log.Error ("Unable to open [{0}] ",info.FullName);
-					Console.WriteLine ("input/file is null");
+					Log.Warn ("Unable to open '{0}': input/file is null", info.FullName);
 					Error ();
 					return;
 				}
 				
 				OpenStorage (info);
 			} catch (Exception e) {
-				Logger.Log.Error ("Unable to open "+info.FullName);
-				Console.WriteLine ("{0}", e.Message);
+				Log.Warn (e, "Unable to open " + info.FullName);
 				Error ();
 				return;
 			}

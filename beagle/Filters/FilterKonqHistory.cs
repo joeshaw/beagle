@@ -94,14 +94,14 @@ namespace Beagle.Filters {
 					doc.Load (mem_stream);
 				else
 					doc.Load (mem_stream, enc);
+				Finished ();
 			} catch (NotSupportedException) {
 				doc.Load (mem_stream, Encoding.ASCII);
+				Finished ();
 			} catch (Exception e) {
-				Console.WriteLine (e.Message);
-				Console.WriteLine (e.StackTrace);
+				Log.Warn (e, "Unable to parse Konqueror History");
+				Error ();
 			}
-
-			Finished ();
 		}
 
 		override protected void RegisterSupportedTypes () 
