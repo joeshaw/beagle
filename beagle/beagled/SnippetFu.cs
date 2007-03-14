@@ -208,7 +208,12 @@ namespace Beagle.Daemon {
 			TextReader reader = TextCache.UserCache.GetReader (filename);
 			if (reader == null)
 				return null;
-			return GetSnippet (query_terms, reader);
+			try {
+				return GetSnippet (query_terms, reader);
+			} catch (ICSharpCode.SharpZipLib.SharpZipBaseException ex) {
+				Log.Debug ("Unexpected exception '{0}' while extracting snippet for {1}", ex.Message, filename);
+				return null;
+			}
 		}
 	}
 
