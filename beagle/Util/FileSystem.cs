@@ -51,7 +51,7 @@ namespace Beagle.Util {
 			else if (Directory.Exists (path))
 				return Directory.GetLastWriteTimeUtc (path);
 			else
-				throw new FileNotFoundException (path);
+				return new DateTime (1601, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 		}
 
 		// Assumes input is UTC
