@@ -4,7 +4,7 @@
  * screensaver-glue.c
  *
  * Copyright (C) 2006 Debajyoti Bera <dbera.web@gmail.com>
- * Copyright (C) 2004 Novell, Inc.
+ * Copyright (C) 2004-2007 Novell, Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -29,6 +29,8 @@
 #include <stdlib.h>
 
 #ifdef HAVE_LIBXSS
+#include <glib.h>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/scrnsaver.h>
 
@@ -37,13 +39,45 @@
 static Display *dsp = NULL;
 #endif
 
+#ifdef HAVE_LIBXSS
+static gboolean
+x_hangup_callback (GIOChannel *channel, GIOCondition cond, gpointer user_data)
+{
+    // This will cause the X connection to break and shut down the daemon.
+    XEvent ignored;
+    XNextEvent (dsp, &ignored);
+
+    // Should never get here...
+    return FALSE;
+}
+#endif
+
 int
 screensaver_glue_init ()
 {
 #ifdef HAVE_LIBXSS
+    int x_fd;
+    GIOChannel *channel;
+
     // screensaver_info is called only from the Scheduler thread; thus we dont need to enable XInitThreads()
     dsp = XOpenDisplay(getenv("DISPLAY"));
-    return (dsp == NULL ? 0 : 1);
+
+    if (dsp == NULL)
+        return 0;
+
+    x_fd = ConnectionNumber (dsp);
+
+    if (x_fd < 0)
+        return 0;
+
+    channel = g_io_channel_unix_new (x_fd);
+    g_io_add_watch (channel,
+                    G_IO_HUP,
+                    x_hangup_callback,
+                    NULL);
+    g_io_channel_unref (channel);
+
+    return 1;
 #else
     return 0;
 #endif
