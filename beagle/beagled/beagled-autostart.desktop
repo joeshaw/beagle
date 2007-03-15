@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Exec=beagled
+Exec=beagled --replace
 Name=Beagle Search Daemon
 Terminal=false
 X-KDE-autostart-phase=2
