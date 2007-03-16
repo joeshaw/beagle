@@ -113,9 +113,25 @@ namespace Beagle.Filters {
 						filter.Height = (int) hval;
 					break;
 				case TagId.ShutterSpeedValue:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:ShutterSpeedValue", Math.Round ((e.RationalValue [0]).Value, 2)));
+					break;
 				case TagId.ExposureTime:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:ExposureTime", e.ValueAsString [0]));
+					break;
 				case TagId.ISOSpeedRatings:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:ISOSpeedRatings", e.ValueAsString [0]));
+					break;
 				case TagId.ApertureValue:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:ApertureValue", Math.Round ((e.RationalValue [0]).Value, 2)));
+					break;
+				case TagId.FNumber:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:FNumber", Math.Round ((e.RationalValue [0]).Value, 1)));
+					break;
+				case TagId.FocalLength:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:FocalLength", e.ValueAsString [0]));
+					break;
+				case TagId.Flash:
+					filter.AddProperty (Beagle.Property.NewUnsearched ("exif:Flash", e.ValueAsString [0]));
 					break;
 				case TagId.XMP:
 					XmpFile xmp = new XmpFile (new System.IO.MemoryStream (e.RawData));
