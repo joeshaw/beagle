@@ -34,12 +34,19 @@ namespace Beagle {
 	
 	public class IndexingServiceRequest : RequestMessage {
 
+		private string source = null;
 		private ArrayList to_remove = new ArrayList ();
 		private ArrayList to_add = new ArrayList ();
 
 		public IndexingServiceRequest () : base (true)
 		{
 
+		}
+
+		[XmlAttribute]
+		public string Source {
+			get { return source; }
+			set { source = value; }
 		}
 
 		[XmlArray (ElementName="ToAdd")]

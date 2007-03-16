@@ -1222,6 +1222,30 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// Our magic LuceneQueryable hooks
 		//
 
+		override protected bool PreAddIndexableHook (Indexable indexable)
+		{
+			Log.Debug ("Asking whether it's ok to index {0} [{1}]", indexable.Uri, indexable.DisplayUri);
+
+			if (indexable.Uri.Scheme != GuidFu.UriScheme) {
+				Uri internal_uri = ExternalToInternalUri (indexable.Uri);
+
+				if (internal_uri == null) {
+					// If we don't match an already indexed
+					// file, add an entry for it.
+					FileAttributes attr;
+					attr = FileAttributesStore.ReadOrCreate (indexable.Uri.LocalPath);
+					bool s = FileAttributesStore.Write (attr);
+					Log.Debug ("Succeeded writing out to store: {0}", s);
+					internal_uri = GuidFu.ToUri (attr.UniqueId);
+				}
+
+				Log.Debug ("Mapped {0} -> {1}", indexable.Uri, internal_uri);
+				indexable.Uri = internal_uri;
+			}
+
+			return base.PreAddIndexableHook (indexable);
+		}
+
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// We don't have anything to do if we are dealing with a child indexable
