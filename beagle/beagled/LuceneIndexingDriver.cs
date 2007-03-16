@@ -182,12 +182,12 @@ namespace Beagle.Daemon {
 							prop_change_children_docs [indexable.Uri] = new ArrayList ();
 
 						Document doc = secondary_reader.Document (term_docs.Doc ());
-						string parent_uri_str = doc.Get ("ParentUri");
-						Uri parent_uri = UriFu.EscapedStringToUri (parent_uri_str);
+						string child_uri_str = doc.Get ("Uri");
+						Uri child_uri = UriFu.EscapedStringToUri (child_uri_str);
 
-						ArrayList child_list = (ArrayList) prop_change_children_docs [parent_uri_str];
+						ArrayList child_list = (ArrayList) prop_change_children_docs [uri_str];
 
-						child_list.Add (indexable.Uri);
+						child_list.Add (child_uri);
 					}
 				}
 
