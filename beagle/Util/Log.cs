@@ -94,11 +94,22 @@ namespace Beagle.Util {
 				console_redirect_writer = console_log_writer;
 			}
 
+			// Redirect the console output to a special file
 			Console.SetOut (console_redirect_writer);
 			Console.SetError (console_redirect_writer);
 
-			// If we are running in the background, redirect stdin to /dev/null
 			if (! running_in_foreground) {
+				// Now redirect the *actual* stdout/stderr to our main
+				// log file.  This is used to catch Mono crash reports
+				// in our logs.  Note that this doesn't override the
+				// console redirection above, which is good.
+				StreamWriter sw = (StreamWriter) log_writer;
+				FileStream fs = (FileStream) sw.BaseStream;
+				int fd = (int) fs.Handle;
+				Mono.Unix.Native.Syscall.dup2 (fd, 1); // stdout
+				Mono.Unix.Native.Syscall.dup2 (fd, 2); // stderr
+
+				// If we are running in the background, redirect stdin to /dev/null
 				FileStream dev_null_stream = new FileStream ("/dev/null",
 									     FileMode.Open,
 									     FileAccess.Read,
