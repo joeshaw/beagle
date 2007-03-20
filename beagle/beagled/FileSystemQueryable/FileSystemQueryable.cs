@@ -173,9 +173,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.LocalState ["Parent"] = parent;
 		}
 
-		public static Indexable DirectoryToIndexable (string         path,
-							      Guid           id,
-							      DirectoryModel parent)
+		public Indexable DirectoryToIndexable (string         path,
+						       Guid           id,
+						       DirectoryModel parent)
 		{
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
@@ -205,13 +205,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			indexable.LocalState ["Path"] = path;
 
+			MergeExternalPendingIndexable (indexable);
+
 			return indexable;
 		}
 
-		public static Indexable FileToIndexable (string         path,
-							 Guid           id,
-							 DirectoryModel parent,
-							 bool           crawl_mode)
+		public Indexable FileToIndexable (string         path,
+						  Guid           id,
+						  DirectoryModel parent,
+						  bool           crawl_mode)
 		{
 			Indexable indexable;
 
@@ -232,13 +234,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			indexable.LocalState ["Path"] = path;
 
+			MergeExternalPendingIndexable (indexable);
+
 			return indexable;
 		}
 
-		private static Indexable NewRenamingIndexable (string         name,
-							       Guid           id,
-							       DirectoryModel parent,
-							       string last_known_path)
+		private Indexable NewRenamingIndexable (string         name,
+							Guid           id,
+							DirectoryModel parent,
+							string last_known_path)
 		{
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.PropertyChange, GuidFu.ToUri (id));
@@ -248,6 +252,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			indexable.LocalState ["Id"] = id;
 			indexable.LocalState ["LastKnownPath"] = last_known_path;
+
+			MergeExternalPendingIndexable (indexable);
 
 			return indexable;
 		}
@@ -1218,32 +1224,74 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
+		// FIXME: Depending on how big this thing gets, we might want
+		// to use some external storage like an SQLite database for
+		// speed and memory reasons.
+
+		private Hashtable external_pending_indexables = UriFu.NewHashtable ();
+
+		private void AddExternalPendingIndexable (Indexable indexable)
+		{
+			Log.Debug ("Delaying add of {0} until FSQ comes across it", indexable.Uri);
+
+			external_pending_indexables [indexable.Uri] = indexable;
+		}
+
+		private void MergeExternalPendingIndexable (Indexable indexable)
+		{
+			Indexable other = (Indexable) external_pending_indexables [indexable.DisplayUri];
+
+			if (other == null)
+				return;
+
+			external_pending_indexables.Remove (indexable.DisplayUri);
+
+			Log.Debug ("Merging in properties of external indexable for {0} into {1}",
+				   indexable.DisplayUri, indexable.Uri);
+
+			indexable.Merge (other);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
 		//
 		// Our magic LuceneQueryable hooks
 		//
 
 		override protected bool PreAddIndexableHook (Indexable indexable)
 		{
-			Log.Debug ("Asking whether it's ok to index {0} [{1}]", indexable.Uri, indexable.DisplayUri);
+			if (Debug)
+				Log.Debug ("Asking whether it's ok to index {0} [{1}]", indexable.Uri, indexable.DisplayUri);
 
-			if (indexable.Uri.Scheme != GuidFu.UriScheme) {
-				Uri internal_uri = ExternalToInternalUri (indexable.Uri);
+			// Internal URIs are always allowed.
+			if (indexable.Uri.Scheme == GuidFu.UriScheme)
+				return true;
 
-				if (internal_uri == null) {
-					// If we don't match an already indexed
-					// file, add an entry for it.
-					FileAttributes attr;
-					attr = FileAttributesStore.ReadOrCreate (indexable.Uri.LocalPath);
-					bool s = FileAttributesStore.Write (attr);
-					Log.Debug ("Succeeded writing out to store: {0}", s);
-					internal_uri = GuidFu.ToUri (attr.UniqueId);
-				}
+			// File URIs we try to remap
+			Uri internal_uri = ExternalToInternalUri (indexable.Uri);
 
-				Log.Debug ("Mapped {0} -> {1}", indexable.Uri, internal_uri);
+			if (internal_uri != null) {
+				// Some slightly odd logic here.  DisplayUri
+				// will always equal Uri if DisplayUri isn't
+				// explicitly set.  Since we're going to
+				// reassign Uri to an internal URI, explicitly
+				// set DisplayUri to Uri, but only if
+				// DisplayUri wasn't previously set.  Got it? :)
+				if (indexable.DisplayUri == indexable.Uri)
+					indexable.DisplayUri = indexable.Uri;
+
+				if (Debug)
+					Log.Debug ("Mapped {0} -> {1}", indexable.Uri, internal_uri);
 				indexable.Uri = internal_uri;
+
+				return true;
 			}
 
-			return base.PreAddIndexableHook (indexable);
+			// The file doesn't exist.  We need to set it aside in
+			// case it appears later.
+			AddExternalPendingIndexable (indexable);
+
+			return false;
 		}
 
 		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
@@ -1613,7 +1661,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////
 
-		public Uri ExternalToInternalUri (Uri external_uri)
+		private Uri ExternalToInternalUri (Uri external_uri)
 		{
 			FileAttributes attr;
 			attr = FileAttributesStore.Read (external_uri.LocalPath);

@@ -131,22 +131,8 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 
 		public Indexable GetIndexable (NautilusTools.NautilusMetadata nm)
 		{
-			Uri internal_uri = this.target_queryable.ExternalToInternalUri (nm.Uri);
-
-			Log.Debug ("Mapped {0} -> {1}", nm.Uri, internal_uri);
-
-			if (internal_uri == null) {
-				// If we didn't match an already indexed file,
-				// add an entry for it in the FSQ.
-				FileAttributes attr;
-				attr = this.target_queryable.FileAttributesStore.ReadOrCreate (nm.Uri.LocalPath);
-				this.target_queryable.FileAttributesStore.Write (attr);
-				internal_uri = GuidFu.ToUri (attr.UniqueId);
-			}
-
-			Indexable indexable = new Indexable (internal_uri);
+			Indexable indexable = new Indexable (nm.Uri);
 			indexable.Type = IndexableType.PropertyChange;
-			indexable.DisplayUri = nm.Uri;
 
 			Property prop;
 

@@ -86,7 +86,11 @@ namespace Beagle.Daemon {
 					this.client.GetStream ().WriteByte (0xff);
 					this.client.GetStream ().Flush ();
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					if (e is IOException && e.InnerException is SocketException)
+						Log.Debug ("Remote side disconnected before we could send {0}", response.GetType ());
+					else
+						Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+
 					return false;
 				}
 

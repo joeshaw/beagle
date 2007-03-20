@@ -445,7 +445,8 @@ namespace Beagle {
 		// merge the two indexables: it just does it.
 		public void Merge (Indexable other)
 		{
-			this.Timestamp = other.Timestamp;
+			if (other.Timestamp > this.Timestamp)
+				this.Timestamp = other.Timestamp;
 
 			foreach (Property prop in other.Properties)
 				this.AddProperty (prop);
