@@ -37,7 +37,7 @@
 #include <libxml/parser.h>
 
 typedef struct {
-	const char *service_name;
+	char *source;
 	GSList *to_add;
 	GSList *to_remove;
 } BeagleIndexingServiceRequestPrivate;
@@ -53,7 +53,10 @@ beagle_indexing_service_request_to_xml (BeagleRequest *request, GError **err)
 	GString *data = g_string_new (NULL);
 	GSList *list;
 
-	_beagle_request_append_standard_header (data, priv->service_name);
+	_beagle_request_append_standard_header (data, "IndexingServiceRequest");
+
+	if (priv->source != NULL)
+		g_string_append_printf (data, "<Source>%s</Source>", priv->source);
 
 	g_string_append (data, "<ToAdd>");
 	
@@ -86,10 +89,12 @@ beagle_indexing_service_request_finalize (GObject *obj)
 {
 	BeagleIndexingServiceRequestPrivate *priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (obj);
 
-	g_slist_foreach (priv->to_add, (GFunc)beagle_indexable_free, NULL);
+	g_free (priv->source);
+
+	g_slist_foreach (priv->to_add, (GFunc) beagle_indexable_free, NULL);
 	g_slist_free (priv->to_add);
 
-	g_slist_foreach (priv->to_remove, (GFunc)g_free, NULL);
+	g_slist_foreach (priv->to_remove, (GFunc) g_free, NULL);
 	g_slist_free (priv->to_remove);
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
@@ -120,19 +125,6 @@ beagle_indexing_service_request_init (BeagleIndexingServiceRequest *indexing_ser
 {
 }
 
-BeagleIndexingServiceRequest *
-beagle_indexing_service_request_new_for_service (const char *name)
-{
-	BeagleIndexingServiceRequest *indexing_service_request = g_object_new (BEAGLE_TYPE_INDEXING_SERVICE_REQUEST, 0);
-	// should indexing_service_request be checked by g_return_if_fail ?
-
-	BeagleIndexingServiceRequestPrivate *priv;
-	priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (indexing_service_request);
-	priv->service_name = name;
-
-	return indexing_service_request;
-}
-
 /**
  * beagle_indexing_service_request_new:
  *
@@ -143,7 +135,12 @@ beagle_indexing_service_request_new_for_service (const char *name)
 BeagleIndexingServiceRequest *
 beagle_indexing_service_request_new (void)
 {
-	return beagle_indexing_service_request_new_for_service ("IndexingServiceRequest");
+	BeagleIndexingServiceRequest *indexing_service_request = g_object_new (BEAGLE_TYPE_INDEXING_SERVICE_REQUEST, 0);
+
+	BeagleIndexingServiceRequestPrivate *priv;
+	priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (indexing_service_request);
+
+	return indexing_service_request;
 }
 
 /**
@@ -185,4 +182,33 @@ beagle_indexing_service_request_remove (BeagleIndexingServiceRequest *request, c
 	priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (request);
 	
 	priv->to_remove = g_slist_prepend (priv->to_remove, g_strdup (uri));
+}
+
+/**
+ * beagle_indexing_service_request_set_source:
+ * @request: a #BeagleIndexingServiceRequest
+ * @source: the backend to send the request to
+ *
+ * Normally #BeagleIndexables sent through the indexing service are stored in a
+ * dedicated index, the IndexingService index.  Sometimes, however, you might
+ * want to send a #BeagleIndexable to another running backend.  A common
+ * use-case for this is if you wanted to add or change metadata on an already
+ * indexed document.  To do this, you would create a #BeagleIndexable with type
+ * BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE and set the source to your backend of
+ * choice, like "Files".  The daemon will route your indexable to that backend
+ * instead of the indexing service backend.  If the backend doesn't exist, you
+ * will get a #BeagleErrorResponse.
+ *
+ **/
+void
+beagle_indexing_service_request_set_source (BeagleIndexingServiceRequest *request, const char *source)
+{
+	BeagleIndexingServiceRequestPrivate *priv;
+
+	g_return_if_fail (BEAGLE_INDEXING_SERVICE_REQUEST (request));
+
+	priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (request);
+
+	g_free (priv->source);
+	priv->source = g_strdup (source);
 }

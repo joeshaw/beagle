@@ -799,8 +799,7 @@ namespace Beagle.Daemon {
 
 		protected void AddIndexable (Indexable indexable)
 		{
-			if (indexable.Source == null)
-				indexable.Source = QueryDriver.GetQueryable (this).Name;
+			indexable.Source = QueryDriver.GetQueryable (this).Name;
 
 			lock (request_lock)
 				pending_request.Add (indexable);

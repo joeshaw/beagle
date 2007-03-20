@@ -539,22 +539,13 @@ beagle_indexable_get_source (BeagleIndexable *indexable)
 }
 
 /**
- * beagle_indexable_set_source:
+ * beagle_indexable_get_timestamp:
  * @indexable: a #BeagleIndexable
- * @source: a string
  *
- * Sets the source of the given #BeagleIndexable to @source.
+ * Gets the #BeagleTimestamp for the given #BeagleIndexable.
+ *
+ * Return value: a #BeagleTimestamp
  **/
-void 
-beagle_indexable_set_source (BeagleIndexable *indexable, const char *source)
-{
-	g_return_if_fail (indexable != NULL);
-
-	g_free (indexable->source);
-	indexable->source = g_strdup (source);
-}
-
-
 BeagleTimestamp *
 beagle_indexable_get_timestamp (BeagleIndexable *indexable)
 {
@@ -563,6 +554,13 @@ beagle_indexable_get_timestamp (BeagleIndexable *indexable)
 	return indexable->timestamp;
 }
 
+/**
+ * beagle_indexable_set_timestamp:
+ * @indexable: a #BeagleIndexable
+ * @timestamp: a #BeagleTimestamp
+ *
+ * Sets the #BeagleTimestamp for the given #BeagleIndexable.
+ **/
 void
 beagle_indexable_set_timestamp (BeagleIndexable *indexable,
 				BeagleTimestamp *timestamp)
@@ -646,9 +644,6 @@ _beagle_indexable_to_xml (BeagleIndexable *indexable, GString *data)
 
 	if (indexable->mime_type)
 		g_string_append_printf (data, " MimeType=\"%s\"", indexable->mime_type);
-
-	if (indexable->source)
-		g_string_append_printf (data, " Source=\"%s\"", indexable->source);
 
 	g_string_append (data, ">");
 

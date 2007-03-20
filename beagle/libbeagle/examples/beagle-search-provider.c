@@ -26,11 +26,6 @@ test_indexer (BeagleClient *client)
 	 */
 	beagle_indexable_set_no_content (indexable, TRUE);
 
-	/* Set the source of this indexable.
-	 * Use this to define the "backend" for this data.
-	 */
-	beagle_indexable_set_source (indexable, "MyBackend");
-
 	/* Type of this indexable.
 	 * One backend can produce indexables of various types.
 	 * Different backends can generate indexables of same type
@@ -58,18 +53,14 @@ test_indexer (BeagleClient *client)
 	timestamp = beagle_timestamp_new_from_unix_time (time (NULL));
 	beagle_indexable_set_timestamp (indexable, timestamp);
 
-	request = beagle_indexing_service_request_new_for_service ("IndexingServiceRequest");
+	request = beagle_indexing_service_request_new ();
 	beagle_indexing_service_request_add (request, indexable);
 
 	beagle_client_send_request (client, BEAGLE_REQUEST (request), NULL);
 	g_print ("Data sent to beagle search service.\n");
 
-	beagle_timestamp_free (timestamp);
-	beagle_property_free (prop1);
-	beagle_property_free (prop2);
-	beagle_property_free (prop3);
+	beagle_indexable_free (indexable);
 }
-
 
 int
 main ()

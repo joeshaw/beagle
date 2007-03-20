@@ -113,8 +113,6 @@ void             beagle_indexable_set_mime_type    (BeagleIndexable *indexable,
 						    const char      *mime_type);
 
 G_CONST_RETURN char *beagle_indexable_get_source    (BeagleIndexable *indexable);
-void             beagle_indexable_set_source	    (BeagleIndexable *indexable, 
-						    const char      *source);
 
 #endif /* __BEAGLE_INDEXABLE_H */
 
