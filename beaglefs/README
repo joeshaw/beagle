@@ -1,0 +1,61 @@
+			beaglefs - The Beagle Filesystem
+
+				  Robert Love
+				<rml@novell.com>
+
+beaglefs (it would be tomfs but Joey hates the name Tom) implements a
+filesystem representing a live Beagle query.  The filesystem represents query
+hit results as symlinks to the hit targets.  For example, the query "Nat" might
+return two hits on a given system; ls(1) in turn might yield:
+
+	img_3116.jpg -> /home/rml/images/foo_camp_20050820/img_3116.jpg
+	resapplet.c -> /home/rml/src/resapplet/resapplet/src/resapplet.c
+
+In addition, beaglefs provides the following features:
+
+	- Live updating: The filesystem is updated on-the-fly as hits come and
+	  go.
+	- Extended Attributes: Beagle hit metadata is exported as extended
+	  attributes in the system.Beagle.* namespace.
+	- Constant time operations: The backing data structure is a hash table,
+	  providing O(1) best-case complexity for many operations.
+
+Supported file operations: readdir, readlink, getxattr, listxattr, stat, and
+statfs.
+
+Requirements to build and run:
+	- a recent-ish gcc (late 3.x or 4.x)
+	- libfuse providing FUSE version 25 or later
+	- glib-2.0 (glib 2.10 or later for GSlice)
+	- libbeagle 0.2 or later
+
+To build:
+	$ make
+
+To mount:
+	$ ./beaglefs [--debug] <query> <mount point>
+
+For example:
+	$ mkdir ~/joey
+	$ ./beaglefs "Joey Shaw" /home/rlove/joey
+
+To unmount:
+	$ fusermount -u <mount point>
+
+To play with the filesystem:
+	$ ls -la <mount point>
+	$ getfattr -m "." -h -d <file in beaglefs>
+	$ stat <file in beaglefs>
+	$ stat -f <mount point>
+
+If you get errors about /dev/fuse or permissions, FUSE is not properly setup,
+installed, or loaded.  Before use, the kernel module "fuse" must be loaded and
+the device file /dev/fuse and the executable fusermount need the proper
+permissions for non-root usage.
+
+If in doubt, try
+
+	% modprobe fuse
+	% chmod 0666 /dev/fuse
+
+But, long term, you really don't want /dev/fuse world-accessible.

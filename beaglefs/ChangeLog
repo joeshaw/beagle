@@ -1,0 +1,49 @@
+2006-07-20  Robert Love  <rml@novell.com>
+
+	* file.c, hit.c, hit.h, dir.c, dir.h: Catch the "destroy" event on fs
+	  unmount and free and unref all of our data.
+
+2006-07-20  Robert Love  <rml@novell.com>
+
+	* COPYING: Add file.  The beaglefs is licensed under the GNU GPL v2,
+	  only; no "and later versions" clause.  Now put your pants back on,
+	  jdub.
+
+2006-07-19  James Wilcox  <snorp@snorp.net>
+
+	* inode.h: Include <time.h> because my user-space is insane.
+
+2006-07-19  Robert Love  <rml@novell.com>
+
+	* dir.c, dir.h, hit.c, file.c: Switch to reader-writer locks as
+	  protection for the directory hash and the inodes.
+
+2006-07-19  Robert Love  <rml@novell.com>
+
+	* beaglefs.c, hit.c, hit.h: Add beagle_hit_set_query() to set the
+	  query string.
+
+2006-07-19  Robert Love  <rml@novell.com>
+
+	* file.c: Cache the page size from getpagesize() so we do not have to
+	  reissue the system call on each statvfs() invocation.
+
+2006-07-19  Robert Love  <rml@novell.com>
+
+	* inode.c, inode.h, hit.c: Remove beagle_inode_new_from_hit(), replaced
+	  by beagle_inode_new(), which is directly provided the values.  Add a
+	  hit_to_new_inode() helper in hit.c that performs the hit to inode
+	  mapping.  This way, inodes stay in inode.c and BeagleHit stays in
+	  hit.c.
+
+2006-07-18  Robert Love  <rml@novell.com>
+
+	* inode.c: Use GSlice for our inode allocator, if glib >= 2.10.
+
+2006-07-14  Michael Wolf  <maw@pobox.com>
+
+	* inode.c: Decode the URI.
+
+2006-07-06  Robert Love  <rml@novell.com>
+
+	* Initial drop
