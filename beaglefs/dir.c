@@ -154,6 +154,6 @@ beagle_dir_init (void)
 void
 beagle_dir_destroy (void)
 {
-	g_hash_table_unref (dir_hash);
+	g_hash_table_destroy (dir_hash);
 	g_static_rw_lock_free (&dir_lock);
 }

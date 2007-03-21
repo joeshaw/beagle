@@ -1,3 +1,8 @@
+2007-03-21  Robert Love  <rml@novell.com>
+
+	* dir.c: Use g_hash_table_destroy() in lieu of g_hash_table_unref(), as
+	  the latter was not introduced until Glib 2.10.
+
 2006-07-20  Robert Love  <rml@novell.com>
 
 	* file.c, hit.c, hit.h, dir.c, dir.h: Catch the "destroy" event on fs
