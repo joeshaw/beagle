@@ -7,10 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-05 21:34+0900\n"
+"POT-Creation-Date: 2007-03-21 10:29+0900\n"
 "PO-Revision-Date: 2007-02-05 21:29+0900\n"
-"Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
-"Language-Team: Japanese <gnome-translation@gnome.gr.jp>\n"
+"Last-Translator: Novell Language <language@novell.com>\n"
+"Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,7 +36,7 @@ msgstr "終了"
 msgid "About"
 msgstr "情報"
 
-#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
+#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:27
 msgid "Contacts"
 msgstr "連絡先"
 
@@ -262,7 +262,7 @@ msgstr "県/州:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "タイトル:"
@@ -476,7 +476,7 @@ msgstr "ファイル名:"
 msgid "Inside File:"
 msgstr "書庫の中のファイル:"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
 msgid "Author:"
 msgstr "作者:"
 
@@ -523,13 +523,13 @@ msgstr "E-メールを送信する"
 msgid "Move to Trash"
 msgstr "ゴミ箱へ移動する"
 
-#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "最終変更日時:"
 
-#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "パス名:"
 
@@ -549,15 +549,15 @@ msgstr[1] "{0}個のアイテムがあります"
 msgid "Set as Wallpaper"
 msgstr "壁紙にセットする"
 
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/Image.cs:84
 msgid "Tags:"
 msgstr "タグ:"
 
-#: ../search/Tiles/Image.cs:83
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "変更日時:"
 
-#: ../search/Tiles/Image.cs:93
+#: ../search/Tiles/Image.cs:96
 msgid "Comment:"
 msgstr "コメント:"
 
@@ -655,72 +655,72 @@ msgstr[1] "{0}ページ"
 msgid "Open"
 msgstr "開く"
 
-#: ../search/Tiles/Utils.cs:24
+#: ../search/Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "アプリケーション"
 
-#: ../search/Tiles/Utils.cs:28
+#: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "予定"
 
-#: ../search/Tiles/Utils.cs:30
+#: ../search/Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "フォルダ"
 
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Tiles/Utils.cs:33
 msgid "Images"
 msgstr "画像"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "オーディオ"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:37
 msgid "Video"
 msgstr "ビデオ"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "ドキュメント"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "メールとIM"
 
-#: ../search/Tiles/Utils.cs:42
+#: ../search/Tiles/Utils.cs:43
 msgid "Websites"
 msgstr "ウェブサイト"
 
-#: ../search/Tiles/Utils.cs:44
+#: ../search/Tiles/Utils.cs:45
 msgid "News Feeds"
 msgstr "ニュース"
 
-#: ../search/Tiles/Utils.cs:46
+#: ../search/Tiles/Utils.cs:47
 msgid "Archives"
 msgstr "書庫"
 
-#: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:116
+#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
+#: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "昨日"
 
-#: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:114
+#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
+#: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "今日"
 
-#: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
+#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
 msgid "Tomorrow"
 msgstr "明日"
 
-#: ../search/Tiles/Utils.cs:235
+#: ../search/Tiles/Utils.cs:224
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0}週間前"
 msgstr[1] "{0}週間前"
 
-#: ../search/Tiles/Utils.cs:237
+#: ../search/Tiles/Utils.cs:226
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -728,28 +728,28 @@ msgstr[0] "{0}週間以内"
 msgstr[1] "{0}週間以内"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:239
+#: ../search/Tiles/Utils.cs:228
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0}ヶ月前"
 msgstr[1] "{0}ヶ月前"
 
-#: ../search/Tiles/Utils.cs:241
+#: ../search/Tiles/Utils.cs:230
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0}ヶ月以内"
 msgstr[1] "{0}ヶ月以内"
 
-#: ../search/Tiles/Utils.cs:243
+#: ../search/Tiles/Utils.cs:232
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0}年前"
 msgstr[1] "{0}年前"
 
-#: ../search/Tiles/Utils.cs:245
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -1409,7 +1409,7 @@ msgstr "IPTC Information Interchange Model (IIM) のバージョン番号"
 
 #: ../Util/F-Spot/IptcFile.cs:177
 msgid "OSI Destination routing information"
-msgstr ""
+msgstr "OSI宛先ルーティング情報"
 
 #: ../Util/F-Spot/IptcFile.cs:179
 msgid "IPTC file format"
@@ -1417,125 +1417,125 @@ msgstr "IPTC ファイル形式"
 
 #: ../Util/F-Spot/IptcFile.cs:181
 msgid "Identifies the provider and product"
-msgstr ""
+msgstr "プロバイダと製品を指定します"
 
 #: ../Util/F-Spot/IptcFile.cs:183
 msgid "A unique number identifying the envelope"
-msgstr ""
+msgstr "エンベロープを識別する固有の番号"
 
 #: ../Util/F-Spot/IptcFile.cs:185
 msgid "A unique number"
-msgstr ""
+msgstr "固有の番号"
 
 #: ../Util/F-Spot/IptcFile.cs:187
 msgid ""
 "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
+msgstr "1(最優先)～9(優先度低)の優先度を処理するエンベロープ"
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr ""
+msgstr "サービスが素材を送信した年月日(CCYYMMDD)"
 
 #: ../Util/F-Spot/IptcFile.cs:191
 msgid ""
 "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
+msgstr "サービスが素材を送信した時分秒(HHMMSS+HHMM)"
 
 #: ../Util/F-Spot/IptcFile.cs:193
 msgid "The character set designation"
-msgstr ""
+msgstr "文字セットの指定"
 
 #: ../Util/F-Spot/IptcFile.cs:195
 msgid "External globally unique object identifier"
-msgstr ""
+msgstr "グローバルな固有の外部オブジェクト識別子"
 
 #: ../Util/F-Spot/IptcFile.cs:200
 msgid "Abstract Relationship Method (ARM) identifier"
-msgstr ""
+msgstr "ARM(Abstract Relationship Method)識別子"
 
 #: ../Util/F-Spot/IptcFile.cs:202
 msgid "Abstract Relationship Method (ARM) version number."
-msgstr ""
+msgstr "ARM(Abstract Relationship Method)バージョン番号"
 
 #: ../Util/F-Spot/IptcFile.cs:205
 msgid "Number identifying the IIM version this application record uses"
-msgstr ""
+msgstr "このアプリケーションレコードが使用するIIMバージョンを識別する数字"
 
 #: ../Util/F-Spot/IptcFile.cs:207
 msgid "Object type reference"
-msgstr ""
+msgstr "オブジェクトタイプ参照"
 
 #: ../Util/F-Spot/IptcFile.cs:212
 msgid "Object attribute reference"
-msgstr ""
+msgstr "オブジェクト属性参照"
 
 #: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
 msgid "Object name"
-msgstr ""
+msgstr "オブジェクト名"
 
 #: ../Util/F-Spot/IptcFile.cs:220
 msgid "Status of the objectdata according to the provider"
-msgstr ""
+msgstr "プロバイダによるオブジェクトデータのステータス"
 
 #: ../Util/F-Spot/IptcFile.cs:224
 msgid "Location within a city or area where the object originates"
-msgstr ""
+msgstr "オブジェクト元の市またはエリア内の場所"
 
 #: ../Util/F-Spot/IptcFile.cs:227
 msgid "Name of the city the content is focussing on"
-msgstr ""
+msgstr "コンテンツが目的とする市名"
 
 #: ../Util/F-Spot/IptcFile.cs:230
 msgid "Copyright information for"
-msgstr ""
+msgstr "著作権情報:"
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
-msgstr ""
+msgstr "コンテンツの目的となる国のフルネーム"
 
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid ""
 "Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
+msgstr "コンテンツの目的となる国のISO3166コードを表す2つまたは3つの文字"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
-msgstr ""
+msgstr "コンテンツ作成者"
 
 #: ../Util/F-Spot/IptcFile.cs:242
 msgid "Provider of the object"
-msgstr ""
+msgstr "オブジェクトのプロバイダ"
 
 #: ../Util/F-Spot/IptcFile.cs:245
 msgid "The title of the author or creator"
-msgstr ""
+msgstr "作成者のタイトル"
 
 #: ../Util/F-Spot/IptcFile.cs:248
 msgid ""
 "The person involved in writing, editing or correcting the object data or "
 "caption/abstract"
-msgstr ""
+msgstr "オブジェクトデータや要旨の執筆、編集、または訂正に携わった人"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
-msgstr ""
+msgstr "コンテンツのヘッドライン"
 
 #: ../Util/F-Spot/IptcFile.cs:255
 msgid ""
 "Instructions from the creator to the receiver not covered by other fields"
-msgstr ""
+msgstr "他のフィールドでカバーしきれない、作成者による受信者向けの説明"
 
 #: ../Util/F-Spot/IptcFile.cs:258
 msgid "Intellectual genre of the object"
-msgstr ""
+msgstr "オブジェクトのジャンル"
 
 #: ../Util/F-Spot/IptcFile.cs:271
 msgid "Unknown IIM DataSet"
-msgstr ""
+msgstr "不明なIIMデータセット"
 
 #: ../Util/F-Spot/MetadataStore.cs:46
 msgid "Creator"
-msgstr ""
+msgstr "作成者"
 
 #: ../Util/F-Spot/MetadataStore.cs:47
 msgid "Title"
@@ -1543,131 +1543,131 @@ msgstr "タイトル"
 
 #: ../Util/F-Spot/MetadataStore.cs:48
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: ../Util/F-Spot/MetadataStore.cs:49
 msgid "Subject and Keywords"
-msgstr ""
+msgstr "件名とキーワード"
 
 #: ../Util/F-Spot/MetadataStore.cs:50
 msgid "Compression"
-msgstr ""
+msgstr "圧縮"
 
 #: ../Util/F-Spot/MetadataStore.cs:52
 msgid "Planar Configuration"
-msgstr ""
+msgstr "平面設定"
 
 #: ../Util/F-Spot/MetadataStore.cs:56
 msgid "Photometric Interpretation"
-msgstr ""
+msgstr "光度計の動作"
 
 #: ../Util/F-Spot/MetadataStore.cs:58
 msgid "Resolution Unit"
-msgstr ""
+msgstr "解像度ユニット"
 
 #: ../Util/F-Spot/MetadataStore.cs:60
 msgid "Exposure Program"
-msgstr ""
+msgstr "露光プログラム"
 
 #: ../Util/F-Spot/MetadataStore.cs:62
 msgid "Metering Mode"
-msgstr ""
+msgstr "調量モード"
 
 #: ../Util/F-Spot/MetadataStore.cs:64
 msgid "Exposure Mode"
-msgstr ""
+msgstr "露光モード"
 
 #: ../Util/F-Spot/MetadataStore.cs:66
 msgid "Custom Rendered"
-msgstr ""
+msgstr "カスタムレンダリング"
 
 #: ../Util/F-Spot/MetadataStore.cs:68
 msgid "Components Configuration"
-msgstr ""
+msgstr "コンポーネント環境設定"
 
 #: ../Util/F-Spot/MetadataStore.cs:70
 msgid "Light Source"
-msgstr ""
+msgstr "光源"
 
 #: ../Util/F-Spot/MetadataStore.cs:72
 msgid "Sensing Method"
-msgstr ""
+msgstr "検出方法"
 
 #: ../Util/F-Spot/MetadataStore.cs:74
 msgid "Color Space"
-msgstr ""
+msgstr "色空間"
 
 #: ../Util/F-Spot/MetadataStore.cs:76
 msgid "White Balance"
-msgstr ""
+msgstr "ホワイトバランス"
 
 #: ../Util/F-Spot/MetadataStore.cs:78
 msgid "Focal Plane Resolution Unit"
-msgstr ""
+msgstr "焦点面解像度ユニット"
 
 #: ../Util/F-Spot/MetadataStore.cs:80
 msgid "File Source Type"
-msgstr ""
+msgstr "ファイルソースタイプ"
 
 #: ../Util/F-Spot/MetadataStore.cs:82
 msgid "Scene Capture Type"
-msgstr ""
+msgstr "シーンキャプチャタイプ"
 
 #: ../Util/F-Spot/MetadataStore.cs:84
 msgid "Gain Control"
-msgstr ""
+msgstr "ゲインコントロール"
 
 #: ../Util/F-Spot/MetadataStore.cs:86
 msgid "Contrast"
-msgstr ""
+msgstr "コントラスト"
 
 #: ../Util/F-Spot/MetadataStore.cs:88
 msgid "Saturation"
-msgstr ""
+msgstr "彩度"
 
 #: ../Util/F-Spot/MetadataStore.cs:90
 msgid "Sharpness"
-msgstr ""
+msgstr "シャープネス"
 
 #: ../Util/F-Spot/MetadataStore.cs:92
 msgid "Scene Type"
-msgstr ""
+msgstr "シーンタイプ"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:119
+#: ../Util/StringFu.cs:120
 msgid "MMM d"
 msgstr "MMM月d日"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:122
+#: ../Util/StringFu.cs:123
 msgid "MMM d, yyyy"
 msgstr "yyyy年MMM月d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:126
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:132
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} の {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:148
+#: ../Util/StringFu.cs:149
 #, csharp-format
 msgid "Today, {0}"
 msgstr "今日の {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:151
+#: ../Util/StringFu.cs:152
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "昨日の {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:156
+#: ../Util/StringFu.cs:157
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -1675,23 +1675,23 @@ msgstr[0] "{0}日前の {1}"
 msgstr[1] "{0}日前の {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:163
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM月d日 h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:168
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy年MMMM月d日 h:mm tt"
 
-#: ../Util/StringFu.cs:177
+#: ../Util/StringFu.cs:178
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0}時間"
 msgstr[1] "{0}時間"
 
-#: ../Util/StringFu.cs:184
+#: ../Util/StringFu.cs:185
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1699,7 +1699,7 @@ msgstr[0] "{0}分"
 msgstr[1] "{0}分"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:218
+#: ../Util/StringFu.cs:219
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -1707,13 +1707,13 @@ msgstr[0] "{0}バイト"
 msgstr[1] "{0}バイト"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:222
+#: ../Util/StringFu.cs:223
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0}Kバイト"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:225
+#: ../Util/StringFu.cs:226
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0}Mバイト"
