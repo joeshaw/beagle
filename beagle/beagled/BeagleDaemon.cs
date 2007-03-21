@@ -325,7 +325,8 @@ namespace Beagle.Daemon {
 					arg_debug_memory = true;
 					break;
 
-				case "--no-shapshots":
+				case "--no-snapshots":
+				case "--no-snapshot":
 					arg_heap_shot_snapshots = false;
 					break;
 
