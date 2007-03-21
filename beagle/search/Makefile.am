@@ -123,6 +123,8 @@ desktop_DATA     = $(desktop_files)
 autostartdir = $(sysconfdir)/xdg/autostart
 autostart_DATA = beagle-search-autostart.desktop
 
+man_MANS = beagle-search.1
+
 all: $(BIN_WRAPPERS)
 
 install-data-local: $(BIN_WRAPPERS)
