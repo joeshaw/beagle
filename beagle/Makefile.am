@@ -14,12 +14,7 @@ if ENABLE_GUI
 SUBDIRS += po
 endif
 
-if ENABLE_LIBBEAGLE
-SUBDIRS += libbeagle
-endif
-
 SUBDIRS +=			\
-	wrappers		\
 	Util			\
 	glue			\
 	BeagleClient            \

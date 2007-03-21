@@ -1,6 +1,6 @@
 INCLUDES = \
-	-I$(top_srcdir)/libbeagle	\
-	$(LIBBEAGLE_CFLAGS)     	\
+	-I$(top_srcdir)		\
+	$(LIBBEAGLE_CFLAGS)     \
 	$(WARN_CFLAGS)
 
 lib_LTLIBRARIES = libbeagle.la

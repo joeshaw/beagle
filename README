@@ -1,0 +1,12 @@
+This is the Subversion repository for Beagle.
+
+To learn more about Beagle, visit http://beagle-project.org
+
+The modules listed under this directory are:
+
+  attic		Old, obsolete code kept around mostly for reference purposes
+  beagle	The core Beagle code, including the daemon, GUI, and C# API
+  beaglefs	A FUSE filesystem for Beagle searches
+  libbeagle	A C library for searching and indexing data.  Includes Python
+	        bindings
+

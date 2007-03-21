@@ -1,9 +1,9 @@
 INCLUDES =				\
-	-I$(top_srcdir)/libbeagle	\
+	-I$(top_srcdir)			\
 	$(LIBBEAGLE_CFLAGS)		\
 	$(WARN_CFLAGS)
 
-LDADD = $(top_builddir)/libbeagle/beagle/libbeagle.la
+LDADD = $(top_builddir)/beagle/libbeagle.la
 
 noinst_PROGRAMS =			\
 	beagle-search			\

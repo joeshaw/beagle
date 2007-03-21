@@ -4,7 +4,7 @@
 
 AC_INIT(beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.2.16)
+AM_INIT_AUTOMAKE(beagle, 0.3.0)
 
 ########################################################################
 
@@ -18,12 +18,6 @@ GMIME_SHARP_REQUIRED=2.2.0
 EVOLUTION_SHARP_REQUIRED=0.10.2
 GSF_SHARP_REQUIRED=0.6
 GTK_REQUIRED=2.6.0
-
-LIBBEAGLE_GOBJECT_REQUIRED=2.6
-LIBBEAGLE_LIBXML_REQUIRED=2.6.19
-
-PYTHON_REQUIRED=2.3
-PYGTK_REQUIRED=2.6
 
 ########################################################################
 
@@ -409,61 +403,6 @@ GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
 GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
 
 dnl ----------------------------------------------
-
-dnl libbeagle
-
-AC_ARG_ENABLE([libbeagle],
-	AC_HELP_STRING([--disable-libbeagle], [Disable libbeagle (C API)]),
-	enable_libbeagle=$enableval,
-	enable_libbeagle=auto)
-
-dnl library versioning
-dnl Increase when changing the API
-LIBBEAGLE_CURRENT=0
-
-dnl Update when changing implementation of current API,
-dnl reset to 0 when changing CURRENT.  This is the revision of
-dnl current API version
-LIBBEAGLE_REVISION=0
-
-dnl Increase of API change is ABI compatible, otherwise reset to 0
-LIBBEAGLE_AGE=0
-
-LIBBEAGLE_VERSION_INFO="$LIBBEAGLE_CURRENT:$LIBBEAGLE_REVISION:$LIBBEAGLE_AGE"
-AC_SUBST(LIBBEAGLE_VERSION_INFO)
-
-PKG_CHECK_MODULES(LIBBEAGLE, [
-	gobject-2.0 >= $LIBBEAGLE_GOBJECT_REQUIRED
-	libxml-2.0  >= $LIBBEAGLE_LIBXML_REQUIRED
-], have_libbeagle_deps=yes, have_libbeagle_deps=no)
-
-AC_SUBST(LIBBEAGLE_CFLAGS)
-AC_SUBST(LIBBEAGLE_LIBS)
-
-if test "x$have_libbeagle_deps" = "xno"; then
-
-	if test "x$enable_libbeagle" = "xyes"; then
-		AC_MSG_ERROR([Missing libbeagle dependencies])
-	fi
-
-	enable_libbeagle="no (missing dependencies)"
-else
-	if test "x$enable_libbeagle" != "xno"; then
-		enable_libbeagle="yes"
-	else
-		enable_libbeagle="no (disabled)"
-	fi
-fi
-
-AM_CONDITIONAL(ENABLE_LIBBEAGLE, test "x$enable_libbeagle" = "xyes")
-
-# Check for gtk-doc.  We need to do this whether or not libbeagle is enabled
-# or else configure complains.
-# KEEP THE LEADING SPACE HERE - it's used to trick gnome-autogen.sh into
-# not running gtkdocize, which we don't need or want to run.
- GTK_DOC_CHECK(1.0)
-
-dnl ----------------------------------------------
 AC_ARG_ENABLE([bludgeon],
 	AC_HELP_STRING([--disable-bludgeon], [Disable bludgeon testing tool]),
 	enable_bludgeon=$enableval,
@@ -614,78 +553,6 @@ AC_SUBST(BEAGLE_DEFINES)
 
 dnl ----------------------------------------------
 
-dnl Python 2.3
-
-AC_ARG_ENABLE(python,
-	AC_HELP_STRING([--disable-python], [Disable python support (default auto)]),
-	enable_python=$enableval,
-	enable_python=auto)
-
-have_python=no
-if test "x$enable_libbeagle" = "xyes" -a "x$enable_python" != "xno"; then
-	have_python_version=no
-	have_python_headers=no
-	have_pygtk_deps=no
-	have_pygtk_codegen=no
-
-	AM_PATH_PYTHON()
-
-	if test -z "$PYTHON"; then
-		AC_MSG_WARN([Python not found])
-	else
-		AM_PYTHON_CHECK_VERSION($PYTHON, $PYTHON_REQUIRED,
-			have_python_version=yes,
-			have_python_version=no)
-	fi
-
-	if test "x$have_python_version" != "xyes"; then
-		AC_MSG_WARN([Python version $PYTHON_REQUIRED not found])
-	else
-		AM_CHECK_PYTHON_HEADERS(have_python_headers=yes, have_python_headers=no)
-	fi
-
-	if test "x$have_python_headers" != "xyes"; then
-		AC_MSG_WARN([could not find Python headers])
-	else
-		PKG_CHECK_MODULES(PYBEAGLE,
-			pygtk-2.0 >= $PYGTK_REQUIRED
-			pygobject-2.0 >= $PYGTK_REQUIRED,
-			have_pygtk_deps=yes,
-			have_pygtk_deps=no)
-	fi
-
-	if test "x$have_pygtk_deps" != "xyes"; then
-		AC_MSG_WARN([could not find pygtk])
-	else
-		AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0, no)
-	fi
-
-	if test -z "$PYGTK_CODEGEN"; then
-		AC_MSG_WARN([could not find pygtk-codegen in path])
-	else
-		AC_MSG_CHECKING(for pygtk defs)
-		PYGTK_DEFSDIR=`$PKG_CONFIG --variable=defsdir pygtk-2.0`
-		AC_MSG_RESULT($PYGTK_DEFSDIR)
-
-		have_python=yes
-	fi
-fi
-
-if test "x$enable_python" = "xyes"; then
-	if test "x$enable_libbeagle" != "xyes"; then
-		AC_MSG_ERROR([Python bindings are requested, but libbeagle isn't to be built])
-	elif test "x$have_python" = "xno"; then
-		AC_MSG_ERROR([Python bindings are requested, but cannot be built])
-	fi
-fi
-
-AM_CONDITIONAL(ENABLE_PYTHON, test "x$have_python" = "xyes")
-AC_SUBST(PYBEAGLE_LIBS)
-AC_SUBST(PYBEAGLE_CFLAGS)
-AC_SUBST(PYGTK_DEFSDIR)
-
-dnl ----------------------------------------------
-
 AC_OUTPUT([
 Makefile
 Util/Makefile
@@ -701,17 +568,9 @@ search/Makefile
 search/beagle-search.desktop.in
 ImLogViewer/Makefile
 ContactViewer/Makefile
-libbeagle/Makefile
-libbeagle/libbeagle-0.0.pc
-libbeagle/beagle/Makefile
-libbeagle/examples/Makefile
-libbeagle/docs/Makefile
-libbeagle/docs/reference/Makefile
 epiphany-extension/Makefile
 mozilla-extension/Makefile
 bludgeon/Makefile
-wrappers/Makefile
-wrappers/python/Makefile
 beagle-0.0.pc
 beagle-daemon.pc
 beagle-ui-0.0.pc
@@ -741,9 +600,6 @@ echo "
 	Local SqliteClient?	  ${use_local_sqlite}
 	Sqlite version:		  ${SQLITE_MAJ_VER}.x
 
-	Enable libbeagle	  ${enable_libbeagle}
-	Enable python bindings	  ${have_python}
-	Enable libbeagle docs     ${enable_gtk_doc}
 	Monitor screensaver       ${have_xss}
 
 	Enable beagle-search GUI  ${enable_gui}
