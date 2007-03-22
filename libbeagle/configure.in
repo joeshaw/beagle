@@ -1,0 +1,167 @@
+###
+### Welcome to libeagle's configure.in.  We hope you enjoy your stay.
+###
+
+AC_INIT(beagle/beagle.h)
+AC_CANONICAL_SYSTEM
+AM_INIT_AUTOMAKE(libbeagle, 0.2.16)
+
+########################################################################
+
+###
+### Some dependencies
+###
+
+GOBJECT_REQUIRED=2.6
+LIBXML_REQUIRED=2.6.19
+
+PYTHON_REQUIRED=2.3
+PYGTK_REQUIRED=2.6
+
+########################################################################
+
+AM_MAINTAINER_MODE
+AM_CONFIG_HEADER(config.h)
+
+AC_PROG_INSTALL
+AM_PROG_LIBTOOL
+AC_PROG_CC
+
+VERSION=${VERSION}
+AC_SUBST(VERSION)
+
+AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+if test "x$PKG_CONFIG" = "xno"; then
+	AC_MSG_ERROR([You need to install pkg-config])
+fi
+
+dnl library versioning
+dnl Increase when changing the API
+LIBBEAGLE_CURRENT=0
+
+dnl Update when changing implementation of current API,
+dnl reset to 0 when changing CURRENT.  This is the revision of
+dnl current API version
+LIBBEAGLE_REVISION=0
+
+dnl Increase of API change is ABI compatible, otherwise reset to 0
+LIBBEAGLE_AGE=0
+
+LIBBEAGLE_VERSION_INFO="$LIBBEAGLE_CURRENT:$LIBBEAGLE_REVISION:$LIBBEAGLE_AGE"
+AC_SUBST(LIBBEAGLE_VERSION_INFO)
+
+PKG_CHECK_MODULES(LIBBEAGLE, [
+	gobject-2.0 >= $GOBJECT_REQUIRED
+	libxml-2.0  >= $LIBXML_REQUIRED
+])
+
+AC_SUBST(LIBBEAGLE_CFLAGS)
+AC_SUBST(LIBBEAGLE_LIBS)
+
+# Check for gtk-doc
+# KEEP THE LEADING SPACE HERE - it's used to trick gnome-autogen.sh into
+# not running gtkdocize, which we don't need or want to run.
+ GTK_DOC_CHECK(1.0)
+
+dnl Conditional for debugging XML messages.
+
+AC_ARG_ENABLE([xml-dump],
+	AC_HELP_STRING([--enable-xml-dump], [Enables printing of the XML messages sent between components (default no)]),
+	enable_xml_dump=$enableval,
+	enable_xml_dump=no)
+
+if test "x$enable_xml_dump" = "xyes"; then
+	AC_DEFINE_UNQUOTED(ENABLE_XML_DUMP, 1, [Dump XML messages for debugging])
+fi
+
+dnl ----------------------------------------------
+
+dnl Python 2.3
+
+AC_ARG_ENABLE(python,
+	AC_HELP_STRING([--disable-python], [Disable python support (default auto)]),
+	enable_python=$enableval,
+	enable_python=auto)
+
+have_python=no
+if test "x$enable_python" != "xno"; then
+	have_python_version=no
+	have_python_headers=no
+	have_pygtk_deps=no
+	have_pygtk_codegen=no
+
+	AM_PATH_PYTHON()
+
+	if test -z "$PYTHON"; then
+		AC_MSG_WARN([Python not found])
+	else
+		AM_PYTHON_CHECK_VERSION($PYTHON, $PYTHON_REQUIRED,
+			have_python_version=yes,
+			have_python_version=no)
+	fi
+
+	if test "x$have_python_version" != "xyes"; then
+		AC_MSG_WARN([Python version $PYTHON_REQUIRED not found])
+	else
+		AM_CHECK_PYTHON_HEADERS(have_python_headers=yes, have_python_headers=no)
+	fi
+
+	if test "x$have_python_headers" != "xyes"; then
+		AC_MSG_WARN([could not find Python headers])
+	else
+		PKG_CHECK_MODULES(PYBEAGLE,
+			pygtk-2.0 >= $PYGTK_REQUIRED
+			pygobject-2.0 >= $PYGTK_REQUIRED,
+			have_pygtk_deps=yes,
+			have_pygtk_deps=no)
+	fi
+
+	if test "x$have_pygtk_deps" != "xyes"; then
+		AC_MSG_WARN([could not find pygtk])
+	else
+		AC_PATH_PROG(PYGTK_CODEGEN, pygtk-codegen-2.0, no)
+	fi
+
+	if test -z "$PYGTK_CODEGEN"; then
+		AC_MSG_WARN([could not find pygtk-codegen in path])
+	else
+		AC_MSG_CHECKING(for pygtk defs)
+		PYGTK_DEFSDIR=`$PKG_CONFIG --variable=defsdir pygtk-2.0`
+		AC_MSG_RESULT($PYGTK_DEFSDIR)
+
+		have_python=yes
+	fi
+fi
+
+if test "x$enable_python" = "xyes"; then
+	if test "x$have_python" = "xno"; then
+		AC_MSG_ERROR([Python bindings are requested, but cannot be built])
+	fi
+fi
+
+AM_CONDITIONAL(ENABLE_PYTHON, test "x$have_python" = "xyes")
+AC_SUBST(PYBEAGLE_LIBS)
+AC_SUBST(PYBEAGLE_CFLAGS)
+AC_SUBST(PYGTK_DEFSDIR)
+
+dnl ----------------------------------------------
+
+AC_OUTPUT([
+Makefile
+libbeagle-0.0.pc
+beagle/Makefile
+examples/Makefile
+docs/Makefile
+docs/reference/Makefile
+wrappers/Makefile
+wrappers/python/Makefile
+])
+
+echo "
+	libeagle bersion:         ${VERSION}
+	Prefix:			  ${prefix}
+
+	Enable docs               ${enable_gtk_doc}
+	Enable python bindings	  ${have_python}
+"
+echo
