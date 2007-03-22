@@ -897,8 +897,9 @@ namespace Beagle.Daemon {
 							Log.Warn ("Unable to match up {0} to any indexable object!",
 								  r.Uri);
 							continue;
-						} else
-							deferred_indexables.Remove (r.Uri);
+						}
+							
+						deferred_indexables.Remove (r.Uri);
 					}
 
 					// Call the appropriate hook

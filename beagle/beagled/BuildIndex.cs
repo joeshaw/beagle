@@ -409,6 +409,8 @@ namespace Beagle.Daemon
 			request.Add (indexable);
 		}
 
+		static private Hashtable deferred_indexables = UriFu.NewHashtable ();
+
 		static IndexerReceipt [] FlushIndexer (IIndexer indexer, IndexerRequest request)
 		{
 			IndexerReceipt [] receipts;
@@ -424,6 +426,18 @@ namespace Beagle.Daemon
 					IndexerAddedReceipt r = (IndexerAddedReceipt) raw_r;
 
 					Indexable indexable = request.GetByUri (r.Uri);
+
+					if (indexable == null) {
+						// This must be a previously deferred indexable.
+						indexable = (Indexable) deferred_indexables [r.Uri];
+
+						if (indexable == null) {
+							Log.Warn ("Unable to match up {0} to any indexable object!", r.Uri);
+							continue;
+						}
+
+						deferred_indexables.Remove (r.Uri);
+					}
 
 					// We don't need to write out any file attributes for
 					// children.
@@ -455,6 +469,11 @@ namespace Beagle.Daemon
 					// Add any filter-generated indexables back into our indexer
 					IndexerIndexablesReceipt r = (IndexerIndexablesReceipt) raw_r;
 					pending_children.AddRange (r.Indexables);
+
+				} else if (raw_r is IndexerDeferredReceipt) {
+					// Set aside any deferred indexables so we can process them later
+					IndexerDeferredReceipt r = (IndexerDeferredReceipt) raw_r;
+					deferred_indexables [r.Uri] = request.GetByUri (r.Uri);
 				}
 			}
 
