@@ -21,4 +21,4 @@ else
    echo "*** Using mono runtime at $BEAGLE_MONO_RUNTIME ***"
 fi
 
-exec -a beagle-search $BEAGLE_MONO_RUNTIME --debug $MONO_EXTRA_ARGS $THIS_EXE "$@"
+exec -a beagle-search $BEAGLE_MONO_RUNTIME $MONO_EXTRA_ARGS $THIS_EXE "$@"
