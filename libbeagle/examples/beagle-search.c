@@ -120,6 +120,12 @@ main (int argc, char **argv)
 
 	total_hits = 0;
 
+	if (beagle_util_daemon_is_running ())
+		g_print ("Running\n");
+	else
+		g_print ("Not running\n");
+	exit (1);
+
 	client = beagle_client_new (NULL);
 
 	if (client == NULL) {
