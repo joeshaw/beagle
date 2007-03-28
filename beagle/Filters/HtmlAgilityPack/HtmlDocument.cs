@@ -28,6 +28,8 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+//#define HTML_DEBUG
+
 using System;
 using System.IO;
 using System.Text;
@@ -36,7 +38,6 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
-
 
 // Legend: SLIM=Comment added describing changes to original HtmlAgilityPack
 //		to reduce memory consumption
@@ -208,14 +209,18 @@ namespace HtmlAgilityPack
 				Array.Copy (_buf_current, _buf_previous, _block_size);
 				_position += _block_size;
 			}
+#if THIS_DEBUG
 			HtmlDocument.Debug ("Debug: Read in buffer at:" + _position);
+#endif
 
 			int num_read = _reader.Read (_buf_current, 0, _block_size);
 			if (num_read < _block_size) {
 				_eof = true;
 				_length = _position + num_read;
 			}
+#if THIS_DEBUG
 			HtmlDocument.Debug ("[" + new string (_buf_current, 0, num_read) + "]");
+#endif
 		}
 		
 		public override bool Eof (int index) {
@@ -252,7 +257,9 @@ namespace HtmlAgilityPack
 		// evil function ... you get what you pay for!
 		private string OutOfBandRead (int startindex, int length)
 		{
+#if THIS_DEBUG
 			HtmlDocument.Debug ("Out of band read! From " + startindex + " to " + (startindex + length - 1));
+#endif
 			ResetPosition (startindex);
 			// ahh.. now we are at the correct place
 			// create a buffer of required length
@@ -296,7 +303,9 @@ namespace HtmlAgilityPack
 		public override string Substring (int startindex, int length)
 		{
 			if (length == 0) {
+#if THIS_DEBUG
 				HtmlDocument.Debug ("substring:" + startindex + " " + length + " " + _position + ":");
+#endif
 				return String.Empty;
 			}
 			if (length > _block_size || startindex < _position - _block_size) {
@@ -404,11 +413,9 @@ namespace HtmlAgilityPack
 		}
 		private HtmlParserState _parserState;
 
-		private static bool _debug = false;
 		internal static void Debug (string s)
 		{
-			if (_debug)
-				Console.WriteLine (s);
+			Console.WriteLine (s);
 		}
 
 		// public props
@@ -981,7 +988,9 @@ namespace HtmlAgilityPack
 
 		public void PauseLoad()
 		{
+#if THIS_DEBUG
 			Debug ("Pausing load");
+#endif
 			_pause_parsing = true;
 		}
 
@@ -998,7 +1007,9 @@ namespace HtmlAgilityPack
 			_parserState._lastquote = -1;
 			_pause_parsing = false;
 
+#if THIS_DEBUG
 			Debug ("Resuming parsing");
+#endif
 			DoParse (_lastquote);
 		}
 
@@ -1443,7 +1454,9 @@ namespace HtmlAgilityPack
 			while (! _pause_parsing && ! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
+#if THIS_DEBUG
 				Debug (String.Format ("_index : {0}({2})({1}) ", _index, (char)_c, _state));
+#endif
 				IncrementPosition();
 
 				switch(_state)
@@ -1735,7 +1748,9 @@ namespace HtmlAgilityPack
 							_state = ParseState.PcData;
 						break;
 					case ParseState.PcData:
+#if THIS_DEBUG
 						Debug (String.Format ("PCDATA ({0}) {1} {2}", _index, _currentnode.Name, _text.Substring(_index-1,  _currentnode._namelength+2)));
+#endif
 						if (_c == '\"' || _c == '\''){
 							_pcdata_quote_char = _c;
 							_state = ParseState.PcDataQuote;
@@ -1767,7 +1782,9 @@ namespace HtmlAgilityPack
 										_stop_parsing = ! ReportNode (script);
 									else
 										_currentnode.AppendChild(script);
+#if THIS_DEBUG
 									Debug ("Found script: [" + script.InnerText + "]");
+#endif
 
 									PushNodeStart(HtmlNodeType.Element, _index-1);
 									PushNodeNameStart(false, _index-1 +2);
@@ -1783,14 +1800,18 @@ namespace HtmlAgilityPack
 			if (_pause_parsing)
 			{
 				_parserState._lastquote = lastquote;
+#if THIS_DEBUG
 				Debug ("Pausing parsing");
+#endif
 			}
 
 			if (_stop_parsing || _text.Eof (_index))
 			{
 				// Mark that parsing is over
 				_done_parsing = true;
+#if THIS_DEBUG
 				Debug ("Done parsing");
+#endif
 
 				// finish the current work
 				if (_currentnode._namestartindex > 0)
@@ -1977,12 +1998,14 @@ namespace HtmlAgilityPack
 			if (_streammode && ReportNode != null)
 				_stop_parsing = ! ReportNode (_currentnode);
 
-			if (_debug) {
+#if THIS_DEBUG
+			{
 				if (_currentnode._nodetype == HtmlNodeType.Text)
 					Debug ("Text:" + _currentnode.InnerText);
 				else
 					Debug ((_currentnode.StartTag ? "Start-" : "End-") + _currentnode.Name);
 			}
+#endif
 			if ((_currentnode._nodetype == HtmlNodeType.Text) ||
 				(_currentnode._nodetype == HtmlNodeType.Comment))
 			{
