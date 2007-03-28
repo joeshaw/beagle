@@ -36,6 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.NautilusMetadataQueryable {
 
+	[PropertyKeywordMapping (Keyword="emblem",  PropertyName="nautilus:emblem", IsKeyword=true, Description="Use emblem to identify items tagged with a specific emblem in nautilus.")]
 	[QueryableFlavor (Name="NautilusMetadata", Domain=QueryDomain.Local, RequireInotify=false,
 			  DependsOn="Files")]
 	public class NautilusMetadataQueryable : ExternalMetadataQueryable, IIndexableGenerator  {
