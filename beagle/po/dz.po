@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.pot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-18 03:15+0000\n"
-"PO-Revision-Date: 2007-01-30 16:00+0530\n"
-"Last-Translator: norbu <nor_den@hotmail.com>\n"
+"POT-Creation-Date: 2007-02-06 05:28+0000\n"
+"PO-Revision-Date: 2007-03-28 03:35+0530\n"
+"Last-Translator: yangka <yanang_ka@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -20,6 +20,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: ../glue/eggtrayicon.c:127
+#: ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
 msgstr "ཕྱོགས་"
 
@@ -32,7 +33,7 @@ msgid "Open..."
 msgstr "ཁ་ཕྱེ་..."
 
 #: ../ContactViewer/ContactWindow.cs:76
-#: ../search/Tray/TrayIcon.cs:86
+#: ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
 msgstr "སྤང་"
 
@@ -403,7 +404,8 @@ msgid "Start search service"
 msgstr "འཚོལ་ཞིབ་ཞབས་ཏོག་འགོ་བཙུགས་"
 
 #: ../search/Search.cs:138
-#: ../search/Tray/TrayIcon.cs:32
+#: ../search/Search.cs:254
+#: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་"
 
@@ -423,26 +425,30 @@ msgstr "འཚོལ་ཞིབ་རྣམ་གྲངས་ཚུ་ནང་
 msgid "Start searching"
 msgstr "འཚོལ་ཞིབ་འབད་ནི་འགོ་བཙུགས་"
 
-#: ../search/Search.cs:264
+#: ../search/Search.cs:273
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་: {0}"
 
-#: ../search/Search.cs:280
+#: ../search/Search.cs:289
 #, csharp-format
-msgid "Showing all {0} matches"
-msgstr "{0} མཐུན་མི་ཚུ་ཆ་མཉམ་སྟོན་དོ་"
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "མཐུན་སྒྲིག་ {0} སྟོན་དོ།"
+msgstr[1] "མཐུན་སྒྲིག་ཚུ་ཆ་མཉམ་ {0} སྟོན་དོ།"
 
-#: ../search/Search.cs:282
+#: ../search/Search.cs:291
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
-msgstr "མཐུན་མི་བསྡོམས་ {1} ལས་ {0} མགོ་འདི་སྟོན་དོ་"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "ཡོངས་བསྡོམ་མཐུན་སྒྲིག་ཚུ་ {0} གི་ {1} མགོ་འདི་སྟོན་དོ།"
+msgstr[1] "ཡོངས་བསྡོམས་མཐུན་སྒྲིག་ཚུ་ {0} གི་ {1} སྟོན་དོ།"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:564
 msgid "Your data is being indexed"
 msgstr "ཁྱོད་ཀྱི་གནད་སྡུད་འདི་ཟུར་ཐོ་བཀོད་ཡོདཔ་ཨིན་"
 
-#: ../search/Search.cs:556
+#: ../search/Search.cs:565
 msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
 msgstr "འཚོལ་ཞིབ་ཞབས་ཏོག་འདི་ ཁྱོད་ཀྱི་གནད་སྡུད་ཟུར་ཐོ་བཀོད་ནིའི་ལས་སྦྱོར་ནང་ཨིན་པས། འཚོལ་ཞིབ་གྲུལ་འབྲས་ཚུ་ ཟུར་ཐོ་བཀོད་ནི་མཇུག་མ་བསྡུ་ཚུན་ ཆ་མ་ཚང་བ་སྦེ་སྡོད་འོང་།"
 
@@ -690,13 +696,13 @@ msgstr "ཡིག་མཛོད་ཚུ་"
 
 #: ../search/Tiles/Utils.cs:133
 #: ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
+#: ../Util/StringFu.cs:116
 msgid "Yesterday"
 msgstr "ཁ་རྩང་"
 
 #: ../search/Tiles/Utils.cs:135
 #: ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
+#: ../Util/StringFu.cs:114
 msgid "Today"
 msgstr "ད་རིས་"
 
@@ -762,15 +768,15 @@ msgstr "ཡུ་ཨར་ཨེལ་:"
 msgid "Accessed:"
 msgstr "འཛུལ་སྤྱོད་འབད་ཡོདཔ་:"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "འཕྲལ་གྱི་འཚོལ་ཞིབ་ཚུ་མེད་"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "འཕྲལ་གྱི་འཚོལ་ཞིབ་ཚུ་"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
 msgstr "བསལ་"
 
@@ -1334,14 +1340,10 @@ msgid "_Start search & indexing services automatically "
 msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནིའི་ཞབས་ཏོག་ཚུ་ རང་བཞིན་གྱིས་འགོ་བཙུགས་(_S)"
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནི་རིམ་སྒྲིག་འབད་"
+msgid "Configure Desktop Search"
+msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་རིམ་སྒྲིག"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནིའི་རྒྱུ་དངོས་ཚུ་ རིམ་སྒྲིག་འབད་"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
 msgid "Search & Indexing"
 msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནི་"
 
@@ -1350,87 +1352,314 @@ msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀ
 msgid "On This Computer"
 msgstr "འ་ནི་གློག་རིག་གུ་ལུ་"
 
-#: ../Util/ExifData.cs:226
+#: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
 msgstr "གཟུགས་བརྙན་སྣོད་ཐོ་"
 
-#: ../Util/ExifData.cs:228
+#: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
 msgstr "མཐེ་གཟེར་སྣོད་ཐོ་"
 
-#: ../Util/ExifData.cs:230
+#: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
 msgstr "ཨི་ཨེགསི་ཨའི་ཨེཕ་སྣོད་ཐོ་"
 
-#: ../Util/ExifData.cs:232
+#: ../Util/F-Spot/Exif.cs:254
 msgid "GPS Directory"
 msgstr "ཇི་པི་ཨེསི་སྣོད་ཐོ་"
 
-#: ../Util/ExifData.cs:234
+#: ../Util/F-Spot/Exif.cs:256
 msgid "InterOperability Directory"
 msgstr "བསྐྱར་བསྣོན་འབད་བཏུབ་པའི་སྣོད་ཐོ་"
 
-#: ../Util/ExifData.cs:236
+#: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
 msgstr "མ་ཤེས་པའི་སྣོད་ཐོ་"
 
+#: ../Util/F-Spot/IptcFile.cs:175
+msgid "IPTC Information Interchange Model (IIM) Version number"
+msgstr "ཨའི་པི་ཊི་སི་བརྡ་དོན་ཕན་ཚུན་བརྗེ་སོར་དཔེ་(ཨའི་ཨའི་ཨེམ)ཐོན་རིམ་ཨང་།"
+
+#: ../Util/F-Spot/IptcFile.cs:177
+msgid "OSI Destination routing information"
+msgstr "ཨོ་ཨེསི་ཨའི་འགྲོ་ཡུལ་འགྲུལ་ལམ་གྱི་བརྡ་དོན།"
+
+#: ../Util/F-Spot/IptcFile.cs:179
+msgid "IPTC file format"
+msgstr "ཨའི་པི་ཊི་སི་ཡིག་སྣོད་རྩ་སྒྲིག"
+
+#: ../Util/F-Spot/IptcFile.cs:181
+msgid "Identifies the provider and product"
+msgstr "བྱིན་མཁན་དང་ཐོན་རྐྱེན་འདི་ངོས་འཛིན་འབདཝ་ཨིན།"
+
+#: ../Util/F-Spot/IptcFile.cs:183
+msgid "A unique number identifying the envelope"
+msgstr "ཡིག་ཤུབས་འདི་མཐུན་མོང་མ་ཡིན་པ་ཅིག་ངོས་འཛིན་འབད་ནི།"
+
+#: ../Util/F-Spot/IptcFile.cs:185
+msgid "A unique number"
+msgstr "མཐུན་མོང་མ་ཡིན་པའི་ཨང་ཅིག"
+
+#: ../Util/F-Spot/IptcFile.cs:187
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr "ཡིག་ཤུབས་ལེགས་སྐྱོང་འཐབ་ནི་གཙོ་རིམ་  ༡(འཕྲལ་མཁོ་ཆེ་ཤོས) དང་༩་གི་བར་ན་ (འཕྲལ་མཁོ་ཉུང་མི)"
+
+#: ../Util/F-Spot/IptcFile.cs:189
+msgid "The year month and day (CCYYMMDD) the service sent the material"
+msgstr "ཅ་ཆས་འདི་བཏང་བའ་ཞབས་ཏོག་ཚུ་གི་(སི་སི་ཝའི་ཝའི་ཨེམ་ཨེམ་ཌི་ཌི་)ལོ་ ཟླ་དང་ཉིནམ་འདི།"
+
+#: ../Util/F-Spot/IptcFile.cs:191
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr "ཅ་ཆས་འདི་བཏང་ཡོད་མི་ཞབས་ཏོག་ཚུ་(ཨེཆ་ཨེཆ་ཨེམ་ཨེམ་ཨེསི་ཨེསི་+ཨེཆ་ཨེཆ་ཨེམ་ཨེམ)གི་ཆུ་ཚོད་སྐར་མ་དང་སྐར་ཆག་འདི།"
+
+#: ../Util/F-Spot/IptcFile.cs:193
+msgid "The character set designation"
+msgstr "ཡིག་འབྲུའི་གཞི་སྒྲིག་འགྲོ་ཡུལ་འདི།"
+
+#: ../Util/F-Spot/IptcFile.cs:195
+msgid "External globally unique object identifier"
+msgstr "ཕྱིའི་སྤྱི་ཁྱབ་མཐུན་མོང་མ་ཡིན་པའི་དངོས་པོ་ངོས་འཛིན་པ།"
+
+#: ../Util/F-Spot/IptcFile.cs:200
+msgid "Abstract Relationship Method (ARM) identifier"
+msgstr "སྙིང་བཅུད་མཐུན་འབྲེལ་ཐབས་ལམ་(ཨེ་ཨར་ཨེམ)ངོས་འཛིན་པ།"
+
+#: ../Util/F-Spot/IptcFile.cs:202
+msgid "Abstract Relationship Method (ARM) version number."
+msgstr "སྙིང་བཅུད་མཐུན་འབྲེལ་ཐབས་ལམ(ཨེ་ཨར་ཨེམ)ཐོན་རིམ་ཨང་།"
+
+#: ../Util/F-Spot/IptcFile.cs:205
+msgid "Number identifying the IIM version this application record uses"
+msgstr "དྲན་འཛིན་ལག་ལེན་འཐབ་མི་གློག་རིམ་འདིའི་ཨའི་ཨའི་ཨེམ་ཐོན་རིམ་འདི་ངོས་འཛིན་འབད་མི་ཨང་།"
+
+#: ../Util/F-Spot/IptcFile.cs:207
+msgid "Object type reference"
+msgstr "དངོས་པོའི་དབྱེ་བ་གཞི་བསྟུན།"
+
+#: ../Util/F-Spot/IptcFile.cs:212
+msgid "Object attribute reference"
+msgstr "དངོས་པོ་ཁྱད་ཆོས་གཞི་བསྟུན།"
+
+#: ../Util/F-Spot/IptcFile.cs:218
+#: ../Util/F-Spot/IptcFile.cs:222
+msgid "Object name"
+msgstr "དངོས་པོའི་མིང་།"
+
+#: ../Util/F-Spot/IptcFile.cs:220
+msgid "Status of the objectdata according to the provider"
+msgstr "བྱིན་མཁན་ལུ་འཁྲིལ་ཏེ་དངོས་པོ་གནས་སྡུད་ཀྱི་གནས་ཚད།"
+
+#: ../Util/F-Spot/IptcFile.cs:224
+msgid "Location within a city or area where the object originates"
+msgstr "དངོས་པོ་འགོ་ཐོག་འབྱུང་ས་གི་མངའ་ཁོངས་ཡང་ན་ཁྲོམ་སྡེ་ཅིག་ནང་འཁོད་གནས་ཁོངས།"
+
+#: ../Util/F-Spot/IptcFile.cs:227
+msgid "Name of the city the content is focussing on"
+msgstr "ཁྲོམ་སྡེའི་ནང་དོན་གྱི་མིང་གུ་ཆེད་དམིགས་འབད་དོ།"
+
+#: ../Util/F-Spot/IptcFile.cs:230
+msgid "Copyright information for"
+msgstr "དོན་ལུ་འདྲ་བཤུས་དབང་ཆའི་བརྡ་དོན།"
+
+#: ../Util/F-Spot/IptcFile.cs:233
+msgid "Full name of the country of the focus of the content"
+msgstr "ནང་དོན་གྱི་ཆེད་དམིགས་ཀྱི་རྒྱལ་ཁབ་ཀྱི་མིང་ཆ་ཚང་།"
+
+#: ../Util/F-Spot/IptcFile.cs:236
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr "ནང་དོན་གྱི་ཆེད་དམིགས་ཀྱི་རྒྱབ་ཁབ་ཀྱི་ཨང་རྟགས་ཨའི་ཨེསི་༠༣༡༦༦་ཡི་གུ་གསུམ་ཡང་ན་གཉིས།"
+
+#: ../Util/F-Spot/IptcFile.cs:239
+msgid "Creator of the content"
+msgstr "ནང་དོན་གྱི་གསར་བསྐྲུན་པ།"
+
+#: ../Util/F-Spot/IptcFile.cs:242
+msgid "Provider of the object"
+msgstr "དངོས་པོ་གི་བྱིན་མཁན།"
+
+#: ../Util/F-Spot/IptcFile.cs:245
+msgid "The title of the author or creator"
+msgstr "རྩོམ་པོ་པོཡང་ན་གསར་བསྐྲུན་གྱི་མགོ་མིང་འདི།"
+
+#: ../Util/F-Spot/IptcFile.cs:248
+msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
+msgstr "དངོས་པོའི་གནས་སྡུད་ཡང་ན་དཔར་བཤད་/སྙིང་བཅུད་ འབྲི་ནི་ ཞུན་་དག་འབད་ནི་ཡང་ན་ནོར་བཅོས་འབད་ནི་ནང་འབྲེལ་བ་ཡོད་མི་གང་ཟག་འདི།"
+
+#: ../Util/F-Spot/IptcFile.cs:252
+msgid "Headline of the content"
+msgstr "ནང་དོན་གྱི་གཙོ་དོན།"
+
+#: ../Util/F-Spot/IptcFile.cs:255
+msgid "Instructions from the creator to the receiver not covered by other fields"
+msgstr "གཞན་ས་སྒོ་ཚུ་གིས་ཁྱབ་ཁོངས་མ་འབད་མི་ལེན་མི་འདི་ལུ་གསར་བསྐྲུན་པ་ལས་བསླབ་སྟོན་ཚུ།"
+
+#: ../Util/F-Spot/IptcFile.cs:258
+msgid "Intellectual genre of the object"
+msgstr "དངོས་པོ་གི་བློ་རིག་གི་རིགས།"
+
+#: ../Util/F-Spot/IptcFile.cs:271
+msgid "Unknown IIM DataSet"
+msgstr "མ་ཤེས་པའི་ཨའི་ཨའི་ཨེམ་གནས་སྡུད་གཞི་སྒྲིག"
+
+#: ../Util/F-Spot/MetadataStore.cs:46
+msgid "Creator"
+msgstr "གསར་བསྐྲུན་པ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:47
+msgid "Title"
+msgstr "མགོ་མིང་།"
+
+#: ../Util/F-Spot/MetadataStore.cs:48
+msgid "Copyright"
+msgstr "འདྲ་བཤུས་དབང་ཆ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:49
+msgid "Subject and Keywords"
+msgstr "དོན་ཚན་དང་གཙོ་ཚིག་ཚུ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:50
+msgid "Compression"
+msgstr "ཨེབ་བཙུགས།"
+
+#: ../Util/F-Spot/MetadataStore.cs:52
+msgid "Planar Configuration"
+msgstr "རིམ་སྒྲིག་འཆར་་གཞིཔ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:56
+msgid "Photometric Interpretation"
+msgstr "དཔར་མི་ཊིཀ་གོ་དོན།"
+
+#: ../Util/F-Spot/MetadataStore.cs:58
+msgid "Resolution Unit"
+msgstr "ཧུམ་ཆའི་ཆ་འཕྲན།"
+
+#: ../Util/F-Spot/MetadataStore.cs:60
+msgid "Exposure Program"
+msgstr "མདངས་ཕོག་ལས་རིམ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:62
+msgid "Metering Mode"
+msgstr "མི་ཊ་རིང་ཐབས་ལམ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:64
+msgid "Exposure Mode"
+msgstr "མདངས་ཕོག་ཐབས་ལམ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:66
+msgid "Custom Rendered"
+msgstr "སྲོལ་སྒྲིག་ལྷག་སྟོན་འབད་ཡོདཔ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:68
+msgid "Components Configuration"
+msgstr "རིམ་སྒྲིག་ཆ་ཤས་ཚུ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:70
+msgid "Light Source"
+msgstr "འོད་འབྱུང་ས།"
+
+#: ../Util/F-Spot/MetadataStore.cs:72
+msgid "Sensing Method"
+msgstr "དྲན་ཤེས་ལྡན་པའི་ཐབས་ལམ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:74
+msgid "Color Space"
+msgstr "ཚོས་གཞིའི་བར་སྟོང།"
+
+#: ../Util/F-Spot/MetadataStore.cs:76
+msgid "White Balance"
+msgstr "དགརཔོ་ཚད་སྙོམས།"
+
+#: ../Util/F-Spot/MetadataStore.cs:78
+msgid "Focal Plane Resolution Unit"
+msgstr "ཕོ་ཀཱལ་པི་ལེན་ཧུམ་ཆའི་ཆ་འཕྲན།"
+
+#: ../Util/F-Spot/MetadataStore.cs:80
+msgid "File Source Type"
+msgstr "ཡིག་སྣོད་འབྱུང་ཁུངས་དབྱེ་བ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:82
+msgid "Scene Capture Type"
+msgstr "འཆར་སྣང་འཛིན་བཟུང་་དབྱེ་བ།"
+
+#: ../Util/F-Spot/MetadataStore.cs:84
+msgid "Gain Control"
+msgstr "ཚད་འཛིན་ཐོབ་ནི།"
+
+#: ../Util/F-Spot/MetadataStore.cs:86
+msgid "Contrast"
+msgstr "ཚོན་མདངས།"
+
+#: ../Util/F-Spot/MetadataStore.cs:88
+msgid "Saturation"
+msgstr "མཐའ་ཚད།"
+
+#: ../Util/F-Spot/MetadataStore.cs:90
+msgid "Sharpness"
+msgstr "རྣོ་ཅན།"
+
+#: ../Util/F-Spot/MetadataStore.cs:92
+msgid "Scene Type"
+msgstr "འཆར་སྣང་དབྱེ་བ།"
+
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:119
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:122
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:125
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:131
 #, csharp-format
 msgid "{0}, {1}"
 msgstr " {0}   {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
 msgstr "ད་རིས་   {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "ཁ་རྩང་   {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:156
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "{0} ཉིནམ་གི་ཧེ་མ་  {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} ཉིནམ་ཧེ་མ་ {1}"
+msgstr[1] "{0} ཉིནམ་དག་པ་ཅིག་ཧེ་མ {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:154
+#: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:177
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} ཆུ་ཚོད་"
 msgstr[1] "{0} ཆུ་ཚོད་ཚུ་"
 
-#: ../Util/StringFu.cs:171
+#: ../Util/StringFu.cs:184
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1438,20 +1667,27 @@ msgstr[0] "{0} སྐར་མ་"
 msgstr[1] "{0} སྐར་མ་ཚུ་"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:205
+#: ../Util/StringFu.cs:218
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0} བཱའིཊིསི་"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} བཱའིཊི"
+msgstr[1] "{0} བཱའིཊིསི་"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:209
+#: ../Util/StringFu.cs:222
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} ཀེ་བི་"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:225
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} ཨེམ་བི་"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནི་རིམ་སྒྲིག་འབད་"
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནིའི་རྒྱུ་དངོས་ཚུ་ རིམ་སྒྲིག་འབད་"
 
