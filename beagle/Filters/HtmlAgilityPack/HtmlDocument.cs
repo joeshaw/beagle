@@ -209,7 +209,7 @@ namespace HtmlAgilityPack
 				Array.Copy (_buf_current, _buf_previous, _block_size);
 				_position += _block_size;
 			}
-#if THIS_DEBUG
+#if HTML_DEBUG
 			HtmlDocument.Debug ("Debug: Read in buffer at:" + _position);
 #endif
 
@@ -218,7 +218,7 @@ namespace HtmlAgilityPack
 				_eof = true;
 				_length = _position + num_read;
 			}
-#if THIS_DEBUG
+#if HTML_DEBUG
 			HtmlDocument.Debug ("[" + new string (_buf_current, 0, num_read) + "]");
 #endif
 		}
@@ -257,7 +257,7 @@ namespace HtmlAgilityPack
 		// evil function ... you get what you pay for!
 		private string OutOfBandRead (int startindex, int length)
 		{
-#if THIS_DEBUG
+#if HTML_DEBUG
 			HtmlDocument.Debug ("Out of band read! From " + startindex + " to " + (startindex + length - 1));
 #endif
 			ResetPosition (startindex);
@@ -303,7 +303,7 @@ namespace HtmlAgilityPack
 		public override string Substring (int startindex, int length)
 		{
 			if (length == 0) {
-#if THIS_DEBUG
+#if HTML_DEBUG
 				HtmlDocument.Debug ("substring:" + startindex + " " + length + " " + _position + ":");
 #endif
 				return String.Empty;
@@ -988,7 +988,7 @@ namespace HtmlAgilityPack
 
 		public void PauseLoad()
 		{
-#if THIS_DEBUG
+#if HTML_DEBUG
 			Debug ("Pausing load");
 #endif
 			_pause_parsing = true;
@@ -1007,7 +1007,7 @@ namespace HtmlAgilityPack
 			_parserState._lastquote = -1;
 			_pause_parsing = false;
 
-#if THIS_DEBUG
+#if HTML_DEBUG
 			Debug ("Resuming parsing");
 #endif
 			DoParse (_lastquote);
@@ -1454,7 +1454,7 @@ namespace HtmlAgilityPack
 			while (! _pause_parsing && ! _stop_parsing && ! _text.Eof (_index))
 			{
 				_c = _text[_index];
-#if THIS_DEBUG
+#if HTML_DEBUG
 				Debug (String.Format ("_index : {0}({2})({1}) ", _index, (char)_c, _state));
 #endif
 				IncrementPosition();
@@ -1748,7 +1748,7 @@ namespace HtmlAgilityPack
 							_state = ParseState.PcData;
 						break;
 					case ParseState.PcData:
-#if THIS_DEBUG
+#if HTML_DEBUG
 						Debug (String.Format ("PCDATA ({0}) {1} {2}", _index, _currentnode.Name, _text.Substring(_index-1,  _currentnode._namelength+2)));
 #endif
 						if (_c == '\"' || _c == '\''){
@@ -1782,7 +1782,7 @@ namespace HtmlAgilityPack
 										_stop_parsing = ! ReportNode (script);
 									else
 										_currentnode.AppendChild(script);
-#if THIS_DEBUG
+#if HTML_DEBUG
 									Debug ("Found script: [" + script.InnerText + "]");
 #endif
 
@@ -1800,7 +1800,7 @@ namespace HtmlAgilityPack
 			if (_pause_parsing)
 			{
 				_parserState._lastquote = lastquote;
-#if THIS_DEBUG
+#if HTML_DEBUG
 				Debug ("Pausing parsing");
 #endif
 			}
@@ -1809,7 +1809,7 @@ namespace HtmlAgilityPack
 			{
 				// Mark that parsing is over
 				_done_parsing = true;
-#if THIS_DEBUG
+#if HTML_DEBUG
 				Debug ("Done parsing");
 #endif
 
@@ -1998,7 +1998,7 @@ namespace HtmlAgilityPack
 			if (_streammode && ReportNode != null)
 				_stop_parsing = ! ReportNode (_currentnode);
 
-#if THIS_DEBUG
+#if HTML_DEBUG
 			{
 				if (_currentnode._nodetype == HtmlNodeType.Text)
 					Debug ("Text:" + _currentnode.InnerText);
