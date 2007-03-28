@@ -627,7 +627,8 @@ EXTRACT_CONTENT_CSFLAGS = \
 	-target:exe
 
 EXTRACT_CONTENT_CSFILES = \
-	$(srcdir)/ExtractContent.cs
+	$(srcdir)/ExtractContent.cs		\
+	$(srcdir)/NoiseFilter.cs
 
 EXTRACT_CONTENT_LOCAL_ASSEMBLIES = \
 	../Util/Util.dll			\

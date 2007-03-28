@@ -34,9 +34,13 @@ using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
+
 class ExtractContentTool {
 
 	static bool tokenize = false;
+	static bool analyze = false;
 	static bool show_generated = false;
 	static string mime_type = null;
 	static bool continue_last = false;
@@ -136,19 +140,33 @@ class ExtractContentTool {
 		watch.Start ();
 
 		TextReader reader;
+		Analyzer indexing_analyzer = new BeagleAnalyzer ();
 
 		char[] buffer = new char [2048];
 		reader = indexable.GetTextReader ();
 		if (reader != null) {
 			Console.WriteLine ("Content:");
-			while (true) {
-				int l = reader.Read (buffer, 0, 2048);
-				if (l <= 0)
-					break;
-				if (first)
-					first = false;
-				DisplayContent (buffer, l);
+
+			if (analyze) {
+				TokenStream token_stream = indexing_analyzer.TokenStream ("Text", reader);
+				Lucene.Net.Analysis.Token token = token_stream.Next ();
+				first = (token == null);
+
+				for (; token != null; token = token_stream.Next ())
+					Console.Write ("{0}{1}", token.TermText (), (tokenize ? '\n' : ' '));
+
+				token_stream.Close ();
+			} else {
+				while (true) {
+					int l = reader.Read (buffer, 0, 2048);
+					if (l <= 0)
+						break;
+					if (first)
+						first = false;
+					DisplayContent (buffer, l);
+				}
 			}
+
 			reader.Close ();
 
 			if (first)
@@ -158,17 +176,30 @@ class ExtractContentTool {
 		}
 			
 		reader = indexable.GetHotTextReader ();
+		first = true;
 		if (reader != null) {
 			Console.WriteLine ("HotContent:");
-			first = true;
-			while (true) {
-				int l = reader.Read (buffer, 0, 2048);
-				if (l <= 0)
-					break;
-				if (first)
-					first = false;
-				DisplayContent (buffer, l);
+
+			if (analyze) {
+				TokenStream token_stream = indexing_analyzer.TokenStream ("HotText", reader);
+				Lucene.Net.Analysis.Token token = token_stream.Next ();
+				first = (token == null);
+
+				for (; token != null; token = token_stream.Next ())
+					Console.Write ("{0}{1}", token.TermText (), (tokenize ? '\n' : ' '));
+
+				token_stream.Close ();
+			} else {
+				while (true) {
+					int l = reader.Read (buffer, 0, 2048);
+					if (l <= 0)
+						break;
+					if (first)
+						first = false;
+					DisplayContent (buffer, l);
+				}
 			}
+
 			reader.Close ();
 
 			if (first)
@@ -213,6 +244,7 @@ class ExtractContentTool {
 		Console.WriteLine ("Options:");
 		Console.WriteLine ("  --debug\t\t\tPrint debug info to the console");
 		Console.WriteLine ("  --tokenize\t\t\tTokenize the text before printing");
+		Console.WriteLine ("  --analyze\t\t\tAnalyze the text before printing.\n\t\t\t\tThis will output exactly the words, separated by whitespace, that go into beagle index.");
 		Console.WriteLine ("  --show-generated\t\tShow filtering information for items created by filters");
 		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
 		Console.WriteLine ("  --outfile=<filename>\t\tOutput file name");
@@ -234,6 +266,9 @@ class ExtractContentTool {
 
 		if (Array.IndexOf (args, "--tokenize") != -1)
 			tokenize = true;
+		
+		if (Array.IndexOf (args, "--analyze") != -1)
+			analyze = true;
 		
 		if (Array.IndexOf (args, "--show-generated") != -1 || Array.IndexOf (args, "--show-children") != -1)
 			show_generated = true;
@@ -297,4 +332,23 @@ class ExtractContentTool {
 
 		return 0;
 	}
+
+	// A stripped version of LuceneCommon.BeagleAnalyzer
+	internal class BeagleAnalyzer : StandardAnalyzer {
+
+		public BeagleAnalyzer ()
+		{
+		}
+
+		public override TokenStream TokenStream (string fieldName, TextReader reader)
+		{
+			TokenStream outstream;
+			outstream = base.TokenStream (fieldName, reader);
+			outstream = new NoiseEmailHostFilter (outstream, true);
+			outstream = new PorterStemFilter (outstream);
+
+			return outstream;
+		}
+	}
+
 }
