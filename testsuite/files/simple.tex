@@ -1,0 +1,28 @@
+\documentclass[11pt]{article}\textheight 32pc\textwidth 6.5in
+\topmargin -3pc \oddsidemargin 0in \evensidemargin 0in \begin{document}
+
+\newcommand\e\varepsilon\date{February 2005, BU-CAS-CS-537}\title
+{\vspace*{-3pc} Nemirovski Estimate of Mean of Arbitrary Distributions\\
+with Known Variance.}\author{Leonid A.~Levin}\maketitle
+
+\noindent Assume independent variables with the same mean $m$ and known
+upper-bounds on variance.\\ We want to estimate the unknown $m$ with
+accuracy $\e$ and a high chance of success.\\ We normalize the variables
+ to set $\e=1$ and spread them into $2k-1$ groups\\ with $\le v\le
+(\sqrt2-1)^2$ variance of averages $x_j$ of variables in each group $j$.\\
+ By Chebyshev inequality, $x_j$ deviate from $m$
+ to each side by $\ge 1$ with probability $\le v/(1+v)$.
+ Their median then deviates from $m$ by $\ge1$ with probability
+$P\le2\sum_{i=0}^{k-1}{2k-1\choose k+i} v^{k+i}/ (1+v)^{2k-1}$.
+ [A.S.Nemirovsky, D.B.Yudin. {\em Problem Complexity and
+  Method Efficiency in Optimization.} 1983.]
+
+\section* {Estimating the Binomial Sum.}
+
+$P(1+v)^{2k-1}/(2v^k)\le\sum_{i=0}^{k-1}{2k-1\choose k+i}v^i <$
+${2k-1\choose k}\sum_{i=0}^{k-1}v^i<$ ${2k-1\choose k}/(1-v)$.
+ Using $n!=(n/e)^n \sqrt{2\pi n+\theta}$, $1\!<\!\theta\!<\!1.05$,
+ we estimate ${2k-1\choose k} <4^k/2\sqrt{k\pi}$ and $P<
+ (4v/(1\!+\!v)^2)^k(1\!+\!v)/((1\!-\!v)\sqrt{k\pi})\le 2^{-k}\sqrt{2/k\pi}$.
+
+ \end{document}
