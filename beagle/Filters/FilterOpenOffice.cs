@@ -428,9 +428,8 @@ namespace Beagle.Filters {
 
 		private void ExtractMetadata (XmlReader reader)
 		{
-			do {
-				reader.Read ();
-			} while (reader.Depth < 2);
+			while (reader.Read () && reader.Depth < 2)
+				;
 
 			while (reader.Depth >= 2) {
 				if (reader.Depth != 2 || reader.NodeType != XmlNodeType.Element) {
