@@ -1,7 +1,7 @@
 //
 // Settings.cs
 //
-// Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2005-2007 Novell, Inc.
 //
 
 //
@@ -56,6 +56,7 @@ public class SettingsDialog
 	[Widget] CheckButton allow_root_toggle;
 	[Widget] CheckButton autostart_toggle;
 	[Widget] CheckButton battery_toggle;
+	[Widget] CheckButton screensaver_toggle;
 	[Widget] CheckButton auto_search_toggle;
 	[Widget] CheckButton press_ctrl_toggle;
  	[Widget] CheckButton press_alt_toggle;
@@ -121,6 +122,7 @@ public class SettingsDialog
 		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
 		auto_search_toggle.Active = Conf.Searching.BeagleSearchAutoSearch;
 		battery_toggle.Active = Conf.Indexing.IndexOnBattery;
+		screensaver_toggle.Active = Conf.Indexing.IndexFasterOnScreensaver;
 
 		autostart_toggle.Active = IsAutostartEnabled ();
 
@@ -144,6 +146,7 @@ public class SettingsDialog
 		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
 		Conf.Searching.BeagleSearchAutoSearch = auto_search_toggle.Active;
 		Conf.Indexing.IndexOnBattery = battery_toggle.Active;
+		Conf.Indexing.IndexFasterOnScreensaver = screensaver_toggle.Active;
 		
 		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
 									 press_ctrl_toggle.Active, 
@@ -953,22 +956,4 @@ public class SettingsDialog
 			add_exclude_dialog.Destroy ();
 		}
 	}
-	
-#if false
-	////////////////////////////////////////////////////////////////
-	// Display view
-	
-	class DisplayView : TreeView 
-	{
-		public DisplayView ()
-		{
-			ListStore store = new ListStore (typeof(bool),typeof(string));
-
-			this.Model = store;
-
-			AppendColumn (Catalog.GetString ("Show"), new CellRendererToggle (), "active", 0);
-			AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 1);
-		}
-	}
-#endif
 }
