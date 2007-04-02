@@ -138,6 +138,12 @@ namespace Beagle.Util {
 			if (! use_screensaver)
 				return;
 
+			if (! Conf.Indexing.IndexFasterOnScreensaver) {
+				cached_screensaver_running = false;
+				cached_screensaver_idle_time = 0;
+				return;
+			}
+
 			if ((DateTime.Now - screensaver_time).TotalSeconds < screensaver_poll_delay)
 				return;
 

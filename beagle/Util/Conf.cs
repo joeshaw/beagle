@@ -475,6 +475,12 @@ namespace Beagle.Util {
 				set { index_on_battery = value; }
 			}
 
+			private bool index_faster_on_screensaver = true;
+			public bool IndexFasterOnScreensaver {
+				get { return index_faster_on_screensaver; }
+				set { index_faster_on_screensaver = value; }
+			}
+
 			private ArrayList excludes = new ArrayList ();
 			[XmlArray]
 			[XmlArrayItem (ElementName="ExcludeItem", Type=typeof(ExcludeItem))]
@@ -514,6 +520,17 @@ namespace Beagle.Util {
 				else
 					output = "Data will be indexed while on battery.";
 				index_on_battery = !index_on_battery;
+				return true;
+			}
+
+			[ConfigOption (Description="Toggles whether to index faster while the screensaver is on")]
+			internal bool FasterOnScreensaver (out string output, string [] args)
+			{
+				if (index_faster_on_screensaver)
+					output = "Data will be indexed normally while on screensaver.";
+				else
+					output = "Data will be indexed faster while on screensaver.";
+				index_faster_on_screensaver = !index_faster_on_screensaver;
 				return true;
 			}
 
