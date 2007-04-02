@@ -38,9 +38,8 @@ namespace Beagle {
 		private ArrayList to_remove = new ArrayList ();
 		private ArrayList to_add = new ArrayList ();
 
-		public IndexingServiceRequest () : base (true)
+		public IndexingServiceRequest ()
 		{
-
 		}
 
 		[XmlAttribute]
