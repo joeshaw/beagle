@@ -156,7 +156,7 @@ class QueryTool {
 			"  --stats-only\t\t\tOnly display statistics about the query, not\n" +
 			"              \t\t\tthe actual results.\n" +
 			"  --max-hits\t\t\tLimit number of search results per backend\n" +
-			"            \t\t\t(default = 100, max = 100)\n" +
+			"            \t\t\t(default 100)\n" +
 			"  --flood\t\t\tExecute the query over and over again.  Don't do that.\n" +
 			"  --listener\t\t\tExecute an index listener query.  Don't do that either.\n" +
 			"  --help\t\t\tPrint this usage message.\n" +
