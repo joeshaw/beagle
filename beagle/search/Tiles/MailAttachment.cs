@@ -26,10 +26,6 @@ namespace Search.Tiles {
 			if (hit.ParentUri == null || str == null || str == "false")
 				return false;
 
-			str = hit.GetFirstProperty ("fixme:attachment_title");
-			if (str == null || str == "")
-				return false;
-
 			Weight += 1;
 			
 			return true;
@@ -42,6 +38,10 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Documents;
 			Title = Hit ["fixme:attachment_title"];
+
+			if (String.IsNullOrEmpty (Title))
+				Title = Catalog.GetString (String.Format ("Attachment to \"{0}\"", Hit ["parent:dc:title"]));
+
 			Description = Catalog.GetString ("Mail attachment");
 		}
 
