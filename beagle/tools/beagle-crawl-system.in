@@ -28,6 +28,10 @@
 
 umask 022
 
+if [ ! -x @sbindir@/beagle-build-index ] ; then
+    exit 1
+fi
+
 CRAWL_USER=beagleindex
 
 export TMPDIR=/tmp
