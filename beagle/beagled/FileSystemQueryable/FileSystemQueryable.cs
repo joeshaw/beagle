@@ -149,6 +149,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			foreach (Property std_prop in Property.StandardFileProperties (name, mutable))
 				indexable.AddProperty (std_prop);
 
+			indexable.HitType = "File";
+
 			if (parent_id == Guid.Empty)
 				return;
 			
@@ -186,7 +188,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return null;
 
 			indexable.MimeType = "inode/directory";
-			indexable.HitType = "File";
 			indexable.NoContent = true;
 			indexable.DisplayUri = UriFu.PathToFileUri (path);
 			indexable.AddProperty (Property.NewKeyword ("beagle:FileType", "directory"));
@@ -228,7 +229,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.DisplayUri = UriFu.PathToFileUri (path);
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
-			indexable.HitType = "File";
 
 			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent, true);
 
