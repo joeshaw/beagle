@@ -63,14 +63,22 @@ spawn_async_with_pipes_and_limits (char   **argv,
 				   GError **error)
 {
 	LimitInfo info;
+	GSpawnFlags flag = G_SPAWN_SEARCH_PATH;
 
 	info.cpu_limit = cpu_limit;
 	info.mem_limit = mem_limit;
 
+	/* If stderr is null, that means SafeProcess has been asked
+	 * to not redirect standard error.
+	 * So ignore the error.
+	 */
+	if (stderr == NULL)
+		flag |= G_SPAWN_STDERR_TO_DEV_NULL;
+
 	g_spawn_async_with_pipes (NULL,
 				  argv,
 				  NULL,
-				  G_SPAWN_SEARCH_PATH,
+				  flag,
 				  limit_setup_func,
 				  &info,
 				  child_pid,

@@ -41,7 +41,8 @@ namespace Beagle.Filters {
 			pc = new SafeProcess ();
 			pc.Arguments = new string [] { "pdfinfo", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
-			pc.RedirectStandardError = true;
+			// See FIXME below for why this is false.
+			pc.RedirectStandardError = false;
 
 			// Let pdfinfo run for at most 10 CPU seconds, and not
 			// use more than 100 megs memory.
@@ -99,12 +100,14 @@ namespace Beagle.Filters {
 			}
 			pout.Close ();
 
+#if false
 			// Log any errors or warnings from stderr
 			pout = new StreamReader (pc.StandardError);
 			while ((str = pout.ReadLine ()) != null)
 				Log.Warn ("pdfinfo [{0}]: {1}", Indexable.Uri, str);
 
 			pout.Close ();
+#endif
 			pc.Close ();
 		}
 		
