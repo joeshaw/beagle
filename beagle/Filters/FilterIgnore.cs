@@ -60,6 +60,8 @@ namespace Beagle.Filters {
 			// Add mimetypes that beagle surely will not filter
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-object"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-sharedlib"));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-java")); // .class files
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("image/x-eps"));
 		}
 
 		protected override void DoPullProperties ()
