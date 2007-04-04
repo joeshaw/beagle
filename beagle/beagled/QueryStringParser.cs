@@ -206,6 +206,43 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			// Non-keyword queries by directly using property names
+			// Query of form property:namespace:name=value
+			// which is translated to a non-keyword query
+			// namespace:name=value
+			int pos;
+			if (key == "property" && ((pos = text.IndexOf ('=')) != -1)) {
+				QueryPart_Property part = new QueryPart_Property ();
+				part.Key = text.Substring (0, pos);
+				part.Value = text.Substring (pos + 1);
+				part.Type = PropertyType.Text;
+				part.Logic = (IsProhibited ?      QueryPartLogic.Prohibited : QueryPartLogic.Required);
+				Logger.Log.Debug ("Parsed query '"	    + query + 
+						  "' as prop query:key="    + part.Key +
+						  ", value="		    + part.Value +
+						  " and property type="	    + part.Type);
+
+				return part;
+			}
+
+			// keyword queries by directly using property names
+			// Query of form keyword:namespace:name=value
+			// which is translated to a keyword query
+			// namespace:name=value
+			if (key == "keyword" && ((pos = text.IndexOf ('=')) != -1)) {
+				QueryPart_Property part = new QueryPart_Property ();
+				part.Key = text.Substring (0, pos);
+				part.Value = text.Substring (pos + 1);
+				part.Type = PropertyType.Keyword;
+				part.Logic = (IsProhibited ?      QueryPartLogic.Prohibited : QueryPartLogic.Required);
+				Logger.Log.Debug ("Parsed query '"	    + query + 
+						  "' as prop query:key="    + part.Key +
+						  ", value="		    + part.Value +
+						  " and property type="	    + part.Type);
+
+				return part;
+			}
+
 			string[] prop_string = null;
 			bool is_present;
 			PropertyType[] prop_type;
