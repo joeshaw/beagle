@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 				else
 					tmpBool = false;
 				if (System.IO.File.Exists(lockFile.FullName)) {
-					Log ("Release didnt delete lockfile {0}.", lockFile.FullName);
+					Beagle.Util.Logger.Log.Debug ("Release didnt delete lockfile {0}.", lockFile.FullName);
 					tmpBool = false;
 				}
 				bool generatedAux = tmpBool;
