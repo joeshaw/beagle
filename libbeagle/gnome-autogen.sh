@@ -174,7 +174,7 @@ check_m4macros() {
 
     cm_status=0
     if [ -n "$REQUIRED_M4MACROS" ]; then
-	printbold "Checking for required M4 macros..."
+	printbold "Checking for required m4 macros..."
 	# check that each macro file is in one of the macro dirs
 	for cm_macro in $REQUIRED_M4MACROS; do
 	    cm_macrofound=false
@@ -203,7 +203,7 @@ check_m4macros() {
 	done
     fi
     if [ -n "$FORBIDDEN_M4MACROS" ]; then
-	printbold "Checking for forbidden M4 macros..."
+	printbold "Checking for forbidden m4 macros..."
 	# check that each macro file is in one of the macro dirs
 	for cm_macro in $FORBIDDEN_M4MACROS; do
 	    cm_macrofound=false
