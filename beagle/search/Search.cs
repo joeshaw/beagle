@@ -496,7 +496,8 @@ namespace Search {
 					pages.CurrentPage = pages.PageNum (panes);
 			}
 
-			TotalMatches += response.NumMatches;
+			if (response.NumMatches != -1)
+				TotalMatches += response.NumMatches;
 		}
 
 		private void OnHitsSubtracted (HitsSubtractedResponse response)
