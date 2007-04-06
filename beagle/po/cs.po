@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-04 10:38+0200\n"
-"PO-Revision-Date: 2007-04-04 10:38+0200\n"
+"POT-Creation-Date: 2007-04-06 14:14+0200\n"
+"PO-Revision-Date: 2007-04-06 14:14+0200\n"
 "Last-Translator: \n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -310,9 +310,9 @@ msgid "Conversations in {0}"
 msgstr "Konverzace v {0}"
 
 #: ../ImLogViewer/ImLogWindow.cs:109
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "Conversations in {0} ({1})"
-msgstr "Konverzace v {0}"
+msgstr "Konverzace v {0} ({1})"
 
 #: ../ImLogViewer/ImLogWindow.cs:125
 #, csharp-format
@@ -457,11 +457,11 @@ msgstr[0] "Zobrazuje se prvních {0} z {1} výsledků"
 msgstr[1] "Zobrazuje se prvních {0} z {1} výsledků"
 msgstr[2] "Zobrazuje se prvních {0} z {1} výsledků"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:565
 msgid "Your data is being indexed"
 msgstr "Vaše data se právě indexují"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:566
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -558,18 +558,16 @@ msgid "Set as Wallpaper"
 msgstr "Použít jako pozadí"
 
 #: ../search/Tiles/Image.cs:84
-#, fuzzy
 msgid "Tags:"
-msgstr "Poslední:"
+msgstr "Tagy:"
 
 #: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "Změněno:"
 
 #: ../search/Tiles/Image.cs:96
-#, fuzzy
 msgid "Comment:"
-msgstr "Země:"
+msgstr "Poznámka:"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -1340,7 +1338,7 @@ msgstr "Indexovat během napájení z _baterie"
 
 #: ../tools/settings.glade.h:18
 msgid "Index more aggressively while the s_creensaver is activated"
-msgstr ""
+msgstr "Indexovat agresivněji, je li aktivován šetřič _obrazovky"
 
 #: ../tools/settings.glade.h:19
 msgid "Indexing"
@@ -1451,15 +1449,15 @@ msgstr "Preferovaný formát:"
 
 #: ../Util/F-Spot/IptcFile.cs:181
 msgid "Identifies the provider and product"
-msgstr ""
+msgstr "Identifikuje poskytovatele a produkt"
 
 #: ../Util/F-Spot/IptcFile.cs:183
 msgid "A unique number identifying the envelope"
-msgstr ""
+msgstr "Jedinečné číslo identifikující obálku"
 
 #: ../Util/F-Spot/IptcFile.cs:185
 msgid "A unique number"
-msgstr ""
+msgstr "Jedinečné číslo"
 
 #: ../Util/F-Spot/IptcFile.cs:187
 msgid ""
@@ -1506,7 +1504,7 @@ msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
 msgid "Object name"
-msgstr ""
+msgstr "Jméno objektu"
 
 #: ../Util/F-Spot/IptcFile.cs:220
 msgid "Status of the objectdata according to the provider"
@@ -1518,7 +1516,7 @@ msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:227
 msgid "Name of the city the content is focussing on"
-msgstr ""
+msgstr "Jméno města, na které je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:230
 msgid "Copyright information for"
@@ -1526,7 +1524,7 @@ msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
-msgstr ""
+msgstr "Úplné jméno země, na kterou je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid ""
@@ -1581,7 +1579,7 @@ msgstr "Název:"
 
 #: ../Util/F-Spot/MetadataStore.cs:48
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright"
 
 #: ../Util/F-Spot/MetadataStore.cs:49
 msgid "Subject and Keywords"
@@ -1635,7 +1633,7 @@ msgstr ""
 
 #: ../Util/F-Spot/MetadataStore.cs:74
 msgid "Color Space"
-msgstr ""
+msgstr "Barevný prostor"
 
 #: ../Util/F-Spot/MetadataStore.cs:76
 msgid "White Balance"
@@ -1708,12 +1706,12 @@ msgstr "Včera, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:157
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
-msgstr[0] "před {0} dny, {1}"
-msgstr[1] "před {0} dny, {1}"
-msgstr[2] "před {0} dny, {1}"
+msgstr[0] "před {0} dnem, v {1}"
+msgstr[1] "před {0} dny, v {1}"
+msgstr[2] "před {0} dny, v {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:163
@@ -1743,11 +1741,11 @@ msgstr[2] "{0} minut"
 
 #. Translators: {0} is a file size in bytes
 #: ../Util/StringFu.cs:219
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
-msgstr[0] "{0} bajtů"
-msgstr[1] "{0} bajtů"
+msgstr[0] "{0} bajt"
+msgstr[1] "{0} bajty"
 msgstr[2] "{0} bajtů"
 
 #. Translators: {0} is a file size in kilobytes
