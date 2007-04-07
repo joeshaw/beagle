@@ -270,11 +270,57 @@ namespace Beagle.Daemon {
 			// assume that the index is corrupted and declare it non-existent.
 			DirectoryInfo lock_dir_info;
 			lock_dir_info = new DirectoryInfo (LockDirectory);
+			bool dangling_lock = false;
+
 			foreach (FileInfo info in lock_dir_info.GetFiles ()) {
 				if (IsDanglingLock (info)) {
-					Logger.Log.Warn ("Found a dangling index lock on {0}", info.FullName);
-					return false;
+					Logger.Log.Warn ("Found a dangling index lock on {0}.", info.FullName);
+					dangling_lock = true;
 				}
+			}
+
+			if (dangling_lock) {
+				if (VerifyLuceneIndex (PrimaryIndexDirectory) && 
+				    VerifyLuceneIndex (SecondaryIndexDirectory)) {
+					// Both index verified
+					// Safe to delete lock file
+					Log.Warn ("Index looks ok. Deleting lock files.");
+					try {
+						foreach (FileInfo info in lock_dir_info.GetFiles ())
+							info.Delete ();
+					} catch {
+						Log.Warn ("Could not delete lock files.");
+						return false;
+					}
+					return true;
+				} else
+					return false;
+			}
+
+			return true;
+		}
+
+		private bool VerifyLuceneIndex (string path)
+		{
+			if (! Directory.Exists (path))
+				return true;
+
+			Log.Debug ("Verifying index {0}", path);
+			try {
+				IndexReader reader = IndexReader.Open (path);
+				int max_doc = reader.MaxDoc ();
+				for (int i = 0; i < max_doc; ++i) {
+					if (reader.IsDeleted (i))
+						continue;
+				
+					Document doc = reader.Document (i);
+					doc = null;
+				}
+				
+				reader.Close ();
+			} catch (Exception e) {
+				Log.Warn ("Lucene index {0} is corrupted ({1})", path, e.Message);
+				return false;
 			}
 
 			return true;
