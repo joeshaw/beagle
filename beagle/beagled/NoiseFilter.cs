@@ -143,15 +143,7 @@ namespace Beagle.Daemon {
 		{
 			string type = token.Type ();
 
-			if (type == tokentype_email) {
-				if (tokenize_email_hostname)
-					ProcessEmailToken (token);
-				return true;
-			} else if (type == tokentype_host) {
-				if (tokenize_email_hostname)
-					ProcessURLToken (token);
-				return true;
-			} else if (type == tokentype_number) {
+			if (type == tokentype_number) {
 				// nobody will remember more than 20 digits
 				return (token.TermText ().Length <= 20);
 			} else if (type == tokentype_alphanum) {
@@ -178,6 +170,14 @@ namespace Beagle.Daemon {
 					token.StartOffset (),
 					token.EndOffset (),
 					token.Type ());
+				return true;
+			} else if (type == tokentype_email) {
+				if (tokenize_email_hostname)
+					ProcessEmailToken (token);
+				return true;
+			} else if (type == tokentype_host) {
+				if (tokenize_email_hostname)
+					ProcessURLToken (token);
 				return true;
 			} else
 				// FIXME: Noise should be only tested on token type alphanum
