@@ -44,8 +44,29 @@ class ExtractContentTool {
 	static bool show_generated = false;
 	static string mime_type = null;
 	static bool continue_last = false;
+	static bool stats_only = true;
 
 	// FIXME: We don't display structural breaks
+	static void DisplayContent (string line)
+	{
+		line = line.Trim ();
+		if (line.Length == 0)
+			return;
+
+		if (tokenize) {
+			
+			string [] parts = line.Split (' ');
+			for (int i = 0; i < parts.Length; ++i) {
+				string part = parts [i].Trim ();
+				if (part != "")
+					Console.WriteLine ("{0}", part);
+			}
+
+		} else {
+			Console.WriteLine (line);
+		}
+	}
+
 	static void DisplayContent (char[] buffer, int length)
 	{
 		if (tokenize) {
@@ -144,27 +165,44 @@ class ExtractContentTool {
 
 		char[] buffer = new char [2048];
 		reader = indexable.GetTextReader ();
+		char separater_char = (tokenize ? '\n' : ' ');
 		if (reader != null) {
-			Console.WriteLine ("Content:");
-
 			if (analyze) {
+				if (! stats_only)
+					Console.WriteLine ("Content:");
+
 				TokenStream token_stream = indexing_analyzer.TokenStream ("Text", reader);
 				Lucene.Net.Analysis.Token token = token_stream.Next ();
 				first = (token == null);
 
-				for (; token != null; token = token_stream.Next ())
-					Console.Write ("{0}{1}", token.TermText (), (tokenize ? '\n' : ' '));
+				if (! stats_only)
+					for (; token != null; token = token_stream.Next ())
+						Console.Write ("{0}{1}", token.TermText (), separater_char);
 
 				token_stream.Close ();
 			} else {
+#if false
 				while (true) {
 					int l = reader.Read (buffer, 0, 2048);
 					if (l <= 0)
 						break;
 					if (first)
 						first = false;
-					DisplayContent (buffer, l);
+					if (! stats_only)
+						DisplayContent (buffer, l);
 				}
+#else
+				string line;
+				first = true;
+				while ((line = reader.ReadLine ()) != null) {
+					if (first) {
+						Console.WriteLine ("Content:");
+						first = false;
+					}
+					if (! stats_only)
+						DisplayContent (line);
+				}
+#endif
 			}
 
 			reader.Close ();
@@ -175,6 +213,7 @@ class ExtractContentTool {
 				Console.WriteLine ('\n');
 		}
 			
+		/*
 		reader = indexable.GetHotTextReader ();
 		first = true;
 		if (reader != null) {
@@ -186,7 +225,7 @@ class ExtractContentTool {
 				first = (token == null);
 
 				for (; token != null; token = token_stream.Next ())
-					Console.Write ("{0}{1}", token.TermText (), (tokenize ? '\n' : ' '));
+					Console.Write ("{0}{1}", token.TermText (), separater_char);
 
 				token_stream.Close ();
 			} else {
@@ -207,6 +246,7 @@ class ExtractContentTool {
 			else
 				Console.WriteLine ('\n');
 		}
+		*/
 
 		watch.Stop ();
 
