@@ -713,12 +713,13 @@ namespace Beagle.Daemon {
 					primary_doc.Add (f);
 				}
 			
+				// FIXME: HotText is ignored for now!
 				// Then add "HotText"
-				reader = indexable.GetHotTextReader ();
-				if (reader != null) {
-					f = new Field ("HotText", reader);
-					primary_doc.Add (f);
-				}
+				//reader = indexable.GetHotTextReader ();
+				//if (reader != null) {
+				//	f = new Field ("HotText", reader);
+				//	primary_doc.Add (f);
+				//}
 			}
 
 			// Store the Type and MimeType in special properties
