@@ -103,6 +103,8 @@ CSFILES = 				\
 	$(srcdir)/FilterKOrganizer.cs	\
 	$(srcdir)/FilterLabyrinth.cs	\
 	$(srcdir)/FilterScribus.cs	\
+	$(srcdir)/FilterM3U.cs		\
+	$(srcdir)/FilterPls.cs		\
 	$(srcdir)/FilterIgnore.cs
 
 if ENABLE_GSF_SHARP

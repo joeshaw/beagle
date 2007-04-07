@@ -62,6 +62,7 @@ using Beagle.Filters;
 	 typeof(FilterKOrganizer),
 	 typeof(FilterKonqHistory),
 	 typeof(FilterLabyrinth),
+	 typeof(FilterM3U),
 	 typeof(FilterMail),
 	 typeof(FilterMan),
 	 typeof(FilterMatlab),
@@ -77,6 +78,7 @@ using Beagle.Filters;
 #if ENABLE_GSF_SHARP
 	 typeof(FilterPPT),
 #endif
+	 typeof(FilterPls),
 	 typeof(FilterPython),
 	 typeof(FilterRPM),
 	 typeof(FilterRTF),
