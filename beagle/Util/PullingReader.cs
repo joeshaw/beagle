@@ -33,7 +33,7 @@ namespace Beagle.Util {
 	
 	public class PullingReader : TextReader {
 
-		public delegate bool Pull (StringBuilder buffer);
+		public delegate bool Pull (StringBuilder buffer, int chars_to_pull);// chars_to_pull is the minimum count, pull less and Pull() will be called again. Its merely a hint.
 		public delegate void DoClose ();
 
 		Pull pull;
@@ -53,7 +53,7 @@ namespace Beagle.Util {
 		{
 			while (! done && pullBuffer.Length < neededSize) {
 				try { 
-					done = ! pull (pullBuffer);
+					done = ! pull (pullBuffer, neededSize - pullBuffer.Length);
 				} catch (Exception e) {
 					Logger.Log.Debug (e, "Caught exception pulling text from {0}", pull);
 				}

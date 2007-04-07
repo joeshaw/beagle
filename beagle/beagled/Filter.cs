@@ -39,10 +39,11 @@ namespace Beagle.Daemon {
 
 		static private bool Debug = false;
 
-		// Lucene fields allow a maximum of 10000 words
-		// Some of the words will be stop words... so a failsafe maximum of 40000 words
-		// Dont accept more words than that
-		const int MAXWORDS = 40000; // Lucene.Net.Index.IndexWriter.DEFAULT_MAX_FIELD_LENGTH * 4
+		// Number of characters Filters should return in each DoPull()
+		// Optimization hint. -1 means unlimited.
+		const int DEFAULT_CHARS_TO_PULL = 2048;
+		int chars_to_pull = -1;
+		int chars_added = 0;
 
 		// Derived classes always must have a constructor that
 		// takes no arguments.
@@ -227,24 +228,22 @@ namespace Beagle.Daemon {
 
 		//////////////////////////
 
+		// Various methods for filters to report extracted text
+		// All the methods return true/false saying whether more text is requested
+		// Filters can choose to ignore the return value
+
+		// Use a shared text builder
+		private static StringBuilder text_builder = new StringBuilder (DEFAULT_CHARS_TO_PULL);
 		private ArrayList textPool;
 		private ArrayList hotPool;
 
-		private int word_count = 0;
-		private int hotword_count = 0;
-
-		protected bool AllowMoreWords ()
-		{
-			return (word_count < MAXWORDS);
-		}
-		
 		private bool last_was_structural_break = true;
 		const string WHITESPACE = " ";
 
 		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
 		 * Handles null str.
 		 */
-		public int AppendText (string str)
+		public bool AppendText (string str)
 		{
 			if (Debug)
 				Logger.Log.Debug ("AppendText (\"{0}\")", str);
@@ -270,64 +269,42 @@ namespace Beagle.Daemon {
 		 * of AppendText ()
 		 */
 
-		public int AppendText (string str, string strHot)
+		public bool AppendText (string str, string strHot)
 		{
-			int num_words = 0;
-
 			if (Debug)
 				Logger.Log.Debug ("AppendText (\"{0}, {1}\")", str, strHot);
 
 			if (IsFrozen)
-				return 0;
+				return true;
 
-			if (word_count < MAXWORDS && ! string.IsNullOrEmpty (str)) {
-				string[] lines;
+			if (! string.IsNullOrEmpty (str)) {
+				// If the filter is not storing snippets, there
+				// is no need to break strings into different lines.
+				ReallyAddText (str);
+				if (snippetWriter != null)
+					// Previously, str was stripped into newlines and
+					// each line was added individually. Effectively
+					// that was removing blank lines from snippets.
+					// Now blank lines are checked while reading from
+					// the cache. No processing done here. TextCache files
+					// are stored compressed so there would not be significant
+					// storage overhead in doing this.
+					snippetWriter.Write (str);
 
-				// Avoid unnecessary allocation of a string
-				// FIXME: Handle \r, \r\n cases.
-				if (str.IndexOf ('\n') > -1) {
-					lines = str.Split ('\n'); 
-					foreach (string line in lines) {
-						if (line.Length > 0) {
-							ReallyAppendText (line);
-							AppendStructuralBreak ();
-						}
-					}
-				} else 
-					ReallyAppendText (str);
-
-				num_words = StringFu.CountWords (str, 3, -1);
-				word_count += num_words;
 			}
 
-			if (hotword_count < MAXWORDS && ! string.IsNullOrEmpty (strHot)) {
-				ReallyAppendHotText (strHot);
-				hotword_count += StringFu.CountWords (strHot, 3, -1);
+			/* FIXME: Disable HotText for now. Enable it when we start using it for query.
+			if (! string.IsNullOrEmpty (strHot)) {
+				hotPool.Add (strHot);
+				hotPool.Add (WHITESPACE);
 			}
+			*/
 
-			return num_words;
-		}
-		
-		// strHot may not be null or empty - checked before
-		private void ReallyAppendHotText (string strHot)
-		{
-			hotPool.Add (strHot.Trim());
-			hotPool.Add (WHITESPACE);
-		}
-
-		// str may not be null or empty - checked before
-		private void ReallyAppendText (string str)
-		{
-			textPool.Add (str);
-
-			if (snippetWriter != null)
-				snippetWriter.Write (str);
-
-			last_was_structural_break = false;
+			return UpdateCharsAdded (str.Length);
 		}
 
 		// Add a word followed by a whitespace. word may not be whitespace or newline.
-		public int AppendWord (string word)
+		public bool AppendWord (string word)
 		{
 			if (Debug)
 				Logger.Log.Debug ("AppendWord (\"{0}\")", word);
@@ -336,7 +313,7 @@ namespace Beagle.Daemon {
 		}
 
 		// Add a line followed by a newline.
-		public int AppendLine (string line)
+		public bool AppendLine (string line)
 		{
 			if (Debug)
 				Logger.Log.Debug ("AppendLine (\"{0}\")", line);
@@ -344,55 +321,66 @@ namespace Beagle.Daemon {
 			return AppendWords (line, true);
 		}
 
-		private int AppendWords (string words, bool is_line)
+		private bool AppendWords (string words, bool is_line)
 		{
 			if (IsFrozen || string.IsNullOrEmpty (words))
-				return 0;
+				return true;
 
+			/* FIXME: Disable hottext for now. Enable it when LuceneCommon starts using it for query.
 			if (IsHot) {
 				hotPool.Add (words);
 				hotPool.Add (WHITESPACE);
-				hotword_count += StringFu.CountWords (words, 3, -1);
 			}
+			*/
 
-			textPool.Add (words);
+			ReallyAddText (words);
+			text_builder.Append (WHITESPACE);
 
-			if (snippetWriter != null)
+			if (snippetWriter != null) {
 				snippetWriter.Write (words);
 
-			if (is_line)
-				AppendStructuralBreak ();
-			else
-				AppendWhiteSpace ();
+				if (is_line) {
+					snippetWriter.WriteLine ();
+					last_was_structural_break = true;
+				} else {
+					snippetWriter.Write (WHITESPACE);
+				}
+			}
 
-			int num_words = StringFu.CountWords (words, 3, -1);
-			word_count += num_words;
-			return num_words;
+			return UpdateCharsAdded (words.Length + 1);
+		}
+
+		public bool AppendChars (char[] buffer, int index, int count)
+		{
+			ReallyAddText (buffer, index, count);
+			return UpdateCharsAdded (count);
 		}
 
 		/*
 		 * Adds whitespace to the textpool.
 		 */
-		public void AppendWhiteSpace ()
+		public bool AppendWhiteSpace ()
 		{
-			if (last_was_structural_break)
-				return;
-
 			if (Debug)
 				Logger.Log.Debug ("AppendWhiteSpace ()");
 
-			if (NeedsWhiteSpace (textPool)) {
-				textPool.Add (WHITESPACE);
-				if (snippetWriter != null)
-					snippetWriter.Write (WHITESPACE);
+			text_builder.Append (WHITESPACE);
+
+			if (last_was_structural_break)
+				return true;
+
+			if (snippetWriter != null) {
+				snippetWriter.Write (WHITESPACE);
 				last_was_structural_break = false;
 			}
+
+			return UpdateCharsAdded (1);
 		}
 
 		/*
 		 * Creates a new paragraph. Mainly useful for storing cached contents.
 		 */
-		public void AppendStructuralBreak ()
+		public bool AppendStructuralBreak ()
 		{
 			if (snippetWriter != null && ! last_was_structural_break) {
 				snippetWriter.WriteLine ();
@@ -401,23 +389,62 @@ namespace Beagle.Daemon {
 
 			// When adding a "newline" to the textCache, we need to 
 			// append a "Whitespace" to the text pool.
-			if (NeedsWhiteSpace (textPool))
-				textPool.Add (WHITESPACE);
+			text_builder.Append (WHITESPACE);
+			return UpdateCharsAdded (1);
 		}
 
-		private bool NeedsWhiteSpace (ArrayList array)
+		//private bool NeedsWhiteSpace (ArrayList array)
+		//{
+		//	if (array.Count == 0)
+		//		return true;
+		//	
+		//	string last = (string) array [array.Count-1];
+		//	if (last.Length > 0
+		//	    && char.IsWhiteSpace (last [last.Length-1]))
+		//		return false;
+
+		//	return true;
+		//}
+
+		private void ReallyAddText (string str)
 		{
-			if (array.Count == 0)
-				return true;
-			
-			string last = (string) array [array.Count-1];
-			if (last.Length > 0
-			    && char.IsWhiteSpace (last [last.Length-1]))
+			text_builder.Append (str);
+
+			// Store text in blocks of whatever Pull() specified or DEFAULT_CHARS_TO_PULL o/w
+			if (text_builder.Length >= (chars_to_pull > 0 ? chars_to_pull : DEFAULT_CHARS_TO_PULL)) {
+				// FIXME: If text-cache needs to be cleaned up (i.e. whitespaces merged and blank
+				// lines removed, then process text_builder here before adding it to textPool
+				// Also, add to snippet-writer from here
+				textPool.Add (text_builder.ToString ());
+				text_builder.Length = 0;
+			}
+		}	
+
+		private void ReallyAddText (char[] buffer, int index, int count)
+		{
+			text_builder.Append (buffer, index, count);
+
+			// Store text in blocks of whatever Pull() specified or DEFAULT_CHARS_TO_PULL o/w
+			if (text_builder.Length >= (chars_to_pull > 0 ? chars_to_pull : DEFAULT_CHARS_TO_PULL)) {
+				// FIXME: If text-cache needs to be cleaned up (i.e. whitespaces merged and blank
+				// lines removed, then process text_builder here before adding it to textPool
+				// Also, add to snippet-writer from here
+				textPool.Add (text_builder.ToString ());
+				text_builder.Length = 0;
+			}
+		}	
+
+		private bool UpdateCharsAdded (int append_chars_added)
+		{
+			chars_added += append_chars_added;
+
+			if (chars_to_pull >= 0 && chars_added >= chars_to_pull) {
 				return false;
+			}
 
 			return true;
 		}
-
+		
 		//////////////////////////
 
 		public void AddProperty (Property prop)
@@ -435,6 +462,8 @@ namespace Beagle.Daemon {
 		
 		protected void Finished ()
 		{
+			textPool.Add (text_builder.ToString ());
+			text_builder.Length = 0;
 			isFinished = true;
 		}
 
@@ -446,6 +475,10 @@ namespace Beagle.Daemon {
 
 		protected void Error ()
 		{
+			// Add whatever was reported till error
+			textPool.Add (text_builder.ToString ());
+			text_builder.Length = 0;
+
 			Cleanup (); // force the clean-up of temporary files on an error
 			has_error = true;
 		}
@@ -566,6 +599,7 @@ namespace Beagle.Daemon {
 			isFinished = false;
 			textPool = new ArrayList ();
 			hotPool = new ArrayList ();
+			text_builder.Length = 0;
 
 			currentInfo = info;
 
@@ -648,15 +682,19 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		// Should only be called for Text and NOT for hottext
+		// hottext should already be in place by the time Text pull is over
 		private bool Pull ()
 		{
-			if (IsFinished || HasError) {
-				return false;
+			while (! IsFinished && ! HasError) {
+				DoPull ();
+				if (chars_to_pull >= 0 && chars_added >= chars_to_pull) {
+					chars_added = 0;
+					break;
+				}
 			}
 
-			DoPull ();
-
-			if (HasError)
+			if (IsFinished || HasError)
 				return false;
 
 			return true;
@@ -726,9 +764,11 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		private bool PullTextCarefully (ArrayList array, StringBuilder sb, bool is_hot)
+		private bool PullTextCarefully (ArrayList array, StringBuilder sb, int chars_to_pull, bool is_hot)
 		{
 			bool pulled = false;
+			this.chars_to_pull = chars_to_pull;
+
 			try {
 				pulled = PullFromArray (array, sb, is_hot);
 			} catch (Exception ex) {
@@ -738,14 +778,15 @@ namespace Beagle.Daemon {
 			return pulled;
 		}
 
-		private bool PullText (StringBuilder sb)
+		// chars_to_pull is a hint about the number of chars to pull before PullText is called again
+		private bool PullText (StringBuilder sb, int chars_to_pull)
 		{
-			return PullTextCarefully (textPool, sb, false);
+			return PullTextCarefully (textPool, sb, chars_to_pull, false);
 		}
 
-		private bool PullHotText (StringBuilder sb)
+		private bool PullHotText (StringBuilder sb, int chars_to_pull)
 		{
-			return PullTextCarefully (hotPool, sb, true);
+			return PullTextCarefully (hotPool, sb, -1, true);
 		}
 
 		public TextReader GetTextReader ()
