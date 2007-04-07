@@ -57,9 +57,9 @@ namespace Beagle.Filters {
 		private HtmlDocument doc;
 
 		// delegate types
-		public delegate int AppendTextCallback (string s);
+		public delegate bool AppendTextCallback (string s);
 		public delegate void AddPropertyCallback (Beagle.Property p);
-		public delegate void AppendSpaceCallback ();
+		public delegate bool AppendSpaceCallback ();
 		public delegate void HotCallback ();
 
 		// delegates
@@ -194,14 +194,16 @@ namespace Beagle.Filters {
 				ignore_level = (ignore_level > 1 ? ignore_level - 1 : 0);
 		}
 
-		protected void HandleContentRichNode (HtmlNode node)
+		protected bool HandleContentRichNode (HtmlNode node)
 		{
 			bool isHot = NodeIsHot (node.Name);
 			bool breaksText = NodeBreaksText (node.Name);
 			bool breaksStructure = NodeBreaksStructure (node.Name);
 
+			bool ret = true;
+
 			if (breaksText)
-				AppendWhiteSpace ();
+				ret = AppendWhiteSpace ();
 
 			if (node.StartTag) {
 				if (isHot) {
@@ -212,8 +214,7 @@ namespace Beagle.Filters {
 					if (attr != String.Empty) {
 						string s = HtmlEntity.DeEntitize (attr);
 						AppendWord (s);
-						AppendWhiteSpace ();
-						added_text_count += (s.Length + 1);
+						ret = AppendWhiteSpace ();
 					}
 				} else if (node.Name == "a") {
 					string attr = node.GetAttributeValue ("href", String.Empty);
@@ -221,8 +222,7 @@ namespace Beagle.Filters {
 						string s = HtmlEntity.DeEntitize (
 							    SW.HttpUtility.UrlDecode (attr, enc));
 						AppendWord (s);
-						AppendWhiteSpace ();
-						added_text_count += (s.Length + 1);
+						ret = AppendWhiteSpace ();
 					}
 				}
 			} else { // (! node.StartTag)
@@ -230,30 +230,32 @@ namespace Beagle.Filters {
 					HotDown ();
 				}	
 				if (breaksStructure)
-					AppendStructuralBreak ();
+					ret = AppendStructuralBreak ();
 			}
 
 			if (breaksText)
-				AppendWhiteSpace ();
+				ret = AppendWhiteSpace ();
+
+			return ret;
 		}
 
-		int added_text_count = 0;
-
-		protected void HandleTextNode (HtmlNode node)
+		protected bool HandleTextNode (HtmlNode node)
 		{
-			// FIXME Do we need to trim the text ?
+			bool ret = true;
 			String text = ((HtmlTextNode)node).Text;
+
 			if (ignore_level != 0)
-				return; // still ignoring ...
+				return true; // still ignoring ...
 			if (building_text)
 				builder.Append (text);
 			else {
 				string s = HtmlEntity.DeEntitize (text);
-				AppendText (s);
-				added_text_count += s.Length;
+				ret = AppendText (s);
 			}
+
 			//if (hot_stack.Count != 0)
 			//Console.WriteLine (" TEXT:" + text + " ignore=" + ignore_level);
+			return ret;
 		}
 
 		protected bool HandleNodeEventHead (HtmlNode node)
@@ -285,6 +287,7 @@ namespace Beagle.Filters {
 		protected bool HandleNodeEventBody (HtmlNode node)
 		{
 			//Log.Debug ("HandleNodeEventBody (<{0}{1}>)", (node.StartTag ? "" : "/"), node.Name);
+			bool pull = true;
 			switch (node.NodeType) {
 				
 			case HtmlNodeType.Document:
@@ -292,26 +295,25 @@ namespace Beagle.Filters {
 				if (! NodeIsInBody (node.Name)) {
 					break;
 				} else if (! NodeIsContentFree (node.Name)) {
-					HandleContentRichNode (node);
+					pull = HandleContentRichNode (node);
 				} else {
 					HandleContentFreeNode (node);
 				}
 				break;
 				
 			case HtmlNodeType.Text:
-				HandleTextNode (node);
+				pull = HandleTextNode (node);
 				break;
 			}
 
-			if (added_text_count > 2048) {
-				added_text_count = 0;
+			if (! pull)
 				doc.PauseLoad ();
-			}
 
 			return true;
 		}
 
 		// Combined handler when you do not need separate head and body events
+		// No idea of pause and resume implemented here
 		protected bool HandleNodeEvent (HtmlNode node)
 		{
 			switch (node.NodeType) {
@@ -334,10 +336,6 @@ namespace Beagle.Filters {
 				break;
 			}
 
-			// HandleNodeEvent() does not use pause/resume parsing
-			// So, check if more words are allowed to be extracted
-			if (! AllowMoreWords ())
-				return false;
 			return true;
 		}
 
