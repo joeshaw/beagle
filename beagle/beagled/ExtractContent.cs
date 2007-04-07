@@ -44,7 +44,7 @@ class ExtractContentTool {
 	static bool show_generated = false;
 	static string mime_type = null;
 	static bool continue_last = false;
-	static bool stats_only = true;
+	static bool stats_only = false;
 
 	// FIXME: We don't display structural breaks
 	static void DisplayContent (string line)
