@@ -502,6 +502,9 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Unable to establish a connection to the X server");
 			XSetIOErrorHandler (BeagleXIOErrorHandler);
 
+			// Lower our CPU priority
+			SystemPriorities.Renice (7);
+
 			QueryDriver.Init ();
 			Server.Init ();
 
