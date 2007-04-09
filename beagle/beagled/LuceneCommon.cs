@@ -280,11 +280,15 @@ namespace Beagle.Daemon {
 			}
 
 			if (dangling_lock) {
+				Beagle.Util.Stopwatch w = new Beagle.Util.Stopwatch ();
+				w.Start ();
+
 				if (VerifyLuceneIndex (PrimaryIndexDirectory) && 
 				    VerifyLuceneIndex (SecondaryIndexDirectory)) {
-					// Both index verified
-					// Safe to delete lock file
-					Log.Warn ("Index looks ok. Deleting lock files.");
+					w.Stop ();
+
+					Log.Warn ("Indexes verified in {0}.  Deleting stale lock files.", w);
+
 					try {
 						foreach (FileInfo info in lock_dir_info.GetFiles ())
 							info.Delete ();
@@ -306,21 +310,53 @@ namespace Beagle.Daemon {
 				return true;
 
 			Log.Debug ("Verifying index {0}", path);
+
+			IndexReader reader = null;
+			TermEnum enumerator = null;
+			TermPositions positions = null;
+
 			try {
-				IndexReader reader = IndexReader.Open (path);
-				int max_doc = reader.MaxDoc ();
-				for (int i = 0; i < max_doc; ++i) {
-					if (reader.IsDeleted (i))
-						continue;
-				
-					Document doc = reader.Document (i);
-					doc = null;
+				reader = IndexReader.Open (path);
+
+				// Crawl all of the terms in the index, and get the
+				// term positions and crawl those as well.  This
+				// method is suggested as a way to verify the index
+				// here:
+				//
+				// http://mail-archives.apache.org/mod_mbox/lucene-java-user/200504.mbox/%3c4265767B.5090307@getopt.org%3e
+				enumerator = reader.Terms ();
+
+				while (enumerator.Next ()) {
+					Term term = enumerator.Term ();
+					positions = reader.TermPositions (term);
+
+					while (positions.Next ()) {
+						int freq = positions.Freq ();
+
+						for (int i = 0; i < freq; i++)
+							positions.NextPosition ();
+					}
+					positions.Close ();
+					positions = null;
 				}
-				
+
+				enumerator.Close ();
+				enumerator = null;
+
 				reader.Close ();
+				reader = null;
 			} catch (Exception e) {
 				Log.Warn ("Lucene index {0} is corrupted ({1})", path, e.Message);
 				return false;
+			} finally {
+				if (positions != null)
+					positions.Close ();
+
+				if (enumerator != null)
+					enumerator.Close ();
+
+				if (reader != null)
+					reader.Close ();
 			}
 
 			return true;
