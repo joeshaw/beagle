@@ -33,7 +33,7 @@
 #include "tomboykeybinder.h"
 
 /* Uncomment the next line to print a debug trace. */
-/* #define DEBUG */
+#define DEBUG
 
 #ifdef DEBUG
 #  define TRACE(x) x
@@ -120,17 +120,11 @@ do_grab_key (Binding *binding)
 
 	if (!egg_accelerator_parse_virtual (binding->keystring, 
 					    &keysym, 
+					    &binding->keycode,
 					    &virtual_mods))
 		return FALSE;
 
-	TRACE (g_print ("Got accel %d, %d\n", keysym, virtual_mods));
-
-	binding->keycode = XKeysymToKeycode (GDK_WINDOW_XDISPLAY (rootwin), 
-					     keysym);
-	if (binding->keycode == 0)
-		return FALSE;
-
-	TRACE (g_print ("Got keycode %d\n", binding->keycode));
+	TRACE (g_print ("Got accel %d, %d, %d\n", keysym, binding->keycode, virtual_mods));
 
 	egg_keymap_resolve_virtual_modifiers (keymap,
 					      virtual_mods,
