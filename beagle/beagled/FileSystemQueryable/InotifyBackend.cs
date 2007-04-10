@@ -52,7 +52,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							   | Inotify.EventType.Delete
 							   | Inotify.EventType.CloseWrite
 							   | Inotify.EventType.MovedFrom
-							   | Inotify.EventType.MovedTo);
+							   | Inotify.EventType.MovedTo
+							   | Inotify.EventType.Attrib);
 
 			}
 			catch (IOException) {
@@ -128,6 +129,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if ((type & Inotify.EventType.CloseWrite) != 0) {
 				queryable.HandleAddEvent (path, subitem, is_directory);
+				return;
+			}
+
+			if ((type & Inotify.EventType.Attrib) != 0) {
+				queryable.HandleAttribEvent (path, subitem, is_directory);
 				return;
 			}
 

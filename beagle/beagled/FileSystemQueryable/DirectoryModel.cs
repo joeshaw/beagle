@@ -228,6 +228,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				Log.Debug ("Marked {0} as {1}", this, state);
 		}
 
+		public void MarkAsUnknown ()
+		{
+			state = DirectoryState.Unknown;
+
+			if (FileSystemQueryable.Debug)
+				Log.Debug ("Reset {0} to {1}", this, state);
+		}
+
 		///////////////////////////////////////////////////////////
 
 		private void ExpireCached_Unlocked ()

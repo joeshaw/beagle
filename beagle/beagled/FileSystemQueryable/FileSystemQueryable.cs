@@ -1585,8 +1585,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void HandleAddEvent (string directory_name, string file_name, bool is_directory)
 		{
-			Logger.Log.Debug ("*** Add '{0}' '{1}' {2}", directory_name, file_name,
-					  is_directory ? "(dir)" : "(file)");
+			if (Debug) {
+				Log.Debug ("*** Add '{0}' '{1}' {2}", directory_name, file_name,
+					   is_directory ? "(dir)" : "(file)");
+			}
 			
 			DirectoryModel dir;
 			dir = GetDirectoryModelByPath (directory_name);
@@ -1603,8 +1605,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void HandleRemoveEvent (string directory_name, string file_name, bool is_directory)
 		{
-			Logger.Log.Debug ("*** Remove '{0}' '{1}' {2}", directory_name, file_name,
-					  is_directory ? "(dir)" : "(file)");
+			if (Debug) {
+				Log.Debug ("*** Remove '{0}' '{1}' {2}", directory_name, file_name,
+					   is_directory ? "(dir)" : "(file)");
+			}
 
 			if (is_directory) {
 				string path;
@@ -1635,10 +1639,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					     string new_directory_name, string new_file_name,
 					     bool is_directory)
 		{
-			Logger.Log.Debug ("*** Move '{0}' '{1}' -> '{2}' '{3}' {4}",
-					  old_directory_name, old_file_name,
-					  new_directory_name, new_file_name,
-					  is_directory ? "(dir)" : "(file)");
+			if (Debug) {
+				Log.Debug ("*** Move '{0}' '{1}' -> '{2}' '{3}' {4}",
+					   old_directory_name, old_file_name,
+					   new_directory_name, new_file_name,
+					   is_directory ? "(dir)" : "(file)");
+			}
 
 			if (is_directory) {
 				DirectoryModel dir, new_parent;
@@ -1654,9 +1660,48 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+		public void HandleAttribEvent (string directory_name, string file_name, bool is_directory)
+		{
+			if (Debug) {
+				Log.Debug ("*** Attrib '{0}' '{1}' {2}", directory_name, file_name,
+					   is_directory ? "(dir)" : "(file)");
+			}
+
+			string path = Path.Combine (directory_name, file_name);
+
+			if (is_directory) {
+				DirectoryModel dir = GetDirectoryModelByPath (path);
+				if (dir == null) {
+					Log.Warn ("HandleAttribEvent failed: Couldn't find DirectoryModel for '{0}'", path);
+					return;
+				}
+
+				if (dir.State == DirectoryState.Uncrawlable && DirectoryWalker.IsWalkable (path)) {
+					Log.Debug ("Re-adding previously uncrawlable directory '{0}'", path);
+					dir.MarkAsUnknown ();
+					
+					if (dir.WatchHandle == null)
+						dir.WatchHandle = event_backend.CreateWatch (path);
+
+					if (tree_crawl_task.Add (dir))
+						ThisScheduler.Add (tree_crawl_task);
+
+					ActivateFileCrawling ();
+				} else if (! DirectoryWalker.IsWalkable (path)) {
+					// This is a no-op, because the HitFilter will remove any
+					// search results that the user can't see.  The upside to
+					// this is that if the directory is ever made visible
+					// again, we don't have to expensively recrawl everything.
+					// The downside is that these entries are still stored in
+					// the index.  Maybe we should eventually schedule them
+					// for removal?
+				}
+			}
+		}
+
 		public void HandleOverflowEvent ()
 		{
-			Logger.Log.Debug ("Queue overflows suck");
+			Log.Warn ("Queue overflows suck");
 		}
 
 		//////////////////////////
