@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-07 02:00+0200\n"
-"PO-Revision-Date: 2007-04-07 02:01+0200\n"
+"POT-Creation-Date: 2007-04-10 11:59+0200\n"
+"PO-Revision-Date: 2007-04-10 11:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -363,7 +363,8 @@ msgstr ""
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr "Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
+msgstr ""
+"Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -378,14 +379,17 @@ msgstr ""
 "OR višně</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Chcete-li vynechat některé termíny, použijte před nimi mínus, např. <b>-"
 "kočky</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+"Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
@@ -438,11 +442,11 @@ msgid "Desktop Search: {0}"
 msgstr "Vyhledávání: {0}"
 
 #: ../search/Search.cs:289
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
-msgstr[0] "Zobrazuje se všech {0} výsledků"
-msgstr[1] "Zobrazuje se všech {0} výsledků"
+msgstr[0] "Zobrazuje {0} výsledek"
+msgstr[1] "Zobrazuje se všechny {0} výsledky"
 msgstr[2] "Zobrazuje se všech {0} výsledků"
 
 #: ../search/Search.cs:291
@@ -1162,7 +1166,8 @@ msgstr "Vyberte cestu"
 
 #: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
+msgstr ""
+"Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
 
 #: ../tools/Settings.cs:330
 msgid ""
@@ -1196,7 +1201,8 @@ msgstr "Odstranit cestu"
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr "Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
+msgstr ""
+"Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
 
 #: ../tools/Settings.cs:407
 msgid "Remove item"
@@ -1363,9 +1369,8 @@ msgstr ""
 "typy objektů, které nechcete indexovat."
 
 #: ../tools/settings.glade.h:27
-#, fuzzy
 msgid "This setting does not apply while on battery power."
-msgstr "Indexovat během napájení z _baterie"
+msgstr "Toto nastavení není platné během napájení z baterie"
 
 #: ../tools/settings.glade.h:28
 msgid "Type:"
@@ -1392,9 +1397,8 @@ msgid "_Start search & indexing services automatically "
 msgstr "_Spustit vyhledávací a indexovací služby automaticky"
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
-#, fuzzy
 msgid "Configure Desktop Search"
-msgstr "Zavřít vyhledávání"
+msgstr "Nastavit vyhledávání"
 
 #: ../tools/beagle-settings.desktop.in.in.h:2
 msgid "Search & Indexing"
@@ -1430,16 +1434,15 @@ msgstr "Neznámý adresář"
 
 #: ../Util/F-Spot/IptcFile.cs:175
 msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr ""
+msgstr "Číslo verze IPTC formátu pro výměnu informací (IIM)"
 
 #: ../Util/F-Spot/IptcFile.cs:177
 msgid "OSI Destination routing information"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:179
-#, fuzzy
 msgid "IPTC file format"
-msgstr "Preferovaný formát:"
+msgstr "Souborový formát IPTC"
 
 #: ../Util/F-Spot/IptcFile.cs:181
 msgid "Identifies the provider and product"
@@ -1454,16 +1457,18 @@ msgid "A unique number"
 msgstr "Jedinečné číslo"
 
 #: ../Util/F-Spot/IptcFile.cs:187
-msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgid ""
+"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr ""
+msgstr "Rok, měsíc a den (CCYYMMDD) odeslání materiálu službou"
 
 #: ../Util/F-Spot/IptcFile.cs:191
-msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
+msgid ""
+"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr "Hodina, minuta a sekunda (HHMMSS+HHMM) odeslání materiálu službou"
 
 #: ../Util/F-Spot/IptcFile.cs:193
 msgid "The character set designation"
@@ -1519,7 +1524,8 @@ msgid "Full name of the country of the focus of the content"
 msgstr "Úplné jméno země, na kterou je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:236
-msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgid ""
+"Two or three letter ISO3166 code of the country of the focus of the content"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:239
@@ -1541,12 +1547,12 @@ msgid ""
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:252
-#, fuzzy
 msgid "Headline of the content"
-msgstr "Nápověda - Obsah"
+msgstr "Titulek obsahu"
 
 #: ../Util/F-Spot/IptcFile.cs:255
-msgid "Instructions from the creator to the receiver not covered by other fields"
+msgid ""
+"Instructions from the creator to the receiver not covered by other fields"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:258
@@ -1563,9 +1569,8 @@ msgid "Creator"
 msgstr "Tvůrce"
 
 #: ../Util/F-Spot/MetadataStore.cs:47
-#, fuzzy
 msgid "Title"
-msgstr "Název:"
+msgstr "Název"
 
 #: ../Util/F-Spot/MetadataStore.cs:48
 msgid "Copyright"
@@ -1573,7 +1578,7 @@ msgstr "Copyright"
 
 #: ../Util/F-Spot/MetadataStore.cs:49
 msgid "Subject and Keywords"
-msgstr ""
+msgstr "Předmět a klíčová slova"
 
 #: ../Util/F-Spot/MetadataStore.cs:50
 msgid "Compression"
@@ -1749,4 +1754,3 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
-
