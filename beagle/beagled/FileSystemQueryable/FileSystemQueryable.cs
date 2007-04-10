@@ -1579,8 +1579,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			dir.LastActivityTime = DateTime.Now;
-
-			Logger.Log.Debug ("Saw event in '{0}'", directory_name);
+			
+			if (Debug)
+				Log.Debug ("Saw event in '{0}'", directory_name);
 		}
 
 		public void HandleAddEvent (string directory_name, string file_name, bool is_directory)
