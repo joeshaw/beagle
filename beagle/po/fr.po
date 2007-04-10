@@ -4,19 +4,19 @@
 #
 # Raphaël Slinckx <raphael@slinckx.net>, 2005.
 # Guillaume Ayoub <lize@invox.org>, 2006-2007
-# Jonathan Ernst <jonathan@ernstfamily.ch>, 2006.
-# Christophe Merlet (RedFox) <redfox@redfoxcenter.org>, 2006.
+# Christophe Merlet <redfox@redfoxcenter.org>, 2006.
 # Damien Durand <splinux@fedoraproject.org>, 2006.
 # Robert-André Mauchin <zebob.m@gmail.com>, 2006.
 # Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007.
+# Jonathan Ernst <jonathan@ernstfamily.ch>, 2006-2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle 0.2.8\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-26 22:46+0100\n"
-"PO-Revision-Date: 2007-02-20 22:33+0100\n"
-"Last-Translator: Stéphane Raimbault <stephane.raimbault@gmail.com>\n"
+"POT-Creation-Date: 2007-04-10 19:42+0200\n"
+"PO-Revision-Date: 2007-04-09 23:03+0100\n"
+"Last-Translator: Jonathan Ernst <jonathan@ernstfamily.ch>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -269,7 +269,7 @@ msgstr "État/province"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Titre :"
@@ -324,7 +324,7 @@ msgstr "Conversations dans {0} ({1})"
 msgid "Conversations with {0}"
 msgstr "Conversation avec {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "Recherche"
 
@@ -462,11 +462,11 @@ msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Affiche le premier des {1} correspondants"
 msgstr[1] "Affiche les {0} premiers des {1} correspondants"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:565
 msgid "Your data is being indexed"
 msgstr "Vos données en cours d'indexation"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:566
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -488,7 +488,7 @@ msgstr "Nom de fichier :"
 msgid "Inside File:"
 msgstr "Dans le fichier :"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
 msgid "Author:"
 msgstr "Auteur :"
 
@@ -535,13 +535,13 @@ msgstr "Courriel"
 msgid "Move to Trash"
 msgstr "Mettre à la corbeille"
 
-#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Dernière édition :"
 
-#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "Chemin complet :"
 
@@ -561,15 +561,15 @@ msgstr[1] "Contient {0} éléments"
 msgid "Set as Wallpaper"
 msgstr "Mettre en fond d'écran"
 
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/Image.cs:84
 msgid "Tags:"
 msgstr "Étiquettes :"
 
-#: ../search/Tiles/Image.cs:83
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "Modifié :"
 
-#: ../search/Tiles/Image.cs:93
+#: ../search/Tiles/Image.cs:96
 msgid "Comment:"
 msgstr "Commentaire :"
 
@@ -1030,7 +1030,7 @@ msgstr "_Affichage"
 
 #: ../search/UIManager.cs:74
 msgid "_Help"
-msgstr "_Aide"
+msgstr "Aid_e"
 
 #: ../search/UIManager.cs:83
 msgid "_Contents"
@@ -1173,11 +1173,11 @@ msgstr "Afficher les détails"
 msgid "Couldn't launch web browser"
 msgstr "Impossible de lancer le navigateur Web"
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "Recharger la configuration"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1186,17 +1186,17 @@ msgstr ""
 "vous supprimer les valeurs affichées et charger la configuration à partir du "
 "disque ?"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "Sélectionner un dossier"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Le dossier sélectionné est déjà dans la liste d'indexation et n'a pas été "
 "ajouté."
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:330
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1204,15 +1204,15 @@ msgstr ""
 "Le dossier sélectionné n'a pas été ajouté. La liste contient des dossiers "
 "qui l'englobent, les données sont donc déjà indexées."
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "Dossier non ajouté"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "Supprimer les dossiers obsolètes"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1221,11 +1221,11 @@ msgstr ""
 "Cela veut dire que les vieux dossiers seront enlevés. Voulez-vous tout de "
 "même l'ajouter ?"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "Enlever le dossier"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1233,11 +1233,11 @@ msgstr ""
 "Êtes-vous sûr de vouloir enlever ce dossier de la liste des dossiers "
 "indexés ?"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "Enlever l'élément"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1245,58 +1245,53 @@ msgstr ""
 "Êtes-vous sûr de vouloir enlever cet élément de la liste des données exclues "
 "de l'indexation ?"
 
-#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458 ../tools/Settings.cs:547 ../tools/Settings.cs:634
 msgid "Name"
 msgstr "Nom"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "Chemin :"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "Modèle :"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "Dossier de courriels :"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "Sélectionner un dossier"
 
-#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907 ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "C_hemin :"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "Dossier de courriels :"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "Modè_le :"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "Erreur lors de l'ajout du dossier"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
 "Le dossier spécifié ne peut pas être trouvé, il n'a donc pas été ajouté à la "
 "liste des ressources exclues de l'indexation."
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "Afficher"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1371,29 +1366,34 @@ msgid "Index data while on _battery power"
 msgstr "Indexer les données lorsque l'alimentation est sur _batterie"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr ""
+"Indexer de façon plus agressive lorsque l'é_conomiseur d'écran est actif"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "Indexation"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr ""
 "Veuillez sélectionner une ressource que vous voulez exclure de l'indexation."
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
 "Veuillez sélectionner le dossier de courriels que vous voulez exclure de "
 "l'indexation. "
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "Préférences de la recherche"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "Sélectionner un dossier de courriel"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1401,27 +1401,33 @@ msgstr ""
 "Indiquez les ressources, tels que les dossiers, les motifs, les dossiers de "
 "courriel et les types d'objets que vous voulez exclure de l'indexation."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr ""
+"Ce paramètre ne s'applique pas lorsque l'ordinateur est alimenté par la "
+"batterie."
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "Type :"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "_Autoriser Beagle à être lancé en tant que root"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "_Parcourir..."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "Chemin du _dossier"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "Dossier de _courriels"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "Lancer les _services de recherche et d'indexation automatiquement"
 
@@ -1709,7 +1715,7 @@ msgstr "d MMM yyyy"
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:126
 msgid "h:mm tt"
-msgstr "h:mm tt"
+msgstr "H:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:132
@@ -1740,12 +1746,12 @@ msgstr[1] "Il y a {0} jours, à {1}"
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:163
 msgid "MMMM d, h:mm tt"
-msgstr "d MMMM à h:mm tt"
+msgstr "d MMMM à H:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:168
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d MMMM yyyy à h:mm tt"
+msgstr "d MMMM yyyy à H:mm"
 
 #: ../Util/StringFu.cs:178
 #, csharp-format
@@ -1780,3 +1786,6 @@ msgstr "{0:0.0} Kio"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} Mio"
+
+#~ msgid "Show"
+#~ msgstr "Afficher"
