@@ -922,9 +922,6 @@ namespace Beagle.Daemon {
 					IndexerRemovedReceipt r;
 					r = (IndexerRemovedReceipt) receipts [i];
 
-					// Drop the removed item from the text cache
-					TextCache.UserCache.Delete (r.Uri);
-			
 					// Call the appropriate hook
 					try {
 						PostRemoveHook (flushed_request.GetByUri (r.Uri), r);
