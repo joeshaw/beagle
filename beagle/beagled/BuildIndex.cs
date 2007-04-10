@@ -111,7 +111,7 @@ namespace Beagle.Daemon
 
 			if (args.Length < 2)
 				PrintUsage ();
-		
+
 			int i = 0;
 			while (i < args.Length) {
 			
@@ -288,6 +288,8 @@ namespace Beagle.Daemon
 				Environment.Exit (0);
 			}
 
+			Log.Always ("Starting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
+		
 			// Set system priorities so we don't slow down the system
 			SystemPriorities.ReduceIoPriority ();
 			SystemPriorities.SetSchedulerPolicyBatch ();
@@ -330,7 +332,7 @@ namespace Beagle.Daemon
 			Logger.Log.Debug ("Elapsed time {0}.", watch);
 
 			if (restart) {
-				Logger.Log.Debug ("Restarting helper");
+				Logger.Log.Debug ("Restarting beagle-build-index");
 				Process p = new Process ();
 				p.StartInfo.UseShellExecute = false;
 				// FIXME: Maybe this isn't the right way to do things?  It should be ok,
@@ -339,6 +341,8 @@ namespace Beagle.Daemon
 				p.StartInfo.Arguments = String.Join (" ", Environment.GetCommandLineArgs ());
 				p.Start ();
 			}
+
+			Log.Always ("Exiting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 		}
 		
 		/////////////////////////////////////////////////////////////////
