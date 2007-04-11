@@ -65,6 +65,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// the appropriate IndexableGenerator.
 		private FileCrawlTask file_crawl_task;
 
+		// An IndexableGenerator that batches file removals generated
+		// from the event backends, instead of creating one task per
+		// file/directory.
+		private RemovalGenerator removal_generator;
+
 		private ArrayList roots = new ArrayList ();
 		private ArrayList roots_by_path = new ArrayList ();
 
@@ -100,6 +105,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			file_crawl_task = new FileCrawlTask (this);
 			file_crawl_task.Source = this;
+
+			removal_generator = new RemovalGenerator (this);
 
 			name_resolver = (LuceneNameResolver) Driver;
 			PreloadDirectoryNameInfo ();
@@ -254,6 +261,26 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.LocalState ["LastKnownPath"] = last_known_path;
 
 			MergeExternalPendingIndexable (indexable);
+
+			return indexable;
+		}
+
+		private Indexable FileRemoveIndexable (DirectoryModel dir,
+						       string         name)
+		{
+			Guid unique_id;
+			unique_id = NameAndParentToId (name, dir);
+			if (unique_id == Guid.Empty) {
+				Log.Info ("Could not resolve unique id of '{0}' in '{1}' for removal -- it is probably already gone",
+					  name, dir.FullName);
+				return null;
+			}
+
+			Uri uri = GuidFu.ToUri (unique_id);
+			Indexable indexable;
+			indexable = new Indexable (IndexableType.Remove, uri);
+			indexable.DisplayUri = UriFu.PathToFileUri (Path.Combine (dir.FullName, name));
+			indexable.LocalState ["RemovedUri"] = indexable.DisplayUri;
 
 			return indexable;
 		}
@@ -620,8 +647,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			foreach (DirectoryModel child in dir.Children)
 				ForgetDirectoryRecursively (child);
 
-			if (dir.WatchHandle != null)
+			if (dir.WatchHandle != null) {
 				event_backend.ForgetWatch (dir.WatchHandle);
+				dir.WatchHandle = null;
+			}
 			dir_models_by_id.Remove (dir.UniqueId);
 			// We rely on the expire event to remove it from dir_models_by_path
 		}
@@ -842,6 +871,99 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				ThisScheduler.Add (tree_crawl_task);
 		}
 		
+		//////////////////////////////////////////////////////////////////////////
+
+		private class RemovalGenerator : IIndexableGenerator {
+
+			private FileSystemQueryable queryable;
+			private bool scheduled = false;
+
+			private object queue_lock = new object ();
+			private Queue dir_name_queue = new Queue ();
+			private Queue file_name_queue = new Queue ();
+
+			public RemovalGenerator (FileSystemQueryable queryable)
+			{
+				this.queryable = queryable;
+			}
+
+			public void Add (string dir_name, string file_name)
+			{
+				lock (queue_lock) {
+					dir_name_queue.Enqueue (dir_name);
+					file_name_queue.Enqueue (file_name);
+				}
+
+				if (! scheduled) {
+					scheduled = true;
+
+					Scheduler.Task task;
+					task = queryable.NewAddTask (this);
+					task.Priority = Scheduler.Priority.Immediate;
+					queryable.ThisScheduler.Add (task);
+				}
+			}
+
+			public Indexable GetNextIndexable ()
+			{
+				string dir_name, file_name;
+
+				lock (queue_lock) {
+					dir_name = (string) dir_name_queue.Dequeue ();
+					file_name = (string) file_name_queue.Dequeue ();
+				}
+
+				// A null file name means that we're dealing with a directory
+				bool is_directory = (file_name == null);
+				DirectoryModel dir = queryable.GetDirectoryModelByPath (dir_name);
+				if (dir == null) {
+					Log.Warn ("RemovalGenerator.GetNextIndexable failed: Couldn't find DirectoryModel for '{0}'", dir_name);
+					return null;
+				}
+
+				if (is_directory) {
+					Indexable indexable;
+					indexable = new Indexable (IndexableType.Remove, GuidFu.ToUri (dir.UniqueId));
+					indexable.DisplayUri = UriFu.PathToFileUri (dir.FullName);
+					indexable.LocalState ["RemovedUri"] = indexable.DisplayUri;
+
+					// Set the watch handle to null.  Since the directory
+					// has been deleted from the file system at this point,
+					// the watch will have been removed for us.
+					dir.WatchHandle = null;
+					queryable.ForgetDirectoryRecursively (dir);
+
+					dir.Remove ();
+
+					return indexable;
+				} else {
+					Indexable indexable;
+					indexable = queryable.FileRemoveIndexable (dir, file_name);
+
+					return indexable;
+				}
+			}
+
+			public bool HasNextIndexable ()
+			{
+				lock (queue_lock) {
+					return (dir_name_queue.Count > 0);
+				}
+			}
+
+			public string StatusName {
+				get { return "Removals from file system backend"; }
+			}
+
+			public void PostFlushHook ()
+			{
+				if (! HasNextIndexable ()) {
+					Log.Debug ("Removal generator out of things to process");
+					scheduled = false;
+				}
+			}
+		}
+
 		//////////////////////////////////////////////////////////////////////////
 
 		//
@@ -1068,27 +1190,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
+#if true
+#endif
+
 		public void RemoveFile (DirectoryModel dir, string name)
 		{
 			// FIXME: We might as well remove it, even if it was being ignore.
 			// Right?
 
-			Guid unique_id;
-			unique_id = NameAndParentToId (name, dir);
-			if (unique_id == Guid.Empty) {
-				Logger.Log.Info ("Could not resolve unique id of '{0}' in '{1}' for removal, it is probably already gone",
-						 name, dir.FullName);
-				return;
-			}
-
-			Uri uri, file_uri;
-			uri = GuidFu.ToUri (unique_id);
-			file_uri = UriFu.PathToFileUri (Path.Combine (dir.FullName, name));
-
 			Indexable indexable;
-			indexable = new Indexable (IndexableType.Remove, uri);
-			indexable.DisplayUri = file_uri;
-			indexable.LocalState ["RemovedUri"] = file_uri;
+			indexable = FileRemoveIndexable (dir, name);
 
 			Scheduler.Task task;
 			task = NewAddTask (indexable);
@@ -1611,29 +1722,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					   is_directory ? "(dir)" : "(file)");
 			}
 
-			if (is_directory) {
-				string path;
-				path = Path.Combine (directory_name, file_name);
-
-				DirectoryModel dir;
-				dir = GetDirectoryModelByPath (path);
-				if (dir == null) {
-					Logger.Log.Warn ("HandleRemoveEvent failed: Couldn't find DirectoryModel for '{0}'", path);
-					return;
-				}
-
-				dir.WatchHandle = null;
-				RemoveDirectory (dir);
-			} else {
-				DirectoryModel dir;
-				dir = GetDirectoryModelByPath (directory_name);
-				if (dir == null) {
-					Logger.Log.Warn ("HandleRemoveEvent failed: Couldn't find DirectoryModel for '{0}'", directory_name);
-					return;
-				}
-				
-				RemoveFile (dir, file_name);
-			}
+			if (is_directory)
+				removal_generator.Add (Path.Combine (directory_name, file_name), null);
+			else
+				removal_generator.Add (directory_name, file_name);
 		}
 
 		public void HandleMoveEvent (string old_directory_name, string old_file_name,

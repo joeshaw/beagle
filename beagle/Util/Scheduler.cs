@@ -567,8 +567,8 @@ namespace Beagle.Util {
 				// is being slammed with them.
 				if (task.Priority == Priority.Immediate) {
 					// Shift our times down by one
-					Array.Copy (last_immediate_times, 1, last_immediate_times, 0, 4);
-					last_immediate_times [4] = DateTime.Now;
+					Array.Copy (last_immediate_times, 1, last_immediate_times, 0, immediate_throttle_count - 1);
+					last_immediate_times [immediate_throttle_count - 1] = DateTime.Now;
 				}
 				
 				old_task = tasks_by_tag [task.Tag] as Task;
@@ -662,16 +662,19 @@ namespace Beagle.Util {
 		//
 
 		// FIXME: random magic constants
-		const double idle_threshold              = 5.314159 * 60; // probably should be longer
-		const double idle_ramp_up_time           = 5.271828 * 60; // probably should be longer
-		const double default_delayed_rate_factor =  9.03;         // work about 1/10th of the time
-		const double default_idle_rate_factor    = 2.097;         // work about 1/3rd of the time
-		const double maximum_delay               = 20;            // never wait for more than 20s
-		const double min_throttled_delay         = 1.5;           // never wait less than this when throttled
-		const double min_overloaded_delay        = 2.2;           // never wait less than this when there are many tasks
-		const int    task_overload_threshold     = 60;            // number of tasks to process before delaying
+		const double idle_threshold               = 5.314159 * 60;  // probably should be longer
+		const double idle_ramp_up_time            = 5.271828 * 60;  // probably should be longer
+		const double default_delayed_rate_factor  = 9.03;           // work about 1/10th of the time
+		const double default_throttle_rate_factor = 3.042;          // work about 1/4th of the time
+		const double default_idle_rate_factor     = 2.097;          // work about 1/3rd of the time
+		const double maximum_delay                = 20;             // never wait for more than 20s
+		const double min_throttled_delay          = 1.5;            // never wait less than this when throttled
+		const double min_overloaded_delay         = 2.2;            // never wait less than this when there are many tasks
+		const int    task_overload_threshold      = 15;             // number of tasks to process before delaying
+		const int    immediate_throttle_count     = 5;              // number of immediate tasks to consider before throttling
+		const double immediate_throttle_delta     = 4.1;            // amount of time between first and last tracked task
 
-		DateTime[] last_immediate_times = new DateTime [5];
+		DateTime[] last_immediate_times = new DateTime [immediate_throttle_count];
 
 		// The return value and duration_of_previous_task are both measured in seconds.
 		private double ComputeDelay (Priority priority_of_next_task,
@@ -704,21 +707,21 @@ namespace Beagle.Util {
 				rate_factor = 0;
 
 				if (last_immediate_times [0] != DateTime.MinValue) {
-					TimeSpan last_add_delta = DateTime.Now.Subtract (last_immediate_times [4]);
+					TimeSpan last_add_delta = DateTime.Now.Subtract (last_immediate_times [immediate_throttle_count - 1]);
 
 					// If less than a second has gone by since the
 					// last immediate task was added, there is
 					// still a torrent of events coming in, and we
 					// may need to throttle.
 					if (last_add_delta.TotalSeconds <= 1) {
-						TimeSpan between_add_delta = last_immediate_times [4].Subtract (last_immediate_times [0]);
+						TimeSpan between_add_delta = last_immediate_times [immediate_throttle_count - 1].Subtract (last_immediate_times [0]);
 
-						// At least 5 immediate tasks have been
-						// added in the last second.  We
-						// definitely need to throttle.
-						if (between_add_delta.TotalSeconds <= 1) {
+						// At least immediate_throttle_count tasks have been
+						// added in the last immediate_throttle_delta seconds.
+						// We definitely need to throttle.
+						if (between_add_delta.TotalSeconds <= immediate_throttle_delta) {
 							need_throttle = true;
-							rate_factor = idle_scale * default_idle_rate_factor;
+							rate_factor = idle_scale * default_throttle_rate_factor;
 						}
 					}
 				}
@@ -826,6 +829,9 @@ namespace Beagle.Util {
 						continue;
 					}
 
+					if (Debug)
+						Log.Debug ("Running Scheduler inner loop.  Pending tasks: {0}", tasks_by_tag.Count);
+
 					// Walk across our list of tasks and find
 					// the next one to execute.
 					DateTime now = DateTime.Now;
@@ -894,6 +900,9 @@ namespace Beagle.Util {
 					double delay = 0;
 					delay = ComputeDelay (next_task.Priority, duration_of_previous_task, executed_task_count);
 					delay = Math.Min (delay, (next_trigger_time - now).TotalSeconds);
+
+					if (Debug)
+						Log.Debug ("Computed a delay of {0:.00}s for next task ({1}: {2})", delay, next_task.Tag, next_task.Priority);
 
 					// Adjust by the time that has actually elapsed since the
 					// last task.
