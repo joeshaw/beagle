@@ -170,8 +170,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			while (term_docs.Next ())
 				term2_doc_ids.Add (term_docs.Doc ());
 
-			Log.Debug ("Found {0} docs for term {1}", term2_doc_ids.Count, name.ToLower ());
-
 			term_docs.Seek (term1);
 			
 			int match_id = -1;
