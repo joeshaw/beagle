@@ -499,11 +499,7 @@ namespace Beagle.Daemon {
 			{
 				if (queryable.PreAddIndexableHook (indexable)) {
 					queryable.AddIndexable (indexable);
-
-					if (Priority == Scheduler.Priority.Immediate)
-						queryable.Flush ();
-					else
-						queryable.ConditionalFlush ();
+					queryable.ConditionalFlush ();
 				}
 			}
 
