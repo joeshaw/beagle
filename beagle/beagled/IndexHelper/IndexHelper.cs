@@ -113,24 +113,24 @@ namespace Beagle.IndexHelper {
 			// Set the IO priority to idle, nice ourselves, and set
 			// a batch scheduling policy so we that we play nice
 			// on the system
-			if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") == null) {
-				SystemPriorities.ReduceIoPriority ();
-
-				int nice_to_set;
-				
-				// We set different nice values because the
-				// internal implementation of SCHED_BATCH
-				// unconditionally imposes a +5 penalty on
-				// processes, and we want to be at nice +17,
-				// because it has a nice timeslice.
-				if (SystemPriorities.SetSchedulerPolicyBatch ())
-					nice_to_set = 12;
-				else
-					nice_to_set = 17;
-
-				SystemPriorities.Renice (nice_to_set);
-			} else
+			if (Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null)
 				Log.Always ("BEAGLE_EXERCISE_THE_DOG is set");
+
+			SystemPriorities.ReduceIoPriority ();
+
+			int nice_to_set;
+				
+			// We set different nice values because the
+			// internal implementation of SCHED_BATCH
+			// unconditionally imposes a +5 penalty on
+			// processes, and we want to be at nice +17,
+			// because it has a nice timeslice.
+			if (SystemPriorities.SetSchedulerPolicyBatch ())
+				nice_to_set = 12;
+			else
+				nice_to_set = 17;
+
+			SystemPriorities.Renice (nice_to_set);
 
 			Server.Init ();
 
