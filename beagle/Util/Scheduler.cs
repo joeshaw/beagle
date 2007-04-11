@@ -904,6 +904,9 @@ namespace Beagle.Util {
 					if (delay > 0.001) {
 						TimeSpan span = TimeSpanFromSeconds (delay);
 
+						if (Debug)
+							Log.Debug ("Waiting {0:.00}s until the next task at {1}", span.TotalSeconds, now + span);
+
 						status_str = String.Format ("Waiting for next task at {0}", now + span);
 						Monitor.Wait (big_lock, span);
 						executed_task_count = 0;
