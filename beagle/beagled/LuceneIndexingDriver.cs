@@ -121,8 +121,6 @@ namespace Beagle.Daemon {
 		// Implementation of the IIndexer interface
 		//
 
-		static int total_flush_count = 0;
-
 		public IndexerReceipt [] Flush (IndexerRequest request)
 		{
 			// This is just to keep a big block of code from being
@@ -133,9 +131,6 @@ namespace Beagle.Daemon {
 
 		private IndexerReceipt [] Flush_Unlocked (IndexerRequest request)
 		{
-			++total_flush_count;
-			Log.Debug ("Flush #{0}", total_flush_count);
-
 			ArrayList receipt_queue;
 			receipt_queue = new ArrayList ();
 

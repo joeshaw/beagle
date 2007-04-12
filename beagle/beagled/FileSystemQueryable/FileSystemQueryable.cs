@@ -70,6 +70,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// file/directory.
 		private RemovalGenerator removal_generator;
 
+		// An IndexableGenerator that batches file additions
+		private AdditionGenerator addition_generator;
+
 		private ArrayList roots = new ArrayList ();
 		private ArrayList roots_by_path = new ArrayList ();
 
@@ -107,6 +110,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			file_crawl_task.Source = this;
 
 			removal_generator = new RemovalGenerator (this);
+			addition_generator = new AdditionGenerator (this);
 
 			name_resolver = (LuceneNameResolver) Driver;
 			PreloadDirectoryNameInfo ();
@@ -876,7 +880,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private class RemovalGenerator : IIndexableGenerator {
 
 			private FileSystemQueryable queryable;
-			private bool scheduled = false;
+			private Scheduler.Task self_task;
 
 			private object queue_lock = new object ();
 			private Queue dir_name_queue = new Queue ();
@@ -892,15 +896,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				lock (queue_lock) {
 					dir_name_queue.Enqueue (dir_name);
 					file_name_queue.Enqueue (file_name);
-				}
 
-				if (! scheduled) {
-					scheduled = true;
-
-					Scheduler.Task task;
-					task = queryable.NewAddTask (this);
-					task.Priority = Scheduler.Priority.Immediate;
-					queryable.ThisScheduler.Add (task);
+					if (self_task == null) {
+						self_task = queryable.NewAddTask (this);
+						self_task.Priority = Scheduler.Priority.Immediate;
+						queryable.ThisScheduler.Add (self_task);
+					}
 				}
 			}
 
@@ -957,9 +958,85 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			public void PostFlushHook ()
 			{
-				if (! HasNextIndexable ()) {
-					Log.Debug ("Removal generator out of things to process");
-					scheduled = false;
+				lock (queue_lock) {
+					if (dir_name_queue.Count > 0)
+						self_task.Reschedule = true;
+					else
+						self_task = null;
+				}
+			}
+		}
+
+		private class AdditionGenerator : IIndexableGenerator {
+
+			private FileSystemQueryable queryable;
+			private Scheduler.Task self_task = null;
+
+			private object queue_lock = new object ();
+			private Queue dir_queue = new Queue ();
+			private Queue file_name_queue = new Queue ();
+
+			public AdditionGenerator (FileSystemQueryable queryable)
+			{
+				this.queryable = queryable;
+			}
+
+			public void Add (DirectoryModel dir, string file_name)
+			{
+				lock (queue_lock) {
+					dir_queue.Enqueue (dir);
+					file_name_queue.Enqueue (file_name);
+
+					if (self_task == null) {
+						self_task = queryable.NewAddTask (this);
+						self_task.Priority = Scheduler.Priority.Immediate;
+						queryable.ThisScheduler.Add (self_task);
+					}
+				}
+			}
+
+			public Indexable GetNextIndexable ()
+			{
+				DirectoryModel dir;
+				string file_name;
+
+				lock (queue_lock) {
+					dir = (DirectoryModel) dir_queue.Dequeue ();
+					file_name = (string) file_name_queue.Dequeue ();
+				}
+
+				Guid unique_id;
+				unique_id = queryable.RegisterFile (dir, file_name);
+
+				if (unique_id == Guid.Empty)
+					return null;
+
+				string path = Path.Combine (dir.FullName, file_name);
+
+				Indexable indexable;
+				indexable = queryable.FileToIndexable (path, unique_id, dir, false);
+
+				return indexable;
+			}
+
+			public bool HasNextIndexable ()
+			{
+				lock (queue_lock) {
+					return (dir_queue.Count > 0);
+				}
+			}
+
+			public string StatusName {
+				get { return "Additions to file system backend"; }
+			}
+
+			public void PostFlushHook ()
+			{
+				lock (queue_lock) {
+					if (dir_queue.Count > 0)
+						self_task.Reschedule = true;
+					else
+						self_task = null;
 				}
 			}
 		}
@@ -1143,19 +1220,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return indexable;
 		}
 
-		public void AddFile (DirectoryModel dir, string name)
+		public Guid RegisterFile (DirectoryModel dir, string name)
 		{
 			string path;
 			path = Path.Combine (dir.FullName, name);
 
 			if (! File.Exists (path))
-				return;
+				return Guid.Empty;
 
 			if (FileSystem.IsSpecialFile (path))
-				return;
+				return Guid.Empty;
 			
 			if (filter.Ignore (dir, name, false))
-				return;
+				return Guid.Empty;
+
+			if (! dir.IsAttached)
+				return Guid.Empty;
 
 			// If this file already has extended attributes,
 			// make sure that the name matches the file
@@ -1178,6 +1258,19 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				unique_id = Guid.NewGuid ();
 
 			RegisterId (name, dir, unique_id);
+			
+			return unique_id;
+		}
+
+		public void AddFile (DirectoryModel dir, string name)
+		{
+			Guid unique_id;
+			unique_id = RegisterFile (dir, name);
+
+			if (unique_id == Guid.Empty)
+				return;
+			
+			string path = Path.Combine (dir.FullName, name);
 
 			Indexable indexable;
 			indexable = FileToIndexable (path, unique_id, dir, false);
@@ -1189,9 +1282,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				ThisScheduler.Add (task);
 			}
 		}
-
-#if true
-#endif
 
 		public void RemoveFile (DirectoryModel dir, string name)
 		{
@@ -1712,7 +1802,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (is_directory)
 				AddDirectory (dir, file_name);
 			else
-				AddFile (dir, file_name);
+				addition_generator.Add (dir, file_name);
 		}
 
 		public void HandleRemoveEvent (string directory_name, string file_name, bool is_directory)
