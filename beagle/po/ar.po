@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.ar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-05 13:14+0000\n"
-"PO-Revision-Date: 2007-03-12 11:59-0000\n"
+"POT-Creation-Date: 2007-04-14 18:21+0100\n"
+"PO-Revision-Date: 2007-04-14 18:51+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
 "MIME-Version: 1.0\n"
@@ -273,7 +273,7 @@ msgstr "الولاية/المحافظة"
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76
 #: ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140
+#: ../search/Tiles/File.cs:173
 #: ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48
 #: ../search/Tiles/WebHistory.cs:53
@@ -332,7 +332,7 @@ msgid "Conversations with {0}"
 msgstr "المحادثات مع {0}"
 
 #: ../search/beagle-search.desktop.in.in.h:1
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "بحث"
 
@@ -453,11 +453,11 @@ msgstr[1] "عرض {0} نتائج من {1}"
 msgstr[2] "عرض {0} نتائج من {1}"
 msgstr[3] "عرض {0} نتائج من {1}"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:565
 msgid "Your data is being indexed"
 msgstr "يجري فهرسة بياناتك"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:566
 msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
 msgstr "ماتزال خدمة البحث في مرحلة فهرسة بياناتك.لن تظهر كل النتائج قبل أن تنتهي عمليّة الفهرسة."
 
@@ -476,7 +476,7 @@ msgid "Inside File:"
 msgstr "داخل الملف:"
 
 #: ../search/Tiles/ArchivedFile.cs:81
-#: ../search/Tiles/File.cs:144
+#: ../search/Tiles/File.cs:177
 msgid "Author:"
 msgstr "المؤلف:"
 
@@ -524,15 +524,15 @@ msgstr "بريد إلكتروني"
 msgid "Move to Trash"
 msgstr "انقل إلى  المهملات"
 
-#: ../search/Tiles/File.cs:141
+#: ../search/Tiles/File.cs:174
 #: ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "آخر تحرير:"
 
-#: ../search/Tiles/File.cs:146
+#: ../search/Tiles/File.cs:179
 #: ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "المسار الكلّي:"
 
@@ -554,15 +554,15 @@ msgstr[3] "يحوي {0} عنصراً"
 msgid "Set as Wallpaper"
 msgstr "استخدم كخلفية"
 
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/Image.cs:84
 msgid "Tags:"
 msgstr "الوسوم:"
 
-#: ../search/Tiles/Image.cs:83
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "عُدّل:"
 
-#: ../search/Tiles/Image.cs:93
+#: ../search/Tiles/Image.cs:96
 msgid "Comment:"
 msgstr "التعليق:"
 
@@ -1191,105 +1191,100 @@ msgstr "اظهر التفاصيل"
 msgid "Couldn't launch web browser"
 msgstr "لم أستطع إطلاق متصفّح الويب."
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "أعِد تحميل الإعدادات"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "لقد عدّل ملف الإعدادات بواسطة تطبيق آخر. أترغب في تجاهل القيم المعروضة حاليا وإعادة تحميل الإعدادات من على القرص؟"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "اختر مساراً"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "المسار المختار اختير بالفعل للفهرسة ولم يُضف."
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:330
 msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
 msgstr "المسار المختار لم يُضَف. تحوي القائمة عناصر تستبدل هذا المسار كما أن البيانات يتم فهرستها بالفعل."
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "لم يُضَف المسار"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "أزِل المسارات الملغيّة"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "إضافة هذا المسار ستُلغي بعضاً من المسارات المضافة بالفعل. سينتج عن هذا إزالة المسار القديم الملغي. أمازلت ترغب في إضافته؟"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "أزِل المسار"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "أمتأكّد من رغبتك في حذف هذا المسار من قائمة الأدلّة المضافة لفهرستها؟"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "احذف العنصر"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "أمتأكّد من رغبتك في حذف هذا العنصر من قائمة الأدلّة المضافة لفهرستها؟"
 
-#: ../tools/Settings.cs:455
-#: ../tools/Settings.cs:544
-#: ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458
+#: ../tools/Settings.cs:547
+#: ../tools/Settings.cs:634
 msgid "Name"
 msgstr "اسم"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "نوع"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "مسار:"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "نمط:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "مجلّد البريد:"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "انتقي مجلّد"
 
-#: ../tools/Settings.cs:904
-#: ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907
+#: ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "_مسار:"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "مجلد ال_بريد:"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "نم_ط:"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "خطأ أثناء إضافة المسار"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "لا يمكن إيجاد المسار المحدّد ولذلك لا يمكن إضافته لقائمة الموارد المستبعدة من الفهرسة."
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "اعرض"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1360,50 +1355,58 @@ msgid "Index data while on _battery power"
 msgstr "فهرٍس البيانات أثناء العمل على _طاقة البطّارية"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "_قم بالفهرسة أكثر عند اشتغال حافظ الشاشة"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "فهرسة"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "رجاء اختر المورد الّذي ترغب في استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "رجاء اختر مجلّد البريد الّذي ترغب في استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "تفضيلات البحث"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "اختر مجلّد بريد"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
 msgstr "حدّد أي مورد، مثل المسارات، الأنماط، مجلدات البريد أو نوع كائن ترغب في استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr "لا يعمل هذا الإعداد عند الإشتغال على البطارية"
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "النّوع:"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "_اسمح بتشغيل بيجل كجذر"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "_تصفّح..."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "مسار ال_مجلّد"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "مجلد ال_بريد"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "إ_بدأ خِدمة البحث والفهرسة آليا"
 
@@ -1761,4 +1764,7 @@ msgstr "{0:0.0} ك ب"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} م ب"
+
+#~ msgid "Show"
+#~ msgstr "اعرض"
 
