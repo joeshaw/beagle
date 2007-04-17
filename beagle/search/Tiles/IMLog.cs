@@ -77,10 +77,12 @@ namespace Search.Tiles {
 		private Gdk.Pixbuf LoadBuddyIcon ()
 		{
 			Gdk.Pixbuf icon = null;
-
+			try {
 			if (Hit ["fixme:speakingto_icon"] != null && System.IO.File.Exists (Hit ["fixme:speakingto_icon"]))
 				icon = new Gdk.Pixbuf (Hit ["fixme:speakingto_icon"]);
-
+			} catch (Exception e){
+				Console.WriteLine(e);
+			}
 			return icon;				
 		}
 
