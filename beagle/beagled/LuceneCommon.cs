@@ -249,12 +249,17 @@ namespace Beagle.Daemon {
 			int current_major_version, current_minor_version;
 			int i = version_str.IndexOf ('.');
 			
-			if (i != -1) {
-				current_major_version = Convert.ToInt32 (version_str.Substring (0, i));
-				current_minor_version = Convert.ToInt32 (version_str.Substring (i+1));
-			} else {
-				current_minor_version = Convert.ToInt32 (version_str);
-				current_major_version = 0;
+			try {
+				if (i != -1) {
+					current_major_version = Convert.ToInt32 (version_str.Substring (0, i));
+					current_minor_version = Convert.ToInt32 (version_str.Substring (i+1));
+				} else {
+					current_minor_version = Convert.ToInt32 (version_str);
+					current_major_version = 0;
+				}
+			} catch (FormatException) {
+				// Something wrong with the version file.
+				return false;
 			}
 
 			if (current_major_version != MAJOR_VERSION
