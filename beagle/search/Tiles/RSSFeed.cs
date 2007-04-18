@@ -31,14 +31,24 @@ namespace Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
+			Gdk.Pixbuf pixbuf = null;
+
 			string path = Hit ["fixme:cachedimg"];
 			if (path != null && File.Exists (path)) {
-				image.Pixbuf = new Gdk.Pixbuf (path);
+				try {
+					pixbuf = new Gdk.Pixbuf (path);
+				} catch (GLib.GException) {
+					// Catch in case of an invalid pixbuf.
+				}
+			}
 
-				if (image.Pixbuf.Width > size || image.Pixbuf.Height > size)
-					image.Pixbuf = image.Pixbuf.ScaleSimple (size, size, Gdk.InterpType.Bilinear);
-			} else
-				image.Pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", size); // FIXME: RSS icon?
+			if (pixbuf != null && (pixbuf.Width > size || pixbuf.Height > size))
+				pixbuf = pixbuf.ScaleSimple (size, size, Gdk.InterpType.Bilinear);
+
+			if (pixbuf == null)
+				pixbuf = WidgetFu.LoadThemeIcon ("gnome-fs-bookmark", size); // FIXME: RSS icon?
+
+			image.Pixbuf = pixbuf;
 		}
 
 		protected override DetailsPane GetDetails ()
