@@ -46,12 +46,17 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		// Index versions
 		// 1: Original version
 		// 2: Updated URI scheme for Evolution 2.4/EDS 1.4
-		private const int INDEX_VERSION = 2;
+		// 3: Add a "item_type" for calendar items, to differentiate between events, tasks, and memos
+		private const int INDEX_VERSION = 3;
+
+		private SchedulingIndexableGenerator generator;
 
 		public EvolutionDataServerQueryable () : base ("EvolutionDataServerIndex", INDEX_VERSION)
 		{
 			photo_dir = Path.Combine (Driver.TopDirectory, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
+
+			generator = new SchedulingIndexableGenerator (this, "Evolution Data Server");
 		}
 
 		public string PhotoDir {
@@ -101,7 +106,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// badly.
 			try {
 				new SourcesHandler ("/apps/evolution/addressbook/sources", typeof (BookContainer), this, Driver.Fingerprint);
-				new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint);
+				new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Event);
+				new SourcesHandler ("/apps/evolution/tasks/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Todo);
+				new SourcesHandler ("/apps/evolution/memos/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Journal);
 				success = true;
 			} catch (DllNotFoundException ex) {
 				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
@@ -114,20 +121,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
 		}
 
-		public void AddIndexable (Indexable indexable, Scheduler.Priority priority)
+		public void ScheduleIndexable (Indexable indexable, Scheduler.Priority priority)
 		{
-			Scheduler.Task task;
-			task = NewAddTask (indexable);
-			task.Priority = priority;
-			ThisScheduler.Add (task);
-		}
-
-		public void RemoveIndexable (Uri uri)
-		{
-			Scheduler.Task task;
-			task = NewRemoveTask (uri);
-			task.Priority = Scheduler.Priority.Immediate;
-			ThisScheduler.Add (task);
+			generator.Add (indexable, priority);
 		}
 
 		public void RemovePropertyIndexable (Property prop)

@@ -27,6 +27,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 
 using Beagle.Util;
 
@@ -38,9 +39,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private Cal cal;
 		private CalView cal_view;
+		private CalSourceType cal_source_type;
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
-		public CalContainer (Evolution.Source source, EvolutionDataServerQueryable queryable, string fingerprint) : base (source, queryable, fingerprint) { }
+		public CalContainer (Evolution.Source source, EvolutionDataServerQueryable queryable, string fingerprint, CalSourceType cal_source_type) : base (source, queryable, fingerprint)
+		{
+			this.cal_source_type = cal_source_type;
+		}
 
 		public override bool OpenClient ()
 		{
@@ -50,7 +55,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			}
 
 			try {
-				this.cal = new Cal (this.source, CalSourceType.Event);
+				this.cal = new Cal (this.source, cal_source_type);
 				this.cal.Open (true);
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Unable to open calendar {0}:", this.source.Uri);
@@ -105,12 +110,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			foreach (CalComponent cc in changed)
 				AddCalComponent (cc);
 
-#if false
-			// FIXME: Broken in e-d-s right now
 			foreach (string id in removed) {
 				RemoveCalComponent (id);
 			}
-#endif
 		}
 
 		public override void Remove ()
@@ -136,18 +138,23 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				AddCalComponent (cc);
 		}
 
+		[StructLayout (LayoutKind.Sequential)]
+		private struct CalComponentId {
+			public string Uid;
+			public string Rid;
+		}
+
 		private void OnObjectsRemoved (object o, Evolution.ObjectsRemovedArgs args)
 		{
-			// FIXME: This is a temporary workaround for the
-			// fact that the evolution bindings return a
-			// GLib.List with an object type, but there are
-			// really strings in there.
-
+			// FIXME: evolution-sharp doesn't know about
+			// CalComponentId itself, so we have to workaround
+			// this by re-creating the GLib.List with the right
+			// type.
 			GLib.List id_list = new GLib.List (args.Uids.Handle,
-							   typeof (string));
+							   typeof (CalComponentId));
 
-			foreach (string id in id_list)
-				RemoveCalComponent (id);
+			foreach (CalComponentId id in id_list)
+				RemoveCalComponent (id.Uid);
 		}
 
 		private void OnViewDone (object o, Evolution.ViewDoneArgs args)
@@ -186,12 +193,15 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			Indexable indexable = CalComponentToIndexable (cc);
 
-			this.queryable.AddIndexable (indexable, this.priority);
+			this.queryable.ScheduleIndexable (indexable, this.priority);
 		}
 
 		private void RemoveCalComponent (string id)
 		{
-			this.queryable.RemoveIndexable (GetCalendarUri (id));
+			Indexable indexable = new Indexable (GetCalendarUri (id));
+			indexable.Type = IndexableType.Remove;
+
+			this.queryable.ScheduleIndexable (indexable, Scheduler.Priority.Immediate);
 		}
 
 		/////////////////////////////////////
@@ -205,8 +215,26 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", cc.Uid));
+
+			switch (this.cal_source_type) {
+
+			case CalSourceType.Event:
+				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "event"));
+				break;
+
+			case CalSourceType.Todo:
+				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "task"));
+				break;
+
+			case CalSourceType.Journal:
+				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "memo"));
+				break;
+			}
+
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart.ToUniversalTime ()));
-			indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
+
+			if (cc.Dtend != DateTime.MinValue)
+				indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
 
 			foreach (string attendee in cc.Attendees)
 				indexable.AddProperty (Property.New ("fixme:attendee", attendee));

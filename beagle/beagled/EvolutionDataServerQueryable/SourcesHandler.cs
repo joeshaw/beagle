@@ -38,14 +38,16 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		Type container_type;
 		EvolutionDataServerQueryable queryable;
 		string fingerprint;
+		object[] ctor_args;
 		SourceList source_list;
 		Hashtable src_to_cont_map = new Hashtable ();
 
-		public SourcesHandler (string gconf_key, Type container_type, EvolutionDataServerQueryable queryable, string fingerprint)
+		public SourcesHandler (string gconf_key, Type container_type, EvolutionDataServerQueryable queryable, string fingerprint, params object[] ctor_args)
 		{
 			this.container_type = container_type;
 			this.queryable = queryable;
 			this.fingerprint = fingerprint;
+			this.ctor_args = ctor_args;
 
 			// This is the first code to hit e-d-s, so we might
 			// get a DllNotFoundException exception if things
@@ -79,7 +81,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			group.SourceRemoved += OnSourceRemoved;
 
 			foreach (Evolution.Source src in group.Sources) {
-				Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { src, this.queryable, this.fingerprint });
+				object[] args = new object [this.ctor_args.Length + 3];
+				args [0] = src;
+				args [1] = this.queryable;
+				args [2] = this.fingerprint;
+				Array.Copy (this.ctor_args, 0, args, 3, this.ctor_args.Length);
+
+				Container cont = (Container) Activator.CreateInstance (this.container_type, args);
 				if (!cont.OpenClient ())
 					continue;
 

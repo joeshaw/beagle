@@ -482,6 +482,7 @@ EDS_QUERYABLE_CSFILES =                                 \
 	$(edsqueryable)/CalContainer.cs			\
 	$(edsqueryable)/Container.cs			\
 	$(edsqueryable)/EvolutionDataServerQueryable.cs	\
+	$(edsqueryable)/SchedulingIndexableGenerator.cs	\
 	$(edsqueryable)/SourcesHandler.cs
 
 evomailqueryable = $(srcdir)/EvolutionMailQueryable

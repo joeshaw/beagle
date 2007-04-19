@@ -200,16 +200,17 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void AddContact (Evolution.Contact contact)
 		{
-			Logger.Log.Debug ("We'll index {0}!", contact.FullName);
 			Indexable indexable = ContactToIndexable (contact);
 
-			this.queryable.AddIndexable (indexable, this.priority);
+			this.queryable.ScheduleIndexable (indexable, this.priority);
 		}
 
 		private void RemoveContact (string id)
 		{
-			Logger.Log.Debug ("We'll remove {0}", id);
-			this.queryable.RemoveIndexable (GetContactUri (id));
+			Indexable indexable = new Indexable (GetContactUri (id));
+			indexable.Type = IndexableType.Remove;
+
+			this.queryable.ScheduleIndexable (indexable, Scheduler.Priority.Immediate);
 		}
 
 		/////////////////////////////////////
