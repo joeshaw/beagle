@@ -65,6 +65,10 @@ namespace Beagle.Daemon {
 					Log.Debug ("Reading or creating attr for {0}", path);
 
 				FileAttributes attr = ifas.Read (path);
+
+				if (attr == null && unique_id == Guid.Empty)
+					unique_id = Guid.NewGuid ();
+
 				// If we pass in a Guid that doesn't match the one we found in the
 				// the attributes, clobber the old attributes and the old unique Guid.
 				if (attr == null
@@ -78,9 +82,6 @@ namespace Beagle.Daemon {
 					attr.UniqueId = unique_id;
 					attr.Path = path;
 					
-					// Now add the new attribute
-					// Note: New attribute should not be added.
-					//ifas.Write (attr);
 					created = true;
 				}
 
@@ -99,7 +100,7 @@ namespace Beagle.Daemon {
 
 		public FileAttributes ReadOrCreate (string path)
 		{
-			return ReadOrCreate (path, Guid.NewGuid ());
+			return ReadOrCreate (path, Guid.Empty);
 		}
 
 		public bool Write (FileAttributes attr)
