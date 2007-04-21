@@ -1495,11 +1495,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return false;
 		}
 
-		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		override protected Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// We don't have anything to do if we are dealing with a child indexable
 			if (indexable.ParentUri != null)
-				return;
+				return indexable.DisplayUri;
 
 			if (indexable.Type == IndexableType.PropertyChange) {
 				// If we were moved, remap to our *old* external Uri
@@ -1507,11 +1507,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// this is an in-place property change and we don't
 				// need to do anything.
 
+				Uri remapped_uri = indexable.DisplayUri;
 				string last_known_path;
 				last_known_path = (string) indexable.LocalState ["LastKnownPath"];
 
 				if (last_known_path != null) {
-					receipt.Uri = UriFu.PathToFileUri (last_known_path);
+					remapped_uri = UriFu.PathToFileUri (last_known_path);
 					Logger.Log.Debug ("Last known path is {0}", last_known_path);
 
 					// This rename is now in the index, so we no
@@ -1519,14 +1520,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					ForgetId (last_known_path);
 				}
 
-				return;
+				return remapped_uri;
 			}
 
 			string path;
 			path = (string) indexable.LocalState ["Path"];
 
 			if (Debug)
-				Log.Debug ("PostAddHook for {0} ({1}) and receipt uri={2}", indexable.Uri, path, receipt.Uri);
+				Log.Debug ("PostAddHook for {0} ({1})", indexable.Uri, path);
 
 			ForgetId (path);
 
@@ -1535,10 +1536,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// The parent directory might have run away since we were indexed
 			if (parent != null && ! parent.IsAttached)
-				return;
+				return indexable.DisplayUri;
 
 			Guid unique_id;
-			unique_id = GuidFu.FromUri (receipt.Uri);
+			unique_id = GuidFu.FromUri (indexable.Uri);
 
 			FileAttributes attr;
 			attr = FileAttributesStore.ReadOrCreate (path, unique_id);
@@ -1554,25 +1555,27 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				name = (string) indexable.LocalState ["Name"];
 
 				if (! RegisterDirectory (name, parent, attr))
-					return;
+					return indexable.DisplayUri;
 			}
 
 			FileAttributesStore.Write (attr);
 
-			// Remap the Uri so that change notification will work properly
-			receipt.Uri = UriFu.PathToFileUri (path);
+			// Return the remapped Uri so that change notification will work properly
+			return UriFu.PathToFileUri (path);
 		}
 
-		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		override protected Uri PostRemoveHook (Indexable indexable)
 		{
 			// Find the cached external Uri and remap the Uri in the receipt.
 			// We have to do this to make change notification work.
 			Uri external_uri;
 			external_uri = indexable.LocalState ["RemovedUri"] as Uri;
 			if (external_uri == null)
-				throw new Exception ("No cached external Uri for " + receipt.Uri);
-			receipt.Uri = external_uri;
+				throw new Exception ("No cached external Uri for " + indexable.Uri);
 			ForgetId (external_uri.LocalPath);
+
+			// Return the remapped uri
+			return external_uri;
 		}
 
 		private bool RemapUri (Hit hit)

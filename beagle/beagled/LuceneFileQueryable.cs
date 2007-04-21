@@ -141,20 +141,20 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
-		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		override protected Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			// Retrieve our cached info about the file.
 			CachedFileInfo info;
-			info = file_info_cache [receipt.Uri] as CachedFileInfo;
+			info = file_info_cache [indexable.Uri] as CachedFileInfo;
 			if (info == null)
-				return;
+				return indexable.Uri;
 
 			file_info_cache.Remove (info.Uri);
 
 			// Yeah, this is ghetto. If it's a file that's shared across multiple
 			// indexables, only tag it with when the last indexable has been indexed.
 			if (info.Shared && DecrementReferenceCount (info.Path))
-				return;
+				return indexable.Uri;
 
 			// Since we know that the file has been successfully
 			// indexed, update the file attributes accordingly.
@@ -174,11 +174,14 @@ namespace Beagle.Daemon {
 
 			if (! FileAttributesStore.Write (attr))
 				Logger.Log.Warn ("Couldn't write attributes for {0}", info.Path);
+
+			return indexable.Uri;
 		}
 
-		override protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		override protected Uri PostRemoveHook (Indexable indexable)
 		{
 			file_info_cache.Remove (indexable.Uri);
+			return indexable.Uri;
 		}
 
 		override protected bool HitIsValid (Uri uri)

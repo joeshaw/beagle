@@ -191,7 +191,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		override protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		override protected Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			base.PostAddHook (indexable, receipt);
 			
@@ -200,11 +200,13 @@ namespace Beagle.Daemon.TomboyQueryable {
 			// the TextCache is not modified until we are
 			// sure that the note was actually indexed.
 			string text;
-			text = (string) note_text_cache [receipt.Uri];
+			text = (string) note_text_cache [indexable.Uri];
 			// If text == null, this is equivalent to
 			// calling Delete (receipt.Uri)
-			TextCache.UserCache.WriteFromString (receipt.Uri, text);
-			note_text_cache.Remove (receipt.Uri);
+			TextCache.UserCache.WriteFromString (indexable.Uri, text);
+			note_text_cache.Remove (indexable.Uri);
+
+			return indexable.Uri;
 		}
 
 		override protected bool HitIsValid (Uri uri)

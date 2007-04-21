@@ -39,39 +39,36 @@ namespace Beagle.Daemon {
 	public abstract class IndexerReceipt {
 		
 		public IndexerReceipt () { }
+
+		public IndexerReceipt (int id)
+		{
+			this.Id = id;
+		}
+
+		// Some abstract id copied from the indexable which caused this receipt
+		[XmlAttribute ("Id")]
+		public int Id = 0;
 	}
 
 	public class IndexerAddedReceipt : IndexerReceipt {
 		
 		public IndexerAddedReceipt () { }
 
-		public IndexerAddedReceipt (Uri uri)
-		{
-			this.Uri = uri;
-		}
+		public IndexerAddedReceipt (int id) : base (id) { }
 
-		public IndexerAddedReceipt (Uri uri, string filter_name, int filter_version)
+		public IndexerAddedReceipt (int id, string filter_name, int filter_version)
 		{
-			this.Uri = uri;
+			this.Id = id;
 			this.FilterName = filter_name;
 			this.FilterVersion = filter_version;
 		}
 		
-		[XmlIgnore]
-		public Uri Uri;
-
 		public bool PropertyChangesOnly = false;
 		
 		public string FilterName = null;
 		
 		public int FilterVersion = -1;
 		
-		[XmlAttribute ("Uri")]
-		public string UriString {
-			get { return UriFu.UriToEscapedString (Uri); }
-			set { Uri = UriFu.EscapedStringToUri (value); }
-		}
-
 		public object Clone ()
 		{
 			return this.MemberwiseClone ();
@@ -83,19 +80,7 @@ namespace Beagle.Daemon {
 		
 		public IndexerRemovedReceipt () { }
 
-		public IndexerRemovedReceipt (Uri uri)
-		{
-			this.Uri = uri;
-		}
-		
-		[XmlIgnore]
-		public Uri Uri;
-		
-		[XmlAttribute ("Uri")]
-		public string UriString {
-			get { return UriFu.UriToEscapedString (Uri); }
-			set { Uri = UriFu.EscapedStringToUri (value); }
-		}
+		public IndexerRemovedReceipt (int id) : base (id) { }
 	}
 			     
 	public class IndexerIndexablesReceipt : IndexerReceipt {
@@ -108,6 +93,7 @@ namespace Beagle.Daemon {
 			this.Indexables = indexables;
 		}
 
+		// Pass the generating uri, PreFilterGeneratedAddHook might need this
 		[XmlIgnore]
 		public Uri GeneratingUri;
 		
@@ -126,18 +112,6 @@ namespace Beagle.Daemon {
 		
 		public IndexerDeferredReceipt () { }
 
-		public IndexerDeferredReceipt (Uri uri)
-		{
-			this.Uri = uri;
-		}
-		
-		[XmlIgnore]
-		public Uri Uri;
-		
-		[XmlAttribute ("Uri")]
-		public string UriString {
-			get { return UriFu.UriToEscapedString (Uri); }
-			set { Uri = UriFu.EscapedStringToUri (value); }
-		}
+		public IndexerDeferredReceipt (int id) : base (id) { }
 	}
 }

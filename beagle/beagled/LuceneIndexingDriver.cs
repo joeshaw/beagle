@@ -212,7 +212,7 @@ namespace Beagle.Daemon {
 					// queue up a removed receipt.
 					if (indexable.Type == IndexableType.Remove) {
 						IndexerRemovedReceipt r;
-						r = new IndexerRemovedReceipt (indexable.Uri);
+						r = new IndexerRemovedReceipt (indexable.Id);
 						receipt_queue.Add (r);
 					}
 				}
@@ -270,7 +270,7 @@ namespace Beagle.Daemon {
 
 					Logger.Log.Debug ("+{0} (props only)", indexable.DisplayUri);
 
-					r = new IndexerAddedReceipt (indexable.Uri);
+					r = new IndexerAddedReceipt (indexable.Id);
 					r.PropertyChangesOnly = true;
 					receipt_queue.Add (r);
 
@@ -320,7 +320,7 @@ namespace Beagle.Daemon {
 				Document persistent_prop_doc = (Document) prop_change_docs [indexable.Uri];
 				bool deferred = false;
 
-				r = new IndexerAddedReceipt (indexable.Uri);
+				r = new IndexerAddedReceipt (indexable.Id);
 
 				if (filter != null) {
 					// Force the clean-up of temporary files, just in case.
@@ -338,7 +338,7 @@ namespace Beagle.Daemon {
 							   filter.GetType ().ToString ());
 
 						IndexerDeferredReceipt dr;
-						dr = new IndexerDeferredReceipt (indexable.Uri);
+						dr = new IndexerDeferredReceipt (indexable.Id);
 						receipt_queue.Add (dr);
 
 						IndexerIndexablesReceipt ir;

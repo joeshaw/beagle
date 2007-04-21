@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 using Beagle.Util;
@@ -468,14 +469,17 @@ namespace Beagle.Daemon {
 		// will come back w/ an internal Uri.  In order for change
 		// notification to work correctly, we have to map it to
 		// an external Uri.
-		virtual protected void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		// Return the remapped uri.
+		virtual protected Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
-			// Does nothing by default
+			// By default, remapped uri is the indexable uri
+			return indexable.Uri;
 		}
 
-		virtual protected void PostRemoveHook (Indexable indexable, IndexerRemovedReceipt receipt)
+		virtual protected Uri PostRemoveHook (Indexable indexable)
 		{
-			// Does nothing by default
+			// By default, remapped uri is the indexable uri
+			return indexable.Uri;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////
@@ -825,7 +829,7 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		private Hashtable deferred_indexables = UriFu.NewHashtable ();
+		private Dictionary<int, Indexable> deferred_indexables = new Dictionary<int, Indexable> ();
 
 		protected void Flush ()
 		{
@@ -876,60 +880,67 @@ namespace Beagle.Daemon {
 					
 					IndexerAddedReceipt r;
 					r = (IndexerAddedReceipt) receipts [i];
-
-					// Add the Uri to the list for our change data
-					// before doing any post-processing.
-					// This ensures that we have internal uris when
-					// we are remapping.
-					added_uris.Add (r.Uri);
-					
-					Indexable indexable = flushed_request.GetByUri (r.Uri);
+					Indexable indexable = flushed_request.GetRequestIndexable (r);
 
 					if (indexable == null) {
 						// Must be a previously deferred indexable.
-						indexable = (Indexable) deferred_indexables [r.Uri];
+						indexable = deferred_indexables [r.Id];
 
 						if (indexable == null) {
-							Log.Warn ("Unable to match up {0} to any indexable object!",
-								  r.Uri);
+							Log.Warn ("Unable to match up indexable id# {0} to any indexable object!",
+								  r.Id);
 							continue;
 						}
-							
-						deferred_indexables.Remove (r.Uri);
+
+						deferred_indexables.Remove (r.Id);
 					}
 
+					// Add the Uri to the list for our change data
+					// *before* doing any post-processing.
+					// This ensures that we have internal uris when
+					// we are remapping.
+					added_uris.Add (indexable.Uri);
+					
 					// Call the appropriate hook
+					Uri notification_uri = indexable.Uri;
 					try {
 						// Map from internal->external Uris in the PostAddHook
-						PostAddHook (indexable, r);
+						notification_uri = PostAddHook (indexable, r);
 					} catch (Exception ex) {
 						Logger.Log.Warn (ex, "Caught exception in PostAddHook '{0}' '{1}' '{2}'",
-								 r.Uri, r.FilterName, r.FilterVersion);
+								 indexable.Uri, r.FilterName, r.FilterVersion);
 					}
 
 					// Every added Uri also needs to be listed as removed,
 					// to avoid duplicate hits in the query.  Since the
 					// removed Uris need to be external Uris, we add them
 					// to the list *after* post-processing.
-					removed_uris.Add (r.Uri);
+					removed_uris.Add (notification_uri);
 
 				} else if (receipts [i] is IndexerRemovedReceipt) {
 
 					IndexerRemovedReceipt r;
 					r = (IndexerRemovedReceipt) receipts [i];
 
+					Indexable indexable = flushed_request.GetRequestIndexable (r);
+					if (indexable == null) { // Should never happen
+						Log.Warn ("Unable to match indexable-remove #{0} to any request!", r.Id);
+						continue;
+					}
+
 					// Call the appropriate hook
+					Uri notification_uri = indexable.Uri;
 					try {
-						PostRemoveHook (flushed_request.GetByUri (r.Uri), r);
+						notification_uri = PostRemoveHook (indexable);
 					} catch (Exception ex) {
 						Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
-								 r.Uri);
+								 indexable.Uri);
 					}
 
 					// Add the removed Uri to the list for our
 					// change data.  This will be an external Uri
 					// when we are remapping.
-					removed_uris.Add (r.Uri);
+					removed_uris.Add (notification_uri);
 					
 				} else if (receipts [i] is IndexerIndexablesReceipt) {
 					
@@ -967,8 +978,14 @@ namespace Beagle.Daemon {
 					
 					IndexerDeferredReceipt r;
 					r = (IndexerDeferredReceipt) receipts [i];
+					Indexable indexable = flushed_request.GetRequestIndexable (r);
 
-					deferred_indexables [r.Uri] = flushed_request.GetByUri (r.Uri);
+					if (indexable == null) { // Should never happen
+						Log.Warn ("Unable to match indexable(now deferred) #{0} to any request!", r.Id);
+						continue;
+					}
+
+					deferred_indexables [r.Id] = indexable;
 				}
 			}
 

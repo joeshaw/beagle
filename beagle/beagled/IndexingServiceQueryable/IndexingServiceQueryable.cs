@@ -240,16 +240,18 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		protected override void PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		protected override Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
 		{
 			FileInfo meta_file = indexable.LocalState ["MetaFile"] as FileInfo;
 			if (meta_file == null)
-				return;
+				return indexable.Uri;
 
 			meta_file.Delete ();
 
 			lock (pending_files)
 				pending_files.Remove (indexable.ContentUri.LocalPath);
+
+			return indexable.Uri;
 		}
 
 		private class IndexableGenerator : IIndexableGenerator {

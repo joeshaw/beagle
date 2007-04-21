@@ -58,6 +58,9 @@ namespace Beagle {
 		// reasons.
 		private IndexableType type = IndexableType.Add;
 
+		// Used to uniquely determine any indexable
+		private int indexable_id = 0;
+
 		// The URI of the item being indexed.
 		private Uri uri = null;
 
@@ -156,6 +159,12 @@ namespace Beagle {
 		public IndexableType Type {
 			get { return type; }
 			set { type = value; }
+		}
+
+		[XmlAttribute ("Id")]
+		public int Id {
+			get { return indexable_id; }
+			set { indexable_id = value; }
 		}
 
 		[XmlIgnore]

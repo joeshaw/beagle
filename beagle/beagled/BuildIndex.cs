@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -421,7 +422,7 @@ namespace Beagle.Daemon
 			request.Add (indexable);
 		}
 
-		static private Hashtable deferred_indexables = UriFu.NewHashtable ();
+		static private Dictionary<int, Indexable> deferred_indexables = new Dictionary<int, Indexable> ();
 
 		static IndexerReceipt [] FlushIndexer (IIndexer indexer, IndexerRequest request)
 		{
@@ -439,18 +440,19 @@ namespace Beagle.Daemon
 					// Update the file attributes 
 					IndexerAddedReceipt r = (IndexerAddedReceipt) raw_r;
 
-					Indexable indexable = request.GetByUri (r.Uri);
+					Indexable indexable = request.GetRequestIndexable (r);
 
 					if (indexable == null) {
 						// This must be a previously deferred indexable.
-						indexable = (Indexable) deferred_indexables [r.Uri];
+						indexable = deferred_indexables [r.Id];
 
 						if (indexable == null) {
-							Log.Warn ("Unable to match up {0} to any indexable object!", r.Uri);
+							Log.Warn ("Unable to match up indexable id# {0} to any indexable object!",
+								  r.Id);
 							continue;
 						}
 
-						deferred_indexables.Remove (r.Uri);
+						deferred_indexables.Remove (indexable.Id);
 					}
 
 					// We don't need to write out any file attributes for
@@ -458,7 +460,7 @@ namespace Beagle.Daemon
 					if (indexable.ParentUri != null) 
 						continue;
 
-					string path = r.Uri.LocalPath;
+					string path = indexable.Uri.LocalPath;
 					
 					FileAttributes attr;
 					attr = fa_store.ReadOrCreate (path);
@@ -473,9 +475,9 @@ namespace Beagle.Daemon
 					// Update the file attributes 
 					IndexerRemovedReceipt r = (IndexerRemovedReceipt) raw_r;
 
-					Indexable indexable = request.GetByUri (r.Uri);
+					Indexable indexable = request.GetRequestIndexable (r);
 
-					string path = r.Uri.LocalPath;
+					string path = indexable.Uri.LocalPath;
 					Logger.Log.Debug ("Removing: '{0}'", path);
 					fa_store.Drop (path);
 
@@ -487,7 +489,7 @@ namespace Beagle.Daemon
 				} else if (raw_r is IndexerDeferredReceipt) {
 					// Set aside any deferred indexables so we can process them later
 					IndexerDeferredReceipt r = (IndexerDeferredReceipt) raw_r;
-					deferred_indexables [r.Uri] = request.GetByUri (r.Uri);
+					deferred_indexables [r.Id] = request.GetRequestIndexable (r);
 				}
 			}
 

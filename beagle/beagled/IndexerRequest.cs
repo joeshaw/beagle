@@ -1,6 +1,7 @@
 //
 // IndexerRequest.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2005-2006 Novell, Inc.
 //
 
@@ -26,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Xml.Serialization;
 
 using Beagle.Util;
@@ -36,25 +38,30 @@ namespace Beagle.Daemon {
 
 		public bool OptimizeIndex = false;
 
-		// These two collections are mutually exclusive.  It's an ugly
-		// hack, but it's necessary to make XML serialization work
-		// easily, and assumes that an IndexerRequest is never changed
-		// after it has been serialized.
-		private Hashtable indexables_by_uri = null;
 		private ArrayList indexables = null;
+		// The hashtable is needed to remove/merge multiple indexables for the same uri
+		private Hashtable indexables_by_uri = null;
+
+		// Used to uniquely determine any indexable
+		private static int indexable_id = 0;
+		private int base_id;
+
+		public IndexerRequest ()
+		{
+			base_id = indexable_id;
+			indexables = new ArrayList ();
+		}
 
 		public void Clear ()
 		{
 			OptimizeIndex = false;
 			indexables_by_uri = null;
-			indexables = null;
+			base_id = indexable_id;
+			indexables.Clear ();
 		}
-	       
+
 		public void Add (Indexable indexable)
 		{
-			if (indexables != null)
-				throw new Exception ("Attempt to add to a serialized IndexerRequest");
-
 			if (indexable == null)
 				return;
 
@@ -70,71 +77,60 @@ namespace Beagle.Daemon {
 
 				case IndexableType.Add:
 				case IndexableType.Remove:
-					// Do nothing, and just clobber the prior indexable.
+					// Clobber the prior indexable.
+					indexable.Id = prior.Id;
+					indexables [prior.Id - base_id] = indexable;
+					indexables_by_uri [indexable.Uri] = indexable;
 					break;
 
 				case IndexableType.PropertyChange:
-					// Merge with the prior indexable.
-					prior.Merge (indexable);
-					indexable = prior;
+					if (prior.Type != IndexableType.Remove) {
+						// Merge with the prior indexable.
+						prior.Merge (indexable);
+					}
 					break;
 				}
+			} else {
+				indexable.Id = indexable_id;
+				indexable_id ++;
+				indexables.Add (indexable);
+				indexables_by_uri [indexable.Uri] = indexable;
 			}
-
-			indexables_by_uri [indexable.Uri] = indexable;
 		}
 
-		public Indexable GetByUri (Uri uri)
+		public Indexable GetRequestIndexable (IndexerReceipt r)
 		{
-			if (indexables_by_uri != null)
-				return indexables_by_uri [uri] as Indexable;
+			int id = r.Id;
 
-			// Fall back to using the list.  This happens when we
-			// have been serialized.  Which is sort of lame.
-			foreach (Indexable indexable in indexables) {
-				if (UriFu.Equals (uri, indexable.Uri))
-					return indexable;
-			}
-			return null;
-		}
+			if (id < base_id || id >= indexable_id)
+				return null;
 
-		[XmlIgnore]
-		public ICollection Indexables {
-			get { 
-				if (indexables != null)
-					return indexables;
-				else if (indexables_by_uri != null)
-					return indexables_by_uri.Values;
-				else
-					return new Indexable [0];
-			}
+			return (Indexable) indexables [id - base_id];
 		}
 
 		[XmlArray (ElementName="Indexables")]
 		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
-		public ArrayList IndexablesForSerialization {
-			get { 
-				if (indexables == null) {
-					indexables = new ArrayList (Indexables);
-					indexables.Sort (); // sort into ascending timestamp order
-				}
+		public ArrayList Indexables {
+			get {
+				indexables_by_uri = null;
 				return indexables;
 			}
+			set { indexables = value; }
 		}
 
 		[XmlIgnore]
 		public int Count {
-			get { return Indexables.Count; }
+			get { return indexables.Count; }
 		}
 		
 		[XmlIgnore]
 		public bool IsEmpty {
-			get { return Count == 0 && ! OptimizeIndex; }
+			get { return indexables.Count == 0 && ! OptimizeIndex; }
 		}
 
 		public void Cleanup ()
 		{
-			foreach (Indexable i in Indexables)
+			foreach (Indexable i in indexables)
 				i.Cleanup ();
 		}
 	}
