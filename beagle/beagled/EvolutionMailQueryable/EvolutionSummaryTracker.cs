@@ -40,7 +40,11 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 		public EvolutionSummaryTracker (string directory, string account_name, string folder_name)
 		{
-			string filename = Path.Combine (directory, String.Format ("SummaryTracker-{0}-{1}.db", account_name, folder_name.Replace ('/', '-')));
+			// Make the on-disk files for folders have sane names
+			folder_name = folder_name.Replace ('/', '-');
+			folder_name = folder_name.Replace (',', ' '); // Causes problems with the ConnectionString otherwise
+
+			string filename = Path.Combine (directory, String.Format ("SummaryTracker-{0}-{1}.db", account_name, folder_name));
 			bool create_new_db = ! File.Exists (filename);
 
 			connection = GetConnection (filename);
