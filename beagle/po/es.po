@@ -3,6 +3,7 @@
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jorge González <jorge.gonzalez.gonzalez@hispalinux.es>, 2007.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007.
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
 # This file is distributed under the same license as the beagle package.
@@ -10,10 +11,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-20 11:32+0100\n"
-"PO-Revision-Date: 2007-02-14 19:31+0100\n"
-"Last-Translator: Jorge González <jorge.gonzalez.gonzalez@hispalinux.es>\n"
-"Language-Team: Español <traductores@es.gnome.org>\n"
+"POT-Creation-Date: 2007-04-03 03:15+0100\n"
+"PO-Revision-Date: 2007-04-25 00:18+0200\n"
+"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
+"Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -266,7 +267,7 @@ msgstr "Estado/Provincia:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Título:"
@@ -321,7 +322,7 @@ msgstr "Conversaciones en {0} ({1})"
 msgid "Conversations with {0}"
 msgstr "Conversaciones con {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "Búsqueda"
 
@@ -377,15 +378,13 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha"
 "\"</b>"
@@ -480,7 +479,7 @@ msgstr "Nombre de archivo:"
 msgid "Inside File:"
 msgstr "Dentro del archivo:"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
+#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
 msgid "Author:"
 msgstr "Autor:"
 
@@ -527,13 +526,13 @@ msgstr "Correo-e"
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
-#: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Tiles/File.cs:146 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "Ruta completa:"
 
@@ -553,15 +552,15 @@ msgstr[1] "Contiene {0} elementos"
 msgid "Set as Wallpaper"
 msgstr "Poner como tapiz"
 
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/Image.cs:84
 msgid "Tags:"
 msgstr "Etiquetas:"
 
-#: ../search/Tiles/Image.cs:83
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "Modificado:"
 
-#: ../search/Tiles/Image.cs:93
+#: ../search/Tiles/Image.cs:96
 msgid "Comment:"
 msgstr "Comentario:"
 
@@ -1128,11 +1127,11 @@ msgstr "Mostrar detalles"
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1141,16 +1140,15 @@ msgstr ""
 "descartar los valores mostrados actualmente y recargar la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:324
-msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"La ruta seleccionada ya está seleccionada para la indización y no se añadió."
-
 #: ../tools/Settings.cs:327
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "La ruta seleccionada ya está seleccionada para la indización y no se añadió."
+
+#: ../tools/Settings.cs:330
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1158,15 +1156,15 @@ msgstr ""
 "La ruta seleccionada no se ha añadido. La lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "La ruta no se ha añadido"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1175,11 +1173,11 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1187,11 +1185,11 @@ msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
 "excluirán de la indización?"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1199,58 +1197,53 @@ msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
 "excluir de la indización?"
 
-#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458 ../tools/Settings.cs:547 ../tools/Settings.cs:634
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907 ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indización."
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "Mostrar"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1327,26 +1320,30 @@ msgid "Index data while on _battery power"
 msgstr "Indexar datos cuando se esté funcionando con _baterías"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Indexar más agresivamente mientras el _salvapantallas está activado"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "Indización"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Seleccione un recurso que desee excluir de la indización."
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Seleccione la carpeta de correo que desee excluir de la indización. "
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "Preferencias de búsqueda"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "Seleccione la carpeta de correo"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1354,27 +1351,31 @@ msgstr ""
 "Especifique cualquier recurso, como rutas, patrones, carpetas de correo ó "
 "tipos de objetos que desea excluir del índice."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr "Este ajuste no se aplica cuando se esté funcionando con la batería."
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "_Permitir a Beagle ejecutarse como root"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "_Examinar…"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "_Ruta a la carpeta"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "Carpeta de _correo"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "_Iniciar los servicios de búsqueda e indización automáticamente"
 
@@ -1439,8 +1440,7 @@ msgid "A unique number"
 msgstr "Un único número"
 
 #: ../Util/F-Spot/IptcFile.cs:187
-msgid ""
-"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
 msgstr "La urgencia del sobre, entre 1 (muy urgente) y 9 (poco urgente)"
 
 #: ../Util/F-Spot/IptcFile.cs:189
@@ -1448,8 +1448,7 @@ msgid "The year month and day (CCYYMMDD) the service sent the material"
 msgstr "El año, mes y día (CCAAMMDD) en la que el servicio envió el material"
 
 #: ../Util/F-Spot/IptcFile.cs:191
-msgid ""
-"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
 msgstr ""
 "La hora, minuto y segundo (HHMMSS+HHMM) en la que el servicio envió el "
 "material"
@@ -1472,8 +1471,7 @@ msgstr "Número de versión del método de relación abstracto (ARM)."
 
 #: ../Util/F-Spot/IptcFile.cs:205
 msgid "Number identifying the IIM version this application record uses"
-msgstr ""
-"Número identificando la versión IIM que usa el registro de esta aplicación"
+msgstr "Número identificando la versión IIM que usa el registro de esta aplicación"
 
 #: ../Util/F-Spot/IptcFile.cs:207
 msgid "Object type reference"
@@ -1508,8 +1506,7 @@ msgid "Full name of the country of the focus of the content"
 msgstr "Nombre completo del país donde está el foco del contenido"
 
 #: ../Util/F-Spot/IptcFile.cs:236
-msgid ""
-"Two or three letter ISO3166 code of the country of the focus of the content"
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
 msgstr "Código ISO3166 de dos o tres letras del país del foco del contenido"
 
 #: ../Util/F-Spot/IptcFile.cs:239
@@ -1537,8 +1534,7 @@ msgid "Headline of the content"
 msgstr "Título del contenido"
 
 #: ../Util/F-Spot/IptcFile.cs:255
-msgid ""
-"Instructions from the creator to the receiver not covered by other fields"
+msgid "Instructions from the creator to the receiver not covered by other fields"
 msgstr ""
 "Instrucciones del creador para el receptor que no están cubiertas por otros "
 "campos"
@@ -1735,3 +1731,4 @@ msgstr "{0:0.0} KiB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MiB"
+
