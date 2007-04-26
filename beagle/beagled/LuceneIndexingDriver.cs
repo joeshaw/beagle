@@ -254,6 +254,23 @@ namespace Beagle.Daemon {
 					break;
 				}
 				
+				// If the indexable is generated due to an IndexerIndexable being rejected,
+				// then properly update the deferred_hash table and cleanup the indexable
+				if (indexable.Type == IndexableType.Ignore) {
+					DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
+					if (di == null) {
+						Log.Warn ("Could not find deferred indexable for {0}", indexable.Uri);
+					} else {
+						di.Count --;
+						deferred_hash.Remove (indexable.Uri);
+						if (di.Count == 0)
+							deferred_queue.Add (di);
+						indexable.Cleanup ();
+					}
+
+					continue;
+				}
+
 				// Receipts for removes were generated in the
 				// previous block.  Now we just have to remove
 				// items from the text cache.

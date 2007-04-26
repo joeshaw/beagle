@@ -504,6 +504,12 @@ namespace Beagle.Daemon {
 				if (queryable.PreAddIndexableHook (indexable)) {
 					queryable.AddIndexable (indexable);
 					queryable.ConditionalFlush ();
+				} else if (indexable.LocalState ["IndexerIndexableGenerated"] != null) {
+					// For indexer generated indexables, either the indexable or an
+					// IndexableType.Ignore request _has_ to go back to the indexhelper.
+					indexable.Type = IndexableType.Ignore;
+					queryable.AddIndexable (indexable);
+					queryable.ConditionalFlush ();
 				}
 			}
 
@@ -572,10 +578,16 @@ namespace Beagle.Daemon {
 							continue;
 					}
 
-					if (queryable.PreAddIndexableHook (generated))
+					if (queryable.PreAddIndexableHook (generated)) {
 						queryable.AddIndexable (generated);
-					else
+					} else if (generated.LocalState ["IndexerIndexableGenerated"] != null) {
+						// For indexer generated indexables, either the indexable or an
+						// IndexableType.Ignore request _has_ to go back to the indexhelper.
+						generated.Type = IndexableType.Ignore;
+						queryable.AddIndexable (generated);
+					} else {
 						generated.Cleanup ();
+					}
 					
 					// We keep adding indexables until a flush goes through.
 				} while (! (flushed = queryable.ConditionalFlush ()));
@@ -949,6 +961,7 @@ namespace Beagle.Daemon {
 
 					foreach (Indexable indexable in r.Indexables) {
 						bool please_add_a_new_task = false;
+						indexable.LocalState ["IndexerIndexableGenerated"] = true;
 
 						try {
 							please_add_a_new_task = PreFilterGeneratedAddHook (indexable);
@@ -966,12 +979,16 @@ namespace Beagle.Daemon {
 									Log.Debug ("Adding filter-generated indexable {0}", indexable.Uri);
 							}
 
-							// FIXME: Maybe we should use an indexable generator instead?
-							Scheduler.Task task = NewAddTask (indexable);
-							task.SubPriority = 1; // So we jump ahead of other individual tasks
-							ThisScheduler.Add (task);
-						} else
-							indexable.Cleanup ();
+						} else {
+							if (Debug)
+								Log.Debug ("Ignoring filter generated indexable {0}", indexable.Uri);
+							indexable.Type = IndexableType.Ignore;
+						}
+
+						// FIXME: Maybe we should use an indexable generator instead?
+						Scheduler.Task task = NewAddTask (indexable);
+						task.SubPriority = 1; // So we jump ahead of other individual tasks
+						ThisScheduler.Add (task);
 					}
 
 				} else if (receipts [i] is IndexerDeferredReceipt) {
