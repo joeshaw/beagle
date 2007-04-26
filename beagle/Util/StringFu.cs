@@ -282,34 +282,88 @@ namespace Beagle.Util {
 		}
 		
 		// Match strings against patterns that are allowed to contain
-		// glob-style * wildcards.
-		// This recursive implementation is not particularly efficient,
-		// and probably will fail for weird corner cases.
+		// glob-style * and ? wildcards.
 		static public bool GlobMatch (string pattern, string str)
 		{
 			if (pattern == null || str == null)
 				return false;
-
-			if (pattern == "*")
+			else if (pattern == "*")
 				return true;
-			else if (pattern.StartsWith ("**"))
-				return GlobMatch (pattern.Substring (1), str);
-			else if (str == "" && pattern != "")
+			else if (str == String.Empty && pattern != String.Empty)
 				return false;
-
-			int i = pattern.IndexOf ('*');
-			if (i == -1)
+			else if (pattern.IndexOf ('*') == -1)
 				return pattern == str;
-			else if (i > 0 && i < str.Length)
-				return pattern.Substring (0, i) == str.Substring (0, i)
-					&& GlobMatch (pattern.Substring (i), str.Substring (i));
-			else if (i == 0)
-				return GlobMatch (pattern.Substring (1), str.Substring (1))
-					|| GlobMatch (pattern.Substring (1), str)
-					|| GlobMatch (pattern, str.Substring (1));
+			else
+				return WildcardEquals (pattern, 0, str, 0);
+		}
+		
+		private const char WILDCARD_STRING = '*';
+		
+		// Copied from beagled/Lucene.Net/Search/WildcardTermEnum.cs
+		// Simple string matching algorithm with wildcards
+		// '*' matches 0 or more characters
+		private static bool WildcardEquals(System.String pattern, int patternIdx, System.String text, int stringIdx)
+		{
+			int p = patternIdx;
 			
+			for (int s = stringIdx; ; ++p, ++s) {
+				// End of string yet?
+				bool sEnd = (s >= text.Length);
+				// End of pattern yet?
+				bool pEnd = (p >= pattern.Length);
+
+				// If we're looking at the end of the string...
+				if (sEnd) {
+					// Assume the only thing left on the pattern is/are wildcards
+					bool justWildcardsLeft = true;
+					
+					// Current wildcard position
+					int wildcardSearchPos = p;
+					// While we haven't found the end of the pattern,
+					// and haven't encountered any non-wildcard characters
+					while (wildcardSearchPos < pattern.Length && justWildcardsLeft) {
+						// Check the character at the current position
+						char wildchar = pattern[wildcardSearchPos];
+						
+						// If it's not a wildcard character, then there is more
+						// pattern information after this/these wildcards.
+						if (wildchar != WILDCARD_STRING)
+							justWildcardsLeft = false;
+						else
+							// Look at the next character
+							wildcardSearchPos++;
+					}
+					
+					// This was a prefix wildcard search, and we've matched, so
+					// return true.
+					if (justWildcardsLeft) {
+						return true;
+					}
+				}
+				
+				// If we've gone past the end of the string, or the pattern,
+				// return false.
+				if (sEnd || pEnd) {
+					break;
+				}
+				
+				if (pattern[p] == WILDCARD_STRING) {
+					// Look at the character beyond the '*'.
+					++p;
+					// Examine the string, starting at the last character.
+					for (int i = text.Length; i >= s; --i) {
+						if (WildcardEquals(pattern, p, text, i)) {
+							return true;
+						}
+					}
+					break;
+				}
+				if (pattern[p] != text[s]) {
+					break;
+				}
+			}
 			return false;
-		} 
+		}
 
 		// FIXME: how do we do this operation in a culture-neutral way?
 		static public string[] SplitQuoted (string str)
