@@ -116,7 +116,6 @@ namespace Beagle.Daemon {
 			else if (indexable.ParentUri != null && indexable.ParentUri.IsFile) {
 				info.Path = indexable.ParentUri.LocalPath;
 				info.Shared = true;
-				IncrementReferenceCount (info.Path);
 			}
 
 			// The path could be null in certain cases:
@@ -137,6 +136,9 @@ namespace Beagle.Daemon {
 			}
 
 			file_info_cache [info.Uri] = info;
+			// If we are all set to authorize this indexable, increment reference count for the path
+			if (info.Shared)
+				IncrementReferenceCount (info.Path);
 
 			return true;
 		}
