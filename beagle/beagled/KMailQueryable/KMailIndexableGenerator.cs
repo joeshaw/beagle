@@ -95,7 +95,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		public Indexable GetNextIndexable ()
 		{
 			FileInfo file = (FileInfo) file_enumerator.Current;
-			return indexer.MaildirMessageToIndexable (file.FullName);
+			return indexer.MaildirMessageToIndexable (file.FullName, true);
 		}
 
 		public bool IsUpToDate (string path)
