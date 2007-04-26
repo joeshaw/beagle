@@ -77,6 +77,7 @@ namespace Beagle.Daemon {
 
 				case IndexableType.Add:
 				case IndexableType.Remove:
+				case IndexableType.Ignore:
 					// Clobber the prior indexable.
 					indexable.Id = prior.Id;
 					indexables [prior.Id - base_id] = indexable;
@@ -84,7 +85,8 @@ namespace Beagle.Daemon {
 					break;
 
 				case IndexableType.PropertyChange:
-					if (prior.Type != IndexableType.Remove) {
+					if (prior.Type != IndexableType.Remove &&
+					    prior.Type != IndexableType.Ignore) {
 						// Merge with the prior indexable.
 						prior.Merge (indexable);
 					}
