@@ -257,14 +257,14 @@ namespace Beagle.Daemon {
 				// If the indexable is generated due to an IndexerIndexable being rejected,
 				// then properly update the deferred_hash table and cleanup the indexable
 				if (indexable.Type == IndexableType.Ignore) {
-					DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
-					if (di == null) {
+					DeferredInfo ignored_di = (DeferredInfo) deferred_hash [indexable.Uri];
+					if (ignored_di == null) {
 						Log.Warn ("Could not find deferred indexable for {0}", indexable.Uri);
 					} else {
-						di.Count --;
+						ignored_di.Count --;
 						deferred_hash.Remove (indexable.Uri);
-						if (di.Count == 0)
-							deferred_queue.Add (di);
+						if (ignored_di.Count == 0)
+							deferred_queue.Add (ignored_di);
 						indexable.Cleanup ();
 					}
 
@@ -362,33 +362,40 @@ namespace Beagle.Daemon {
 						ir = new IndexerIndexablesReceipt (indexable.Uri, filter.GeneratedIndexables);
 						receipt_queue.Add (ir);
 
-						DeferredInfo di = new DeferredInfo (indexable, r, persistent_prop_doc, filter.GeneratedIndexables.Count);
+						DeferredInfo deffered_info = new DeferredInfo (indexable, r, persistent_prop_doc, filter.GeneratedIndexables.Count);
 						foreach (Indexable fi in filter.GeneratedIndexables)
-							deferred_hash [fi.Uri] = di;
+							deferred_hash [fi.Uri] = deffered_info;
 						deferred = true;
 					}
 				}
 
-				// If we haven't deferred our receipt, add it to the index.
-				if (! deferred) {
-					Logger.Log.Debug ("+{0}", indexable.DisplayUri);
-					AddDocumentToIndex (indexable, persistent_prop_doc, primary_writer, ref secondary_writer);
-					receipt_queue.Add (r);
-
-					// Lower the refcount on the deferred item, and
-					// move it into the queue to be processed if all
-					// the filter-generated indexables have been
-					// indexed.
-					DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
-					if (di != null) {
-						di.Count--;
-						deferred_hash.Remove (indexable.Uri);
-
-						if (di.Count == 0)
-							deferred_queue.Add (di);
-					}
+				// If we are deferred, continue. Do not cleanup indexable or remove text-cache yet.
+				// If we are shutdown, lucenequeryable calls
+				// indexable.Cleanup() for all deferred indexables
+				if (deferred) {
+					if (FileFilterNotifier != null)
+						FileFilterNotifier (null, null); // reset
+					continue;
 				}
-				
+
+				// If we haven't deferred our receipt, add it to the index.
+				Logger.Log.Debug ("+{0}", indexable.DisplayUri);
+				AddDocumentToIndex (indexable, persistent_prop_doc, primary_writer, ref secondary_writer);
+				receipt_queue.Add (r);
+
+				// Lower the refcount on the deferred item, and
+				// move it into the queue to be processed if all
+				// the filter-generated indexables have been
+				// indexed.
+				DeferredInfo di = (DeferredInfo) deferred_hash [indexable.Uri];
+				if (di != null) {
+					di.Count--;
+					deferred_hash.Remove (indexable.Uri);
+
+					if (di.Count == 0)
+						deferred_queue.Add (di);
+				}
+
 				if (FileFilterNotifier != null)
 					FileFilterNotifier (null, null); // reset
 

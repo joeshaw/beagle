@@ -157,6 +157,10 @@ namespace Beagle.Daemon {
 			lock (request_lock) 
 				pending_request.Cleanup ();
 
+			// Clear the deferred indexables
+			foreach (Indexable indexable in deferred_indexables.Values)
+				indexable.Cleanup ();
+				
 			try {
 				ShutdownHook ();
 			} catch (Exception ex) {
