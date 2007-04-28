@@ -40,7 +40,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[PropertyKeywordMapping (Keyword="ext", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.")]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public new bool Debug = false;
+		static public new bool Debug = true;
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
@@ -85,6 +85,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
+		// cached_uid_by_path contains the <uid,path> mapping for every new file
+		// since it is scheduled till PostAddHook (when it is confirmed that the
+		// file was added)
 		private Hashtable cached_uid_by_path = new Hashtable ();
 
 		//////////////////////////////////////////////////////////////////////////
@@ -228,10 +231,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						  bool           crawl_mode)
 		{
 			Indexable indexable;
+
 			if (path.EndsWith (".xmp")) {
 				indexable = GetXmpQueryable (path, id, parent);
-				if (indexable != null)
-					return indexable;
+				// Since this method is called with an id,
+				// someone could have registered the id before calling this method. Free the id.
+				if (indexable == null) {
+					Log.Debug ("Ignoring xmp file {0}", path);
+					ForgetId (path);
+				}
+
+				return indexable;
 			}
 
 			indexable = new Indexable (IndexableType.Add, GuidFu.ToUri (id));
@@ -252,18 +262,74 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			MergeExternalPendingIndexable (indexable);
 
+			// In crawl mode, whenever xmp file is encountered, it either schedules the basefile or notices that
+			// the basefile is already scheduled. In short, it is properly taken care of. So, during
+			// crawling, we can return the indexable created at this point instead of checking the
+			// existence of foo.xmp for each crawled file foo.
+			if (crawl_mode)
+				return indexable;
+
+			// In non-crawl mode, check if a corresponding xmp file is present and not already scheduled and index it.
+			// If file.xmp and file are rapidly written/updated (in that order), this does the right thing.
+			// If file and file.xmp are rapidly written/updated (in that order), either
+			// - file.xmp is present during FileToIndexable(file): in which case xmp properties are
+			//   added to file; and when file.xmp is indexed, it will replace the xmp properties
+			// - file.xmp is not present during FileToIndexable(file): when the xmp file is later indexed
+			//   it will add the xmp properties
+			// since the uid file will still be in the uid-cache, correct uid will be used for xmp prop-change indexable
+			string possible_xmp_file_path = string.Concat (path, ".xmp");
+			if (! File.Exists (possible_xmp_file_path))
+				return indexable;
+
+			Guid xmp_id = RegisterFile (parent, (Path.GetFileName (possible_xmp_file_path)));
+			if (xmp_id == Guid.Empty)
+				return indexable;
+
+			XmpFile xmp_file = null;
+			try {
+				xmp_file = new XmpFile (possible_xmp_file_path);
+			} catch {
+				ForgetId (possible_xmp_file_path);
+				return indexable;
+			}
+
+			// FIXME: Should also delete previous xmp properties!
+			foreach (Property p in xmp_file.Properties) {
+				p.IsMutable = true;
+				indexable.AddProperty (p);
+			}
+			xmp_file.Close ();
+
+			// Also need to save some local states for PostAddHook,
+			// namely, path to the xmp file, path to basefile and generated uid
+			indexable.LocalState ["XmpFilePath"] = possible_xmp_file_path;
+			indexable.LocalState ["BaseFilePath"] = path;
+			indexable.LocalState ["XmpGuid"] = GuidFu.ToShortString (xmp_id);
+			if (Debug)
+				Log.Debug ("Adding properties from {0}({2}) to {1}({3})", possible_xmp_file_path, path, GuidFu.ToShortString (xmp_id), GuidFu.ToShortString (id));
 			return indexable;
 		}
 
 		private Indexable GetXmpQueryable (string path, Guid id, DirectoryModel parent)
 		{
+			Log.Debug ("Asked to create xmp indexable for ({0}) {1}", GuidFu.ToShortString (id), path);
 			// Should be at least 5 characters /<...>.xmp
 			if (path.Length < 6)
 				return null;
 
-			string basefile_path = path.Substring (0, path.Length - 4);
+			string basefile_path = Path.ChangeExtension (path, null);
+			// Ignore xmp files by itself
+			// FIXME: To support indexing independent xmp files will require even greater trouble
 			if (! File.Exists (basefile_path))
 				return null;
+
+			XmpFile xmp_file = null;
+			try {
+				xmp_file = new XmpFile (path);
+			} catch {
+				Log.Warn ("Cannot create xmpfile from {0}", path);
+				return null;
+			}
 
 			// Try to get the correct uid for the basefile
 			// First we need to see if basefile is already scheduled (yet to be dispatched)
@@ -271,18 +337,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Indexable base_indexable;
 
 			if (cached_uid_by_path.Contains (basefile_path)) {
-				// basefile is waiting in the request queue waiting to be dispatch
+				// Since cached_uid_by_path contains basefile, so basefile is already scheduled
+				// Get basefile uid from there
 				Guid basefile_id = (Guid) cached_uid_by_path [basefile_path];
 				basefile_uri = GuidFu.ToUri (basefile_id);
 				Log.Debug ("{0} is already scheduled with uri {1}", basefile_path, basefile_uri);
 			} else {
 				// Basefile is not scheduled in the current batch
-				// Either it was already checked for re-indexing or it is in the queue
 				string basefile_name = Path.GetFileName (basefile_path);
+				// Try to schedule it for addition
 				base_indexable = GetCrawlingFileIndexable (parent, basefile_name);
 
 				if (base_indexable == null) {
-					// basefile need not be indexed
+					// GetCrawlingFileIndexable returns null if file does not need to be indexed
+					// So basefile is up-to-date
 					// Need to figure out id from name_resolver
 					Guid basefile_id = name_resolver.GetIdByNameAndParentId (basefile_name, parent.UniqueId);
 					basefile_uri = GuidFu.ToUri (basefile_id);
@@ -302,29 +370,34 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				}
 			}
 
-			if (Debug)
-				Log.Debug ("Adding xmp-indexable for {0} (basefile uri {1}) with uid {2}",
-					path,
-					basefile_uri,
-					GuidFu.ToShortString (id));
+			Log.Debug ("Adding xmp-indexable for {0} (basefile uri {1}) with uid {2}",
+				path,
+				basefile_uri,
+				GuidFu.ToShortString (id));
 
-			// Else, prepare a property-change indexable
 			Indexable indexable = new Indexable (IndexableType.PropertyChange, basefile_uri);
-			indexable.Timestamp = File.GetLastWriteTimeUtc (path);
+			// Set the timestamp of the indexable as the timestamp of the basefile
+			// It could have also been skipped, the original Indexable.Add would anyway have it
+			indexable.Timestamp = File.GetLastWriteTimeUtc (basefile_path);
+			indexable.DisplayUri = UriFu.PathToFileUri (path);
 
 			// If the file was somehow deleted before this point, bail out.
-			if (! FileSystem.ExistsByDateTime (indexable.Timestamp))
+			if (! FileSystem.ExistsByDateTime (indexable.Timestamp)) {
+				xmp_file.Close ();
 				return null;
+			}
 
 			// Save some local states for PostAddHook, namely, path to the xmp file, path to basefile and generated uid
 			indexable.LocalState ["XmpFilePath"] = path;
 			indexable.LocalState ["BaseFilePath"] = basefile_path;
-			indexable.LocalState ["Guid"] = GuidFu.ToShortString (id);
+			indexable.LocalState ["XmpGuid"] = GuidFu.ToShortString (id);
 
-			// FIXME: Alex, need you to supply a Util.Xmp property enumerator
-			Property p = Property.New ("foobar", "good doog unik techst");
-			p.IsMutable = true; // XMP properties always move with the basefile-"name", hence mutable
-			indexable.AddProperty (p);
+			// FIXME: Should also delete previous xmp properties!
+			foreach (Property p in xmp_file.Properties) {
+				p.IsMutable = true;
+				indexable.AddProperty (p);
+			}
+			xmp_file.Close ();
 
 			return indexable;
 		}
@@ -334,6 +407,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							DirectoryModel parent,
 							string last_known_path)
 		{
+			// FIXME
+			if (name.EndsWith (".xmp")) {
+				Log.Warn ("Renaming of xmp files is not yet supported!");
+				return null;
+			}
+
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.PropertyChange, GuidFu.ToUri (id));
 			indexable.DisplayUri = UriFu.PathToFileUri (name);
@@ -351,6 +430,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private Indexable FileRemoveIndexable (DirectoryModel dir,
 						       string         name)
 		{
+			// FIXME
+			if (name.EndsWith (".xmp")) {
+				Log.Warn ("Deleting of xmp files is not yet supported!");
+				return null;
+			}
+
 			Guid unique_id;
 			unique_id = NameAndParentToId (name, dir);
 			if (unique_id == Guid.Empty) {
@@ -359,11 +444,20 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return null;
 			}
 
+			string path = Path.Combine (dir.FullName, name);
 			Uri uri = GuidFu.ToUri (unique_id);
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Remove, uri);
-			indexable.DisplayUri = UriFu.PathToFileUri (Path.Combine (dir.FullName, name));
+			indexable.DisplayUri = UriFu.PathToFileUri (path, name);
 			indexable.LocalState ["RemovedUri"] = indexable.DisplayUri;
+
+			// While adding, wait till the files are added to index for clearing cached_uid and writing attributes
+			// For removal, do them first and then remove from index
+			ForgetId (path);
+			FileAttributesStore.Drop (path);
+			// Do the same for the corresponding xmp file
+			ForgetId (string.Concat (path, ".xmp"));
+			FileAttributesStore.Drop (string.Concat (path, ".xmp"));
 
 			return indexable;
 		}
@@ -464,18 +558,22 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private void RegisterId (string name, DirectoryModel dir, Guid id)
 		{
-			Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
+			if (Debug)
+				Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
 			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
 		}
 
 		private void ForgetId (string path)
 		{
+			if (Debug)
+				Log.Debug ("Forgetting {0}", path);
 			cached_uid_by_path.Remove (path);
 		}
 
 		// This works for files.  (It probably works for directories
 		// too, but you should use one of the more efficient means
 		// above if you know it is a directory.)
+		// This is mostly used for getting uid for deleted files
 		private Guid NameAndParentToId (string name, DirectoryModel dir)
 		{
 			string path;
@@ -1304,6 +1402,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return indexable;
 		}
 
+		// Returns Guid.Empty if already scheduled
 		public Guid RegisterFile (DirectoryModel dir, string name)
 		{
 			string path;
@@ -1323,17 +1422,33 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If path is already in the id cache, it means the file
 			// is already scheduled to be indexed
-			if (cached_uid_by_path.Contains (path))
+			if (cached_uid_by_path.Contains (path)) {
+				if (Debug)
+					Log.Debug ("Cache contains {0}", path);
 				return Guid.Empty;
+			}
 
 			// If this file already has extended attributes,
 			// make sure that the name matches the file
 			// that is in the index.  If not, it could be
 			// a copy of an already-indexed file and should
 			// be assigned a new unique id.
+			// However, xmp files are never written to the index and so
+			// need not be matched with the index.
 			Guid unique_id = Guid.Empty;
-			FileAttributes attr;
-			attr = FileAttributesStore.Read (path);
+			FileAttributes attr = null;
+
+			// Guid for xmp file is only written to the attributes and not to the index.
+			// However, if sqlite is used, creating a new guid will result in multiple id for same file.
+			// Again if xattr is used, copying xmp files would create different files with same id.
+			// So, everytime create a new guid for any xmp file and delete the old attribute.
+			// I know, I know, its a horrible hack.
+			if (name.EndsWith (".xmp")) {
+				FileAttributesStore.Drop (path);
+			} else {
+				attr = FileAttributesStore.Read (path);
+			}
+
 			if (attr != null) {
 				LuceneNameResolver.NameInfo info;
 				info = name_resolver.GetNameInfoById (attr.UniqueId);
@@ -1593,19 +1708,26 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string xmpfile_path = (string) indexable.LocalState ["XmpFilePath"];
 			if (xmpfile_path != null) {
 				// Get the uid of the xmp file
-				string xmp_id_string = (string) indexable.LocalState ["Guid"];
+				string xmp_id_string = (string) indexable.LocalState ["XmpGuid"];
 				Guid xmp_id = GuidFu.FromShortString (xmp_id_string);
 
 				FileAttributes xmp_attr;
 				xmp_attr = FileAttributesStore.ReadOrCreate (xmpfile_path, xmp_id);
 				xmp_attr.Path = xmpfile_path;
-				xmp_attr.LastWriteTime = indexable.Timestamp;
+				// Potential race here, attr->LastWriteTime should really be the last write
+				// time as seen when this indexable was added
+				xmp_attr.LastWriteTime = File.GetLastWriteTimeUtc (xmpfile_path);
+
+				// Add filter information, otherwise the xmp file will be indexed on each recrawl
+				xmp_attr.FilterName = XmpFile.FilterName;
+				xmp_attr.FilterVersion = XmpFile.FilterVersion;
 
 				// Write file attributes for xmp file
 				if (Debug)
-					Log.Debug ("Writing attributes for {0}", xmpfile_path);
+					Log.Debug ("Writing attributes for xmp {0}({1})", xmpfile_path, xmp_id_string);
 
 				FileAttributesStore.Write (xmp_attr);
+				ForgetId (xmpfile_path);
 			}
 
 			if (indexable.Type == IndexableType.PropertyChange) {
@@ -1629,8 +1751,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					// Get the correct uri for notifications
 					string basefile_path = (string) indexable.LocalState ["BaseFilePath"];
 					remapped_uri = UriFu.PathToFileUri (basefile_path);
-
-					ForgetId (xmpfile_path);
 				}
 
 				return remapped_uri;
@@ -1685,7 +1805,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			external_uri = indexable.LocalState ["RemovedUri"] as Uri;
 			if (external_uri == null)
 				throw new Exception ("No cached external Uri for " + indexable.Uri);
-			ForgetId (external_uri.LocalPath);
 
 			// Return the remapped uri
 			return external_uri;
