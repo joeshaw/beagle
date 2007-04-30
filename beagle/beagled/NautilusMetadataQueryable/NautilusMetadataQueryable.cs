@@ -43,9 +43,8 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 
 		private string nautilus_dir;
 		private FileSystemQueryable.FileSystemQueryable target_queryable;
-		private FileAttributesStore fa_store;
 
-		public NautilusMetadataQueryable () : base ("Files")
+		public NautilusMetadataQueryable ()
 		{
 			nautilus_dir = Path.Combine (Path.Combine (PathFinder.HomeDir, ".nautilus"), "metafiles");
 		}
@@ -55,40 +54,11 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
                         base.Start ();
 
 			// The FSQ
-			this.target_queryable = (FileSystemQueryable.FileSystemQueryable) TargetQueryable.IQueryable;
+			Queryable queryable = QueryDriver.GetQueryable ("Files");
+			this.target_queryable = (FileSystemQueryable.FileSystemQueryable) queryable.IQueryable;
 
-			string storage_path = Path.Combine (PathFinder.IndexDir, "NautilusMetadata");
-			string fingerprint_file = Path.Combine (storage_path, "fingerprint");
-			string fingerprint;
-
-			if (! Directory.Exists (storage_path)) {
-				Directory.CreateDirectory (storage_path);
-				fingerprint = GuidFu.ToShortString (Guid.NewGuid ());
-				StreamWriter writer = new StreamWriter (fingerprint_file);
-				writer.WriteLine (fingerprint);
-				writer.Close ();
-			} else {
-				StreamReader reader = new StreamReader (fingerprint_file);
-				fingerprint = reader.ReadLine ();
-				reader.Close ();
-			}
-
-			string fsq_fingerprint = this.target_queryable.IndexFingerprint;
-
-			IFileAttributesStore ifa_store;
-
-			if (ExtendedAttribute.Supported)
-				ifa_store = new FileAttributesStore_ExtendedAttribute (fingerprint + "-" + fsq_fingerprint);
-			else {
-				string path = Path.Combine (PathFinder.IndexDir, "NautilusMetadata");
-
-				if (! Directory.Exists (path))
-					Directory.CreateDirectory (path); 
-
-				ifa_store = new FileAttributesStore_Sqlite (path, fingerprint + "-" + fsq_fingerprint);
-			}
-
-			fa_store = new FileAttributesStore (ifa_store);
+			string fsq_fingerprint = target_queryable.IndexFingerprint;
+			InitFileAttributesStore ("NautilusMetadata", fsq_fingerprint);
 
 			if (! Directory.Exists (nautilus_dir))
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
@@ -185,7 +155,7 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 			DateTime last_checked = DateTime.MinValue;
 
 			FileAttributes attr;
-			attr = fa_store.Read (file);
+			attr = FileAttributesStore.Read (file);
 			if (attr != null)
 				last_checked = attr.LastWriteTime;
 
@@ -219,7 +189,7 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 					return true;
 				else {
 					metadata = null;
-					fa_store.AttachLastWriteTime ((string) metafiles.Current, DateTime.UtcNow);
+					FileAttributesStore.AttachLastWriteTime ((string) metafiles.Current, DateTime.UtcNow);
 				}
 			}
 
@@ -232,7 +202,7 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 
 				string file = (string) metafiles.Current;
 
-				if (fa_store.IsUpToDate (file))
+				if (FileAttributesStore.IsUpToDate (file))
 					continue;
 
 				metadata = NautilusTools.GetMetadata ((string) metafiles.Current).GetEnumerator ();
@@ -241,7 +211,7 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 					return true;
 				else {
 					metadata = null;
-					fa_store.AttachLastWriteTime (file, DateTime.UtcNow);
+					FileAttributesStore.AttachLastWriteTime (file, DateTime.UtcNow);
 				}
 			}
 

@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -38,16 +39,10 @@ namespace Beagle.Daemon {
 	// existing backends.
 	public abstract class ExternalMetadataQueryable : IQueryable {
 
-		private string target_name;
-		private Queryable target;
+		private FileAttributesStore fa_store;
 
-		public ExternalMetadataQueryable (string target_name)
+		public ExternalMetadataQueryable ()
 		{
-			this.target_name = target_name;
-		}
-
-		protected Queryable TargetQueryable {
-			get { return target; }
 		}
 
 		public Scheduler ThisScheduler {
@@ -56,7 +51,6 @@ namespace Beagle.Daemon {
 
 		public virtual void Start ()
 		{
-			this.target = QueryDriver.GetQueryable (target_name);
 		}
 
 		public bool AcceptQuery (Query query)
@@ -85,6 +79,44 @@ namespace Beagle.Daemon {
 			status.IsIndexing = false;
 
 			return status;
+		}
+
+		protected FileAttributesStore FileAttributesStore {
+			get { return fa_store; }
+		}				
+				
+		protected void InitFileAttributesStore (string name, string external_fingerprint)
+		{
+			string storage_path = Path.Combine (PathFinder.IndexDir, name);
+			string fingerprint_file = Path.Combine (storage_path, "fingerprint");
+			string internal_fingerprint;
+
+			if (! Directory.Exists (storage_path)) {
+				Directory.CreateDirectory (storage_path);
+				internal_fingerprint = GuidFu.ToShortString (Guid.NewGuid ());
+				StreamWriter writer = new StreamWriter (fingerprint_file);
+				writer.WriteLine (internal_fingerprint);
+				writer.Close ();
+			} else {
+				StreamReader reader = new StreamReader (fingerprint_file);
+				internal_fingerprint = reader.ReadLine ();
+				reader.Close ();
+			}
+
+			string fingerprint;
+			if (external_fingerprint != null)
+				fingerprint = internal_fingerprint + "-" + external_fingerprint;
+			else
+				fingerprint = internal_fingerprint;
+
+			IFileAttributesStore ifa_store;
+
+			if (ExtendedAttribute.Supported)
+				ifa_store = new FileAttributesStore_ExtendedAttribute (fingerprint);
+			else
+				ifa_store = new FileAttributesStore_Sqlite (storage_path, fingerprint);
+
+			fa_store = new FileAttributesStore (ifa_store);
 		}
 	}
 }

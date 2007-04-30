@@ -176,6 +176,11 @@ namespace Beagle.Daemon {
 			return true;
 		}
 
+		virtual public bool HasUri (Uri uri)
+		{
+			return Driver.HasUri (uri);
+		}
+
 		/////////////////////////////////////////
 
 		virtual protected bool HitIsValid (Uri uri)

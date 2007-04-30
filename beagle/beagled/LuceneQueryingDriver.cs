@@ -108,6 +108,31 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		public bool HasUri (Uri uri)
+		{
+			IndexReader primary_reader;
+			primary_reader = LuceneCommon.GetReader (PrimaryStore);
+
+			Term term;
+			term = new Term ("Uri", UriFu.UriToEscapedString (uri));
+
+			TermDocs term_docs;
+			term_docs = primary_reader.TermDocs ();
+			term_docs.Seek (term);
+
+			bool has_uri = false;
+
+			if (term_docs.Next ())
+				has_uri = true;
+
+			term_docs.Close ();
+			LuceneCommon.ReleaseReader (primary_reader);
+
+			return has_uri;
+		}
+
+		////////////////////////////////////////////////////////////////
+
 		// Returns the lowest matching score before the results are
 		// truncated.
 		public void DoQuery (Query               query,

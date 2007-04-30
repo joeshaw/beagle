@@ -1938,6 +1938,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
+		override public bool HasUri (Uri uri)
+		{
+			Uri internal_uri = ExternalToInternalUri (uri);
+
+			if (internal_uri == null)
+				return false;
+
+			return base.HasUri (internal_uri);
+		}
+
 		// Remap uri in querypart_uri
 		private void RemapQueryParts (ICollection parts)
 		{
