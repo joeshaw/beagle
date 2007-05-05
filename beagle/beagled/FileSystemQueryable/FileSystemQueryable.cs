@@ -76,20 +76,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private ArrayList roots = new ArrayList ();
 		private ArrayList roots_by_path = new ArrayList ();
 
+		private UidManager uid_manager;
+
 		private FileNameFilter filter;
 		
-		// This is just a copy of the LuceneQueryable's QueryingDriver
-		// cast into the right type for doing internal->external Uri
-		// lookups.
-		private LuceneNameResolver name_resolver;
-
-		//////////////////////////////////////////////////////////////////////////
-
-		// cached_uid_by_path contains the <uid,path> mapping for every new file
-		// since it is scheduled till PostAddHook (when it is confirmed that the
-		// file was added)
-		private Hashtable cached_uid_by_path = new Hashtable ();
-
 		//////////////////////////////////////////////////////////////////////////
 
 		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
@@ -115,7 +105,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			removal_generator = new RemovalGenerator (this);
 			addition_generator = new AdditionGenerator (this);
 
-			name_resolver = (LuceneNameResolver) Driver;
+			uid_manager = new UidManager (FileAttributesStore, Driver);
+
 			PreloadDirectoryNameInfo ();
 
 			// Setup our file-name filter
@@ -238,7 +229,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// someone could have registered the id before calling this method. Free the id.
 				if (indexable == null) {
 					Log.Debug ("Ignoring xmp file {0}", path);
-					ForgetId (path);
+					uid_manager.ForgetNewId (path);
 				}
 
 				return indexable;
@@ -289,7 +280,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				xmp_file = new XmpFile (possible_xmp_file_path);
 			} catch {
-				ForgetId (possible_xmp_file_path);
+				uid_manager.ForgetNewId (possible_xmp_file_path);
 				return indexable;
 			}
 
@@ -336,10 +327,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri basefile_uri = null;
 			Indexable base_indexable;
 
-			if (cached_uid_by_path.Contains (basefile_path)) {
-				// Since cached_uid_by_path contains basefile, so basefile is already scheduled
+			if (uid_manager.HasNewId (basefile_path)) {
+				// Since uid_manager has a new id for this basefile, so basefile is already scheduled
 				// Get basefile uid from there
-				Guid basefile_id = (Guid) cached_uid_by_path [basefile_path];
+				Guid basefile_id = uid_manager.GetNewId (basefile_path);
 				basefile_uri = GuidFu.ToUri (basefile_id);
 				Log.Debug ("{0} is already scheduled with uri {1}", basefile_path, basefile_uri);
 			} else {
@@ -351,8 +342,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (base_indexable == null) {
 					// GetCrawlingFileIndexable returns null if file does not need to be indexed
 					// So basefile is up-to-date
-					// Need to figure out id from name_resolver
-					Guid basefile_id = name_resolver.GetIdByNameAndParentId (basefile_name, parent.UniqueId);
+					// Need to figure out id from uid manager
+					Guid basefile_id = uid_manager.GetIdByNameAndParentId (basefile_name, parent.UniqueId);
 					basefile_uri = GuidFu.ToUri (basefile_id);
 					Log.Debug ("{0} is not scheduled and need not be, uri is {1}", basefile_path, basefile_uri);
 				} else {
@@ -437,7 +428,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			Guid unique_id;
-			unique_id = NameAndParentToId (name, dir);
+			unique_id = uid_manager.NameAndParentToId (name, dir);
 			if (unique_id == Guid.Empty) {
 				Log.Info ("Could not resolve unique id of '{0}' in '{1}' for removal -- it is probably already gone",
 					  name, dir.FullName);
@@ -453,10 +444,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// While adding, wait till the files are added to index for clearing cached_uid and writing attributes
 			// For removal, do them first and then remove from index
-			ForgetId (path);
+			uid_manager.ForgetNewId (path);
 			FileAttributesStore.Drop (path);
 			// Do the same for the corresponding xmp file
-			ForgetId (string.Concat (path, ".xmp"));
+			uid_manager.ForgetNewId (string.Concat (path, ".xmp"));
 			FileAttributesStore.Drop (string.Concat (path, ".xmp"));
 
 			return indexable;
@@ -476,7 +467,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void PreloadDirectoryNameInfo ()
 		{
 			ICollection all;
-			all = name_resolver.GetAllDirectoryNameInfo ();
+			all = uid_manager.GetAllDirectoryNameInfo ();
 			foreach (LuceneNameResolver.NameInfo info in all)
 				name_info_by_id [info.Id] = info;
 		}
@@ -541,7 +532,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If not, try to pull name information out of the index.
 			LuceneNameResolver.NameInfo info;
-			info = name_resolver.GetNameInfoById (id);
+			info = uid_manager.GetNameInfoById (id);
 			if (info == null)
 				return null;
 			return ToFullPath (info.Name, info.ParentId);
@@ -550,42 +541,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private string UniqueIdToFileName (Guid id)
 		{
 			LuceneNameResolver.NameInfo info;
-			info = name_resolver.GetNameInfoById (id);
+			info = uid_manager.GetNameInfoById (id);
 			if (info == null)
 				return null;
 			return info.Name;
-		}
-
-		private void RegisterId (string name, DirectoryModel dir, Guid id)
-		{
-			if (Debug)
-				Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
-			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
-		}
-
-		private void ForgetId (string path)
-		{
-			if (Debug)
-				Log.Debug ("Forgetting {0}", path);
-			cached_uid_by_path.Remove (path);
-		}
-
-		// This works for files.  (It probably works for directories
-		// too, but you should use one of the more efficient means
-		// above if you know it is a directory.)
-		// This is mostly used for getting uid for deleted files
-		private Guid NameAndParentToId (string name, DirectoryModel dir)
-		{
-			string path;
-			path = Path.Combine (dir.FullName, name);
-
-			Guid unique_id;
-			if (cached_uid_by_path.Contains (path))
-				unique_id = (Guid) cached_uid_by_path [path];
-			else
-				unique_id = name_resolver.GetIdByNameAndParentId (name, dir.UniqueId);
-
-			return unique_id;
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1378,7 +1337,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 			// Store the id in the cache, useful for xmp sidecars
 			// This nice table of path<->id should be more useful ! How ?
-			RegisterId (name, dir, unique_id);
+			uid_manager.RegisterNewId (name, dir, unique_id);
 
 			Indexable indexable = null;
 
@@ -1422,7 +1381,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			// If path is already in the id cache, it means the file
 			// is already scheduled to be indexed
-			if (cached_uid_by_path.Contains (path)) {
+			if (uid_manager.HasNewId (path)) {
 				if (Debug)
 					Log.Debug ("Cache contains {0}", path);
 				return Guid.Empty;
@@ -1451,7 +1410,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (attr != null) {
 				LuceneNameResolver.NameInfo info;
-				info = name_resolver.GetNameInfoById (attr.UniqueId);
+				info = uid_manager.GetNameInfoById (attr.UniqueId);
 				if (info != null
 				    && info.Name == name
 				    && info.ParentId == dir.UniqueId)
@@ -1461,7 +1420,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (unique_id == Guid.Empty)
 				unique_id = Guid.NewGuid ();
 
-			RegisterId (name, dir, unique_id);
+			uid_manager.RegisterNewId (name, dir, unique_id);
 			
 			return unique_id;
 		}
@@ -1529,7 +1488,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// assumptions about whether they follow around the
 			// file (EAs) or the path (sqlite)...
 			Guid unique_id;
-			unique_id = NameAndParentToId (old_name, old_dir);
+			unique_id = uid_manager.NameAndParentToId (old_name, old_dir);
 			if (unique_id == Guid.Empty) {
 				// If we can't find the unique ID, we have to
 				// assume that the original file never made it
@@ -1539,12 +1498,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 			}
 
-			RegisterId (new_name, new_dir, unique_id);
+			uid_manager.RegisterNewId (new_name, new_dir, unique_id);
 
 			string old_path;
 			old_path = Path.Combine (old_dir.FullName, old_name);
 
-			ForgetId (old_path);
+			uid_manager.ForgetNewId (old_path);
 
 			// FIXME: I think we need to be more conservative when we seen
 			// events in a directory that has not been fully scanned, just to
@@ -1727,7 +1686,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					Log.Debug ("Writing attributes for xmp {0}({1})", xmpfile_path, xmp_id_string);
 
 				FileAttributesStore.Write (xmp_attr);
-				ForgetId (xmpfile_path);
+				uid_manager.ForgetNewId (xmpfile_path);
 			}
 
 			if (indexable.Type == IndexableType.PropertyChange) {
@@ -1746,7 +1705,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 					// This rename is now in the index, so we no
 					// longer need to keep track of the uid in memory.
-					ForgetId (last_known_path);
+					uid_manager.ForgetNewId (last_known_path);
 				} else if (xmpfile_path != null) {
 					// Get the correct uri for notifications
 					string basefile_path = (string) indexable.LocalState ["BaseFilePath"];
@@ -1762,7 +1721,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (Debug)
 				Log.Debug ("PostAddHook for {0} ({1})", indexable.Uri, path);
 
-			ForgetId (path);
+			uid_manager.ForgetNewId (path);
 
 			DirectoryModel parent;
 			parent = indexable.LocalState ["Parent"] as DirectoryModel;

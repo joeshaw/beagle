@@ -1,5 +1,5 @@
 //
-// LuceneNameResolver.cs
+// InternalUriManager.cs
 //
 // Copyright (C) 2005-2007 Novell, Inc.
 //
@@ -268,4 +268,87 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return match_list;
 		}
 	}
+
+	// This class knows how to get/set internal uris.
+	//
+	public class UidManager {
+		private FileAttributesStore fa_store;
+		// This is just a copy of the LuceneQueryable's QueryingDriver
+		// cast into the right type for doing internal->external Uri
+		// lookups.
+		private LuceneNameResolver name_resolver;
+
+		public UidManager (FileAttributesStore fa_store,
+				   LuceneQueryingDriver driver)
+		{
+			this.fa_store = fa_store;
+			this.name_resolver = (LuceneNameResolver) driver;
+		}
+
+		////////////////////////////////////////////////////////////////////////
+
+		// cached_uid_by_path contains the <uid,path> mapping for every new file
+		// since it is scheduled till PostAddHook (when it is confirmed that the
+		// file was added)
+		private Hashtable cached_uid_by_path = new Hashtable ();
+
+		internal bool HasNewId (string path) {
+			return cached_uid_by_path.Contains (path);
+		}
+
+		internal Guid GetNewId (string path) {
+			return (Guid) cached_uid_by_path [path];
+		}
+
+		internal void RegisterNewId (string name, DirectoryModel dir, Guid id)
+		{
+			Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
+			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
+		}
+
+		internal void ForgetNewId (string path)
+		{
+			Log.Debug ("Forgetting {0}", path);
+			cached_uid_by_path.Remove (path);
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+
+		internal Guid GetIdByNameAndParentId (string name, Guid parent_id)
+		{
+			return name_resolver.GetIdByNameAndParentId (name, parent_id);
+		}
+
+		// This works for files.  (It probably works for directories
+		// too, but you should use one of the more efficient means
+		// above if you know it is a directory.)
+		// This is mostly used for getting uid for deleted files
+		internal Guid NameAndParentToId (string name, DirectoryModel dir)
+		{
+			string path;
+			path = Path.Combine (dir.FullName, name);
+
+			Guid unique_id;
+			if (cached_uid_by_path.Contains (path))
+				unique_id = (Guid) cached_uid_by_path [path];
+			else
+				unique_id = name_resolver.GetIdByNameAndParentId (name, dir.UniqueId);
+
+			return unique_id;
+		}
+
+		internal LuceneNameResolver.NameInfo GetNameInfoById (Guid id)
+		{
+			return name_resolver.GetNameInfoById (id);
+		}
+
+		///////////////////////////////////////////////////////////////////////////////
+
+		internal ICollection GetAllDirectoryNameInfo ()
+		{
+			return name_resolver.GetAllDirectoryNameInfo ();
+		}
+
+	}
 }
+
