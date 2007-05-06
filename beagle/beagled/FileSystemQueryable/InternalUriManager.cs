@@ -290,6 +290,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// cached_uid_by_path contains the <uid,path> mapping for every new file
 		// since it is scheduled till PostAddHook (when it is confirmed that the
 		// file was added)
+		// FIXME: Replace Hashtable by Dictionary<string,Guid>
 		private Hashtable cached_uid_by_path = new Hashtable ();
 
 		internal bool HasNewId (string path) {
@@ -297,7 +298,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		internal Guid GetNewId (string path) {
-			return (Guid) cached_uid_by_path [path];
+			if (cached_uid_by_path.Contains (path))
+				return (Guid) cached_uid_by_path [path];
+			else
+				return Guid.Empty;
 		}
 
 		internal void RegisterNewId (string name, DirectoryModel dir, Guid id)
@@ -310,6 +314,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			Log.Debug ("Forgetting {0}", path);
 			cached_uid_by_path.Remove (path);
+		}
+
+		internal Guid ReadOrCreateNewId (string path)
+		{
+			if (cached_uid_by_path.Contains (path))
+				return (Guid) cached_uid_by_path [path];
+
+			Guid new_guid = Guid.NewGuid ();
+			cached_uid_by_path [path] = new_guid;
+			return new_guid;
 		}
 
 		//////////////////////////////////////////////////////////////////////////

@@ -1191,15 +1191,23 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Forget
 		}
 
+		// Finds what to do with the file and if re-indexing is needed, what id to use
+		// During crawling, this is the sole method that finds the right id for a file based on its status, so
+		// it might make sense to make this thread safe so that asynchronos inotify events
+		// cannot cause any race.
 		private RequiredAction DetermineRequiredAction (DirectoryModel dir,
 								string         name,
-								FileAttributes attr,
+								out Guid       id,
 								out string     last_known_path)
 		{
 			last_known_path = null;
+			id = Guid.Empty;
 
 			string path;
 			path = Path.Combine (dir.FullName, name);
+
+			FileAttributes attr;
+			attr = FileAttributesStore.Read (path);
 
 			if (Debug)
 				Logger.Log.Debug ("*** What should we do with {0}?", path);
@@ -1218,11 +1226,39 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return RequiredAction.None;
 			}
 
+			// If someone touches a file just before GetCrawlingFileIndexable gets to it,
+			// then the file has been already added to the indexer_request but attr is null.
+			// Though a waste, the simplest thing to do is to just add another indexable.
+			// The two indexables will be merged if the previous one has not been sent to
+			// the index-helper yet. Such races are rare and it is not worth the effort
+			// to try to handle it better.
 			if (attr == null) {
 				if (Debug)
 					Logger.Log.Debug ("*** Index it: File has no attributes");
+				id = uid_manager.ReadOrCreateNewId (path);
 				return RequiredAction.Index;
 			}
+
+			// If the id for this file is not yet registered, use the id stored in the attribute
+			id = uid_manager.GetNewId (path);
+			if (id == Guid.Empty) {
+				id = attr.UniqueId;
+			} else {
+				// If id does not match the attribute id, then definitely this file needs to be
+				// re-indexed.
+				// There are two ways the id of this file could get stored in uid_manager
+				// 1. There was a corresponding xmp file and while adding it, it was determined
+				// that this file should have a new id.
+				// 2. This file was touched just before GetCrawlingFileIndexable reached it. Again,
+				// RegisterFile() decided this file should have a new id.
+				if (id != attr.UniqueId) {
+					if (Debug)
+						Logger.Log.Debug ("*** Index it: File has a different id in attribute");
+					return RequiredAction.Index;
+				}
+			}
+
+			// So at this point, id = attr.UniqueId
 
 			// If this was not indexed before, try again
 			if (! attr.HasFilterInfo)
@@ -1266,11 +1302,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// (Thus touching & then immediately renaming a file can
 				// cause its unique id to change, which is less than
 				// optimal but probably can't be helped.)
-				last_known_path = UniqueIdToFullPath (attr.UniqueId);
+				last_known_path = UniqueIdToFullPath (id);
 				if (path != last_known_path) {
 					if (Debug)
 						Logger.Log.Debug ("*** Name has also changed, assigning new unique id");
-					attr.UniqueId = Guid.NewGuid ();
+					id = uid_manager.ReadOrCreateNewId (path);
 				}
 				
 				return RequiredAction.Index;
@@ -1288,7 +1324,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						DateTimeUtil.ToString (attr.LastAttrTime),
 						DateTimeUtil.ToString (last_attr_time));
 
-				last_known_path = UniqueIdToFullPath (attr.UniqueId);
+				last_known_path = UniqueIdToFullPath (id);
 
 				if (last_known_path == null) {
 					if (Debug)
@@ -1319,25 +1355,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string path;
 			path = Path.Combine (dir.FullName, name);
 
-			FileAttributes attr;
-			attr = FileAttributesStore.Read (path);
-			
 			RequiredAction action;
 			string last_known_path;
-			action = DetermineRequiredAction (dir, name, attr, out last_known_path);
+			Guid unique_id;
+			action = DetermineRequiredAction (dir, name, out unique_id, out last_known_path);
 
 			if (action == RequiredAction.None)
 				return null;
-
-			Guid unique_id;
-			if (attr != null)
-				unique_id = attr.UniqueId;
-			else
-				unique_id = Guid.NewGuid ();
-			
-			// Store the id in the cache, useful for xmp sidecars
-			// This nice table of path<->id should be more useful ! How ?
-			uid_manager.RegisterNewId (name, dir, unique_id);
 
 			Indexable indexable = null;
 
@@ -1425,41 +1449,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return unique_id;
 		}
 
-		public void AddFile (DirectoryModel dir, string name)
-		{
-			Guid unique_id;
-			unique_id = RegisterFile (dir, name);
-
-			if (unique_id == Guid.Empty)
-				return;
-			
-			string path = Path.Combine (dir.FullName, name);
-
-			Indexable indexable;
-			indexable = FileToIndexable (path, unique_id, dir, false);
-
-			if (indexable != null) {
-				Scheduler.Task task;
-				task = NewAddTask (indexable);
-				task.Priority = Scheduler.Priority.Immediate;
-				ThisScheduler.Add (task);
-			}
-		}
-
-		public void RemoveFile (DirectoryModel dir, string name)
-		{
-			// FIXME: We might as well remove it, even if it was being ignore.
-			// Right?
-
-			Indexable indexable;
-			indexable = FileRemoveIndexable (dir, name);
-
-			Scheduler.Task task;
-			task = NewAddTask (indexable);
-			task.Priority = Scheduler.Priority.Immediate;
-			ThisScheduler.Add (task);
-		}
-
 		public void MoveFile (DirectoryModel old_dir, string old_name,
 				      DirectoryModel new_dir, string new_name)
 		{
@@ -1474,12 +1463,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// action.
 
 			if (old_ignore && ! new_ignore) {
-				AddFile (new_dir, new_name);
+				addition_generator.Add (new_dir, new_name);
 				return;
 			}
 
 			if (! old_ignore && new_ignore) {
-				RemoveFile (new_dir, new_name);
+				removal_generator.Add (new_dir.FullName, new_name);
 				return;
 			}
 
@@ -1494,7 +1483,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// assume that the original file never made it
 				// into the index ---  thus we treat this as
 				// an Add.
-				AddFile (new_dir, new_name);
+				addition_generator.Add (new_dir, new_name);
 				return;
 			}
 
