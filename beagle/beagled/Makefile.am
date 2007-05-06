@@ -289,7 +289,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/FileCrawlTask.cs			\
 	$(fsqueryabledir)/DirectoryIndexableGenerator.cs	\
 	$(fsqueryabledir)/FileNameFilter.cs			\
-	$(fsqueryabledir)/LuceneNameResolver.cs			\
+	$(fsqueryabledir)/InternalUriManager.cs			\
 	$(fsqueryabledir)/FileSystemQueryable.cs		\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
 	$(fsqueryabledir)/InotifyBackend.cs			\
