@@ -304,7 +304,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private Indexable GetXmpQueryable (string path, Guid id, DirectoryModel parent)
 		{
 			Log.Debug ("Asked to create xmp indexable for ({0}) {1}", GuidFu.ToShortString (id), path);
-			// Should be at least 5 characters /<...>.xmp
+			// Should be at least 6 characters /<...>.xmp
 			if (path.Length < 6)
 				return null;
 
@@ -460,6 +460,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		//
 
 		private Hashtable dir_models_by_id = new Hashtable ();
+		// LEAK in name_info_by_id, directories that are present in Lucene,
+		// but not actually present in file system will still be there in name_info_by_id.
+		// I think (1) after crawling is over, the remaining directories can be
+		// used to remove deleted files and dirs from the index
+		// and (2) then, the hashtable could be cleared
 		private Hashtable name_info_by_id = new Hashtable ();
 
 		// We fall back to using the name information in the index
