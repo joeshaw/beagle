@@ -294,7 +294,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 	$(fsqueryabledir)/IFileEventBackend.cs			\
 	$(fsqueryabledir)/InotifyBackend.cs			\
 	$(fsqueryabledir)/NullFileEventBackend.cs		\
-	$(fsqueryabledir)/XmpFile.cs
+	$(fsqueryabledir)/XmpSidecarStore.cs
 
 
 
