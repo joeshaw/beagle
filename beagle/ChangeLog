@@ -1,4 +1,679 @@
 ------------------------------------------------------------------------
+r3697 | joeshaw | 2007-05-08 15:09:07 -0400 (Tue, 08 May 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/configure.in
+
+Bump version number to 0.2.17
+------------------------------------------------------------------------
+r3696 | joeshaw | 2007-05-08 14:51:19 -0400 (Tue, 08 May 2007) | 2 lines
+Changed paths:
+   M /branches/beagle-0.2.16/po/ar.po
+   M /branches/beagle-0.2.16/po/ca.po
+   M /branches/beagle-0.2.16/po/cs.po
+   M /branches/beagle-0.2.16/po/de.po
+   M /branches/beagle-0.2.16/po/dz.po
+   M /branches/beagle-0.2.16/po/en_GB.po
+   M /branches/beagle-0.2.16/po/es.po
+   M /branches/beagle-0.2.16/po/fi.po
+   M /branches/beagle-0.2.16/po/fr.po
+   M /branches/beagle-0.2.16/po/gl.po
+   M /branches/beagle-0.2.16/po/hu.po
+   M /branches/beagle-0.2.16/po/it.po
+   M /branches/beagle-0.2.16/po/ja.po
+   M /branches/beagle-0.2.16/po/mk.po
+   M /branches/beagle-0.2.16/po/nb.po
+   M /branches/beagle-0.2.16/po/pa.po
+   M /branches/beagle-0.2.16/po/pl.po
+   M /branches/beagle-0.2.16/po/pt_BR.po
+   M /branches/beagle-0.2.16/po/ru.po
+   M /branches/beagle-0.2.16/po/sv.po
+   M /branches/beagle-0.2.16/po/zh_CN.po
+   M /branches/beagle-0.2.16/po/zh_TW.po
+
+Move the upstream po files back onto the branch, and update
+them from the trunk
+------------------------------------------------------------------------
+r3695 | dbera | 2007-05-08 13:27:36 -0400 (Tue, 08 May 2007) | 2 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/LuceneIndexingDriver.cs
+
+Merge from trunk: r3694: Set IndexReader to null to ensure faster collection.
+
+------------------------------------------------------------------------
+r3693 | dbera | 2007-05-08 12:58:18 -0400 (Tue, 08 May 2007) | 24 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/BeagleDaemon.cs
+   M /branches/beagle-0.2.16/beagled/BuildIndex.cs
+   M /branches/beagle-0.2.16/beagled/EvolutionMailQueryable/EvolutionSummaryTracker.cs
+   M /branches/beagle-0.2.16/beagled/KMailQueryable/KMailIndexableGenerator.cs
+   M /branches/beagle-0.2.16/beagled/KMailQueryable/KMailIndexer.cs
+   M /branches/beagle-0.2.16/beagled/Lucene.Net/Store/FSDirectory.cs
+   A /branches/beagle-0.2.16/beagled/Lucene.Net/upstream-changes/27_lockfile_delete_use_syscall.patch (from /trunk/beagle/beagled/Lucene.Net/upstream-changes/27_lockfile_delete_use_syscall.patch:3685)
+   M /branches/beagle-0.2.16/beagled/LuceneCommon.cs
+   M /branches/beagle-0.2.16/beagled/LuceneQueryable.cs
+   M /branches/beagle-0.2.16/beagled/QueryResult.cs
+   M /branches/beagle-0.2.16/beagled/wrapper.in
+
+Merge from trunk:beagled/
+(Leaving out the major ones)
+
+r3531: Call SetProcessName() in beagle-extract-content
+r3560: Always use the LuceneQueryingDriver's item count in
+LuceneQueryable.GetQueryableStatus().  It refreshes its IndexReader if
+it's out of date, so it always has a fresh view of the index, and
+doesn't start an index helper process.
+r3561: Always use the LuceneQueryingDriver's item count in
+LuceneQueryable.GetQueryableStatus().  It refreshes its IndexReader if
+it's out of date, so it always has a fresh view of the index, and
+doesn't start an index helper process.
+r3599: Remove Mono's --debug from the default wrapper in the beagled directory, so that things like beagle-build-index use less memory.  It can still be passed in through the MONO_EXTRA_ARGS environment variable.
+r3644: Lower the CPU priority for the main daemon process a little, for cases where it gets a little CPU-hungry
+r3638, r3645: Verify the index before purging.
+r3648: Print some info out during a beagle-build-index run
+r3660: Handle invalid content in the index version file.
+r3667: Fix an exception that could occur when trying to index mails from an
+Evolution IMAP folder with a comma.  bgo #432417, lp #108957
+r3670: Set Indexable.Crawled to false for new messages to reduce thrasing.
+r3672: Remove the separate crawler thread from BuildIndex. Do the crawling and indexing in the same thread, indexing files as and when they are found during crawling.
+r3685: Use Mono.Posix native file delete method instead of System.IO.File.Delete.
+
+
+------------------------------------------------------------------------
+r3692 | dbera | 2007-05-08 12:31:11 -0400 (Tue, 08 May 2007) | 11 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Util/FileSystem.cs
+   M /branches/beagle-0.2.16/Util/StringFu.cs
+   M /branches/beagle-0.2.16/Util/XmlFu.cs
+
+Merge from trunk:Util/
+
+r3519: When serializing, wrap the buffer first in an UnclosableStream and then in a BufferedStream with an 8k buffer.  This gives us around a 10% speed up when serializing responses.
+
+r3566: Have Beagle.Util.FileSystem.GetLastWriteTimeUtc() use the same rules as the File and Directory variants.  That is, return 1 Jan 1601 at midnight
+UTC if the file doesn't exist rather than throwing an exception.  This
+fixes bgo 417601.
+
+r3671: Better GlobMatch routine.
+
+
+------------------------------------------------------------------------
+r3691 | dbera | 2007-05-08 12:23:51 -0400 (Tue, 08 May 2007) | 19 lines
+Changed paths:
+   M /branches/beagle-0.2.16/search/Search.cs
+   M /branches/beagle-0.2.16/search/Tiles/File.cs
+   M /branches/beagle-0.2.16/search/Tiles/IMLog.cs
+   M /branches/beagle-0.2.16/search/Tiles/Image.cs
+   M /branches/beagle-0.2.16/search/Tiles/MailAttachment.cs
+   M /branches/beagle-0.2.16/search/Tiles/RSSFeed.cs
+   M /branches/beagle-0.2.16/search/beagle-search.in
+
+Merge from trunk:search/
+
+r3537:
+* search/Tiles/File.cs: Display the first emblem in the file tile; add a FIXME to display multiple emblems.  
+* search/Tiles/Image.cs: Fix an uncommon memory leak.
+
+r3600: Booting the --debug from our beagle-search script as well, saves us about 2 megs resident mem, and it seems to statup faster
+
+r3617: Not all mail attachments have a filename associated with them.  Instead of dropping them on the floor, display them with a fairly generic name.
+
+r3626: Only add the number of matches to the total if it's not -1.
+
+r3659: fixes launchpad Bug #93064, a crash in beagle-search from empty buddy icons
+
+r3661: Handle invalid pixbufs, sometimes caused by Liferea leaving behind
+zero-byte image files.  bgo #428736.
+
+
+
+------------------------------------------------------------------------
+r3690 | dbera | 2007-05-08 12:07:23 -0400 (Tue, 08 May 2007) | 5 lines
+Changed paths:
+   M /branches/beagle-0.2.16/glue/xdgmime/README
+   M /branches/beagle-0.2.16/glue/xdgmime/xdgmimeglob.c
+   M /branches/beagle-0.2.16/tools/beagle-crawl-system.in
+   M /branches/beagle-0.2.16/tools/wrapper.in
+
+r3680: (Sync with gtk+ svn trunk): Duplicate the mime_type when storing it in a hash node, to avoid leaks. Update all callers.
+3554: Redirect wrapper.in echo output to stderr, so that it doesn't affect script processing of stdout.
+3619: Exit out of the cronjob if beagle-build-index doesn't exist.  bgo #370943.
+
+
+------------------------------------------------------------------------
+r3689 | dbera | 2007-05-08 12:00:33 -0400 (Tue, 08 May 2007) | 9 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterHtml.cs
+   M /branches/beagle-0.2.16/Filters/FilterKonqHistory.cs
+   M /branches/beagle-0.2.16/Filters/FilterOle.cs
+   M /branches/beagle-0.2.16/Filters/FilterPdf.cs
+   M /branches/beagle-0.2.16/Filters/HtmlAgilityPack/HtmlDocument.cs
+   M /branches/beagle-0.2.16/glue/spawn-glue.c
+
+r3565: Fix Console.WriteLine()s in filters.  Fixes those damn "No OLE2
+signature" messages in the IndexHelperConsole log files.
+r3602: Incorrectly placed void functions can still add up to the total runtime. Give a speedup to the html filter by using preprocessor directive instead of a variable.
+r3603: Typo in the last commit of HtmlDocument.cs
+r3621: glue/spawn-glue.c: If RedirectStandardError is false, then SafeProcess is not interested in the standard error, send the stderr to /dev/null in that case.
+r3621: Filters/FilterPdf.cs: Fix #425150. Handle pdf files which can cause huge errors with pdfinfo. pdfinfo does not have any '-q' option, so send its stderr to /dev/null.
+r3639: Add xhtml mimetype to html filter.
+  
+
+------------------------------------------------------------------------
+r3612 | joeshaw | 2007-03-29 15:51:48 -0400 (Thu, 29 Mar 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterOpenOffice.cs
+
+Merge in r3611 to the branch: don't go into an infinite loop if the OOo
+file doesn't have a depth greater than 2.
+
+
+------------------------------------------------------------------------
+r3593 | joeshaw | 2007-03-21 14:46:54 -0400 (Wed, 21 Mar 2007) | 3 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/BeagleDaemon.cs
+
+Fix a typo ("shapshot") and add --no-snapshot as a valid alternative
+
+
+------------------------------------------------------------------------
+r3583 | joeshaw | 2007-03-19 17:49:01 -0400 (Mon, 19 Mar 2007) | 5 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Util/Log.cs
+
+Redirect the actual stdout/stderr (rather than Console.Out and
+Console.Error) to the main log file, so that we can catch the output
+from a crashing Mono and save it somewhere useful.
+
+
+------------------------------------------------------------------------
+r3576 | joeshaw | 2007-03-15 16:16:58 -0400 (Thu, 15 Mar 2007) | 8 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/beagled-autostart.desktop
+
+Merging:
+
+r3575 | joeshaw | 2007-03-15 16:16:26 -0400 (Thu, 15 Mar 2007) | 3 lines
+
+Start beagled with the --replace option, to replace any previously
+running daemon if there is one.
+
+
+------------------------------------------------------------------------
+r3574 | joeshaw | 2007-03-15 16:14:33 -0400 (Thu, 15 Mar 2007) | 11 lines
+Changed paths:
+   M /branches/beagle-0.2.16/glue/screensaver-glue.c
+
+Merge r3573 onto the branch:
+
+r3573 | joeshaw | 2007-03-15 16:13:43 -0400 (Thu, 15 Mar 2007) | 7 lines
+
+Watch the X connection's file descriptor and g_io_add_watch() on it for
+the connection being closed.  When it is, synthesize an X event so that
+our X connection immediately dies, and the daemon can shut down cleanly.
+Fixes an issue where an idle daemon wasn't getting shut down at logout
+time.
+
+
+------------------------------------------------------------------------
+r3572 | joeshaw | 2007-03-15 16:11:30 -0400 (Thu, 15 Mar 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/configure.in
+
+Bump version to 0.2.16.3 for another bug fix tarball
+------------------------------------------------------------------------
+r3571 | joeshaw | 2007-03-15 16:09:50 -0400 (Thu, 15 Mar 2007) | 8 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/FileSystemQueryable/InotifyBackend.cs
+
+Merge r3542:
+
+r3542 | joeshaw | 2007-03-09 16:27:50 -0500 (Fri, 09 Mar 2007) | 5 lines
+Create a single inotify callback and reuse it, rather than the implicit
+recreation each time.  Saves a bunch of unnecessary allocations (which
+are never cleaned up) when watching directories.
+
+
+------------------------------------------------------------------------
+r3570 | joeshaw | 2007-03-15 16:09:05 -0400 (Thu, 15 Mar 2007) | 6 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/ExtractContent.cs
+
+Merge in r3531
+
+r3531 | joeshaw | 2007-03-05 15:04:24 -0500 (Mon, 05 Mar 2007) | 1 line
+Call SetProcessName() in beagle-extract-content
+
+
+------------------------------------------------------------------------
+r3569 | joeshaw | 2007-03-15 16:08:03 -0400 (Thu, 15 Mar 2007) | 44 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterArchive.cs
+   M /branches/beagle-0.2.16/Util/FileSystem.cs
+
+Merge in a lot of archive filter fixes.
+
+r3496 | joeshaw | 2007-02-23 13:43:41 -0500 (Fri, 23 Feb 2007) | 6 lines
+Uri.ToString() doesn't print out escaped versions of the URI, so don't
+pass in the "escaped" flag to the Uri constructor in the archive filter.
+This fixes serialization exceptions for non-ASCII files in archives.
+
+r3498 | joeshaw | 2007-02-23 16:11:40 -0500 (Fri, 23 Feb 2007) | 5 lines
+Cut-and-paste Path.GetTempFileName() from System.IO but have it take an
+extension argument so that we can do extension-based MIME sniffing on
+our temporary files correctly.  (Mainly needed for things like Word
+documents inside archives.)
+
+r3502 | dbera | 2007-02-24 15:31:21 -0500 (Sat, 24 Feb 2007) | 3 lines
+FilterArchive.cs: Add a comment explaining a potential problem in
+constructing correct Uri for embedded files.
+
+r3529 | dbera | 2007-03-04 13:11:48 -0500 (Sun, 04 Mar 2007) | 2 lines
+Fix a crash when a bz2 or gzip archive contains a large file.
+
+r3539 | dbera | 2007-03-07 10:29:02 -0500 (Wed, 07 Mar 2007) | 3 lines
+* FilterArchive.cs: Check if the included file was actually extracted
+before determining its mimetype.
+
+r3540 | dbera | 2007-03-07 10:36:01 -0500 (Wed, 07 Mar 2007) | 2 lines
+Addendum to r3539.
+
+r3543 | dbera | 2007-03-09 21:31:06 -0500 (Fri, 09 Mar 2007) | 2 lines
+* FilterArchive.cs: Catch GetNextEntry*() exceptions. Fixes #415056.
+Most SharpZLib methods are broken and can throw exceptions even for
+valid files. Anyone listening ???
+
+r3555 | joeshaw | 2007-03-12 16:29:59 -0400 (Mon, 12 Mar 2007) | 6 lines
+When writing out temp files with an extension, add special cases for
+.tar.gz and .tar.bz2 so that we don't add an extra layer of processing
+(first the compression, then the tar file) and instead handle both at
+the same time.
+
+r3557 | joeshaw | 2007-03-12 16:52:28 -0400 (Mon, 12 Mar 2007) | 4 lines
+Remove anonymous delegates and move exception handling into a single
+method; log errors we hit when trying to extract files.
+
+
+
+------------------------------------------------------------------------
+r3568 | joeshaw | 2007-03-15 15:50:12 -0400 (Thu, 15 Mar 2007) | 8 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/LuceneCommon.cs
+
+Merge r3535:
+r3535 | joeshaw | 2007-03-05 18:49:41 -0500 (Mon, 05 Mar 2007) | 4 lines
+
+Prohibited date queries weren't working at all.  Fix them in most cases,
+and add a FIXME about the case in which they don't work: with sub-date
+accuracy.
+
+
+------------------------------------------------------------------------
+r3567 | joeshaw | 2007-03-15 15:47:24 -0400 (Thu, 15 Mar 2007) | 6 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterArchive.cs
+
+Merge r3529 from the trunk:
+r3529 | dbera | 2007-03-04 13:11:48 -0500 (Sun, 04 Mar 2007) | 2 lines
+
+Fix a crash when a bz2 or gzip archive contains a large file.
+
+
+------------------------------------------------------------------------
+r3532 | joeshaw | 2007-03-05 16:01:37 -0500 (Mon, 05 Mar 2007) | 3 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterArchive.cs
+
+Wrap reading from the archive streams in a try-catch, so that
+we can move past files that cause SharpZipLib to throw an
+exception
+------------------------------------------------------------------------
+r3523 | joeshaw | 2007-03-01 15:41:44 -0500 (Thu, 01 Mar 2007) | 15 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Util/ImLog.cs
+   M /branches/beagle-0.2.16/beagled/KonversationQueryable/KonversationQueryable.cs
+   M /branches/beagle-0.2.16/search/Tiles/IMLog.cs
+
+Merge r3504, 3511, and 3517 onto the trunk.
+
+r3504:
+Use parent-uri in IMLog tiles for konversation hits. ParentUri contains
+the proper path of the file. Fixes #408101
+
+r3511:
+Konversation log files are in CurrentCulture. Do not use
+InvariantCulture.
+
+r3517:
+Use system encoding and system culture when dealing with konversation
+log files.  Some things I missed before.
+
+
+------------------------------------------------------------------------
+r3514 | joeshaw | 2007-02-27 12:56:02 -0500 (Tue, 27 Feb 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/po/ca.po
+
+Updated Catalan translation from the Novell l10n team
+------------------------------------------------------------------------
+r3494 | joeshaw | 2007-02-23 11:06:39 -0500 (Fri, 23 Feb 2007) | 2 lines
+Changed paths:
+   M /branches/beagle-0.2.16/po/de.po
+   M /branches/beagle-0.2.16/po/es.po
+   M /branches/beagle-0.2.16/po/fr.po
+   M /branches/beagle-0.2.16/po/it.po
+   M /branches/beagle-0.2.16/po/ja.po
+   M /branches/beagle-0.2.16/po/pt_BR.po
+   M /branches/beagle-0.2.16/po/ru.po
+   M /branches/beagle-0.2.16/po/sv.po
+   M /branches/beagle-0.2.16/po/zh_TW.po
+
+Check in updated translations from the Novell language team
+
+------------------------------------------------------------------------
+r3492 | joeshaw | 2007-02-22 13:04:54 -0500 (Thu, 22 Feb 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/configure.in
+
+Commit 0.2.16.2 for another bug fix release
+------------------------------------------------------------------------
+r3491 | joeshaw | 2007-02-22 12:53:17 -0500 (Thu, 22 Feb 2007) | 8 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/BuildIndex.cs
+   M /branches/beagle-0.2.16/tools/beagle-crawl-system.in
+   M /branches/beagle-0.2.16/tools/crawl-rules/crawl-documentation
+
+Merge r3455 onto the branch:
+
+Add a --disable-on-battery option to beagle-build-index, add support for
+it to beagle-crawl-system (through a CRAWL_DISABLE_ON_BATTERY var), and
+turn it on by default in the documentation crawler, since it can be
+pretty slow.  Fixes bgo #383789.
+
+
+------------------------------------------------------------------------
+r3490 | joeshaw | 2007-02-22 12:52:11 -0500 (Thu, 22 Feb 2007) | 5 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterPdf.cs
+
+Merge r3454 onto the branch:
+
+Limit PDF tools to 100 megs memory.  Fixes bgo #335461
+
+
+------------------------------------------------------------------------
+r3489 | joeshaw | 2007-02-22 12:47:38 -0500 (Thu, 22 Feb 2007) | 5 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterChm.cs
+
+Merge r3467 onto branch:
+
+Adapt Chm filter to the changed html filter. Fixes #408047.
+
+
+------------------------------------------------------------------------
+r3461 | joeshaw | 2007-02-15 16:24:40 -0500 (Thu, 15 Feb 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/configure.in
+
+Oops, forgot to commit version number bump on the branch
+------------------------------------------------------------------------
+r3460 | joeshaw | 2007-02-15 16:23:45 -0500 (Thu, 15 Feb 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterArchive.cs
+
+Put some limits on the sizes of files extracted from archives, to
+prevent /tmp from filling up.  Fixes bnc #244490 and brc #228718.
+
+
+------------------------------------------------------------------------
+r3450 | joeshaw | 2007-02-13 15:54:55 -0500 (Tue, 13 Feb 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterDocbook.cs
+
+Add more well-known locations for docbook files, since
+xdgmime/shared-mime-info can't figure out what they are beyond
+application/xml.
+
+------------------------------------------------------------------------
+r3448 | joeshaw | 2007-02-13 15:39:08 -0500 (Tue, 13 Feb 2007) | 12 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/LuceneCommon.cs
+
+Handle the situation where you do a search for something like "no dice"
+(no quotes) and you don't get any results back.  Because "no" is a stop
+word, we were expanding queries to this:
+
+(Text:dice OR PropertyText:dice OR PropertyKeyword:dice) AND
+(PropertyKeyword:no)
+
+Since stop words get filtered out, and the user may be expecting to
+match "no" from the Text and "dice" from a keyword, we can drop the
+second clause from the query entirely.
+
+
+------------------------------------------------------------------------
+r3446 | joeshaw | 2007-02-13 14:27:51 -0500 (Tue, 13 Feb 2007) | 33 lines
+Changed paths:
+   M /branches/beagle-0.2.16/BeagleClient/QueryPart.cs
+   M /branches/beagle-0.2.16/BeagleClient/Versioned.cs
+   M /branches/beagle-0.2.16/Util/DateTimeUtil.cs
+   M /branches/beagle-0.2.16/Util/StringFu.cs
+   M /branches/beagle-0.2.16/libbeagle/beagle/beagle-timestamp.c
+   M /branches/beagle-0.2.16/search/Tiles/IMLog.cs
+   M /branches/beagle-0.2.16/search/Tiles/MailMessage.cs
+   M /branches/beagle-0.2.16/search/Tiles/Utils.cs
+
+Merge r3417, r3418, r3424 and r3429 onto the branch.
+
+r3417:
+Directly parse BeagleTimeStamp instead of calling DateTime.ParseExact.
+Remove some duplicate code from beagle-search.
+
+r3418:
+FAQ 1. My application uses datetimes from different sources. I also have
+to store it on disk.
+*      Always convert any datetime to UTC and use it in that form for
+*      internal usage. UTC is a good general framework.
+FAQ 2. My application is a client server app that needs to send and
+receive datetimes.
+*      XmlSerializer assumes localtime by default when deserialing.
+*      Hence, either change time to localtime before serializing or send
+*      a string representation of the UTC time and re-construct the
+*      correct time at the other end. The timezone part of the
+*      serialized timestamp does not mean anything useful and should be
+*      ignored completely.
+
+Beagle does 1. Beagle should have done 2 but everytime the datetime
+serialization problems were avoided using other fixes. This patch sends
+the datetime in its string representation. Also instead of printing the
+timezone in the output of beagle-query, print the datetime kind. As I
+said, the timezone does not say anything useful.
+
+r3424:
+Remove a debugging line I accidentally committed.
+
+r3429:
+Fixing a buildbreaker
+
+
+------------------------------------------------------------------------
+r3445 | joeshaw | 2007-02-13 14:18:12 -0500 (Tue, 13 Feb 2007) | 6 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterSvg.cs
+
+Merge r3432 onto the branch.
+
+Remove the non-fatal block in the SVG filter; we fixed the main symptom
+of SVG files that have an undeclared xlink namespace, and the check doesn't
+seem to work for certain files.  Fixes #407564
+
+------------------------------------------------------------------------
+r3444 | joeshaw | 2007-02-13 14:16:48 -0500 (Tue, 13 Feb 2007) | 13 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/BuildIndex.cs
+   M /branches/beagle-0.2.16/beagled/FileAttributesStore.cs
+
+Merge r3428 onto the branch.
+
+Revert r3354. r3354 checked if an attr had valid filter info when
+checking if it is uptodate. This would fail a lot of backends, mostly
+LuceneFileQueryable ones. LuceneFileQueryable does not write filter
+information if mulitple indexables were created from a single file. So
+for all those backends, restarting beagled would re-index all the files
+(KMail backend, due to a side effect, only re-indexes the mails with
+attachments). The changes in r3354 were really necessary for file system
+indexing (files backend and BuildIndex); files backend does its own
+check and doesnt use IsUpToDate(), so revert the change and create
+another function IsUpToDateAndFiltered() for BuildIndex to use.
+
+------------------------------------------------------------------------
+r3443 | joeshaw | 2007-02-13 14:15:28 -0500 (Tue, 13 Feb 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/TomboyQueryable/TomboyQueryable.cs
+
+Merge r3425 onto the branch.
+
+Use TOMBOY_PATH if available. Fixes #332102.
+
+------------------------------------------------------------------------
+r3442 | joeshaw | 2007-02-13 14:14:26 -0500 (Tue, 13 Feb 2007) | 7 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/IndexHelper/RemoteIndexerExecutor.cs
+   M /branches/beagle-0.2.16/beagled/LuceneIndexingDriver.cs
+
+Merge r3421 onto the branch.
+
+While processing large flush requests, check regularly if shutdown has
+been requested and stop processing further in that case. This will allow
+faster shutdown when beagle is in the middle of large indexing,
+especially when it involves archives.
+
+------------------------------------------------------------------------
+r3441 | joeshaw | 2007-02-13 14:12:22 -0500 (Tue, 13 Feb 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/LuceneQueryingDriver.cs
+
+Merge r3415 onto the branch.
+
+Fixes #405317. Adjust the count if HitFilter rejects any hit.
+
+------------------------------------------------------------------------
+r3440 | joeshaw | 2007-02-13 14:11:33 -0500 (Tue, 13 Feb 2007) | 4 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Util/F-Spot/Exif.cs
+   A /branches/beagle-0.2.16/Util/F-Spot/beagle-changes/08-exif-timestamp-local.diff (from /trunk/beagle/Util/F-Spot/beagle-changes/08-exif-timestamp-local.diff:3414)
+
+merge 3414 onto the branch.
+
+Assume local time for exif timestamps.
+
+------------------------------------------------------------------------
+r3439 | joeshaw | 2007-02-13 14:10:49 -0500 (Tue, 13 Feb 2007) | 11 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/BeagleDaemon.cs
+   M /branches/beagle-0.2.16/beagled/IndexHelper/IndexHelper.cs
+   M /branches/beagle-0.2.16/beagled/IndexHelper/RemoteIndexerExecutor.cs
+   M /branches/beagle-0.2.16/beagled/LuceneIndexingDriver.cs
+   M /branches/beagle-0.2.16/beagled/RemoteIndexer.cs
+   M /branches/beagle-0.2.16/beagled/SnippetFu.cs
+
+Merge r3413 and 3433-3434 onto the branch.
+
+Add option --disable-textcache to beagled. This disallows caching data
+for snippet purposes during this run. To prevent inconsistency, this
+also deletes existing textcache for any document indexed in this
+session. Usage of this option is highly discouraged and should be only
+used on space-strapped machines.
+
+Change --disable-textcache to --disable-text-cache to maintain
+consistency with beagle-build-index's --enable-text-cache
+
+------------------------------------------------------------------------
+r3438 | joeshaw | 2007-02-13 14:08:33 -0500 (Tue, 13 Feb 2007) | 6 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /branches/beagle-0.2.16/beagled/TextCache.cs
+
+Merge r3412 onto the branch.
+
+* TextCache.cs: Deleting items from textcache was broken; files were
+deleted but the entries remained in the database. Fix that. Update FSQ
+code accordingly.
+
+------------------------------------------------------------------------
+r3437 | joeshaw | 2007-02-13 14:07:49 -0500 (Tue, 13 Feb 2007) | 11 lines
+Changed paths:
+   M /branches/beagle-0.2.16/beagled/KMailQueryable/KMailQueryable.cs
+
+Merge r3410:3411 onto the branch.
+
+r3410:
+I still do not understand how to best decide if a directory is a valid
+kmail directory. If the directory is listed in config, then do not
+check. Also, give ~/.kde/... location higher preference over the other
+locations.
+
+r3411:
+3410 was incorrect, this one is the correct patch.
+
+------------------------------------------------------------------------
+r3436 | joeshaw | 2007-02-13 14:05:55 -0500 (Tue, 13 Feb 2007) | 8 lines
+Changed paths:
+   M /branches/beagle-0.2.16/Util/PullingReader.cs
+   M /branches/beagle-0.2.16/beagled/Filter.cs
+   M /branches/beagle-0.2.16/beagled/LuceneCommon.cs
+   M /branches/beagle-0.2.16/beagled/TextCache.cs
+
+Merge r3409 onto 0.2.16 branch.
+
+Fix a fd leak for large files when lucene would stop asking for more
+data. Now Filter.Pull() does not call Close(), but instead Close() is
+called by lucene. This also fixes some invalid textcache.gz files.
+Buffer the reader and writer streams to and from textcache to reduce the
+time spent in inflating/deflating.
+
+------------------------------------------------------------------------
+r3435 | joeshaw | 2007-02-13 14:04:51 -0500 (Tue, 13 Feb 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/Util/F-Spot/JpegHeader.cs
+
+Merge r3408 into 0.2.16 branch: Avoid infinite loop on some truncated jpeg files.  bgo #405372
+------------------------------------------------------------------------
+r3401 | joeshaw | 2007-02-07 14:04:00 -0500 (Wed, 07 Feb 2007) | 1 line
+Changed paths:
+   M /branches/beagle-0.2.16/Filters/FilterOpenOffice.cs
+
+Merge in OOo syntax error fix (r3399) from the trunk
+------------------------------------------------------------------------
+r3398 | joeshaw | 2007-02-07 11:36:30 -0500 (Wed, 07 Feb 2007) | 3 lines
+Changed paths:
+   A /branches/beagle-0.2.16 (from /tags/BEAGLE_0_2_16:3397)
+
+Create a maintenance bug fix branch for 0.2.16, which is what will be in
+SLED 10 SP1 and Ubuntu Feisty.
+
+------------------------------------------------------------------------
+r3396 | joeshaw | 2007-02-07 11:35:00 -0500 (Wed, 07 Feb 2007) | 2 lines
+Changed paths:
+   A /tags/BEAGLE_0_2_16 (from /trunk/beagle:3395)
+
+Tag 0.2.16 release
+
+------------------------------------------------------------------------
+r3395 | joeshaw | 2007-02-07 11:30:31 -0500 (Wed, 07 Feb 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/ChangeLog
+
+Update changelog for 0.2.16
+------------------------------------------------------------------------
+r3394 | joeshaw | 2007-02-07 11:28:58 -0500 (Wed, 07 Feb 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/configure.in
+
+Update for 0.2.16 release
+------------------------------------------------------------------------
+------------------------------------------------------------------------
 r3394 | joeshaw | 2007-02-07 11:28:58 -0500 (Wed, 07 Feb 2007) | 1 line
 
 Update for 0.2.16 release

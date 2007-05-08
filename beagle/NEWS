@@ -1,4 +1,149 @@
 
+Version 0.2.17
+8 May 2007
+
+Notable changes:
+
+* When extracting files from archives, save the temporary files with
+  the appropriate file extensions (rather than .tmp) so that
+  extension-based MIME type detection works correctly.
+
+* Handle phrase queries that contained stop words much better.
+  For example, previously "no dice" would return no hits.
+
+* Make the archive filter much more robust. [bgo #415056, bnc #244490
+  and #228718]
+
+* Add --disable-on-battery to beagle-build-index, add support for
+  it in beagle-crawl-system, and enable it for the documentation
+  index, since it takes a while to build. [bgo #383789]
+
+* Add --disable-text-cache to the Beagle daemon, to disable storing of
+  text for snippets.  This saves substantial amounts of disk space at
+  the expense of showing snippets in the UI.
+
+* Fix a bug in which deleted files weren't removed from the text cache
+  properly.
+
+* Fix prohibited date queries (ie, -date:20070505) in most cases.
+
+* Fix an infinite loop on certain SVG files. [bgo #407564]
+
+* Fix an infinite loop on some truncated JPEG files. [bgo #405372]
+
+* Limit PDF tools to 100 megs mapped memory. [bgo #335461]
+
+* Add more well-known locations for Docbook files, since their MIME
+  type often cannot be determined beyond generic XML types.
+
+* Use the TOMBOY_HOME environment variable if available. [bgo #332102]
+
+* Fix the CHM filter. [bgo #408047]
+
+* Fix opening of Konversation hits in beagle-search. [bgo #408101]
+
+* Shut down the daemon sooner if requested in the middle of a large
+  batch of files being indexed.
+
+* Many other minor filter and backend fixes.
+
+* Redirect low-level stdout and stderr to the log file, rather than
+  just .Net streams so that Mono crashes are logged and saved
+  somewhere useful.
+
+* Lower CPU priority in the Beagle daemon, for instances where we get
+  a little CPU hungry.
+
+* Add a new index verification process if stale lockfiles are left
+  behind for whatever reason (usually an index helper crash).  The
+  process is rather CPU intensive, but overall will be less painful
+  than purging the index and reindexing everything.
+
+* Watch the X connection more closely, fixing a bug in which the
+  daemon wouldn't exit when the user logged out if it didn't have any
+  work to do.
+
+* Always start the daemon with --replace, so that no more than one
+  copy is running per user.
+
+* Speed up the returning of results by about 10%.
+
+* Remove separate crawling and indexing threads from
+  beagle-build-index, causing it to be slightly faster and use a lot
+  less memory.
+
+* Speed up beagle-index-info by returning cached document counts, and
+  not starting up a helper process to get them.
+
+* Fix an infinite loop problem with empty OpenOffice documents. [bgo
+  #427256, #435694]
+
+* Better handle PDF files which spew tons of warnings with
+  pdfinfo. [bgo #425150]
+
+* Display the first Nautilus emblem on file results, and fix an
+  uncommon memory leak in the beagle-search UI.
+
+* Remove the Mono --debug argument from beagle-search, saving about 2
+  megs RSS and making startup faster.  Also remove it from things like
+  beagle-build-index.
+
+* Fix a bug in which mail attachments which didn't have a file name
+  weren't being displayed in the UI.
+
+* Fix bugs in counting the total number of results in the UI.
+
+* Fix a crash caused by empty buddy icons. [Launchpad #93064]
+
+* Fix a crash caused by empty icons from Liferea. [bgo #428336]
+
+* Fix an exception caused by Evolution IMAP folders with commas in
+  their names. [bgo #432417, lp #108957]
+
+* Redirect MS Word extractor script output to stderr so that it
+  doesn't interfere with the indexing process.
+
+* Fix some file modification date handling issues in the daemon.
+
+* Exit the beagle-crawl-system cronjob if beagle-build-index doesn't
+  exist. [bgo #370943]
+
+* Always set the process name in beagle-extract-content.
+
+* Add application/xhtml+xml as a MIME type for the HTML filter.
+
+* Sync our copy of xdgmime with the upstream GTK+ version.
+
+* Translations:
+
+  - Arabic               (Djihed Afifi)
+  - Brazilian Portuguese (Igor Pires Soares)
+  - British English      (David Lodge)
+  - Czech                (Jakub Friedl)
+  - Dzongkha             (Pema Geyleg)
+  - Finnish              (Ilkka Tuohela)
+  - French               (Guillaume Ayoub, Stéphane Raimbault,
+			  Christophe Bliard, Claude Paroz)
+  - Galician             (Ignacio Casal Quinteiro)
+  - Hungarian            (Gabor Kelemen)
+  - Japanese             (Takeshi Aihana)
+  - Macedonian           (Jovan Naumovski)
+  - Norwegian bokmål     (Kjartan Maraas)
+  - Simplified Chinese   (Funda Wang)
+  - Spanisn              (Roberto Majadas, Jorge Gonzalez)
+  - Swedish              (Daniel Nylander)
+
+Contributors to this release: Joe Shaw, Debajyoti Bera, Jose Carlos
+Garcia Sogo, Alexander Macdonald.
+
+Roughly 43 GNOME Bugzilla bugs were fixed between 0.2.16 and 0.2.17:
+http://tinyurl.com/3d8aqx
+
+Full set of changes:
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_17/ChangeLog
+
+------------------------------------------------------
+
 Version 0.2.16
 7 February 2007
 
