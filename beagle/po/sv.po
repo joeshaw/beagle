@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-24 10:52+0100\n"
-"PO-Revision-Date: 2007-03-24 10:36+0100\n"
+"POT-Creation-Date: 2007-05-09 12:29+0200\n"
+"PO-Revision-Date: 2007-05-09 12:28+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -265,7 +265,7 @@ msgstr "Län/Region:"
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Titel:"
 
@@ -319,7 +319,7 @@ msgstr "Konversationer i {0} ({1})"
 msgid "Conversations with {0}"
 msgstr "Konversationer med {0}"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "Sök"
 
@@ -455,11 +455,11 @@ msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Visar den första {0} av totalt {1} träffar"
 msgstr[1] "Visar de första {0} av totalt {1} träffar"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:565
 msgid "Your data is being indexed"
 msgstr "Ditt data håller på att indexeras"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:566
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -570,31 +570,31 @@ msgstr "Kommentar:"
 msgid "IM Conversation"
 msgstr "IM-konversation"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:94
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:95 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:99
 msgid "Status:"
 msgstr "Status:"
 
-#: ../search/Tiles/IMLog.cs:112
+#: ../search/Tiles/IMLog.cs:114
 msgid "Idle"
 msgstr "Overksam"
 
-#: ../search/Tiles/IMLog.cs:119
+#: ../search/Tiles/IMLog.cs:121
 msgid "Away"
 msgstr "Frånvarande"
 
-#: ../search/Tiles/IMLog.cs:122
+#: ../search/Tiles/IMLog.cs:124
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: ../search/Tiles/IMLog.cs:125
+#: ../search/Tiles/IMLog.cs:127
 msgid "Available"
 msgstr "Tillgänglig"
 
@@ -642,11 +642,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} diabild"
 msgstr[1] "{0} diabilder"
 
-#: ../search/Tiles/RSSFeed.cs:49
+#: ../search/Tiles/RSSFeed.cs:59
 msgid "Site:"
 msgstr "Plats:"
 
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
 msgstr "Visningsdatum:"
 
@@ -1156,11 +1156,11 @@ msgstr "Visa detaljer"
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1168,15 +1168,15 @@ msgstr ""
 "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från "
 "dina aktuella ändringar och läsa om inställningarna från disk?"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:330
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1184,15 +1184,15 @@ msgstr ""
 "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer "
 "den och datat blir redan indexerat."
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "Sökvägen lades inte till"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1201,11 +1201,11 @@ msgstr ""
 "föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas "
 "bort. Vill du fortfarande lägga till den?"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1213,11 +1213,11 @@ msgstr ""
 "Är du säker på att du vill ta bort denna sökväg från listan över kataloger "
 "som skall indexeras?"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1225,58 +1225,53 @@ msgstr ""
 "Är du säker på att du vill ta bort det här objektet från listan över data "
 "som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458 ../tools/Settings.cs:547 ../tools/Settings.cs:634
 msgid "Name"
 msgstr "Namn"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "Sökväg:"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "Mönster:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "E-postmapp:"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907 ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "E-postm_app:"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "Mö_nster:"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
 "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i "
 "listan på resurser som ska undanhållas från indexering."
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "Visa"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1351,26 +1346,30 @@ msgid "Index data while on _battery power"
 msgstr "Indexera data vid _batteridrift"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Indexera mer aggressivt när s_kärmsläckaren är aktiverad"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "Indexering"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Välj den resurs som du vill undanhålla från indexing."
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Välj den e-postmapp som du vill undanhålla från indexing. "
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "Sökinställningar"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "Välj e-postmapp"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1378,27 +1377,31 @@ msgstr ""
 "Lägg till resurser såsom sökvägar, mönster och e-postmappar eller "
 "objekttyper som du vill undanhålla från indexering."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr "Den här inställningen gäller inte när datorn körs på batterispänning."
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "Typ:"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "_Tillåt Beagle att köras som root"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "_Bläddra..."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "_Mappsökväg"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "E-post_mapp"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "_Starta söknings- och indexeringstjänster automatiskt "
 
@@ -1759,6 +1762,9 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#~ msgid "Show"
+#~ msgstr "Visa"
 
 #~ msgid "Configure Desktop Search & Indexing"
 #~ msgstr "Konfigurera skrivbordssökning och indexering"
