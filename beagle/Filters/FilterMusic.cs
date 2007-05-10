@@ -136,11 +136,21 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.New ("fixme:genre", genre));
 
 			AddProperty (Beagle.Property.New ("fixme:comment", tag.Comment));
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:tracknumber", tag.Track));
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:trackcount", tag.TrackCount));
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:disknumber", tag.Disc));
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:diskcount", tag.DiscCount));
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:year", tag.Year));
+
+			if (tag.Track > 0)
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:tracknumber", tag.Track));
+
+			if (tag.TrackCount > 0)
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:trackcount", tag.TrackCount));
+
+			if (tag.Disc > 0)
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:discnumber", tag.Disc));
+
+			if (tag.DiscCount > 0)
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:disccount", tag.DiscCount));
+
+			if (tag.Year > 0)
+				AddProperty (Beagle.Property.NewUnsearched ("fixme:year", tag.Year));
 
 			foreach (TagLib.ICodec codec in file.Properties.Codecs) {
 				TagLib.IAudioCodec acodec = codec as TagLib.IAudioCodec;
