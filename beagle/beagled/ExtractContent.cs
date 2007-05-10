@@ -149,6 +149,9 @@ class ExtractContentTool {
 			Console.WriteLine ("  Timestamp = {0}", DateTimeUtil.ToString (indexable.Timestamp));
 
 		foreach (Beagle.Property prop in prop_array) {
+			if (String.IsNullOrEmpty (prop.Value))
+				continue;
+
 			Console.WriteLine ("  {0} = {1}", prop.Key, prop.Value);
 		}
 
