@@ -1,6 +1,4 @@
 This contains our own copy of Taglib Sharp.
 http://www.taglib-sharp.com/Main_Page
 
-upstream_changes/ contains the changes needed to make Taglib Sharp work with beagle.
-
-Synced with revision 77104.
+Synced with revision 77132 (May 10, 2007).
