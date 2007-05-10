@@ -105,7 +105,14 @@ namespace Beagle.Daemon {
 
 		public Indexable GetRequestIndexable (IndexerReceipt r)
 		{
-			return indexables [r.Id];
+			// FIXME: Once deferred-indexable feature is removed
+			// replace with indexables [r.Id]
+			// Currently, the request might not contain the indexable if r
+			// is the receipt for a deferred indexable
+			Indexable requested_indexable = null;
+			indexables.TryGetValue (r.Id, out requested_indexable);
+			return requested_indexable;
+
 		}
 
 		/* Fake IEnumerable class to serialize a Dictionary. */
