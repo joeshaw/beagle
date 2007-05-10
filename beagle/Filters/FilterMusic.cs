@@ -39,7 +39,8 @@ namespace Beagle.Filters {
 		public FilterMusic ()
 		{
 			// 1: Added duration and bitrate property
-			SetVersion (1);
+			// 2. Use TagLib-Sharp for filtering. Also index lots of new properties provided by TagLib#
+			SetVersion (2);
 			SetFileType ("audio");
 			StreamingTagReader.Link ();
 		}
