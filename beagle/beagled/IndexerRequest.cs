@@ -38,25 +38,26 @@ namespace Beagle.Daemon {
 
 		public bool OptimizeIndex = false;
 
-		private ArrayList indexables = null;
+		// Keep a list of indexables indexed by the globally unique id
+		private Dictionary<int, Indexable> indexables = null;
+
 		// The hashtable is needed to remove/merge multiple indexables for the same uri
 		private Hashtable indexables_by_uri = null;
 
 		// Used to uniquely determine any indexable
 		private static int indexable_id = 0;
-		private int base_id;
+		private static object indexable_id_lock = new object ();
 
 		public IndexerRequest ()
 		{
-			base_id = indexable_id;
-			indexables = new ArrayList ();
+			// Just a good initial size
+			indexables = new Dictionary<int, Indexable> (LuceneQueryable.RequestFlushThreshold);
 		}
 
 		public void Clear ()
 		{
 			OptimizeIndex = false;
 			indexables_by_uri = null;
-			base_id = indexable_id;
 			indexables.Clear ();
 		}
 
@@ -80,7 +81,7 @@ namespace Beagle.Daemon {
 				case IndexableType.Ignore:
 					// Clobber the prior indexable.
 					indexable.Id = prior.Id;
-					indexables [prior.Id - base_id] = indexable;
+					indexables [prior.Id] = indexable;
 					indexables_by_uri [indexable.Uri] = indexable;
 					break;
 
@@ -93,31 +94,49 @@ namespace Beagle.Daemon {
 					break;
 				}
 			} else {
-				indexable.Id = indexable_id;
-				indexable_id ++;
-				indexables.Add (indexable);
+				lock (indexable_id_lock) {
+					indexable.Id = indexable_id;
+					indexable_id ++;
+				}
+				indexables [indexable.Id] = indexable;
 				indexables_by_uri [indexable.Uri] = indexable;
 			}
 		}
 
 		public Indexable GetRequestIndexable (IndexerReceipt r)
 		{
-			int id = r.Id;
-
-			if (id < base_id || id >= indexable_id)
-				return null;
-
-			return (Indexable) indexables [id - base_id];
+			return indexables [r.Id];
 		}
 
+		/* Fake IEnumerable class to serialize a Dictionary. */
+		public class IndexablesList : IEnumerable {
+			public Dictionary<int, Indexable> indexables;
+			
+			public IndexablesList (Dictionary<int, Indexable> dict)
+			{
+			        indexables = dict;
+			}
+			
+			public IEnumerator GetEnumerator ()
+			{
+			        return indexables.Values.GetEnumerator ();
+			}
+			
+			public void Add (object o)
+			{
+				Indexable i = (Indexable) o;
+				indexables [i.Id] = i;
+			}
+		}
+	
 		[XmlArray (ElementName="Indexables")]
 		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
-		public ArrayList Indexables {
+		public IndexablesList Indexables {
 			get {
 				indexables_by_uri = null;
-				return indexables;
+				return new IndexablesList (indexables);
 			}
-			set { indexables = value; }
+			set { indexables = value.indexables; }
 		}
 
 		[XmlIgnore]
@@ -132,7 +151,7 @@ namespace Beagle.Daemon {
 
 		public void Cleanup ()
 		{
-			foreach (Indexable i in indexables)
+			foreach (Indexable i in indexables.Values)
 				i.Cleanup ();
 		}
 	}

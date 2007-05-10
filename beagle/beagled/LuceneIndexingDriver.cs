@@ -155,7 +155,7 @@ namespace Beagle.Daemon {
 			TermDocs term_docs = secondary_reader.TermDocs ();
 			int delete_count = 0;
 
-			ICollection request_indexables = request.Indexables;
+			IEnumerable request_indexables = request.Indexables;
 
 			foreach (Indexable indexable in request_indexables) {
 

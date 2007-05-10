@@ -838,11 +838,14 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		// Flush if more than this number of requests
+		public const int RequestFlushThreshold = 37; // a total arbitrary magic number
+
 		// Returns true if we actually did flush, false otherwise.
 		protected bool ConditionalFlush ()
 		{
 			lock (request_lock) {
-				if (pending_request.Count > 37) { // a total arbitrary magic number
+				if (pending_request.Count > RequestFlushThreshold) {
 					Flush ();
 					return true;
 				}
