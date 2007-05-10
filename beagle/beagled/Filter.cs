@@ -291,6 +291,9 @@ namespace Beagle.Daemon {
 					// storage overhead in doing this.
 					snippetWriter.Write (str);
 
+				return UpdateCharsAdded (str.Length);
+			} else {
+				return true;
 			}
 
 			/* FIXME: Disable HotText for now. Enable it when we start using it for query.
@@ -299,8 +302,6 @@ namespace Beagle.Daemon {
 				hotPool.Add (WHITESPACE);
 			}
 			*/
-
-			return UpdateCharsAdded (str.Length);
 		}
 
 		// Add a word followed by a whitespace. word may not be whitespace or newline.
