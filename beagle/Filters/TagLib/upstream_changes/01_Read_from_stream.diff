@@ -1,0 +1,385 @@
+diff -ur ./Asf/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Asf/File.cs
+--- ./Asf/File.cs	2007-05-09 23:42:39.046244730 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Asf/File.cs	2007-05-09 21:29:23.717794001 -0400
+@@ -44,7 +44,6 @@
+       //////////////////////////////////////////////////////////////////////////
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	 Create (properties_style);
+          asf_tag    = null;
+          properties = null;
+          
+@@ -57,24 +56,6 @@
+       {
+       }
+       
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
+-      {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-
+-      private void Create (ReadStyle properties_style)
+-      {
+-         asf_tag    = null;
+-         properties = null;
+-         
+-         Mode = AccessMode.Read;
+-         Read (properties_style);
+-         Mode = AccessMode.Closed;
+-      }
+-      
+       public override void Save ()
+       {
+          Mode = AccessMode.Write;
+diff -ur ./File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/File.cs
+--- ./File.cs	2007-05-09 23:42:39.102246919 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/File.cs	2007-05-09 23:51:02.321912321 -0400
+@@ -82,12 +82,6 @@
+          file_abstraction = file_abstraction_creator (file);
+       }
+       
+-      public File (System.IO.Stream stream)
+-      {
+-	  file_stream = stream;
+-	  file_abstraction = new Beagle.Filters.FilterMusic.FilterMusicFileAbstraction (stream);
+-      }
+-
+       public string Name {get {return file_abstraction.Name;}}
+       public string MimeType { 
+          get { return mime_type; }
+@@ -502,33 +496,6 @@
+          return Create(path, null, style);
+       }
+       
+-      public static File CreateReadOnly(System.IO.Stream stream, string mimetype)
+-      {
+-	  return CreateReadOnly(stream, mimetype, ReadStyle.Average);
+-      }
+-
+-      public static File CreateReadOnly(System.IO.Stream stream, string mimetype, ReadStyle style)
+-      {
+-         if(mimetype == null)
+-         {
+-	     throw new Exception ("null mimetype!");
+-         }
+- 
+-         if(!FileTypes.AvailableTypes.ContainsKey(mimetype)) {
+-            throw new UnsupportedFormatException(String.Format("{0}", mimetype));
+-         }
+-         
+-         Type file_type = FileTypes.AvailableTypes[mimetype];
+-                 
+-         try {
+-            File file = (File)Activator.CreateInstance(file_type, new object [] { stream, style });
+-            file.MimeType = mimetype;
+-            return file;
+-         } catch(System.Reflection.TargetInvocationException e) {
+-            throw e.InnerException;
+-         }
+-      }
+-
+       public static File Create(string path, string mimetype, ReadStyle style)
+       {
+          foreach (FileTypeResolver resolver in file_type_resolvers)
+diff -ur ./Flac/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Flac/File.cs
+--- ./Flac/File.cs	2007-05-09 23:42:39.146248638 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Flac/File.cs	2007-05-09 21:29:23.593789155 -0400
+@@ -47,14 +47,6 @@
+       public File (string file) : this (file, ReadStyle.Average)
+       {
+       }
+-
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+ #endregion
+       
+       public override void Save ()
+diff -ur ./Mpc/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpc/File.cs
+--- ./Mpc/File.cs	2007-05-09 23:42:39.186250202 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpc/File.cs	2007-05-09 21:29:22.657752575 -0400
+@@ -38,12 +38,6 @@
+       public File (string file) : this (file, ReadStyle.Average)
+       {}
+       
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {}
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+       public override TagLib.Tag GetTag (TagTypes type, bool create)
+       {
+          Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);
+@@ -88,4 +82,4 @@
+          return new Properties (TimeSpan.Zero, header);
+       }
+    }
+-}
++}
+\ No newline at end of file
+diff -ur ./Mpeg/AudioFile.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg/AudioFile.cs
+--- ./Mpeg/AudioFile.cs	2007-05-09 23:42:39.238252234 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg/AudioFile.cs	2007-05-09 23:51:02.265910133 -0400
+@@ -43,12 +43,6 @@
+       public AudioFile (string file) : this (file, ReadStyle.Average)
+       {}
+       
+-      public AudioFile (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {}
+-      
+-      public AudioFile (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+       public override TagLib.Tag GetTag (TagTypes type, bool create)
+       {
+          Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);
+@@ -96,4 +90,4 @@
+          return new Properties (TimeSpan.Zero, first_header);
+       }
+    }
+-}
++}
+\ No newline at end of file
+diff -ur ./Mpeg/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg/File.cs
+--- ./Mpeg/File.cs	2007-05-09 23:42:39.242252390 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg/File.cs	2007-05-09 21:29:23.401781651 -0400
+@@ -63,15 +63,6 @@
+       public File (string file) : this (file, ReadStyle.Average)
+       {}
+       
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {
+-         audio_header = null;
+-         start_time = null;
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+       public override TagLib.Tag GetTag (TagTypes type, bool create)
+       {
+          Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);
+diff -ur ./Mpeg4/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg4/File.cs
+--- ./Mpeg4/File.cs	2007-05-09 23:42:39.370257392 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Mpeg4/File.cs	2007-05-09 21:29:24.045806819 -0400
+@@ -25,24 +25,6 @@
+       //////////////////////////////////////////////////////////////////////////
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	 Create (properties_style);
+-      }
+-      
+-      // Assume average speed.
+-      public File (string file) : this (file, ReadStyle.Average)
+-      {
+-      }
+-      
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
+-      {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-
+-      private void Create (ReadStyle properties_style)
+-      {
+          // TODO: Support Id3v2 boxes!!!
+          tag = new CombinedTag ();
+          
+@@ -54,7 +36,12 @@
+          Read (properties_style);
+          Mode = AccessMode.Closed;
+       }
+-
++      
++      // Assume average speed.
++      public File (string file) : this (file, ReadStyle.Average)
++      {
++      }
++      
+       // Read the tag. If it doesn't exist, create.
+       public override TagLib.Tag Tag {get {return tag;}}
+       
+diff -ur ./NonContainer/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/NonContainer/File.cs
+--- ./NonContainer/File.cs	2007-05-09 23:42:39.374257549 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/NonContainer/File.cs	2007-05-09 23:33:36.809054556 -0400
+@@ -35,24 +35,6 @@
+ #region Constructors
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (string file) : this (file, ReadStyle.Average)
+-      {
+-      }
+-
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
+-      {
+-	  Create (properties_style);
+-      }
+-
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {
+-      }
+-
+-      private void Create (ReadStyle properties_style)
+-      {
+          Mode = AccessMode.Read;
+          tag = new Tag (this);
+          
+@@ -70,6 +52,10 @@
+          
+          Mode = AccessMode.Closed;
+       }
++      
++      public File (string file) : this (file, ReadStyle.Average)
++      {
++      }
+ #endregion
+       
+       protected virtual void ReadStart (long start, ReadStyle style) {}
+diff -ur ./Ogg/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/File.cs
+--- ./Ogg/File.cs	2007-05-09 23:42:39.434259894 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/File.cs	2007-05-09 21:29:24.205813072 -0400
+@@ -44,26 +44,13 @@
+       
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	  Create(properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
+-      {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-
+-      private void Create (ReadStyle properties_style)
+-      {
+          Mode = AccessMode.Read;
+          tag = new GroupedComment ();
+          properties = null;
+          Read (properties_style);
+          Mode = AccessMode.Closed;
+       }
+-
++      
+       private void Read (ReadStyle properties_style)
+       {
+          long end;
+diff -ur ./Ogg/Flac/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/Flac/File.cs
+--- ./Ogg/Flac/File.cs	2007-05-09 23:42:39.438260050 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/Flac/File.cs	2007-05-09 21:29:24.173811821 -0400
+@@ -67,13 +67,6 @@
+       {
+       }
+ 
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-
+       public override void Save ()
+       {
+          ClearPageData (); // Force re-reading of the file.
+diff -ur ./Ogg/Vorbis/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/Vorbis/File.cs
+--- ./Ogg/Vorbis/File.cs	2007-05-09 23:42:39.458260831 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Ogg/Vorbis/File.cs	2007-05-09 21:29:24.161811352 -0400
+@@ -49,23 +49,6 @@
+       //////////////////////////////////////////////////////////////////////////
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (string file) : this (file, ReadStyle.Average)
+-      {
+-      }
+-      
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-
+-      private void Create (ReadStyle properties_style)
+-      {
+          comment = null;
+          properties = null;
+          
+@@ -74,6 +57,10 @@
+          Mode = AccessMode.Closed;
+       }
+       
++      public File (string file) : this (file, ReadStyle.Average)
++      {
++      }
++      
+       public override void Save ()
+       {
+          ClearPageData (); // Force re-reading of the file.
+diff -ur ./Riff/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Riff/File.cs
+--- ./Riff/File.cs	2007-05-09 23:42:39.506262707 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/Riff/File.cs	2007-05-09 21:29:23.009766331 -0400
+@@ -31,19 +31,6 @@
+       
+       public File (string file, ReadStyle properties_style) : base (file)
+       {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
+-      {
+-	  Create (properties_style);
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+-      private void Create (ReadStyle properties_style)
+-      {
+          uint riff_size;
+          long tag_start, tag_end;
+          
+@@ -56,7 +43,7 @@
+          GetTag (TagTypes.MovieId, true);
+          GetTag (TagTypes.DivX, true);
+       }
+-
++      
+       private void Read (bool read_tags, ReadStyle style, out uint riff_size, out long tag_start, out long tag_end)
+       {
+          Seek (0);
+diff -ur ./WavPack/File.cs /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/WavPack/File.cs
+--- ./WavPack/File.cs	2007-05-09 23:42:39.550264427 -0400
++++ /usr/share/devel/cvsdev/taglib-sharp/src/TagLib/WavPack/File.cs	2007-05-09 21:29:23.501785559 -0400
+@@ -37,13 +37,6 @@
+       public File (string file) : this (file, ReadStyle.Average)
+       {}
+       
+-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
+-      {
+-      }
+-      
+-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
+-      {}
+-      
+       public override TagLib.Tag GetTag (TagTypes type, bool create)
+       {
+          Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);
