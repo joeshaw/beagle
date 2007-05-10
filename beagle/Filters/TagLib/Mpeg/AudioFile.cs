@@ -43,12 +43,6 @@ namespace TagLib.Mpeg
       public AudioFile (string file) : this (file, ReadStyle.Average)
       {}
       
-      public AudioFile (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
-      {}
-      
-      public AudioFile (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-      
       public override TagLib.Tag GetTag (TagTypes type, bool create)
       {
          Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);

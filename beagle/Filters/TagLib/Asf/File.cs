@@ -44,7 +44,6 @@ namespace TagLib.Asf
       //////////////////////////////////////////////////////////////////////////
       public File (string file, ReadStyle properties_style) : base (file)
       {
-	 Create (properties_style);
          asf_tag    = null;
          properties = null;
          
@@ -55,24 +54,6 @@ namespace TagLib.Asf
 
       public File (string file) : this (file, ReadStyle.Average)
       {
-      }
-      
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
-      {
-	  Create (properties_style);
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-
-      private void Create (ReadStyle properties_style)
-      {
-         asf_tag    = null;
-         properties = null;
-         
-         Mode = AccessMode.Read;
-         Read (properties_style);
-         Mode = AccessMode.Closed;
       }
       
       public override void Save ()

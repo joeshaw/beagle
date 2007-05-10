@@ -47,14 +47,6 @@ namespace TagLib.Flac
       public File (string file) : this (file, ReadStyle.Average)
       {
       }
-
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
-      {
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-      
 #endregion
       
       public override void Save ()

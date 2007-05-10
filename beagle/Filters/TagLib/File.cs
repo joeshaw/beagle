@@ -82,12 +82,6 @@ namespace TagLib
          file_abstraction = file_abstraction_creator (file);
       }
       
-      public File (System.IO.Stream stream)
-      {
-	  file_stream = stream;
-	  file_abstraction = new Beagle.Filters.FilterMusic.FilterMusicFileAbstraction (stream);
-      }
-
       public string Name {get {return file_abstraction.Name;}}
       public string MimeType { 
          get { return mime_type; }
@@ -502,33 +496,6 @@ namespace TagLib
          return Create(path, null, style);
       }
       
-      public static File CreateReadOnly(System.IO.Stream stream, string mimetype)
-      {
-	  return CreateReadOnly(stream, mimetype, ReadStyle.Average);
-      }
-
-      public static File CreateReadOnly(System.IO.Stream stream, string mimetype, ReadStyle style)
-      {
-         if(mimetype == null)
-         {
-	     throw new Exception ("null mimetype!");
-         }
- 
-         if(!FileTypes.AvailableTypes.ContainsKey(mimetype)) {
-            throw new UnsupportedFormatException(String.Format("{0}", mimetype));
-         }
-         
-         Type file_type = FileTypes.AvailableTypes[mimetype];
-                 
-         try {
-            File file = (File)Activator.CreateInstance(file_type, new object [] { stream, style });
-            file.MimeType = mimetype;
-            return file;
-         } catch(System.Reflection.TargetInvocationException e) {
-            throw e.InnerException;
-         }
-      }
-
       public static File Create(string path, string mimetype, ReadStyle style)
       {
          foreach (FileTypeResolver resolver in file_type_resolvers)

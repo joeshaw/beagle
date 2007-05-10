@@ -41,6 +41,7 @@ namespace Beagle.Filters {
 			// 1: Added duration and bitrate property
 			SetVersion (1);
 			SetFileType ("audio");
+			StreamingTagReader.Link ();
 		}
 
 		protected override void RegisterSupportedTypes ()
@@ -57,25 +58,50 @@ namespace Beagle.Filters {
 				return MimeType;
 		}
 
-		internal class FilterMusicFileAbstraction : TagLib.File.IFileAbstraction
+		// A thread-safe IFileAbstraction to work on streams
+		// Written by Brian Kerrick Nickel <brian.nickel@gmail.com>
+		internal class StreamingTagReader : TagLib.File.IFileAbstraction
 		{
-			private Stream stream;
+			private static System.Collections.Generic.Queue<Stream> streams = new System.Collections.Generic.Queue<Stream> ();
 
-			public FilterMusicFileAbstraction(Stream stream)
+			private Stream s = null;
+
+			public StreamingTagReader (Stream s)
 			{
-				this.stream = stream;
+				this.s = s;
 			}
-			
+
 			public string Name {
-				get { return null; }
+				get { return "[Stream]"; } }
+
+			public System.IO.Stream ReadStream { get { return s; } }
+			public System.IO.Stream WriteStream { get { return null; } }
+
+			private static TagLib.File.IFileAbstraction CreateFile (string path)
+			{
+				return new StreamingTagReader (streams.Dequeue ());
 			}
 
-			public System.IO.Stream ReadStream {
-				get { return stream; }
+			private static void QueueStream (Stream s)
+			{
+				streams.Enqueue (s);
 			}
 
-			public System.IO.Stream WriteStream {
-				get { throw new Exception ("Not supported"); }
+			private static readonly System.Object read_lock = new System.Object ();
+			public static TagLib.File LoadFile (Stream stream, string mime)
+			{
+				TagLib.File f;
+				lock (read_lock)
+				{
+				    QueueStream (stream);
+				    f = TagLib.File.Create (null, mime, TagLib.ReadStyle.Average);
+				}
+				return f;
+			}
+
+			public static void Link ()
+			{
+				TagLib.File.SetFileAbstractionCreator (CreateFile);
 			}
 		}
 
@@ -84,7 +110,7 @@ namespace Beagle.Filters {
 			TagLib.File file;
 			
 			try {
-				file = TagLib.File.CreateReadOnly (Stream, GetTaglibMimeType ());
+				file = StreamingTagReader.LoadFile (Stream, GetTaglibMimeType ());
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Exception filtering music");
 				Finished();

@@ -67,13 +67,6 @@ namespace TagLib.Ogg.Flac
       {
       }
 
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream, properties_style)
-      {
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-
       public override void Save ()
       {
          ClearPageData (); // Force re-reading of the file.

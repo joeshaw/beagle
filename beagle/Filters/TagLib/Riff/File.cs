@@ -31,19 +31,6 @@ namespace TagLib.Riff
       
       public File (string file, ReadStyle properties_style) : base (file)
       {
-	  Create (properties_style);
-      }
-      
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
-      {
-	  Create (properties_style);
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-      
-      private void Create (ReadStyle properties_style)
-      {
          uint riff_size;
          long tag_start, tag_end;
          
@@ -56,7 +43,7 @@ namespace TagLib.Riff
          GetTag (TagTypes.MovieId, true);
          GetTag (TagTypes.DivX, true);
       }
-
+      
       private void Read (bool read_tags, ReadStyle style, out uint riff_size, out long tag_start, out long tag_end)
       {
          Seek (0);

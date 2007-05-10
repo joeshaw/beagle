@@ -35,24 +35,6 @@ namespace TagLib.NonContainer
 #region Constructors
       public File (string file, ReadStyle properties_style) : base (file)
       {
-	  Create (properties_style);
-      }
-      
-      public File (string file) : this (file, ReadStyle.Average)
-      {
-      }
-
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
-      {
-	  Create (properties_style);
-      }
-
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {
-      }
-
-      private void Create (ReadStyle properties_style)
-      {
          Mode = AccessMode.Read;
          tag = new Tag (this);
          
@@ -69,6 +51,10 @@ namespace TagLib.NonContainer
             ReadProperties (start, end, properties_style) : null;
          
          Mode = AccessMode.Closed;
+      }
+      
+      public File (string file) : this (file, ReadStyle.Average)
+      {
       }
 #endregion
       

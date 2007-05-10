@@ -44,26 +44,13 @@ namespace TagLib.Ogg
       
       public File (string file, ReadStyle properties_style) : base (file)
       {
-	  Create(properties_style);
-      }
-      
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
-      {
-	  Create (properties_style);
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-
-      private void Create (ReadStyle properties_style)
-      {
          Mode = AccessMode.Read;
          tag = new GroupedComment ();
          properties = null;
          Read (properties_style);
          Mode = AccessMode.Closed;
       }
-
+      
       private void Read (ReadStyle properties_style)
       {
          long end;

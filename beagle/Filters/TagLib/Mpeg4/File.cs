@@ -25,24 +25,6 @@ namespace TagLib.Mpeg4
       //////////////////////////////////////////////////////////////////////////
       public File (string file, ReadStyle properties_style) : base (file)
       {
-	 Create (properties_style);
-      }
-      
-      // Assume average speed.
-      public File (string file) : this (file, ReadStyle.Average)
-      {
-      }
-      
-      public File (System.IO.Stream stream, ReadStyle properties_style) : base (stream)
-      {
-	  Create (properties_style);
-      }
-      
-      public File (System.IO.Stream stream) : this (stream, ReadStyle.Average)
-      {}
-
-      private void Create (ReadStyle properties_style)
-      {
          // TODO: Support Id3v2 boxes!!!
          tag = new CombinedTag ();
          
@@ -54,7 +36,12 @@ namespace TagLib.Mpeg4
          Read (properties_style);
          Mode = AccessMode.Closed;
       }
-
+      
+      // Assume average speed.
+      public File (string file) : this (file, ReadStyle.Average)
+      {
+      }
+      
       // Read the tag. If it doesn't exist, create.
       public override TagLib.Tag Tag {get {return tag;}}
       
