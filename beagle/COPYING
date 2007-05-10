@@ -6,12 +6,12 @@ COPYING, LICENSE, or README file which lists the licensing terms.
 
 Subprojects include:
 	* DotLucene - Apache License v2.0
-	* Entagged-Sharp - MIT License
 	* System.Windows.Forms.RTF - MIT License
 	* HtmlAgilityPack - BSD License
 	* SemWeb - Creative Commons Attribution License
 	* Parts of libegg (eggaccelerators.c and eggtrayicon.c) - GNU LGPL v2
 	* xdgmime - Academic Free License v2.0 or GNU LGPL v2
+	* Taglib Sharp - GNU LGPL v2
 
 -----------------------------------------------------------------------------
 

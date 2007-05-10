@@ -18,7 +18,9 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
-include entagged-sharp/entagged-sharp.sources
+#include entagged-sharp/entagged-sharp.sources
+
+include TagLib/TagLib.sources
 
 # Local copy of http://svn.myrealbox.com/viewcvs/trunk/mcs/class/Managed.Windows.Forms/System.Windows.Forms.RTF/
 SWF_RTF_CSFILES =						\
@@ -46,7 +48,7 @@ SWF_RTF_CSFILES =						\
 
 CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs	\
-	$(ENTAGGED_CSFILES)		\
+	$(TAGLIB_CSFILES)		\
 	$(HAP_CSFILES)			\
 	$(SWF_RTF_CSFILES)		\
 	$(srcdir)/FilterArchive.cs	\
