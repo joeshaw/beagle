@@ -769,36 +769,6 @@ $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
 
 ############################################################
 
-FS_SANITY_CHECK_WRAPPER = beagle-file-system-sanity-check
-FS_SANITY_CHECK_TARGET = SanityCheckTool.exe
-
-$(FS_SANITY_CHECK_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(FS_SANITY_CHECK_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(FS_SANITY_CHECK_WRAPPER)
-
-FS_SANITY_CHECK_CSFLAGS = \
-	-target:exe
-
-FS_SANITY_CHECK_CSFILES = \
-	$(srcdir)/SanityCheckTool.cs
-
-FS_SANITY_CHECK_LOCAL_ASSEMBLIES = \
-	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)
-
-FS_SANITY_CHECK_ASSEMBLIES = \
-	$(BEAGLED_LIBS)				\
-	$(SHARPZIPLIB_LIBS)			\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix
-
-$(FS_SANITY_CHECK_TARGET): $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(FS_SANITY_CHECK_CSFLAGS) $(FS_SANITY_CHECK_CSFILES) $(FS_SANITY_CHECK_ASSEMBLIES)
-
-############################################################
-
 BUILD_INDEX_WRAPPER = beagle-build-index
 BUILD_INDEX_TARGET = BuildIndex.exe
 
@@ -872,8 +842,6 @@ $(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
 ############################################################
 
 #	$(MASTER_DELETE_TARGET)
-
-#	$(FS_SANITY_CHECK_TARGET)
 
 ALL_TARGETS = 				\
 	$(PLUGIN_TARGET)		\
@@ -1016,7 +984,6 @@ SBIN_WRAPPERS = \
 	$(MANAGE_INDEX_WRAPPER)
 
 #	$(MASTER_DELETE_WRAPPER)
-#	$(FS_SANITY_CHECK_WRAPPER)
 
 noinst_SCRIPTS=	\
 	$(SNIPPET_TEST_WRAPPER)
@@ -1038,7 +1005,6 @@ EXTRA_DIST = \
 	$(SNIPPET_TEST_CSFILES)			\
 	$(INDEX_HELPER_CSFILES)			\
 	$(MASTER_DELETE_CSFILES)		\
-	$(FS_SANITY_CHECK_CSFILES)		\
 	$(MANAGE_INDEX_CSFILES)			\
 	$(BUILD_INDEX_CSFILES)
 
@@ -1070,9 +1036,6 @@ CLEANFILES = \
 	$(SNIPPET_TEST_TARGET)			\
 	$(SNIPPET_TEST_TARGET).mdb		\
 	$(SNIPPET_TEST_WRAPPER)			\
-	$(FS_SANITY_CHECK_TARGET)		\
-	$(FS_SANITY_CHECK_TARGET).mdb		\
-	$(FS_SANITY_CHECK_WRAPPER)		\
 	$(MANAGE_INDEX_TARGET)			\
 	$(MANAGE_INDEX_TARGET).mdb		\
 	$(MANAGE_INDEX_WRAPPER)			\
