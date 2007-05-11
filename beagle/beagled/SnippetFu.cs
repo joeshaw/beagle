@@ -177,7 +177,7 @@ namespace Beagle.Daemon {
 			}
 
 			string str;
-			while (! String.IsNullOrEmpty (str = string_source ())) {
+			while ( (str = string_source ()) != null) {
 				if (str.Length == 0)
 					continue;
 				found_snippet_length += HighlightTerms (query_terms_list, str, ref matches);
