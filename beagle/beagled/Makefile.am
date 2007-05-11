@@ -799,36 +799,6 @@ $(TERM_STATS_TARGET): $(TERM_STATS_CSFILES) $(TERM_STATS_LOCAL_ASSEMBLIES)
 
 ############################################################
 
-NAME_INDEX_WRAPPER = beagle-name-index
-NAME_INDEX_TARGET = NameIndexTool.exe
-
-$(NAME_INDEX_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(NAME_INDEX_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(NAME_INDEX_WRAPPER)
-
-NAME_INDEX_CSFLAGS = \
-	-target:exe
-
-NAME_INDEX_CSFILES = \
-	$(srcdir)/NameIndexTool.cs
-
-NAME_INDEX_LOCAL_ASSEMBLIES =	\
-	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)
-
-NAME_INDEX_ASSEMBLIES = \
-	$(BEAGLED_LIBS)				\
-	$(SHARPZIPLIB_LIBS)			\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix
-
-$(NAME_INDEX_TARGET): $(NAME_INDEX_CSFILES) $(NAME_INDEX_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(NAME_INDEX_CSFLAGS) $(NAME_INDEX_CSFILES) $(NAME_INDEX_ASSEMBLIES)
-
-############################################################
-
 FS_SANITY_CHECK_WRAPPER = beagle-file-system-sanity-check
 FS_SANITY_CHECK_TARGET = SanityCheckTool.exe
 
@@ -952,7 +922,6 @@ ALL_TARGETS = 				\
 	$(DUMP_INDEX_WRAPPER)		\
 	$(SNIPPET_TEST_TARGET)		\
 	$(TERM_STATS_TARGET)		\
-	$(NAME_INDEX_TARGET)		\
 	$(MANAGE_INDEX_TARGET)		\
 	$(MANAGE_INDEX_WRAPPER)
 
@@ -1082,8 +1051,7 @@ SBIN_WRAPPERS = \
 
 noinst_SCRIPTS=	\
 	$(SNIPPET_TEST_WRAPPER)		\
-	$(TERM_STATS_WRAPPER)		\
-	$(NAME_INDEX_WRAPPER)		
+	$(TERM_STATS_WRAPPER)
 
 EXTRA_DIST = \
 	$(autostart_DATA)			\
@@ -1103,7 +1071,6 @@ EXTRA_DIST = \
 	$(INDEX_HELPER_CSFILES)			\
 	$(MASTER_DELETE_CSFILES)		\
 	$(TERM_STATS_CSFILES)			\
-	$(NAME_INDEX_CSFILES)			\
 	$(FS_SANITY_CHECK_CSFILES)		\
 	$(MANAGE_INDEX_CSFILES)			\
 	$(BUILD_INDEX_CSFILES)
@@ -1139,9 +1106,6 @@ CLEANFILES = \
 	$(TERM_STATS_TARGET)			\
 	$(TERM_STATS_TARGET).mdb		\
 	$(TERM_STATS_WRAPPER)			\
-	$(NAME_INDEX_TARGET)			\
-	$(NAME_INDEX_TARGET).mdb		\
-	$(NAME_INDEX_WRAPPER)			\
 	$(FS_SANITY_CHECK_TARGET)		\
 	$(FS_SANITY_CHECK_TARGET).mdb		\
 	$(FS_SANITY_CHECK_WRAPPER)		\
