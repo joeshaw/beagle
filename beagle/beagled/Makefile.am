@@ -769,36 +769,6 @@ $(SNIPPET_TEST_TARGET): $(SNIPPET_TEST_CSFILES) $(SNIPPET_TEST_LOCAL_ASSEMBLIES)
 
 ############################################################
 
-TERM_STATS_WRAPPER = beagle-term-stats
-TERM_STATS_TARGET = TermStatsTool.exe
-
-$(TERM_STATS_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(TERM_STATS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(TERM_STATS_WRAPPER)
-
-TERM_STATS_CSFLAGS = \
-	-target:exe
-
-TERM_STATS_CSFILES = \
-	$(srcdir)/TermStatsTool.cs
-
-TERM_STATS_LOCAL_ASSEMBLIES =	\
-	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)
-
-TERM_STATS_ASSEMBLIES = \
-	$(BEAGLED_LIBS)				\
-	$(SHARPZIPLIB_LIBS)			\
-	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
-	-r:Mono.Posix
-
-$(TERM_STATS_TARGET): $(TERM_STATS_CSFILES) $(TERM_STATS_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(TERM_STATS_CSFLAGS) $(TERM_STATS_CSFILES) $(TERM_STATS_ASSEMBLIES)
-
-############################################################
-
 FS_SANITY_CHECK_WRAPPER = beagle-file-system-sanity-check
 FS_SANITY_CHECK_TARGET = SanityCheckTool.exe
 
@@ -921,7 +891,6 @@ ALL_TARGETS = 				\
 	$(DUMP_INDEX_TARGET)		\
 	$(DUMP_INDEX_WRAPPER)		\
 	$(SNIPPET_TEST_TARGET)		\
-	$(TERM_STATS_TARGET)		\
 	$(MANAGE_INDEX_TARGET)		\
 	$(MANAGE_INDEX_WRAPPER)
 
@@ -1050,8 +1019,7 @@ SBIN_WRAPPERS = \
 #	$(FS_SANITY_CHECK_WRAPPER)
 
 noinst_SCRIPTS=	\
-	$(SNIPPET_TEST_WRAPPER)		\
-	$(TERM_STATS_WRAPPER)
+	$(SNIPPET_TEST_WRAPPER)
 
 EXTRA_DIST = \
 	$(autostart_DATA)			\
@@ -1070,7 +1038,6 @@ EXTRA_DIST = \
 	$(SNIPPET_TEST_CSFILES)			\
 	$(INDEX_HELPER_CSFILES)			\
 	$(MASTER_DELETE_CSFILES)		\
-	$(TERM_STATS_CSFILES)			\
 	$(FS_SANITY_CHECK_CSFILES)		\
 	$(MANAGE_INDEX_CSFILES)			\
 	$(BUILD_INDEX_CSFILES)
@@ -1103,9 +1070,6 @@ CLEANFILES = \
 	$(SNIPPET_TEST_TARGET)			\
 	$(SNIPPET_TEST_TARGET).mdb		\
 	$(SNIPPET_TEST_WRAPPER)			\
-	$(TERM_STATS_TARGET)			\
-	$(TERM_STATS_TARGET).mdb		\
-	$(TERM_STATS_WRAPPER)			\
 	$(FS_SANITY_CHECK_TARGET)		\
 	$(FS_SANITY_CHECK_TARGET).mdb		\
 	$(FS_SANITY_CHECK_WRAPPER)		\
