@@ -44,8 +44,13 @@ class SnippetTestTool {
 			query.AddText (arg);
 
 		string snippet;
-		snippet = SnippetFu.GetSnippet (args,
-						new SnippetFu.StringSource (Console.ReadLine));
+		snippet = SnippetFu.GetSnippet (args, delegate {
+				string input = Console.ReadLine ();
+				if (String.IsNullOrEmpty (input))
+					return null;
+				else
+					return input;
+			});
 
 		Console.WriteLine ("Snippet:\n'{0}'", snippet);
 	}
