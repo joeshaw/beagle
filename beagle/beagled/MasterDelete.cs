@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 
-using Beagle.Util;
+using Beagle;
 using Beagle.Daemon;
 
 class MasterDeleteTool {
@@ -44,18 +44,23 @@ class MasterDeleteTool {
 			return;
 		}
 
-		LuceneDriver driver = new LuceneDriver (index_dir);
+		LuceneQueryingDriver driver = new LuceneQueryingDriver (index_dir, -1, true);
 
-		ICollection hits = driver.DoQueryByUri (uri_to_delete);
-		
-		if (hits == null || hits.Count == 0) {
+		if (! driver.HasUri (uri_to_delete)) {
 			Console.WriteLine ("Uri {0} not found in the index in {1}",
 					   uri_to_delete, index_dir);
 			return;
 		}
-			
-		driver.Remove (uri_to_delete);
-		driver.Flush ();
+
+		LuceneIndexingDriver indexer = new LuceneIndexingDriver (index_dir, false);
+
+		Indexable indexable = new Indexable (uri_to_delete);
+		indexable.Type = IndexableType.Remove;
+
+		IndexerRequest request = new IndexerRequest ();
+		request.Add (indexable);
+
+		indexer.Flush (request);
 
 		Console.WriteLine ("Uri {0} deleted", uri_to_delete);
 	}
