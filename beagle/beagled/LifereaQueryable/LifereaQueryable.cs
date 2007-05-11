@@ -59,10 +59,27 @@ namespace Beagle.Daemon.LifereaQueryable {
 		
 		public LifereaQueryable () : base ("LifereaIndex", INDEX_VERSION)
 		{
-			liferea_dir = Path.Combine (PathFinder.HomeDir, ".liferea");
-			liferea_dir = Path.Combine (liferea_dir, "cache");
+		}
+
+		/////////////////////////////////////////////////
+
+		private bool CheckForDirectory ()
+		{
+			string dir = Path.Combine (PathFinder.HomeDir, ".liferea_1.2");
+
+			if (! Directory.Exists (dir))
+				dir = Path.Combine (PathFinder.HomeDir, ".liferea");
+
+			if (! Directory.Exists (dir))
+				return false;
+
+			liferea_dir = Path.Combine (dir, "cache");
 			icon_dir = Path.Combine (liferea_dir, "favicons");
 			liferea_dir = Path.Combine (liferea_dir, "feeds");
+
+			Log.Debug ("Found Liferea directory '{0}'", liferea_dir);
+
+			return true;
 		}
 
 		/////////////////////////////////////////////////
@@ -76,7 +93,8 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		private void StartWorker ()
 		{
-			if (!Directory.Exists (liferea_dir)) {
+			if (! CheckForDirectory ()) {
+				Log.Debug ("Watching for creation of Liferea directory");
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
                                 return;
 			}
@@ -113,10 +131,10 @@ namespace Beagle.Daemon.LifereaQueryable {
 
 		private bool CheckForExistence ()
                 {
-                        if (!Directory.Exists (liferea_dir))
+                        if (! CheckForDirectory ())
                                 return true;
 
-                        this.Start ();
+			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 
                         return false;
                 }
