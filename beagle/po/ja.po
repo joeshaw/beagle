@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-21 10:29+0900\n"
-"PO-Revision-Date: 2007-02-05 21:29+0900\n"
+"POT-Creation-Date: 2007-05-12 13:19+0900\n"
+"PO-Revision-Date: 2007-05-12 13:19+0900\n"
 "Last-Translator: Novell Language <language@novell.com>\n"
 "Language-Team: Novell Language <language@novell.com>\n"
 "MIME-Version: 1.0\n"
@@ -263,7 +263,7 @@ msgstr "県/州:"
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "タイトル:"
 
@@ -317,7 +317,7 @@ msgstr "\"{0}\" ({1}) についての会話記録"
 msgid "Conversations with {0}"
 msgstr "\"{0}\" さんとの会話記録"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
+#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "検索"
 
@@ -450,11 +450,11 @@ msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "{1}個の検索結果のうち上位 {0}個を表示しています"
 msgstr[1] "{1}個の検索結果のうち上位 {0}個を表示しています"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:565
 msgid "Your data is being indexed"
 msgstr "データのインデックスを作成中です"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:566
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -565,31 +565,31 @@ msgstr "コメント:"
 msgid "IM Conversation"
 msgstr "IM 上での会話"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:94
 msgid "Name:"
 msgstr "名前:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:95 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "受信した日付:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:99
 msgid "Status:"
 msgstr "状態:"
 
-#: ../search/Tiles/IMLog.cs:112
+#: ../search/Tiles/IMLog.cs:114
 msgid "Idle"
 msgstr "待機中"
 
-#: ../search/Tiles/IMLog.cs:119
+#: ../search/Tiles/IMLog.cs:121
 msgid "Away"
 msgstr "離席中"
 
-#: ../search/Tiles/IMLog.cs:122
+#: ../search/Tiles/IMLog.cs:124
 msgid "Offline"
 msgstr "オフライン"
 
-#: ../search/Tiles/IMLog.cs:125
+#: ../search/Tiles/IMLog.cs:127
 msgid "Available"
 msgstr "利用可能"
 
@@ -636,11 +636,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0}個のスライド"
 msgstr[1] "{0}個のスライド"
 
-#: ../search/Tiles/RSSFeed.cs:49
+#: ../search/Tiles/RSSFeed.cs:59
 msgid "Site:"
 msgstr "サイト:"
 
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
 msgstr "訪問した日:"
 
@@ -1124,11 +1124,11 @@ msgstr "詳細を表示する"
 msgid "Couldn't launch web browser"
 msgstr "ウェブ・ブラウザを起動できませんでした"
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "設定の再読込み"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1136,15 +1136,15 @@ msgstr ""
 "他のアプリケーションが設定ファイルを変更しました。現在表示している内容を破棄"
 "して、再び設定情報を読み直しますか？"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "パスの選択"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "指定したパスは既にインデックス作成の対象になっているので登録しません。"
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:330
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1152,15 +1152,15 @@ msgstr ""
 "指定したパスを含んだアイテムがが既に登録され、そのインデックスが作成されてい"
 "るので、そのパスは登録しません。"
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "パスを追加しませんでした"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "古いパスの削除"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1168,80 +1168,75 @@ msgstr ""
 "このパスを追加すると既に登録済みの古いパスを破棄することになります。それでも"
 "パスを追加しますか？"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "パスの削除"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "アイテムの削除"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象外一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458 ../tools/Settings.cs:547 ../tools/Settings.cs:634
 msgid "Name"
 msgstr "名前"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "種類"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "パス名:"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "メール・フォルダ:"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "フォルダの選択"
 
-#: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907 ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "パス名(_A):"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "フォルダ(_A):"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "パターン(_A):"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "パス名を追加する際にエラーが発生しました"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
 "指定したパスが見つからなかったので、インデックスの作成で除外するリソース一覧"
 "にパスを追加することができませんでした。"
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "表示"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1273,7 +1268,7 @@ msgstr "<b>ユーザ・インタフェース</b>"
 
 #: ../tools/settings.glade.h:8
 msgid "Add any additional paths to be included for indexing."
-msgstr "追加でインデックスを作成するフォルダを指定して下さい:"
+msgstr "インデックスに追加するフォルダを指定して下さい:"
 
 #: ../tools/settings.glade.h:9
 msgid ""
@@ -1313,29 +1308,34 @@ msgstr "ホーム・フォルダのインデックスを作成する(_I)"
 
 #: ../tools/settings.glade.h:17
 msgid "Index data while on _battery power"
-msgstr "バッテリーを使用している時でもインデックスを作成する(_B)"
+msgstr "バッテリーを使用している時でもインデックスを更新する(_B)"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr ""
+"スクリーンセーバーが実行している最中にインデックス更新の頻度を上げる(_C)"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "インデックスの作成"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "インデックスの作成で対象外にするリソースを選択して下さい:"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "インデックスの作成で対象外にするメール・フォルダを選択して下さい:"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "デスクトップ検索の設定"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "メール・フォルダの選択"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1343,27 +1343,31 @@ msgstr ""
 "インデックスの作成で対象外にするフォルダ、パターン、メール・フォルダ、オブ"
 "ジェクトの種類を指定して下さい:"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr "バッテリーを使用している間はこの設定を適用しません"
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "種類:"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "root 権限で Beagle を実行できるようにする(_A)"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "参照(_B)..."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "フォルダ(_F)"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "メール・フォルダ(_M)"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "自動的に検索＆インデックス作成サービスを起動する(_S)"
 
