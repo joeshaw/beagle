@@ -374,6 +374,13 @@ fi
 
 dnl ----------------------------------------------
 
+dnl taglib-sharp: Needed for indexing audio formats
+
+PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp)
+AC_SUBST(TAGLIB_SHARP_LIBS)
+
+dnl ----------------------------------------------
+
 dnl libexif: Needed to index jpeg metadata
 
 LIBEXIF_API_CHANGE=0.6.0
