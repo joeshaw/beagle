@@ -2,6 +2,7 @@
 // LuceneIndexingDriver.cs
 //
 // Copyright (C) 2004-2007 Novell, Inc.
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 //
 
 //

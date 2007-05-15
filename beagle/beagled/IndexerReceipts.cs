@@ -2,6 +2,7 @@
 // IndexerReceipts.cs
 //
 // Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 //
 
 //

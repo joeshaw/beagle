@@ -98,6 +98,9 @@ namespace Beagle.Daemon {
 		// expect to have change.  Canonical example: file names.
 		private Lucene.Net.Store.Directory secondary_store = null;
 
+		// Flush if more than this number of requests
+		public const int RequestFlushThreshold = 37; // a total arbitrary magic number
+
 		//////////////////////////////////////////////////////////////////////////////
 
 		protected LuceneCommon (string index_name, int minor_version)
