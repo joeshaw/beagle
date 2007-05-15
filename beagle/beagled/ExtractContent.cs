@@ -128,6 +128,8 @@ class ExtractContentTool {
 		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
 		Console.WriteLine ();
 
+#if false
+		// FIXME FIXME FIXME: Fix generated indexables for ExtractContent
 		if (filter.GeneratedIndexables.Count > 0) {
 			Console.WriteLine ("Filter-generated indexables ({0}):", filter.GeneratedIndexables.Count);
 
@@ -136,6 +138,7 @@ class ExtractContentTool {
 
 			Console.WriteLine ();
 		}
+#endif
 
 		// Make sure that the properties are sorted.
 		ArrayList prop_array = new ArrayList (indexable.Properties);
@@ -263,6 +266,8 @@ class ExtractContentTool {
 		// Clean up any temporary files associated with filtering this indexable.
 		indexable.Cleanup ();
 
+#if false
+		// FIXME FIXME FIXME: Fix generated indexables for ExtractContent
 		foreach (Indexable i in filter.GeneratedIndexables) {
 			if (! show_generated) {
 				i.Cleanup ();
@@ -272,7 +277,7 @@ class ExtractContentTool {
 			i.StoreStream ();
 			Display (i);
 		}
-		
+#endif		
 		indexable.Cleanup ();
 
 	}

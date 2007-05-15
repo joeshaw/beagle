@@ -88,6 +88,7 @@ namespace Beagle.Daemon
 
 		static Queue pending_files = new Queue ();
 		static Queue pending_directories = new Queue ();
+		static IndexerRequest pending_request;
 		
 		const int BATCH_SIZE = 30;
 		
@@ -330,12 +331,12 @@ namespace Beagle.Daemon
 		
 		static void IndexWorker ()
 		{
-			Log.Debug ("Starting IndexWorker");
+			Logger.Log.Debug ("Starting IndexWorker");
 
 			try {
 				DoIndexing ();
 			} catch (Exception e) {
-				Log.Debug ("Encountered exception while indexing: {0}", e);
+				Logger.Log.Debug ("Encountered exception while indexing: {0}", e);
 			}
 
 			Logger.Log.Debug ("IndexWorker Done");
@@ -348,7 +349,6 @@ namespace Beagle.Daemon
 			int count_files = 0;
 
 			Indexable indexable;
-			IndexerRequest pending_request;
 			pending_request = new IndexerRequest ();
 			Queue modified_directories = new Queue ();
 			
@@ -356,7 +356,7 @@ namespace Beagle.Daemon
 				DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
 
 				if (! arg_disable_directories)
-					AddToRequest (pending_request, DirectoryToIndexable (dir, modified_directories));
+					AddToRequest (DirectoryToIndexable (dir, modified_directories));
 
 				try {
 					if (arg_recursive)
@@ -368,7 +368,7 @@ namespace Beagle.Daemon
 					foreach (FileInfo file in DirectoryWalker.GetFileInfos (dir))
 						if (!Ignore (file)
 						    && !FileSystem.IsSpecialFile (file.FullName)) {
-							AddToRequest (pending_request, FileToIndexable (file));
+							AddToRequest (FileToIndexable (file));
 							count_files ++;
 						}
 				
@@ -407,17 +407,18 @@ namespace Beagle.Daemon
 					// remove
 					Uri uri = UriFu.PathToFileUri (info.FullName);
 					indexable = new Indexable (IndexableType.Remove, uri);
-					AddToRequest (pending_request, indexable);
+					AddToRequest (indexable);
 				}
 			}
-			
+
+			bool reschedule = false;
 			// Call Flush until our request is empty.  We have to do this in a loop
-			// because children can get added back to the pending request in a flush.
-			while (pending_request.Count > 0) {
+			// because Flush happens in a batch size and some indexables might generate more indexables
+			while (reschedule || pending_request.Count > 0) {
 				if (Shutdown.ShutdownRequested)
 					break;
 
-				FlushIndexer (driver, pending_request);
+				reschedule = FlushIndexer (driver);
 			}
 
 			backing_fa_store.Flush ();
@@ -431,7 +432,7 @@ namespace Beagle.Daemon
 		
 		/////////////////////////////////////////////////////////////////
 
-		static void AddToRequest (IndexerRequest request, Indexable indexable)
+		static void AddToRequest (Indexable indexable)
 		{
 			if (indexable == null)
 				return;
@@ -451,30 +452,46 @@ namespace Beagle.Daemon
 
 			indexable.Source = arg_source;
 
-			request.Add (indexable);
+			pending_request.Add (indexable);
+			bool reschedule = false;
 
-			if (! Shutdown.ShutdownRequested && request.Count >= BATCH_SIZE) {
-				Logger.Log.Debug ("Flushing driver, {0} items in queue", request.Count);
-				FlushIndexer (driver, request);
-				// FlushIndexer clears the pending_request
-			}
+			do {
+				if (Shutdown.ShutdownRequested)
+					break;
+
+				if (! reschedule && pending_request.Count < BATCH_SIZE)
+					break;
+
+				if (reschedule)
+					Logger.Log.Debug ("Continuing indexing indexer generated indexables");
+				else
+					Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
+
+				reschedule = FlushIndexer (driver);
+				Console.WriteLine (reschedule);
+
+			} while (reschedule);
 		}
 
-		static private Dictionary<int, Indexable> deferred_indexables = new Dictionary<int, Indexable> ();
-
-		static IndexerReceipt [] FlushIndexer (IIndexer indexer, IndexerRequest request)
+		// This is mostly a copy of LuceneQueryable.Flush + FSQ.PostAddHooks/PostRemoveHook
+		static bool FlushIndexer (IIndexer indexer)
 		{
+			IndexerRequest flushed_request;
+			if (pending_request.IsEmpty)
+				return false;
+
+			flushed_request = pending_request;
+			pending_request = new IndexerRequest ();
+
 			IndexerReceipt [] receipts;
-			receipts = indexer.Flush (request);
+			receipts = indexer.Flush (flushed_request);
 
 			// Flush will return null if it encounters a shutdown during flushing
 			if (receipts == null)
-				return null;
-
-			ArrayList pending_children;
-			pending_children = new ArrayList ();
+				return false;
 
 			fa_store.BeginTransaction ();
+			bool indexer_indexable_receipt = false;
 
 			foreach (IndexerReceipt raw_r in receipts) {
 
@@ -482,19 +499,11 @@ namespace Beagle.Daemon
 					// Update the file attributes 
 					IndexerAddedReceipt r = (IndexerAddedReceipt) raw_r;
 
-					Indexable indexable = request.GetRequestIndexable (r);
+					Indexable indexable = flushed_request.RetrieveRequestIndexable (r);
 
 					if (indexable == null) {
-						// This must be a previously deferred indexable.
-						indexable = deferred_indexables [r.Id];
-
-						if (indexable == null) {
-							Log.Warn ("Unable to match up indexable id# {0} to any indexable object!",
-								  r.Id);
-							continue;
-						}
-
-						deferred_indexables.Remove (indexable.Id);
+						Logger.Log.Debug ("Should not happen! Previously requested indexable with id #{0} has eloped!", r.Id);
+						continue;
 					}
 
 					// We don't need to write out any file attributes for
@@ -517,35 +526,31 @@ namespace Beagle.Daemon
 					// Update the file attributes 
 					IndexerRemovedReceipt r = (IndexerRemovedReceipt) raw_r;
 
-					Indexable indexable = request.GetRequestIndexable (r);
+					Indexable indexable = flushed_request.RetrieveRequestIndexable (r);
+					if (indexable == null) { // Should never happen
+						Log.Warn ("Unable to match indexable-remove #{0} to any request!", r.Id);
+						continue;
+					}
 
 					string path = indexable.Uri.LocalPath;
 					Logger.Log.Debug ("Removing: '{0}'", path);
 					fa_store.Drop (path);
 
 				} else if (raw_r is IndexerIndexablesReceipt) {
-					// Add any filter-generated indexables back into our indexer
-					IndexerIndexablesReceipt r = (IndexerIndexablesReceipt) raw_r;
-					pending_children.AddRange (r.Indexables);
-
-				} else if (raw_r is IndexerDeferredReceipt) {
-					// Set aside any deferred indexables so we can process them later
-					IndexerDeferredReceipt r = (IndexerDeferredReceipt) raw_r;
-					deferred_indexables [r.Id] = request.GetRequestIndexable (r);
+					indexer_indexable_receipt = true;
 				}
 			}
 
+			pending_request.DeferredIndexables = flushed_request.DeferredIndexables;
+
+			// Reschedule if some indexable generated more indexables
+			if (indexer_indexable_receipt) {
+				pending_request.ContinueIndexing = true;
+				return true;
+			}
+
 			fa_store.CommitTransaction ();
-
-			request.Clear (); // clear out the old request
-
-			if (Shutdown.ShutdownRequested)
-				return receipts;
-
-			foreach (Indexable i in pending_children) // and then add the children
-				AddToRequest (request, i);
-			
-			return receipts;
+			return false;
 		}
 
 		static Indexable FileToIndexable (FileInfo file)

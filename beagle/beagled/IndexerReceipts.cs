@@ -34,8 +34,7 @@ namespace Beagle.Daemon {
 
 	[XmlInclude (typeof (IndexerAddedReceipt)),
 	 XmlInclude (typeof (IndexerRemovedReceipt)),
-	 XmlInclude (typeof (IndexerIndexablesReceipt)),
-	 XmlInclude (typeof (IndexerDeferredReceipt))]
+	 XmlInclude (typeof (IndexerIndexablesReceipt))]
 	public abstract class IndexerReceipt {
 		
 		public IndexerReceipt () { }
@@ -47,7 +46,7 @@ namespace Beagle.Daemon {
 
 		// Some abstract id copied from the indexable which caused this receipt
 		[XmlAttribute ("Id")]
-		public int Id = 0;
+		public int Id = -1;
 	}
 
 	public class IndexerAddedReceipt : IndexerReceipt {
@@ -57,8 +56,8 @@ namespace Beagle.Daemon {
 		public IndexerAddedReceipt (int id) : base (id) { }
 
 		public IndexerAddedReceipt (int id, string filter_name, int filter_version)
+			: base (id)
 		{
-			this.Id = id;
 			this.FilterName = filter_name;
 			this.FilterVersion = filter_version;
 		}
@@ -75,43 +74,22 @@ namespace Beagle.Daemon {
 		}
 
 	}
-	
+
 	public class IndexerRemovedReceipt : IndexerReceipt {
 		
 		public IndexerRemovedReceipt () { }
 
 		public IndexerRemovedReceipt (int id) : base (id) { }
 	}
-			     
+
+	// This fake receipt is sent to the daemon to basically schedule indexing of filter generated indexables
 	public class IndexerIndexablesReceipt : IndexerReceipt {
 
 		public IndexerIndexablesReceipt () { }
-
-		public IndexerIndexablesReceipt (Uri generating_uri, ArrayList indexables)
-		{
-			this.GeneratingUri = generating_uri;
-			this.Indexables = indexables;
-		}
-
-		// Pass the generating uri, PreFilterGeneratedAddHook might need this
-		[XmlIgnore]
-		public Uri GeneratingUri;
-		
-		[XmlAttribute ("GeneratingUri")]
-		public string GeneratingUriString {
-			get { return UriFu.UriToEscapedString (GeneratingUri); }
-			set { GeneratingUri = UriFu.EscapedStringToUri (value); }
-		}
-
-		[XmlArray (ElementName="Indexables")]
-		[XmlArrayItem (ElementName="Indexable", Type=typeof (Indexable))]
-		public ArrayList Indexables;
-	}
-
-	public class IndexerDeferredReceipt : IndexerReceipt {
-		
-		public IndexerDeferredReceipt () { }
-
-		public IndexerDeferredReceipt (int id) : base (id) { }
+		// FIXME: We could send id here to get "permission" from the backend whether to continue
+		// indexing the generated indexables from some backend scheduled indexable; currently I see
+		// no need.
+		// Another use for the id(s) could to tell the backend what parent indexable(s) are being currently indexed.
+		// This could be useful in displaying correct status information.
 	}
 }

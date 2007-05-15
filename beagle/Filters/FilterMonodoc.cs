@@ -98,7 +98,7 @@ namespace Beagle.Filters {
 			// If we've successfully crawled the file but haven't 
                         // found any indexables, we shouldn't consider it
                         // successfull at all.
-                        if (GeneratedIndexables.Count == 0) {
+                        if (! HasGeneratedIndexable) {
                                 Error ();
                                 return;
                         }

@@ -157,10 +157,6 @@ namespace Beagle.Daemon {
 			lock (request_lock) 
 				pending_request.Cleanup ();
 
-			// Clear the deferred indexables
-			foreach (Indexable indexable in deferred_indexables.Values)
-				indexable.Cleanup ();
-				
 			try {
 				ShutdownHook ();
 			} catch (Exception ex) {
@@ -513,12 +509,6 @@ namespace Beagle.Daemon {
 				if (queryable.PreAddIndexableHook (indexable)) {
 					queryable.AddIndexable (indexable);
 					queryable.ConditionalFlush ();
-				} else if (indexable.LocalState ["IndexerIndexableGenerated"] != null) {
-					// For indexer generated indexables, either the indexable or an
-					// IndexableType.Ignore request _has_ to go back to the indexhelper.
-					indexable.Type = IndexableType.Ignore;
-					queryable.AddIndexable (indexable);
-					queryable.ConditionalFlush ();
 				}
 			}
 
@@ -587,16 +577,10 @@ namespace Beagle.Daemon {
 							continue;
 					}
 
-					if (queryable.PreAddIndexableHook (generated)) {
+					if (queryable.PreAddIndexableHook (generated))
 						queryable.AddIndexable (generated);
-					} else if (generated.LocalState ["IndexerIndexableGenerated"] != null) {
-						// For indexer generated indexables, either the indexable or an
-						// IndexableType.Ignore request _has_ to go back to the indexhelper.
-						generated.Type = IndexableType.Ignore;
-						queryable.AddIndexable (generated);
-					} else {
+					else
 						generated.Cleanup ();
-					}
 					
 					// We keep adding indexables until a flush goes through.
 				} while (! (flushed = queryable.ConditionalFlush ()));
@@ -838,14 +822,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		// Flush if more than this number of requests
-		public const int RequestFlushThreshold = 37; // a total arbitrary magic number
-
 		// Returns true if we actually did flush, false otherwise.
 		protected bool ConditionalFlush ()
 		{
 			lock (request_lock) {
-				if (pending_request.Count > RequestFlushThreshold) {
+				if (pending_request.Count > LuceneCommon.RequestFlushThreshold) {
 					Flush ();
 					return true;
 				}
@@ -853,28 +834,45 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
-		private Dictionary<int, Indexable> deferred_indexables = new Dictionary<int, Indexable> ();
-
 		protected void Flush ()
+		{
+			Flush (false);
+		}
+
+		protected void Flush (bool continue_only)
 		{
 			IndexerRequest flushed_request;
 
-			lock (request_lock) {
-				if (pending_request.IsEmpty)
-					return;
+			if (continue_only) {
+				// if the request is merely to signal indexhelper to continue indexing,
+				// then sent a fake indexerrequest but then use the previous request to retrieve
+				// deferred indexables
+				flushed_request = new IndexerRequest ();
+				flushed_request.ContinueIndexing = true;
 
-				flushed_request = pending_request;
-				pending_request = new IndexerRequest ();
+				// Do not pass this through PreFlushHook since this is a fake request
+			} else {
+				lock (request_lock) {
+					if (pending_request.IsEmpty)
+						return;
 
-				// We hold the request_lock when calling PreFlushHook, so
-				// that no other requests can come in until it exits.
-				PreFlushHook (flushed_request);
+					flushed_request = pending_request;
+					pending_request = new IndexerRequest ();
+
+					// We hold the request_lock when calling PreFlushHook, so
+					// that no other requests can come in until it exits.
+					PreFlushHook (flushed_request);
+				}
 			}
 
 			IndexerReceipt [] receipts;
 			receipts = indexer.Flush (flushed_request);
 
 			PostFlushHook (flushed_request, receipts);
+
+			if (continue_only) {
+				flushed_request = pending_request;
+			}
 
 			// Silently return if we get a null back.  This is probably
 			// a bad thing to do.
@@ -887,6 +885,7 @@ namespace Beagle.Daemon {
 				return;
 
 			// Update the cached count of items in the driver
+			// FIXME: Verify that this still works after all the deferred-indexable fu
 			driver.SetItemCount (indexer.GetItemCount ());
 
 			// Something happened, so schedule an optimize just in case.
@@ -897,6 +896,7 @@ namespace Beagle.Daemon {
 
 			ArrayList added_uris = new ArrayList ();
 			ArrayList removed_uris  = new ArrayList ();
+			bool indexer_indexable_receipt = false;
 
 			for (int i = 0; i < receipts.Length; ++i) {
 
@@ -904,19 +904,11 @@ namespace Beagle.Daemon {
 					
 					IndexerAddedReceipt r;
 					r = (IndexerAddedReceipt) receipts [i];
-					Indexable indexable = flushed_request.GetRequestIndexable (r);
+					Indexable indexable = flushed_request.RetrieveRequestIndexable (r);
 
 					if (indexable == null) {
-						// Must be a previously deferred indexable.
-						indexable = deferred_indexables [r.Id];
-
-						if (indexable == null) {
-							Log.Warn ("Unable to match up indexable id# {0} to any indexable object!",
-								  r.Id);
-							continue;
-						}
-
-						deferred_indexables.Remove (r.Id);
+						Log.Debug ("Should not happen! Previously requested indexable with id #{0} has eloped!", r.Id);
+						continue;
 					}
 
 					// Add the Uri to the list for our change data
@@ -946,7 +938,7 @@ namespace Beagle.Daemon {
 					IndexerRemovedReceipt r;
 					r = (IndexerRemovedReceipt) receipts [i];
 
-					Indexable indexable = flushed_request.GetRequestIndexable (r);
+					Indexable indexable = flushed_request.RetrieveRequestIndexable (r);
 					if (indexable == null) { // Should never happen
 						Log.Warn ("Unable to match indexable-remove #{0} to any request!", r.Id);
 						continue;
@@ -967,55 +959,27 @@ namespace Beagle.Daemon {
 					removed_uris.Add (notification_uri);
 					
 				} else if (receipts [i] is IndexerIndexablesReceipt) {
-					
-					IndexerIndexablesReceipt r;
-					r = (IndexerIndexablesReceipt) receipts [i];
-
-					foreach (Indexable indexable in r.Indexables) {
-						bool please_add_a_new_task = false;
-						indexable.LocalState ["IndexerIndexableGenerated"] = true;
-
-						try {
-							please_add_a_new_task = PreFilterGeneratedAddHook (indexable);
-						} catch (InvalidOperationException ex) {
-							// Queryable does not support adding children
-						} catch (Exception ex) {
-							Logger.Log.Warn (ex, "Caught exception in PreFilterGeneratedAddHook '{0}'", indexable.DisplayUri);
-						}
-
-						if (please_add_a_new_task) {
-							if (Debug) {
-								if (indexable.IsChild)
-									Log.Debug ("Adding filter-generated child indexable {0} to parent {1}", indexable.Uri, indexable.ParentUri);
-								else
-									Log.Debug ("Adding filter-generated indexable {0}", indexable.Uri);
-							}
-
-						} else {
-							if (Debug)
-								Log.Debug ("Ignoring filter generated indexable {0}", indexable.Uri);
-							indexable.Type = IndexableType.Ignore;
-						}
-
-						// FIXME: Maybe we should use an indexable generator instead?
-						Scheduler.Task task = NewAddTask (indexable);
-						task.SubPriority = 1; // So we jump ahead of other individual tasks
-						ThisScheduler.Add (task);
-					}
-
-				} else if (receipts [i] is IndexerDeferredReceipt) {
-					
-					IndexerDeferredReceipt r;
-					r = (IndexerDeferredReceipt) receipts [i];
-					Indexable indexable = flushed_request.GetRequestIndexable (r);
-
-					if (indexable == null) { // Should never happen
-						Log.Warn ("Unable to match indexable(now deferred) #{0} to any request!", r.Id);
-						continue;
-					}
-
-					deferred_indexables [r.Id] = indexable;
+					indexer_indexable_receipt = true;
 				}
+			}
+
+			if (! continue_only) {
+				lock (request_lock) {
+					pending_request.DeferredIndexables = flushed_request.DeferredIndexables;
+				}
+			}
+
+			if (indexer_indexable_receipt) {
+				Log.Debug ("Indexing of indexer generated indexables is paused. Scheduling job to continue.");
+				// Create a task asking the indexer to continue indexing
+				Scheduler.Task task;
+				task = Scheduler.TaskFromHook (new Scheduler.TaskHook (ContinueIndexerIndexableIndexing));
+				// Schedule it so that it is the immediate next task to be scheduled
+				task.Priority = Scheduler.Priority.Immediate;
+				task.SubPriority = 100;
+				task.Source = this;
+				task.Tag = "Continue indexing generated indexables from " + IndexName;
+				ThisScheduler.Add (task);
 			}
 
 			if (fa_store != null)
@@ -1030,6 +994,12 @@ namespace Beagle.Daemon {
 
 				QueryDriver.QueryableChanged (this, change_data);
 			}
+		}
+
+		// Ouch! What a name ?!
+		private void ContinueIndexerIndexableIndexing (Scheduler.Task task)
+		{
+			Flush (true);
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////

@@ -369,6 +369,8 @@ namespace Beagle.Filters {
 								child.SetBinaryStream (stream);
 
 							child.SetChildOf (this.indexable);
+							child.StoreStream ();
+							child.CloseStreams ();
 							this.child_indexables.Add (child);
 						} else {
 							Log.Debug ("Skipping attachment {0}#{1} with blacklisted mime type {2}",

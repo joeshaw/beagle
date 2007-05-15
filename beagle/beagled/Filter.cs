@@ -804,8 +804,26 @@ namespace Beagle.Daemon {
 		}
 
 		//////////////////////////////
+		//////////// Default implementation of generated indexables
 
 		private ArrayList generated_indexables = new ArrayList ();
+
+		public virtual bool HasGeneratedIndexable {
+			get { return generated_indexables.Count > 0; }
+		}
+
+		// Good filters should replace this by an IEnumerable that does not require generating
+		// all the indexables beforehand
+		public virtual bool GenerateNextIndexable (out Indexable indexable)
+		{
+			indexable = null;
+			if (generated_indexables.Count == 0)
+				return false;
+
+			indexable = (Indexable) generated_indexables [0];
+			generated_indexables.RemoveAt (0);
+			return true;
+		}
 
 		protected void AddIndexable (Indexable indexable)
 		{
@@ -815,10 +833,6 @@ namespace Beagle.Daemon {
 		protected void AddIndexables (ICollection indexables)
 		{
 			this.generated_indexables.AddRange (indexables);
-		}
-
-		public ArrayList GeneratedIndexables {
-			get { return this.generated_indexables; }
 		}
 	}
 
