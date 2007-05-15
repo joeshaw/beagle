@@ -96,49 +96,113 @@ class ExtractContentTool {
 		}
 	}
 
-	static bool first_indexable = true;
+	class DeferredInfo {
+		public Indexable Indexable;
+		public Filter Filter;
+		public double ElapsedTime;
+
+		public DeferredInfo (Indexable indexable, Filter filter)
+		{
+			this.Indexable = indexable;
+			this.Filter = filter;
+		}
+	}
 
 	static void Display (Indexable indexable)
 	{
-		if (!first_indexable) {
-			Console.WriteLine ();
-			Console.WriteLine ("-----------------------------------------");
-			Console.WriteLine ();
-		}
-		first_indexable = false;
-
-		Console.WriteLine ("Filename: " + indexable.Uri);
-
-		if (indexable.ParentUri != null)
-			Console.WriteLine ("Parent: " + indexable.ParentUri);
-
 		Stopwatch watch = new Stopwatch ();
-
 		Filter filter;
-
-		watch.Start ();
+		
 		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
+			Console.WriteLine ("Filename: " + indexable.Uri);
+
+			if (indexable.ParentUri != null)
+				Console.WriteLine ("Parent: " + indexable.ParentUri);
+
 			Console.WriteLine ("No filter for {0}", indexable.MimeType);
 			indexable.Cleanup ();
 			return;
 		}
-		watch.Stop ();
 
-		Console.WriteLine ("Filter: {0} (determined in {1})", filter, watch);
-		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
-		Console.WriteLine ();
+		ArrayList deferred_indexables = new ArrayList ();
+		DeferredInfo di = new DeferredInfo (indexable, filter);
+		deferred_indexables.Add (di);
 
-#if false
-		// FIXME FIXME FIXME: Fix generated indexables for ExtractContent
-		if (filter.GeneratedIndexables.Count > 0) {
-			Console.WriteLine ("Filter-generated indexables ({0}):", filter.GeneratedIndexables.Count);
+		while (deferred_indexables.Count > 0) {
+			di = (DeferredInfo) deferred_indexables [0];
+			if (di.Indexable.LocalState ["HasNextIndexable"] != null) {
+				deferred_indexables.RemoveAt (0);
+				DisplayIndexable (di.Indexable, di.Filter, di.ElapsedTime);
+				continue;
+			}
 
-			foreach (Indexable i in filter.GeneratedIndexables)
-				Console.WriteLine ("  {0}", i.Uri);
+			bool next = false;
+			while (! next) {
+				Indexable generated_indexable = null;
 
+				if (! di.Filter.GenerateNextIndexable (out generated_indexable)) {
+					// Mark it for indexing and leave it in the stack
+					di.Indexable.LocalState ["HasNextIndexable"] = false;
+					next = true;
+					break;
+				}
+
+				if (generated_indexable == null)
+					continue;
+
+				generated_indexable.LocalState ["GeneratedIndexable"] = true;
+
+				watch.Restart ();
+				if (! FilterFactory.FilterIndexable (generated_indexable, out filter)) {
+					Console.WriteLine ("Filename: " + generated_indexable.Uri);
+
+					if (generated_indexable.ParentUri != null)
+						Console.WriteLine ("Parent: " + generated_indexable.ParentUri);
+
+					Console.WriteLine ("No filter for {0}", generated_indexable.MimeType);
+					generated_indexable.Cleanup ();
+					watch.Stop ();
+					continue;
+				}
+
+				watch.Stop ();
+				if (filter.HasGeneratedIndexable) {
+
+					DeferredInfo deferred_info;
+					deferred_info = new DeferredInfo (generated_indexable, filter);
+					deferred_info.ElapsedTime = watch.ElapsedTime;
+					deferred_indexables.Insert (0, deferred_info);
+					continue;
+				}
+
+				DisplayIndexable (generated_indexable, filter, watch.ElapsedTime);
+			}
+
+		}
+	}
+
+	static void DisplayIndexable (Indexable indexable, Filter filter, double time_to_determine_filter)
+	{
+		if (indexable.LocalState ["GeneratedIndexable"] != null) {
+			if (! show_generated) {
+				Console.WriteLine ("(Generated) {0}", indexable.Uri);
+				indexable.Cleanup ();
+				return;
+			} else {
+				Console.WriteLine ("\n===[Displaying generated indexable]===\n");
+			}
+		} else {
 			Console.WriteLine ();
 		}
-#endif
+
+		Console.WriteLine ("Filename: {0}", indexable.Uri);
+
+		if (indexable.ParentUri != null)
+			Console.WriteLine ("Parent: " + indexable.ParentUri);
+
+		Console.WriteLine ("Filter: {0} (determined in {1:.00}s)", filter, time_to_determine_filter);
+		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
+		Console.WriteLine ();
 
 		// Make sure that the properties are sorted.
 		ArrayList prop_array = new ArrayList (indexable.Properties);
@@ -163,7 +227,7 @@ class ExtractContentTool {
 		if (indexable.NoContent)
 			return;
 
-		watch.Reset ();
+		Stopwatch watch = new Stopwatch ();
 		watch.Start ();
 
 		TextReader reader;
@@ -258,26 +322,13 @@ class ExtractContentTool {
 
 		Console.WriteLine ();
 		Console.WriteLine ("Text extracted in {0}", watch);
+		Console.WriteLine ("-----------------------------------------------------");
 
-		Stream stream = indexable.GetBinaryStream ();
-		if (stream != null)
-			stream.Close ();
+		//Stream stream = indexable.GetBinaryStream ();
+		//if (stream != null)
+		//	stream.Close ();
 
 		// Clean up any temporary files associated with filtering this indexable.
-		indexable.Cleanup ();
-
-#if false
-		// FIXME FIXME FIXME: Fix generated indexables for ExtractContent
-		foreach (Indexable i in filter.GeneratedIndexables) {
-			if (! show_generated) {
-				i.Cleanup ();
-				continue;
-			}
-
-			i.StoreStream ();
-			Display (i);
-		}
-#endif		
 		indexable.Cleanup ();
 
 	}
