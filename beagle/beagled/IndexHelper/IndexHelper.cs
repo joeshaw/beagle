@@ -321,9 +321,9 @@ namespace Beagle.IndexHelper {
 			if (CurrentUri == null)
 				Log.Warn ("Filtering status ({0} ago): no document is currently being filtered.", span);
 			else if (CurrentFilter == null)
-				Log.Warn ("Filtering status ({0} ago): determining filter for {1}", span, CurrentUri);
+				Log.Warn ("Filtering status ({0} ago): determining filter and extracting properties for {1}", span, CurrentUri);
 			else
-				Log.Warn ("Filtering status ({0} ago): filtering {1} with {2}", span, CurrentUri, CurrentFilter);
+				Log.Warn ("Filtering status ({0} ago): extracting text from {1} with {2}", span, CurrentUri, CurrentFilter);
 
 			// Don't shut down on information signals (SIGUSR1 and SIGUSR2)
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
