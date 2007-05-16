@@ -8,9 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-10 11:59+0200\n"
-"PO-Revision-Date: 2007-04-10 11:59+0200\n"
-"Last-Translator: \n"
+"POT-Creation-Date: 2007-05-16 12:16+0200\n"
+"PO-Revision-Date: 2007-05-16 12:16+0200\n"
+"Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -266,7 +266,7 @@ msgstr "Stát/provincie:"
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
 #: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
 msgstr "Název:"
 
@@ -573,31 +573,31 @@ msgstr "Poznámka:"
 msgid "IM Conversation"
 msgstr "IM konverzace"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:94
 msgid "Name:"
 msgstr "Jméno:"
 
-#: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:95 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Přijato:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:99
 msgid "Status:"
 msgstr "Stav:"
 
-#: ../search/Tiles/IMLog.cs:112
+#: ../search/Tiles/IMLog.cs:114
 msgid "Idle"
 msgstr "Nečinný"
 
-#: ../search/Tiles/IMLog.cs:119
+#: ../search/Tiles/IMLog.cs:121
 msgid "Away"
 msgstr "Pryč"
 
-#: ../search/Tiles/IMLog.cs:122
+#: ../search/Tiles/IMLog.cs:124
 msgid "Offline"
 msgstr "Offline"
 
-#: ../search/Tiles/IMLog.cs:125
+#: ../search/Tiles/IMLog.cs:127
 msgid "Available"
 msgstr "Dostupný"
 
@@ -645,11 +645,11 @@ msgstr[0] "{0} snímek"
 msgstr[1] "{0} snímky"
 msgstr[2] "{0} snímků"
 
-#: ../search/Tiles/RSSFeed.cs:49
+#: ../search/Tiles/RSSFeed.cs:59
 msgid "Site:"
 msgstr "Web:"
 
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
 msgstr "Prohlíženo:"
 
@@ -1517,7 +1517,7 @@ msgstr "Jméno města, na které je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:230
 msgid "Copyright information for"
-msgstr ""
+msgstr "Informace o autorských právech pro"
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
@@ -1624,7 +1624,7 @@ msgstr "Světelný zdroj"
 
 #: ../Util/F-Spot/MetadataStore.cs:72
 msgid "Sensing Method"
-msgstr ""
+msgstr "Metoda snímání"
 
 #: ../Util/F-Spot/MetadataStore.cs:74
 msgid "Color Space"
