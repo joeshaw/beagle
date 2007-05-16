@@ -133,15 +133,16 @@ namespace Beagle.Daemon {
 		{
 			// This is just to keep a big block of code from being
 			// indented an extra eight spaces.
-			lock (flush_lock)
-				return Flush_Unlocked (request);
+			lock (flush_lock) {
+				if (request.ContinueIndexing)
+					return FlushGeneratedIndexables_Unlocked (request);
+				else
+					return Flush_Unlocked (request);
+			}
 		}
 
 		private IndexerReceipt [] Flush_Unlocked (IndexerRequest request)
 		{
-			if (request.ContinueIndexing)
-				return FlushGeneratedIndexables_Unlocked (request);
-
 			ArrayList receipt_queue;
 			receipt_queue = new ArrayList ();
 
@@ -396,6 +397,8 @@ namespace Beagle.Daemon {
 			secondary_writer = null;
 			IndexerAddedReceipt r;
 
+			Log.Debug ("Continuing indexing generated indexables from {0} indexables", deferred_indexables.Count);
+
 			// Access using index so that we can add more deferred_indexable at the front
 			// deferred_indexables are added at the front and fetched from the front like a stack
 			while (deferred_indexables.Count > 0) {
@@ -481,6 +484,13 @@ namespace Beagle.Daemon {
 			if (secondary_writer != null)
 				secondary_writer.Close ();
 			
+			// Send a single IndexerIndexablesReceipt if there were deferred indexables
+			if (deferred_indexables.Count > 0) {
+				Log.Debug ("{0} more indexable-generating indexable remainding to index; asking daemon to schedule their indexing.", deferred_indexables.Count);
+				IndexerIndexablesReceipt paused_receipt = new IndexerIndexablesReceipt ();
+				receipt_queue.Add (paused_receipt);
+			}
+
 			IndexerReceipt [] receipt_array;
 			receipt_array = new IndexerReceipt [receipt_queue.Count];
 			for (int i = 0; i < receipt_queue.Count; ++i)
