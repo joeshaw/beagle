@@ -81,6 +81,8 @@ namespace Beagle.Daemon {
 		public IndexerRemovedReceipt () { }
 
 		public IndexerRemovedReceipt (int id) : base (id) { }
+
+		public int NumRemoved = -1;
 	}
 
 	// This fake receipt is sent to the daemon to basically schedule indexing of filter generated indexables

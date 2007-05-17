@@ -210,17 +210,19 @@ namespace Beagle.Daemon {
 				// Now remove (non-remove indexables will be re-added in next block)
 				Logger.Log.Debug ("-{0}", indexable.DisplayUri);
 				
+				int num_delete = 0;
+
 				// For property changes, only secondary index is modified
 				if (indexable.Type != IndexableType.PropertyChange) {
 					term = new Term ("Uri", uri_str);
-					delete_count += primary_reader.Delete (term);
+					num_delete = primary_reader.Delete (term);
 					secondary_reader.Delete (term);
 				}
 
 				// When we delete an indexable, also delete any children.
 				// FIXME: Shouldn't we also delete any children of children, etc.?
 				term = new Term ("ParentUri", uri_str);
-				delete_count += primary_reader.Delete (term);
+				num_delete += primary_reader.Delete (term);
 				secondary_reader.Delete (term);
 
 				// If this is a strict removal (and not a deletion that
@@ -229,8 +231,11 @@ namespace Beagle.Daemon {
 				if (indexable.Type == IndexableType.Remove) {
 					IndexerRemovedReceipt r;
 					r = new IndexerRemovedReceipt (indexable.Id);
+					r.NumRemoved = num_delete;
 					receipt_queue.Add (r);
 				}
+
+				delete_count += num_delete;
 			}
 
 			term_docs.Close ();
