@@ -124,6 +124,7 @@ namespace Beagle.Util {
 
 				return storage_dir;
 			}
+			set { lock (storage_dir_lock) { storage_dir = value; } }
 		}
 
 		static string remote_storage_dir;

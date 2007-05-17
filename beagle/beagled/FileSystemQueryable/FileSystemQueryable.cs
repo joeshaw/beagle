@@ -1138,7 +1138,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// So at this point, id = attr.UniqueId
 
 			// If this was not indexed before, try again
-			if (! attr.HasFilterInfo)
+			// If filtercache is dirty, then there might be a newer filter
+			if (! attr.HasFilterInfo && FilterFactory.DirtyFilterCache)
 				return RequiredAction.Index;
 
 			// FIXME: This does not take in to account that we might have a better matching filter to use now

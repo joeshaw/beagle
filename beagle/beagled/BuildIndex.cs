@@ -64,7 +64,8 @@ namespace Beagle.Daemon
 		static string [] allowed_files = {
 			"FileAttributesStore.db",
 			"fingerprint",
-			"version"
+			"version",
+			"filterver.dat"
 		};
 		
 		static string [] allowed_dirs = {
@@ -222,6 +223,10 @@ namespace Beagle.Daemon
 				Logger.Log.Error ("--target must be specified");
 				Environment.Exit (1);
 			}
+
+			// Set the storage dir, this should be used to store log messages
+			// and filterver.dat
+			PathFinder.StorageDir = arg_output;
 
 			foreach (FileSystemInfo info in pending_directories) {
 				if (Path.GetFullPath (arg_output) == info.FullName) {

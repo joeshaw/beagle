@@ -210,8 +210,9 @@ namespace Beagle.Daemon {
 				i.Cleanup ();
 
 			// Clear the deferred indexables
-			foreach (Indexable indexable in deferred_indexables.Values)
-				indexable.Cleanup ();
+			if (deferred_indexables != null)
+				foreach (Indexable indexable in deferred_indexables.Values)
+					indexable.Cleanup ();
 		}
 	}
 }
