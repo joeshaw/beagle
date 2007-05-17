@@ -86,6 +86,11 @@ namespace Beagle.Filters
 
 		override protected void DoOpen (FileInfo info)
 		{
+			if (info.Name == "legal.xml") {
+				Error ();
+				return;
+			}
+
 			base_path = info.FullName;		
 			reader = new XmlTextReader (Stream);
 			reader.XmlResolver = null;

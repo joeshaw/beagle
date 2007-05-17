@@ -61,6 +61,7 @@ namespace Beagle.Filters {
 			if (file.Length > LENGTH_CUTOFF) {
 				Beagle.Util.Logger.Log.Debug ("{0} is too large to filter!", file.FullName);
 				Error ();
+				return;
 			}
 
 			buf = new char [BUFSIZE];
