@@ -44,7 +44,6 @@ namespace Beagle.IndexHelper {
 		static Hashtable indexer_table = new Hashtable ();
 
 		Indexable[] child_indexables;
-		FilteredStatus[] uris_filtered;
 
 		public override ResponseMessage Execute (RequestMessage raw_request)
 		{
