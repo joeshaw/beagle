@@ -341,8 +341,8 @@ namespace Beagle.Daemon {
 
 					filter = candidate_filter;
 					return true;
-				} else if (Debug) {
-					Logger.Log.Debug ("Unsuccessfully filtered {0} with {1}, falling back", path, candidate_filter);
+				} else {
+					Log.Warn ("Error in filtering {0} with {1}, falling back", path, candidate_filter);
 					candidate_filter.Cleanup ();
 				}
 			}
