@@ -202,6 +202,7 @@ namespace Beagle.Filters
 			// means that it's actually a docbook file, just without
 			// sections.
 			if (! HasGeneratedIndexable && base_title == null) {
+				Log.Error ("Probably not a docbook. Ignoring {0}!", base_path);
 				Error ();
 				return;
 			}
