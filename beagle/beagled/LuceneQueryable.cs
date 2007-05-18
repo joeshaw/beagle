@@ -875,7 +875,11 @@ namespace Beagle.Daemon {
 			}
 
 			// Silently return if we get a null back.  This is probably
-			// a bad thing to do.
+			// a bad thing to do. If IndexHelper is shutdown because of
+			// memory blowup or is crashed, then null is returned. Silently
+			// returning means ignoring the indexables in the IndexHelper's
+			// queue (which could be more than what was sent in the last request,
+			// since there could be some deferred-indexables too).
 			if (receipts == null)
 				return;
 
