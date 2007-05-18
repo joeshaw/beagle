@@ -172,14 +172,12 @@ namespace Beagle.Filters {
 
 			if (total_size > MAX_ALL_FILES)
 				Log.Debug ("Archive {0} crossed our max uncompressed size threshold.  Only {1} files extracted", this.file_info, count);
-		}
 
-		protected override void DoClose ()
-		{
 			// We don't close the archive stream, since it closes
 			// the underlying stream.
 			archive_stream = null;
 			file_info = null;
+			get_next_entry = null;
 		}
 
 		internal class ArchiveEntry {
