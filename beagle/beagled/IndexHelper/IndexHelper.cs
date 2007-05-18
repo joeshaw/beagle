@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using SNS = System.Net.Sockets;
 using System.Runtime.InteropServices;
@@ -57,6 +58,8 @@ namespace Beagle.IndexHelper {
 		public static bool DisableTextCache {
 			get { return disable_textcache; }
 		}
+
+		private static bool heap_shot = false;
 
 		[DllImport ("libc")]
 		extern static private int unsetenv (string name);
@@ -153,6 +156,9 @@ namespace Beagle.IndexHelper {
 			}
 
 			if (server_has_been_started) {
+				// Whether we should generate heap-shot snapshots
+				heap_shot = (Environment.GetEnvironmentVariable ("_HEY_LETS_DO_A_HEAP_SHOT") != null);
+
 				// Start the monitor thread, which keeps an eye on memory usage and idle time.
 				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
 
@@ -205,9 +211,18 @@ namespace Beagle.IndexHelper {
 				// Check resident memory usage
 				int vmrss = SystemInformation.VmRss;
 				double size = vmrss / (double) vmrss_original;
-				if (vmrss != last_vmrss)
+				if (last_vmrss != 0 && vmrss != last_vmrss) {
 					Logger.Log.Debug ("Helper Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
 							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
+
+					double increase = vmrss / (double) last_vmrss;
+
+					if (heap_shot && increase > 1.20) {
+						Log.Debug ("Large memory increase detected.  Sending SIGPROF to ourself.");
+						Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGPROF);
+					}
+				}
+
 				last_vmrss = vmrss;
 				if (size > threshold
 				    || (max_request_count > 0 && RemoteIndexerExecutor.Count > max_request_count)) {
@@ -281,12 +296,6 @@ namespace Beagle.IndexHelper {
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
 		}
 
-		// Our handler triggers an orderly shutdown when it receives a signal.
-		// However, this can be annoying if the process gets wedged during
-		// shutdown.  To deal with that case, we make a note of the time when
-		// the first signal comes in, and we allow signals to unconditionally
-		// kill the process after 5 seconds have passed.
-		private static DateTime signal_time = DateTime.MinValue;
 		private static void OurSignalHandler (int signal)
 		{
 			// This allows us to call OurSignalHandler w/o doing anything.
