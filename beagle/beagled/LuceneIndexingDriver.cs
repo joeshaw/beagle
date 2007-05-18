@@ -113,6 +113,7 @@ namespace Beagle.Daemon {
 			public void Cleanup ()
 			{
 				Filter.Cleanup ();
+				Filter.CleanGeneratedIndexables ();
 				Indexable.Cleanup ();
 				Filter = null;
 				Indexable = null;
@@ -344,6 +345,9 @@ namespace Beagle.Daemon {
 				text_cache.CommitTransaction ();
 
 			if (Shutdown.ShutdownRequested) {
+				foreach (DeferredInfo di in deferred_indexables)
+					di.Cleanup ();
+
 				foreach (Indexable indexable in request_indexables)
 					indexable.Cleanup ();
 
@@ -476,7 +480,7 @@ namespace Beagle.Daemon {
 
 			if (Shutdown.ShutdownRequested) {
 				foreach (DeferredInfo di in deferred_indexables)
-					di.Indexable.Cleanup ();
+					di.Cleanup ();
 
 				primary_writer.Close ();
 				if (secondary_writer != null)

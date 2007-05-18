@@ -835,6 +835,12 @@ namespace Beagle.Daemon {
 		{
 			this.generated_indexables.AddRange (indexables);
 		}
+
+		public void CleanGeneratedIndexables ()
+		{
+			foreach (Indexable indexable in generated_indexables)
+				indexable.Cleanup ();
+		}
 	}
 
 	[AttributeUsage (AttributeTargets.Assembly)]
