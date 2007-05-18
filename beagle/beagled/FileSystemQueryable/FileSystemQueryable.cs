@@ -1433,7 +1433,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		//////////////////////////////////////////////////////////////////////////
 
-		public void UpdateIsIndexing ()
+		public void UpdateIsIndexing (DirectoryModel next_dir)
 		{
 			// If IsIndexing is false, then the indexing had
 			// finished previously and we don't really care about
@@ -1442,10 +1442,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (this.IsIndexing == false)
 				return;
 
-			DirectoryModel next_dir = GetNextDirectoryToCrawl ();
-
-			// If there are any "dirty" directories left, we're
-			// still indexing.  If not, check our crawl tasks to
+			// If crawled_dir is not null, we're
+			// still indexing.  If not, check our tree and file crawl tasks to
 			// see if we're still working on the queue.
 			if (next_dir != null)
 				this.IsIndexing = (next_dir.State > DirectoryState.PossiblyClean);

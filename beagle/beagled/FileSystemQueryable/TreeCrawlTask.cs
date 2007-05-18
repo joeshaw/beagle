@@ -56,11 +56,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		}
 
 		// Must be called from inside big_lock
-		private void SetIsActive (bool is_active)
+		private void SetIsActive (bool is_active, DirectoryModel current_dir)
 		{
 			this.is_active = is_active;
 
-			queryable.UpdateIsIndexing ();
+			queryable.UpdateIsIndexing (current_dir);
 		}
 
 		// Returns 'true' if the queue was empty before adding
@@ -94,7 +94,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (FileSystemQueryable.Debug)
 					Log.Debug ("Running tree crawl task");
 
-				SetIsActive (true);
+				SetIsActive (true, dir);
 			}
 			
 			LuceneQueryable queryable = (LuceneQueryable) Source;
@@ -126,7 +126,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void DoneCrawling ()
 		{
 			Log.Debug ("Done crawling directory tree!!!");
-			SetIsActive (false);
+			SetIsActive (false, null);
 		}
 
 	}
