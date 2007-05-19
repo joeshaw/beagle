@@ -91,6 +91,8 @@ namespace Beagle {
 
 		// Is this being indexed because of crawling or other
 		// background activity?
+		// If crawl is set, then the underlying file will be flushed
+		// from buffer cache as soon as it is indexed.
 		private bool crawled = true;
 
 		// Is this object inherently contentless?
@@ -480,6 +482,8 @@ namespace Beagle {
 
 			if (string.IsNullOrEmpty (this.HitType))
 				this.HitType = parent.HitType;
+
+			this.Source = parent.Source;
 
 			// FIXME: Set all of the parent's properties on the
 			// child so that we get matches against the child
