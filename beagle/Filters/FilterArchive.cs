@@ -45,10 +45,10 @@ namespace Beagle.Filters {
 
 		internal delegate ArchiveEntry GetNextEntry ();
 
-		private FileInfo file_info;
 		private Stream archive_stream;
 		private GetNextEntry get_next_entry;
-		private int total_bytes_read;
+		private int count = 0;
+		private	long total_size = 0;
 
 		// Fairly arbitrary limits
 		private const int  MAX_CHILDREN    = 30;
@@ -73,10 +73,16 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-bzip"));
 		}
 		
-		protected override void DoOpen (FileInfo file_info)
+		public override bool HasGeneratedIndexable {
+			get { return true; }
+		}
+
+		bool setup_done = false;
+
+		private void SetupArchiveStream ()
 		{
-			this.file_info = file_info;
-			this.total_bytes_read = 0;
+			this.count = 0;
+			this.total_size = 0;
 
 			switch (MimeType) {
 			case "application/zip":
@@ -113,6 +119,8 @@ namespace Beagle.Filters {
 			default:
 				throw new ArgumentException ("Invalid or unsupported mime type.");
 			}
+
+			setup_done = true;
 		}
 				
 		protected override void DoPullProperties ()
@@ -120,64 +128,81 @@ namespace Beagle.Filters {
 			// FIXME: Fetch the archive properties.
 		}
 
-		protected override void DoPullSetup ()
+		public override bool GenerateNextIndexable (out Indexable child)
 		{
 			ArchiveEntry a_entry;
-			int count = 0;
-			long total_size = 0;
+			child = null;
 
-			while (count < MAX_CHILDREN
-			       && total_size <= MAX_ALL_FILES
-			       && (a_entry = DoGetNextEntry ()) != null) {
+			if (! setup_done)
+				SetupArchiveStream ();
 
-				// Store file names in the archive
-				AppendText (Path.GetFileName (a_entry.Name));
-				AppendWhiteSpace ();
-
-				// If this is an invalid or oversized entry, skip it.
-				if (a_entry.TempFile == null)
-					continue;
-
-				++count;
-				total_size += a_entry.Size;
-
-				// FIXME: For nested archives, create uid:foo#bar
-				// instead of uid:foo#xxx#bar (avoid duplicates ?)
-				// FIXME: Construct correct Uri
-				// 1. Use Uri (foo, true): foo is not escaped. This creates serialization error for uris containing non-ascii character
-				// 2: Using Uri (foo): foo is escaped. This causes foo.zip#b#c (file c in archive b in archive foo) to be escaped to foo.zip#b%23c. This should be properly escaped back. Note that, file b#c in archive foo.zip would also be escaped to foo.zip#b%23c. If there is any problem about incorrect filename containing '#' in an archive, then System.Uri should be abandoned and a custom Beagle.Uri should be created which can handle multiple fragments.
-				// If you read the Uri related FIXMEs and hacks in beagled/*Queryable,
-				// then you would see why creating Beagle.Uri class over System.Uri
-				// is not at all a bad idea :)
-				Indexable child = new Indexable (new Uri (Indexable.Uri.ToString () + "#" + a_entry.Name));
-
-				child.CacheContent = true;
-				child.MimeType = a_entry.MimeType;
-
-				child.DisplayUri = new Uri (Indexable.DisplayUri.ToString () + "#" + a_entry.Name);
-				child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
-				child.DeleteContent = true;
-
-				child.AddProperty (Property.NewBool ("fixme:inside_archive", true));
-
-				child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
-				child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
-
-				foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
-					child.AddProperty (prop);
-
-				child.SetChildOf (Indexable);
-				AddIndexable (child);
+			if (count >= MAX_CHILDREN) {
+				Log.Debug ("Archive {0} contains more than {1} files.  Only {1} files indexed.", Indexable.DisplayUri.ToString (), count);
+				Close ();
+				return false;
 			}
 
-			if (total_size > MAX_ALL_FILES)
-				Log.Debug ("Archive {0} crossed our max uncompressed size threshold.  Only {1} files extracted", this.file_info, count);
+			if (total_size > MAX_ALL_FILES) {
+				Log.Debug ("Archive {0} crossed our max uncompressed size threshold.  Only {1} files extracted", Indexable.DisplayUri.ToString (), count);
+				Close ();
+				return false;
+			}
 
-			// We don't close the archive stream, since it closes
-			// the underlying stream.
+			a_entry = DoGetNextEntry ();
+			if (a_entry == null) {
+				Close ();
+				return false;
+			}
+
+			// Store file names in the archive
+			AppendText (Path.GetFileName (a_entry.Name));
+			AppendWhiteSpace ();
+
+			// If this is an invalid or oversized entry, skip it.
+			if (a_entry.TempFile == null)
+				return true;
+
+			++count;
+			total_size += a_entry.Size;
+
+			// FIXME: For nested archives, create uid:foo#bar
+			// instead of uid:foo#xxx#bar (avoid duplicates ?)
+			// FIXME: Construct correct Uri
+			// 1. Use Uri (foo, true): foo is not escaped. This creates serialization error for uris containing non-ascii character
+			// 2: Using Uri (foo): foo is escaped. This causes foo.zip#b#c (file c in archive b in archive foo) to be escaped to foo.zip#b%23c. This should be properly escaped back. Note that, file b#c in archive foo.zip would also be escaped to foo.zip#b%23c. If there is any problem about incorrect filename containing '#' in an archive, then System.Uri should be abandoned and a custom Beagle.Uri should be created which can handle multiple fragments.
+			// If you read the Uri related FIXMEs and hacks in beagled/*Queryable,
+			// then you would see why creating Beagle.Uri class over System.Uri
+			// is not at all a bad idea :)
+			child = new Indexable (new Uri (Indexable.Uri.ToString () + "#" + a_entry.Name));
+
+			child.CacheContent = true;
+			child.MimeType = a_entry.MimeType;
+
+			child.DisplayUri = new Uri (Indexable.DisplayUri.ToString () + "#" + a_entry.Name);
+			child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
+			child.DeleteContent = true;
+
+			child.AddProperty (Property.NewBool ("fixme:inside_archive", true));
+
+			child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
+			child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
+
+			foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
+				child.AddProperty (prop);
+
+			child.SetChildOf (Indexable);
+
+			return true;
+		}
+
+		private void Close ()
+		{
+			// Cleanup
+			archive_stream.Close ();
 			archive_stream = null;
-			file_info = null;
 			get_next_entry = null;
+
+			Finished ();
 		}
 
 		internal class ArchiveEntry {
@@ -214,7 +239,7 @@ namespace Beagle.Filters {
 				try {
 					read = stream.Read (buffer, 0, buffer.Length);
 				} catch (Exception e) {
-					Log.Error (e, "Caught exception extracting data from archive {0}", this.file_info);
+					Log.Error (e, "Caught exception extracting data from archive {0}", Indexable.DisplayUri.ToString ());
 					skip_file = true;
 					break;
 				}
@@ -223,7 +248,7 @@ namespace Beagle.Filters {
 
 				// Don't extract big files, to avoid filling up /tmp
 				if (total_bytes_read > MAX_SINGLE_FILE) {
-					Log.Debug ("10 meg threshold hit, skipping over {0}", this.file_info);
+					Log.Debug ("10 meg threshold hit, skipping over {0}", Indexable.DisplayUri.ToString ());
 					skip_file = true;
 					break;
 				}
@@ -241,7 +266,7 @@ namespace Beagle.Filters {
 
 						// 20 is a fairly arbitrary value
 						if (stuck_count == 20) {
-							Log.Debug ("{0} appears to be broken, skipping", this.file_info);
+							Log.Debug ("{0} appears to be broken, skipping", Indexable.DisplayUri.ToString ());
 							skip_file = true;
 							break;
 						}
@@ -287,7 +312,7 @@ namespace Beagle.Filters {
 			try {
 				return this.get_next_entry ();
 			} catch (Exception e) {
-				Log.Warn (e, "Unable to extract file from {0}", file_info);
+				Log.Warn (e, "Unable to extract file from {0}", Indexable.DisplayUri.ToString ());
 				return null;
 			}
 		}
@@ -313,7 +338,7 @@ namespace Beagle.Filters {
 
 			// Only index smaller subfiles, to avoid filling /tmp
 			if (entry.Size > MAX_SINGLE_FILE) {
-				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
+				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, Indexable.DisplayUri.ToString ());
 				return entry;
 			}
 
@@ -344,7 +369,7 @@ namespace Beagle.Filters {
 
 			// Only index smaller subfiles, to avoid filling /tmp
 			if (entry.Size > MAX_SINGLE_FILE) {
-				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, this.file_info);
+				Log.Debug ("Skipping over large file {0} in {1}", entry.Name, Indexable.DisplayUri.ToString ());
 				return entry;
 			}
 
@@ -363,8 +388,22 @@ namespace Beagle.Filters {
 				return null;
 
 			ArchiveEntry entry = new ArchiveEntry ();
-			entry.Name = Path.GetFileNameWithoutExtension (this.file_info.Name);
-			entry.Modified = this.file_info.LastWriteTimeUtc;
+
+			// If there is a ExactFilename property, get name using that,
+			// else use the FileInfo name
+			string exact_filename = null;
+			foreach (Property p in Indexable.Properties)
+				if (p.Key == Property.ExactFilenamePropKey) {
+					exact_filename = p.Value;
+					break;
+				}
+
+			if (exact_filename != null)
+				entry.Name = Path.GetFileNameWithoutExtension (exact_filename);
+			else
+				entry.Name = Path.GetFileNameWithoutExtension (FileInfo.Name);
+
+			entry.Modified = FileInfo.LastWriteTimeUtc;
 
 			entry.TempFile = StoreStreamInTempFile (archive_stream, GetExtension (entry.Name), entry.Modified);
 
