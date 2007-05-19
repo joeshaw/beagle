@@ -209,12 +209,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void MarkAsClean ()
 		{
-			// If we aren't being watched, the "cleanest"
-			// state we can be in is PossiblyClean.
-			if (watch_handle == null)
-				state = DirectoryState.PossiblyClean;
-			else
-				state = DirectoryState.Clean;
+			// When asked to mark as clean, do so.
+			// Even if there is no watch handle now, still mark it clean.
+			// The state will be explicitly set to PossiblyClean if and when required.
+			state = DirectoryState.Clean;
 
 			if (FileSystemQueryable.Debug)
 				Log.Debug ("Marked {0} as {1}", this, state);

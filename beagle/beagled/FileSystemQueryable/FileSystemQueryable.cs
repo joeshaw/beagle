@@ -782,6 +782,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return next_dir;
 		}
 
+		// This is called from the PostFlushHook of DirectoryIndexableGenerator i.e.
+		// after PostAddHook() has Registered the directory
 		public void DoneCrawlingOneDirectory (DirectoryModel dir)
 		{
 			if (! dir.IsAttached)
