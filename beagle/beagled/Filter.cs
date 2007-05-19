@@ -234,7 +234,7 @@ namespace Beagle.Daemon {
 		// Filters can choose to ignore the return value
 
 		// Use a shared text builder
-		private static StringBuilder text_builder = new StringBuilder (DEFAULT_CHARS_TO_PULL);
+		private StringBuilder text_builder = new StringBuilder (DEFAULT_CHARS_TO_PULL);
 		private ArrayList textPool;
 		private ArrayList hotPool;
 
@@ -466,6 +466,8 @@ namespace Beagle.Daemon {
 		{
 			textPool.Add (text_builder.ToString ());
 			text_builder.Length = 0;
+
+			Close (); // Close streams and clear tmpfiles when done
 			isFinished = true;
 		}
 
@@ -481,7 +483,7 @@ namespace Beagle.Daemon {
 			textPool.Add (text_builder.ToString ());
 			text_builder.Length = 0;
 
-			Cleanup (); // force the clean-up of temporary files on an error
+			Close (); // Close streams and clear tmpfiles on error
 			has_error = true;
 		}
 
