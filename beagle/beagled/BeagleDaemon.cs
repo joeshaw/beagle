@@ -219,7 +219,8 @@ namespace Beagle.Daemon {
 			// will become some sort of D-BUS signal, probably from
 			// something like gnome-power-manager.
 			prev_on_battery = initially_on_battery;
-			GLib.Timeout.Add (5000, CheckBatteryStatus);
+			// Use 1 sec more than acpi poll interval
+			GLib.Timeout.Add (((int) SystemInformation.acpi_poll_delay + 1) * 1000, CheckBatteryStatus);
 
 			// Start our Inotify threads
 			Inotify.Start ();
