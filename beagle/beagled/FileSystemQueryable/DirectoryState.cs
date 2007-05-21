@@ -33,7 +33,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		Clean         = 0, 
 
 		// It was clean last time we checked.  This state only occurs
-		// in unwatched directories.
+		// in unwatched directories, and is the 'best' state such a
+		// directory can be in.
 		PossiblyClean = 1,
 
 		// Something might have changed, but we aren't sure.
