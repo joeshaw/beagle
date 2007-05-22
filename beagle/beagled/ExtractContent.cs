@@ -1,7 +1,7 @@
 //
 // ExtractContent.cs
 //
-// Copyright (C) 2004 Novell, Inc.
+// Copyright (C) 2004-2007 Novell, Inc.
 // Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 //
 
@@ -97,119 +97,65 @@ class ExtractContentTool {
 		}
 	}
 
-	class DeferredInfo {
-		public Indexable Indexable;
-		public Filter Filter;
-		public double ElapsedTime;
-
-		public DeferredInfo (Indexable indexable, Filter filter)
-		{
-			this.Indexable = indexable;
-			this.Filter = filter;
-		}
-	}
+	static bool first_indexable = true;
 
 	static void Display (Indexable indexable)
 	{
-		Stopwatch watch = new Stopwatch ();
-		Filter filter;
-		
-		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
-			Console.WriteLine ("Filename: " + indexable.Uri);
-
-			if (indexable.ParentUri != null)
-				Console.WriteLine ("Parent: " + indexable.ParentUri);
-
-			Console.WriteLine ("No filter for {0}", indexable.MimeType);
-			indexable.Cleanup ();
-			return;
-		}
-
-		ArrayList deferred_indexables = new ArrayList ();
-		DeferredInfo di = new DeferredInfo (indexable, filter);
-		deferred_indexables.Add (di);
-
-		while (deferred_indexables.Count > 0) {
-			di = (DeferredInfo) deferred_indexables [0];
-			if (di.Indexable.LocalState ["HasNextIndexable"] != null) {
-				deferred_indexables.RemoveAt (0);
-				DisplayIndexable (di.Indexable, di.Filter, di.ElapsedTime);
-				continue;
-			}
-
-			bool next = false;
-			while (! next) {
-				Indexable generated_indexable = null;
-
-				if (! di.Filter.GenerateNextIndexable (out generated_indexable)) {
-					// Mark it for indexing and leave it in the stack
-					di.Indexable.LocalState ["HasNextIndexable"] = false;
-					next = true;
-					break;
-				}
-
-				if (generated_indexable == null)
-					continue;
-
-				generated_indexable.LocalState ["GeneratedIndexable"] = true;
-
-				watch.Restart ();
-				if (! FilterFactory.FilterIndexable (generated_indexable, out filter)) {
-					Console.WriteLine ("Filename: " + generated_indexable.Uri);
-
-					if (generated_indexable.ParentUri != null)
-						Console.WriteLine ("Parent: " + generated_indexable.ParentUri);
-
-					Console.WriteLine ("No filter for {0}", generated_indexable.MimeType);
-					generated_indexable.Cleanup ();
-					watch.Stop ();
-					continue;
-				}
-
-				watch.Stop ();
-				if (filter.HasGeneratedIndexable) {
-
-					DeferredInfo deferred_info;
-					deferred_info = new DeferredInfo (generated_indexable, filter);
-					deferred_info.ElapsedTime = watch.ElapsedTime;
-					deferred_indexables.Insert (0, deferred_info);
-					continue;
-				}
-
-				DisplayIndexable (generated_indexable, filter, watch.ElapsedTime);
-			}
-
-		}
-	}
-
-	static void DisplayIndexable (Indexable indexable, Filter filter, double time_to_determine_filter)
-	{
-		if (indexable.LocalState ["GeneratedIndexable"] != null) {
-			if (! show_generated) {
-				Console.WriteLine ("(Generated) {0}", indexable.Uri);
-				indexable.Cleanup ();
-				return;
-			} else {
-				Console.WriteLine ("\n===[Displaying generated indexable]===\n");
-			}
-		} else {
+		if (!first_indexable) {
+			Console.WriteLine ();
+			Console.WriteLine ("-----------------------------------------");
 			Console.WriteLine ();
 		}
+		first_indexable = false;
 
-		Console.WriteLine ("Filename: {0}", indexable.Uri);
+		Console.WriteLine ("Filename: " + indexable.Uri);
 
 		if (indexable.ParentUri != null)
 			Console.WriteLine ("Parent: " + indexable.ParentUri);
 
-		Console.WriteLine ("Filter: {0} (determined in {1:.00}s)", filter, time_to_determine_filter);
+		Stopwatch watch = new Stopwatch ();
+
+		Filter filter;
+
+		watch.Start ();
+		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
+			Console.WriteLine ("No filter for {0}", indexable.MimeType);
+			indexable.Cleanup ();
+			return;
+		}
+		watch.Stop ();
+
+		Console.WriteLine ("Filter: {0} (determined in {1})", filter, watch);
 		Console.WriteLine ("MimeType: {0}", indexable.MimeType);
 		Console.WriteLine ();
+
+		ArrayList generated_indexables = new ArrayList ();
+		Indexable generated_indexable;
+
+		bool first = true;
+		while (filter.GenerateNextIndexable (out generated_indexable)) {
+			if (generated_indexable == null)
+				continue;
+
+			if (first) {
+				Console.WriteLine ("Filter-generated indexables:");
+				first = false;
+			}
+			
+			Console.WriteLine ("  {0}", generated_indexable.Uri);
+
+			if (show_generated)
+				generated_indexables.Add (generated_indexable);
+			else
+				generated_indexable.Cleanup ();
+		}
+
+		if (! first)
+			Console.WriteLine ();
 
 		// Make sure that the properties are sorted.
 		ArrayList prop_array = new ArrayList (indexable.Properties);
 		prop_array.Sort ();
-
-		bool first = true;
 
 		Console.WriteLine ("Properties:");
 
@@ -228,7 +174,7 @@ class ExtractContentTool {
 		if (indexable.NoContent)
 			return;
 
-		Stopwatch watch = new Stopwatch ();
+		watch.Reset ();
 		watch.Start ();
 
 		TextReader reader;
@@ -238,6 +184,8 @@ class ExtractContentTool {
 		reader = indexable.GetTextReader ();
 		char separater_char = (tokenize ? '\n' : ' ');
 		if (reader != null) {
+			first = true;
+
 			if (analyze) {
 				if (! stats_only)
 					Console.WriteLine ("Content:");
@@ -323,15 +271,16 @@ class ExtractContentTool {
 
 		Console.WriteLine ();
 		Console.WriteLine ("Text extracted in {0}", watch);
-		Console.WriteLine ("-----------------------------------------------------");
 
-		//Stream stream = indexable.GetBinaryStream ();
-		//if (stream != null)
-		//	stream.Close ();
+		foreach (Indexable gi in generated_indexables)
+			Display (gi);
+
+		Stream stream = indexable.GetBinaryStream ();
+		if (stream != null)
+			stream.Close ();
 
 		// Clean up any temporary files associated with filtering this indexable.
 		indexable.Cleanup ();
-
 	}
 
 	static void PrintUsage ()
@@ -421,14 +370,6 @@ class ExtractContentTool {
 		}
 		if (writer != null)
 			writer.Close ();
-
-		GLib.MainLoop main_loop = new GLib.MainLoop ();
-
-		if (Environment.GetEnvironmentVariable ("BEAGLE_TEST_MEMORY") != null) {
-			GC.Collect ();
-			GLib.Timeout.Add (1000, delegate() { main_loop.Quit (); return false; });
-			main_loop.Run ();
-		}
 
 		return 0;
 	}
