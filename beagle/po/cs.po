@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-16 12:16+0200\n"
-"PO-Revision-Date: 2007-05-16 12:16+0200\n"
+"POT-Creation-Date: 2007-05-22 17:13+0200\n"
+"PO-Revision-Date: 2007-05-22 17:25+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -363,8 +363,7 @@ msgstr ""
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
-msgstr ""
-"Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
+msgstr "Měli byste zkontrolovat, zda vámi zadaná slova neobsahují nějaké překlepy."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -379,17 +378,14 @@ msgstr ""
 "OR višně</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Chcete-li vynechat některé termíny, použijte před nimi mínus, např. <b>-"
 "kočky</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Hledáte-li přesnou frázi, přidejte uvozovky, např: <b>\"Draci tu nejsou\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
@@ -450,10 +446,10 @@ msgstr[1] "Zobrazuje se všechny {0} výsledky"
 msgstr[2] "Zobrazuje se všech {0} výsledků"
 
 #: ../search/Search.cs:291
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Zobrazuje se prvních {0} z {1} výsledků"
+msgstr[0] "Zobrazuje se první {0} z {1} výsledku"
 msgstr[1] "Zobrazuje se prvních {0} z {1} výsledků"
 msgstr[2] "Zobrazuje se prvních {0} z {1} výsledků"
 
@@ -1166,8 +1162,7 @@ msgstr "Vyberte cestu"
 
 #: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
+msgstr "Vybraná cesta je již nastavena pro indexaci a nebyla tedy znovu přidána."
 
 #: ../tools/Settings.cs:330
 msgid ""
@@ -1201,8 +1196,7 @@ msgstr "Odstranit cestu"
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
-msgstr ""
-"Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
+msgstr "Opravdu chcete odstranit cestu ze seznamu adresářů zahrnutých do indexace?"
 
 #: ../tools/Settings.cs:407
 msgid "Remove item"
@@ -1457,8 +1451,7 @@ msgid "A unique number"
 msgstr "Jedinečné číslo"
 
 #: ../Util/F-Spot/IptcFile.cs:187
-msgid ""
-"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:189
@@ -1466,8 +1459,7 @@ msgid "The year month and day (CCYYMMDD) the service sent the material"
 msgstr "Rok, měsíc a den (CCYYMMDD) odeslání materiálu službou"
 
 #: ../Util/F-Spot/IptcFile.cs:191
-msgid ""
-"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
 msgstr "Hodina, minuta a sekunda (HHMMSS+HHMM) odeslání materiálu službou"
 
 #: ../Util/F-Spot/IptcFile.cs:193
@@ -1505,11 +1497,11 @@ msgstr "Jméno objektu"
 
 #: ../Util/F-Spot/IptcFile.cs:220
 msgid "Status of the objectdata according to the provider"
-msgstr ""
+msgstr "Stav dat objektu podle poskytovatele"
 
 #: ../Util/F-Spot/IptcFile.cs:224
 msgid "Location within a city or area where the object originates"
-msgstr ""
+msgstr "Část města či oblasti, ze které objekt pochází"
 
 #: ../Util/F-Spot/IptcFile.cs:227
 msgid "Name of the city the content is focussing on"
@@ -1524,9 +1516,8 @@ msgid "Full name of the country of the focus of the content"
 msgstr "Úplné jméno země, na kterou je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:236
-msgid ""
-"Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr "Dvou- nebo trojpísmenný kód ISO3166 země, na kterou je obsah zaměřen"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
@@ -1551,8 +1542,7 @@ msgid "Headline of the content"
 msgstr "Titulek obsahu"
 
 #: ../Util/F-Spot/IptcFile.cs:255
-msgid ""
-"Instructions from the creator to the receiver not covered by other fields"
+msgid "Instructions from the creator to the receiver not covered by other fields"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:258
@@ -1754,3 +1744,4 @@ msgstr "{0:0.0} KB"
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
