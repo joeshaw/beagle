@@ -78,6 +78,12 @@ namespace Beagle.Filters {
 			public System.IO.Stream ReadStream { get { return s; } }
 			public System.IO.Stream WriteStream { get { return null; } }
 
+			// Uncomment this for taglib-sharp RC1
+			//public void CloseStream (System.IO.Stream stream)
+			//{
+			//	// Do not close the stream here!
+			//}
+
 			private static TagLib.File.IFileAbstraction CreateFile (string path)
 			{
 				return new StreamingTagReader (streams.Dequeue ());
