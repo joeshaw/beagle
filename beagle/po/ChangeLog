@@ -1,3 +1,9 @@
+2007-05-27  Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation by Raul Pereira
+	<contato@raulpereira.com> and myself (Leonardo Fontenelle
+	<leo.fontenelle@gmail.com>). Closes bug #440066.
+
 2007-05-22  Jakub Friedl  <jfriedl@suse.cz>
 
 	* cs.po: Updated Czech translation.
