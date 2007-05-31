@@ -18,6 +18,8 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
+include TagLib/TagLib.sources
+
 # Local copy of http://svn.myrealbox.com/viewcvs/trunk/mcs/class/Managed.Windows.Forms/System.Windows.Forms.RTF/
 SWF_RTF_CSFILES =						\
 	$(srcdir)/System.Windows.Forms.RTF/Charcode.cs		\
@@ -129,12 +131,17 @@ LOCAL_ASSEMBLIES =				\
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	$(SHARPZIPLIB_LIBS)		\
-	$(TAGLIB_SHARP_LIBS)		\
 	-r:Mono.Posix			\
 	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
+
+if INTERNAL_TAGLIB
+CSFILES += $(TAGLIB_CSFILES)
+else
+ASSEMBLIES += $(TAGLIB_SHARP_LIBS)
+endif
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)

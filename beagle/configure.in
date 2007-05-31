@@ -376,8 +376,9 @@ dnl ----------------------------------------------
 
 dnl taglib-sharp: Needed for indexing audio formats
 
-PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp)
+PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp, internal_taglib=no, internal_taglib=yes)
 AC_SUBST(TAGLIB_SHARP_LIBS)
+AM_CONDITIONAL(INTERNAL_TAGLIB, test "x$internal_taglib" = "xyes")
 
 dnl ----------------------------------------------
 
@@ -604,6 +605,7 @@ echo "
 	Mozilla Extension?	  yes
 	Epiphany Extension?	  ${enable_epiphany_extension}
 
+	Local taglib-sharp?       ${internal_taglib}
 	Local SqliteClient?	  ${use_local_sqlite}
 	Sqlite version:		  ${SQLITE_MAJ_VER}.x
 
