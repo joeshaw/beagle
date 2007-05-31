@@ -431,10 +431,14 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			if (Environment.GetEnvironmentVariable ("SABAYON_SESSION_RUNNING") == "yes") {
+				Console.WriteLine ("Beagle is running underneath Sabayon, exiting.");
+				Environment.Exit (0);
+			}
+
 			if (arg_indexing_test_mode) {
 				LuceneQueryable.OptimizeRightAway = true;
 			}
-				
 
 			// Bail out if we are trying to run as root
 			if (Environment.UserName == "root" && Environment.GetEnvironmentVariable ("SUDO_USER") != null) {
