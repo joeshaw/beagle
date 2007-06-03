@@ -135,7 +135,7 @@ namespace Beagle.Util
 
 				try {
 					key_sequence = (string) parent.client.Get (gconf_path);
-				} catch (Exception e) {
+				} catch {
 					Logger.Log.Warn ("GConf key '{0}' does not exist, using default.", 
 							 gconf_path);
 				}

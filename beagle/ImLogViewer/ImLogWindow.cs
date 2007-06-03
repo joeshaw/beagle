@@ -245,10 +245,11 @@ namespace ImLogViewer {
 			}
 
 			if (preview == null)
-				return ((ImLog.Utterance) log.Utterances [0]).Text;
+				preview = ((ImLog.Utterance) log.Utterances [0]).Text;
 
 			if (preview.Length > 50)
-				return preview.Substring (0, 50) + "...";
+				preview = preview.Substring (0, 50) + "...";
+
 			return preview;
 		}
 

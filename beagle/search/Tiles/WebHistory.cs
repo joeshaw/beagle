@@ -41,8 +41,7 @@ namespace Search.Tiles {
 		}
 
 		public override void Open ()
-		{
-			
+		{			
 			base.OpenFromUri (UriFu.UriToEscapedString(Hit.Uri));
 		}
 

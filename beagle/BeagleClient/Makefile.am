@@ -1,12 +1,11 @@
-
-CSC = $(MCS) -debug $(BEAGLE_DEFINES)
+CSC = $(MCS) -debug
 
 TARGET = Beagle.dll
 
-CSFLAGS = 					\
-	-target:library				\
-	-define:PREFIX=$(prefix)		\
-	-define:PKGLIBDIR=$(pkglibdir)		\
+CSFLAGS = 						\
+	-target:library					\
+	-define:PREFIX=$(prefix)			\
+	-define:PKGLIBDIR=$(pkglibdir)			\
 	$(BEAGLE_DEFINES)
 
 CSFILES = 						\
@@ -28,14 +27,14 @@ CSFILES = 						\
 	$(srcdir)/Snippet.cs				\
 	$(srcdir)/Versioned.cs
 
-LOCAL_ASSEMBLIES =			\
+LOCAL_ASSEMBLIES =					\
 	../Util/Util.dll
 
 
-ASSEMBLIES = 				\
-	$(BEAGLED_LIBS)                 \
-	$(SHARPZIPLIBS_LIBS)		\
-	-r:Mono.Posix			\
+ASSEMBLIES = 						\
+	$(BEAGLED_LIBS)                 		\
+	$(SHARPZIPLIBS_LIBS)				\
+	-r:Mono.Posix					\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 RESOURCES =
@@ -52,7 +51,7 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
 
-EXTRA_DIST =			\
+EXTRA_DIST =		\
 	$(CSFILES)
 
 CLEANFILES =		\

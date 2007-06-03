@@ -36,16 +36,23 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = new SafeProcess ();
 
-			// This doesn't work very well if you have multiple
-			// terms that match.  Tomboy doesn't seem to have a way
-			// to specify more than one thing to highlight.
-			if (Hit.Source == "Tomboy"){
+			switch (Hit.Source) {
+			case "Tomboy":
+				// This doesn't work very well if you have multiple
+				// terms that match.  Tomboy doesn't seem to have a way
+				// to specify more than one thing to highlight.
 				p.Arguments = new string [] { "tomboy",
-						      "--open-note", Hit.EscapedUri,
-						      "--highlight-search", Query.QuotedText };
-			} else if (Hit.Source  == "Labyrinth"){
-				p.Arguments = new string [] { "labyrinth",
-						      "-m", Hit.FileInfo.Name };
+							      "--open-note", Hit.EscapedUri,
+							      "--highlight-search", Query.QuotedText };
+				break;
+			
+			case "Labyrinth":
+				p.Arguments = new string [] { "labyrinth", "-m", Hit.FileInfo.Name };
+				break;
+
+			case "EvolutionDataServer":
+				p.Arguments = new string [] { "evolution", Hit.EscapedUri };
+				break;
 			}
 
 			try {

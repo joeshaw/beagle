@@ -485,8 +485,10 @@ namespace Search {
 		{
 			foreach (Hit hit in response.Hits) {
 				Tile tile = TileActivatorOrg.MakeTile (hit, current_query);
-				if (tile == null)
+				if (tile == null) {
+					Console.WriteLine ("No tile found for: {0} ({1})", hit.Uri, hit.Type);
 					continue;
+				}
 
 				if (filter != null && !filter.Filter (tile))
 					continue;

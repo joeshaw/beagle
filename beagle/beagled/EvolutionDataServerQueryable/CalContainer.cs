@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -40,9 +41,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private Cal cal;
 		private CalView cal_view;
 		private CalSourceType cal_source_type;
+
 		private Scheduler.Priority priority = Scheduler.Priority.Delayed;
 
-		public CalContainer (Evolution.Source source, EvolutionDataServerQueryable queryable, string fingerprint, CalSourceType cal_source_type) : base (source, queryable, fingerprint)
+		public CalContainer (Evolution.Source source, EvolutionDataServerQueryable queryable, string fingerprint, CalSourceType cal_source_type) 
+			: base (source, queryable, fingerprint)
 		{
 			this.cal_source_type = cal_source_type;
 		}
@@ -178,11 +181,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		// Evolution can handle the horribly mangled URIs
 		// that come out of it.
 
-		private Uri GetCalendarUri (CalComponent cc) {
-			return GetCalendarUri (cc.Uid);
+		private Uri GetComponentUri (CalComponent cc)
+		{
+			return GetComponentUri (cc.Uid);
 		}
 
-		private Uri GetCalendarUri (string id) {
+		private Uri GetComponentUri (string id)
+		{
 			return new Uri (String.Format ("calendar://uri-class-sucks/?source-uid={0}&comp-uid={1}",
 						       this.source.Uid, id));
 		}
@@ -192,15 +197,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		private void AddCalComponent (CalComponent cc)
 		{
 			Indexable indexable = CalComponentToIndexable (cc);
-
 			this.queryable.ScheduleIndexable (indexable, this.priority);
 		}
 
 		private void RemoveCalComponent (string id)
 		{
-			Indexable indexable = new Indexable (GetCalendarUri (id));
+			Indexable indexable = new Indexable (GetComponentUri (id));
 			indexable.Type = IndexableType.Remove;
-
 			this.queryable.ScheduleIndexable (indexable, Scheduler.Priority.Immediate);
 		}
 
@@ -208,28 +211,82 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private Indexable CalComponentToIndexable (CalComponent cc)
 		{
-			Indexable indexable = new Indexable (GetCalendarUri (cc));
+			switch (cal_source_type) {
+			case CalSourceType.Event:
+				return EventToIndexable (cc);
+				break;
 
+			case CalSourceType.Todo:
+				return TodoToIndexable (cc);
+				break;
+
+			case CalSourceType.Journal:
+				return MemoToIndexable (cc);
+				break;
+			}			
+
+			return null;
+		}
+
+		private Indexable MemoToIndexable (CalComponent cc)
+		{
+			Indexable indexable = new Indexable (GetComponentUri (cc));
+			indexable.Timestamp = cc.Dtstart;
+			indexable.HitType = "Note";
+			indexable.Filtering = IndexableFiltering.AlreadyFiltered;
+
+			indexable.AddProperty (Property.NewUnsearched ("fixme:application","evolution"));
+
+			foreach (string summary in cc.Summaries)
+				indexable.AddProperty (Property.New ("dc:title", summary));
+
+			// We remember the note's text so that we can stuff it in
+			// the TextCache later.
+			// This is here form compability with Tomboy notes.
+			foreach (string description in cc.Descriptions) {
+				queryable.IndexableTextCache [indexable.Uri] = description;
+
+				StringReader reader = new StringReader (description);
+				indexable.SetTextReader (reader);
+			}
+
+			return indexable;
+		}
+
+		private Indexable TodoToIndexable (CalComponent cc)
+		{
+			Indexable indexable = new Indexable (GetComponentUri (cc));
+			indexable.Timestamp = cc.Dtstart;
+			indexable.HitType = "Task";
+
+			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", cc.Uid));
+
+			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart.ToUniversalTime ()));
+
+			if (cc.Dtend != DateTime.MinValue)
+				indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
+
+			foreach (string description in cc.Descriptions)
+				indexable.AddProperty (Property.New ("fixme:description", description));
+
+			foreach (string summary in cc.Summaries)
+				indexable.AddProperty (Property.New ("fixme:summary", summary));
+
+			foreach (string category in cc.Categories)
+				indexable.AddProperty (Property.NewUnsearched ("fixme:category", category));
+
+			return indexable;
+		}
+
+		private Indexable EventToIndexable (CalComponent cc)
+		{
+			Indexable indexable = new Indexable (GetComponentUri (cc));
 			indexable.Timestamp = cc.Dtstart;
 			indexable.HitType = "Calendar";
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:source_uid", this.source.Uid));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uid", cc.Uid));
-
-			switch (this.cal_source_type) {
-
-			case CalSourceType.Event:
-				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "event"));
-				break;
-
-			case CalSourceType.Todo:
-				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "task"));
-				break;
-
-			case CalSourceType.Journal:
-				indexable.AddProperty (Property.NewKeyword ("fixme:item_type", "memo"));
-				break;
-			}
 
 			indexable.AddProperty (Property.NewDate ("fixme:starttime", cc.Dtstart.ToUniversalTime ()));
 

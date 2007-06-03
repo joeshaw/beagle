@@ -111,30 +111,26 @@ namespace Beagle.Util {
 
 		//////////////////////////////////
 
-		public class Comparer : IComparer
+		public class EqualityComparer : IEqualityComparer
 		{
-			public int Compare(object uri1, object uri2)
+			public new bool Equals (object uri1, object uri2)
 			{
-				return String.Compare(uri1.ToString(), uri2.ToString());
+				return String.Equals (uri1.ToString (), uri2.ToString ());
+			}
+
+			public int GetHashCode (object o)
+			{
+				return o.ToString ().GetHashCode ();
 			}
 		}
 
-		public class Hasher : IHashCodeProvider
-		{
-			public int GetHashCode(object o)
-			{
-				return o.ToString().GetHashCode();
-			}
-		}
-
-		static Comparer the_comparer = new Comparer ();
-		static Hasher the_hasher = new Hasher ();
+		static EqualityComparer equality_comparer = new EqualityComparer ();
 
 		// Returns a hash table that does the right thing when
 		// the key is a Uri.
 		static public Hashtable NewHashtable ()
 		{
-			return new Hashtable (the_hasher, the_comparer);
+			return new Hashtable (equality_comparer);
 		}
 
 	}

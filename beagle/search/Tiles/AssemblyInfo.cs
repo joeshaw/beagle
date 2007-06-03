@@ -46,6 +46,7 @@ using Search.Tiles;
 	 typeof (RSSFeedActivator),
 	 typeof (SpreadsheetActivator),
 	 typeof (TextDocumentActivator),
+	 typeof (TaskActivator),
 	 typeof (VideoActivator),
 	 typeof (WebHistoryActivator)
 )]

@@ -24,7 +24,6 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-
 using System;
 using System.Collections;
 using System.Globalization;
@@ -41,33 +40,38 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 	[QueryableFlavor (Name="EvolutionDataServer", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class EvolutionDataServerQueryable : LuceneQueryable {
-		private string photo_dir;
 
 		// Index versions
 		// 1: Original version
 		// 2: Updated URI scheme for Evolution 2.4/EDS 1.4
 		// 3: Add a "item_type" for calendar items, to differentiate between events, tasks, and memos
-		private const int INDEX_VERSION = 3;
+		// 4: Modify memos to be comaptible with Tomboy notes and make tasks a seperate HitType
 
+		private const int INDEX_VERSION = 4;
+
+		private string photo_dir;
 		private SchedulingIndexableGenerator generator;
+
+		// This is our text cache that gets flushed in our post
+		// add hook and is currently only used for memos
+		// snippets for compability with Tomboy notes :-(
+		private Hashtable indexable_text_cache;
 
 		public EvolutionDataServerQueryable () : base ("EvolutionDataServerIndex", INDEX_VERSION)
 		{
+			indexable_text_cache = UriFu.NewHashtable ();
+
 			photo_dir = Path.Combine (Driver.TopDirectory, "Photos");
 			System.IO.Directory.CreateDirectory (photo_dir);
 
 			generator = new SchedulingIndexableGenerator (this, "Evolution Data Server");
 		}
 
-		public string PhotoDir {
-			get { return photo_dir; }
-		}
-
 		public override void Start ()
 		{
 			base.Start ();
 
-			// Defer the actual startup till main_loop starts.
+			// Defer the actual startup until the main loop starts.
 			// EDS requires StartWorker to run in mainloop,
 			// hence it is not started in a separate thread.
 			GLib.Idle.Add (new GLib.IdleHandler (delegate () { StartWorker (); return false; }));
@@ -75,50 +79,47 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void StartWorker ()
 		{
-			Logger.Log.Info ("Scanning addressbooks and calendars");
+			Logger.Log.Info ("Scanning EDS sources (Addressbook, Calendars, Memos, ...)");
+
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
 
 			IsIndexing = true;
 
-			bool success = false;
-
-			// FIXME: This is a total hack.  We call into a
-			// method inside libevolutionglue so that we can
-			// possibly catch a DllNotFoundException if it
-			// fails to load.  This is separate from the next
-			// try-catch-finally block, which calls into the
-			// e-d-s libraries.
 			try {
-				// This is a no-op
-				CalUtil.FreeGlueCompGLibSList (IntPtr.Zero);
-			} catch (DllNotFoundException ex) {
-				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
-				return;
+				ConnectToEDS ();
+			} catch (Exception e) {
+				Logger.Log.Error (e, "Unable to start EvolutionDataServer backend");
 			} finally {
 				IsIndexing = false;
-				timer.Stop ();
 			}
 
-			// This is the first code which tries to open the
-			// evolution-data-server APIs.  Try to catch
-			// DllNotFoundException and bail out if things go
-			// badly.
+			timer.Stop ();
+
+			Logger.Log.Info ("Scanned EDS sources in {0}", timer);
+		}
+
+		private void ConnectToEDS ()
+		{
 			try {
+				// FIXME: This is a total hack.  We call into a
+				// method inside libevolutionglue so that we can
+				// possibly catch a DllNotFoundException if it
+				// fails to load.
+				CalUtil.FreeGlueCompGLibSList (IntPtr.Zero); // This is a no-op
+
+				// This is the first code which tries to open the
+				// evolution-data-server APIs.  Try to catch
+				// DllNotFoundException and bail out if things go
+				// badly.
 				new SourcesHandler ("/apps/evolution/addressbook/sources", typeof (BookContainer), this, Driver.Fingerprint);
 				new SourcesHandler ("/apps/evolution/calendar/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Event);
 				new SourcesHandler ("/apps/evolution/tasks/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Todo);
 				new SourcesHandler ("/apps/evolution/memos/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Journal);
-				success = true;
 			} catch (DllNotFoundException ex) {
-				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");
-			} finally {
-				IsIndexing = false;
-				timer.Stop ();
-			}
-			
-			if (success)
-				Logger.Log.Info ("Scanned addressbooks and calendars in {0}", timer);
+				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
+				return;
+			}		       
 		}
 
 		public void ScheduleIndexable (Indexable indexable, Scheduler.Priority priority)
@@ -128,10 +129,31 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public void RemovePropertyIndexable (Property prop)
 		{
-			Scheduler.Task task;
-			task = NewRemoveByPropertyTask (prop);
+			Scheduler.Task task = NewRemoveByPropertyTask (prop);
 			task.Priority = Scheduler.Priority.Immediate;
 			ThisScheduler.Add (task);
+		}
+
+		protected override Uri PostAddHook (Indexable indexable, IndexerAddedReceipt receipt)
+		{
+			base.PostAddHook (indexable, receipt);
+			
+			if (indexable_text_cache.ContainsKey (indexable.Uri)) {
+				string text = (string)indexable_text_cache [indexable.Uri];
+				TextCache.UserCache.WriteFromString (indexable.Uri, text);			       
+
+				indexable_text_cache.Remove (indexable.Uri);
+			}
+
+			return indexable.Uri;
+		}
+
+		public string PhotoDir {
+			get { return photo_dir; }
+		}
+
+		public Hashtable IndexableTextCache {
+			get { return indexable_text_cache; }
 		}
 	}
 }

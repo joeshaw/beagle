@@ -103,6 +103,16 @@ namespace Search.Tiles {
 				return hit.GetFirstProperty ("parent:" + prop);
 		}
 
+		public static string TrimFirstLine (string text)
+		{
+			int newline = text.IndexOf ('\n');
+
+			if (newline == -1)
+				return text;
+
+			return String.Format ("{0}...", text.Substring (0, newline));
+		}
+
 		private static DateTimeFormatInfo DateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
 		private static string ShortMonthDayPattern = DateTimeFormat.MonthDayPattern.Replace ("MMMM", "MMM");
 		private static string ShortYearMonthPattern = DateTimeFormat.YearMonthPattern.Replace ("MMMM", "MMM");
@@ -232,6 +242,25 @@ namespace Search.Tiles {
 				return String.Format (Catalog.GetPluralString ("{0} year ago", "{0} years ago", span.Days / 365) + " ({1:MMMM d, yyyy})", span.Days / 365, dt);
 			else
 				return String.Format (Catalog.GetPluralString ("In {0} year", "In {0} years", span.Days / 365) + " ({1:MMMM d, yyyy})", span.Days / 365, dt);
+		}
+
+		public static string NiceShortTime (DateTime dt)
+		{
+			return StringFu.DateTimeToPrettyString (dt.ToLocalTime ());
+		}
+
+		public static string NiceShortTime (string timestamp)
+		{
+			DateTime dt;
+
+			try {
+				dt = StringFu.StringToDateTime (timestamp);
+
+			} catch {
+				return "";
+			}
+
+			return NiceShortTime (dt);
 		}
 	}
 }

@@ -79,7 +79,11 @@ namespace Search.Tray
 				menu_to_query_map = new Hashtable ();
 
 				foreach (string s in recent_searches) {
-					item = new Gtk.ImageMenuItem (s);
+					// Replace all occurences of '_' with "__"
+					// so that underscores don't become mnemonics.
+					string query = s.Replace ("_", "__");
+
+					item = new Gtk.ImageMenuItem (query);
 					item.Activated += new EventHandler (OnSearch);
 					menu.Append (item);
 					menu_to_query_map [item] = s;

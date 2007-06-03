@@ -128,31 +128,27 @@ namespace Beagle.Daemon {
 			return ret;
 		}
 
-		public class WeightComparer : IComparer 
+		public class EqualityComparer : IEqualityComparer 
 		{
-			public int Compare (object obj1, object obj2) 
+			public new bool Equals (object obj1, object obj2) 
 			{
 				FilterFlavor flav1 = (FilterFlavor) obj1;
 				FilterFlavor flav2 = (FilterFlavor) obj2;
 
-				return flav1.Weight.CompareTo (flav2.Weight);
+				return flav1.Weight.Equals (flav2.Weight);
 			} 
-		}
 
-		public class Hasher : IHashCodeProvider
-		{
 			public int GetHashCode (object o)
 			{
 				return o.ToString ().GetHashCode ();
 			}
 		}
 
-		static WeightComparer the_comparer = new WeightComparer ();
-		static Hasher the_hasher = new Hasher ();
+		static EqualityComparer equality_comparer = new EqualityComparer ();
 
 		public static Hashtable NewHashtable ()
 		{
-			return new Hashtable (the_hasher, the_comparer);
+			return new Hashtable (equality_comparer);
 		}
 
 		////////////////////////////////////////////

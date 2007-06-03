@@ -67,6 +67,7 @@ TILES = 					\
 	$(srcdir)/Tiles/Presentation.cs		\
 	$(srcdir)/Tiles/RSSFeed.cs		\
 	$(srcdir)/Tiles/Spreadsheet.cs		\
+	$(srcdir)/Tiles/Task.cs			\
 	$(srcdir)/Tiles/TextDocument.cs		\
 	$(srcdir)/Tiles/ThumbnailFactory.cs	\
 	$(srcdir)/Tiles/Tile.cs			\

@@ -109,7 +109,7 @@ namespace Search.Tiles {
 				}
 				
 				if (best != null)
-					return best.BuildTile (hit, query);
+				      return best.BuildTile (hit, query);				
 			} catch (Exception e) {
 				Console.WriteLine ("Error instantiating tile:\n{0}", e);
 			}

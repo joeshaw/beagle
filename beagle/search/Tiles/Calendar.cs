@@ -28,15 +28,8 @@ namespace Search.Tiles {
 
 			Title = (time == "") ? summary : time + ": " + summary;
 
-			string description = hit.GetFirstProperty ("fixme:description");
-
-			if (description != null && description != "") {
-				int newline = description.IndexOf ('\n');
-				if (newline == -1)
-					Description = description;
-				else
-					Description = String.Format ("{0}...", description.Substring (0, newline));
-			}
+			if (!String.IsNullOrEmpty (hit.GetFirstProperty ("fixme:description")))
+				Description = Utils.TrimFirstLine (hit.GetFirstProperty ("fixme:description"));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -50,10 +43,21 @@ namespace Search.Tiles {
 
 			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
 
-			if (Description != null && Description != "")
+			if (!String.IsNullOrEmpty (Description))
 				details.AddLabelPair (Catalog.GetString ("Description:"), Description);
 			
-			if (Hit.GetFirstProperty ("fixme:location") != null)
+			if (!String.IsNullOrEmpty (Hit.GetFirstProperty ("fixme:starttime"))) {
+				Console.WriteLine ("1. " + Hit.GetFirstProperty ("fixme:starttime"));
+				string time = Utils.NiceShortTime (Hit.GetFirstProperty ("fixme:starttime"));
+				Console.WriteLine ("2. " + time);
+				
+				if (!String.IsNullOrEmpty (Hit.GetFirstProperty ("fixme:endtime")))
+				    time = String.Format ("{0} - {1}", time, Utils.NiceShortTime (Hit.GetFirstProperty ("fixme:endtime")));
+
+				details.AddLabelPair (Catalog.GetString ("Time:"), time);
+			}
+
+			if (!String.IsNullOrEmpty (Hit.GetFirstProperty ("fixme:location")))
 				details.AddLabelPair (Catalog.GetString ("Location:"), Hit.GetFirstProperty ("fixme:location"));
 
 			string[] attendees = Hit.GetProperties ("fixme:attendee");
