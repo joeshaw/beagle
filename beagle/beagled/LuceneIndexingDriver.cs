@@ -421,7 +421,12 @@ namespace Beagle.Daemon {
 					Document persistent_prop_doc = null;
 					if (di.PersistentPropDocs != null)
 						persistent_prop_doc = (Document) di.PersistentPropDocs [di.Indexable.Uri];
-					Log.Debug ("+{0} (deferred)", di.Indexable.DisplayUri);
+					
+					if (di.Indexable.DisplayUri != di.Indexable.ContentUri)
+						Log.Debug ("+{0} ({1}) [deferred]", di.Indexable.DisplayUri, di.Indexable.ContentUri);
+					else
+						Log.Debug ("+{0} [deferred]", di.Indexable.DisplayUri);
+
 					AddDocumentToIndex (di.Indexable, persistent_prop_doc, primary_writer, ref secondary_writer);
 
 					// Add the receipt if the indexable was submitted and not generated
@@ -563,7 +568,11 @@ namespace Beagle.Daemon {
 			}
 
 			// If this indexables is not deferred, add it to the index.
-			Logger.Log.Debug ("+{0} ({1})", indexable.DisplayUri, indexable.ContentUri);
+			if (indexable.DisplayUri != indexable.ContentUri)
+				Log.Debug ("+{0} ({1})", indexable.DisplayUri, indexable.ContentUri);
+			else
+				Log.Debug ("+{0}", indexable.DisplayUri);
+
 			Document persistent_prop_doc = null;
 			if (prop_change_docs != null)
 				persistent_prop_doc = (Document) prop_change_docs [indexable.Uri];
