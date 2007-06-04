@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-09 12:29+0200\n"
+"POT-Creation-Date: 2007-06-04 08:15+0200\n"
 "PO-Revision-Date: 2007-05-09 12:28+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -30,7 +30,7 @@ msgstr "Lådans orientering."
 msgid "Open..."
 msgstr "Öppna..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:102
 msgid "Quit"
 msgstr "Avsluta"
 
@@ -263,9 +263,9 @@ msgid "State/Province:"
 msgstr "Län/Region:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:69
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:52
 msgid "Title:"
 msgstr "Titel:"
 
@@ -455,11 +455,11 @@ msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Visar den första {0} av totalt {1} träffar"
 msgstr[1] "Visar de första {0} av totalt {1} träffar"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:567
 msgid "Your data is being indexed"
 msgstr "Ditt data håller på att indexeras"
 
-#: ../search/Search.cs:566
+#: ../search/Search.cs:568
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -485,15 +485,19 @@ msgstr "inne i filen:"
 msgid "Author:"
 msgstr "Upphovsman:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47
 msgid "Description:"
 msgstr "Beskrivning:"
 
 #: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Tid:"
+
+#: ../search/Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "Plats:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "Deltagare:"
 
@@ -529,7 +533,7 @@ msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
 #: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/Note.cs:70
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
@@ -705,28 +709,28 @@ msgstr "Nyhetskanaler"
 msgid "Archives"
 msgstr "Arkiv"
 
-#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
 #: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "Igår"
 
-#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
 #: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "Idag"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Imorgon"
 
-#: ../search/Tiles/Utils.cs:224
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} vecka sedan"
 msgstr[1] "{0} veckor sedan"
 
-#: ../search/Tiles/Utils.cs:226
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -734,28 +738,28 @@ msgstr[0] "Om {0} vecka"
 msgstr[1] "Om {0} veckor"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} månad sedan"
 msgstr[1] "{0} månader sedan"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Om {0} månad"
 msgstr[1] "Om {0} månader"
 
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} år sedan"
 msgstr[1] "{0} år sedan"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -768,12 +772,12 @@ msgstr[1] "Om {0} år"
 msgid "Unknown duration"
 msgstr "Okänd speltid"
 
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
 msgstr "Url:"
 
 # Hmm
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:54
 msgid "Accessed:"
 msgstr "Kom åt:"
 
@@ -785,7 +789,7 @@ msgstr "Inga tidigare sökningar"
 msgid "Recent Searches"
 msgstr "Tidigare sökningar"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Töm"
 
