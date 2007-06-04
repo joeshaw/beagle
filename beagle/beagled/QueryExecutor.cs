@@ -40,6 +40,9 @@ namespace Beagle.Daemon {
 
 		private void DisconnectResult ()
 		{
+			if (this.result == null)
+				return;
+
 			this.result.HitsAddedEvent -= OnResultHitsAdded;
 			this.result.HitsSubtractedEvent -= OnResultHitsSubtracted;
 			this.result.FinishedEvent -= OnResultFinished;
