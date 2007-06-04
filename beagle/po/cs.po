@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: cs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-22 17:13+0200\n"
-"PO-Revision-Date: 2007-05-22 17:25+0200\n"
+"POT-Creation-Date: 2007-06-04 17:47+0200\n"
+"PO-Revision-Date: 2007-06-04 17:48+0200\n"
 "Last-Translator: Jakub Friedl <jfriedl@suse.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "Orientace v panelu."
 msgid "Open..."
 msgstr "Otevřít..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:102
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -264,9 +264,9 @@ msgid "State/Province:"
 msgstr "Stát/provincie:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:69
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:52
 msgid "Title:"
 msgstr "Název:"
 
@@ -453,11 +453,11 @@ msgstr[0] "Zobrazuje se první {0} z {1} výsledku"
 msgstr[1] "Zobrazuje se prvních {0} z {1} výsledků"
 msgstr[2] "Zobrazuje se prvních {0} z {1} výsledků"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:567
 msgid "Your data is being indexed"
 msgstr "Vaše data se právě indexují"
 
-#: ../search/Search.cs:566
+#: ../search/Search.cs:568
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -483,15 +483,19 @@ msgstr "Uvnitř souboru:"
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47
 msgid "Description:"
 msgstr "Popis:"
 
 #: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Čas:"
+
+#: ../search/Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "Místo:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "Účastníci:"
 
@@ -527,7 +531,7 @@ msgid "Move to Trash"
 msgstr "Přesunout do koše"
 
 #: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/Note.cs:70
 msgid "Last Edited:"
 msgstr "Naposledy změněno"
 
@@ -705,21 +709,21 @@ msgstr "Kanály zpráv"
 msgid "Archives"
 msgstr "Archívy"
 
-#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
 #: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "Včera"
 
-#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
 #: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "Dnes"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Zítra"
 
-#: ../search/Tiles/Utils.cs:224
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
@@ -727,7 +731,7 @@ msgstr[0] "Před týdnem"
 msgstr[1] "Před {0} týdny"
 msgstr[2] "Před {0} týdny"
 
-#: ../search/Tiles/Utils.cs:226
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -736,7 +740,7 @@ msgstr[1] "Za {0} týdny"
 msgstr[2] "Za {0} týdnů"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
@@ -744,7 +748,7 @@ msgstr[0] "Před měsícem"
 msgstr[1] "Před {0} měsíci"
 msgstr[2] "Před {0} měsíci"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
@@ -752,7 +756,7 @@ msgstr[0] "Za měsíc"
 msgstr[1] "Za {0} měsíce"
 msgstr[2] "Za {0} měsíců"
 
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
@@ -760,7 +764,7 @@ msgstr[0] "Před rokem"
 msgstr[1] "Před {0} lety"
 msgstr[2] "Před {0} lety"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -774,11 +778,11 @@ msgstr[2] "Za {0} let"
 msgid "Unknown duration"
 msgstr "Neznámá délka"
 
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:54
 msgid "Accessed:"
 msgstr "Přistoupeno:"
 
@@ -790,7 +794,7 @@ msgstr "Žádná nedávná hledání"
 msgid "Recent Searches"
 msgstr "Nedávná hledání"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Vymazat"
 
@@ -1468,7 +1472,7 @@ msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:195
 msgid "External globally unique object identifier"
-msgstr ""
+msgstr "Externí globálně jedinečný identifikátor objektu"
 
 #: ../Util/F-Spot/IptcFile.cs:200
 msgid "Abstract Relationship Method (ARM) identifier"
@@ -1550,9 +1554,8 @@ msgid "Intellectual genre of the object"
 msgstr ""
 
 #: ../Util/F-Spot/IptcFile.cs:271
-#, fuzzy
 msgid "Unknown IIM DataSet"
-msgstr "Neznámý adresář"
+msgstr "Neznámý IIM DataSet"
 
 #: ../Util/F-Spot/MetadataStore.cs:46
 msgid "Creator"
