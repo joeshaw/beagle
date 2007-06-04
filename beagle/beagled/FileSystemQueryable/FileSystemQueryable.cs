@@ -311,7 +311,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri uri = GuidFu.ToUri (unique_id);
 			Indexable indexable;
 			indexable = new Indexable (IndexableType.Remove, uri);
-			indexable.DisplayUri = UriFu.PathToFileUri (path, name);
+			indexable.DisplayUri = UriFu.PathToFileUri (path);
 			indexable.LocalState ["RemovedUri"] = indexable.DisplayUri;
 
 			// While adding, wait till the files are added to index for clearing cached_uid and writing attributes
