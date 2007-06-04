@@ -49,7 +49,8 @@ namespace Beagle.Daemon
 		static string [] allowed_files = {
 			"FileAttributesStore.db",
 			"fingerprint",
-			"version"
+			"version",
+			"filterver.dat"
 		};
 		
 		static string [] allowed_dirs = {
