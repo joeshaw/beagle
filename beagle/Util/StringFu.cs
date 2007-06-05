@@ -815,35 +815,4 @@ namespace Beagle.Util {
 			}
 		}
 	}
-
-	public class HtmlRemovingReader : TextReader {
-
-		private TextReader reader;
-		private StringBuilder sb;
-	    
-		public HtmlRemovingReader (TextReader reader)
-		{
-			this.reader = reader;
-			this.sb = new StringBuilder ();
-		}
-
-		public override string ReadLine ()
-		{
-			string line = reader.ReadLine ();
-
-			if (line == null)
-				return null;
-
-			sb.Length = 0;
-			line = StringFu.StripTags (line, sb);
-			line = StringFu.ConvertSpecialEntities (line);
-
-			return line;
-		}
-
-		public override void Close ()
-		{
-			reader.Close ();
-		}
-	}
 }

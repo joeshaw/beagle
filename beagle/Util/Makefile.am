@@ -51,9 +51,9 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GuidFu.cs			\
+	$(srcdir)/HtmlRemovingReader.cs		\
 	$(srcdir)/ICalParser.cs              	\
 	$(srcdir)/ImBuddy.cs              	\
-	$(srcdir)/ImLog.cs              	\
 	$(srcdir)/Inotify.cs			\
 	$(srcdir)/KdeUtils.cs			\
 	$(srcdir)/KonqHistoryUtil.cs		\
@@ -85,14 +85,14 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
 	$(srcdir)/F-Spot/Bim.cs			\
-	$(srcdir)/F-Spot/BitConverter.cs		\
-	$(srcdir)/F-Spot/Exif.cs			\
+	$(srcdir)/F-Spot/BitConverter.cs	\
+	$(srcdir)/F-Spot/Exif.cs		\
 	$(srcdir)/F-Spot/IptcFile.cs		\
 	$(srcdir)/F-Spot/JpegHeader.cs		\
 	$(srcdir)/F-Spot/MetadataStore.cs	\
 	$(srcdir)/F-Spot/PngFile.cs		\
 	$(srcdir)/F-Spot/PixbufUtils.cs		\
-	$(srcdir)/F-Spot/Tiff.cs			\
+	$(srcdir)/F-Spot/Tiff.cs		\
 	$(srcdir)/F-Spot/XmpFile.cs		\
 	$(srcdir)/SemWeb/AssemblyInfo.cs        \
 	$(srcdir)/SemWeb/NamespaceManager.cs    \
@@ -120,8 +120,8 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/PropertyKeywordAttribute.cs
 
 if ENABLE_THUNDERBIRD
-UTIL_CSFILES +=				\
-	$(srcdir)/Mork.cs		\
+UTIL_CSFILES +=					\
+	$(srcdir)/Mork.cs			\
 	$(srcdir)/Thunderbird.cs
 endif
 

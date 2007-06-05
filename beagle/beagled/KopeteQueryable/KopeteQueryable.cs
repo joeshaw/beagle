@@ -177,7 +177,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 			Indexable indexable = new Indexable (uri);
 			indexable.ContentUri = uri;
 			indexable.Timestamp = File.GetLastWriteTimeUtc (filename);
-			indexable.MimeType = KopeteLog.MimeType;
+			indexable.MimeType = "beagle/x-kopete-log";
 			indexable.HitType = "IMLog";
 			indexable.CacheContent = false;
 
@@ -201,8 +201,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 		override protected double RelevancyMultiplier (Hit hit)
 		{
-			return HalfLifeMultiplierFromProperty (hit, 0.25,
-							       "fixme:endtime", "fixme:starttime");
+			return HalfLifeMultiplierFromProperty (hit, 0.25, "fixme:endtime", "fixme:starttime");
 		}
 
 		override protected bool HitFilter (Hit hit) 
@@ -210,7 +209,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
 			
 			if (buddy != null) {
-				if (buddy.Alias != "")
+				if (!String.IsNullOrEmpty (buddy.Alias))
 					hit ["fixme:speakingto_alias"] = buddy.Alias;
 
 				// FIXME: Icons?

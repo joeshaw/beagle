@@ -7,6 +7,7 @@ WRAPPER = beagle-imlogviewer
 CSFLAGS = -target:exe
 
 CSFILES =				\
+	$(srcdir)/ImLog.cs              \
 	$(srcdir)/ImLogViewer.cs	\
 	$(srcdir)/ImLogWindow.cs
 

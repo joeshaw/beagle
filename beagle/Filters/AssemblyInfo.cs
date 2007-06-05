@@ -53,7 +53,6 @@ using Beagle.Filters;
 	 typeof(FilterGif),
 	 typeof(FilterHtml),
 	 typeof(FilterIgnore),
-	 typeof(FilterImLog),
 	 typeof(FilterJava),
 	 typeof(FilterJavascript),
 	 typeof(FilterJpeg),
@@ -92,5 +91,7 @@ using Beagle.Filters;
 	 typeof(FilterText),
 	 typeof(FilterTiff),
 	 typeof(FilterTotem),
-	 typeof(FilterXslt)
+	 typeof(FilterXslt),
+	 typeof(FilterPidginLog),
+	 typeof(FilterKopeteLog)
 )]

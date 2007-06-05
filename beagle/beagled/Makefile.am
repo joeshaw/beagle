@@ -298,9 +298,9 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 
 
 
-gaimlogqueryable = $(srcdir)/GaimLogQueryable
-GAIM_LOG_QUERYABLE_CSFILES =				\
-	$(gaimlogqueryable)/GaimLogQueryable.cs
+pidginqueryable = $(srcdir)/PidginQueryable
+PIDGIN_QUERYABLE_CSFILES =				\
+	$(pidginqueryable)/PidginQueryable.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable
 TOMBOY_QUERYABLE_CSFILES =				\
@@ -375,7 +375,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(KMAIL_QUERYABLE_CSFILES)				\
 	$(FILE_SYSTEM_QUERYABLE_CSFILES)			\
-	$(GAIM_LOG_QUERYABLE_CSFILES)				\
+	$(PIDGIN_QUERYABLE_CSFILES)				\
 	$(INDEXING_SERVICE_QUERYABLE_CSFILES)			\
 	$(TOMBOY_QUERYABLE_CSFILES)				\
 	$(LABYRINTH_QUERYABLE_CSFILES)				\

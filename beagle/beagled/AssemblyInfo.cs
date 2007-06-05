@@ -54,7 +54,7 @@ using Beagle.Daemon;
 [assembly: IQueryableTypes (
 	typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
 	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
-	typeof (Beagle.Daemon.GaimLogQueryable.GaimLogQueryable),
+	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
 	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
 	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
 	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),

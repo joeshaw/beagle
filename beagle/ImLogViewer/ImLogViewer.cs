@@ -63,7 +63,7 @@ namespace ImLogViewer {
 		{
 			Console.WriteLine ("USAGE: beagle-imlogviewer --client <CLIENT> [OPTIONS] <log file or directory>\n" +
 					   "Options:\n" +
-					   "  --client\t\t\tClient that the log belongs to (e.g. gaim).\n" +					   
+					   "  --client\t\t\tClient that the log belongs to (e.g. Pidgin).\n" +					   
 					   "  --highlight-search\t\tWords to highlight in the buffer.\n" +
 					   "  --search\t\t\tSearch query to filter hits on.");
 

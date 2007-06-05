@@ -37,7 +37,7 @@ using Mono.Unix.Native;
 namespace Beagle.Util {
 
 	public enum ImClient {
-		Gaim,
+		Pidgin,
 		Kopete,
 		Konversation
 	}
@@ -126,16 +126,12 @@ namespace Beagle.Util {
 	///////////////////////////////////////////////////////////////////////////////
 
 	//
-	// Gaim Logs
+	// Pidgin Logs (formerly Gaim)
 	//
 
-	public class GaimLog : ImLog {
+	public class PidginLog : ImLog {
 
-		public const string MimeType = "beagle/x-gaim-log";
-
-		///////////////////////////////////////
-
-		public GaimLog (FileInfo file, TextReader reader) : base ("gaim", file, reader)
+		public PidginLog (FileInfo file, TextReader reader) : base ("Pidgin", file, reader)
 		{
 			string filename = file.Name;
 
@@ -239,8 +235,7 @@ namespace Beagle.Util {
 				alias = line.Substring (3, i - 3);
 				text = line.Substring (i + 1);
 			} else {
-				// FIXME: This will break if there is a ':' in the nickname
-				i = line.IndexOf (':');
+				i = line.IndexOf (": ");
 				if (i == -1 || line.Length < i + 2)
 					return;
 
@@ -290,9 +285,7 @@ namespace Beagle.Util {
 	//
 	public class KopeteLog : ImLog {
 
-		public const string MimeType = "beagle/x-kopete-log";
-
-		public KopeteLog (FileInfo file, TextReader reader) : base ("kopete", file, reader)
+		public KopeteLog (FileInfo file, TextReader reader) : base ("Kopete", file, reader)
 		{
 			// FIXME: Artificially split logs into conversations depending on the
 			// amount of time elapsed betweet messages?
@@ -397,13 +390,11 @@ namespace Beagle.Util {
 	///////////////////////////////////////////////////////////////////////////////
 
 	//
-	// Gaim Logs
+	// Konversation Logs
 	//
 	public class KonversationLog : ImLog {
 
-		private LineReader reader;
-
-		public KonversationLog (FileInfo file) : base ("konversation", file, null)
+		public KonversationLog (FileInfo file) : base ("Konversation", file, null)
 		{
 			Protocol = "IRC";
 			Identity = "Me"; // FIXME - read from config file

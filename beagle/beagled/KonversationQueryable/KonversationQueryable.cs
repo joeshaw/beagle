@@ -40,6 +40,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 	// FIXME: Absolutely requires Inotify currently
 	[QueryableFlavor (Name="Konversation", Domain=QueryDomain.Local, RequireInotify=true)]
 	public class KonversationQueryable : LuceneFileQueryable {
+
 		private string log_dir;
 		private Dictionary<string, long> session_offset_table;
 		private ArrayList initial_log_files;
@@ -140,11 +141,96 @@ namespace Beagle.Daemon.KonversationQueryable {
 			ThisScheduler.Add (task);
 		}
 
+		// Returns true if the line is a correct chat line, false otherwise
+		// If the line is correct, text contains the text of the chat line,
+		// dt_string contains the date string line and if speaker was set to not-null,
+		// speaker contains the name of the speaker
+		private static bool ProcessLine (StringBuilder log_line_sb, out string text, out string dt_string, ref string speaker)
+		{
+			text = dt_string = null;
+			
+			// Proper log line looks like
+			//
+			//[Mon Nov 1 2005] [14:09:32] <dBera>    can yo...
+			
+			int bracket_begin_index, bracket_end_index;
+			
+			// Ignore empty lines or non-chat lines
+			if (log_line_sb.Length == 0 || log_line_sb [0] != '[')
+				return false;
+			bracket_begin_index = 0;
+			
+			bracket_end_index = IndexOfSB (log_line_sb, ']', bracket_begin_index + 1);
+			if (bracket_end_index == -1)
+				return false;
+			
+			bracket_end_index += 2;
+			if (bracket_end_index >= log_line_sb.Length || log_line_sb [bracket_end_index] != '[')
+				return false;
+			
+			bracket_end_index += 9;
+			if (bracket_end_index >= log_line_sb.Length || log_line_sb [bracket_end_index] != ']')
+				return false;
+			
+			// Ignore lines like '[Tue Nov 8 2005] [17:53:14]   * joe nods'
+			// Good line should have name of speaker '<foobar>' after the time
+			bracket_begin_index = bracket_end_index + 2;
+			if (bracket_begin_index >= log_line_sb.Length || log_line_sb [bracket_begin_index] != '<')
+				return false;
+			
+			dt_string = log_line_sb.ToString (0, bracket_end_index + 1);
+			
+			// Search for name of speaker '<foobar>'
+			bracket_end_index = IndexOfSB (log_line_sb, '>', bracket_begin_index + 1);
+			if (bracket_end_index == -1)
+				return false;
+			
+			if (speaker != null)
+				speaker = log_line_sb.ToString (bracket_begin_index + 1, bracket_end_index - bracket_begin_index - 1);
+			
+			text = log_line_sb.ToString (bracket_end_index + 1, log_line_sb.Length - bracket_end_index - 1);
+			//Console.WriteLine ("[{0}] {1}", dt_string, text);
+			
+			return true;
+		}
+		
+		private static int IndexOfSB (StringBuilder sb, char c, int begin_index)
+		{
+			int pos = -1;
+			
+			for (int i = begin_index; i < sb.Length; ++i) {
+				if (sb [i] != c)
+					continue;
+				pos = i;
+				break;
+			}
+			
+			return pos;
+		}
+		
+		private static void ParseFilename (string filename, out string server, out string channel)
+		{
+			server = channel = null;
+			
+			if (string.IsNullOrEmpty (filename))
+				return;
+			
+			filename = Path.GetFileNameWithoutExtension (filename);
+			int index_ = filename.IndexOf ('_');
+			if (index_ == -1) {
+				channel = filename;
+			} else {
+				server = filename.Substring (0, index_);
+				channel = filename.Substring (index_ + 1);
+			}
+		}
+
 		// To balance system load, use a nested IIndexableGenerator
 		// LogIndexableGenerator iterates over the log files,
 		// and then for each log file, it schedules the sessions one after another
 		// This will take a while to index, but your machine will be happy.
 		private class LogIndexableGenerator : IIndexableGenerator {
+
 			private KonversationQueryable queryable;
 			private SessionIndexableGenerator generator;
 			private string[] files;
@@ -220,6 +306,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 		}
 
 		private class SessionIndexableGenerator : IIndexableGenerator {
+
 			private KonversationQueryable queryable;
 			private string log_file;
 			private LineReader reader;
@@ -235,6 +322,8 @@ namespace Beagle.Daemon.KonversationQueryable {
 			private long prev_line_offset; // stores the offset of the previous line read by reader
 			private long session_num_lines;
 
+			private const string time_format_string = "[ddd MMM d yyyy] [HH:mm:ss]";
+
 			public SessionIndexableGenerator (KonversationQueryable queryable, string log_file, long offset)
 			{
 				this.queryable = queryable;
@@ -248,7 +337,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 				this.session_begin_time = DateTime.MinValue;
 				this.speakers = new Dictionary<string, bool> (10); // rough default value
 
-				KonversationLog.ParseFilename (Path.GetFileName (log_file), out server_name, out speaking_to);
+				ParseFilename (Path.GetFileName (log_file), out server_name, out speaking_to);
 				Log.Debug ("Reading from konversation log {0} (server={1}, channel={1})", log_file, server_name, speaking_to);
 			}
 
@@ -344,7 +433,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 
 				string dt_string, text;
 				string speaker = String.Empty;
-				bool is_good_line = KonversationLog.ProcessLine (log_line_as_sb, out text, out dt_string, ref speaker);
+				bool is_good_line = ProcessLine (log_line_as_sb, out text, out dt_string, ref speaker);
 
 				if (! is_good_line)
 					return true;
@@ -352,7 +441,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 				try {
 					line_dt = DateTime.ParseExact (
 						dt_string,
-						KonversationLog.LogTimeFormatString,
+						time_format_string,
 						CultureInfo.CurrentCulture,
 						DateTimeStyles.AssumeLocal);
 				} catch (FormatException) {
@@ -473,7 +562,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 					if (sb == null)
 						return null;
 
-					good_line = KonversationLog.ProcessLine (sb, out text, out dt_string, ref speaker);
+					good_line = ProcessLine (sb, out text, out dt_string, ref speaker);
 				}
 
 				return String.Format ("[{0}] {1}", speaker, text);

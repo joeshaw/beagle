@@ -143,11 +143,11 @@ namespace Search.Tiles {
 		{
 			SafeProcess p = new SafeProcess ();
 
-			string log_path;
+			string log_path = Hit.Uri.LocalPath;
+
 			if (Hit.Source == "Konversation")
 				log_path = Hit.ParentUri.LocalPath;
-			else
-				log_path = Hit.Uri.LocalPath;
+
 			p.Arguments = new string [] { "beagle-imlogviewer",
 						      "--client", Hit ["fixme:client"],
 						      "--highlight-search", Query.QuotedText,

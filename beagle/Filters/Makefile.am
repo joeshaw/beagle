@@ -80,7 +80,6 @@ CSFILES = 				\
 	$(srcdir)/FilterDesktop.cs	\
 	$(srcdir)/FilterMail.cs		\
 	$(srcdir)/FilterMusic.cs	\
-	$(srcdir)/FilterImLog.cs	\
 	$(srcdir)/FilterKonqHistory.cs	\
 	$(srcdir)/FilterShellscript.cs	\
 	$(srcdir)/FilterRuby.cs		\
@@ -104,6 +103,8 @@ CSFILES = 				\
 	$(srcdir)/FilterScribus.cs	\
 	$(srcdir)/FilterM3U.cs		\
 	$(srcdir)/FilterPls.cs		\
+	$(srcdir)/FilterPidginLog.cs	\
+	$(srcdir)/FilterKopeteLog.cs	\
 	$(srcdir)/FilterIgnore.cs
 
 if ENABLE_GSF_SHARP
