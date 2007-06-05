@@ -63,9 +63,10 @@ namespace Beagle.IndexHelper {
 
 					indexer_table [remote_request.RemoteIndexName] = indexer;
 
-					indexer.FileFilterNotifier += delegate (Uri display_uri, Filter filter) {
+					indexer.FileFilterNotifier += delegate (Uri display_uri, Uri content_uri, Filter filter) {
 						IndexHelperTool.ReportActivity ();
-						IndexHelperTool.CurrentUri = display_uri;
+						IndexHelperTool.CurrentDisplayUri = display_uri;
+						IndexHelperTool.CurrentContentUri = content_uri;
 						IndexHelperTool.CurrentFilter = filter;
 					};
 				}

@@ -49,7 +49,8 @@ namespace Beagle.IndexHelper {
 		private static Server server;
 
 		// Current state with filtering.
-		public static Uri CurrentUri;
+		public static Uri CurrentDisplayUri;
+		public static Uri CurrentContentUri;
 		public static Filter CurrentFilter;
 
 		// DisableTextcache does more than merely ignoring
@@ -327,12 +328,12 @@ namespace Beagle.IndexHelper {
 
 			string span = StringFu.TimeSpanToString (DateTime.Now - last_activity);
 
-			if (CurrentUri == null)
+			if (CurrentDisplayUri == null)
 				Log.Warn ("Filtering status ({0} ago): no document is currently being filtered.", span);
 			else if (CurrentFilter == null)
-				Log.Warn ("Filtering status ({0} ago): determining filter and extracting properties for {1}", span, CurrentUri);
+				Log.Warn ("Filtering status ({0} ago): determining filter and extracting properties for {1} ({2})", span, CurrentDisplayUri, CurrentContentUri);
 			else
-				Log.Warn ("Filtering status ({0} ago): extracting text from {1} with {2}", span, CurrentUri, CurrentFilter);
+				Log.Warn ("Filtering status ({0} ago): extracting text from {1} ({2}) with {3}", span, CurrentDisplayUri, CurrentContentUri, CurrentFilter);
 
 			// Don't shut down on information signals (SIGUSR1 and SIGUSR2)
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||

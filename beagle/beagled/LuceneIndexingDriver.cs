@@ -90,7 +90,7 @@ namespace Beagle.Daemon {
 		// going on if the helper spins the CPU.  The method will be
 		// called with null parameters after filtering has finished.
 
-		public delegate void FileFilterDelegate (Uri display_uri, Filter filter);
+		public delegate void FileFilterDelegate (Uri display_uri, Uri content_uri, Filter filter);
 		public FileFilterDelegate FileFilterNotifier = null;
 
 		////////////////////////////////////////////////////////////////
@@ -520,7 +520,7 @@ namespace Beagle.Daemon {
 		{
 			Filter filter = null;
 			if (FileFilterNotifier != null)
-				FileFilterNotifier (indexable.DisplayUri, null); // We don't know what filter yet.
+				FileFilterNotifier (indexable.DisplayUri, indexable.ContentUri, null); // We don't know what filter yet.
 
 			// If we have content, try to find a filter
 			// we we can use to process the indexable
@@ -531,7 +531,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (FileFilterNotifier != null)
-				FileFilterNotifier (indexable.DisplayUri, filter); // Update with our filter
+				FileFilterNotifier (indexable.DisplayUri, indexable.ContentUri, filter); // Update with our filter
 
 			IndexerAddedReceipt r = new IndexerAddedReceipt (indexable.Id);
 
@@ -552,7 +552,7 @@ namespace Beagle.Daemon {
 					// FIXME: Make sure all indexable.Cleanup is called for all indexables if
 					// shutdown is signalled.
 					if (FileFilterNotifier != null)
-						FileFilterNotifier (null, null); // reset
+						FileFilterNotifier (null, null, null); // reset
 
 					// Return null to signal the indexable was deferred
 					return null;
@@ -579,7 +579,7 @@ namespace Beagle.Daemon {
 			AddDocumentToIndex (indexable, persistent_prop_doc, primary_writer, ref secondary_writer);
 
 			if (FileFilterNotifier != null)
-				FileFilterNotifier (null, null); // reset
+				FileFilterNotifier (null, null, null); // reset
 
 			// Clean up any temporary files associated with filtering this indexable.
 			indexable.Cleanup ();
