@@ -140,6 +140,23 @@ namespace Beagle.Util {
 					error_message = Mono.Unix.UnixMarshal.GetErrorDescription (errno);
 
 				Logger.Log.Warn ("Could not initialize inotify: {0}", error_message);
+			} else {
+				try {
+					FileStream fs = new FileStream ("/proc/sys/fs/inotify/max_user_watches", FileMode.Open, FileAccess.Read);
+					StreamReader r = new StreamReader (fs);
+
+					string line = r.ReadLine ();
+					r.Close ();
+
+					int watches = -1;
+					try {
+						watches = Int32.Parse (line);
+					} catch (FormatException) { }
+					
+					if (watches > -1 && watches < 32768) {
+						Log.Warn ("Inotify watches may be too low ({0}) for some users!  Increase it to at least 65535 by setting fs.inotify.max_user_watches in /etc/sysctl.conf", watches);
+					}
+				} catch { }
 			}
 		}
 
