@@ -1,5 +1,5 @@
 //
-// GaimLogQueryable.cs
+// PidginQueryable.cs
 //
 // Copyright (C) 2004 Novell, Inc.
 //
@@ -33,19 +33,16 @@ using System.Threading;
 using Beagle.Daemon;
 using Beagle.Util;
 
-namespace Beagle.Daemon.GaimLogQueryable {
+namespace Beagle.Daemon.PidginQueryable {
 
-	// FIXME: This should be rather renamed to Gaim to be compliant with other backend names
-	[QueryableFlavor (Name="GaimLog", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class GaimLogQueryable : LuceneFileQueryable, IIndexableGenerator {
+	[QueryableFlavor (Name="Pidgin", Domain=QueryDomain.Local, RequireInotify=false)]
+	public class PidginQueryable : LuceneFileQueryable, IIndexableGenerator {
 
 		private string config_dir, log_dir, icons_dir;
-
 		private int polling_interval_in_seconds = 60;
-
 		private GaimBuddyListReader list = new GaimBuddyListReader ();
 
-		public GaimLogQueryable () : base ("GaimLogIndex")
+		public PidginQueryable () : base ("PidginIndex")
 		{
 			config_dir = Path.Combine (PathFinder.HomeDir, ".gaim");
 			log_dir = Path.Combine (config_dir, "logs");
@@ -61,13 +58,13 @@ namespace Beagle.Daemon.GaimLogQueryable {
 				return;
 			}
 
-			Log.Info ("Starting Gaim log backend");
+			Log.Info ("Starting Pidgin IM log backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
 			if (Inotify.Enabled) {
-				Log.Info ("Setting up inotify watches on gaim log directories");
+				Log.Info ("Setting up inotify watches on Pidgin log directories");
 				Crawl (false);
 			}
 
@@ -77,7 +74,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			task.Source = this;
 
 			if (!Inotify.Enabled) {
-				Scheduler.TaskGroup group = Scheduler.NewTaskGroup ("Repeating gaim log crawler", null, AddCrawlTask);
+				Scheduler.TaskGroup group = Scheduler.NewTaskGroup ("Repeating Pidgin log crawler", null, AddCrawlTask);
 				task.AddTaskGroup (group);
 			}
 
@@ -85,7 +82,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 			stopwatch.Stop ();
 
-			Log.Info ("Gaim log backend worker thread done in {0}", stopwatch); 
+			Log.Info ("Pidgin log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 
@@ -163,7 +160,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 		/////////////////////////////////////////////////
 
 		public string StatusName {
-			get { return "GaimLogQueryable"; }
+			get { return "PidginQueryable"; }
 		}
 
 		private IEnumerator log_files = null;
@@ -193,7 +190,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (IsUpToDate (file.FullName))
 				return null;
 
-			Indexable indexable = ImLogToIndexable (file.FullName);
+			Indexable indexable = PidginLogToIndexable (file.FullName);
 			
 			return indexable;
 		}
@@ -282,13 +279,13 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		/////////////////////////////////////////////////
 		
-		private static Indexable ImLogToIndexable (string filename)
+		private static Indexable PidginLogToIndexable (string filename)
 		{
 			Uri uri = UriFu.PathToFileUri (filename);
 			Indexable indexable = new Indexable (uri);
 			indexable.ContentUri = uri;
 			indexable.Timestamp = File.GetLastWriteTimeUtc (filename);
-			indexable.MimeType = GaimLog.MimeType;
+			indexable.MimeType = "beagle/x-pidgin-log";
 			indexable.HitType = "IMLog";
 			indexable.CacheContent = false;
 
@@ -303,7 +300,7 @@ namespace Beagle.Daemon.GaimLogQueryable {
 			if (IsUpToDate (filename))
 				return;
 
-			Indexable indexable = ImLogToIndexable (filename);
+			Indexable indexable = PidginLogToIndexable (filename);
 			Scheduler.Task task = NewAddTask (indexable);
 			task.Priority = priority;
 			task.SubPriority = 0;
@@ -350,10 +347,11 @@ namespace Beagle.Daemon.GaimLogQueryable {
 
 		override public string GetSnippet (string [] query_terms, Hit hit)
 		{
-			TextReader reader;
-			reader = TextCache.UserCache.GetReader (hit.Uri);
+			TextReader reader = TextCache.UserCache.GetReader (hit.Uri);
+
 			if (reader == null)
 				return null;
+
 			HtmlRemovingReader html_removing_reader = new HtmlRemovingReader (reader);
 			string snippet = SnippetFu.GetSnippet (query_terms, html_removing_reader);
 			html_removing_reader.Close ();

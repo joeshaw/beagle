@@ -34,7 +34,9 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Mono.Unix.Native;
 
-namespace Beagle.Util {
+using Beagle.Util;
+
+namespace ImLogViewer {
 
 	public enum ImClient {
 		Pidgin,
