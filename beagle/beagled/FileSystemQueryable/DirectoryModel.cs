@@ -174,6 +174,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public bool NeedsCrawl {
 			get {
 				return state != DirectoryState.Clean
+					&& state != DirectoryState.PossiblyClean
 					&& state != DirectoryState.Uncrawlable;
 			}
 		}
