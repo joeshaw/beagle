@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export MONO_GAC_PREFIX=$MONO_GAC_PREFIX:@prefix@
+
+exec -a "xesam-adaptor" @mono@ @mono_flags@ @pkglibdir@/@target@ "$@"
