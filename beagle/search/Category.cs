@@ -139,9 +139,12 @@ namespace Search {
 		protected override void OnAdded (Gtk.Widget widget)
 		{
 			HideTiles ();
-			widget.ChildVisible = false;
-			tiles.Add ((Tiles.Tile)widget);
+
+			widget.ChildVisible = false;			
 			widget.Parent = this;
+
+			tiles.Add ((Tiles.Tile)widget);
+
 			if (Expanded)
 				ShowTiles (true);
 		}
@@ -149,8 +152,11 @@ namespace Search {
 		protected override void OnRemoved (Gtk.Widget widget)
 		{
 			HideTiles ();
-			tiles.Remove ((Tiles.Tile)widget);
+
 			widget.Unparent ();
+
+			tiles.Remove ((Tiles.Tile)widget);
+
 			if (Expanded)
 				ShowTiles (true);
 		}

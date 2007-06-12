@@ -18,16 +18,20 @@ namespace Search {
 
 	public class GroupView : VBox {
 
-		public event TileHandler TileSelected;
-		private Gtk.SizeGroup tileSizeGroup;
+		public delegate void CategoryToggledDelegate (ScopeType catScope);
+
 		private Hashtable categories;
+		private Gtk.SizeGroup tileSizeGroup;
 		private Gtk.Widget selection;
+
+		public event CategoryToggledDelegate CategoryToggled;
+		public event TileHandler TileSelected;
 
 		public GroupView () : base (false, 0)
 		{
-			categories = new Hashtable ();
-			tileSizeGroup = new Gtk.SizeGroup (Gtk.SizeGroupMode.Both);
 			Category box = null;
+			categories = new Hashtable ();
+			tileSizeGroup = new Gtk.SizeGroup (Gtk.SizeGroupMode.Both);			
 
 			foreach (Tiles.TileGroupInfo info in Tiles.Utils.GroupInfo) {
 								
@@ -41,8 +45,6 @@ namespace Search {
 				box.CategoryToggle += OnCategoryToggle;
 				categories [info.Group] = box;
 			}
-
-			// FIXME: Add the Best match category
 		}
 		
 		public void AddHit (Tiles.Tile tile)
@@ -64,7 +66,12 @@ namespace Search {
 					if (tile.Hit.Uri.Equals (uri)) {
 						if (tile.State == StateType.Selected)
 							OnTileSelected (null, EventArgs.Empty);
+
 						box.Remove (tile);
+
+						if (box.Count < 1)
+							box.Hide ();
+
 						return;
 					}
 				}
@@ -176,11 +183,5 @@ namespace Search {
 			scope = scope ^ catScope;
 			CategoryToggled (catScope);
 		}
-
-		public delegate void CategoryToggledDelegate (ScopeType catScope);
-		public event CategoryToggledDelegate CategoryToggled;
-
-		
-		
 	}
 }
