@@ -345,16 +345,21 @@ namespace Beagle.Daemon.PidginQueryable {
 			return true;
 		}
 
-		override public string GetSnippet (string [] query_terms, Hit hit)
+		public override string GetSnippet (string [] query_terms, Hit hit)
 		{
 			TextReader reader = TextCache.UserCache.GetReader (hit.Uri);
 
 			if (reader == null)
 				return null;
 
-			HtmlRemovingReader html_removing_reader = new HtmlRemovingReader (reader);
-			string snippet = SnippetFu.GetSnippet (query_terms, html_removing_reader);
-			html_removing_reader.Close ();
+			string line = reader.ReadLine ();
+
+			if (line[0] == '<')
+				reader = new HtmlRemovingReader (reader);
+
+			string snippet = SnippetFu.GetSnippet (query_terms, reader);
+			
+			reader.Close ();
 
 			return snippet;
 		}

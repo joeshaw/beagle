@@ -796,11 +796,11 @@ namespace Beagle.Util {
 		
 		public static string ConvertSpecialEntities (string line)
 		{
-			line.Replace ("&lt;", "<");
-			line.Replace ("&gt;", ">");
-			line.Replace ("&quot;", "\"");
-			line.Replace ("&amp;", "&");
-			line.Replace ("&nbsp", " ");
+			line = line.Replace ("&lt;", "<");
+			line = line.Replace ("&gt;", ">");
+			line = line.Replace ("&quot;", "\"");
+			line = line.Replace ("&amp;", "&");
+			line = line.Replace ("&nbsp", " ");
 
 			return line;
   		}

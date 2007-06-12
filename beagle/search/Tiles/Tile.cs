@@ -282,7 +282,7 @@ namespace Search.Tiles {
 
 		private void EmitGotSnippet ()
 		{
-			if (snippet != null && snippet != "" && GotSnippet != null)
+			if (!String.IsNullOrEmpty (snippet) && GotSnippet != null)
 				GotSnippet (snippet);
 		}
 

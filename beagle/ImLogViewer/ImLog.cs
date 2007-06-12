@@ -252,24 +252,23 @@ namespace ImLogViewer {
 
 		protected override void Load ()
 		{
-			string line;
+			StringBuilder builder = new StringBuilder ();
 
 			ClearUtterances ();
-			StringBuilder builder;
-			builder = new StringBuilder ();
 
-			line = TextReader.ReadLine (); // throw away first line
+			string line = TextReader.ReadLine (); // throw away first line
+
 			if (line == null)
 				return;
 
+			TextReader reader = base.TextReader;
+
 			// Could the second line ever start w/ < in a non-html log?
 			// I hope not!
-			bool isHtml = line.Length > 0 && line [0] == '<';
+			if (line.Length > 0 && line [0] == '<')
+				reader = new HtmlRemovingReader (TextReader);
 				
-			while ((line = TextReader.ReadLine ()) != null) {
-				if (isHtml)
-					line = StringFu.StripTags (line, builder);
-			
+			while ((line = reader.ReadLine ()) != null) {
 				try {
 					ProcessLine (line);
 				} catch (Exception e) {

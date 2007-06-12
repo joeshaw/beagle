@@ -344,6 +344,10 @@ namespace Beagle.Daemon {
 				// on a higer version of SharpZipLib
 				reader.Peek ();
 			} catch (Exception ex) {
+				// FIXME: WTF? The Peek () above advances one character. I'm not sure
+				// why though, maybe because an exception is thrown, anyways seek to
+				// the beginning of the file.
+				file_stream.Seek (0, SeekOrigin.Begin);
 				reader = new StreamReader (file_stream);
 			}
 

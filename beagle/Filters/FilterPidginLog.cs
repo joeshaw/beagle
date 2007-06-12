@@ -130,7 +130,7 @@ namespace Beagle.Filters {
 			// If this is a HTML log, use our totally awesome HTML
 			// removing TextReader :-)
 			if (line [0] == '<')
-				reader = new HtmlRemovingReader (TextReader);			
+				reader = new HtmlRemovingReader (TextReader);
 
 			while ((line = reader.ReadLine ()) != null) {
 				string text = null;
