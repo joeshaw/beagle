@@ -40,12 +40,14 @@ namespace Search.Tiles {
 				From.LabelProp = "(unknown)";
 
 			try {
-				Timestamp = StringFu.StringToDateTime (hit.GetFirstProperty ("fixme:starttime"));
+				string starttime = hit.GetFirstProperty ("fixme:starttime");
+				
+				if (!String.IsNullOrEmpty (starttime))
+				    Timestamp = StringFu.StringToDateTime (starttime);
+				    
 				Date.LabelProp = Utils.NiceShortDate (Timestamp);
 			} catch {}
-
 		}
-
 
 		private Hashtable IconsForSize (int size)
 		{

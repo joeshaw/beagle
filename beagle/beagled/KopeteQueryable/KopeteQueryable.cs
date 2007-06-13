@@ -25,10 +25,11 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
+using System.Xml;
 using System.Text;
 using System.Threading;
+using System.Collections;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -199,12 +200,12 @@ namespace Beagle.Daemon.KopeteQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		override protected double RelevancyMultiplier (Hit hit)
+		protected override double RelevancyMultiplier (Hit hit)
 		{
 			return HalfLifeMultiplierFromProperty (hit, 0.25, "fixme:endtime", "fixme:starttime");
 		}
 
-		override protected bool HitFilter (Hit hit) 
+		protected override bool HitFilter (Hit hit) 
 		{
 			ImBuddy buddy = list.Search (hit ["fixme:speakingto"]);
 			
@@ -216,6 +217,65 @@ namespace Beagle.Daemon.KopeteQueryable {
 			}
 			
 			return true;
+		}
+
+		public override string GetSnippet (string [] query_terms, Hit hit)
+		{
+			TextReader reader = TextCache.UserCache.GetReader (hit.Uri);
+
+			if (reader == null)
+				return null;
+
+			KopeteSnippetReader snippet_reader = new KopeteSnippetReader (reader);
+
+			string snippet = SnippetFu.GetSnippet (query_terms, snippet_reader);
+			
+			snippet_reader.Close ();
+
+			return snippet;
+		}
+
+		private class KopeteSnippetReader : TextReader {
+			
+			private StringBuilder sb;
+			private XmlTextReader reader;
+			
+			public KopeteSnippetReader (TextReader reader)
+			{
+				this.sb = new StringBuilder ();
+				this.reader = new XmlTextReader (reader);
+			}
+			
+			public override string ReadLine ()
+			{				
+				while (reader.Read ()) {
+					if (reader.NodeType != XmlNodeType.Element && reader.Name != "msg")
+						continue;
+				
+					sb.Length = 0;
+
+					if (!String.IsNullOrEmpty (reader ["nick"]))
+						sb.Append (reader["nick"]);
+					else
+						sb.Append (reader ["from"]);
+
+					sb.Append (": ");
+
+					// Advance to the text node for the actual message
+					reader.Read ();
+				
+					sb.Append (reader.Value);
+
+					return sb.ToString ();
+				}
+
+				return null;
+			}
+
+			public override void Close ()
+			{
+				reader.Close ();
+			}
 		}
 	}
 }

@@ -60,6 +60,7 @@ using Beagle.Filters;
 	 typeof(FilterKnotes),
 	 typeof(FilterKOrganizer),
 	 typeof(FilterKonqHistory),
+	 typeof(FilterKopeteLog),
 	 typeof(FilterLabyrinth),
 	 typeof(FilterM3U),
 	 typeof(FilterMail),
@@ -73,6 +74,7 @@ using Beagle.Filters;
 	 typeof(FilterPdf),
 	 typeof(FilterPerl),
 	 typeof(FilterPhp),
+	 typeof(FilterPidginLog),
 	 typeof(FilterPng),
 #if ENABLE_GSF_SHARP
 	 typeof(FilterPPT),
@@ -91,7 +93,5 @@ using Beagle.Filters;
 	 typeof(FilterText),
 	 typeof(FilterTiff),
 	 typeof(FilterTotem),
-	 typeof(FilterXslt),
-	 typeof(FilterPidginLog),
-	 typeof(FilterKopeteLog)
+	 typeof(FilterXslt)
 )]

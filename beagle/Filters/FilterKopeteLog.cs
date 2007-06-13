@@ -49,23 +49,41 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			// FIXME: We are dropping endtime and startime in favor of performance
-			// for the time being, until we can figure out how to get
-			// it out of the log file more efficiently.
-			//AddProperty (Beagle.Property.NewDate ("fixme:starttime", log.StartTime));
-			//AddProperty (Beagle.Property.NewDate ("fixme:endtime", log.EndTime)); 
-
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:client", "Kopete"));
 
 			string protocol = GetProtocol (FileInfo);
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:protocol", protocol));
 
-			// FIXME: Should the following properties use Property.NewKeyword and be searched?
-			string speaking_to = GetSpeakingTo (FileInfo);
-			AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto", speaking_to));
+			XmlTextReader reader = new XmlTextReader (base.TextReader);
 
-			string identity = FileInfo.Directory.Name;
-			AddProperty (Beagle.Property.NewUnsearched ("fixme:identity", identity));
+			while (reader.Read ()) {
+				if (reader.NodeType != XmlNodeType.Element)
+					continue;
+				
+				// Extract our identity and speaking to from the beginning
+				// of the log
+				if (reader.Name == "contact") {				
+					if (reader ["type"] != null && reader ["type"] == "myself")
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:identity", reader ["contactId"]));
+					else
+						AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto", reader ["contactId"]));
+				}
+
+				// Extract the actual message text
+				if (reader.Name == "msg") {
+					// Advance to the text node for the actual message
+					reader.Read ();
+				
+					AppendText (reader.Value);
+					AppendWhiteSpace ();
+				}
+			}
+
+			// FIXME: We are dropping endtime and startime in favor of performance
+			// for the time being, until we can figure out how to get
+			// it out of the log file more efficiently.
+			//AddProperty (Beagle.Property.NewDate ("fixme:starttime", log.StartTime));
+			//AddProperty (Beagle.Property.NewDate ("fixme:endtime", log.EndTime)); 
 		}
 
 		private static string GetProtocol (FileInfo file)
@@ -78,39 +96,6 @@ namespace Beagle.Filters {
 				return file.Directory.Name.Substring (0, file.Directory.Name.Length - 8).ToLower ();
 
 			return file.Directory.Name;
-		}
-
-		private static string GetSpeakingTo (FileInfo file)
-		{
-			// FIXME: This is not safe for all kinds of file/screennames
-			string filename = Path.GetFileNameWithoutExtension (file.Name);
-
-			if (filename.LastIndexOf ('.') > 0)
-				return filename.Substring (0, filename.LastIndexOf ('.'));
-			
-			if (filename.LastIndexOf ('_') > 0)
-				return filename.Substring (0, filename.LastIndexOf ('_'));
-
-			return filename;
-		}
-
-		override protected void DoPull ()
-		{
-			XmlTextReader reader = new XmlTextReader (base.TextReader);
-
-			while (reader.Read ()) {
-				if (reader.NodeType != XmlNodeType.Element || reader.Name == "msg")
-					continue;
-				
-				// Advance to the text node for the actual message
-				reader.Read ();
-				
-				AppendText (reader.Value);
-				AppendWhiteSpace ();
-			}
-			
-			reader.Close ();
-			Finished ();
 		}
 	}
 }

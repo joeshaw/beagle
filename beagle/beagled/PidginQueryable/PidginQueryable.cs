@@ -307,12 +307,12 @@ namespace Beagle.Daemon.PidginQueryable {
 			ThisScheduler.Add (task);
 		}
 
-		override protected double RelevancyMultiplier (Hit hit)
+		protected override double RelevancyMultiplier (Hit hit)
 		{
 			return HalfLifeMultiplierFromProperty (hit, 0.25, "fixme:endtime", "fixme:starttime");
 		}
 
-		override protected bool HitFilter (Hit hit) 
+		protected override bool HitFilter (Hit hit) 
 		{
 			// If the protocol isn't set (because maybe we got an
 			// exception while we were indexing), this isn't a
@@ -363,7 +363,6 @@ namespace Beagle.Daemon.PidginQueryable {
 
 			return snippet;
 		}
-
 	}
 }
 
