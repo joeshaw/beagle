@@ -82,6 +82,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/TypeCacheAttribute.cs		\
 	$(srcdir)/UnclosableStream.cs		\
 	$(srcdir)/UriFu.cs			\
+	$(srcdir)/VersionFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
 	$(srcdir)/F-Spot/Bim.cs			\

@@ -46,7 +46,7 @@ mdb=0
 BEAGLED_ARGS="$*"
 for i in $BEAGLED_ARGS; do
     case "$i" in
-    --help | --list-backends | --fg | --foreground ) fg_user=1 ;;
+    --help | --list-backends | --fg | --foreground | --version) fg_user=1 ;;
     --bg | --background ) fg_user=0 ;;
     --monogrind ) monogrind=1 ;;
     --heap-buddy ) heap_buddy=1 ;;

@@ -137,12 +137,9 @@ namespace Beagle.Daemon {
 
 		private static void PrintUsage ()
 		{
-			string usage =
-				"beagled: The daemon to the Beagle search system.\n" +
-				"Web page: http://beagle-project.org\n" +
-				"Copyright (C) 2004-2007 Novell, Inc.\n\n";
+			VersionFu.PrintHeader ();
 
-			usage +=
+			string usage =
 				"Usage: beagled [OPTIONS]\n\n" +
 				"Options:\n" +
 				"  --version\t\tShow version of daemon, Mono, and Sqlite.\n" +
@@ -417,9 +414,7 @@ namespace Beagle.Daemon {
 					break;
 				
 				case "--version":
-					Console.WriteLine ("Beagle: " + ExternalStringsHack.Version);
-					Console.WriteLine ("Mono: " + SystemInformation.MonoRuntimeVersion);
-					Console.WriteLine ("Sqlite: " + ExternalStringsHack.SqliteVersion);
+					VersionFu.PrintVersion ();
 					Environment.Exit (0);
 					break;
 

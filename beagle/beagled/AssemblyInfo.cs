@@ -29,6 +29,10 @@ using System.Reflection;
 using Beagle;
 using Beagle.Daemon;
 
+// Assembly information
+[assembly: AssemblyTitle ("beagled")]
+[assembly: AssemblyDescription ("The daemon to the Beagle search system")]
+
 // Any request message types in the BeagleDaemonLib.dll file must be registered
 // in these two attributes.
 [assembly: RequestMessageTypes (
@@ -44,31 +48,31 @@ using Beagle.Daemon;
 	typeof (DaemonInformationExecutor),
 	typeof (InformationalMessagesRequestExecutor),
 	typeof (OptimizeIndexesExecutor),
+	typeof (QueryExecutor),
 	typeof (ReloadConfigExecutor),
 	typeof (ShutdownExecutor),
-	typeof (SnippetExecutor),
-	typeof (QueryExecutor)
+	typeof (SnippetExecutor)
 )]
 
 // All backends in this assembly must be registered here.
 [assembly: IQueryableTypes (
-	typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
-	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
-	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
-	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
-	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
-	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
-	typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
-	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
 	typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
-	typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
+	typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
+	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
+	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
 	typeof (Beagle.Daemon.KBookmarkQueryable.KonqBookmarkQueryable),
+	typeof (Beagle.Daemon.KMailQueryable.KMailQueryable),
 	typeof (Beagle.Daemon.KNotesQueryable.KNotesQueryable),
 	typeof (Beagle.Daemon.KOrganizerQueryable.KOrganizerQueryable),
 	typeof (Beagle.Daemon.KabcQueryable.KabcQueryable),
-	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
+	typeof (Beagle.Daemon.KonqQueryable.KonqQueryable),
 	typeof (Beagle.Daemon.KonversationQueryable.KonversationQueryable),
-	typeof (Beagle.Daemon.StaticQueryable),
+	typeof (Beagle.Daemon.KopeteQueryable.KopeteQueryable),
+	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
+	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
+	typeof (Beagle.Daemon.NautilusMetadataQueryable.NautilusMetadataQueryable),
 	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable),
-	typeof (Beagle.Daemon.NautilusMetadataQueryable.NautilusMetadataQueryable)
+	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
+	typeof (Beagle.Daemon.StaticQueryable),
+	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable)
 )]
