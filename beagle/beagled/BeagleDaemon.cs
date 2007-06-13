@@ -153,6 +153,7 @@ namespace Beagle.Daemon {
 				"  --list-backends\tList all the available backends.\n" +
 				"  --add-static-backend\tAdd a static backend by path.\n" + 
 				"  --help\t\tPrint this usage message.\n" +
+				"  --version\t\tPrint version information.\n" +
 				"\n" +
 				"Advance options:\n" +
 				"  --debug\t\tWrite out debugging information.\n" +

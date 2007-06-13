@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Text;
 using System.Reflection;
 using System.Collections;
 
@@ -34,27 +35,31 @@ namespace Beagle.Util {
 		
 		public static void PrintHeader (Assembly a)
 		{
-			// Retrieves name and description which should always
-			// be stored in AssemblyInfo.cs
+			// Retrieves name and description that are stored as assembly
+			// attributes in the specified assembly (usually the calling one)
+			//
+			// These attributes are defined as following:
+			//  [assembly: AssemblyTitle ("beagle-foo")]
+			//  [assembly: AsssemblyDescription ("This is the program that does foo")]
+
 			AssemblyTitleAttribute title = (AssemblyTitleAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyTitleAttribute));
 			AssemblyDescriptionAttribute desc = (AssemblyDescriptionAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyDescriptionAttribute));
 
-			string info = "";
+			StringBuilder text = new StringBuilder ();
 			
 			if (title != null && desc != null)
-				info += String.Format ("{0}: {1}.\n", title.Title, desc.Description);
+				text.AppendFormat ("{0}: {1}.\n", title.Title, desc.Description);
 
-			info +=
-				"Web page: http://beagle-project.org\n" +
-				"Copyright (C) 2004-2007 Novell, Inc.\n";
+			text.Append ("Web page: http://beagle-project.org\n");
+			text.Append ("Copyright (C) 2004-2007 Novell, Inc.\n");
 
-			Console.WriteLine (info);
+			Console.WriteLine (text);
 		}
 
 		public static void PrintHeader ()
 		{
-			// Gets the calling assembly of which the information
-			// we want to get
+			// Gets the calling assembly from which the information
+			// we want to pull
 			Assembly assembly = Assembly.GetCallingAssembly ();
 
 			PrintHeader (assembly);
@@ -62,8 +67,8 @@ namespace Beagle.Util {
 
 		public static void PrintVersion ()
 		{
-			// Gets the calling assembly of which the information
-			// we want to get
+			// Gets the calling assembly from which the information
+			// we want to pull
 			Assembly assembly = Assembly.GetCallingAssembly ();
 
 			PrintHeader (assembly);

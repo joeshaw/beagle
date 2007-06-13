@@ -26,8 +26,13 @@
 //
 
 using System;
+using System.Reflection;
+
 using Mono.Unix;
 using Beagle.Util;
+
+[assembly: AssemblyTitle ("beagle-imlogviewer")]
+[assembly: AssemblyDescription ("Excellent IM history viewer for multiple clients")]
 
 namespace ImLogViewer {
 
@@ -61,11 +66,15 @@ namespace ImLogViewer {
 
 		private static void PrintUsageAndExit ()
 		{
+			VersionFu.PrintHeader ();
+
 			Console.WriteLine ("USAGE: beagle-imlogviewer --client <CLIENT> [OPTIONS] <log file or directory>\n" +
 					   "Options:\n" +
 					   "  --client\t\t\tClient that the log belongs to (e.g. Pidgin).\n" +					   
 					   "  --highlight-search\t\tWords to highlight in the buffer.\n" +
-					   "  --search\t\t\tSearch query to filter hits on.");
+					   "  --search\t\t\tSearch query to filter hits on.\n" +
+					   "  --help\t\t\tPrint this usage message.\n" +
+					   "  --version\t\t\tPrint version information.\n");
 
 			Environment.Exit (0);
 		}
@@ -80,6 +89,11 @@ namespace ImLogViewer {
 				case "-h":
 				case "--help":
 					PrintUsageAndExit ();
+					break;
+
+				case "--version":
+					VersionFu.PrintVersion ();
+					Environment.Exit (0);
 					break;
 
 				case "--highlight-search":

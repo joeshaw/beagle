@@ -35,15 +35,17 @@ using Beagle;
 using Beagle.Daemon;
 using Beagle.Util;
 
-class InfoTool {
+// Assembly information
+[assembly: AssemblyTitle ("beagle-info")]
+[assembly: AssemblyDescription ("Statistics from the Beagle daemon")]
+
+public class InfoTool {
 
 	public static void PrintUsageAndExit () 
 	{
+		VersionFu.PrintHeader ();
+
 		string usage =
-			"beagle-info: Statistics from the Beagle daemon.\n" +
-			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2004-2006 Novell, Inc.\n\n";
-		usage +=
 			"Usage: beagle-info <OPTIONS>\n\n" +
 			"Options:\n" +
 			"  --daemon-version\t\tPrint the version of the running daemon.\n" +
@@ -54,7 +56,8 @@ class InfoTool {
 			"  --list-backends\t\tList the currently available backends.\n" +
 			"  --list-filters\t\tList the currently available filters.\n" +
 			"  --list-static-indexes\t\tList the available static indexes.\n" +
-			"  --help\t\t\tPrint this usage message.\n";
+			"  --help\t\t\tPrint this usage message.\n" +
+			"  --version\t\t\tPrint version information.\n";
 
 		Console.WriteLine (usage);
 
@@ -65,6 +68,11 @@ class InfoTool {
 	{
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1)
 			PrintUsageAndExit ();
+
+		if (Array.IndexOf (args, "--version") > -1) {
+			VersionFu.PrintVersion ();
+			return 0;
+		}
 
 		if (Array.IndexOf (args, "--list-filters") > -1)
 			PrintFilterInformation ();

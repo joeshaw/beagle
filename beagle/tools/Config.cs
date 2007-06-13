@@ -38,15 +38,17 @@ using Beagle.Util;
 //using Gtk;
 using GLib;
 
+// Assembly information
+[assembly: AssemblyTitle ("beagle-config")]
+[assembly: AssemblyDescription ("Command-line interface to the Beagle config file")]
+
 public static class ConfigTool {
 
 	private static void PrintUsageAndExit ()
 	{
+		VersionFu.PrintHeader ();
+
 		string usage =
-			"beagle-config: Command-line interface to the Beagle config file.\n" +
-			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2005-2006 Novell, Inc.\n\n";
-		usage +=
 			"Usage: beagle-config [OPTIONS]\n" +
 			"   or: beagle-config <SECTION>\n" +
 			"   or: beagle-config <SECTION> <SECTIONOPTION> [PARAMS]\n\n" +
@@ -54,7 +56,8 @@ public static class ConfigTool {
 			"  --beagled-reload-config\tAsk the beagle daemon to reload\n" +
 			"                         \tthe configuration file.\n" +
 			"  --list-sections\t\tList all available configuration sections.\n" +
-			"  --help\t\t\tPrint this usage message.\n\n" +
+			"  --help\t\t\tPrint this usage message.\n" +
+			"  --version\t\t\tPrint version information.\n\n" +
 			"If a section is specified with no options, then a list of the available commands for that section is shown.\n";
 
 		Console.WriteLine (usage);
@@ -122,6 +125,11 @@ public static class ConfigTool {
 			case "--usage":
 				PrintUsageAndExit ();
 				return;
+
+			case "--version":
+				VersionFu.PrintVersion ();
+				Environment.Exit (0);
+				break;
 
 			default:
 				break;

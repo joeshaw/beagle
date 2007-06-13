@@ -24,23 +24,25 @@
 // SOFTWARE.
 //
 
-
 using System;
-using System.Collections;
 using System.IO;
+using System.Reflection;
+using System.Collections;
 
 using Beagle;
-using Beagle.Daemon;
 using Beagle.Util;
+using Beagle.Daemon;
+
+[assembly: AssemblyTitle ("beagle-index-url")]
+[assembly: AssemblyDescription ("Index web page content using the Beagle Search Engine")]
 
 class IndexWebContentTool {
 
-	static void PrintUsage () {
+	static void PrintUsage ()
+	{
+		VersionFu.PrintHeader ();
+
 		string usage =
-			"beagle-index-url: Index web page content using the Beagle Search Engine.\n" +
-			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2004-2005 Novell, Inc.\n\n";
-		usage +=
 			"Usage: beagle-index-url <OPTIONS>\n\n" +
 			"Options:\n" +
 			"  --url URL\t\tURL for the web page being indexed.\n" +
@@ -48,7 +50,8 @@ class IndexWebContentTool {
 			"  --sourcefile PATH\tFile containing content to index.\n" +
 			"\t\t\tIf not set, content is read from STDIN.\n" +
 			"  --deletesourcefile\tDelete file passed to --sourcefile after index.\n" +
-			"  --help\t\tPrint this usage message.\n";
+			"  --help\t\tPrint this usage message.\n" +
+			"  --version\t\tPrint version information.\n";
 
 		Console.WriteLine (usage);
 	}
@@ -93,6 +96,9 @@ class IndexWebContentTool {
 				break;
 			case "--help":
 				PrintUsage ();
+				return;
+			case "--version":
+				VersionFu.PrintVersion ();
 				return;
 			}
 		}

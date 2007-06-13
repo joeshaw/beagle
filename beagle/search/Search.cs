@@ -5,15 +5,20 @@
 //
 
 using System;
+using System.Reflection;
 using System.Collections;
 
 using Gtk;
+using Mono.Unix;
+
 using Beagle;
 using Beagle.Util;
-using Mono.Unix;
 
 using Search.Tiles;
 using Search.Tray;
+
+[assembly: AssemblyTitle ("beagle-search")]
+[assembly: AssemblyDescription ("GUI interface to the Beagle search system")]
 
 namespace Search {
 
@@ -54,13 +59,11 @@ namespace Search {
 		public static void Main (string [] args)
 		{
 			SystemInformation.SetProcessName ("beagle-search");
-
 			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
 
 			string query = ParseArgs (args);
 
-			Gnome.Program program = new Gnome.Program ("search", "0.0",
-								   Gnome.Modules.UI, args);
+			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
 
 			MainWindow window = new MainWindow ();
 
@@ -83,6 +86,11 @@ namespace Search {
 				case "--usage":
 					PrintUsageAndExit ();
 					return null;
+
+				case "--version":
+					VersionFu.PrintVersion ();
+					Environment.Exit (0);
+					break;
 
 				case "--icon":
 					IconEnabled = true;
@@ -118,16 +126,14 @@ namespace Search {
 
 		public static void PrintUsageAndExit ()
 		{
-			string usage =
-				"beagle-search: GUI interface to the Beagle search system.\n" +
-				"Web page: http://www.beagle-project.org/\n" +
-				"Copyright (C) 2005-2006 Novell, Inc.\n\n";
+			VersionFu.PrintHeader ();
 
-			usage +=
+			string usage =
 				"Usage: beagle-search [OPTIONS] [<query string>]\n\n" +
 				"Options:\n" +
+				"  --icon\t\t\tAdd an icon to the notification area rather than opening a search window.\n" +
 				"  --help\t\t\tPrint this usage message.\n" +
-				"  --icon\t\t\tAdd an icon to the notification area rather than opening a search window.\n";
+				"  --version\t\t\tPrint version information.\n";
 
 			Console.WriteLine (usage);
 			System.Environment.Exit (0);

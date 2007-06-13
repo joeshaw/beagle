@@ -40,7 +40,11 @@ using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 
-class QueryTool {
+// Assembly information
+[assembly: AssemblyTitle ("beagle-query")]
+[assembly: AssemblyDescription ("Command-line interface to the Beagle search system")]
+
+public class QueryTool {
 
 	private static int count = 0;
 	private static Query query = null;
@@ -135,11 +139,9 @@ class QueryTool {
 
 	public static void PrintUsageAndExit () 
 	{
+		VersionFu.PrintHeader ();
+
 		string usage =
-			"beagle-query: Command-line interface to the Beagle search system.\n" +
-			"Web page: http://www.gnome.org/projects/beagle\n" +
-			"Copyright (C) 2004-2006 Novell, Inc.\n\n";
-		usage +=
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
@@ -160,6 +162,7 @@ class QueryTool {
 			"  --flood\t\t\tExecute the query over and over again.  Don't do that.\n" +
 			"  --listener\t\t\tExecute an index listener query.  Don't do that either.\n" +
 			"  --help\t\t\tPrint this usage message.\n" +
+			"  --version\t\t\tPrint version information.\n" +
 			"\n" +
 			"Query string supports an advanced query syntax.\n" +
 			"For details of the query syntax, please see http://beagle-project.org/Searching_Data\n" +
@@ -250,6 +253,11 @@ class QueryTool {
 
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
+
+		if (Array.IndexOf (args, "--version") > -1) {
+			VersionFu.PrintVersion ();
+			Environment.Exit (0);
+		}
 
 		StringBuilder query_str =  new StringBuilder ();
 
@@ -389,7 +397,5 @@ class QueryTool {
 
 		main_loop.Run ();
 	}
-
-
 }
 	

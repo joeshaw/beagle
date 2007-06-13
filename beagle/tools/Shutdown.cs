@@ -25,21 +25,34 @@
 //
 
 using System;
-using System.Net.Sockets;
+using System.Reflection;
 
 using Beagle;
+using Beagle.Util;
 
-class Shutdown {
+[assembly: AssemblyTitle ("beagle-shutdown")]
+[assembly: AssemblyDescription ("Tool for shutting down the Beagle daemon")]
 
-	static int Main ()
+public class Shutdown {
+
+	public static int Main (string[] args)
 	{
+		if (Array.IndexOf (args, "--help") > -1) {
+			VersionFu.PrintHeader ();
+			return 0;
+		}
+
+		if (Array.IndexOf (args, "--version") > -1) {
+			VersionFu.PrintVersion ();
+			return 0;
+		}
+
 		ShutdownRequest request = new ShutdownRequest ();
 
 		try {
 			request.Send ();
 		} catch {
 			Console.WriteLine ("ERROR: The Beagle daemon does not appear to be running");
-
 			return 1;
 		}
 

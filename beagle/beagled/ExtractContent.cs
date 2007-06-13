@@ -25,11 +25,11 @@
 // SOFTWARE.
 //
 
-
 using System;
-using System.Collections;
 using System.IO;
 using System.Net;
+using System.Reflection;
+using System.Collections;
 
 using Beagle;
 using Beagle.Util;
@@ -37,6 +37,9 @@ using Beagle.Daemon;
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.Standard;
+
+[assembly: AssemblyTitle ("beagle-extract-content")]
+[assembly: AssemblyDescription ("Extracts filtered data from a file")]
 
 class ExtractContentTool {
 
@@ -285,9 +288,8 @@ class ExtractContentTool {
 
 	static void PrintUsage ()
 	{
-		Console.WriteLine ("beagle-extract-content: Extracts filtered data from a file.");
-		Console.WriteLine ("Copyright (C) 2004-2005 Novell, Inc.");
-		Console.WriteLine ();
+		VersionFu.PrintHeader ();
+
 		Console.WriteLine ("Usage: beagle-extract-content [OPTIONS] file [file ...]");
 		Console.WriteLine ();
 		Console.WriteLine ("Options:");
@@ -298,6 +300,7 @@ class ExtractContentTool {
 		Console.WriteLine ("  --mimetype=<mime_type>\tUse filter for mime_type");
 		Console.WriteLine ("  --outfile=<filename>\t\tOutput file name");
 		Console.WriteLine ("  --help\t\t\tShow this message");
+		Console.WriteLine ("  --version\t\t\tPrint version information");
 		Console.WriteLine ();
 	}
 
@@ -310,6 +313,11 @@ class ExtractContentTool {
 
 		if (Array.IndexOf (args, "--help") != -1) {
 			PrintUsage ();
+			return 0;
+		}
+
+		if (Array.IndexOf (args, "--version") != -1) {
+			VersionFu.PrintVersion ();
 			return 0;
 		}
 
