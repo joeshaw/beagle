@@ -9,9 +9,8 @@ namespace TagLib.Ogg.Codecs
       private HeaderPacket header;
       private ByteVector comment_data;
       
-      public Theora ()
+      private Theora ()
       {
-         comment_data = null;
       }
       
       public static Codec FromPacket (ByteVector packet)
@@ -43,16 +42,22 @@ namespace TagLib.Ogg.Codecs
       public override MediaTypes MediaTypes  {get {return MediaTypes.Video;}}
       public override ByteVector CommentData {get {return comment_data;}}
       public override string Description  {get {return "Vorbis Version " + header.major_version + "." + header.minor_version + " Video";}}
-      public override TimeSpan GetDuration (long last_granular_position, long first_granular_position)
+      public override TimeSpan GetDuration (long firstGranularPosition, long lastGranularPosition)
       {
-         return TimeSpan.FromSeconds (header.GranuleTime (last_granular_position) - header.GranuleTime (first_granular_position));
+         return TimeSpan.FromSeconds (header.GranuleTime (lastGranularPosition) - header.GranuleTime (firstGranularPosition));
       }
       
-      public override void SetCommentPacket (ByteVectorList packets, XiphComment comment)
+      public override void SetCommentPacket (ByteVectorCollection packets, XiphComment comment)
       {
+         if (packets == null)
+            throw new ArgumentNullException ("packets");
+         
+         if (comment == null)
+            throw new ArgumentNullException ("comment");
+         
          ByteVector data = new ByteVector ((byte) 0x81);
          data.Add (id);
-         data.Add (comment.Render ());
+         data.Add (comment.Render (true));
          if (packets.Count > 1 && PacketType (packets [1]) == 0x81)
             packets [1] = data;
          else

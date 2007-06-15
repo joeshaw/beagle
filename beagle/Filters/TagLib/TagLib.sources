@@ -42,6 +42,7 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/NonContainer/Tag.cs \
 	$(srcdir)/TagLib/Id3v1/Tag.cs \
 	$(srcdir)/TagLib/Id3v1/StringHandler.cs \
+	$(srcdir)/TagLib/Id3v2/Frames/PlayCountFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/PrivateFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/RelativeVolumeFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/UniqueFileIdentifierFrame.cs \
@@ -51,8 +52,12 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/Id3v2/Frames/AttachedPictureFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/GeneralEncapsulatedObjectFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/UnsynchronisedLyricsFrame.cs \
+	$(srcdir)/TagLib/Id3v2/Frames/SynchronizedLyricsFrame.cs \
+	$(srcdir)/TagLib/Id3v2/Frames/MusicCdIdentifierFrame.cs \
+	$(srcdir)/TagLib/Id3v2/Frames/TermsOfUseFrame.cs \
 	$(srcdir)/TagLib/Id3v2/FrameFactory.cs \
 	$(srcdir)/TagLib/Id3v2/Frame.cs \
+	$(srcdir)/TagLib/Id3v2/FrameTypes.cs \
 	$(srcdir)/TagLib/Id3v2/Tag.cs \
 	$(srcdir)/TagLib/Id3v2/FrameHeader.cs \
 	$(srcdir)/TagLib/Id3v2/ExtendedHeader.cs \
@@ -63,7 +68,6 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/Mpeg4/Box.cs \
 	$(srcdir)/TagLib/Mpeg4/BoxFactory.cs \
 	$(srcdir)/TagLib/Mpeg4/BoxHeader.cs \
-	$(srcdir)/TagLib/Mpeg4/BoxList.cs \
 	$(srcdir)/TagLib/Mpeg4/BoxTypes.cs \
 	$(srcdir)/TagLib/Mpeg4/File.cs \
 	$(srcdir)/TagLib/Mpeg4/FileParser.cs \
@@ -99,12 +103,11 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/WavPack/File.cs \
 	$(srcdir)/TagLib/WavPack/StreamHeader.cs \
 	$(srcdir)/TagLib/ICodec.cs \
-	$(srcdir)/TagLib/IntList.cs \
 	$(srcdir)/TagLib/Tag.cs \
-	$(srcdir)/TagLib/ByteVectorList.cs \
+	$(srcdir)/TagLib/ReadOnlyByteVector.cs \
 	$(srcdir)/TagLib/ByteVector.cs \
+	$(srcdir)/TagLib/ByteVectorList.cs \
 	$(srcdir)/TagLib/CombinedTag.cs \
-	$(srcdir)/TagLib/Debugger.cs \
 	$(srcdir)/TagLib/Genres.cs \
 	$(srcdir)/TagLib/Properties.cs \
 	$(srcdir)/TagLib/File.cs \

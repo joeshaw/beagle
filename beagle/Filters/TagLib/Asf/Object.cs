@@ -26,31 +26,33 @@ namespace TagLib.Asf
       //////////////////////////////////////////////////////////////////////////
       // private properties
       //////////////////////////////////////////////////////////////////////////
-      private Guid id;
+      private System.Guid id;
       private ulong size;
       
       
       //////////////////////////////////////////////////////////////////////////
       // public methods
       //////////////////////////////////////////////////////////////////////////
-      public Object (Asf.File file, long position)
+      protected Object (Asf.File file, long position)
       {
+         if (file == null)
+            throw new System.ArgumentNullException ("file");
+         
          file.Seek (position);
          id = file.ReadGuid ();
          size = file.ReadQWord ();
       }
       
-      public Object (Guid guid)
+      protected Object (System.Guid guid)
       {
          id = guid;
-         size = 0;
       }
       
       public abstract ByteVector Render ();
       
-      public static ByteVector RenderUnicode (string str)
+      public static ByteVector RenderUnicode (string value)
       {
-         ByteVector v = ByteVector.FromString (str, StringType.UTF16LE);
+         ByteVector v = ByteVector.FromString (value, StringType.UTF16LE);
          v.Add (ByteVector.FromUShort (0));
          return v;
       }
@@ -74,7 +76,7 @@ namespace TagLib.Asf
       //////////////////////////////////////////////////////////////////////////
       // public properties
       //////////////////////////////////////////////////////////////////////////
-      public Guid Guid {get {return id;}}
+      public System.Guid Guid {get {return id;}}
       
       public ulong OriginalSize {get {return size;}}
       
@@ -85,7 +87,7 @@ namespace TagLib.Asf
       protected ByteVector Render (ByteVector data)
       {
          ulong length = (ulong)((data != null ? data.Count : 0) + 24);
-         ByteVector v = Guid.Render ();
+         ByteVector v = id.ToByteArray ();
          v.Add (RenderQWord (length));
          v.Add (data);
          return v;

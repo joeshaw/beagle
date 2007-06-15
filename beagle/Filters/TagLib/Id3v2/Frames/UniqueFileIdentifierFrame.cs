@@ -27,33 +27,52 @@ namespace TagLib.Id3v2
 {
    public class UniqueFileIdentifierFrame : Frame
    {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
-      private string owner;
-      private ByteVector identifier;
+      #region Private Properties
+      private string owner = null;
+      private ByteVector identifier = null;
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
-      public UniqueFileIdentifierFrame (ByteVector data, uint version) : base (data, version)
+      
+      #region Constructors
+      public UniqueFileIdentifierFrame (ByteVector data, byte version) : base (data, version)
       {
-         owner = null;
-         identifier = null;
-         
-         SetData (data, 0, version);
+         SetData (data, 0, version, true);
       }
 
-      public UniqueFileIdentifierFrame (string owner, ByteVector id) : base ("UFID", 4)
+      public UniqueFileIdentifierFrame (string owner, ByteVector id) : base (FrameType.UFID, 4)
       {
          this.owner = owner;
          identifier = id;
       }
       
+      protected internal UniqueFileIdentifierFrame (ByteVector data, int offset, FrameHeader header, byte version) : base(header)
+      {
+         SetData (data, offset, version, false);
+      }
+      #endregion
+      
+      
+      
+      #region Public Properties
+      public string Owner
+      {
+         get {return owner;}
+      }
+
+      public ByteVector Identifier
+      {
+         get {return identifier;}
+         set {identifier = value;}
+      }
+      #endregion
+      
+      
+      
+      #region Public Static Methods
       public static UniqueFileIdentifierFrame Get (Tag tag, string owner, bool create)
       {
-         foreach (Frame f in tag.GetFrames ("UFID"))
+         foreach (Frame f in tag.GetFrames (FrameType.UFID))
             if (f is UniqueFileIdentifierFrame && (f as UniqueFileIdentifierFrame).Owner == owner)
                return f as UniqueFileIdentifierFrame;
          
@@ -63,29 +82,14 @@ namespace TagLib.Id3v2
          tag.AddFrame (frame);
          return frame;
       }
+      #endregion
       
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
-      public string Owner
+      
+      
+      #region Protected Methods
+      protected override void ParseFields (ByteVector data, byte version)
       {
-         get {return owner;}
-         set {owner = value;}
-      }
-
-      public ByteVector Identifier
-      {
-         get {return identifier;}
-         set {identifier = value;}
-      }
-
-
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected override void ParseFields (ByteVector data, uint version)
-      {
-         ByteVectorList fields = ByteVectorList.Split(data, (byte) 0);
+         ByteVectorCollection fields = ByteVectorCollection.Split(data, (byte) 0);
 
          if (fields.Count != 2)
             return;
@@ -94,7 +98,7 @@ namespace TagLib.Id3v2
          identifier = fields [1];
       }
       
-      protected override ByteVector RenderFields (uint version)
+      protected override ByteVector RenderFields (byte version)
       {
          ByteVector data = new ByteVector ();
          
@@ -104,12 +108,6 @@ namespace TagLib.Id3v2
          
          return data;
       }
-      
-      protected internal UniqueFileIdentifierFrame (ByteVector data, int offset, FrameHeader h, uint version) : base (h)
-      {
-         owner = null;
-         identifier = null;
-         ParseFields (FieldData (data, offset, version), version);
-      }
+      #endregion
    }
 }

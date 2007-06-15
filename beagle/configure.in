@@ -376,7 +376,7 @@ dnl ----------------------------------------------
 
 dnl taglib-sharp: Needed for indexing audio formats
 
-PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp, internal_taglib=no, internal_taglib=yes)
+PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp >= 2.0, internal_taglib=no, internal_taglib=yes)
 AC_SUBST(TAGLIB_SHARP_LIBS)
 AM_CONDITIONAL(INTERNAL_TAGLIB, test "x$internal_taglib" = "xyes")
 

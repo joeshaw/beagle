@@ -24,8 +24,26 @@ using System;
 
 namespace TagLib
 {
-   public class Tag
+   [Flags]
+   public enum TagTypes : uint
    {
+      None         = 0x00000000,
+      Xiph         = 0x00000001,
+      Id3v1        = 0x00000002,
+      Id3v2        = 0x00000004,
+      Ape          = 0x00000008,
+      Apple        = 0x00000010,
+      Asf          = 0x00000020,
+      RiffInfo     = 0x00000040,
+      MovieId      = 0x00000080,
+      DivX         = 0x00000100,
+      FlacMetadata = 0x00000200,
+      AllTags      = 0xFFFFFFFF
+   }
+   
+   public abstract class Tag
+   {
+      public abstract TagTypes TagTypes {get;}
       public virtual string    Title           {get {return null;} set {}}
       public virtual string [] AlbumArtists    {get {return new string [] {};} set {}}
       public virtual string [] Performers      {get {return new string [] {};} set {}}
@@ -39,15 +57,19 @@ namespace TagLib
       public virtual uint      Disc            {get {return 0;}    set {}}
       public virtual uint      DiscCount       {get {return 0;}    set {}}
       public virtual string    Lyrics          {get {return null;} set {}}
+      public virtual string    Grouping        {get {return null;} set {}}
+      public virtual uint      BeatsPerMinute  {get {return 0;}    set {}}
+      public virtual string    Conductor       {get {return null;} set {}}
+      public virtual string    Copyright       {get {return null;} set {}}
       
       public virtual IPicture [] Pictures { get { return new Picture [] { }; } set { } }
       
-      public string FirstArtist    { get { return FirstInGroup(AlbumArtists);    } }
-      public string FirstPerformer { get { return FirstInGroup(Performers); } }
-      public string FirstComposer  { get { return FirstInGroup(Composers);  } }
-      public string FirstGenre     { get { return FirstInGroup(Genres);     } }
+      public string FirstArtist    { get { return FirstInGroup(AlbumArtists);} }
+      public string FirstPerformer { get { return FirstInGroup(Performers);  } }
+      public string FirstComposer  { get { return FirstInGroup(Composers);   } }
+      public string FirstGenre     { get { return FirstInGroup(Genres);      } }
       
-      public string JoinedArtists    { get { return JoinGroup(AlbumArtists);     } }
+      public string JoinedArtists    { get { return JoinGroup(AlbumArtists);} }
       public string JoinedPerformers { get { return JoinGroup(Performers);  } } 
       public string JoinedComposers  { get { return JoinGroup(Composers);   } }
       public string JoinedGenres     { get { return JoinGroup(Genres);      } }
@@ -59,21 +81,25 @@ namespace TagLib
       
       private static string JoinGroup(string [] group)
       {
-         return new StringList(group).ToString(", ");
+         return new StringCollection(group).ToString(", ");
       }
 
       public virtual bool IsEmpty
       {
          get
          {
-            return ((Title == null || Title.Trim () == String.Empty) &&
-                    (AlbumArtists == null || AlbumArtists.Length == 0) &&
-                    (Performers == null || Performers.Length == 0) &&
-                    (Composers == null || Composers.Length == 0) &&
-                    (Album == null || Album.Trim () == String.Empty) &&
-                    (Comment == null || Comment.Trim () == String.Empty) &&
-                    (Genres == null || Genres.Length == 0) &&
+            return (IsNullOrLikeEmpty (Title) &&
+                    IsNullOrLikeEmpty (Grouping) &&
+                    IsNullOrLikeEmpty (AlbumArtists) &&
+                    IsNullOrLikeEmpty (Performers) &&
+                    IsNullOrLikeEmpty (Composers) &&
+                    IsNullOrLikeEmpty (Conductor) &&
+                    IsNullOrLikeEmpty (Copyright) &&
+                    IsNullOrLikeEmpty (Album) &&
+                    IsNullOrLikeEmpty (Comment) &&
+                    IsNullOrLikeEmpty (Genres) &&
                     Year == 0 &&
+                    BeatsPerMinute == 0 &&
                     Track == 0 &&
                     TrackCount == 0 &&
                     Disc == 0 &&
@@ -81,21 +107,29 @@ namespace TagLib
          }
       }
       
+      public abstract void Clear ();
+      
       public static void Duplicate (Tag source, Tag target, bool overwrite)
       {
-         if (overwrite || target.Title == null || target.Title.Trim () == String.Empty)
+         if (source == null)
+            throw new ArgumentNullException ("source");
+         
+         if (target == null)
+            throw new ArgumentNullException ("target");
+         
+         if (overwrite || IsNullOrLikeEmpty (target.Title))
             target.Title = source.Title;
-         if (overwrite || target.AlbumArtists == null || target.AlbumArtists.Length == 0)
+         if (overwrite || IsNullOrLikeEmpty (target.AlbumArtists))
             target.AlbumArtists = source.AlbumArtists;
-         if (overwrite || target.Performers == null || target.Performers.Length == 0)
+         if (overwrite || IsNullOrLikeEmpty (target.Performers))
             target.Performers = source.Performers;
-         if (overwrite || target.Composers == null || target.Composers.Length == 0)
+         if (overwrite || IsNullOrLikeEmpty (target.Composers))
             target.Composers = source.Composers;
-         if (overwrite || target.Album == null || target.Album.Trim () == String.Empty)
+         if (overwrite || IsNullOrLikeEmpty (target.Album))
             target.Album = source.Album;
-         if (overwrite || target.Comment == null || target.Comment.Trim () == String.Empty)
+         if (overwrite || IsNullOrLikeEmpty (target.Comment))
             target.Comment = source.Comment;
-         if (overwrite || target.Genres == null || target.Genres.Length == 0)
+         if (overwrite || IsNullOrLikeEmpty (target.Genres))
             target.Genres = source.Genres;
          if (overwrite || target.Year == 0)
             target.Year = source.Year;
@@ -107,6 +141,31 @@ namespace TagLib
             target.Disc = source.Disc;
          if (overwrite || target.DiscCount == 0)
             target.DiscCount = source.DiscCount;
+         if (overwrite || target.BeatsPerMinute == 0)
+            target.BeatsPerMinute = source.BeatsPerMinute;
+         if (overwrite || IsNullOrLikeEmpty (target.Grouping))
+            target.Grouping = source.Grouping;
+         if (overwrite || IsNullOrLikeEmpty (target.Conductor))
+            target.Conductor = source.Conductor;
+         if (overwrite || IsNullOrLikeEmpty (target.Copyright))
+            target.Conductor = source.Copyright;
+      }
+      
+      private static bool IsNullOrLikeEmpty (string value)
+      {
+         return value == null || value.Trim ().Length == 0;
+      }
+      
+      private static bool IsNullOrLikeEmpty (string [] value)
+      {
+         if (value == null)
+            return true;
+         
+         foreach (string s in value)
+            if (!IsNullOrLikeEmpty (s))
+               return false;
+         
+         return true;
       }
    }
 }

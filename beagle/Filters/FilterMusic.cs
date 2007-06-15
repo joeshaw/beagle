@@ -42,12 +42,11 @@ namespace Beagle.Filters {
 			// 2. Use TagLib-Sharp for filtering. Also index lots of new properties provided by TagLib#
 			SetVersion (2);
 			SetFileType ("audio");
-			StreamingTagReader.Link ();
 		}
 
 		protected override void RegisterSupportedTypes ()
 		{
-			foreach(string type in SupportedMimeType.AllMimeTypes)
+			foreach (string type in SupportedMimeType.AllMimeTypes)
 				AddSupportedFlavor (FilterFlavor.NewFromMimeType (type));
 		}
 
@@ -59,56 +58,31 @@ namespace Beagle.Filters {
 				return MimeType;
 		}
 
-		// A thread-safe IFileAbstraction to work on streams
-		// Written by Brian Kerrick Nickel <brian.nickel@gmail.com>
-		internal class StreamingTagReader : TagLib.File.IFileAbstraction
+		// An IFileAbstraction to work on streams
+		// Based on an example by Brian Kerrick Nickel <brian.nickel@gmail.com>
+		internal class StreamAbstraction : TagLib.File.IFileAbstraction
 		{
-			private static System.Collections.Generic.Queue<Stream> streams = new System.Collections.Generic.Queue<Stream> ();
-
-			private Stream s = null;
-
-			public StreamingTagReader (Stream s)
+			private System.IO.Stream stream;
+   
+			public StreamAbstraction (System.IO.Stream stream)
 			{
-				this.s = s;
+				this.stream = stream;
 			}
-
+			
 			public string Name {
-				get { return "[Stream]"; } }
-
-			public System.IO.Stream ReadStream { get { return s; } }
-			public System.IO.Stream WriteStream { get { return null; } }
-
-			// Uncomment this for taglib-sharp RC1
-			//public void CloseStream (System.IO.Stream stream)
-			//{
-			//	// Do not close the stream here!
-			//}
-
-			private static TagLib.File.IFileAbstraction CreateFile (string path)
-			{
-				return new StreamingTagReader (streams.Dequeue ());
+				get { return "[Stream]"; }
 			}
-
-			private static void QueueStream (Stream s)
-			{
-				streams.Enqueue (s);
+			
+			public System.IO.Stream ReadStream {
+				get { return stream; }
 			}
-
-			private static readonly System.Object read_lock = new System.Object ();
-			public static TagLib.File LoadFile (Stream stream, string mime)
-			{
-				TagLib.File f;
-				lock (read_lock)
-				{
-				    QueueStream (stream);
-				    f = TagLib.File.Create (null, mime, TagLib.ReadStyle.Average);
-				}
-				return f;
+			
+			public System.IO.Stream WriteStream {
+				get { return stream; }
 			}
-
-			public static void Link ()
+			
+			public void CloseStream (System.IO.Stream stream)
 			{
-				TagLib.File.SetFileAbstractionCreator (CreateFile);
 			}
 		}
 
@@ -117,7 +91,7 @@ namespace Beagle.Filters {
 			TagLib.File file;
 			
 			try {
-				file = StreamingTagReader.LoadFile (Stream, GetTaglibMimeType ());
+				file = TagLib.File.Create (new StreamAbstraction (Stream), GetTaglibMimeType (), TagLib.ReadStyle.Average);
 			} catch (Exception e) {
 				Logger.Log.Warn (e, "Exception filtering music");
 				Finished();
@@ -161,7 +135,7 @@ namespace Beagle.Filters {
 			foreach (TagLib.ICodec codec in file.Properties.Codecs) {
 				TagLib.IAudioCodec acodec = codec as TagLib.IAudioCodec;
 				
-				if (acodec != null && (acodec.MediaTypes & TagLib.MediaTypes.Audio) != TagLib.MediaTypes.Unknown)
+				if (acodec != null && (acodec.MediaTypes & TagLib.MediaTypes.Audio) != TagLib.MediaTypes.None)
 				{
 					AddProperty (Beagle.Property.NewUnsearched ("fixme:bitrate", acodec.AudioBitrate));
 					AddProperty (Beagle.Property.NewUnsearched ("fixme:samplerate", acodec.AudioSampleRate));
@@ -172,7 +146,7 @@ namespace Beagle.Filters {
 				// FIXME: Get data from IVideoCodec too
                 	}
 
-                	if (file.Properties.MediaTypes != TagLib.MediaTypes.Unknown)
+                	if (file.Properties.MediaTypes != TagLib.MediaTypes.None)
 				AddProperty (Beagle.Property.NewUnsearched ("fixme:duration", file.Properties.Duration));
 
 			// FIXME: Store embedded picture and lyrics

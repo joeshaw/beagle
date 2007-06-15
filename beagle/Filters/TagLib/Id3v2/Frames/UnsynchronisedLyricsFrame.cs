@@ -7,56 +7,83 @@ namespace TagLib.Id3v2
 {
     public class UnsynchronisedLyricsFrame : Frame
     {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
-      StringType text_encoding;
-      ByteVector language;
-      string description;
-      string text;
+      #region Private Properties
+      private StringType encoding      = StringType.UTF8;
+      private string     language      = null;
+      private string     description   = null;
+      private string     text          = null;
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
-      public UnsynchronisedLyricsFrame (string description, ByteVector language, StringType encoding) : base ("USLT", 4)
+      
+      #region Constructors
+      public UnsynchronisedLyricsFrame (string description, string language, StringType encoding) : base (FrameType.USLT, 4)
       {
-         text_encoding = encoding;
-         this.language = language;
+         this.encoding    = encoding;
+         this.language    = language;
          this.description = description;
-         text = null;
       }
       
-      public UnsynchronisedLyricsFrame (string description, ByteVector language) : this (description, language, TagLib.Id3v2.Tag.DefaultEncoding)
+      public UnsynchronisedLyricsFrame (string description, string language) : this (description, language, TagLib.Id3v2.Tag.DefaultEncoding)
       {}
 
       public UnsynchronisedLyricsFrame (string description) : this (description, null)
       {}
       
-      public UnsynchronisedLyricsFrame(ByteVector data, uint version)
-            : base(data, version)
+      public UnsynchronisedLyricsFrame(ByteVector data, byte version) : base(data, version)
       {
-         text_encoding = StringType.UTF8;
-         language = null;
-         description = null;
-         text = null;
-         SetData (data, 0, version);
+         SetData (data, 0, version, true);
+      }
+      
+      protected internal UnsynchronisedLyricsFrame(ByteVector data, int offset, FrameHeader header, byte version) : base(header)
+      {
+         SetData (data, offset, version, false);
+      }
+      #endregion
+      
+      
+      
+      #region Public Properties
+      public StringType TextEncoding
+      {
+         get {return encoding;}
+         set {encoding = value;}
       }
 
-
+      public string Language
+      {
+         get {return (language != null && language.Length > 2) ? language.Substring (0, 3) : "XXX";}
+         set {language = value;}
+      }
+      
+      public string Description
+      {
+         get {return description;}
+         set {description = value;}
+      }
+      
+      public string Text
+      {
+         get {return text;}
+         set {text = value;}
+      }
+      #endregion
+      
+      
+      
+      #region Public Methods
       public override string ToString ()
       {
          return text;
       }
+      #endregion
       
-      public override void SetText (string text)
-      {
-         this.text = text;
-      }
       
-      public static UnsynchronisedLyricsFrame Get (Tag tag, string description, ByteVector language, bool create)
+      
+      #region Public Static Methods
+      public static UnsynchronisedLyricsFrame Get (Tag tag, string description, string language, bool create)
       {
-         foreach (Frame f in tag.GetFrames ("USLT"))
+         foreach (Frame f in tag.GetFrames (FrameType.USLT))
          {
             UnsynchronisedLyricsFrame cf = f as UnsynchronisedLyricsFrame;
             
@@ -72,7 +99,7 @@ namespace TagLib.Id3v2
          return frame;
       }
       
-      public static UnsynchronisedLyricsFrame GetPreferred (Tag tag, string description, ByteVector language, bool create)
+      public static UnsynchronisedLyricsFrame GetPreferred (Tag tag, string description, string language)
       {
          // This is weird, so bear with me. The best thing we can have is 
          // something straightforward and in our own language. If it has a 
@@ -86,7 +113,7 @@ namespace TagLib.Id3v2
          int best_value = -1;
          UnsynchronisedLyricsFrame best_frame = null;
          
-         foreach (Frame f in tag.GetFrames ("USLT"))
+         foreach (Frame f in tag.GetFrames (FrameType.USLT))
          {
             UnsynchronisedLyricsFrame cf = f as UnsynchronisedLyricsFrame;
             if (cf == null) continue;
@@ -105,54 +132,23 @@ namespace TagLib.Id3v2
             best_frame = cf;
          }
          
-         if (best_frame == null && create)
-         {
-            best_frame = new UnsynchronisedLyricsFrame (description, language);
-            tag.AddFrame (best_frame);
-         }
          return best_frame;
       }
-      
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
-      public StringType TextEncoding
-      {
-         get {return text_encoding;}
-         set {text_encoding = value;}
-      }
-
-      public ByteVector Language
-      {
-         get {return language != null ? language : "XXX";}
-         set {language = value != null ? value.Mid (0, 3) : "XXX";}
-      }
-      
-      public string Description
-      {
-         get {return description;}
-         set {description = value;}
-      }
-      
-      public string Text
-      {
-         get {return text;}
-         set {text = value;}
-      }
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected override void ParseFields (ByteVector data, uint version)
+      
+      
+      #region Protected Methods
+      protected override void ParseFields (ByteVector data, byte version)
       {
          if (data.Count < 4)
             throw new CorruptFileException ("Not enough bytes in field.");
          
-         text_encoding = (StringType) data [0];
-         language = data.Mid (1, 3);
+         encoding = (StringType) data [0];
+         language = data.Mid (1, 3).ToString (StringType.Latin1);
 
-         string [] split = data.ToStrings (text_encoding, 4, 2);
+         string [] split = data.ToStrings (encoding, 4, 2);
          
          if (split.Length == 1)
          {
@@ -166,29 +162,20 @@ namespace TagLib.Id3v2
             text        = split [1];
          }
       }
-
-        protected override ByteVector RenderFields(uint version)
-        {
-            StringType encoding = CorrectEncoding(TextEncoding, version);
-            ByteVector v = new ByteVector();
-
-            v.Add((byte)encoding);
-            v.Add(Language);
-            v.Add(ByteVector.FromString (description, encoding));
-            v.Add(TextDelimiter(encoding));
-            v.Add(ByteVector.FromString (text, encoding));
-
-            return v;
-        }
-
-        protected internal UnsynchronisedLyricsFrame(ByteVector data, int offset, FrameHeader h, uint version)
-            : base(h)
+      
+      protected override ByteVector RenderFields(byte version)
       {
-         text_encoding = StringType.UTF8;
-         language = null;
-         description = null;
-         text = null;
-         ParseFields (FieldData (data, offset, version), version);
+         StringType encoding = CorrectEncoding(TextEncoding, version);
+         ByteVector v = new ByteVector();
+
+         v.Add((byte)encoding);
+         v.Add(ByteVector.FromString (Language, StringType.Latin1));
+         v.Add(ByteVector.FromString (description, encoding));
+         v.Add(TextDelimiter(encoding));
+         v.Add(ByteVector.FromString (text, encoding));
+
+         return v;
       }
-    }
+      #endregion
+   }
 }

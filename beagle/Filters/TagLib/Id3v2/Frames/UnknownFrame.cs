@@ -27,19 +27,16 @@ namespace TagLib.Id3v2
 {
    public class UnknownFrame : Frame
    {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
-      private ByteVector field_data;
+      #region Private Properties
+      private ByteVector field_data = null;
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
-      public UnknownFrame (ByteVector data, uint version) : base (data, version)
+      
+      #region Constructors
+      public UnknownFrame (ByteVector data, byte version) : base (data, version)
       {
-         field_data = null;
-         SetData (data, 0, version);
+         SetData (data, 0, version, true);
       }
       
       public UnknownFrame (ByteVector type, ByteVector data) : base (type, 4)
@@ -50,39 +47,43 @@ namespace TagLib.Id3v2
       public UnknownFrame (ByteVector type) : this (type, null)
       {}
       
-      public override string ToString ()
+      protected internal UnknownFrame (ByteVector data, int offset, FrameHeader header, byte version) : base(header)
       {
-         return null;
+         SetData (data, offset, version, false);
       }
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
+      
+      #region Public Properties
       public ByteVector Data
       {
          get {return field_data;}
          set {field_data = value;}
       }
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected override void ParseFields (ByteVector data, uint version)
+      
+      #region Public Methods
+      public override string ToString ()
+      {
+         return null;
+      }
+      #endregion
+      
+      
+      
+      #region Protected Methods
+      protected override void ParseFields (ByteVector data, byte version)
       {
          field_data = data;
       }
       
-      protected override ByteVector RenderFields (uint version)
+      protected override ByteVector RenderFields (byte version)
       {
          return field_data != null ? field_data : new ByteVector ();
       }
-      
-      protected internal UnknownFrame (ByteVector data, int offset, FrameHeader h, uint version) : base (h)
-      {
-         field_data = null;
-         ParseFields (FieldData (data, offset, version), version);
-      }
+      #endregion
    }
 }

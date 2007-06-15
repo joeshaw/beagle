@@ -27,22 +27,33 @@ namespace TagLib.Riff
       private Id3v2.Tag   id32_tag   = null;
       private Properties  properties = null;
       
-      public static readonly ByteVector FileIdentifier = "RIFF";
+      public static readonly ReadOnlyByteVector FileIdentifier = "RIFF";
       
-      public File (string file, ReadStyle properties_style) : base (file)
+      public File (string path, ReadStyle propertiesStyle) : this (new File.LocalFileAbstraction (path), propertiesStyle)
+      {}
+      
+      public File (string path) : this (path, ReadStyle.Average)
+      {}
+      
+      public File (File.IFileAbstraction abstraction, ReadStyle propertiesStyle) : base (abstraction)
       {
          uint riff_size;
          long tag_start, tag_end;
          
          Mode = AccessMode.Read;
-         Read (true, properties_style, out riff_size, out tag_start, out tag_end);
+         Read (true, propertiesStyle, out riff_size, out tag_start, out tag_end);
          Mode = AccessMode.Closed;
+         
+         TagTypesOnDisk = TagTypes;
          
          GetTag (TagTypes.Id3v2, true);
          GetTag (TagTypes.RiffInfo, true);
          GetTag (TagTypes.MovieId, true);
          GetTag (TagTypes.DivX, true);
       }
+      
+      public File (File.IFileAbstraction abstraction) : this (abstraction, ReadStyle.Average)
+      {}
       
       private void Read (bool read_tags, ReadStyle style, out uint riff_size, out long tag_start, out long tag_end)
       {
@@ -165,7 +176,8 @@ namespace TagLib.Riff
             if (id32_tag == null && create)
             {
                id32_tag = new Id3v2.Tag ();
-               id32_tag.Header.FooterPresent = true;
+               id32_tag.Version = 4;
+               id32_tag.Flags |= Id3v2.HeaderFlags.FooterPresent;
                TagLib.Tag.Duplicate (this.tag, id32_tag, true);
             }
             tag = id32_tag;
@@ -202,13 +214,13 @@ namespace TagLib.Riff
       
       public override void RemoveTags (TagTypes types)
       {
-         if ((types & TagLib.TagTypes.Id3v2) != TagLib.TagTypes.NoTags)
+         if ((types & TagLib.TagTypes.Id3v2) != TagLib.TagTypes.None)
             id32_tag = null;
-         if ((types & TagLib.TagTypes.RiffInfo) != TagLib.TagTypes.NoTags)
+         if ((types & TagLib.TagTypes.RiffInfo) != TagLib.TagTypes.None)
             info_tag = null;
-         if ((types & TagLib.TagTypes.MovieId) != TagLib.TagTypes.NoTags)
+         if ((types & TagLib.TagTypes.MovieId) != TagLib.TagTypes.None)
             mid_tag  = null;
-         if ((types & TagLib.TagTypes.DivX) != TagLib.TagTypes.NoTags)
+         if ((types & TagLib.TagTypes.DivX) != TagLib.TagTypes.None)
             divx_tag = null;
          
          tag.SetTags (id32_tag, info_tag, mid_tag, divx_tag);
@@ -269,6 +281,8 @@ namespace TagLib.Riff
             Insert (ByteVector.FromUInt ((uint)(riff_size + data.Count - length), false), 4, 4);
          
          Mode = AccessMode.Closed;
+         
+         TagTypesOnDisk = TagTypes;
       }
    }
 }

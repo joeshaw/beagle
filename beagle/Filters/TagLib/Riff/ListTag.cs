@@ -25,23 +25,29 @@ namespace TagLib.Riff
    {
       List fields;
       
-      public ListTag ()
+      protected ListTag ()
       {
          fields = new List ();
       }
       
-      public ListTag (List fields)
+      protected ListTag (List fields)
       {
+         if (fields == null)
+            throw new System.ArgumentNullException ("fields");
+         
          this.fields = fields;
       }
       
-      public ListTag (ByteVector data)
+      protected ListTag (ByteVector data)
       {
          fields = new List (data);
       }
       
-      public ListTag (TagLib.File file, long position, int length)
+      protected ListTag (TagLib.File file, long position, int length)
       {
+         if (file == null)
+            throw new System.ArgumentNullException ("file");
+         
          file.Seek (position);
          fields = new List (file.ReadBlock (length));
       }
@@ -58,14 +64,14 @@ namespace TagLib.Riff
          return fields.Render ();
       }
       
-      public ByteVectorList GetValues (ByteVector id)
+      public ByteVectorCollection GetValues (ByteVector id)
       {
          return fields.GetValues (id);
       }
       
-      public StringList GetValuesAsStringList (ByteVector id)
+      public StringCollection GetValuesAsStringCollection (ByteVector id)
       {
-         return fields.GetValuesAsStringList (id);
+         return fields.GetValuesAsStringCollection (id);
       }
       
       public uint GetValueAsUInt (ByteVector id)
@@ -73,12 +79,12 @@ namespace TagLib.Riff
          return fields.GetValueAsUInt (id);
       }
       
-      public void SetValue (ByteVector id, ByteVector value)
+      public void SetValue (ByteVector id, params ByteVector [] value)
       {
          fields.SetValue (id, value);
       }
       
-      public void SetValue (ByteVector id, string value)
+      public void SetValue (ByteVector id, ByteVectorCollection value)
       {
          fields.SetValue (id, value);
       }
@@ -88,12 +94,12 @@ namespace TagLib.Riff
          fields.SetValue (id, value);
       }
       
-      public void SetValue (ByteVector id, StringList value)
+      public void SetValue (ByteVector id, StringCollection value)
       {
          fields.SetValue (id, value);
       }
       
-      public void SetValue (ByteVector id, string [] value)
+      public void SetValue (ByteVector id, params string [] value)
       {
          fields.SetValue (id, value);
       }
@@ -101,6 +107,17 @@ namespace TagLib.Riff
       public void RemoveValue (ByteVector id)
       {
          fields.RemoveValue (id);
+      }
+      
+      public override void Clear ()
+      {
+         fields.Clear ();
+      }
+      
+      public override bool IsEmpty {
+         get {
+            return fields.Count == 0;
+         }
       }
    }
 }

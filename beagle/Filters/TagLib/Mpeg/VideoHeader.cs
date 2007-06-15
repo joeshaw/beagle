@@ -2,7 +2,7 @@ using System;
 
 namespace TagLib.Mpeg
 {
-	public class VideoHeader : IVideoCodec
+	public struct VideoHeader : IVideoCodec
 	{
 		int width;
       int height;
@@ -22,9 +22,12 @@ namespace TagLib.Mpeg
       public MediaTypes MediaTypes {get {return MediaTypes.Video;}}
       public TimeSpan Duration {get {return TimeSpan.Zero;}}
       
-		public VideoHeader (TagLib.File file, long offset)
-		{
-         file.Seek (offset);
+      public VideoHeader (TagLib.File file, long position)
+      {
+         if (file == null)
+            throw new ArgumentNullException ("file");
+         
+         file.Seek (position);
          ByteVector data = file.ReadBlock (7);
          
          width = data.Mid (0, 2).ToUShort () >> 4;
@@ -33,6 +36,6 @@ namespace TagLib.Mpeg
          frame_rate_index = data [3] & 0x0F;
          
          bitrate = (int)((data.Mid (4, 3).ToUInt () >> 6) & 0x3FFFF);
-		}
-	}
+      }
+   }
 }

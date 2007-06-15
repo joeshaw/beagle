@@ -27,54 +27,38 @@ namespace TagLib.Id3v2
 {
    public class PrivateFrame : Frame
    {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
-      string owner;
-      ByteVector data;
+      #region Private Properties
+      private string     owner = null;
+      private ByteVector data  = null;
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
-      public PrivateFrame (string owner, ByteVector data) : base ("PRIV", 4)
+      
+      #region Constructors
+      public PrivateFrame (string owner, ByteVector data) : base (FrameType.PRIV, 4)
       {
          this.owner = owner;
-         this.data = data;
+         this.data  = data;
       }
       
       public PrivateFrame (string owner) : this (owner, null)
       {
       }
 
-      public PrivateFrame (ByteVector data, uint version) : base (data, version)
+      public PrivateFrame (ByteVector data, byte version) : base (data, version)
       {
-         this.owner = null;
-         this.data = null;
-         SetData (data, 0, version);
+         SetData (data, 0, version, true);
       }
 
-      public override string ToString ()
+      protected internal PrivateFrame (ByteVector data, int offset, FrameHeader header, byte version) : base(header)
       {
-         return owner;
+         SetData (data, offset, version, false);
       }
+      #endregion
       
-      public static PrivateFrame Get (Tag tag, string owner, bool create)
-      {
-         foreach (Frame f in tag.GetFrames ("PRIV"))
-            if (f is PrivateFrame && (f as PrivateFrame).Owner == owner)
-               return f as PrivateFrame;
-         
-         if (!create) return null;
-         
-         PrivateFrame frame = new PrivateFrame (owner);
-         tag.AddFrame (frame);
-         return frame;
-      }
       
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
+      
+      #region Public Properties
       public string Owner
       {
          get {return owner;}
@@ -85,17 +69,43 @@ namespace TagLib.Id3v2
          get {return data;}
          set {data = value;}
       }
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected override void ParseFields (ByteVector data, uint version)
+      
+      #region Public Methods
+      public override string ToString ()
+      {
+         return owner;
+      }
+      #endregion
+      
+      
+      
+      #region Public Static Methods
+      public static PrivateFrame Get (Tag tag, string owner, bool create)
+      {
+         foreach (Frame f in tag.GetFrames (FrameType.PRIV))
+            if (f is PrivateFrame && (f as PrivateFrame).Owner == owner)
+               return f as PrivateFrame;
+         
+         if (!create) return null;
+         
+         PrivateFrame frame = new PrivateFrame (owner);
+         tag.AddFrame (frame);
+         return frame;
+      }
+      #endregion
+      
+      
+      
+      #region Protected Methods
+      protected override void ParseFields (ByteVector data, byte version)
       {
          if (data.Count < 1)
             throw new CorruptFileException ("A private frame must contain at least 1 byte.");
          
-         ByteVectorList l = ByteVectorList.Split (data, TextDelimiter (StringType.Latin1), 1, 2);
+         ByteVectorCollection l = ByteVectorCollection.Split (data, TextDelimiter (StringType.Latin1), 1, 2);
          
          if (l.Count == 2)
          {
@@ -104,7 +114,7 @@ namespace TagLib.Id3v2
          }
       }
 
-      protected override ByteVector RenderFields (uint version)
+      protected override ByteVector RenderFields (byte version)
       {
          ByteVector v = new ByteVector ();
          
@@ -117,12 +127,6 @@ namespace TagLib.Id3v2
          
          return v;
       }
-
-      protected internal PrivateFrame (ByteVector data, int offset, FrameHeader h, uint version) : base (h)
-      {
-         this.owner = null;
-         this.data = null;
-         ParseFields (FieldData (data, offset, version), version);
-      }
+      #endregion
    }
 }

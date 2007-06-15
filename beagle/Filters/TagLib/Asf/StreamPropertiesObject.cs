@@ -27,8 +27,8 @@ namespace TagLib.Asf
    public class StreamPropertiesObject : Object
    {
 #region Private Properties
-      private Guid stream_type;
-      private Guid error_correction_type;
+      private System.Guid stream_type;
+      private System.Guid error_correction_type;
       private ulong time_offset;
       private ushort flags;
       private uint reserved;
@@ -39,11 +39,14 @@ namespace TagLib.Asf
 #region Constructors
       public StreamPropertiesObject (Asf.File file, long position) : base (file, position)
       {
+         if (file == null)
+            throw new ArgumentNullException ("file");
+         
          if (!Guid.Equals (Asf.Guid.AsfStreamPropertiesObject))
-            throw new System.Exception ("Object GUID incorrect.");
+            throw new CorruptFileException ("Object GUID incorrect.");
          
          if (OriginalSize < 78)
-            throw new System.Exception ("Object size too small.");
+            throw new CorruptFileException ("Object size too small.");
          
          stream_type                       = file.ReadGuid  ();
          error_correction_type             = file.ReadGuid  ();
@@ -60,8 +63,8 @@ namespace TagLib.Asf
 #region Public Methods
       public override ByteVector Render ()
       {
-         ByteVector output = stream_type.Render ();
-         output.Add (error_correction_type.Render ());
+         ByteVector output = stream_type.ToByteArray ();
+         output.Add (error_correction_type.ToByteArray ());
          output.Add (RenderQWord (time_offset));
          output.Add (RenderDWord ((uint) type_specific_data.Count));
          output.Add (RenderDWord ((uint) error_correction_data.Count));
@@ -73,25 +76,30 @@ namespace TagLib.Asf
          return Render (output);
       }
       
-      public ICodec GetCodec ()
+      public ICodec Codec
       {
-         if (stream_type.Equals (Guid.AsfAudioMedia))
-            return new Riff.WaveFormatEx (type_specific_data, 0);
-         
-         if (stream_type.Equals (Guid.AsfVideoMedia))
-            return new TagLib.Riff.BitmapInfoHeader (type_specific_data, 11);
-         
-         return null;
+         get
+         {
+            if (stream_type == Asf.Guid.AsfAudioMedia)
+               return new Riff.WaveFormatEx (type_specific_data, 0);
+            
+            if (stream_type == Asf.Guid.AsfVideoMedia)
+               return new TagLib.Riff.BitmapInfoHeader (type_specific_data, 11);
+            
+            return null;
+         }
       }
-#endregion
+      #endregion
       
-#region Public Properties
-      public Guid       StreamType {get {return stream_type;}}
-      public Guid       ErrorCorrectionType {get {return error_correction_type;}}
-      public TimeSpan   TimeOffset {get {return new TimeSpan ((long)time_offset);}}
-      public ushort     Flags {get {return flags;}}
-      public ByteVector TypeSpecificData {get {return type_specific_data;}}
-      public ByteVector ErrorCorrectionData {get {return error_correction_data;}}
-#endregion
+      
+      
+      #region Public Properties
+      public System.Guid StreamType          {get {return stream_type;}}
+      public System.Guid ErrorCorrectionType {get {return error_correction_type;}}
+      public TimeSpan    TimeOffset          {get {return new TimeSpan ((long)time_offset);}}
+      public ushort      Flags               {get {return flags;}}
+      public ByteVector  TypeSpecificData    {get {return type_specific_data;}}
+      public ByteVector  ErrorCorrectionData {get {return error_correction_data;}}
+      #endregion
    }
 }

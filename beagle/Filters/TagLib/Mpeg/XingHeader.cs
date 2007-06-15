@@ -25,22 +25,44 @@ using System;
 
 namespace TagLib.Mpeg
 {
-   public class XingHeader
+   public struct XingHeader
    {
       //////////////////////////////////////////////////////////////////////////
       // private properties
       //////////////////////////////////////////////////////////////////////////
       private uint frames;
       private uint size;
-
+      
+      public static readonly XingHeader Unknown = new XingHeader (0, 0);
       //////////////////////////////////////////////////////////////////////////
       // public methods
       //////////////////////////////////////////////////////////////////////////
+      private XingHeader (uint frame, uint size)
+      {
+         this.frames = frame;
+         this.size = size;
+      }
+      
       public XingHeader (ByteVector data)
       {
-         frames = 0;
-         size = 0;
-         Parse (data);
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
+         // Check to see if a valid Xing header is available.
+         if (!data.StartsWith ("Xing"))
+            throw new CorruptFileException ("Not a valid Xing header");
+
+         // If the XingHeader doesn't contain the number of frames and the total stream
+         // info it's invalid.
+
+         if ((data [7] & 0x01) == 0)
+            throw new CorruptFileException ("Xing header doesn't contain the total number of frames.");
+
+         if ((data[7] & 0x02) == 0)
+            throw new CorruptFileException ("Xing header doesn't contain the total stream size.");
+
+         frames = data.Mid (8, 4).ToUInt ();
+         size = data.Mid (12, 4).ToUInt ();
       }
 
       //////////////////////////////////////////////////////////////////////////
@@ -52,44 +74,22 @@ namespace TagLib.Mpeg
       //////////////////////////////////////////////////////////////////////////
       // public static methods
       //////////////////////////////////////////////////////////////////////////
-      public static int XingHeaderOffset (Version v, ChannelMode c)
+      public static int XingHeaderOffset (Version version, ChannelMode channelMode)
       {
-         if (v == Version.Version1)
+         if (version == Version.Version1)
          {
-            if (c == ChannelMode.SingleChannel)
+            if (channelMode == ChannelMode.SingleChannel)
                return 0x15;
             else
                return 0x24;
          }
          else
          {
-            if (c == ChannelMode.SingleChannel)
+            if (channelMode == ChannelMode.SingleChannel)
                return 0x0D;
             else
                return 0x15;
          }
-      }
-      
-      //////////////////////////////////////////////////////////////////////////
-      // private methods
-      //////////////////////////////////////////////////////////////////////////
-      private void Parse (ByteVector data)
-      {
-         // Check to see if a valid Xing header is available.
-         if (!data.StartsWith ("Xing"))
-            throw new CorruptFileException ("Not a valid Xing header");
-
-         // If the XingHeader doesn't contain the number of frames and the total stream
-         // info it's invalid.
-
-         if ((data [7] & 0x01) == 0)
-            throw new Exception ("Xing header doesn't contain the total number of frames.");
-
-         if ((data[7] & 0x02) == 0)
-            throw new Exception ("Xing header doesn't contain the total stream size.");
-
-         frames = data.Mid (8, 4).ToUInt ();
-         size = data.Mid (12, 4).ToUInt ();
       }
    }
 }

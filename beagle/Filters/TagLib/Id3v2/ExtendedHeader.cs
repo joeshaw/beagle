@@ -31,18 +31,20 @@ namespace TagLib.Id3v2
       
       public ExtendedHeader ()
       {
-         size = 0;
+      }
+      
+      public ExtendedHeader (ByteVector data, byte version)
+      {
+         Parse (data, version);
       }
       
       public uint Size {get {return size;}}
       
-      public void SetData (ByteVector data)
+      protected void Parse (ByteVector data, byte version)
       {
-         Parse (data);
-      }
-
-      protected void Parse (ByteVector data)
-      {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          size = SynchData.ToUInt (data.Mid (0, 4));
       }
    }

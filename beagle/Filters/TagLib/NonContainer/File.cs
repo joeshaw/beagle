@@ -27,40 +27,48 @@ namespace TagLib.NonContainer
 {
    public abstract class File : TagLib.File
    {
-#region Properties
+      #region Properties
       private TagLib.NonContainer.Tag tag;
       private Properties properties;
-#endregion
+      #endregion
       
 #region Constructors
-      public File (string file, ReadStyle properties_style) : base (file)
+      protected File (string path, ReadStyle propertiesStyle) : this (new File.LocalFileAbstraction (path), propertiesStyle)
+      {}
+      
+      protected File (string path) : this (path, ReadStyle.Average)
+      {}
+      
+      protected File (File.IFileAbstraction abstraction, ReadStyle propertiesStyle) : base (abstraction)
       {
          Mode = AccessMode.Read;
          tag = new Tag (this);
          
          // Read the tags and property data at the beginning of the file.
          long start = tag.ReadStart ();
-         ReadStart (start, properties_style);
+         TagTypesOnDisk |= StartTag.TagTypes;
+         ReadStart (start, propertiesStyle);
          
          // Read the tags and property data at the end of the file.
          long end = tag.ReadEnd ();
-         ReadEnd (end, properties_style);
+         TagTypesOnDisk |= EndTag.TagTypes;
+         ReadEnd (end, propertiesStyle);
          
          // Read the audio properties.
-         properties = (properties_style != ReadStyle.None) ?
-            ReadProperties (start, end, properties_style) : null;
+         properties = (propertiesStyle != ReadStyle.None) ?
+            ReadProperties (start, end, propertiesStyle) : null;
          
          Mode = AccessMode.Closed;
       }
       
-      public File (string file) : this (file, ReadStyle.Average)
-      {
-      }
+      protected File (File.IFileAbstraction abstraction) : this (abstraction, ReadStyle.Average)
+      {}
 #endregion
       
-      protected virtual void ReadStart (long start, ReadStyle style) {}
-      protected virtual void ReadEnd   (long end,   ReadStyle style) {}
-      protected abstract TagLib.Properties ReadProperties (long start, long end, ReadStyle style);
+      
+      protected virtual void ReadStart (long start, ReadStyle propertiesStyle) {}
+      protected virtual void ReadEnd   (long end,   ReadStyle propertiesStyle) {}
+      protected abstract TagLib.Properties ReadProperties (long start, long end, ReadStyle propertiesStyle);
       
       public override void Save ()
       {
@@ -68,6 +76,7 @@ namespace TagLib.NonContainer
          Mode = AccessMode.Write;
          tag.Write (out start, out end);
          Mode = AccessMode.Closed;
+         TagTypesOnDisk = TagTypes;
       }
       
       public override void RemoveTags (TagTypes types)

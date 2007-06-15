@@ -7,9 +7,9 @@ namespace TagLib.Mpeg4
       #endregion
       
       #region Constructors
-      public IsoChunkLargeOffsetBox (BoxHeader header, File file, Box handler) : base (header, file, handler)
+      public IsoChunkLargeOffsetBox (BoxHeader header, TagLib.File file, IsoHandlerBox handler) : base (header, file, handler)
       {
-         ByteVector box_data = LoadData (file);
+         ByteVector box_data = file.ReadBlock (DataSize);
          
          offsets = new ulong [(int) box_data.Mid (0, 4).ToUInt ()];
          
@@ -19,31 +19,36 @@ namespace TagLib.Mpeg4
       #endregion
       
       #region Public Methods
-      public void Overwrite (File file, long size_difference, long after)
+      public void Overwrite (File file, long sizeDifference, long after)
       {
+         if (file == null)
+            throw new System.ArgumentNullException ("file");
+         
          if (Header.Position < 0)
-            throw new System.Exception ("Cannot overwrite headers created from ByteVectors.");
+            throw new System.InvalidOperationException ("Cannot overwrite headers created from ByteVectors.");
          
-         file.Insert (Render (size_difference, after), Header.Position, Size);
+         file.Insert (Render (sizeDifference, after), Header.Position, Size);
       }
       
-      public ByteVector Render (long size_difference, long after)
+      public ByteVector Render (long sizeDifference, long after)
       {
-      	ByteVector output = ByteVector.FromUInt ((uint) offsets.Length);
          for (int i = 0; i < offsets.Length; i ++)
-         {
             if (offsets [i] >= (ulong) after)
-               offsets [i] = (ulong) ((long)offsets [i] + size_difference);
-            output.Add (ByteVector.FromULong (offsets [i]));
-         }
+               offsets [i] = (ulong) ((long)offsets [i] + sizeDifference);
          
-         return Render (output);
+         return Render ();
       }
       
-      public override ByteVector Render ()
-      {
-         return Render (0, 0);
+      public override ByteVector Data {
+         get
+         {
+         	ByteVector output = ByteVector.FromUInt ((uint) offsets.Length);
+            for (int i = 0; i < offsets.Length; i ++)
+               output.Add (ByteVector.FromULong (offsets [i]));
+            return output;
+         }
       }
+
       #endregion
       
       #region Public Properties

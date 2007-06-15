@@ -20,131 +20,43 @@
  *   USA                                                                   *
  ***************************************************************************/
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
+using System.Globalization;
 
 namespace TagLib.Ape
 {
-   public class Tag : TagLib.Tag
+   public class Tag : TagLib.Tag, IEnumerable<string>
    {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
-      private Footer    footer;
-      private Dictionary<string,Item> items;
+      #region Private Properties
+      private Footer _footer = new Footer ();
+      private Dictionary<string,Item> _items = new Dictionary<string,Item> ();
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // static properties
-      //////////////////////////////////////////////////////////////////////////
-      public static readonly ByteVector FileIdentifier = Footer.FileIdentifier;
-
-
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
+      
+      #region Public Static Properties
+      public static readonly ReadOnlyByteVector FileIdentifier = Footer.FileIdentifier;
+      #endregion
+      
+      
+      
+      #region Constructors
       public Tag () : base ()
-      {
-         footer = new Footer ();
-         items = new Dictionary<string,Item> ();
-      }
+      {}
       
-      public Tag (File file, long offset) : this ()
+      public Tag (File file, long position) : this ()
       {
-         Read (file, offset);
+         Read (file, position);
       }
+      #endregion
       
-      public ByteVector Render ()
-      {
-         ByteVector data = new ByteVector ();
-         uint item_count = 0;
+      
+      
+      #region Public Properties
+      public override TagTypes TagTypes {get {return TagTypes.Ape;}}
 
-         foreach (Item item in items.Values)
-         {
-            data.Add (item.Render ());
-            item_count ++;
-         }
-         
-         footer.ItemCount     = item_count;
-         footer.TagSize       = (uint) (data.Count + Footer.Size);
-         footer.HeaderPresent = true;
-
-         data.Insert (0, footer.RenderHeader ());
-         data.Add (footer.RenderFooter ());
-         return data;
-      }
-      
-      public void RemoveItem (string key)
-      {
-         items.Remove (key.ToUpper ());
-      }
-      
-      public Item GetItem (string key)
-      {
-         return items.ContainsKey (key.ToUpper ()) ? items [key.ToUpper ()] : null;
-      }
-      
-      public void AddNumberValue (string key, uint number, uint count, bool replace)
-      {
-         if (number == 0 && count == 0)
-            AddValue (key, null, replace);
-         else if (count != 0)
-            AddValue (key, number.ToString () + "/" + count.ToString (), replace);
-         else
-            AddValue (key, number.ToString (), replace);
-      }
-
-      public void AddValue (string key, string value, bool replace)
-      {
-         if (replace)
-            RemoveItem (key);
-         
-         if (value != null && value != String.Empty)
-         {
-            StringList l = new StringList ();
-            
-            if (GetItem (key) != null && !replace)
-               l.Add (GetItem (key).ToStringArray ());
-            
-            l.Add (value);
-                    
-            SetItem (key, new Item (key, l));
-         }
-      }
-      
-      public void AddValue (string key, string value)
-      {
-         AddValue (key, value, true);
-      }
-      
-      public void AddValues (string key, string [] values, bool replace)
-      {
-         if (replace)
-            RemoveItem (key);
-         
-         if (values != null)
-            foreach (string s in values)
-               AddValue (key, s, false);
-      }
-
-      public void AddValues (string key, string [] values)
-      {
-         AddValues (key, values, true);
-      }
-
-      public void SetItem (string key, Item item)
-      {
-         if (items.ContainsKey (key.ToUpper ()))
-            items [key.ToUpper ()] = item;
-         else
-            items.Add (key.ToUpper (), item);
-      }
-      
-      
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
       public override string Title
       {
          get
@@ -154,7 +66,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValue ("TITLE", value, true);
+            SetValue ("TITLE", value);
          }
       }
       
@@ -167,7 +79,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValues ("ARTIST", value, true);
+            SetValue ("ARTIST", value);
          }
       }
       
@@ -180,7 +92,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValues ("PERFORMER", value, true);
+            SetValue ("PERFORMER", value);
          }
       }
       
@@ -193,7 +105,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValues ("COMPOSER", value, true);
+            SetValue ("COMPOSER", value);
          }
       }
       
@@ -206,7 +118,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValue ("ALBUM", value, true);
+            SetValue ("ALBUM", value);
          }
       }
       
@@ -219,7 +131,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValue ("COMMENT", value, true);
+            SetValue ("COMMENT", value);
          }
       }
       
@@ -232,7 +144,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValues ("GENRE", value, true);
+            SetValue ("GENRE", value);
          }
       }
       public override uint Year
@@ -253,7 +165,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddNumberValue ("YEAR", value, 0, true);
+            SetValue ("YEAR", value, 0);
          }
       }
       
@@ -272,7 +184,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddNumberValue ("TRACK", value, TrackCount, true);
+            SetValue ("TRACK", value, TrackCount);
          }
       }
       
@@ -291,7 +203,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddNumberValue ("TRACK", Track, value, true);
+            SetValue ("TRACK", Track, value);
          }
       }
       
@@ -310,7 +222,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddNumberValue ("DISC", value, DiscCount, true);
+            SetValue ("DISC", value, DiscCount);
          }
       }
       
@@ -329,7 +241,7 @@ namespace TagLib.Ape
          }
          set
          {
-            AddNumberValue ("DISC", Disc, value, true);
+            SetValue ("DISC", Disc, value);
          }
       }
       
@@ -342,52 +254,232 @@ namespace TagLib.Ape
          }
          set
          {
-            AddValue ("LYRICS", value, true);
+            SetValue ("LYRICS", value);
          }
       }
       
-      public override bool IsEmpty {get {return items.Count == 0;}}
+      public override string Copyright
+      {
+         get
+         {
+            Item item = GetItem ("COPYRIGHT");
+            return item != null ? item.ToString () : null;
+         }
+         set
+         {
+            SetValue ("COPYRIGHT", value);
+         }
+      }
       
-      public Footer Footer {get {return footer;}}
+      public override string Conductor
+      {
+         get
+         {
+            Item item = GetItem ("CONDUCTOR");
+            return item != null ? item.ToString () : null;
+         }
+         set
+         {
+            SetValue ("CONDUCTOR", value);
+         }
+      }
+      
+      public override string Grouping
+      {
+         get
+         {
+            Item item = GetItem ("GROUPING");
+            return item != null ? item.ToString () : null;
+         }
+         set
+         {
+            SetValue ("GROUPING", value);
+         }
+      }
+      
+      public override uint BeatsPerMinute
+      {
+         get
+         {
+            Item item = GetItem ("TEMPO");
+            uint value;
+            
+            if ((item = GetItem ("TEMPO")) != null && uint.TryParse (item.ToString (), out value))
+               return value;
+            
+            return 0;
+         }
+         set
+         {
+            SetValue ("TEMPO", value, 0);
+         }
+      }
+      
+      public bool HeaderPresent
+      {
+         get {return (_footer.Flags & FooterFlags.HeaderPresent) != 0;}
+         set
+         {
+            if (value)
+               _footer.Flags |= FooterFlags.HeaderPresent;
+            else
+               _footer.Flags &= ~FooterFlags.HeaderPresent;
+         }
+      }
+      
+      public override bool IsEmpty {get {return _items.Count == 0;}}
+      #endregion
       
       
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected void Read (File file, long offset)
+      
+      #region Public Methods
+      public IEnumerator<string> GetEnumerator()
+      {
+         return _items.Keys.GetEnumerator();
+      }
+      
+      IEnumerator IEnumerable.GetEnumerator()
+      {
+         return _items.Keys.GetEnumerator();
+      }
+      
+      public void AddValue (string key, uint number, uint count)
+      {
+         if (number == 0 && count == 0)
+            return;
+         else if (count != 0)
+            AddValue (key, number.ToString (CultureInfo.InvariantCulture) + "/" + count.ToString (CultureInfo.InvariantCulture));
+         else
+            AddValue (key, number.ToString (CultureInfo.InvariantCulture));
+      }
+      
+      public void SetValue (string key, uint number, uint count)
+      {
+         RemoveItem (key);
+         AddValue (key, number, count);
+      }
+      
+      public void AddValue (string key, string value)
+      {
+         if (string.IsNullOrEmpty (value))
+            return;
+         
+         StringCollection l = new StringCollection ();
+         Item old_item = GetItem (key);
+         if (old_item != null)
+            l.Add (old_item.ToStringArray ());
+         
+         l.Add (value);
+         
+         SetItem (new Item (key, l));
+      }
+      
+      public void SetValue (string key, string value)
+      {
+         RemoveItem (key);
+         AddValue (key, value);
+      }
+      
+      public void AddValue (string key, string [] value)
+      {
+         if (value != null)
+            foreach (string s in value)
+               AddValue (key, s);
+      }
+
+      public void SetValue (string key, string [] value)
+      {
+         RemoveItem (key);
+         AddValue (key, value);
+      }
+      
+      public Item GetItem (string key)
+      {
+         key = key.ToUpper (CultureInfo.InvariantCulture);
+         return _items.ContainsKey (key) ? _items [key] : null;
+      }
+      
+      public void SetItem (Item item)
+      {
+         string key = item.Key.ToUpper (CultureInfo.InvariantCulture);
+         if (_items.ContainsKey (key))
+            _items [key] = item;
+         else
+            _items.Add (key, item);
+      }
+      
+      public void RemoveItem (string key)
+      {
+         _items.Remove (key.ToUpper (CultureInfo.InvariantCulture));
+      }
+      
+      public ByteVector Render ()
+      {
+         ByteVector data = new ByteVector ();
+         uint item_count = 0;
+
+         foreach (Item item in _items.Values)
+         {
+            data.Add (item.Render ());
+            item_count ++;
+         }
+         
+         _footer.ItemCount = item_count;
+         _footer.TagSize   = (uint) (data.Count + Footer.Size);
+         HeaderPresent    = true;
+
+         data.Insert (0, _footer.RenderHeader ());
+         data.Add (_footer.RenderFooter ());
+         return data;
+      }
+      
+      public override void Clear ()
+      {
+         _items.Clear ();
+      }
+      #endregion
+      
+      
+      
+      #region Protected Methods
+      protected void Read (File file, long position)
       {
          if (file == null)
             throw new ArgumentException ("File object is null.", "file");
          
          file.Mode = File.AccessMode.Read;
-         footer = new Footer (file, offset);
+         file.Seek (position);
+         _footer = new Footer (file.ReadBlock ((int)Footer.Size));
          
-         if(footer.TagSize == 0 || footer.TagSize > file.Length)
+         if(_footer.TagSize == 0 || _footer.TagSize > file.Length)
             throw new CorruptFileException ("Tag size out of bounds.");
       	
       	// If we've read a header, we don't have to seek to read the content.
       	// If we've read a footer, we need to move back to the start of the
       	// tag.
-      	if (!footer.IsHeader)
-            file.Seek (offset + Footer.Size - footer.TagSize);
+      	if ((_footer.Flags & FooterFlags.IsHeader) == 0)
+            file.Seek (position + Footer.Size - _footer.TagSize);
       	
-      	Parse (file.ReadBlock (footer.TagSize - Footer.Size));
+      	Parse (file.ReadBlock ((int)(_footer.TagSize - Footer.Size)));
       }
 
       protected void Parse (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          int pos = 0;
          
          // 11 bytes is the minimum size for an APE item
-         for (uint i = 0; i < footer.ItemCount && pos <= data.Count - 11; i++)
+         for (uint i = 0; i < _footer.ItemCount && pos <= data.Count - 11; i++)
          {
-            Item item = new Item ();
-            item.Parse (data.Mid (pos));
+            Item item = new Item (data, pos);
             
-            SetItem (item.Key.ToUpper (), item);
+            SetItem (item);
             
             pos += item.Size;
          }
       }
+      #endregion
    }
 }

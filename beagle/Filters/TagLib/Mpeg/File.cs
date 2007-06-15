@@ -27,17 +27,17 @@ namespace TagLib.Mpeg
 {
    public enum Marker
    {
-      Corrupt       = -1,
-      
+      Corrupt          = -1,
+      Zero             = 0,
       SystemSyncPacket = 0xBA,
       VideoSyncPacket  = 0xB3,
       
-      SystemPacket  = 0xBB,
-      PaddingPacket = 0xBE,
-      AudioPacket   = 0xC0,
-      VideoPacket   = 0xE0,
+      SystemPacket     = 0xBB,
+      PaddingPacket    = 0xBE,
+      AudioPacket      = 0xC0,
+      VideoPacket      = 0xE0,
       
-      EndOfStream   = 0xB9
+      EndOfStream      = 0xB9
    }
    
    [SupportedMimeType("taglib/mpg",  "mpg")]
@@ -51,17 +51,24 @@ namespace TagLib.Mpeg
       private Version version;
       private AudioHeader audio_header;
       private VideoHeader video_header;
-      private double? start_time;
+      private bool video_found = false;
+      private bool audio_found = false;
+      private double? start_time = null;
       private double end_time;
       
-      public File (string file, ReadStyle properties_style) : base (file, properties_style)
-      {
-         audio_header = null;
-         start_time = null;
-      }
-      
-      public File (string file) : this (file, ReadStyle.Average)
+      #region Constructors
+      public File (string path, ReadStyle propertiesStyle) : base (path, propertiesStyle)
       {}
+      
+      public File (string path) : base (path)
+      {}
+      
+      public File (File.IFileAbstraction abstraction, ReadStyle propertiesStyle) : base (abstraction, propertiesStyle)
+      {}
+      
+      public File (File.IFileAbstraction abstraction) : base (abstraction)
+      {}
+      #endregion
       
       public override TagLib.Tag GetTag (TagTypes type, bool create)
       {
@@ -129,22 +136,22 @@ namespace TagLib.Mpeg
          return GetMarker (position);
       }
       
-      protected override void ReadStart (long start, ReadStyle style)
+      protected override void ReadStart (long start, ReadStyle propertiesStyle)
       {
-         if (style == ReadStyle.None)
+         if (propertiesStyle == ReadStyle.None)
             return;
          
          FindMarker (ref start, Marker.SystemSyncPacket);
          ReadSystemFile (start);
       }
       
-      protected override void ReadEnd (long end, ReadStyle style)
+      protected override void ReadEnd (long end, ReadStyle propertiesStyle)
       {
          // Make sure we have ID3v1 and ID3v2 tags.
          GetTag (TagTypes.Id3v1, true);
          GetTag (TagTypes.Id3v2, true);
          
-         if (style == ReadStyle.None || start_time == null)
+         if (propertiesStyle == ReadStyle.None || start_time == null)
             return;
          
          RFindMarker (ref end, Marker.SystemSyncPacket);
@@ -152,7 +159,7 @@ namespace TagLib.Mpeg
          end_time = ReadTimestamp (end + 4);
       }
       
-      protected override TagLib.Properties ReadProperties (long start, long end, ReadStyle style)
+      protected override TagLib.Properties ReadProperties (long start, long end, ReadStyle propertiesStyle)
       {
          TimeSpan duration = TimeSpan.FromSeconds (start_time == null ? 0d : (end_time - (double) start_time));
          return new Properties (duration, video_header, audio_header);
@@ -162,7 +169,7 @@ namespace TagLib.Mpeg
       {
          int sanity_limit = 100;
          
-         for (int i = 0; i < sanity_limit && (start_time == null || audio_header == null || video_header == null); i ++)
+         for (int i = 0; i < sanity_limit && (start_time == null || !audio_found || !video_found); i ++)
          {
             Marker marker = FindMarker (ref position);
             
@@ -195,8 +202,8 @@ namespace TagLib.Mpeg
       {
          Seek (position + 4);
          int length = ReadBlock (2).ToUShort ();
-         if (audio_header == null)
-            audio_header = AudioHeader.Find (this, position + 15, length - 9);
+         if (!audio_found)
+            audio_found = AudioHeader.Find (out audio_header, this, position + 15, length - 9);
          position += length;
       }
       
@@ -206,10 +213,13 @@ namespace TagLib.Mpeg
          int length = ReadBlock (2).ToUShort ();
          
          long offset = position + 6;
-         while (video_header == null && offset < position + length)
+         while (!video_found && offset < position + length)
             if (FindMarker (ref offset) == Marker.VideoSyncPacket)
+            {
                video_header = new VideoHeader (this, offset + 4);
-         
+               video_found = true;
+            }
+            
          position += length;
       }
       
@@ -251,11 +261,11 @@ namespace TagLib.Mpeg
             data = ReadBlock (5);
             high = (double) ((data [0] >> 3) & 0x01);
             
-            low = (uint) ((((data [0] >> 1) & 0x03) << 30)
-                        |   (data [1] << 22)
-                        |  ((data [2] >> 1) << 15)
-                        |   (data [3] << 7)
-                        |   (data [4] << 1));
+            low = ((uint)((data [0] >> 1) & 0x03) << 30)
+                |  (uint) (data [1] << 22)
+                |  (uint)((data [2] >> 1) << 15)
+                |  (uint) (data [3] << 7)
+                |  (uint) (data [4] << 1);
          }
          else
          {
@@ -263,13 +273,13 @@ namespace TagLib.Mpeg
             
             high = (double) ((data [0] & 0x20) >> 5);
 
-            low = (uint) ((((data [0] & 0x18) >> 3) << 30)
-                        |  ((data [0] & 0x03) << 28)
-                        |   (data [1] << 20)
-                        |  ((data [2] & 0xF8) << 12)
-                        |  ((data [2] & 0x03) << 13)
-                        |   (data [3] << 5)
-                        |   (data [4] >> 3));
+            low = ((uint) ((data [0] & 0x18) >> 3) << 30)
+                |  (uint) ((data [0] & 0x03) << 28)
+                |  (uint)  (data [1] << 20)
+                |  (uint) ((data [2] & 0xF8) << 12)
+                |  (uint) ((data [2] & 0x03) << 13)
+                |  (uint)  (data [3] << 5)
+                |  (uint)  (data [4] >> 3);
          }
          
          return (((high * 0x10000) * 0x10000) + low) / 90000.0;

@@ -11,9 +11,12 @@ namespace TagLib.Mpeg4
       
 #region Constructors
       
-      public IsoSampleEntry (BoxHeader header, File file, Box handler) : base (header, file, handler)
+      public IsoSampleEntry (BoxHeader header, TagLib.File file, IsoHandlerBox handler) : base (header, handler)
       {
-         file.Seek (base.DataOffset + 6);
+         if (file == null)
+            throw new System.ArgumentNullException ("file");
+         
+         file.Seek (base.DataPosition + 6);
          data_reference_index   = file.ReadBlock (2).ToUShort ();
       }
       
@@ -23,7 +26,7 @@ namespace TagLib.Mpeg4
 #region Public Properties
       
       public             ushort DataReferenceIndex {get {return data_reference_index;}}
-      protected override long   DataOffset         {get {return base.DataOffset + 8;}}
+      protected override long   DataPosition       {get {return base.DataPosition + 8;}}
       
 #endregion
    }

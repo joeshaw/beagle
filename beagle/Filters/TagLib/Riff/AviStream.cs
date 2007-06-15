@@ -8,10 +8,9 @@ namespace TagLib.Riff
       private AviStreamHeader header;
 	   private ICodec codec;
 	   
-      public AviStream (AviStreamHeader header)
+      protected AviStream (AviStreamHeader header)
       {
          this.header = header;
-         codec = null;
       }
       
       public virtual void ParseItem (ByteVector id, ByteVector data, int start, int length)
@@ -22,6 +21,9 @@ namespace TagLib.Riff
       
       public static AviStream ParseStreamList (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          AviStream stream = null;
          int pos = 4;
          
@@ -48,8 +50,7 @@ namespace TagLib.Riff
          return stream;
       }
       
-      protected void SetCodec (ICodec codec) {this.codec = codec;}
-      public ICodec Codec {get {return codec;}}
+      public ICodec Codec {get {return codec;} protected set {this.codec = value;}}
 	}
    
    public class AviAudioStream : AviStream
@@ -61,7 +62,7 @@ namespace TagLib.Riff
       public override void ParseItem (ByteVector id, ByteVector data, int start, int length)
       {
          if (id == "strf")
-            SetCodec (new WaveFormatEx (data, start));
+            Codec = new WaveFormatEx (data, start);
       }
    }
    
@@ -74,7 +75,7 @@ namespace TagLib.Riff
       public override void ParseItem (ByteVector id, ByteVector data, int start, int length)
       {
          if (id == "strf")
-            SetCodec (new BitmapInfoHeader (data, start));
+            Codec = new BitmapInfoHeader (data, start);
       }
    }
    
@@ -101,6 +102,9 @@ namespace TagLib.Riff
       
       public AviStreamHeader (ByteVector data, int offset)
       {
+         if (data == null)
+            throw new System.ArgumentNullException ("data");
+         
          type                  = data.Mid (offset,      4);
          handler               = data.Mid (offset +  4, 4);
          flags                 = data.Mid (offset +  8, 4).ToUInt (false);

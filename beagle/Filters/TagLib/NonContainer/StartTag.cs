@@ -50,7 +50,7 @@ namespace TagLib.NonContainer
          get
          {
             long size = 0;
-            while (ReadTagInfo (size, out size) != TagTypes.NoTags)
+            while (ReadTagInfo (size, out size) != TagTypes.None)
                ;
             
             return size;
@@ -106,7 +106,7 @@ namespace TagLib.NonContainer
          }
          catch (CorruptFileException) {}
          
-         return TagTypes.NoTags;
+         return TagTypes.None;
       }
       
       public void RemoveTags (TagTypes types)
@@ -130,8 +130,10 @@ namespace TagLib.NonContainer
          if (type == TagTypes.Id3v2)
             tag = new TagLib.Id3v2.Tag ();
          else if (type == TagTypes.Ape)
+         {
             tag = new TagLib.Ape.Tag ();
-         
+            (tag as Ape.Tag).HeaderPresent = true;
+         }
          if (tag != null)
          {
             if (copy != null)

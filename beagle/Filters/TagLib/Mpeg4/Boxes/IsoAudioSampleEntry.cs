@@ -1,40 +1,46 @@
 using System;
+using System.Collections.Generic;
 
 namespace TagLib.Mpeg4
 {
    public class IsoAudioSampleEntry : IsoSampleEntry, IAudioCodec
    {
-#region Private Properties
+      #region Private Properties
       private ushort channel_count;
       private ushort sample_size;
       private uint   sample_rate;
-      private BoxList children;
-#endregion
+      private IEnumerable<Box> children;
+      #endregion
       
       
-#region Constructors
-      public IsoAudioSampleEntry (BoxHeader header, File file, Box handler) : base (header, file, handler)
+      
+      #region Constructors
+      public IsoAudioSampleEntry (BoxHeader header, TagLib.File file, IsoHandlerBox handler) : base (header, file, handler)
       {
-         file.Seek (base.DataOffset + 8);
+         file.Seek (base.DataPosition + 8);
          channel_count = file.ReadBlock (2).ToUShort ();
          sample_size   = file.ReadBlock (2).ToUShort ();
-         file.Seek (base.DataOffset + 16);
+         file.Seek (base.DataPosition + 16);
          sample_rate   = file.ReadBlock (4).ToUInt  ();
          children = LoadChildren (file);
       }
-#endregion
+      #endregion
       
-#region Public Properties
-      protected override long    DataOffset   {get {return base.DataOffset + 20;}}
-      public    override BoxList Children     {get {return children;}}
-#endregion
       
-#region IAudioCodec Properties
+      
+      #region Public Properties
+      protected override long    DataPosition {get {return base.DataPosition + 20;}}
+      public    override IEnumerable<Box> Children     {get {return children;}}
+      #endregion
+      
+      
+      
+      #region IAudioCodec Properties
       public int AudioBitrate
       {
          get
          {
-            AppleElementaryStreamDescriptor esds = Children.GetRecursively ("esds") as AppleElementaryStreamDescriptor;
+            AppleElementaryStreamDescriptor esds = GetChildRecursively ("esds") as AppleElementaryStreamDescriptor;
             
             // If we don't have an stream descriptor, we don't know what's what.
             if (esds == null)
@@ -48,9 +54,9 @@ namespace TagLib.Mpeg4
       public int AudioChannels   {get {return channel_count;}}
       public int AudioSampleRate {get {return (int)(sample_rate >> 16);}}
       public int AudioSampleSize {get {return sample_size;}}
-      public string Description {get {return "MPEG-4 Video (" + BoxType.ToString () + ")";}}
+      public string Description {get {return "MPEG-4 Audio (" + BoxType.ToString () + ")";}}
       public MediaTypes MediaTypes {get {return MediaTypes.Audio;}}
       public TimeSpan Duration {get {return TimeSpan.Zero;}}
-#endregion
+      #endregion
    }
 }

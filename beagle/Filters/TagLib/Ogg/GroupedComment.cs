@@ -41,34 +41,46 @@ namespace TagLib.Ogg
          tags = new List<XiphComment> ();
       }
       
-      public XiphComment [] Comments
+      public IEnumerable<XiphComment> Comments
       {
          get
          {
-            return tags.ToArray ();
+            return tags;
          }
       }
       
-      public XiphComment GetComment (uint stream_serial_number)
+      public XiphComment GetComment (uint streamSerialNumber)
       {
-         return comment_hash [stream_serial_number];
+         return comment_hash [streamSerialNumber];
       }
       
-      public void AddComment (uint stream_serial_number, XiphComment comment)
+      public void AddComment (uint streamSerialNumber, XiphComment comment)
       {
-         comment_hash.Add (stream_serial_number, comment);
+         comment_hash.Add (streamSerialNumber, comment);
          tags.Add (comment);
       }
       
-      public void AddComment (uint stream_serial_number, ByteVector data)
+      public void AddComment (uint streamSerialNumber, ByteVector data)
       {
-         AddComment (stream_serial_number, new XiphComment (data));
+         AddComment (streamSerialNumber, new XiphComment (data));
       }
       
-      public void Clear ()
+      public override void Clear ()
       {
          foreach (XiphComment tag in tags)
             tag.Clear ();
+      }
+      
+      public override TagTypes TagTypes
+      {
+         get
+         {
+            TagTypes types = TagTypes.None;
+            foreach (XiphComment tag in tags)
+               if (tag != null)
+                  types |= tag.TagTypes;
+            return types;
+         }
       }
       
       public override string Title
@@ -279,6 +291,70 @@ namespace TagLib.Ogg
          }
       }
 
+      public override string Grouping
+      {
+         get
+         {
+            string output = null;
+            foreach (XiphComment tag in tags)
+               if (tag != null && output == null)
+                  output = tag.Grouping;
+            return output;
+         }
+         set
+         {
+            tags [0].Grouping = value;
+         }
+      }
+      
+      public override uint BeatsPerMinute
+      {
+         get
+         {
+            uint output = 0;
+            foreach (XiphComment tag in tags)
+               if (tag != null && output == 0)
+                  output = tag.BeatsPerMinute;
+            return output;
+         }
+         set
+         {
+            tags [0].BeatsPerMinute = value;
+         }
+      }
+      
+      public override string Conductor
+      {
+         get
+         {
+            string output = null;
+            foreach (XiphComment tag in tags)
+               if (tag != null && output == null)
+                  output = tag.Conductor;
+            return output;
+         }
+         set
+         {
+            tags [0].Conductor = value;
+         }
+      }
+      
+      public override string Copyright
+      {
+         get
+         {
+            string output = null;
+            foreach (XiphComment tag in tags)
+               if (tag != null && output == null)
+                  output = tag.Copyright;
+            return output;
+         }
+         set
+         {
+            tags [0].Copyright = value;
+         }
+      }
+      
       public override IPicture [] Pictures {
          get {
             foreach(XiphComment tag in tags) {
@@ -293,6 +369,18 @@ namespace TagLib.Ogg
          set {
             tags [0].Pictures = value;
          }
-      } 
+      }
+      
+      public override bool IsEmpty
+      {
+         get
+         {
+            foreach (XiphComment tag in tags)
+               if (!tag.IsEmpty)
+                  return false;
+            
+            return true;
+         }
+      }
    }
 }

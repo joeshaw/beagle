@@ -25,91 +25,109 @@ namespace TagLib.Flac
 {
    public class Picture : IPicture
    {
-      private PictureType type;
-      private string mime_type;
-      private string description;
-      private int width;
-      private int height;
-      private int color_depth;
-      private int indexed_colors;
-      private ByteVector data;
+      private PictureType _type;
+      private string      _mimetype;
+      private string      _description;
+      private int         _width = 0;
+      private int         _height = 0;
+      private int         _color_depth = 0;
+      private int         _indexed_colors = 0;
+      private ByteVector  _data;
       
       public Picture (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          if (data.Count < 32)
-            throw new ArgumentException ("Data must be at least 32 bytes long", "data");
+            throw new CorruptFileException ("Data must be at least 32 bytes long");
          
          int pos = 0;
-         type = (PictureType) data.Mid (pos, 4).ToUInt ();
+         _type = (PictureType) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         int mime_type_length = (int) data.Mid (pos, 4).ToUInt ();
+         int mimetype_length = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         mime_type = data.Mid (pos, mime_type_length).ToString (StringType.Latin1);
-         pos += mime_type_length;
+         _mimetype = data.Mid (pos, mimetype_length).ToString (StringType.Latin1);
+         pos += mimetype_length;
          
          int description_length = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         description = data.Mid (pos, description_length).ToString (StringType.UTF8);
+         _description = data.Mid (pos, description_length).ToString (StringType.UTF8);
          pos += description_length;
          
-         width = (int) data.Mid (pos, 4).ToUInt ();
+         _width = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         height = (int) data.Mid (pos, 4).ToUInt ();
+         _height = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         color_depth = (int) data.Mid (pos, 4).ToUInt ();
+         _color_depth = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         indexed_colors = (int) data.Mid (pos, 4).ToUInt ();
+         _indexed_colors = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
          int data_length = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         this.data = data.Mid (pos, data_length);
+         _data = data.Mid (pos, data_length);
       }
       
-      public static ByteVector Render (IPicture picture)
+      public Picture (IPicture picture)
+      {
+         if (picture == null)
+            throw new ArgumentNullException ("picture");
+         
+         _type        = picture.Type;
+         _mimetype    = picture.MimeType;
+         _description = picture.Description;
+         _data        = picture.Data;
+         
+         TagLib.Flac.Picture flac_picture = picture as TagLib.Flac.Picture;
+         if (flac_picture != null)
+         {
+            _width          = flac_picture.Width;
+            _height         = flac_picture.Height;
+            _color_depth    = flac_picture.ColorDepth;
+            _indexed_colors = flac_picture.IndexedColors;
+         }
+      }
+      
+      public ByteVector Render ()
       {
          ByteVector data = new ByteVector ();
          
-         data.Add (ByteVector.FromUInt ((uint) picture.Type));
+         data.Add (ByteVector.FromUInt ((uint) Type));
          
-         ByteVector mime_data = ByteVector.FromString (picture.MimeType, StringType.Latin1);
+         ByteVector mime_data = ByteVector.FromString (MimeType, StringType.Latin1);
          data.Add (ByteVector.FromUInt ((uint) mime_data.Count));
          data.Add (mime_data);
          
-         ByteVector decription_data = ByteVector.FromString (picture.Description, StringType.UTF8);
+         ByteVector decription_data = ByteVector.FromString (Description, StringType.UTF8);
          data.Add (ByteVector.FromUInt ((uint) decription_data.Count));
          data.Add (decription_data);
          
-         if (picture is Picture)
-         {
-            data.Add (ByteVector.FromUInt ((uint) (picture as Picture).Width));
-            data.Add (ByteVector.FromUInt ((uint) (picture as Picture).Height));
-            data.Add (ByteVector.FromUInt ((uint) (picture as Picture).ColorDepth));
-            data.Add (ByteVector.FromUInt ((uint) (picture as Picture).IndexedColors));
-         }
-         else
-            data.Add (new ByteVector (16));
+         data.Add (ByteVector.FromUInt ((uint) Width));
+         data.Add (ByteVector.FromUInt ((uint) Height));
+         data.Add (ByteVector.FromUInt ((uint) ColorDepth));
+         data.Add (ByteVector.FromUInt ((uint) IndexedColors));
          
-         data.Add (ByteVector.FromUInt ((uint) picture.Data.Count));
-         data.Add (picture.Data);
+         data.Add (ByteVector.FromUInt ((uint) Data.Count));
+         data.Add (Data);
          
          return data;
       }
       
-      public PictureType Type          {get {return type;}           set {type = value;}}
-      public string      MimeType      {get {return mime_type;}      set {mime_type = value;}}
-      public string      Description   {get {return description;}    set {description = value;}}
-      public int         Width         {get {return width;}          set {width = value;}}
-      public int         Height        {get {return height;}         set {height = value;}}
-      public int         ColorDepth    {get {return color_depth;}    set {color_depth = value;}}
-      public int         IndexedColors {get {return indexed_colors;} set {indexed_colors = value;}}
-      public ByteVector  Data          {get {return data;}           set {data = value;}}
+      public PictureType Type          {get {return _type;}           set {_type = value;}}
+      public string      MimeType      {get {return _mimetype;}       set {_mimetype = value;}}
+      public string      Description   {get {return _description;}    set {_description = value;}}
+      public int         Width         {get {return _width;}          set {_width = value;}}
+      public int         Height        {get {return _height;}         set {_height = value;}}
+      public int         ColorDepth    {get {return _color_depth;}    set {_color_depth = value;}}
+      public int         IndexedColors {get {return _indexed_colors;} set {_indexed_colors = value;}}
+      public ByteVector  Data          {get {return _data;}           set {_data = value;}}
    }
 }

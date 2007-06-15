@@ -90,28 +90,51 @@ namespace TagLib.Asf
          children.Add (obj);
       }
       
+      public bool HasContentDescriptors
+      {
+         get
+         {
+            foreach (Asf.Object child in children)
+               if (child.Guid == TagLib.Asf.Guid.AsfContentDescriptionObject ||
+                   child.Guid == TagLib.Asf.Guid.AsfExtendedContentDescriptionObject)
+                  return true;
+            
+            return false;
+         }
+      }
+      
+      public void RemoveContentDescriptors ()
+      {
+         for (int i = children.Count - 1; i >= 0; i --)
+            if (children [i].Guid == TagLib.Asf.Guid.AsfContentDescriptionObject ||
+                children [i].Guid == TagLib.Asf.Guid.AsfExtendedContentDescriptionObject)
+               children.RemoveAt (i);
+      }
+      
+      
       //////////////////////////////////////////////////////////////////////////
       // public properties
       //////////////////////////////////////////////////////////////////////////
-      public byte [] Reserved {get {return reserved.Data;}}
+      public IEnumerable<Object> Children {get {return children;}}
       
-      public Object [] Children {get {return children.ToArray ();}}
-      
-      public Properties GetProperties ()
+      public Properties Properties
       {
-         TimeSpan duration = TimeSpan.Zero;
-         List<ICodec> codecs = new List<ICodec> ();
-         
-         foreach (Object obj in Children)
+         get
          {
-            if (obj is FilePropertiesObject)
-               duration = (obj as FilePropertiesObject).PlayDuration;
+            TimeSpan duration = TimeSpan.Zero;
+            List<ICodec> codecs = new List<ICodec> ();
             
-            if (obj is StreamPropertiesObject)
-               codecs.Add ((obj as StreamPropertiesObject).GetCodec ());
+            foreach (Object obj in Children)
+            {
+               if (obj is FilePropertiesObject)
+                  duration = (obj as FilePropertiesObject).PlayDuration;
+               
+               if (obj is StreamPropertiesObject)
+                  codecs.Add ((obj as StreamPropertiesObject).Codec);
+            }
+            
+            return new Properties (duration, codecs);
          }
-         
-         return new Properties (duration, codecs);
       }
    }
 }

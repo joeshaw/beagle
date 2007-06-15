@@ -3,23 +3,23 @@ using System.Collections.Generic;
 
 namespace TagLib.Mpeg4
 {
-   public class Box : IComparable<Box>
+   public class Box
    {
-      #region Private   Properties
-      private BoxHeader header;
-      private Box handler;
-      private long data_offset;
+      #region Private       Properties
+      private BoxHeader     header;
+      private IsoHandlerBox handler;
+      private long          data_position;
       #endregion
       
       #region Constructors
-      protected Box (BoxHeader header, File file, Box handler)
+      protected Box (BoxHeader header, IsoHandlerBox handler)
       {
-         this.header      = header;
-         this.data_offset = header.Position + (long)header.DataOffset;
-         this.handler     = handler;
+         this.header        = header;
+         this.data_position = header.Position + header.DataOffset;
+         this.handler       = handler;
       }
       
-      protected Box (BoxHeader header) : this (header, null, null)
+      protected Box (BoxHeader header) : this (header, null)
       {
       }
       
@@ -29,61 +29,64 @@ namespace TagLib.Mpeg4
       #endregion
       
       // Render the complete box including children.
-      public virtual ByteVector Render ()
+      public ByteVector Render ()
       {
          return Render (new ByteVector ());
       }
       
       public    virtual ByteVector BoxType      {get {return header.BoxType;}}
       public    virtual int        Size         {get {return (int)header.TotalBoxSize;}}
-      protected         int        DataSize     {get {return (int)(header.DataSize + data_offset - DataOffset);}}
-      protected virtual long      DataOffset   {get {return data_offset;}}
+      protected         int        DataSize     {get {return (int)(header.DataSize + data_position - DataPosition);}}
+      protected virtual long       DataPosition {get {return data_position;}}
       protected         BoxHeader  Header       {get {return header;}}
       
       public virtual ByteVector Data  {get {return null;} set {}}
-      public virtual BoxList Children {get {return null;}}
+      public virtual IEnumerable<Box> Children {get {return null;}}
       
-      protected BoxList LoadChildren (File file)
+      protected IEnumerable<Box> LoadChildren (TagLib.File file)
       {
-         BoxList children = new BoxList ();
+         if (file == null)
+            throw new ArgumentNullException ("file");
          
-         long position = DataOffset;
+         List<Box> children = new List<Box> ();
+         
+         long position = DataPosition;
          long end = position + DataSize;
          
+         header.Box = this;
          while (position < end)
          {
-            Box child = BoxFactory.CreateBox (file, position, header, handler);
+            Box child = BoxFactory.CreateBox (file, position, header, handler, children.Count);
             children.Add (child);
             position += child.Size;
          }
+         header.Box = null;
          
          return children;
       }
       
-      protected ByteVector LoadData (File file)
+      protected ByteVector LoadData (TagLib.File file)
       {
-         file.Seek (DataOffset);
+         if (file == null)
+            throw new ArgumentNullException ("file");
+         
+         file.Seek (DataPosition);
          return file.ReadBlock (DataSize);
       }
       
       // The handler used for this box.
       public IsoHandlerBox Handler
       {
-         get {return handler as IsoHandlerBox;}
-      }
-      
-      public int CompareTo (Box box)
-      {
-         return (int)(DataSize - box.DataSize);
+         get {return handler;}
       }
       
       // Render a box with the "data" before its content.
-      protected virtual ByteVector Render (ByteVector data)
+      protected virtual ByteVector Render (ByteVector topData)
       {
          bool free_found = false;
          ByteVector output = new ByteVector ();
          
-         if (Children != null && Children.Count != 0)
+         if (Children != null)
             foreach (Box box in Children)
                if (box.GetType () == typeof (IsoFreeSpaceBox))
                   free_found = true;
@@ -93,7 +96,7 @@ namespace TagLib.Mpeg4
             output.Add (Data);
          
          // If there was a free, don't take it away, and let meta be a special case.
-         if (free_found || BoxType == BoxTypes.Meta)
+         if (free_found || BoxType == Mpeg4.BoxType.Meta)
          {
             long size_difference =  header.DataSize - output.Count;
             
@@ -107,17 +110,17 @@ namespace TagLib.Mpeg4
          }
          
          // Adjust the header's data size to match the content.
-         header.DataSize = data.Count + output.Count;
+         header.DataSize = topData.Count + output.Count;
          
          // Render the full box.
-         output.Insert (0, data);
+         output.Insert (0, topData);
          output.Insert (0, header.Render ());
          return output;
       }
       
-      internal void DumpTree (string start)
+      /*internal void DumpTree (string start)
       {
-         if (BoxType == BoxTypes.Data)
+         if (BoxType == BoxType.Data)
             System.Console.WriteLine (start + BoxType.ToString () + " " + (this as AppleDataBox).Text);
          else
             System.Console.WriteLine (start + BoxType.ToString ());
@@ -125,6 +128,105 @@ namespace TagLib.Mpeg4
          if (Children != null)
             foreach (Box child in Children)
                child.DumpTree (start + "   ");
+      }*/
+      
+      public Box GetChild (ByteVector type)
+      {
+         if (Children != null)
+            foreach (Box box in Children)
+               if (box.BoxType == type)
+                  return box;
+         
+         return null;
+      }
+      
+/*      public Box GetChild (System.Type type)
+      {
+         if (Children != null)
+            foreach (Box box in Children)
+               if (box.GetType () == type)
+                  return box;
+         
+         return null;
+      }*/
+      
+      public Box GetChildRecursively (ByteVector type)
+      {
+         if (Children == null)
+            return null;
+         
+         foreach (Box box in Children)
+            if (box.BoxType == type)
+               return box;
+         
+         foreach (Box box in Children)
+         {
+            Box child_box = box.GetChildRecursively (type);
+            if (child_box != null)
+               return child_box;
+         }
+         
+         return null;
+      }
+      
+/*      public Box GetChildRecursively (System.Type type)
+      {
+         if (Children == null)
+            return null;
+         
+         foreach (Box box in Children)
+            if (box.GetType () == type)
+               return box;
+         
+         foreach (Box box in Children)
+         {
+            Box child_box = box.GetChildRecursively (type);
+            if (child_box != null)
+               return child_box;
+         }
+         
+         return null;
+      }*/
+      
+      public void RemoveChild (ByteVector type)
+      {
+         if (Children != null && Children is ICollection<Box>)
+            foreach (Box b in Children)
+               if (b.BoxType == type)
+                  (Children as ICollection<Box>).Remove (b);
+      }
+      
+/*      public void RemoveChild (System.Type type)
+      {
+         if (Children != null && Children is ICollection<Box>)
+            foreach (Box b in Children)
+               if (b.GetType () == type)
+                  (Children as ICollection<Box>).Remove (b);
+      }*/
+      
+      public void RemoveChild (Box box)
+      {
+         if (Children != null && Children is ICollection<Box>)
+            (Children as ICollection<Box>).Remove (box);
+      }
+      
+      public void AddChild (Box box)
+      {
+         if (Children != null && Children is ICollection<Box>)
+            (Children as ICollection<Box>).Add (box);
+      }
+      
+      public void ClearChildren ()
+      {
+         if (Children != null && Children is ICollection<Box>)
+            (Children as ICollection<Box>).Clear ();
+      }
+      
+      public bool HasChildren {
+         get {
+            return Children != null && Children is ICollection<Box>
+               && (Children as ICollection<Box>).Count != 0;
+         }
       }
    }
 }

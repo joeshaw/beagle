@@ -3,6 +3,7 @@
                          : (C) 2006 Novell, Inc.
     email                : brian.nickel@gmail.com
                          : Aaron Bockover <abockover@novell.com>
+    based on             : tbytevector.cpp from TagLib
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,62 +22,46 @@
  *   USA                                                                   *
  ***************************************************************************/
 
-using System;
-using System.Runtime.InteropServices;
-
 namespace TagLib
 {
-    [ComVisible(false)]
-    public class StringCollection : ListBase<string>
-    {
-        public StringCollection () 
+   public sealed class ReadOnlyByteVector : ByteVector
+   {
+      #region Constructors
+      public ReadOnlyByteVector() : base () {}
+      public ReadOnlyByteVector(int size, byte value) : base (size, value) {}
+      public ReadOnlyByteVector(int size) : this(size, 0) {}
+      public ReadOnlyByteVector(ByteVector vector) : base (vector) {}
+      public ReadOnlyByteVector (byte [] data, int length) : base (data, length) {}
+      public ReadOnlyByteVector (params byte [] data) : base (data) {}
+      #endregion
+      
+      
+        #region Operators
+        public static implicit operator ReadOnlyByteVector(byte value)
         {
+            return new ReadOnlyByteVector(value);
         }
 
-        public StringCollection(StringCollection values)
+        public static implicit operator ReadOnlyByteVector(byte [] value)
         {
-            Add (values);
+            return new ReadOnlyByteVector(value);
+        }
+
+        public static implicit operator ReadOnlyByteVector(string value)
+        {
+            return new ReadOnlyByteVector (ByteVector.FromString(value));
+        }
+        #endregion
+
+
+        #region IList<T>
+        public override bool IsReadOnly {
+            get { return true; }
         }
         
-        public StringCollection(params string [] values)
-        {
-            Add (values);
+        public override bool IsFixedSize {
+            get { return true; }
         }
-
-        public StringCollection(ByteVectorCollection vectorList, StringType type)
-        {
-            foreach(ByteVector vector in vectorList) {
-                Add(vector.ToString(type));
-            }
-        }
-
-        public StringCollection(ByteVectorCollection vectorList) : this(vectorList, StringType.UTF8) 
-        {
-        }
-        
-        public static StringCollection Split (string value, string pattern)
-        {
-           if (value == null)
-              throw new ArgumentNullException ("value");
-           
-           if (pattern == null)
-              throw new ArgumentNullException ("pattern");
-           
-           StringCollection list = new StringCollection ();
-
-           int previous_position = 0;
-           int position = value.IndexOf (pattern, 0);
-           int pattern_length = pattern.Length;
-            
-           while (position != -1) {
-              list.Add (value.Substring(previous_position, position - previous_position));
-              previous_position = position + pattern_length;
-              position = value.IndexOf (pattern, previous_position);
-           }
-
-           list.Add (value.Substring (previous_position));
-            
-           return list;
-        }
+        #endregion
     }
 }

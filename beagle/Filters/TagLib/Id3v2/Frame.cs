@@ -25,56 +25,18 @@ using System;
 
 namespace TagLib.Id3v2
 {
-   public class Frame
+   public abstract class Frame
    {
-      //////////////////////////////////////////////////////////////////////////
-      // private properties
-      //////////////////////////////////////////////////////////////////////////
+      #region Private Properties
       private FrameHeader header;
+      private byte group_id;
+      private byte encryption_id;
+      #endregion
       
-      //////////////////////////////////////////////////////////////////////////
-      // public methods
-      //////////////////////////////////////////////////////////////////////////
-      public void SetData (ByteVector data, int offset, uint version)
-      {
-         Parse (data, offset, version);
-      }
       
-      public virtual void SetText (string text) {}
       
-      public ByteVector Render (uint version)
-      {
-         ByteVector field_data = RenderFields (version);
-         
-         // If we don't have any content, don't render anything.
-         if (field_data.Count == 0)
-            return new ByteVector ();
-         
-         header.FrameSize = (uint) field_data.Count;
-         ByteVector header_data = header.Render (version);
-         header_data.Add (field_data);
-
-         return header_data;
-      }
-      
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
-      public ByteVector FrameId {get {return (header != null) ? header.FrameId : null;}}
-      public uint       Size    {get {return (header != null) ? header.FrameSize : 0;}}
-      
-      //////////////////////////////////////////////////////////////////////////
-      // public static methods
-      //////////////////////////////////////////////////////////////////////////
-      public static ByteVector TextDelimiter (StringType t)
-      {
-         return new ByteVector ((t == StringType.UTF16 || t == StringType.UTF16BE) ? 2 : 1, (byte) 0);
-      }
-
-      //////////////////////////////////////////////////////////////////////////
-      // protected methods
-      //////////////////////////////////////////////////////////////////////////
-      protected Frame (ByteVector data, uint version)
+      #region Constructors
+      protected Frame (ByteVector data, byte version)
       {
          header = new FrameHeader (data, version);
       }
@@ -83,48 +45,176 @@ namespace TagLib.Id3v2
       {
          this.header = header;
       }
+      #endregion
       
-      protected internal FrameHeader Header
+      
+      
+      #region Public Properties
+      public ReadOnlyByteVector FrameId {get {return header.FrameId;}}
+      public uint       Size    {get {return header.FrameSize;}}
+      public FrameFlags Flags
       {
-         get {return header;}
-         set {header = value;}
+         get {return header.Flags;}
+         set {header.Flags = value;}
       }
       
-      protected void Parse (ByteVector data, int offset, uint version)
+      public short GroupId
       {
-         if (header != null)
-            header.SetData (data, version);
-         else
-            header = new FrameHeader (data, version);
+         get {return (Flags & FrameFlags.GroupingIdentity) != 0 ? group_id : (short) -1;}
+         set
+         {
+            if (value >= 0x00 && value <= 0xFF)
+            {
+               group_id = (byte) value;
+               Flags |= FrameFlags.GroupingIdentity;
+            }
+            else
+               Flags &= ~FrameFlags.GroupingIdentity;
+         }
+      }
+      
+      public short EncryptionId
+      {
+         get {return (Flags & FrameFlags.Encryption) != 0 ? encryption_id : (short) -1;}
+         set
+         {
+            if (value >= 0x00 && value <= 0xFF)
+            {
+               encryption_id = (byte) value;
+               Flags |= FrameFlags.Encryption;
+            }
+            else
+               Flags &= ~FrameFlags.Encryption;
+         }
+      }
+      #endregion
+      
+      
+      
+      #region Public Methods
+      public virtual ByteVector Render (byte version)
+      {
+         if (version < 4)
+            Flags &= ~(FrameFlags.DataLengthIndicator | FrameFlags.Unsychronisation);
          
-         ParseFields (FieldData (data, offset, version), version);
+         if (version < 3)
+            Flags &= ~(FrameFlags.Compression |
+                                   FrameFlags.Encryption |
+                                   FrameFlags.FileAlterPreservation |
+                                   FrameFlags.GroupingIdentity |
+                                   FrameFlags.ReadOnly |
+                                   FrameFlags.TagAlterPreservation);
+         
+         ByteVector field_data = RenderFields (version);
+         
+         // If we don't have any content, don't render anything. This will cause
+         // the frame to not be rendered.
+         if (field_data.Count == 0)
+            return new ByteVector ();
+         
+         ByteVector front_data = new ByteVector ();
+         
+         if ((Flags & (FrameFlags.Compression | FrameFlags.DataLengthIndicator)) != 0)
+            front_data.Add (ByteVector.FromUInt ((uint) field_data.Count));
+         
+         if ((Flags & FrameFlags.GroupingIdentity) != 0)
+            front_data.Add (group_id);
+         
+         if ((Flags & FrameFlags.Encryption) != 0)
+            front_data.Add (encryption_id);
+         
+         // FIXME: Implement compression.
+         if ((Flags & FrameFlags.Compression) != 0)
+            throw new NotImplementedException ("Compression not yet supported");
+         
+         // FIXME: Implement encryption.
+         if ((Flags & FrameFlags.Encryption) != 0)
+            throw new NotImplementedException ("Encryption not yet supported");
+         
+         if ((Flags & FrameFlags.Unsychronisation) != 0)
+            SynchData.UnsynchByteVector (field_data);
+         
+         if (front_data.Count > 0)
+            field_data.Insert (0, front_data);
+         
+         header.FrameSize = (uint) field_data.Count;
+         ByteVector header_data = header.Render (version);
+         header_data.Add (field_data);
+         
+         return header_data;
       }
+      #endregion
       
-      protected StringType CorrectEncoding (StringType type, uint version)
+      
+      
+      #region Public Static Methods
+      public static ByteVector TextDelimiter (StringType type)
+      {
+         return new ByteVector ((type == StringType.UTF16 || type == StringType.UTF16BE) ? 2 : 1, (byte) 0);
+      }
+      #endregion
+      
+      
+      
+      #region Protected Methods
+      protected static StringType CorrectEncoding (StringType type, byte version)
       {
          if (Tag.ForceDefaultEncoding)
             type = Tag.DefaultEncoding;
          return (version < 4 && type == StringType.UTF8) ? StringType.UTF16 : type;
       }
       
-      protected virtual void ParseFields(ByteVector data, uint version) {}
-      protected virtual ByteVector RenderFields (uint version) {return new ByteVector ();}
-      protected ByteVector FieldData (ByteVector frame_data, int offset, uint version)
+      protected void SetData (ByteVector data, int offset, byte version, bool readHeader)
       {
-         uint header_size = FrameHeader.Size (version);
-
-         uint frame_data_offset = (uint) (header_size + offset);
-         uint frame_data_length = Size;
-
-         if (header.Compression || header.DataLengthIndicator)
+         if (readHeader)
+            header = new FrameHeader (data, version);
+         ParseFields (FieldData (data, offset, version), version);
+      }
+      
+      protected abstract void ParseFields(ByteVector data, byte version);
+      protected abstract ByteVector RenderFields (byte version);
+      
+      protected ByteVector FieldData (ByteVector frameData, int offset, byte version)
+      {
+         if (frameData == null)
+            throw new ArgumentNullException ("frameData");
+         
+         int data_offset              = offset + (int) FrameHeader.Size (version);
+         int data_length              = (int) Size;
+         /*int uncompressed_data_length;*/
+         
+         if ((Flags & (FrameFlags.Compression | FrameFlags.DataLengthIndicator)) != 0)
          {
-            frame_data_length = frame_data.Mid ((int) header_size, 4).ToUInt ();
-            frame_data_length += 4;
+            /*uncompressed_data_length = (int) frame_data.Mid (data_offset, 4).ToUInt () + 4;*/
+            data_offset += 4;
+            data_offset -= 4;
          }
          
-         // FIXME: Impliment compression and encrpytion.
+         if ((Flags & FrameFlags.GroupingIdentity) != 0)
+         {
+            group_id = frameData [data_offset++];
+            data_length--;
+         }
+         
+         if ((Flags & FrameFlags.Encryption) != 0)
+         {
+            encryption_id = frameData [data_offset++];
+            data_length--;
+         }
+         
+         ByteVector data = frameData.Mid (data_offset, data_length);
+         
+         if ((Flags & FrameFlags.Unsychronisation) != 0)
+            SynchData.ResynchByteVector (data);
+         
+         // FIXME: Implement encryption.
+         if ((Flags & FrameFlags.Encryption) != 0)
+            throw new NotImplementedException ();
+         
+         // FIXME: Implement compression.
+         if ((Flags & FrameFlags.Compression) != 0)
+            throw new NotImplementedException ();
          /*
-         #if HAVE_ZLIB
             if(d->header->compression()) {
                ByteVector data(frameDataLength);
                uLongf uLongTmp = frameDataLength;
@@ -134,11 +224,10 @@ namespace TagLib.Id3v2
                            size());
                return data;
             }
-            else
-         #endif
          */
          
-         return frame_data.Mid ((int) frame_data_offset, (int) frame_data_length);
+         return data;
       }
+      #endregion
    }
 }

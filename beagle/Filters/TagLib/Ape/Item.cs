@@ -25,8 +25,6 @@ using System;
 
 namespace TagLib.Ape
 {
-#region Enumerators
-   
    public enum ItemType
    {
       Text = 0,   // Item contains text information coded in UTF-8
@@ -34,95 +32,85 @@ namespace TagLib.Ape
       Locator = 2 // Item is a locator of external stored information
    }
    
-#endregion
    
-   
-#region Classes
    
    public class Item
    {
-#region Private Properties
-      
-      private ItemType type;
-      private string key;
-      private ByteVector value;
-      private StringList text;
-      private bool read_only;
-      
-#endregion
+      #region Private Properties
+      private ItemType           _type      = ItemType.Text;
+      private string             _key       = null;
+      private ReadOnlyByteVector _value     = null;
+      private StringCollection   _text      = new StringCollection ();
+      private bool               _read_only = false;
+      #endregion
       
       
-#region Constructors
       
-      public Item ()
-      // Creates a new empty item.
+      #region Constructors
+      public Item (ByteVector data, int offset)
       {
-         type      = ItemType.Text;
-         key       = null;
-         value    = null;
-         text      = new StringList ();
-         read_only = false;
+         Parse (data, offset);
       }
       
-      public Item (string key, string value) : this ()
-      // Creates a new item with a given name and string.
+      public Item (string key, string value)
       {
-         this.key = key;
-         this.text.Add (value);
+         _key = key;
+         _text.Add (value);
       }
       
-      public Item (string key, StringList value) : this ()
-      // Creates a new item with a given name and strings.
+      public Item (string key, StringCollection value)
       {
-         this.key = key;
-         text.Add (value);
+         _key = key;
+         _text.Add (value);
       }
       
-      public Item (string key, ByteVector value) : this ()
-      // Creates a new item with a given name and data.
+      public Item (string key, ByteVector value)
       {
-         this.key = key;
-         this.type = ItemType.Binary;
-         this.value = value;
+         _key   = key;
+         _type  = ItemType.Binary;
+         _value = value is ReadOnlyByteVector ? value as ReadOnlyByteVector : new ReadOnlyByteVector (value);
+      }
+      #endregion
+      
+      
+      
+      #region Public Properties
+      public string     Key   {get {return _key;}}
+      public ByteVector Value {get {return (_type == ItemType.Binary) ? _value : null;}}
+      public int        Size  {get {return 8 + _key.Length + 1 + _value.Count;}}
+      public ItemType   Type  {get {return _type;} set {_type = value;}}
+      
+      public bool ReadOnly
+      {
+         get {return _read_only;}
+         set {_read_only = value;}
       }
       
-#endregion
+      public bool IsEmpty
+      {
+         get
+         {
+            if (_type != ItemType.Binary)
+               return _text.IsEmpty;
+            else
+               return _value.IsEmpty;
+         }
+      }
+      #endregion
       
+      
+      
+      #region Public Methods
       public override string ToString ()
       {
-         return text.ToString ();
+         return _text.ToString ();
       }
       
       public string [] ToStringArray ()
       {
-         return text.ToArray ();
+         return (_type != ItemType.Binary) ? _text.ToArray () : new string [0];
       }
       
-      public void Parse (ByteVector data)
-      {
-         // 11 bytes is the minimum size for an APE item
-
-         if(data.Count < 11)
-            throw new CorruptFileException ("Not enough data for APE Item");
-
-         uint value_length  = data.Mid (0, 4).ToUInt (false);
-         uint flags        = data.Mid (4, 4).ToUInt (false);
-         
-         int pos = data.Find (new ByteVector (1), 8);
-         
-         key   = data.Mid (8, pos - 8).ToString (StringType.UTF8);
-         value = data.Mid (pos + 1, (int) value_length);
-
-         ReadOnly = (flags & 1) == 1;
-         Type = (ItemType) ((flags >> 1) & 3);
-
-         if(Type != ItemType.Binary)
-         {
-            text.Clear ();
-            text = new StringList (ByteVectorList.Split(value, (byte) 0), StringType.UTF8);
-         }
-      }
-
       public ByteVector Render ()
       {
          ByteVector data = new ByteVector ();
@@ -130,58 +118,63 @@ namespace TagLib.Ape
 
          if (IsEmpty)
             return data;
-
-         if(type != ItemType.Binary)
+      	
+         if(_type != ItemType.Binary)
          {
-            value = new ByteVector ();
-            for (int i = 0; i < text.Count; i ++)
+            ByteVector value = new ByteVector ();
+            for (int i = 0; i < _text.Count; i ++)
             {
                if (i != 0)
                   value.Add ((byte) 0);
                
-               value.Add (ByteVector.FromString (text [i], StringType.UTF8));
+               value.Add (ByteVector.FromString (_text [i], StringType.UTF8));
             }
+            _value = new ReadOnlyByteVector (value);
          }
+         
 
-         data.Add (ByteVector.FromUInt ((uint) value.Count, false));
+         data.Add (ByteVector.FromUInt ((uint) _value.Count, false));
          data.Add (ByteVector.FromUInt (flags, false));
-         data.Add (ByteVector.FromString (key, StringType.UTF8));
+         data.Add (ByteVector.FromString (_key, StringType.UTF8));
          data.Add ((byte) 0);
-         data.Add (value);
+         data.Add (_value);
 
          return data;
       }
+      #endregion
+      
+      
+      
+      #region Protected Methods
+      protected void Parse (ByteVector data, int offset)
+      {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
+         // 11 bytes is the minimum size for an APE item
+         if(data.Count < offset + 11)
+            throw new CorruptFileException ("Not enough data for APE Item");
+         
+         if (offset > int.MaxValue - 11)
+            throw new ArgumentOutOfRangeException ("offset", "offset + 11 must be less that Int32.MaxValue");
+         
+         uint value_length  = data.Mid (offset, 4).ToUInt (false);
+         uint flags         = data.Mid (offset + 4, 4).ToUInt (false);
+         
+         int pos = data.Find (new ByteVector (1), offset + 8);
+         
+         _key   = data.Mid (offset + 8, pos - offset - 8).ToString (StringType.UTF8);
+         _value = new ReadOnlyByteVector (data.Mid (pos + 1, (int) value_length));
 
-      //////////////////////////////////////////////////////////////////////////
-      // public properties
-      //////////////////////////////////////////////////////////////////////////
-      public string Key {get {return key;}}
-      public ByteVector Value {get {return value;}}
-      public int Size {get {return 8 + key.Length + 1 + value.Count;}}
-      
-      public ItemType Type
-      {
-         get {return type;}
-         set {type = value;}
-      }
-      
-      public bool ReadOnly
-      {
-         get {return read_only;}
-         set {read_only = value;}
-      }
-      
-      public bool IsEmpty
-      {
-         get
+         ReadOnly = (flags & 1) == 1;
+         Type = (ItemType) ((flags >> 1) & 3);
+
+         if(Type != ItemType.Binary)
          {
-            if (type != ItemType.Binary)
-               return text.IsEmpty;
-            else
-               return value.IsEmpty;
+            _text.Clear ();
+            _text = new StringCollection (ByteVectorCollection.Split(_value, (byte) 0), StringType.UTF8);
          }
       }
+      #endregion
    }
-   
-#endregion
 }

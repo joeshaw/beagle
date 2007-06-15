@@ -35,34 +35,46 @@ namespace TagLib.Asf
       //////////////////////////////////////////////////////////////////////////
       // private properties
       //////////////////////////////////////////////////////////////////////////
-      private Asf.Tag      asf_tag;
-      private Properties   properties;
+      private Asf.Tag      asf_tag = null;
+      private Properties   properties = null;
       
       
       //////////////////////////////////////////////////////////////////////////
       // public methods
       //////////////////////////////////////////////////////////////////////////
-      public File (string file, ReadStyle properties_style) : base (file)
+      public File (string path, ReadStyle propertiesStyle) : this (new File.LocalFileAbstraction (path), propertiesStyle)
+      {}
+      
+      public File (string path) : this (path, ReadStyle.Average)
+      {}
+      
+      public File (File.IFileAbstraction abstraction, ReadStyle propertiesStyle) : base (abstraction)
       {
-         asf_tag    = null;
-         properties = null;
-         
          Mode = AccessMode.Read;
-         Read (properties_style);
+         Read (propertiesStyle);
          Mode = AccessMode.Closed;
       }
 
-      public File (string file) : this (file, ReadStyle.Average)
-      {
-      }
+      public File (File.IFileAbstraction abstraction) : this (abstraction, ReadStyle.Average)
+      {}
       
       public override void Save ()
       {
          Mode = AccessMode.Write;
          
          HeaderObject header = new HeaderObject (this, 0);
-         header.AddUniqueObject (asf_tag.ContentDescriptionObject);
-         header.AddUniqueObject (asf_tag.ExtendedContentDescriptionObject);
+         
+         if (asf_tag == null)
+         {
+            header.RemoveContentDescriptors ();
+            TagTypesOnDisk &= ~ TagTypes.Asf;
+         }
+         else
+         {
+            TagTypesOnDisk |= TagTypes.Asf;
+            header.AddUniqueObject (asf_tag.ContentDescriptionObject);
+            header.AddUniqueObject (asf_tag.ExtendedContentDescriptionObject);
+         }
          
          Insert (header.Render (), 0, (long) header.OriginalSize);
          
@@ -72,7 +84,12 @@ namespace TagLib.Asf
       public override TagLib.Tag GetTag (TagTypes type, bool create)
       {
          if (type == TagTypes.Asf)
+         {
+            if (asf_tag == null)
+               asf_tag = new Tag ();
+            
             return asf_tag;
+         }
          
          return null;
       }
@@ -80,31 +97,27 @@ namespace TagLib.Asf
       public override void RemoveTags (TagTypes types)
       {
          if ((types & TagTypes.Asf) == TagTypes.Asf)
-            asf_tag.Clear ();
+            asf_tag = null;
       }
       
       public ushort ReadWord ()
       {
-         ByteVector v = ReadBlock (2);
-         return v.ToUShort (false);
+         return ReadBlock (2).ToUShort (false);
       }
       
       public uint ReadDWord ()
       {
-         ByteVector v = ReadBlock (4);
-         return v.ToUInt (false);
+         return ReadBlock (4).ToUInt (false);
       }
       
       public ulong ReadQWord ()
       {
-         ByteVector v = ReadBlock (8);
-         return v.ToULong (false);
+         return ReadBlock (8).ToULong (false);
       }
       
-      public Guid ReadGuid ()
+      public System.Guid ReadGuid ()
       {
-         ByteVector v = ReadBlock (16);
-         return new Guid (v);
+         return new System.Guid (ReadBlock (16).Data);
       }
 
       public string ReadUnicode (int length)
@@ -120,7 +133,7 @@ namespace TagLib.Asf
          for (int i = 0; i < (int) count; i ++)
          {
             Seek (position);
-            Guid id = ReadGuid ();
+            System.Guid id = ReadGuid ();
             
             Object obj;
             
@@ -158,10 +171,13 @@ namespace TagLib.Asf
       {
          HeaderObject header = new HeaderObject (this, 0);
          
+         if (header.HasContentDescriptors)
+            TagTypesOnDisk |= TagTypes.Asf;
+         
          asf_tag = new Asf.Tag (header);
          
          if(properties_style != ReadStyle.None)
-            properties = header.GetProperties ();
+            properties = header.Properties;
       }
    }
 }

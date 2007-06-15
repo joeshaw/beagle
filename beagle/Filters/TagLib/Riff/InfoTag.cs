@@ -38,11 +38,13 @@ namespace TagLib.Riff
          return RenderEnclosed ("INFO");
       }
 
+      public override TagTypes TagTypes {get {return TagTypes.RiffInfo;}}
+      
       public override string Title
       {
          get
          {
-            foreach (string s in GetValuesAsStringList ("INAM"))
+            foreach (string s in GetValuesAsStringCollection ("INAM"))
                if (s != null)
                   return s;
             
@@ -53,19 +55,19 @@ namespace TagLib.Riff
       
       public override string [] AlbumArtists
       {
-         get {return GetValuesAsStringList ("IART").ToArray ();}
+         get {return GetValuesAsStringCollection ("IART").ToArray ();}
          set {SetValue ("IART", value);}
       }
       
       public override string [] Performers
       {
-         get {return GetValuesAsStringList ("ISTR").ToArray ();}
+         get {return GetValuesAsStringCollection ("ISTR").ToArray ();}
          set {SetValue ("ISTR", value);}
       }
       
       public override string [] Composers
       {
-         get {return GetValuesAsStringList ("IWRI").ToArray ();}
+         get {return GetValuesAsStringCollection ("IWRI").ToArray ();}
          set {SetValue ("IWRI", value);}
       }
       
@@ -73,7 +75,7 @@ namespace TagLib.Riff
       {
          get
          {
-            foreach (string s in GetValuesAsStringList ("ICMT"))
+            foreach (string s in GetValuesAsStringCollection ("ICMT"))
                if (s != null)
                   return s;
             
@@ -84,7 +86,7 @@ namespace TagLib.Riff
       
       public override string [] Genres
       {
-         get {return GetValuesAsStringList ("IGNR").ToArray ();}
+         get {return GetValuesAsStringCollection ("IGNR").ToArray ();}
          set {SetValue ("IGNR", value);}
       }
       
@@ -104,6 +106,19 @@ namespace TagLib.Riff
       {
          get {return GetValueAsUInt ("IFRM");}
          set {SetValue ("IFRM", value);}
+      }
+      
+      public override string Copyright
+      {
+         get
+         {
+            foreach (string s in GetValuesAsStringCollection ("ICOP"))
+               if (s != null)
+                  return s;
+            
+            return null;
+         }
+         set {SetValue ("ICOP", value);}
       }
    }
 }

@@ -25,10 +25,13 @@ using System;
 
 namespace TagLib.Id3v2
 {
-   public class SynchData
+   public static class SynchData
    {
       public static uint ToUInt (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          uint sum = 0;
          int last = data.Count > 4 ? 3 : data.Count - 1;
 
@@ -48,20 +51,24 @@ namespace TagLib.Id3v2
          return v;
       }
       
-      public static ByteVector UnsynchByteVector (ByteVector data)
+      public static void UnsynchByteVector (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          for (int i = data.Count - 2; i >= 0; i --)
             if (data [i] == 0xFF && (data [i+1] == 0 || (data [i+1] & 0xE0) != 0))
                data.Insert (i+1, 0);
-         return data;
       }
       
-      public static ByteVector ResynchByteVector (ByteVector data)
+      public static void ResynchByteVector (ByteVector data)
       {
+         if (data == null)
+            throw new ArgumentNullException ("data");
+         
          for (int i = data.Count - 2; i >= 0; i --)
             if (data [i] == 0xFF && data [i+1] == 0)
                data.RemoveAt (i+1);
-         return data;
       }
    }
 }
