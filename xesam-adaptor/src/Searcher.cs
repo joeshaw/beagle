@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using NDesk.DBus;
@@ -36,7 +35,7 @@ namespace Beagle {
 		public delegate void HitsAddedMethod (string searchId, int count);
 		public delegate void HitsRemovedMethod (string searchId, int[] hitIds);
 
-		[Interface("org.freedesktop.xesam.search")]
+		[Interface("org.freedesktop.xesam.Search")]
 		public interface ISearcher {
 			string NewSession();
 			void CloseSession(string s);
