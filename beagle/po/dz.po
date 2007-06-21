@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.pot\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-06 05:28+0000\n"
-"PO-Revision-Date: 2007-03-28 03:35+0530\n"
-"Last-Translator: yangka <yanang_ka@hotmail.com>\n"
+"POT-Creation-Date: 2007-06-04 03:15+0100\n"
+"PO-Revision-Date: 2007-06-14 14:42+0530\n"
+"Last-Translator: yumkee lhamo <yumkeyl08@hotmail.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -33,7 +33,7 @@ msgid "Open..."
 msgstr "ཁ་ཕྱེ་..."
 
 #: ../ContactViewer/ContactWindow.cs:76
-#: ../search/Tray/TrayIcon.cs:98
+#: ../search/Tray/TrayIcon.cs:102
 msgid "Quit"
 msgstr "སྤང་"
 
@@ -42,7 +42,7 @@ msgid "About"
 msgstr "སྐོར་ལས་"
 
 #: ../ContactViewer/ContactWindow.cs:95
-#: ../search/Tiles/Utils.cs:26
+#: ../search/Tiles/Utils.cs:27
 msgid "Contacts"
 msgstr "འབྲེལ་བ་འཐབ་ས་ཚུ་"
 
@@ -269,11 +269,11 @@ msgstr "མངའ་སྡེ་/མངའ་རིས་:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
 #: ../search/Tiles/ArchivedFile.cs:76
-#: ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140
-#: ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:173
+#: ../search/Tiles/Note.cs:69
+#: ../search/Tiles/RSSFeed.cs:58
+#: ../search/Tiles/WebHistory.cs:52
 msgid "Title:"
 msgstr "མགོ་མིང་:"
 
@@ -329,7 +329,7 @@ msgid "Conversations with {0}"
 msgstr "གྲོས་གླེང་ཚུ་ {0} དང་གཅིག་ཁར་"
 
 #: ../search/beagle-search.desktop.in.in.h:1
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "འཚོལ་ཞིབ་"
 
@@ -444,11 +444,11 @@ msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "ཡོངས་བསྡོམ་མཐུན་སྒྲིག་ཚུ་ {0} གི་ {1} མགོ་འདི་སྟོན་དོ།"
 msgstr[1] "ཡོངས་བསྡོམས་མཐུན་སྒྲིག་ཚུ་ {0} གི་ {1} སྟོན་དོ།"
 
-#: ../search/Search.cs:564
+#: ../search/Search.cs:567
 msgid "Your data is being indexed"
 msgstr "ཁྱོད་ཀྱི་གནད་སྡུད་འདི་ཟུར་ཐོ་བཀོད་ཡོདཔ་ཨིན་"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:568
 msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
 msgstr "འཚོལ་ཞིབ་ཞབས་ཏོག་འདི་ ཁྱོད་ཀྱི་གནད་སྡུད་ཟུར་ཐོ་བཀོད་ནིའི་ལས་སྦྱོར་ནང་ཨིན་པས། འཚོལ་ཞིབ་གྲུལ་འབྲས་ཚུ་ ཟུར་ཐོ་བཀོད་ནི་མཇུག་མ་བསྡུ་ཚུན་ ཆ་མ་ཚང་བ་སྦེ་སྡོད་འོང་།"
 
@@ -467,19 +467,23 @@ msgid "Inside File:"
 msgstr "ཡིག་སྣོད་ནང་ན་:"
 
 #: ../search/Tiles/ArchivedFile.cs:81
-#: ../search/Tiles/File.cs:144
+#: ../search/Tiles/File.cs:177
 msgid "Author:"
 msgstr "རྩོམ་པ་པོ་:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47
 msgid "Description:"
 msgstr "འགྲེལ་བཤད་:"
 
 #: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "ཚུ་ཚོད་:"
+
+#: ../search/Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "གནས་ཁོངས་:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "ངོ་འཛོམས་པ་ཚུ་:"
 
@@ -515,15 +519,15 @@ msgstr "གློག་འཕྲིན་"
 msgid "Move to Trash"
 msgstr "ཕྱགས་ཧོད་ལུ་སྤོ་"
 
-#: ../search/Tiles/File.cs:141
+#: ../search/Tiles/File.cs:174
 #: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/Note.cs:70
 msgid "Last Edited:"
 msgstr "མཇུག་ལུ་ཞུན་དག་འབད་ཡོདཔ་:"
 
-#: ../search/Tiles/File.cs:146
+#: ../search/Tiles/File.cs:179
 #: ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "འགྲུལ་ལམ་ཆ་ཚང་:"
 
@@ -543,15 +547,15 @@ msgstr[1] "ནང་ན་ {0} རྣམ་གྲངས་ཚུ་ཡོདཔ�
 msgid "Set as Wallpaper"
 msgstr "གྱང་ཤོག་སྦེ་གཞི་སྒྲིག་འབད་"
 
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/Image.cs:84
 msgid "Tags:"
 msgstr "ངོ་རྟགས་ཚུ་:"
 
-#: ../search/Tiles/Image.cs:83
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "ལེགས་བཅོས་འབད་ཡོདཔ་:"
 
-#: ../search/Tiles/Image.cs:93
+#: ../search/Tiles/Image.cs:96
 msgid "Comment:"
 msgstr "བསམ་བཀོད་:"
 
@@ -559,32 +563,32 @@ msgstr "བསམ་བཀོད་:"
 msgid "IM Conversation"
 msgstr "ཨའི་ཨེམ་གྲོས་གླེང་"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:94
 msgid "Name:"
 msgstr "མིང་:"
 
-#: ../search/Tiles/IMLog.cs:93
+#: ../search/Tiles/IMLog.cs:95
 #: ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "ཚེས་གྲངས་ཐོབ་ཡོདཔ་:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:99
 msgid "Status:"
 msgstr "གནས་ཚད་:"
 
-#: ../search/Tiles/IMLog.cs:112
+#: ../search/Tiles/IMLog.cs:114
 msgid "Idle"
 msgstr "ལས་མེད་"
 
-#: ../search/Tiles/IMLog.cs:119
+#: ../search/Tiles/IMLog.cs:121
 msgid "Away"
 msgstr "ཕྱི་ཁར་"
 
-#: ../search/Tiles/IMLog.cs:122
+#: ../search/Tiles/IMLog.cs:124
 msgid "Offline"
 msgstr "གློག་ལམ་མེད་"
 
-#: ../search/Tiles/IMLog.cs:125
+#: ../search/Tiles/IMLog.cs:127
 msgid "Available"
 msgstr "འཐོབ་ཚུགས་"
 
@@ -631,11 +635,11 @@ msgid_plural "{0} slides"
 msgstr[0] "{0} བཤུད་"
 msgstr[1] "{0} བཤུད་"
 
-#: ../search/Tiles/RSSFeed.cs:49
+#: ../search/Tiles/RSSFeed.cs:59
 msgid "Site:"
 msgstr "ས་ཁོངས་:"
 
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Date Viewed:"
 msgstr "ཚེས་གྲངས་བལྟ་ཚར་ཡོདཔ་:"
 
@@ -650,75 +654,75 @@ msgstr[1] "{0} ཤོག་ལེབ་ཚུ་"
 msgid "Open"
 msgstr "ཁ་ཕྱེ་"
 
-#: ../search/Tiles/Utils.cs:24
+#: ../search/Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "གློག་རིམ་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:28
+#: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "ཟླ་ཐོ་བྱུང་ལས་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:30
+#: ../search/Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "སྣོད་འཛིན་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Tiles/Utils.cs:33
 msgid "Images"
 msgstr "གཟུགས་བརྙན་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "རྣར་ཉན་"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:37
 msgid "Video"
 msgstr "ཝི་ཌིའོ་"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "ཡིག་ཆ་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "གྲོས་གླེང་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:42
+#: ../search/Tiles/Utils.cs:43
 msgid "Websites"
 msgstr "ཝེབ་ས་ཁོངས་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:44
+#: ../search/Tiles/Utils.cs:45
 msgid "News Feeds"
 msgstr "གནས་ཚུལ་མཁོ་སྤྲོད་འབད་ནི་"
 
-#: ../search/Tiles/Utils.cs:46
+#: ../search/Tiles/Utils.cs:47
 msgid "Archives"
 msgstr "ཡིག་མཛོད་ཚུ་"
 
-#: ../search/Tiles/Utils.cs:133
-#: ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:116
+#: ../search/Tiles/Utils.cs:132
+#: ../search/Tiles/Utils.cs:214
+#: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "ཁ་རྩང་"
 
-#: ../search/Tiles/Utils.cs:135
-#: ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:114
+#: ../search/Tiles/Utils.cs:134
+#: ../search/Tiles/Utils.cs:216
+#: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "ད་རིས་"
 
-#: ../search/Tiles/Utils.cs:137
-#: ../search/Tiles/Utils.cs:219
+#: ../search/Tiles/Utils.cs:136
+#: ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "ནངས་པར་"
 
-#: ../search/Tiles/Utils.cs:235
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} བདུན་ཕྲག་ཧེ་མ་"
 msgstr[1] "{0} བདུན་ཕྲག་ཚུ་གི་ཧེ་མ་"
 
-#: ../search/Tiles/Utils.cs:237
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -726,28 +730,28 @@ msgstr[0] " {0} བདུན་ཕྲག་ནང་"
 msgstr[1] " {0} བདུན་ཕྲག་ཚུ་ནང་"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:239
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} ཟླཝ་གི་ཧེ་མ་"
 msgstr[1] "{0} ཟླཝ་ཚུ་གི་ཧེ་མ་"
 
-#: ../search/Tiles/Utils.cs:241
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] " {0} ཟླཝ་ནང་"
 msgstr[1] "{0} ཟླཝ་ཚུ་ནང་"
 
-#: ../search/Tiles/Utils.cs:243
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} ལོའི་ཧེ་མ་"
 msgstr[1] "{0} ལོ་ཚུའི་ཧེ་མ་"
 
-#: ../search/Tiles/Utils.cs:245
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -760,11 +764,11 @@ msgstr[1] "{0} ལོ་ཚུ་ནང་"
 msgid "Unknown duration"
 msgstr "མ་ཤེས་པའི་དུས་ཡུན་"
 
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:53
 msgid "URL:"
 msgstr "ཡུ་ཨར་ཨེལ་:"
 
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:54
 msgid "Accessed:"
 msgstr "འཛུལ་སྤྱོད་འབད་ཡོདཔ་:"
 
@@ -776,7 +780,7 @@ msgstr "འཕྲལ་གྱི་འཚོལ་ཞིབ་ཚུ་མེད
 msgid "Recent Searches"
 msgstr "འཕྲལ་གྱི་འཚོལ་ཞིབ་ཚུ་"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "བསལ་"
 
@@ -1123,105 +1127,100 @@ msgstr "རྒྱས་བཤད་ཚུ་སྟོན་"
 msgid "Couldn't launch web browser"
 msgstr "ཝེབ་བརའུ་ཟར་གསར་བཙུགས་འབད་མ་ཚུགས་"
 
-#: ../tools/Settings.cs:166
+#: ../tools/Settings.cs:169
 msgid "Reload configuration"
 msgstr "རིམ་སྒྲིག་ཡང་བསྐྱར་མངོན་གསལ་འབད་"
 
-#: ../tools/Settings.cs:167
+#: ../tools/Settings.cs:170
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "རིམ་སྒྲིག་ཡིག་སྣོད་འདི་ གློག་རིམ་གཞན་མི་ཅིག་གིས་ ལེགས་བཅོས་འབད་ཡོད། ཁྱོད་ཀྱིས་ད་ལྟོ་བཀྲམ་སྟོན་འབད་ཡོད་པའི་གནས་གོང་ཚུ་བཏོན་བཀོག་ཞིནམ་ལས་ ཌིཀསི་ལས་རིམ་སྒྲིག་འདི་ ཡང་བསྐྱར་མངོན་གསལ་འབད་ནིའི་ རེ་འདོད་བསྐྱེདཔ་ཨིན་ན?"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:308
 msgid "Select Path"
 msgstr "འགྲུལ་ལམ་སེལ་འཐུ་འབད་"
 
-#: ../tools/Settings.cs:324
+#: ../tools/Settings.cs:327
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "སེལ་འཐུ་འབད་ཡོད་པའི་འགྲུལ་ལམ་འདི་ ཧེ་མ་ལས་རང་ ཟུར་ཐོ་བཀོད་ནིའི་དོན་ལུ་སེལ་ཐུ་འབད་ཡོད་ དེ་ལས་འདི་ཁ་སྐོང་མ་རྐྱབས།"
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:330
 msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
 msgstr "སེལ་འཐུ་འབད་ཡོད་པའི་འགྲུལ་ལམ་འདི་ཁ་སྐོང་མ་རྐྱབས། ཐོ་ཡིག་འདི་ནང་ སུ་པར་སེཏི་འབད་མི་རྣམ་གྲངས་ཚུ་ཡོད་ དེ་ལས་གནད་སྡུད་འདི་ཧེ་མ་ལས་རང་ཟུར་ཐོ་བཀོད་ཡོད།"
 
-#: ../tools/Settings.cs:338
+#: ../tools/Settings.cs:341
 msgid "Path not added"
 msgstr "འགྲུལ་ལམ་ཁ་སྐོང་མ་རྐྱབས་པས་"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "Remove obsolete paths"
 msgstr "ཕན་མེད་འགྲུལ་ལམ་ཚུ་རྩ་བསྐྲད་གཏང་"
 
-#: ../tools/Settings.cs:348
+#: ../tools/Settings.cs:351
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "འ་ནི་འགྲུལ་ལམ་ཁ་སྐོང་རྐྱབས་ནི་འདི་གིས་ འགྲུལ་ལམ་ཚུ་གྲངས་སུ་བཙུགས་ཏེ་ ཡོད་བཞིན་མི་ལ་ལོ་ཅིག་ཕན་མེད་བཟོ་འོང་། འ་ནི་འདི་གིས་ ཕན་མེད་འགྲུལ་ལམ་རྙིངམ་ཚུ་རྩ་བསྐྲད་གཏང་ནི་ལུ་འགྱུར་འོང་། ཁྱོད་ཀྱིས་འདི་ད་རུང་ཁ་སྐོང་རྐྱབས་ནི་ཨིན་ན?"
 
-#: ../tools/Settings.cs:374
+#: ../tools/Settings.cs:377
 msgid "Remove path"
 msgstr "འགྲུལ་ལམ་རྩ་བསྐྲད་གཏང་"
 
-#: ../tools/Settings.cs:375
+#: ../tools/Settings.cs:378
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "ཁྱོད་ཀྱིས་འ་ནི་འགྲུལ་ལམ་འདི་ ཟུར་ཐོ་བཀོད་ནིའི་དོན་ལུ་ གྲངས་སུ་བཙུགས་ནིའི་སྣོད་ཐོ་ཚུ་གི་ ཐོ་ཡིག་འདི་ལས་ རྩ་བསྐྲད་གཏང་ནི་ངེས་ཏིག་ཨིན་ན?"
 
-#: ../tools/Settings.cs:404
+#: ../tools/Settings.cs:407
 msgid "Remove item"
 msgstr "རྣམ་གྲངས་རྩ་བསྐྲད་གཏང་"
 
-#: ../tools/Settings.cs:405
+#: ../tools/Settings.cs:408
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "ཁྱོད་ཀྱིས་འ་ནི་རྣམ་གྲངས་འདི་ ཟུར་ཐོ་བཀོད་ནིའི་གྲངས་ལས་བཏོན་ནིའི་ཐོ་ཡིག་འདི་ལས་ རྩ་བསྐྲད་གཏང་ནི་ངེས་ཏིག་ཨིན་ན?"
 
-#: ../tools/Settings.cs:455
-#: ../tools/Settings.cs:544
-#: ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
+#: ../tools/Settings.cs:458
+#: ../tools/Settings.cs:547
+#: ../tools/Settings.cs:634
 msgid "Name"
 msgstr "མིང་"
 
-#: ../tools/Settings.cs:538
+#: ../tools/Settings.cs:541
 msgid "Type"
 msgstr "དབྱེ་བ་"
 
-#: ../tools/Settings.cs:591
+#: ../tools/Settings.cs:594
 msgid "Path:"
 msgstr "འགྲུལ་ལམ་:"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:597
 msgid "Pattern:"
 msgstr "དཔེ་གཞི་:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:600
 msgid "Mail folder:"
 msgstr "ཡིག་འཕྲིན་སྣོད་འཛིན་:"
 
-#: ../tools/Settings.cs:878
+#: ../tools/Settings.cs:881
 msgid "Select Folder"
 msgstr "སྣོད་འཛིན་སེལ་འཐུ་འབད་"
 
-#: ../tools/Settings.cs:904
-#: ../tools/settings.glade.h:19
+#: ../tools/Settings.cs:907
+#: ../tools/settings.glade.h:20
 msgid "P_ath:"
 msgstr "འགྲུལ་ལམ་:(_a)"
 
-#: ../tools/Settings.cs:909
+#: ../tools/Settings.cs:912
 msgid "M_ail folder:"
 msgstr "ཡིག་འཕྲིན་སྣོད་འཛིན་:(_a)"
 
-#: ../tools/Settings.cs:914
+#: ../tools/Settings.cs:917
 msgid "P_attern:"
 msgstr "དེབ་གཞི་:(_a)"
 
-#: ../tools/Settings.cs:938
+#: ../tools/Settings.cs:941
 msgid "Error adding path"
 msgstr "འགྲུལ་ལམ་ཁ་སྐོང་རྐྱབས་ད་འཛོལ་བ་"
 
-#: ../tools/Settings.cs:939
+#: ../tools/Settings.cs:942
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "གསལ་བཀོད་འབད་ཡོད་པའི་འགྲུལ་ལམ་འདི་ འཚོལ་མི་འཐོབ་ དེ་འབདཝ་ལས་ འདི་ཟུར་ཐོ་བཀོད་ནིའི་དོན་ལུ་ གྲངས་ལས་བཏོན་ཡོད་མི་ཐོན་ཁུངས་ཚུ་གི་ཐོ་ཡིག་འདི་ལུ་ ཁ་སྐོང་རྐྱབས་མི་བཏུབ།"
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "སྟོན་"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1292,50 +1291,58 @@ msgid "Index data while on _battery power"
 msgstr "འཕྲུལ་ལྟོ་ནུས་ཤུགས་གུ་ཨིན་པའི་སྐབས་ གནད་སྡུད་ཟུར་ཐོ་བཀོད་(_b)"
 
 #: ../tools/settings.glade.h:18
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "གསལ་གཞིའི་ཉེན་སྲུང་ཤུགས་ལྡན་བཟོ་ཡོདཔ་ད་བཙན་ཤུགས་བསྐྱེལ་ཏེ་ཟུར་ཐོ་བཀལ་"
+
+#: ../tools/settings.glade.h:19
 msgid "Indexing"
 msgstr "ཟུར་ཐོ་ནང་བཀོད་ནི་"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:21
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "ཁྱོད་ཀྱིས་ཟུར་ཐོ་བཀོད་ནིའི་གྲངས་ལས་བཏོན་གཏང་ནིའི་ རེ་འདོད་བསྐྱེད་མི་ ཐོན་ཁུངས་ཅིག་སེལ་འཐུ་འབད་གནང་།"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:22
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "ཁྱོད་ཀྱིས་ཟུར་ཐོ་བཀོད་ནི་གི་གྲངས་ལས་བཏོན་གཏང་ནི་གི་རེ་འདོད་བསྐྱེད་མི་ ཡིག་འཕྲིན་སྣོད་འཛིན་འདི་ སེལ་འཐུ་འབད་གནང་།"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
 msgid "Search Preferences"
 msgstr "འཚོལ་ཞིབ་དགའ་གདམ་ཚུ་"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:25
 msgid "Select Mail Folder"
 msgstr "ཡིག་འཕྲིན་སྣོད་འཛིན་སེལ་འཐུ་འབད་"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
 msgstr "ཐོན་ཁུངས་ག་ཅི་འབད་རུང་གསལ་བཀོད་འབད་ དཔེར་ན་ འགྲུལ་ལམ་ དཔེ་གཞི་ ཡིག་འཕྲིན་སྣོད་འཛིན་ ཡང་ན་ ཁྱོད་ཀྱིས་ཟུར་ཐོ་བཀོད་ནིའི་གྲངས་ལས་བཏོན་གཏང་ནིའི་རེ་འདོད་བསྐྱེད་མི་དངོས་པོ་གི་དབྱེ་བ་བཟུམ།"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
+msgid "This setting does not apply while on battery power."
+msgstr "འ་ནི་སྒྲིག་སྟངས་ཀྱིས་འཕྲུལ་ལྟོ་ནུས་ཤུགས་གུ་ཡོད་པའི་སྐབས་འཇུག་སྤྱོད་མི་འབད་ "
+
+#: ../tools/settings.glade.h:28
 msgid "Type:"
 msgstr "དབྱེ་བ:་"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:29
 msgid "_Allow Beagle to be run as root"
 msgstr "བི་གལ་འདི་ རྩ་བ་སྦེ་གཡོག་བཀོལ་བཅུག་(_A)"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:30
 msgid "_Browse..."
 msgstr "བརྡ་འཚོལ་(_B)"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:31
 msgid "_Folder path"
 msgstr "སྣོད་འཛིན་འགྲུལ་ལམ་(_F)"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:32
 msgid "_Mail folder"
 msgstr "ཡིག་འཕྲིན་སྣོད་འཛིན་(_M)"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:33
 msgid "_Start search & indexing services automatically "
 msgstr "འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནིའི་ཞབས་ཏོག་ཚུ་ རང་བཞིན་གྱིས་འགོ་བཙུགས་(_S)"
 
@@ -1602,40 +1609,40 @@ msgid "Scene Type"
 msgstr "འཆར་སྣང་དབྱེ་བ།"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:119
+#: ../Util/StringFu.cs:120
 msgid "MMM d"
 msgstr "MMM d"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:122
+#: ../Util/StringFu.cs:123
 msgid "MMM d, yyyy"
 msgstr "MMM d, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:125
+#: ../Util/StringFu.cs:126
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:131
+#: ../Util/StringFu.cs:132
 #, csharp-format
 msgid "{0}, {1}"
 msgstr " {0}   {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:148
+#: ../Util/StringFu.cs:149
 #, csharp-format
 msgid "Today, {0}"
 msgstr "ད་རིས་   {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:151
+#: ../Util/StringFu.cs:152
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "ཁ་རྩང་   {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:156
+#: ../Util/StringFu.cs:157
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -1643,23 +1650,23 @@ msgstr[0] "{0} ཉིནམ་ཧེ་མ་ {1}"
 msgstr[1] "{0} ཉིནམ་དག་པ་ཅིག་ཧེ་མ {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:162
+#: ../Util/StringFu.cs:163
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:168
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "MMMM d yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:177
+#: ../Util/StringFu.cs:178
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} ཆུ་ཚོད་"
 msgstr[1] "{0} ཆུ་ཚོད་ཚུ་"
 
-#: ../Util/StringFu.cs:184
+#: ../Util/StringFu.cs:185
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1667,7 +1674,7 @@ msgstr[0] "{0} སྐར་མ་"
 msgstr[1] "{0} སྐར་མ་ཚུ་"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:218
+#: ../Util/StringFu.cs:219
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -1675,17 +1682,19 @@ msgstr[0] "{0} བཱའིཊི"
 msgstr[1] "{0} བཱའིཊིསི་"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:222
+#: ../Util/StringFu.cs:223
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} ཀེ་བི་"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:225
+#: ../Util/StringFu.cs:226
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} ཨེམ་བི་"
 
+#~ msgid "Show"
+#~ msgstr "སྟོན་"
 #~ msgid "Configure Desktop Search & Indexing"
 #~ msgstr "ཌེཀསི་ཊོཔ་འཚོལ་ཞིབ་དང་ཟུར་ཐོ་ནང་བཀོད་ནི་རིམ་སྒྲིག་འབད་"
 #~ msgid "Configure search & indexing properties"
