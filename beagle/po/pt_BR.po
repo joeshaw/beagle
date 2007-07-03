@@ -2,16 +2,16 @@
 # Copyright (C) 2005 Free Software Foundation, Inc.
 # This file is distributed under the same license as the beagle package.
 # Raphael Higino <raphaelh@uai.com.br>, 2005.
-# Igor Pires Soares <igor@projetofedora.org>, 2007.
 # Raul Pereira <contato@raulpereira.com>, 2007.
+# Igor Pires Soares <igor@projetofedora.org>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-27 02:10-0300\n"
-"PO-Revision-Date: 2007-03-04 17:17-0300\n"
-"Last-Translator: Raul Pereira <contato@raulpereira.com>\n"
+"POT-Creation-Date: 2007-07-03 20:04-0300\n"
+"PO-Revision-Date: 2007-07-02 18:35-0300\n"
+"Last-Translator: Igor Pires Soares <igor@projetofedora.org>\n"
 "Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipsga.org.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -30,7 +30,7 @@ msgstr "A orientação da bandeja."
 msgid "Open..."
 msgstr "Abrir..."
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
+#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:102
 msgid "Quit"
 msgstr "Sair"
 
@@ -263,9 +263,9 @@ msgid "State/Province:"
 msgstr "Estado/Província:"
 
 #: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:69
+#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:57
 msgid "Title:"
 msgstr "Título:"
 
@@ -304,17 +304,17 @@ msgstr "<b>Histórico de Conversas</b>"
 msgid "IM Viewer"
 msgstr "Visualizador de Mensagens Instantâneas"
 
-#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
+#: ../ImLogViewer/ImLogWindow.cs:105 ../ImLogViewer/ImLogWindow.cs:117
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Conversas em {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
+#: ../ImLogViewer/ImLogWindow.cs:108
 #, csharp-format
 msgid "Conversations in {0} ({1})"
 msgstr "Conversas em {0} ({1})"
 
-#: ../ImLogViewer/ImLogWindow.cs:125
+#: ../ImLogViewer/ImLogWindow.cs:124
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Conversas com {0}"
@@ -337,7 +337,7 @@ msgstr[1] "{0} resultados"
 #: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} de {2}"
+msgstr "{0} a {1} de {2}"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -384,8 +384,8 @@ msgstr ""
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
-"Ao pesquisar por uma expressão utilize aspas. Ex.:<b>\"Grande Sertão: Veredas"
-"\"</b>"
+"Ao pesquisar por uma expressão utilize aspas. Ex.: <b>\"Grande Sertão: "
+"Veredas\"</b>"
 
 #: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
 msgid "Quick Tips"
@@ -411,51 +411,51 @@ msgstr "O serviço de pesquisa não está em execução"
 msgid "Start search service"
 msgstr "Iniciar serviço de pesquisa"
 
-#: ../search/Search.cs:138 ../search/Search.cs:254
+#: ../search/Search.cs:144 ../search/Search.cs:260
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Pesquisas no Ambiente de Trabalho"
 
-#: ../search/Search.cs:157
+#: ../search/Search.cs:163
 msgid "_Find:"
 msgstr "_Localizar:"
 
-#: ../search/Search.cs:178
+#: ../search/Search.cs:184
 msgid "Find Now"
 msgstr "Localizar Agora"
 
-#: ../search/Search.cs:237
+#: ../search/Search.cs:243
 msgid "Type in search terms"
 msgstr "Digite os termos para pesquisa"
 
-#: ../search/Search.cs:238
+#: ../search/Search.cs:244
 msgid "Start searching"
 msgstr "Começar a pesquisar"
 
-#: ../search/Search.cs:273
+#: ../search/Search.cs:279
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Pesquisas no Ambiente de Trabalho: {0}"
 
-#: ../search/Search.cs:289
+#: ../search/Search.cs:295
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} resultado"
 msgstr[1] "Mostrando todos os {0} resultados"
 
-#: ../search/Search.cs:291
+#: ../search/Search.cs:297
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Mostrando o primeiro {0} de {1} resultado no total"
-msgstr[1] "Mostrando o primeiro {0} de {1} resultados no total"
+msgstr[0] "Mostrando {0} de {1} resultado no total"
+msgstr[1] "Mostrando os primeiros {0} resultados de {1} no total"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:573
 msgid "Your data is being indexed"
 msgstr "Os seus dados estão sendo indexados"
 
-#: ../search/Search.cs:566
+#: ../search/Search.cs:574
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -481,15 +481,19 @@ msgstr "Dentro do arquivo:"
 msgid "Author:"
 msgstr "Autor:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47
 msgid "Description:"
 msgstr "Descrição:"
 
 #: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Horário:"
+
+#: ../search/Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "Localização:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "Participantes:"
 
@@ -525,7 +529,7 @@ msgid "Move to Trash"
 msgstr "Mover para Lixeira"
 
 #: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/Note.cs:70
 msgid "Last Edited:"
 msgstr "Última Edição:"
 
@@ -566,31 +570,31 @@ msgstr "Comentário:"
 msgid "IM Conversation"
 msgstr "Mensagens Instantâneas"
 
-#: ../search/Tiles/IMLog.cs:94
+#: ../search/Tiles/IMLog.cs:96
 msgid "Name:"
 msgstr "Nome:"
 
-#: ../search/Tiles/IMLog.cs:95 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:97 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
-msgstr "Data de Recepção:"
+msgstr "Data de Recebimento:"
 
-#: ../search/Tiles/IMLog.cs:99
+#: ../search/Tiles/IMLog.cs:101
 msgid "Status:"
 msgstr "Status:"
 
-#: ../search/Tiles/IMLog.cs:114
+#: ../search/Tiles/IMLog.cs:116
 msgid "Idle"
 msgstr "Inativo"
 
-#: ../search/Tiles/IMLog.cs:121
+#: ../search/Tiles/IMLog.cs:123
 msgid "Away"
 msgstr "Ausente"
 
-#: ../search/Tiles/IMLog.cs:124
+#: ../search/Tiles/IMLog.cs:126
 msgid "Offline"
 msgstr "Offline"
 
-#: ../search/Tiles/IMLog.cs:127
+#: ../search/Tiles/IMLog.cs:129
 msgid "Available"
 msgstr "Disponível"
 
@@ -700,28 +704,28 @@ msgstr "Fonte de Notícias"
 msgid "Archives"
 msgstr "Pacotes"
 
-#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
+#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
 #: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "Ontem"
 
-#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
 #: ../Util/StringFu.cs:115
 msgid "Today"
 msgstr "Hoje"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Amanhã"
 
-#: ../search/Tiles/Utils.cs:224
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} semana atrás"
 msgstr[1] "{0} semanas atrás"
 
-#: ../search/Tiles/Utils.cs:226
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -729,28 +733,28 @@ msgstr[0] "Em {0} semana"
 msgstr[1] "Em {0} semanas"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} mês atrás"
 msgstr[1] "{0} meses atrás"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Em {0} mês"
 msgstr[1] "Em {0} meses"
 
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} ano atrás"
 msgstr[1] "{0} anos atrás"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -763,11 +767,11 @@ msgstr[1] "Em {0} anos"
 msgid "Unknown duration"
 msgstr "Duração desconhecida"
 
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:58
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:59
 msgid "Accessed:"
 msgstr "Acessado:"
 
@@ -779,7 +783,7 @@ msgstr "Nenhuma Pesquisa Recente"
 msgid "Recent Searches"
 msgstr "Pesquisas Recentes"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Limpar"
 
