@@ -1,0 +1,34 @@
+This is a list of issues we have while implementing the Xesam interface for
+Beagle:
+
+* HitsModified: Beagle does not have an equivalent signal, because it'd need
+	to maintain a lot of state to track these changes. Instead, we just
+	send a HitsSubtracted followed by a HitsAdded.
+
+	This brings us to a whole different problem. GetHits(count) gets
+	count hits after a HitsAdded event, sorted in the given order. Now
+	what happens if a given set of htis are retrieved, then some are
+	modified (or more are added). What does the next GetHits() return? The
+	new set of hits, or the first count hits of _all_ hits added so far?
+
+* StateChanged: Beagle does not have a StateChanged signal. Either we poll for
+	this periodically (with every new search?), or just let the client
+	worry about this.
+
+	In the mean time, xesam-tool will always report [UNKNOWN, 0] for a
+	GetState, because it counts on StateChanged alone for figuring out the
+	status. Are we suppoed to throw a StateChanged on session (dbus session
+	or xesam session?) creation or something?
+
+* Grouping: Beagle doesn't support grouping of ANDs and ORs, it seems. We
+	either need to make some drastic changes at lower levels (more R&D
+	required), or break up at ORs and start multiple searches for a single
+	Xesam search (I don't like this approach -- it is ugly).
+
+* Ontologies: What is the default value for session.vendorOntologies?
+
+* Live searches: What happens if search.live is false? Is it assumed that the
+	search is done when SearchStart() terminates? Are signals ignored?
+	Beagle doesn't have non-live searches, AFAICT.
+
+* Fields/Sorting: We need the list of fields before we can handle these
