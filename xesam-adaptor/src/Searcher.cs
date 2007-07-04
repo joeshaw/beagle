@@ -34,21 +34,32 @@ namespace Beagle {
 	namespace Xesam {
 		public delegate void HitsAddedMethod (string searchId, int count);
 		public delegate void HitsRemovedMethod (string searchId, int[] hitIds);
+		public delegate void SearchDoneMethod (string searchId);
 
 		[Interface("org.freedesktop.xesam.Search")]
 		public interface ISearcher {
 			string NewSession();
 			void CloseSession(string s);
 			object GetProperty(string s, string prop);
+			object SetProperty(string s, string prop, object val);
 			string NewSearch(string s, string xmlSearch);
+			void StartSearch(string s);
+			void CloseSearch(string s);
+			string[] GetState();
+			int CountHits(string s);
 			object[][] GetHits(string s, int num);
 			event HitsAddedMethod HitsAdded;
 			event HitsRemovedMethod HitsRemoved;
+			// XXX: We don't implement HitsModified and StateChanged because there is no
+			// simple corresponding entity in Beagle
+			event SearchDoneMethod SearchDone;
 		}
 
 		public class Searcher : ISearcher {
 			static private bool Debug = true;
-			// Start worrying about threads?
+			// XXX: Assuming that you won't change the beagled version in between
+			static private string beagleVersion = null;
+			// XXX: Start worrying about threads?
 			private int sessionCount = 0;
 			private int searchCount = 0;
 			private Dictionary<string, Session> sessions = new Dictionary<string, Session>();
@@ -56,14 +67,20 @@ namespace Beagle {
 
 			public event HitsAddedMethod HitsAdded;
 			public event HitsRemovedMethod HitsRemoved;
+			public event SearchDoneMethod SearchDone;
 
 			public string NewSession()
 			{
+				if (beagleVersion == null) {
+					DaemonInformationRequest infoReq = new DaemonInformationRequest(true, false, false, false);
+					DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
+					beagleVersion = infoResp.Version;
+				}
+
 				Session session = new Session();
 				session.VendorId = "Beagle";
-				// XXX: populate this from the Beagle daemon
-				//session.VendorVersion = "0";
-				session.VendorDisplay = "The Beagle sesktop search tool";
+				session.VendorVersion = beagleVersion;
+				session.VendorDisplay = "The Beagle desktop search tool";
 				// XXX: populate fieldnames, extensions
 				sessions.Add(Convert.ToString(sessionCount), session);
 
@@ -75,9 +92,17 @@ namespace Beagle {
 
 			public void CloseSession(string s)
 			{
-				// XXX: error handling?
-				sessions[s].Close();
+				Session session = sessions[s];
+
+				if (s == null) {
+					if (Debug) 
+						Console.Error.WriteLine("Error: CloseSession() -- {0} is not a valid session", s);
+					return;
+				}
+
+				session.Close();
 				sessions.Remove(s);
+
 				if (Debug) 
 					Console.Error.WriteLine("CloseSession() -- {0}", s);
 			}
@@ -133,6 +158,9 @@ namespace Beagle {
 					case "vendor.extensions":
 						ret =  session.VendorExtensions;
 						break;
+					case "vendor.ontologies":
+						ret = session.VendorOntologies;
+						break;
 					default:
 						ret =  null;
 						break;
@@ -151,6 +179,92 @@ namespace Beagle {
 				return ret;
 			}
 
+			public object SetProperty(string s, string prop, object val)
+			{
+				Session session = sessions[s];
+				object ret;
+
+				if (Debug) 
+					Console.Error.WriteLine("GetProperty() -- {0}, {1}", s, prop);
+
+				switch (prop) {
+					case "search.live": 
+						session.SearchLive = (bool)val;
+						ret =  session.SearchLive;
+						break;
+					case "search.blocking": 
+						session.SearchBlocking = (bool)val;
+						ret =  session.SearchBlocking;
+						break;
+					case "hit.fields":
+						session.HitFields = (string[])val;
+						ret =  session.HitFields;
+						break;
+					case "hit.fields.extended":
+						session.HitFieldsExtended = (string[])val;
+						ret =  session.HitFieldsExtended;
+						break;
+					case "hit.snippet.length":
+						session.HitSnippetLength = (int)val;
+						ret =  session.HitSnippetLength;
+						break;
+					case "sort.primary":
+						session.SortPrimary = (string)val;
+						ret =  session.SortPrimary;
+						break;
+					case "sort.secondary":
+						session.SortSecondary = (string)val;
+						ret =  session.SortSecondary;
+						break;
+					case "sort.order":
+						session.SortOrder = (string)val;
+						ret =  session.SortOrder;
+						break;
+					case "vendor.id":
+						/* read-only */
+						ret =  session.VendorId;
+						break;
+					case "vendor.version":
+						/* read-only */
+						ret =  session.VendorVersion;
+						break;
+					case "vendor.display":
+						/* read-only */
+						ret =  session.VendorDisplay;
+						break;
+					case "vendor.xesam":
+						/* read-only */
+						ret =  session.VendorXesam;
+						break;
+					case "vendor.fieldnames":
+						/* read-only */
+						ret =  session.VendorFieldNames;
+						break;
+					case "vendor.extensions":
+						/* read-only */
+						ret =  session.VendorExtensions;
+						break;
+					case "vendor.ontologies":
+						/* read-only */
+						ret = session.VendorOntologies;
+						break;
+					default:
+						ret =  null;
+						break;
+				}
+
+				if (Debug) {
+					if (ret is string[]) {
+						Console.Error.Write(" `-- returning ");
+						foreach (string i in (string[])ret)
+							Console.Error.Write("\"{0}\" ", i);
+						Console.Error.WriteLine("");
+					} else {
+						Console.Error.WriteLine(" `-- returning {0}", ret);
+					}
+				}
+				return ret;
+			}
 			public string NewSearch(string s, string xmlQuery)
 			{
 				Session session = sessions[s];
@@ -160,18 +274,98 @@ namespace Beagle {
 				search = session.CreateSearch(searchId, xmlQuery);
 				search.HitsAddedHandler += HitsAdded;
 				search.HitsRemovedHandler += HitsRemoved;
+				search.SearchDoneHandler += SearchDone;
 				searches.Add(searchId, search);
-
-				// Don't let HitsAdded events be raised till we
-				// return
-				search.mutex.WaitOne();
-				search.Start();
 
 				if (Debug) 
 					Console.Error.WriteLine("NewSearch() -- {0}, {1}, {2}", s, searchId, xmlQuery);
 
-				search.mutex.ReleaseMutex();
 				return searchId;
+			}
+
+			public void StartSearch(string s)
+			{
+				Search search = searches[s];
+
+				if (search == null) {
+					if (Debug) 
+						Console.Error.WriteLine("Error: StartSearch() -- {0} is not a valid search", s);
+					return;
+				}
+
+				search.Start();
+				if (Debug) 
+					Console.Error.WriteLine("StartSearch() -- {0}", s);
+			}
+
+			public void CloseSearch(string s)
+			{
+				Search search = searches[s];
+
+				if (search == null) {
+					if (Debug) 
+						Console.Error.WriteLine("Error: CloseSearch() -- {0} is not a valid search", s);
+					return;
+				}
+
+				search.Close();
+				searches.Remove(s);
+
+				if (Debug) 
+					Console.Error.WriteLine("CloseSearch() -- {0}", s);
+			}
+
+			public string[] GetState()
+			{
+				// XXX: Is there any way to find out if we're doing a FULL_INDEX ?
+				string[] ret = new string[] { null, null };
+				if (Debug) 
+					Console.Error.WriteLine("GetState(): {0} - {1}", ret[0], ret[1]);
+
+				DaemonInformationRequest infoReq = new DaemonInformationRequest(false, false, true, true);
+				DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
+
+				if (infoResp.IsIndexing) {
+					ret[0] = "IDLE";
+					return ret;
+				} else {
+					ret[0] = "UPDATE";
+
+					// XXX: We're just building total progress percentage as an average of all
+					// queryables' percentages
+					int qCount = 0;
+					int progress = 0;
+					foreach (QueryableStatus status in infoResp.IndexStatus) {
+						if (status.ProgressPercent != -1) {
+							qCount++;
+							progress += status.ProgressPercent;
+						}
+					}
+
+					ret[1] = (progress/qCount).ToString();
+				}
+
+				if (Debug) 
+					Console.Error.WriteLine("GetState(): {0} - {1}", ret[0], ret[1]);
+				return ret;
+			}
+
+			public int CountHits(string s)
+			{
+				Search search = searches[s];
+
+				if (search == null) {
+					if (Debug) 
+						Console.Error.WriteLine("Error: CountHits() -- {0} is not a valid search", s);
+					return 0;
+				}
+
+				int ret = search.CountHits();
+
+				if (Debug) 
+					Console.Error.WriteLine("CountHits() -- {0}, {1}", s, ret);
+
+				return ret;
 			}
 
 			public object[][] GetHits(string s, int num)

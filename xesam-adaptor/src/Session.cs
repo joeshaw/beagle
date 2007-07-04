@@ -44,6 +44,7 @@ namespace Beagle {
 			private int vendorXesam;
 			private string[] vendorFieldNames;
 			private string[] vendorExtensions;
+			private string[][] vendorOntologies;
 
 			private List<Search> searches = new List<Search>();
 
@@ -117,6 +118,11 @@ namespace Beagle {
 				set { vendorExtensions = value; }
 			}
 
+			public string[][] VendorOntologies {
+				get { return vendorOntologies; }
+				set { vendorOntologies = value; }
+			}
+
 			public Session()
 			{
 				SearchLive = false;
@@ -133,11 +139,13 @@ namespace Beagle {
 				VendorXesam = 1;
 				VendorFieldNames = new string[] { "uri" };
 				VendorExtensions = new string[] { "uri" };
+				// XXX: This is wrong. Needs to be fixed.
+				vendorOntologies = new string[][] { };
 			}
 
 			public Search CreateSearch(string searchID, string xmlQuery)
 			{
-				Search search = new Search(searchID, this, "xesam");
+				Search search = new Search(searchID, this, xmlQuery);
 				searches.Add(search);
 				return search;
 			}

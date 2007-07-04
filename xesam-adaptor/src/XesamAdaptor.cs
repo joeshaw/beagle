@@ -25,9 +25,6 @@
 //
 
 using System;
-using System.Threading;
-using System.Collections;
-using System.Collections.Generic;
 using GLib;
 using NDesk.DBus;
 using org.freedesktop.DBus;
@@ -44,6 +41,15 @@ namespace Beagle {
 			}
 			public static int Main(string[] args)
 			{
+				// Is Beagle up?
+				DaemonInformationRequest infoReq = new DaemonInformationRequest();
+				try {
+					infoReq.Send();
+				} catch {
+					Console.Error.WriteLine("Error: beagled does not appear to be running");
+					return -1;
+				}
+
 				Bus bus = Bus.Session;
 				ObjectPath opath = new ObjectPath("/org/freedesktop/xesam/searcher/main");
 				string service = "org.freedesktop.xesam.searcher";

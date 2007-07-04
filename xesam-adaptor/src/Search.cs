@@ -26,7 +26,6 @@
 
 using System;
 using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
 using Beagle;
 
@@ -71,7 +70,7 @@ namespace Beagle {
 			private Session parentSession;
 			private Query query;
 			private string id;
-			private bool running;
+			private bool running, finished;
 			private int hitCount = 0;
 			private Dictionary<int, Xesam.Hit> hits;
 			private Dictionary<int, Xesam.Hit> newHits;
@@ -79,17 +78,36 @@ namespace Beagle {
 			public Mutex mutex;
 			public event HitsAddedMethod HitsAddedHandler;
 			public event HitsRemovedMethod HitsRemovedHandler;
+			public event SearchDoneMethod SearchDoneHandler;
 
-			public Search(string myID, Session parentSession, string qTxt)
+			private bool isLive()
+			{
+				return parentSession.SearchLive;
+			}
+
+			private bool isBlocking()
+			{
+				return parentSession.SearchBlocking;
+			}
+
+			public Search(string myID, Session parentSession, string xmlQuery)
 			{
 				this.parentSession = parentSession;
 				id = myID;
 				running = false;
+				finished = false;
 				hits = new Dictionary<int, Xesam.Hit>();
 				newHits = new Dictionary<int, Xesam.Hit>();
 				mutex = new Mutex();
 
 				query = new Query();
+				string qTxt = Parser.ParseXesamQuery(xmlQuery);
+
+				if (qTxt == null) {
+					// XXX: This is dumb -- we should die gracefully
+					qTxt = "";
+					finished = true;
+				}
 
 				query.AddText(qTxt);
 
@@ -100,22 +118,41 @@ namespace Beagle {
 
 			public void Start()
 			{
-				query.SendAsync();
-				running = true;
+				if (!running) {
+					running = true;
+					query.SendAsync();
+				}
+
+				if (!isLive()) {
+					// Block till search is done
+					while (running) { }
+				}
 			}
 
 			public void Close()
 			{
-				// The if() might not be strictly necessary,
-				// but just in case
+				mutex.WaitOne();
 				if (running) {
 					query.Close();
 					running = false;
 				}
+				mutex.ReleaseMutex();
+			}
+
+			public int CountHits()
+			{
+				if (isBlocking()) {
+					while (!finished) { }
+				}
+				return hits.Count;
 			}
 
 			public object[][] GetHits(int num)
 			{
+				if (isBlocking()) {
+					while (!finished) { }
+				}
+
 				mutex.WaitOne();
 
 				// XXX: TBD -- sorting
@@ -175,22 +212,35 @@ namespace Beagle {
 					hits.Remove(key);
 				}
 
-				HitsRemovedHandler(id, removed.ToArray());
+				if (isLive()) {
+					HitsRemovedHandler(id, removed.ToArray());
+				}
 				mutex.ReleaseMutex();
 			}
 
 			private void OnFinished(FinishedResponse response)
 			{
+				Console.Error.WriteLine("Search finished");
+
+				if (!isLive()) {
+					// XXX: We really should wait a while after the first OnFinished
+					Close();
+					return;
+				}
+
+				// used for blocking searches
+				finished = true;
+
 				mutex.WaitOne();
 
-				Console.Error.WriteLine("Search finished");
 				if (newHits.Count > 0) {
 					HitsAddedHandler(id, newHits.Count);
 				}
 
+				SearchDoneHandler(id);
+
 				mutex.ReleaseMutex();
 			}
-
 		}
 	}
 }

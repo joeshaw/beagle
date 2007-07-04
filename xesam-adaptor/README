@@ -1,6 +1,6 @@
 This is a small adaptor that translates between the Xesam search API
 (http://freedesktop.org/wiki/XesamSearchLive) and Beagle's native search
-interface. It is currently very incomplete.
+interface. It is currently incomplete.
 
 To test this, you need the DBus service running:
 
@@ -15,6 +15,3 @@ To test this, you need the DBus service running:
 5) Use your xesam client to connect (see
 http://freedesktop.org/wiki/XesamSearchLive for an example client)
 
-Note: If you notice that all searches return results for the string "xesam",
-that's because the actual XML query is ignored. :) This should be fixed very
-soon.
