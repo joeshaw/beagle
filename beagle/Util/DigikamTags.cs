@@ -65,7 +65,7 @@ namespace Beagle.Util {
 		private static string digikamrc = null;
 		private const string tags_sql_string = @"SELECT images.caption, tags.name, tags.pid
 FROM albums, images, imagetags, tags 
-WHERE images.id=imagetags.imageid AND imagetags.tagid=tags.id AND 
+WHERE images.id=imagetags.imageid AND imagetags.tagid=tags.id AND albums.id=images.dirid AND 
 albums.url=@AlbumsUrl AND images.name=@ImagesName";
 		private const string tags_parenttags_sql_string = @"SELECT t1.name, t2.name 
 FROM tags t1, tags t2 
@@ -173,6 +173,7 @@ WHERE t1.pid=t2.id";
 			command.CommandText = tags_sql_string;
 			command.Parameters.Add ("@AlbumsUrl", relative_path);
 			command.Parameters.Add ("@ImagesName", filename);
+			//Console.WriteLine (tags_sql_string);
 			
 			SqliteDataReader reader = command.ExecuteReader ();
 
@@ -183,9 +184,11 @@ WHERE t1.pid=t2.id";
 				original_tags = new ArrayList ();
 				imagedata.caption = (string) reader [0];
 				original_tags.Add ((string) reader [1]);
+				//Console.WriteLine ("Adding tag {0}", (string) reader [1]);
 				//Console.WriteLine ("Found caption:" + imagedata.caption);
 			}
 			while (reader.Read ()) {
+				//Console.WriteLine ("Adding more tag {0}", (string) reader [1]);
 				original_tags.Add ((string) reader [1]);
 			}
 
