@@ -272,9 +272,12 @@ namespace Beagle {
 				Search search;
 
 				search = session.CreateSearch(searchId, xmlQuery);
-				search.HitsAddedHandler += HitsAdded;
-				search.HitsRemovedHandler += HitsRemoved;
-				search.SearchDoneHandler += SearchDone;
+
+				if (session.SearchLive) {
+					search.HitsAddedHandler += HitsAdded;
+					search.HitsRemovedHandler += HitsRemoved;
+					search.SearchDoneHandler += SearchDone;
+				}
 				searches.Add(searchId, search);
 
 				if (Debug) 

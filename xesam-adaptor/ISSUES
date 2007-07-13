@@ -27,8 +27,10 @@ Beagle:
 
 * Ontologies: What is the default value for session.vendorOntologies?
 
-* Live searches: What happens if search.live is false? Is it assumed that the
-	search is done when SearchStart() terminates? Are signals ignored?
-	Beagle doesn't have non-live searches, AFAICT.
+* Blocking searches: We stop blocking after the first OnFinished event. Maybe
+	we need to wait for a few more before throwing a SearchDone
 
 * Fields/Sorting: We need the list of fields before we can handle these
+
+* Threading: We need to verify that we've got locks where we need and that a
+	blocking request does not block the adaptor as a whole

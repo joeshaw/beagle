@@ -75,15 +75,17 @@ namespace Beagle {
 			private Dictionary<int, Xesam.Hit> hits;
 			private Dictionary<int, Xesam.Hit> newHits;
 
-			public Mutex mutex;
+			public Mutex mutex;	// Generic Dictonaries are not thread-safe
 			public event HitsAddedMethod HitsAddedHandler;
 			public event HitsRemovedMethod HitsRemovedHandler;
 			public event SearchDoneMethod SearchDoneHandler;
 
+			/*
 			private bool isLive()
 			{
 				return parentSession.SearchLive;
 			}
+			*/
 
 			private bool isBlocking()
 			{
@@ -118,15 +120,12 @@ namespace Beagle {
 
 			public void Start()
 			{
+				mutex.WaitOne();
 				if (!running) {
 					running = true;
 					query.SendAsync();
 				}
-
-				if (!isLive()) {
-					// Block till search is done
-					while (running) { }
-				}
+				mutex.ReleaseMutex();
 			}
 
 			public void Close()
@@ -142,7 +141,7 @@ namespace Beagle {
 			public int CountHits()
 			{
 				if (isBlocking()) {
-					while (!finished) { }
+					while (!finished) { /* XXX: Consider using a semaphore */ }
 				}
 				return hits.Count;
 			}
@@ -150,7 +149,7 @@ namespace Beagle {
 			public object[][] GetHits(int num)
 			{
 				if (isBlocking()) {
-					while (!finished) { }
+					while (!finished) { /* XXX: Consider using a semaphore */ }
 				}
 
 				mutex.WaitOne();
@@ -189,6 +188,10 @@ namespace Beagle {
 					newHits.Add(hitCount++, new Xesam.Hit(hitCount, bHit, parentSession.HitFields));
 				}
 
+				if (newHits.Count > 0 && HitsAddedHandler != null) {
+					HitsAddedHandler(id, response.Hits.Count);
+				}
+
 				mutex.ReleaseMutex();
 			}
 
@@ -212,7 +215,7 @@ namespace Beagle {
 					hits.Remove(key);
 				}
 
-				if (isLive()) {
+				if (HitsRemovedHandler != null) {
 					HitsRemovedHandler(id, removed.ToArray());
 				}
 				mutex.ReleaseMutex();
@@ -222,24 +225,12 @@ namespace Beagle {
 			{
 				Console.Error.WriteLine("Search finished");
 
-				if (!isLive()) {
-					// XXX: We really should wait a while after the first OnFinished
-					Close();
-					return;
-				}
-
 				// used for blocking searches
 				finished = true;
 
-				mutex.WaitOne();
-
-				if (newHits.Count > 0) {
-					HitsAddedHandler(id, newHits.Count);
+				if (SearchDoneHandler != null) {
+					SearchDoneHandler(id);
 				}
-
-				SearchDoneHandler(id);
-
-				mutex.ReleaseMutex();
 			}
 		}
 	}
