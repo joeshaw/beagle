@@ -27,7 +27,6 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 
 using GMime;
@@ -116,8 +115,6 @@ namespace Beagle.Filters {
 			return false;
 		}
 
-		bool has_attachment = false;
-
 		protected override void DoPullProperties ()
 		{
 			string subject = GMime.Utils.HeaderDecodePhrase (this.message.Subject);
@@ -156,10 +153,8 @@ namespace Beagle.Filters {
 			}
 			addrs.Dispose ();
 
-			if (HasAttachments (this.message.MimePart)) {
-				has_attachment = true;
+			if (HasAttachments (this.message.MimePart))
 				AddProperty (Property.NewFlag ("fixme:hasAttachments"));
-			}
 
 			// Store the message ID and references are unsearched
 			// properties.  They will be used to generate
@@ -190,52 +185,13 @@ namespace Beagle.Filters {
 				AddProperty (Property.NewFlag ("fixme:isSent"));
 		}
 
-		//protected override void DoPullSetup ()
-		//{
-		//	this.handler = new PartHandler (Indexable);
-		//	using (GMime.Object mime_part = this.message.MimePart)
-		//		this.handler.OnEachPart (mime_part);
-
-		//	AddIndexables (this.handler.ChildIndexables);
-		//}
-
-		//protected override void DoPullSetup ()
-		//{
-		//	this.handler = new PartHandler (Indexable, this.message.MimePart);
-		//	foreach (object o in this.handler) {
-		//		Console.WriteLine (o.ToString ());
-		//	}
-		//}
-
-		public override bool HasGeneratedIndexable {
-			get { return has_attachment; }
-		}
-
-		bool setup_done = false;
-		public override bool GenerateNextIndexable (out Indexable indexable)
+		protected override void DoPullSetup ()
 		{
-			indexable = null;
-			if (! setup_done) {
-				this.handler = new PartHandler (Indexable, this.message.MimePart);
-				setup_done = true;
-			}
+			this.handler = new PartHandler (Indexable);
+			using (GMime.Object mime_part = this.message.MimePart)
+				this.handler.OnEachPart (mime_part);
 
-			try {
-				indexable = this.handler.GetNextIndexable ();
-			} catch (Exception e) {
-				Log.Debug (e);
-				this.handler.Close ();
-				return false;
-			}
-
-			if (indexable == null) {
-				// free handler, which should in turn free message.MimePart
-				this.handler.Close ();
-				return false;
-			}
-			
-
-			return true;
+			AddIndexables (this.handler.ChildIndexables);
 		}
 
 		protected override void DoPull ()
@@ -276,10 +232,8 @@ namespace Beagle.Filters {
 			private Indexable indexable;
 			private int count = 0; // parts handled so far
 			private int depth = 0; // part recursion depth
-			//private ArrayList child_indexables = new ArrayList ();
+			private ArrayList child_indexables = new ArrayList ();
 			private TextReader reader;
-			private GMime.Object mime_part;
-			private IEnumerator parts;
 
 			// Blacklist a handful of common MIME types that are
 			// either pointless on their own or ones that we don't
@@ -292,23 +246,9 @@ namespace Beagle.Filters {
 				"text/x-vcard"
 			};
 
-			public PartHandler (Indexable parent_indexable, GMime.Object mime_part)
+			public PartHandler (Indexable parent_indexable)
 			{
 				this.indexable = parent_indexable;
-				this.mime_part = mime_part;
-				this.parts = GetNextPart (mime_part).GetEnumerator ();
-			}
-
-			~PartHandler ()
-			{
-				if (mime_part != null)
-					mime_part.Dispose ();
-			}
-
-			public void Close ()
-			{
-				mime_part.Dispose ();
-				parts = null;
 			}
 
 			private bool IsMimeTypeHandled (string mime_type)
@@ -321,21 +261,7 @@ namespace Beagle.Filters {
 				return false;
 			}
 
-			public Indexable GetNextIndexable ()
-			{
-				if (parts.MoveNext ()) {
-					//Console.WriteLine (parts.Current);
-					return (Indexable) parts.Current;
-				} else
-					return null;
-			}
-
-			public IEnumerator GetEnumerator ()
-			{
-				return parts;	
-			}
-
-			public IEnumerable GetNextPart (GMime.Object mime_part)
+			public void OnEachPart (GMime.Object mime_part)
 			{
 				GMime.Object part = null;
 				bool part_needs_dispose = false;
@@ -351,9 +277,7 @@ namespace Beagle.Filters {
 
 					using (GMime.Message message = msg_part.Message) {
 						using (GMime.Object subpart = message.MimePart)
-							foreach (Indexable ind in this.GetNextPart (subpart))
-								yield return ind;
-							//yield return this.GetNextPart (subpart);
+							this.OnEachPart (subpart);
 					}
 				} else if (mime_part is GMime.Multipart) {
 					GMime.Multipart multipart = (GMime.Multipart) mime_part;
@@ -383,9 +307,7 @@ namespace Beagle.Filters {
 					if (part == null) {
 						for (int i = 0; i < num_parts; i++) {
 							using (GMime.Object subpart = multipart.GetPart (i))
-								foreach (Indexable ind in this.GetNextPart (subpart))
-									yield return ind;
-								//yield return this.GetNextPart (subpart);
+								this.OnEachPart (subpart);
 						}
 					}
 				} else if (mime_part is GMime.Part)
@@ -449,7 +371,7 @@ namespace Beagle.Filters {
 							child.SetChildOf (this.indexable);
 							child.StoreStream ();
 							child.CloseStreams ();
-							yield return child;
+							this.child_indexables.Add (child);
 						} else {
 							Log.Debug ("Skipping attachment {0}#{1} with blacklisted mime type {2}",
 								   this.indexable.Uri, this.count, mime_type);
@@ -465,9 +387,9 @@ namespace Beagle.Filters {
 				--depth;
 			}
 
-			//public ICollection ChildIndexables {
-			//	get { return this.child_indexables; }
-			//}
+			public ICollection ChildIndexables {
+				get { return this.child_indexables; }
+			}
 
 			public TextReader Reader {
 				get { return this.reader; }
