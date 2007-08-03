@@ -60,16 +60,20 @@ namespace Beagle.Filters {
 			// add pdfinfo's output to pool
 			pout = new StreamReader (pc.StandardOutput);
 			string str = null;
-			string[] tokens = null;
+			int idx = -1;
 			string strMetaTag = null;
 			bool bKeyword = false;
+			string prop = null;
+			string val = null;
 
 			while ((str = pout.ReadLine ()) != null) {
 				bKeyword = false;
 				strMetaTag = null;
-				tokens = str.Split (':');
-				if (tokens.Length > 1) {
-					switch (tokens[0]) {
+				idx = str.IndexOf (':');
+				if (idx > 0) {
+					prop = str.Substring (0, idx);
+					val = str.Substring (idx + 1);
+					switch (prop) {
 					case "Title":
 						strMetaTag = "dc:title";
 						break;
@@ -83,6 +87,9 @@ namespace Beagle.Filters {
 					case "Creator":
 						strMetaTag = "dc:creator";
 						break;
+					case "Keywords":
+						strMetaTag = "dc:keyword";
+						break;
 					case "Producer":
 						strMetaTag = "dc:appname";
 						break;
@@ -90,10 +97,10 @@ namespace Beagle.Filters {
 					if (strMetaTag != null) {
 						if (bKeyword)
 							AddProperty (Beagle.Property.NewUnsearched (strMetaTag, 
-												 tokens[1].Trim()));
+												 val.Trim ()));
 						else
 							AddProperty (Beagle.Property.New (strMetaTag, 
-											  tokens[1].Trim()));
+											  val.Trim ()));
 					}
 						
 				}
