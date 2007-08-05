@@ -116,35 +116,32 @@ namespace Search.Tiles {
 			return details;
 		}
 
-		public static SafeProcess GetClientProcess (string client, string uri)
+		public static SafeProcess GetClientProcess (Beagle.Hit hit)
 		{
+			string client = null;
 			SafeProcess p = null;
-
+			
+			if (hit.ParentUri != null)
+				client = Utils.GetFirstPropertyOfParent (hit, "fixme:client");
+			else
+				client = hit.GetFirstProperty ("fixme:client");
+			
 			if (client == "evolution") {
 				p = new SafeProcess ();
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
-				p.Arguments [1] = uri;
+				p.Arguments [1] = (hit.ParentUri != null ? hit.EscapedParentUri : hit.EscapedUri);
 #if ENABLE_THUNDERBIRD
-			} else if (client == "thunderbird") {
-				p = new SafeProcess ();
-				p.Arguments = new string [3];
-				p.Arguments [0] = Thunderbird.ExecutableName;
-				p.Arguments [1] = "-mail";
-				p.Arguments [2] = uri;
+			} else if (client == "thunderbird")
+				p = Thunderbird.GetSafeProcess ("-viewbeagle", hit.GetFirstProperty ("fixme:uri"));
 #endif
-			}
 
 			return p;
 		}
 
 		public override void Open ()
 		{
-			SafeProcess p;
-			if (Hit.ParentUri != null) 
-				p = GetClientProcess (Utils.GetFirstPropertyOfParent (Hit, "fixme:client"), Hit.EscapedParentUri);
-			else
-				p = GetClientProcess (Utils.GetFirstPropertyOfParent (Hit, "fixme:client"), Hit.EscapedUri);
+			SafeProcess p = GetClientProcess (Hit);
 			
 			if (p == null) {
 				OpenFromMime (Hit);

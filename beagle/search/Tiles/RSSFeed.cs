@@ -3,6 +3,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Collections;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -65,7 +66,20 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			base.OpenFromUri (Hit ["dc:identifier"]);
+			// If we are not a feed from Thunderbird just open based on mime
+			if (Hit.GetFirstProperty ("fixme:client") != "thunderbird") {
+				base.OpenFromUri (Hit ["dc:identifier"]);
+				return;
+			}
+			
+			// Here's the Thunderbird specific part
+			SafeProcess p = Thunderbird.GetSafeProcess ("-viewbeagle", Hit.GetFirstProperty ("fixme:uri"));
+			
+			try {
+				p.Start ();
+			} catch (SafeProcessException e) {
+				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
+			}
 		}
 	}
 }

@@ -67,12 +67,8 @@ namespace Search.Tiles {
 
 		public override void Open ()
 		{
-			SafeProcess p;
+			SafeProcess p = MailMessage.GetClientProcess (Hit);
 			
-			if (Hit.ParentUri != null)
-				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.EscapedParentUri);
-			else
-				p = MailMessage.GetClientProcess (GetHitProperty (Hit, "fixme:client"), Hit.EscapedUri);
 			if (p == null) {
 				OpenFromMime (Hit);
 				return;

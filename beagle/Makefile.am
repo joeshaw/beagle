@@ -41,9 +41,7 @@ SUBDIRS += bludgeon
 endif
 
 if ENABLE_THUNDERBIRD
-if ENABLE_GUI
-SUBDIRS += ContactViewer
-endif
+SUBDIRS += thunderbird-extension
 endif
 
 # When the chooser work has been fixed up to use libbeagle, we can
