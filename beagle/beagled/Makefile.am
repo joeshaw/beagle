@@ -518,16 +518,7 @@ THUNDERBIRD_TARGET = ThunderbirdBackends.dll
 THUNDERBIRD_CSFLAGS = $(BACKEND_CSFLAGS)
 
 THUNDERBIRD_CSFILES =						\
-	$(THUNDERBIRD_DIR)/LuceneAccess.cs			\
-	$(THUNDERBIRD_DIR)/ThunderbirdIndexer.cs   		\
-	$(THUNDERBIRD_DIR)/ThunderbirdIndexableGenerator.cs	\
-	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs		\
-	$(THUNDERBIRD_DIR)/ThunderbirdInotify.cs		\
-	$(THUNDERBIRD_DIR)/Mail.cs				\
-	$(THUNDERBIRD_DIR)/Contact.cs				\
-	$(THUNDERBIRD_DIR)/Rss.cs				\
-	$(THUNDERBIRD_DIR)/Nntp.cs				\
-	$(THUNDERBIRD_DIR)/MoveMail.cs
+	$(THUNDERBIRD_DIR)/ThunderbirdQueryable.cs
 
 THUNDERBIRD_LOCAL_ASSEMBLIES =					\
 	../Util/Util.dll					\
