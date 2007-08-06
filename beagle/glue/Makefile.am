@@ -1,15 +1,13 @@
 INCLUDES = $(MONO_CFLAGS)
 
 if ENABLE_GUI
-INCLUDES += 				\
-	$(LIBTRAYICON_CFLAGS)		\
-	$(UIGLUE_CFLAGS)
+INCLUDES += $(UIGLUE_CFLAGS)
 endif
 
 EXTRA_GLUE_SOURCES =
 EXTRA_GLUE_LIBADD =
 
-BEAGLED_GLUE_SOURCES =	\
+BEAGLED_GLUE_SOURCES =		\
 	beagled-utils.c
 
 if ENABLE_INOTIFY
@@ -19,10 +17,10 @@ EXTRA_GLUE_SOURCES +=		\
 	inotify-glue.c
 endif
 
-IOPRIO_GLUE_SOURCES =	\
+IOPRIO_GLUE_SOURCES =		\
 	ioprio-glue.c
 
-SPAWN_GLUE_SOURCES =	\
+SPAWN_GLUE_SOURCES =		\
 	spawn-glue.c
 
 SCHEDULER_GLUE_SOURCES =	\
@@ -45,11 +43,6 @@ KEY_GLUE_SOURCES =	 	\
 	tomboykeybinder.h	\
 	eggaccelerators.c	\
 	eggaccelerators.h
-
-TRAYICON_GLUE_SOURCES =		\
-	eggtrayicon.c		\
-	eggtrayicon.h
-TRAYICON_GLUE_LIBADD = $(LIBTRAYICON_LIBS)
 
 XDGMIME_GLUE_SOURCES =		\
 	xdgmime/xdgmime.c	\
@@ -105,11 +98,9 @@ libbeagleglue_la_LIBADD =	\
 
 libbeagleuiglue_la_SOURCES =	\
 	$(KEY_GLUE_SOURCES)	\
-	$(TRAYICON_GLUE_SOURCES)\
 	$(UI_GLUE_SOURCES)
 
 libbeagleuiglue_la_LIBADD =	\
-	$(TRAYICON_GLUE_LIBADD)	\
 	$(UI_GLUE_LIBADD)
 
 gluelibdir = $(pkglibdir)
