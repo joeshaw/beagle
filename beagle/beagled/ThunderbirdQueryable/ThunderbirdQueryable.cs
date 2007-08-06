@@ -45,7 +45,8 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 	
 		// History:
 		// 1: Initial version used to force reindex due to changes in URI scheme
-		private const int MINOR_VERSION = 1;
+		// 2: Client and folder properties have been changed to Keyword instead of Unsearched
+		private const int MINOR_VERSION = 2;
 	
 		private ThunderbirdIndexer indexer = null;
 		private string overriden_toindex = null;
@@ -182,7 +183,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				return;
 			}
 			
-			Property prop = Property.NewUnsearched ("fixme:folderFile", folderFile);
+			Property prop = Property.NewUnsearched ("ParentUri", folderFile);
 			Scheduler.Task task = queryable.NewRemoveByPropertyTask (prop);
 			task.Tag = folderFile;
 			task.Priority = Scheduler.Priority.Immediate;
@@ -396,9 +397,9 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			indexable.Crawled = true;
 			indexable.SetBinaryStream (message.Stream);
 			
-			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "thunderbird"));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:folder", GetText (document, "Folder")));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:folderFile", GetText (document, "FolderFile")));
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "thunderbird"));
+			indexable.AddProperty (Property.NewKeyword ("fixme:folder", GetText (document, "Folder")));
+			indexable.AddProperty (Property.NewUnsearched ("ParentUri", GetText (document, "FolderFile")));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uri", GetText (document, "Uri")));
 			
 			message.Dispose ();
@@ -408,7 +409,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		
 		// ReadLine in stream requires the more "fancy" line ending "\r\n", which we do't have. So we use this
 		// implementation instead.
-		private static string ReadLine (System.IO.Stream stream)
+		private static string ReadEncodingLine (System.IO.Stream stream)
 		{
 			// We usually only need to cover UTF-8 and iso-8859-1, so we initially make the buffer big
 			// enough for this (and expand later if needed)
@@ -468,7 +469,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 					// current character with the ones in CHARSET. If we match all characters
 					// in order, we know that what follows is the encoding.
 					if (charset_pos == CHARSET.Length) {
-						encoding_str = ReadLine (stream.BaseStream);
+						encoding_str = ReadEncodingLine (stream.BaseStream);
 						newlines++; // We must compensate this
 						header_length += encoding_str.Length+1; // ...and this
 						charset_pos = 0;
@@ -527,9 +528,9 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			indexable.CacheContent = true;
 			indexable.Crawled = true;
 			
-			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "thunderbird"));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:folder", GetText (document, "Folder")));
-			indexable.AddProperty (Property.NewUnsearched ("fixme:folderFile", GetText (document, "FolderFile")));
+			indexable.AddProperty (Property.NewKeyword ("fixme:client", "thunderbird"));
+			indexable.AddProperty (Property.NewKeyword ("fixme:folder", GetText (document, "Folder")));
+			indexable.AddProperty (Property.NewUnsearched ("ParentUri", GetText (document, "FolderFile")));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uri", GetText (document, "Uri")));
 			
 			indexable.AddProperty (Property.NewKeyword ("dc:identifier", ExtractUrl (GetText (document, "MessageId"))));

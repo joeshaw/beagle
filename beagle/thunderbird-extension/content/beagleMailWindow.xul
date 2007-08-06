@@ -231,10 +231,10 @@
 					
 				folder.QueryInterface (Components.interfaces.nsIMsgFolder);
 				var userMarked = indexer.isFolderUserMarked (folder);
+				var queue = Components.classes ['@beagle-project.org/services/queue;1'].getService (Components.interfaces.nsIBeagleQueue);
 				if (userMarked) {
-					// We reset userMarked but also the "indexed" flag to make sure content
-					// gets indexed when done (only the folder, not the content)
 					indexer.resetFolder (folder, true, false, false);
+					queue.addFolder (folder);
 				} else
 					indexer.markFolderAsUserMarked (folder);
 			} catch (ex) {
@@ -274,7 +274,8 @@
 				
 				if (!userMarked) {
 					var hdr = msgs.QueryElementAt (0, Components.interfaces.nsIMsgDBHdr);
-					indexer.resetFolder (hdr.folder, false, false, false);
+					var queue = Components.classes ['@beagle-project.org/services/queue;1'].getService (Components.interfaces.nsIBeagleQueue);
+					queue.addHdr (hdr);
 				}
 					
 			} catch (ex) {
@@ -284,7 +285,7 @@
 		// The code below belongs to the "open-message-from-command-line"-code. The reason
 		// why this code is placed here is because of the MsgOpenNewWindowForMessage-function,
 		// which will do everything we want. This code will be removed once we have proper
-		// support for opening from command line.
+		// support for opening from command line. This code is ugly...
 		var observer = Components.classes['@mozilla.org/observer-service;1']
 			.getService(Components.interfaces.nsIObserverService);
 		
@@ -293,16 +294,40 @@
 			{
 				if (!data)
 					return;
-					
+				
 				var messenger = Components.classes ['@mozilla.org/messenger;1']
 					.getService (Components.interfaces.nsIMessenger);
 				var hdr = messenger.msgHdrFromURI (data);
+				dump ("Opening message: " + hdr.folder.getUriForMsg (hdr) + "\n");
+				
 				MsgOpenNewWindowForMessage (data, hdr.folder.URI);
 			}
 		};
 		
-		observer.addObserver (gBeagleCommandLineObserver, 'beagle-open-uri', false);
-
+		function getWindowCount ()
+		{
+			var ww = Components.classes ['@mozilla.org/embedcomp/window-watcher;1']
+				.getService (Components.interfaces.nsIWindowWatcher);
+			var enumerator = ww.getWindowEnumerator ();
+			var count = 0;
+			
+			while (enumerator.hasMoreElements ()) {
+				enumerator.getNext ();
+				count++;
+			}
+			
+			return count;
+		}
+		
+		// Each window opened (including the windows displaying a message) will load the code in
+		// this file due to the way they are overlayed. If each window is listening for new 
+		// messages that the user wants to display, then we'll get one new message window per 
+		// already opened window. For instance, if the user has a main window open as well as 
+		// writing a message and decides to display a message - two equal windows will pop-up. 
+		// We only listen in case we have one windows open to work around this issue.
+		if (getWindowCount () == 1)
+			observer.addObserver (gBeagleCommandLineObserver, 'beagle-open-uri', false);
+		
 		// Tell the world that we are done (mainly to make the "open from command line"-hack to work)
 		observer.notifyObservers (null, 'beagle-loaded', null);
 	]]>

@@ -24,7 +24,7 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-var init = false;
+var beagle_init = false;
 var gBeagleSettings = null;
 var gBeagleIndexer = null;
 var gBeagleQueue = null;
@@ -43,7 +43,7 @@ function notify (data)
 
 function initService ()
 {
-	if (init)
+	if (beagle_init)
 		return;
 	
 	dump ("Beagle init started\n");
@@ -55,7 +55,7 @@ function initService ()
 		.getService (Components.interfaces.nsIBeagleIndexer);
 	gBeagleQueue = Components.classes ['@beagle-project.org/services/queue;1']
 		.getService (Components.interfaces.nsIBeagleQueue);
-	init = true;
+	beagle_init = true;
 	
 	// Load settings
 	gBeagleSettings.init ();
@@ -85,7 +85,7 @@ function initService ()
 
 function start ()
 {
-	if (!init)
+	if (!beagle_init)
 		initService ();
 	
 	gBeagleTimer.cancel ();
@@ -97,7 +97,7 @@ function start ()
 
 function stop (disable)
 {
-	if (!init)
+	if (!beagle_init)
 		initService ();
 	
 	gBeagleTimer.cancel ();
@@ -114,7 +114,7 @@ function stop (disable)
 
 function restart (seconds)
 {
-	if (!init)
+	if (!beagle_init)
 		initService ();
 		
 	gBeagleTimer.cancel ();
@@ -132,8 +132,16 @@ function addWarning (text, params, length)
 	var bundleService = Components.classes ['@mozilla.org/intl/stringbundle;1']
 		.getService (Components.interfaces.nsIStringBundleService);
 	var bundle = bundleService.createBundle ('chrome://beagle/locale/strings.properties');
-
-	warnings [warnings.length] = bundle.formatStringFromName (text, params, length);
+	
+	try {
+		if (params == null)
+			warnings [warnings.length] = bundle.GetStringFromName (text);
+		else
+			warnings [warnings.length] = bundle.formatStringFromName (text, params, length);
+	} catch (ex) {
+		warnings [warnings.length] = "Failed to add error message! You should report this as a bug. Details: " + ex;
+	}
+	
 	notify ('new-warning');
 }
 

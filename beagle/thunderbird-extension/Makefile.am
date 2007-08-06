@@ -1,8 +1,5 @@
 PROJECT = beagle
-VERSION = 0.1
-
-XPIDL_BIN = /usr/lib/firefox/xpidl
-IDL_FILES = /usr/share/idl/mozilla-thunderbird
+VERSION = 0.1.2
 
 all: $(PROJECT).xpi
 
@@ -49,7 +46,7 @@ chrome/$(PROJECT).jar: $(JAR_FILES)
 
 $(COMPONENT_FILES): 
 	-@mkdir -p components 
-	$(XPIDL_BIN) -m typelib -w -v -I $(IDL_FILES) -e $@ `echo $@ | sed s/xpt/idl/`
+	$(XPIDL_PATH) -m typelib -w -v -I $(IDL_PATH) -e $@ `echo $@ | sed s/xpt/idl/`
 
 $(PROJECT).xpi: $(XPI_FILES)
 	zip -q9 $@ $^

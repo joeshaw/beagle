@@ -37,6 +37,7 @@ interface nsIBeagleQueue : nsISupports
 
 	boolean addHdr (in nsIMsgDBHdr hdr);
 	boolean removeHdr (in nsIMsgDBHdr hdr);
+	boolean addFolder (in nsIMsgFolder folder);
 	boolean removeFolder (in nsIMsgFolder folder);
 	boolean moveHdr (in nsIMsgDBHdr oldHdr, in nsIMsgDBHdr newHdr);
 	boolean moveFolder (in nsIMsgFolder oldFolder, in nsIMsgFolder newFolder);

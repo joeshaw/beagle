@@ -62,7 +62,7 @@ const startupObserver = {
 	
 	notify: function ()
 	{
-		if (!loaded || !last_uri)
+		if (!loaded || (loaded && !last_uri))
 			return;
 		
 		var uri = last_uri;
@@ -73,6 +73,10 @@ const startupObserver = {
 	observe: function (subject, topic, data)
 	{
 		if (topic == 'beagle-loaded') {
+			// Each message will send this so we better not respond to all of them
+			if (loaded)
+				return;
+			
 			loaded = true;
 			this.notify ();
 		} else if (topic == 'quit-application')

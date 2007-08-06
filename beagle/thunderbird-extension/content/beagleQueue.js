@@ -124,6 +124,18 @@ function removeHdr (hdr)
 	return false;
 }
 
+// Basic purpose of this function is to make the main loop run which eventually will pick it up
+function addFolder (folder)
+{
+	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
+		.getService (Components.interfaces.nsIBeagleIndexer);
+	
+	if (indexer.isFolderIndexed (folder))
+		return;
+	
+	notify ('add-folder');
+}
+
 function removeFolder (folder)
 {
 	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
