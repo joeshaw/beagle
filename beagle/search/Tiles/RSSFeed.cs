@@ -71,7 +71,8 @@ namespace Search.Tiles {
 				base.OpenFromUri (Hit ["dc:identifier"]);
 				return;
 			}
-			
+
+#if ENABLE_THUNDERBIRD			
 			// Here's the Thunderbird specific part
 			SafeProcess p = Thunderbird.GetSafeProcess ("-viewbeagle", Hit.GetFirstProperty ("fixme:uri"));
 			
@@ -80,6 +81,7 @@ namespace Search.Tiles {
 			} catch (SafeProcessException e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
 			}
+#endif
 		}
 	}
 }

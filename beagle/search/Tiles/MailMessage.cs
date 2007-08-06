@@ -131,9 +131,11 @@ namespace Search.Tiles {
 				p.Arguments = new string [2];
 				p.Arguments [0] = "evolution";
 				p.Arguments [1] = (hit.ParentUri != null ? hit.EscapedParentUri : hit.EscapedUri);
+			}
 #if ENABLE_THUNDERBIRD
-			} else if (client == "thunderbird")
-				p = Thunderbird.GetSafeProcess ("-viewbeagle", hit.GetFirstProperty ("fixme:uri"));
+			else if (client == "thunderbird")  {
+			     p = Thunderbird.GetSafeProcess ("-viewbeagle", hit.GetFirstProperty ("fixme:uri"));
+			}
 #endif
 
 			return p;
