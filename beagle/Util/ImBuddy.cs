@@ -32,20 +32,49 @@ using System.IO;
 namespace Beagle.Util {
 
 	public class ImBuddy {
-		public string Protocol = String.Empty;
-		public string OwnerAccountName = String.Empty;
-		public string BuddyAccountName = String.Empty;
-		public string Alias = String.Empty;
-		public string BuddyIconLocation = String.Empty;
-		public string BuddyIconChecksum = String.Empty;
 
-		public ImBuddy (string protocol, string owneraccount, string buddyaccount, string alias, string iconlocation, string iconchecksum) {
-			Protocol = protocol;
-			OwnerAccountName = owneraccount;
-			BuddyAccountName = buddyaccount;
-			Alias = alias;
-			BuddyIconLocation = iconlocation;
-			BuddyIconChecksum = iconchecksum;
+		public string protocol = null;
+		public string owner_account_name = null;
+		public string buddy_account_name = null;
+		public string alias = null;
+		public string buddy_icon_location = null;
+		public string buddy_icon_checksum = null;
+
+		public ImBuddy (string protocol, string owner, string buddy, string alias, string location, string checksum)
+		{
+			this.protocol = protocol;
+			this.owner_account_name = owner;
+			this.buddy_account_name = buddy;
+			this.alias = alias;
+			this.buddy_icon_location = location;
+			this.buddy_icon_checksum = checksum;
+		}
+
+		public string Protocol {
+			get { return protocol; }
+		}
+
+		public string OwnerAccountName {
+			get { return owner_account_name; }
+		}
+
+		public string BuddyAccountName {
+			get { return buddy_account_name; }
+		}
+
+		public string Alias {
+			get { return alias; }
+			set { alias = value; }
+		}
+
+		public string BuddyIconLocation {
+			get { return buddy_icon_location; }
+			set { buddy_icon_location = value; }
+		}
+
+		public string BuddyIconChecksum {
+			get { return buddy_icon_checksum; }
+			set { buddy_icon_checksum = value; }
 		}
 	}
 	
@@ -53,177 +82,164 @@ namespace Beagle.Util {
 
 	public abstract class ImBuddyListReader {
 
-		public bool verbose = false;
-
-		public Hashtable buddyList = new Hashtable ();
+		public Hashtable BuddyList = null;
 
 		abstract public void Read ();
 
-		public void DebugPrint (string str) {
-			if (!verbose)
-				return;
-			Logger.Log.Debug ("{0}", str);
+		protected static string Format (string name)
+		{
+			return name.ToLower ().Replace (" ", "");
 		}
 
+		public virtual ImBuddy Search (string buddy)
+		{
+			if (BuddyList == null)
+				return null;
+
+			return (ImBuddy)BuddyList[Format (buddy)];
+		}
 	}
+
+	///////////////////////////////////////////////////////////////////////////////
 	
-	public class GaimBuddyListReader : ImBuddyListReader {
+	public class PidginBuddyListReader : ImBuddyListReader {
 
-		string buddyListPath;
-		string buddyListDir;
-		DateTime buddyListLastWriteTime;
-		uint timeoutId;
+		private string buddy_list_path = null;
+		private string buddy_list_dir = null;
+		private DateTime buddy_list_last_write;
+		private uint timeout_id;
 
-		public GaimBuddyListReader ()
+		public PidginBuddyListReader ()
 		{
 			string home = Environment.GetEnvironmentVariable ("HOME");
-			buddyListDir = Path.Combine (home, ".gaim");
-			buddyListPath = Path.Combine (buddyListDir, "blist.xml");
+			buddy_list_dir = Path.Combine (home, ".gaim");
+			buddy_list_path = Path.Combine (buddy_list_dir, "blist.xml");
 			
-			if (File.Exists (buddyListPath))
+			if (File.Exists (buddy_list_path))
 				Read ();
 
 			// Poll the file once every minute
-			timeoutId = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
+			timeout_id = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
 		}
 
-		~GaimBuddyListReader ()
+		~PidginBuddyListReader ()
 		{
-			if (timeoutId > 0)
-				GLib.Source.Remove (timeoutId);
+			if (timeout_id > 0)
+				GLib.Source.Remove (timeout_id);
 		}
 
 		private bool ReadTimeoutHandler ()
 		{
-			if (File.Exists (buddyListPath))
+			if (File.Exists (buddy_list_path))
 				Read ();
 
 			return true;
 		}
 
-		private string Format (string name) {
-			return name.ToLower ().Replace (" ", "");
-		}
-
-		override public void Read ()
+		public override void Read ()
 		{
 			// If the file hasn't changed, don't do anything.
-			DateTime last_write = File.GetLastWriteTime (buddyListPath);
-			if (last_write == buddyListLastWriteTime)
+			DateTime last_write = File.GetLastWriteTime (buddy_list_path);
+
+			if (last_write == buddy_list_last_write)
 				return;
 
-			buddyListLastWriteTime = last_write;
+			buddy_list_last_write = last_write;
 
-			buddyList = new Hashtable ();
+			BuddyList = new Hashtable ();
 
 			try {
 				XmlDocument accounts = new XmlDocument ();
-				accounts.Load (buddyListPath);
+				accounts.Load (buddy_list_path);
 				
 				XmlNodeList contacts = accounts.SelectNodes ("//contact");
 				
 				foreach (XmlNode contact in contacts) {
-					string groupalias = String.Empty;
+					string group_alias = null;
 					
 					foreach (XmlAttribute attr in contact.Attributes) {
-						if (attr.Name == "alias") {
-							groupalias = attr.Value;
-						}
+						if (attr.Name == "alias")
+							group_alias = attr.Value;
 					}
 					
-					if (groupalias != String.Empty) {
-						foreach (XmlNode buddy in contact.ChildNodes) {
-							AddBuddy (buddy, groupalias);
-						}
+					if (!String.IsNullOrEmpty (group_alias)) {
+						foreach (XmlNode buddy in contact.ChildNodes)
+							AddBuddy (buddy, group_alias);
 					}
 				}
 				
-				foreach (XmlNode buddy in accounts.SelectNodes ("//contact[not(@name)]/buddy")) {
+				foreach (XmlNode buddy in accounts.SelectNodes ("//contact[not(@name)]/buddy"))
 					AddBuddy (buddy);
-				}
 			} catch (Exception ex) {
 				Logger.Log.Error (ex, "Caught exception while trying to parse Gaim contact list:");
 			}
 		}
 
-		private void AddBuddy (XmlNode buddy, string groupalias) 
+		private void AddBuddy (XmlNode node, string group_alias)
 		{
-			string protocol, owner, other, alias, iconlocation, iconchecksum;
-			
-			protocol = String.Empty;
-			owner = String.Empty;
-			other = String.Empty;
-			alias = String.Empty;
-			iconlocation = String.Empty;
-			iconchecksum = String.Empty;
+			string protocol = null;
+			string owner = null;
+			string buddy = null;
+			string alias = null;
+			string iconlocation = null;
+			string iconchecksum = null;
 
-			foreach (XmlAttribute attr in buddy.Attributes) {
+			foreach (XmlAttribute attr in node.Attributes) {
 				switch (attr.Name) {
-					case "account":
-						owner = attr.Value;
-						DebugPrint ("owner: " + owner);
-						break;
-					case "proto":
+				case "account":
+					owner = attr.Value;
+					break;
+					
+				case "proto":
 					protocol = attr.Value;
-					DebugPrint ("protocol: " + protocol);
 					break;
 				}
 			}
 		
-			foreach (XmlNode attr in buddy.ChildNodes) {
+			foreach (XmlNode attr in node.ChildNodes) {
 				switch (attr.LocalName) {
-					case "name":
-						other = attr.InnerText;
-						DebugPrint ("other: " + other);
-						break;
-					case "alias":
-						alias = attr.InnerText;
-						DebugPrint ("alias: " + alias);
-						break;
-					case "setting":
-						foreach (XmlAttribute subattr in attr.Attributes) {
-							if (subattr.Name == "name" && subattr.Value == "buddy_icon")
-							{
-								iconlocation = attr.InnerText;
-								DebugPrint ("iconlocation: " + iconlocation);
-							}
-							else if ( subattr.Name == "name" && subattr.Value == "icon_checksum")
-							{
+				case "name":
+					buddy = attr.InnerText;
+					break;
+					
+				case "alias":
+					alias = attr.InnerText;
+					break;
+					
+				case "setting":
+					foreach (XmlAttribute subattr in attr.Attributes) {
+						if (subattr.Name == "name" && subattr.Value == "buddy_icon") {
+							iconlocation = attr.InnerText;
+						} else if (subattr.Name == "name" && subattr.Value == "icon_checksum") {
 								iconchecksum = attr.InnerText;
-								DebugPrint ("iconchecksum: " + iconchecksum);
-							}
 						}
-						break;
+					}
+					break;
 				}
 			}
 
-			ImBuddy old;
+			if (!String.IsNullOrEmpty (group_alias))
+				alias = group_alias;
 
-			if (groupalias != null)
-				alias = groupalias;
+			if (BuddyList.ContainsKey (Format (buddy))) {
+				ImBuddy old = Search (buddy);
 
-			if (buddyList.ContainsKey (Format(other))) {
-				old = (ImBuddy)buddyList[Format(other)];
-				if (old.Alias == String.Empty && alias != String.Empty)
+				if (String.IsNullOrEmpty (old.Alias) && !String.IsNullOrEmpty (alias))
 					old.Alias = alias;
-				if (old.BuddyIconLocation == String.Empty && iconlocation == String.Empty) {
+
+				if (String.IsNullOrEmpty (old.BuddyIconLocation) && !String.IsNullOrEmpty (iconlocation)) {
 					old.BuddyIconLocation = iconlocation;
 					old.BuddyIconChecksum = iconchecksum;
 				}
-				buddyList.Remove (Format(other));
-				buddyList.Add (Format(other), old);
-			} 
-			else
-				buddyList.Add (Format(other), new ImBuddy (protocol, owner, Format(other), alias, iconlocation, iconchecksum));
+			} else {
+				ImBuddy im_buddy = new ImBuddy (protocol, owner, Format (buddy), alias, iconlocation, iconchecksum);
+				BuddyList.Add (Format (buddy), im_buddy);
+			}
 		}
 
 		private void AddBuddy (XmlNode buddy) 
 		{
 			AddBuddy (buddy, null);
-		}
-
-		public ImBuddy Search (string buddy) {
-			return (ImBuddy)buddyList[Format(buddy)];
 		}
 	}
 
@@ -231,61 +247,58 @@ namespace Beagle.Util {
 
 	public class KopeteBuddyListReader : ImBuddyListReader {
 
-		string buddyListPath;
-		string buddyListDir;
-		DateTime buddyListLastWriteTime;
-		uint timeoutId;
+		private string buddy_list_path = null;
+		private string buddy_list_dir = null;
+		private DateTime buddy_list_last_write;
+		private uint timeout_id;
 
 		public KopeteBuddyListReader ()
 		{
-			buddyListDir = Path.Combine (PathFinder.HomeDir, ".kde/share/apps/kopete");
-			buddyListPath = Path.Combine (buddyListDir, "contactlist.xml");
+			buddy_list_dir = Path.Combine (PathFinder.HomeDir, ".kde/share/apps/kopete");
+			buddy_list_path = Path.Combine (buddy_list_dir, "contactlist.xml");
 			
-			if (File.Exists (buddyListPath))
+			if (File.Exists (buddy_list_path))
 				Read ();
 
 			// Poll the file once every minute
-			timeoutId = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
+			timeout_id = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
 		}
 
 		~KopeteBuddyListReader ()
 		{
-			if (timeoutId > 0)
-				GLib.Source.Remove (timeoutId);
+			if (timeout_id > 0)
+				GLib.Source.Remove (timeout_id);
 		}
 
 		private bool ReadTimeoutHandler ()
 		{
-			if (File.Exists (buddyListPath))
+			if (File.Exists (buddy_list_path))
 				Read ();
 
 			return true;
 		}
 
-		private string Format (string name) {
-			return name.ToLower ().Replace (" ", "");
-		}
-
-		override public void Read ()
+		public override void Read ()
 		{
 			// Ignore empty files
-			FileInfo fi = new FileInfo (buddyListPath);
+			FileInfo fi = new FileInfo (buddy_list_path);
+
 			if (fi.Length == 0)
 				return;
-			fi = null;
 
 			// If the file hasn't changed, don't do anything.
-			DateTime last_write = File.GetLastWriteTime (buddyListPath);
-			if (last_write == buddyListLastWriteTime)
+			DateTime last_write = File.GetLastWriteTime (buddy_list_path);
+
+			if (last_write == buddy_list_last_write)
 				return;
 
-			buddyListLastWriteTime = last_write;
+			buddy_list_last_write = last_write;
 
-			buddyList = new Hashtable ();
+			BuddyList = new Hashtable ();
 
 			try {
 				XmlDocument accounts = new XmlDocument ();
-				accounts.Load (buddyListPath);
+				accounts.Load (buddy_list_path);
 				
 				// Find all xml contact nodes in the contact list
 				foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
@@ -297,55 +310,46 @@ namespace Beagle.Util {
 
 		private void AddContact (XmlNode contact) 
 		{
-			string protocol, owner, other, alias, iconlocation, iconchecksum;
-			
-			protocol = String.Empty;
-			owner = String.Empty;
-			other = String.Empty;
-			alias = String.Empty;
-			iconlocation = String.Empty;
-			iconchecksum = String.Empty;
+			string protocol = null;
+			string owner = null;
+			string buddy = null;
+			string alias = null;
 
 			// For each and every meta-contact, there can be multiple 
 			// buddy information entries if we have a contact added on
 			// multiple protocols. Loop through them.
 
  			foreach (XmlNode plugin_node in contact.SelectNodes ("plugin-data")) {
-				// Determin the protocol
+				// Determine the protocol
 				XmlAttribute plugin_id_attr = plugin_node.Attributes ["plugin-id"];
 				protocol = plugin_id_attr.Value.Substring (0, plugin_id_attr.Value.Length-8).ToLower ();
-				DebugPrint ("Protocol=" + protocol);
 
 				// Fetch all the buddy properties
 				foreach (XmlNode plugin_data_node in plugin_node.SelectNodes ("plugin-data-field")) { 
 					switch (plugin_data_node.Attributes ["key"].Value) {
 					case "contactId":
-						other = plugin_data_node.InnerText;
-						DebugPrint ("Screen=" + other);
+						buddy = plugin_data_node.InnerText;
 						break;
 					case "accountId":
 						owner = plugin_data_node.InnerText;
-						DebugPrint ("Account=" + owner);
 						break;
 					case "displayName":
 						alias = plugin_data_node.InnerText;
-						DebugPrint ("Alias=" + alias);
 						break;
 					}
 				}
 				
+				string buddy_name = Format (buddy);
+
 				// Replace any earlier buddies with the same screenname
 				// FIXME: Not safe since we can have the same screenname on different accounts.
-				if (buddyList.ContainsKey (Format(other)))
-					buddyList.Remove (Format(other));
+				if (BuddyList.ContainsKey (buddy_name))
+					BuddyList.Remove (buddy_name);
 				
-				buddyList.Add (Format(other), new ImBuddy (protocol, owner, Format(other), alias, iconlocation, iconchecksum));
-			}
-		}
-		
+				ImBuddy im_buddy = new ImBuddy (protocol, owner, buddy_name, alias, null, null);
 
-		public ImBuddy Search (string buddy) {
-			return (ImBuddy)buddyList[Format(buddy)];
+				BuddyList.Add (buddy_name, im_buddy);
+			}
 		}
 	}
 }

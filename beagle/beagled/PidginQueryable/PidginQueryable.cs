@@ -40,7 +40,7 @@ namespace Beagle.Daemon.PidginQueryable {
 
 		private string config_dir, log_dir, icons_dir;
 		private int polling_interval_in_seconds = 60;
-		private GaimBuddyListReader list = new GaimBuddyListReader ();
+		private PidginBuddyListReader list = new PidginBuddyListReader ();
 
 		public PidginQueryable () : base ("PidginIndex")
 		{
