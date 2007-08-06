@@ -122,7 +122,6 @@ UTIL_CSFILES = 			        	\
 
 if ENABLE_THUNDERBIRD
 UTIL_CSFILES +=					\
-	$(srcdir)/Mork.cs			\
 	$(srcdir)/Thunderbird.cs
 endif
 
