@@ -38,15 +38,15 @@
 		<stringbundle id="bundle_beagle" src="chrome://beagle/locale/strings.properties"/>
 	</stringbundleset>
 	
+	<script src="beagleUtils.js"/>
 	<script src="beagleUnindex.js"/>
 	<script src="beagleService.js"/>
 
-	<script type="application/x-javascript">>
+	<script type="application/x-javascript">
 	<![CDATA[
 		var observer = Components.classes['@mozilla.org/observer-service;1']
 			.getService(Components.interfaces.nsIObserverService);
-		var gBeagleSettings = Components.classes ['@beagle-project.org/services/settings;1']
-			.getService (Components.interfaces.nsIBeagleSettings);
+		var gBeagleSettings = GetJsService ('@beagle-project.org/services/settings;1');
 
 		function onLoad ()
 		{

@@ -37,6 +37,7 @@
 		onload="onLoad ();"
 		xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 	
+	<script src="beagleUtils.js"/>
 	<script src="beagleUnindex.js"/>
 	
 	<vbox flex="0">

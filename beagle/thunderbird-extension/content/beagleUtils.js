@@ -1,5 +1,5 @@
 //
-// BeagleQueue.idl: XPCOM Interface for queue component
+// BeagleUtils.js: This is the base of various utility functions
 //
 // Copyright (C) 2007 Pierre Östlund
 //
@@ -24,25 +24,9 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-#include "nsISupports.idl"
-
-interface nsIMsgFolder;
-interface nsIMsgDBHdr;
-
-[scriptable, uuid (d413d0af-29c4-4d47-bfa8-cc585075603d)]
-interface nsIBeagleQueue : nsISupports
+function GetJsService (component)
 {
-	readonly attribute long totalAdded;
-	readonly attribute long totalRemoved;
-
-	boolean addHdr (in nsIMsgDBHdr hdr);
-	boolean removeHdr (in nsIMsgDBHdr hdr);
-	boolean addFolder (in nsIMsgFolder folder);
-	boolean removeFolder (in nsIMsgFolder folder);
-	boolean moveHdr (in nsIMsgDBHdr oldHdr, in nsIMsgDBHdr newHdr);
-	boolean moveFolder (in nsIMsgFolder oldFolder, in nsIMsgFolder newFolder);
-	void process ();
-	void forceProcess ();
-	long getQueueCount ();
-};
+	var comp = Components.classes [component].getService (Components.interfaces.nsISupports);
+	return comp.wrappedJSObject;
+}
 

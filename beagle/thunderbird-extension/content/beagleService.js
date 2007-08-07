@@ -49,12 +49,9 @@ function initService ()
 	dump ("Beagle init started\n");
 	
 	// Set our globally needed variables
-	gBeagleSettings = Components.classes ['@beagle-project.org/services/settings;1']
-		.getService (Components.interfaces.nsIBeagleSettings);
-	gBeagleIndexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	gBeagleQueue = Components.classes ['@beagle-project.org/services/queue;1']
-		.getService (Components.interfaces.nsIBeagleQueue);
+	gBeagleSettings = GetJsService ('@beagle-project.org/services/settings;1');
+	gBeagleIndexer = GetJsService ('@beagle-project.org/services/indexer;1');
+	gBeagleQueue = GetJsService ('@beagle-project.org/services/queue;1');
 	beagle_init = true;
 	
 	// Load settings

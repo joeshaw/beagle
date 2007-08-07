@@ -31,209 +31,212 @@ var queueRemove = Components.classes ['@mozilla.org/supports-array;1']
 var observerService = Components.classes ['@mozilla.org/observer-service;1']
 	.getService(Components.interfaces.nsIObserverService);
 
-var totalAdded = 0;
-var totalRemoved = 0;
-
 function notify (data)
 {
-	var self = Components.classes ['@beagle-project.org/services/queue;1']
-		.getService (Components.interfaces.nsIBeagleQueue);
+	var self = GetJsService ('@beagle-project.org/services/queue;1');
 	observerService.notifyObservers (self, "beagle-queue", data);
 }
 
-function init ()
-{
-	observerService.addObserver (gBeagleQueueObserver, 'quit-application', false);
-}
+Component.prototype = {
 
-// obj is either nsIMsgDBHdr or nsIMsgFolder
-function add (obj)
-{
-	if (queueAdd.GetIndexOf (obj) != -1)
-		return;
-	
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	if (obj instanceof Components.interfaces.nsIMsgDBHdr)
-		indexer.markHdrAsIndexed (obj);
-	else if (obj instanceof Components.interfaces.nsIMsgFolder)
-		indexer.markFolderAsIndexed (obj);
-	else 
-		return;
-	
-	queueAdd.AppendElement (obj);
-	totalAdded++;
-	notify ('add');
-}
+	reload: function() {
+		loader.loadSubScript(SOURCE, this.__proto__);
+	},
 
-function remove (obj)
-{
-	if (queueRemove.GetIndexOf (obj) != -1)
-		return;
-	
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	if (obj instanceof Components.interfaces.nsIMsgDBHdr)
-		indexer.resetHdr (obj, false);
-	else if (obj instanceof Components.interfaces.nsIMsgFolder)
-		indexer.resetFolder (obj, false, false, false);
-	else 
-		return;
-	
-	queueRemove.AppendElement (obj);
-	totalRemoved++;
-	notify ('remove');
-}
+	QueryInterface: function(aIID) {
+		if(!aIID.equals(INTERFACE) && !aIID.equals(Ci.nsISupports))
+			throw Cr.NS_ERROR_NO_INTERFACE;
+		return this;
+	},
 
-// add, remove* and move* all return true if the object was added to the queue. If the object was
-// rejected by a filter, then they will return false. A filter in this sense is if a mail is marked
-// to be indexed or not (by the user).
+	totalAdded: 0,
+	totalRemoved: 0,
 
-// Add a new header for inclusion in the beagle index
-function addHdr (hdr)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	// Check if we should index this
-	if (!indexer.shouldIndexHdr (hdr) || !indexer.shouldIndexFolder (hdr.folder)) 
-		return false;
+	init: function ()
+	{
+		observerService.addObserver (gBeagleQueueObserver, 'quit-application', null);
+	},
 
-	add (hdr);
-	
-	process ();
-	
-	return true;
-}
+	// obj is either nsIMsgDBHdr or nsIMsgFolder
+	add: function (obj)
+	{
+		if (queueAdd.GetIndexOf (obj) != -1)
+			return;
+		
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (obj instanceof Components.interfaces.nsIMsgDBHdr)
+			indexer.markHdrAsIndexed (obj);
+		else if (obj instanceof Components.interfaces.nsIMsgFolder)
+			indexer.markFolderAsIndexed (obj);
+		else 
+			return;
+		
+		queueAdd.AppendElement (obj);
+		this.totalAdded++;
+		notify ('add');
+	},
 
-function removeHdr (hdr)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	if (hdr instanceof Components.interfaces.nsIMsgDBHdr) {
-		remove (hdr);
+	remove: function (obj)
+	{
+		if (queueRemove.GetIndexOf (obj) != -1)
+			return;
+		
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (obj instanceof Components.interfaces.nsIMsgDBHdr)
+			indexer.resetHdr (obj, false);
+		else if (obj instanceof Components.interfaces.nsIMsgFolder)
+			indexer.resetFolder (obj, false, false, false);
+		else 
+			return;
+		
+		queueRemove.AppendElement (obj);
+		this.totalRemoved++;
+		notify ('remove');
+	},
 
-		process ();
+	// add, remove* and move* all return true if the object was added to the queue. If the object was
+	// rejected by a filter, then they will return false. A filter in this sense is if a mail is marked
+	// to be indexed or not (by the user).
 
+	// Add a new header for inclusion in the beagle index
+	addHdr: function (hdr)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		// Check if we should index this
+		if (!indexer.shouldIndexHdr (hdr) || !indexer.shouldIndexFolder (hdr.folder)) 
+			return false;
+
+		this.add (hdr);
+		
+		this.process ();
+		
 		return true;
-	}
-	
-	return false;
-}
+	},
 
-// Basic purpose of this function is to make the main loop run which eventually will pick it up
-function addFolder (folder)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	if (indexer.isFolderIndexed (folder))
-		return;
-	
-	notify ('add-folder');
-}
-
-function removeFolder (folder)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	if (folder instanceof Components.interfaces.nsIMsgFolder) {
-		remove (folder);
-		process ();
-
-		return true;
-	}
-	
-	return false;
-}
-
-function moveHdr (oldHdr, newHdr)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Component.interfaces.nsIBeagleIndexer);
-	
-	if (!indexer.shouldIndexHdr (oldHdr) || !indexer.shouldIndexHdr (newHdr))
-		return false;
-	
-	remove (oldHdr);
-	add (newHdr);
-	processs ();
-	
-	return true;
-}
-
-function moveFolder (oldFolder, newFolder)
-{
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Component.interfaces.nsIBeagleIndexer);
-	
-	if (!indexer.shouldIndexFolder (oldFolder) || !indexer.shouldIndexFolder (newFolder))
-		return false;
+	removeHdr: function (hdr)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
 		
-	remove (oldFolder);
-	add (newFolder);
-	process ();
-		
-	return true;
-}
+		if (hdr instanceof Components.interfaces.nsIMsgDBHdr) {
+			this.remove (hdr);
 
-// This process function will make sure that we have enough objects in the queue before processing
-function process ()
-{
-	var settings = Components.classes ['@beagle-project.org/services/settings;1']
-		.getService (Components.interfaces.nsIBeagleSettings);
-	
-	if (getQueueCount () < settings.getIntPref ('IndexQueueCount'))
-		return;
-	
-	forceProcess ();
-}
+			this.process ();
 
-// No object count is done here, mainly so that the queue can be processed at any given time
-function forceProcess ()
-{
-	var count = getQueueCount ();
-	if (count == 0)
-		return;
-		
-	var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-		.getService (Components.interfaces.nsIBeagleIndexer);
-	
-	// Add new items to the beagle database
-	for (var i = 0; i < queueAdd.Count (); i++) {
-		var msg = queueAdd.GetElementAt (i).QueryInterface (Components.interfaces.nsIMsgDBHdr);
-		if (!msg)
-			continue;
-		indexer.addToIndex (msg);
-	}
-	
-	// Remove old items from the beagle database
-	for (var i = 0; i < queueRemove.Count (); i++) {
-		var obj = queueRemove.GetElementAt (i);
-		
-		if (obj instanceof Components.interfaces.nsIMsgDBHdr) {
-			obj.QueryInterface (Components.interfaces.nsIMsgDBHdr);
-			indexer.dropHdrFromIndex (obj);
-		} else if (obj instanceof Components.interfaces.nsIMsgFolder) {
-			obj.QueryInterface (Components.interfaces.nsIMsgFolder);
-			indexer.dropFolderFromIndex (obj);
+			return true;
 		}
-	}
-	
-	queueAdd.Clear ();
-	queueRemove.Clear ();
-	
-	dump ("Done processing " + count + " items\n");
-}
+		
+		return false;
+	},
 
-function getQueueCount ()
-{
-	return queueAdd.Count () + queueRemove.Count ();
-}
+	// Basic purpose of this function is to make the main loop run which eventually will pick it up
+	addFolder: function (folder)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (indexer.isFolderIndexed (folder))
+			return;
+		
+		notify ('add-folder');
+	},
+
+	removeFolder: function (folder)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (folder instanceof Components.interfaces.nsIMsgFolder) {
+			this.remove (folder);
+			this.process ();
+
+			return true;
+		}
+		
+		return false;
+	},
+
+	moveHdr: function (oldHdr, newHdr)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (!indexer.shouldIndexHdr (oldHdr) || !indexer.shouldIndexHdr (newHdr))
+			return false;
+		
+		this.remove (oldHdr);
+		this.add (newHdr);
+		this.processs ();
+		
+		return true;
+	},
+
+	moveFolder: function (oldFolder, newFolder)
+	{
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		
+		if (!indexer.shouldIndexFolder (oldFolder) || !indexer.shouldIndexFolder (newFolder))
+			return false;
+			
+		this.remove (oldFolder);
+		this.add (newFolder);
+		this.process ();
+			
+		return true;
+	},
+
+	// This process function will make sure that we have enough objects in the queue before processing
+	process: function ()
+	{
+		var settings = GetJsService ('@beagle-project.org/services/settings;1');
+		
+		if (this.getQueueCount () < settings.getIntPref ('IndexQueueCount'))
+			return;
+		
+		this.forceProcess ();
+	},
+
+	// No object count is done here, mainly so that the queue can be processed at any given time
+	forceProcess: function ()
+	{
+		var count = this.getQueueCount ();
+		if (count == 0)
+			return;
+		
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+
+		// Add new items to the beagle database
+		for (var i = 0; i < queueAdd.Count (); i++) {
+			var msg = queueAdd.GetElementAt (i).QueryInterface (Components.interfaces.nsIMsgDBHdr);
+			if (!msg)
+				continue;
+			indexer.addToIndex (msg);
+		}
+		
+		// Remove old items from the beagle database
+		for (var i = 0; i < queueRemove.Count (); i++) {
+			var obj = queueRemove.GetElementAt (i);
+			
+			if (obj instanceof Components.interfaces.nsIMsgDBHdr) {
+				obj.QueryInterface (Components.interfaces.nsIMsgDBHdr);
+				indexer.dropHdrFromIndex (obj);
+			} else if (obj instanceof Components.interfaces.nsIMsgFolder) {
+				obj.QueryInterface (Components.interfaces.nsIMsgFolder);
+				indexer.dropFolderFromIndex (obj);
+			}
+		}
+		
+		queueAdd.Clear ();
+		queueRemove.Clear ();
+		
+		dump ("Done processing " + count + " items\n");
+	},
+
+	getQueueCount: function ()
+	{
+		return queueAdd.Count () + queueRemove.Count ();
+	}
+
+};
 
 // This observer will check if the application is about to quit and process any remaining
 // items in the queue when it does
@@ -243,8 +246,9 @@ var gBeagleQueueObserver = {
 	{
 		// Just process whatever is left in the queue
 		try {
-			forceProcess ();
-			observerService.removeObserver (this, 'quit-application');
+			var queue = GetJsService ('@beagle-project.org/services/queue;1');
+			queue.forceProcess ();
+			observerService.removeObserver (gBeagleQueueObserver, 'quit-application');
 		} catch (ex) {
 		}
 	}

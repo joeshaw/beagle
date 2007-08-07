@@ -30,7 +30,7 @@ const CLASS_ID = Components.ID('{d413d0af-29c4-4d47-bfa8-cc585075603d}');
 const CLASS_NAME = 'Beagle queue component';
 const CONTRACT_ID = '@beagle-project.org/services/queue;1';
 const SOURCE = "chrome://beagle/content/beagleQueue.js";
-const INTERFACE = Components.interfaces.nsIBeagleQueue;
+const INTERFACE = Components.interfaces.nsISupports;
 
 const Cc = Components.classes;
 const Ci = Components.interfaces;
@@ -42,18 +42,12 @@ function Component () {
     this.wrappedJSObject = this;
 }
 
-Component.prototype = {
-    reload: function() {
-        loader.loadSubScript(SOURCE, this.__proto__);
-    },
+function GetJsService (component)
+{
+	var comp = Components.classes [component].getService (Components.interfaces.nsISupports);
+	return comp.wrappedJSObject;
+}
 
-    QueryInterface: function(aIID) {
-        if(!aIID.equals(INTERFACE) &&
-           !aIID.equals(Ci.nsISupports))
-            throw Cr.NS_ERROR_NO_INTERFACE;
-        return this;
-    }
-};
 loader.loadSubScript(SOURCE, Component.prototype);
 
 var Factory = {
@@ -61,7 +55,7 @@ var Factory = {
         if(aOuter != null)
             throw Cr.NS_ERROR_NO_AGGREGATION;
         var component = new Component();
-        if(typeof(component.init) == 'function')
+        if(typeof(component.wrappedJSObject.init) == 'function')
             component.init();
 
         return component.QueryInterface(aIID);
@@ -99,5 +93,5 @@ var Module = {
     canUnload: function(aCompMgr) { return true; }
 };
 
-function NSGetModule(aCompMgr, aFileSpec) { dump ("Load queue\n"); return Module; }
+function NSGetModule(aCompMgr, aFileSpec) { return Module; }
 

@@ -47,56 +47,6 @@ const BEAGLE_SETTINGS = new Array (
 
 var loadedPrefs = new Array ();
 
-function init ()
-{
-	// Load settings
-	forceLoad ();
-	
-	// Make sure we catch updates as we should
-	var prefbranch = Components.classes ['@mozilla.org/preferences-service;1']
-		.getService (Components.interfaces.nsIPrefBranch2);
-	prefbranch.removeObserver ('beagle', gObserver);
-	prefbranch.addObserver ('beagle', gObserver, false);
-}
-
-// Use this to force a preference read
-function forceLoad ()
-{
-	for (var i = 0; i < BEAGLE_SETTINGS.length; i++) {
-		var val = BEAGLE_SETTINGS [i] [2];
-		
-		try {
-			var type = BEAGLE_SETTINGS [i] [3], domain = BEAGLE_SETTINGS [i] [0];
-			if (type == Components.interfaces.nsIPrefBranch.PREF_BOOL)
-				val = prefs.getBoolPref (domain);
-			else if (type == Components.interfaces.nsIPrefBranch.PREF_INT)
-				val = prefs.getIntPref (domain);
-			else if (type == Components.interfaces.nsIPrefBranch.PREF_STRING)
-				val = prefs.getCharPref (domain);
-		} catch (ex) {
-		}
-		
-		loadedPrefs [BEAGLE_SETTINGS [i] [1]] = val;
-	}
-}
-
-// Writes current settings to configuration file
-function write ()
-{
-	for (var i = 0; i < BEAGLE_SETTINGS.length; i++) {
-		var type = BEAGLE_SETTINGS [i] [3], 
-			domain = BEAGLE_SETTINGS [i] [0], 
-			key = BEAGLE_SETTINGS [i] [1];
-		
-		if (type == Components.interfaces.nsIPrefBranch.PREF_BOOL)
-			this.Pref.setBoolPref (domain, loadedPrefs [key]);
-		else if (type == Components.interfaces.nsIPrefBranch.PREF_INT)
-			this.Pref.setIntPref (domain, loadedPrefs [key]);
-		else if (type == Components.interfaces.nsIPrefBranch.PREF_STRING)
-			this.Pref.setCharPref (domain, loadedPrefs [key]);
-	}
-}
-
 // The .beagle directory is normally stored in $HOME, but this can be overriden by using the
 // $BEAGLE_STORAGE environment variable. $HOME can also be overriden by $BEAGLE_HOME.
 function getDestinationDirectory ()
@@ -117,58 +67,105 @@ function getDestinationDirectory ()
 	return directory;
 }
 
-function getBoolPref (prefName)
-{
-	return loadedPrefs [prefName];
-}
+Component.prototype = {
 
-function getCharPref (prefName)
-{
-	return loadedPrefs [prefName];
-}
+	reload: function() {
+		loader.loadSubScript(SOURCE, this.__proto__);
+	},
 
-function getIntPref (prefName)
-{
-	return loadedPrefs [prefName];
-}
+	QueryInterface: function(aIID) {
+		if(!aIID.equals(INTERFACE) && !aIID.equals(Ci.nsISupports))
+			throw Cr.NS_ERROR_NO_INTERFACE;
+		return this;
+	},
+	
+	init: function ()
+	{
+		// Load settings
+		this.forceLoad ();
+		
+		// Make sure we catch updates as we should
+		var prefbranch = Components.classes ['@mozilla.org/preferences-service;1']
+			.getService (Components.interfaces.nsIPrefBranch2);
+		prefbranch.removeObserver ('beagle', gObserver);
+		prefbranch.addObserver ('beagle', gObserver, false);
+	},
 
-function getDomain (prefName)
-{
-	for (var i = 0; i < BEAGLE_SETTINGS.length; i++) {
-		var setting = BEAGLE_SETTINGS [i];
-		if (setting [1] == prefName)
-			return setting [0];
+	// Use this to force a preference read
+	forceLoad: function ()
+	{
+		for (var i = 0; i < BEAGLE_SETTINGS.length; i++) {
+			var val = BEAGLE_SETTINGS [i] [2];
+			
+			try {
+				var type = BEAGLE_SETTINGS [i] [3], domain = BEAGLE_SETTINGS [i] [0];
+				if (type == Components.interfaces.nsIPrefBranch.PREF_BOOL)
+					val = prefs.getBoolPref (domain);
+				else if (type == Components.interfaces.nsIPrefBranch.PREF_INT)
+					val = prefs.getIntPref (domain);
+				else if (type == Components.interfaces.nsIPrefBranch.PREF_STRING)
+					val = prefs.getCharPref (domain);
+			} catch (ex) {
+			}
+			
+			loadedPrefs [BEAGLE_SETTINGS [i] [1]] = val;
+		}
+	},
+
+	getBoolPref: function (prefName)
+	{
+		return loadedPrefs [prefName];
+	},
+
+	getCharPref: function (prefName)
+	{
+		return loadedPrefs [prefName];
+	},
+
+	getIntPref: function (prefName)
+	{
+		return loadedPrefs [prefName];
+	},
+
+	getDomain: function (prefName)
+	{
+		for (var i = 0; i < BEAGLE_SETTINGS.length; i++) {
+			var setting = BEAGLE_SETTINGS [i];
+			if (setting [1] == prefName)
+				return setting [0];
+		}
+		
+		return null;
+	},
+
+	setBoolPref: function (prefName, value)
+	{
+		var domain = this.getDomain (prefName);
+		if (!domain)
+			throw Components.results.NS_ERROR_FAILURE;
+		
+		prefs.setBoolPref (domain, value);
+	},
+
+	setCharPref: function (prefName, value)
+	{
+		var domain = this.getDomain (prefName);
+		if (!domain)
+			throw Components.results.NS_ERROR_FAILURE;
+		
+		prefs.setCharPref (domain, value);
+	},
+
+	setIntPref: function (prefName, value)
+	{
+		var domain = this.getDomain (prefName);
+		if (!domain)
+			throw Components.results.NS_ERROR_FAILURE;
+		
+		prefs.setIntPref (domain, value);
 	}
-	
-	return null;
-}
 
-function setBoolPref (prefName, value)
-{
-	var domain = getDomain (prefName);
-	if (!domain)
-		throw Components.results.NS_ERROR_FAILURE;
-	
-	prefs.setBoolPref (domain, value);
-}
-
-function setCharPref (prefName, value)
-{
-	var domain = getDomain (prefName);
-	if (!domain)
-		throw Components.results.NS_ERROR_FAILURE;
-	
-	prefs.setCharPref (domain, value);
-}
-
-function setIntPref (prefName, value)
-{
-	var domain = getDomain (prefName);
-	if (!domain)
-		throw Components.results.NS_ERROR_FAILURE;
-	
-	prefs.setIntPref (domain, value);
-}
+};
 
 // We use this to catch updates
 var gObserver = {

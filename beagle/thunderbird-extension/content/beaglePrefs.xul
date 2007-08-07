@@ -167,6 +167,7 @@
 		<stringbundle id="bundle_beagle" src="chrome://beagle/locale/strings.properties"/>
 	</stringbundleset>
 	
+	<script src="beagleUtils.js"/>
 	<script src="beagleUnindex.js"/>
 	
 	<script type="application/x-javascript">
@@ -184,10 +185,9 @@
 			[100,		1,		100],	// Very fast
 			[9999999,	1,		1]		// Instant
 		);
-
-		var settings = Cc ['@beagle-project.org/services/settings;1']
-			.getService (Ci.nsIBeagleSettings);
-
+		
+		var settings = GetJsService ('@beagle-project.org/services/settings;1');
+		
 		function load ()
 		{
 			
@@ -274,8 +274,7 @@
 			var added = document.getElementById ('itemsadded');
 			var removed = document.getElementById ('itemsremoved');
 			var queued = document.getElementById ('itemsqueued');
-			var beagleQueue = Cc ['@beagle-project.org/services/queue;1']
-				.getService (Ci.nsIBeagleQueue);
+			var beagleQueue = GetJsService ('@beagle-project.org/services/queue;1');
 			var remaining = new Array ();
 			
 			added.value = beagleQueue.totalAdded;
@@ -286,8 +285,7 @@
 			try {
 				var indexedFolders = 0;
 				var totalFolders = 0;
-				var indexer = Cc ['@beagle-project.org/services/indexer;1']
-					.getService (Ci.nsIBeagleIndexer);
+				var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
 				var accountmanager = Cc ['@mozilla.org/messenger/account-manager;1']
 					.getService (Ci.nsIMsgAccountManager);
 				var accounts = accountmanager.accounts;

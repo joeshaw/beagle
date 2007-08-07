@@ -39,12 +39,12 @@
 		<stringbundle id="bundle_beagle" src="chrome://beagle/locale/strings.properties"/>
 	</stringbundleset>
 
+	<script src="beagleUtils.js"/>
+
 	<script type="application/x-javascript">
 	<![CDATA[
-		var indexer = Components.classes ['@beagle-project.org/services/indexer;1']
-			.getService (Components.interfaces.nsIBeagleIndexer);
-		var settings = Components.classes ['@beagle-project.org/services/settings;1']
-			.getService (Components.interfaces.nsIBeagleSettings);
+		var indexer = GetJsService ('@beagle-project.org/services/indexer;1');
+		var settings = GetJsService ('@beagle-project.org/services/settings;1');
 		var messenger = Components.classes ['@mozilla.org/messenger;1'].getService (Components.interfaces.nsIMessenger);
 
 		function getSelectedFolder ()
@@ -231,7 +231,7 @@
 					
 				folder.QueryInterface (Components.interfaces.nsIMsgFolder);
 				var userMarked = indexer.isFolderUserMarked (folder);
-				var queue = Components.classes ['@beagle-project.org/services/queue;1'].getService (Components.interfaces.nsIBeagleQueue);
+				var queue = GetJsService ('@beagle-project.org/services/queue;1');
 				if (userMarked) {
 					indexer.resetFolder (folder, true, false, false);
 					queue.addFolder (folder);
@@ -274,7 +274,7 @@
 				
 				if (!userMarked) {
 					var hdr = msgs.QueryElementAt (0, Components.interfaces.nsIMsgDBHdr);
-					var queue = Components.classes ['@beagle-project.org/services/queue;1'].getService (Components.interfaces.nsIBeagleQueue);
+					var queue = GetJsService ('@beagle-project.org/services/queue;1');
 					queue.addHdr (hdr);
 				}
 					

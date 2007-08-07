@@ -33,12 +33,8 @@ const HDR_MODE_UNINDEX = 3;
 const EVERYTHING_MODE_REMOVE = 4;
 const EVERYTHING_MODE_UNINDEX = 5;
 
-var gBeagleIndexer = Components.classes ['@beagle-project.org/services/indexer;1']
-	.getService (Components.interfaces.nsIBeagleIndexer);
-var gBeagleQueue = Components.classes ['@beagle-project.org/services/queue;1']
-	.getService (Components.interfaces.nsIBeagleQueue);
-var eventQueue = Components.classes ['@mozilla.org/event-queue;1']
-	.getService (Components.interfaces.nsIEventQueue);
+var gBeagleIndexer = GetJsService ('@beagle-project.org/services/indexer;1');
+var gBeagleQueue = GetJsService ('@beagle-project.org/services/queue;1');
 
 //
 //	Call one of the following functions to remove or unindex content
