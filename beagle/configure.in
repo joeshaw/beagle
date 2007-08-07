@@ -193,7 +193,7 @@ LIBS="$OLD_LIBS"
 dnl ----------------------------------------------
 
 AC_ARG_ENABLE([thunderbird],
-        AC_HELP_STRING([--disable-evolution], [Disable thunderbird support (default auto)]),
+        AC_HELP_STRING([--disable-thunderbird], [Disable thunderbird support (default auto)]),
         enable_tbird=$enableval,
 	enable_tbird_sharp=auto)
 
