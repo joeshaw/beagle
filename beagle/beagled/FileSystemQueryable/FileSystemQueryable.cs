@@ -36,7 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.FileSystemQueryable {
 
-	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local, RequireInotify=false)]
+	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local | QueryDomain.Neighborhood, RequireInotify=false)]
 	[PropertyKeywordMapping (Keyword="ext", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.")]
 	public class FileSystemQueryable : LuceneQueryable {
 

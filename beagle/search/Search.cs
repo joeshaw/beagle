@@ -7,6 +7,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Diagnostics;
 
 using Gtk;
 using Mono.Unix;
@@ -336,6 +337,9 @@ namespace Search {
 					TotalMatches = -1;
 					current_query.HitsAddedEvent -= OnHitsAdded;
 					current_query.HitsSubtractedEvent -= OnHitsSubtracted;
+#if ENABLE_AVAHI
+					current_query.UnknownHostFoundEvent -= OnUnknownHostFound;
+#endif
 					current_query.Close ();
 				}
 
@@ -356,6 +360,9 @@ namespace Search {
 				current_query.HitsAddedEvent += OnHitsAdded;
 				current_query.HitsSubtractedEvent += OnHitsSubtracted;
 				current_query.FinishedEvent += OnFinished;
+#if ENABLE_AVAHI
+				current_query.UnknownHostFoundEvent += OnUnknownHostFound;
+#endif
 
 				current_query.SendAsync ();
 				spinner.Start ();
@@ -457,6 +464,9 @@ namespace Search {
 				TotalMatches = -1;
 				current_query.HitsAddedEvent -= OnHitsAdded;
 				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
+#if ENABLE_AVAHI
+				current_query.UnknownHostFoundEvent -= OnUnknownHostFound;
+#endif
 				current_query.Close ();
 				current_query = null;
 			}
@@ -478,7 +488,7 @@ namespace Search {
 			}
 		}
 
-		private void OnFinished (FinishedResponse response)
+		private void OnFinished ()
 		{
 			spinner.Stop ();
 			view.Finished (grab_focus);
@@ -491,6 +501,7 @@ namespace Search {
 		{
 			foreach (Hit hit in response.Hits) {
 				Tile tile = TileActivatorOrg.MakeTile (hit, current_query);
+
 				if (tile == null) {
 					Console.WriteLine ("No tile found for: {0} ({1})", hit.Uri, hit.Type);
 					continue;
@@ -500,6 +511,7 @@ namespace Search {
 					continue;
 
 				view.AddHit (tile);
+
 				if (pages.CurrentPageWidget != panes)
 					pages.CurrentPage = pages.PageNum (panes);
 			}
@@ -517,6 +529,33 @@ namespace Search {
 
 			CheckNoMatch ();
 		}
+
+#if ENABLE_AVAHI
+                private void OnUnknownHostFound (object sender, AvahiEventArgs args)
+                {
+			Console.WriteLine ("Warn user blleeeh");
+			NotificationMessage m = new NotificationMessage ();
+			m.Pixbuf = WidgetFu.LoadThemeIcon ("network-workgroup", 48);
+			m.Title = Catalog.GetString ("There are computers near you running Beagle");
+			m.Message = Catalog.GetString ("You can select to search other computers from the \"Search\" menu.");
+			m.AddAction ("Configure", OnNetworkConfigure);
+			notification_area.Display (m);
+		}
+
+		private void OnNetworkConfigure (object o, EventArgs args)
+		{
+			Process p = new Process ();
+			p.StartInfo.UseShellExecute = false;
+			p.StartInfo.FileName = "beagle-settings";
+			p.StartInfo.Arguments = "--networking";
+
+			try {
+				p.Start ();
+			} catch (Exception e) {
+				Console.WriteLine ("Could not start beagle-settings: {0}", e);
+			}
+                }
+#endif
 
 		private void CheckNoMatch ()
 		{

@@ -18,6 +18,7 @@ GMIME_SHARP_REQUIRED=2.2.0
 EVOLUTION_SHARP_REQUIRED=0.12
 GSF_SHARP_REQUIRED=0.6
 GTK_REQUIRED=2.6.0
+AVAHI_SHARP_REQUIRED=0.6.10
 
 ########################################################################
 
@@ -500,6 +501,23 @@ PKG_CHECK_MODULES(GALAGO, galago-sharp >= 0.5 , enable_galago=yes, enable_galago
 AM_CONDITIONAL(ENABLE_GALAGO, test "x$enable_galago" = "xyes")
 AC_SUBST(GALAGO_LIBS)
 
+dnl ----------------------------------------------
+
+dnl Zeroconf support
+
+AC_ARG_ENABLE([avahi],
+        AC_HELP_STRING([--enable-avahi], [Enable Avahi (default disabled)]),
+        enable_avahi=$enableval,
+        enable_avahi=no)
+
+AM_CONDITIONAL(ENABLE_AVAHI, test "x$enable_avahi" = "xyes")
+
+if test "x$enable_avahi" = "xyes"; then
+       dnl -------------------------------------------------------
+       dnl Avahi version requirements
+        PKG_CHECK_MODULES(AVAHI_SHARP, avahi-sharp >= $AVAHI_SHARP_REQUIRED)
+        AC_SUBST(AVAHI_SHARP_LIBS)
+fi
 
 dnl ----------------------------------------------
 
@@ -614,6 +632,8 @@ echo "
 	Sqlite version:		  ${SQLITE_MAJ_VER}.x
 
 	Monitor screensaver       ${have_xss}
+
+	Avahi support		  ${enable_avahi}
 
 	Enable beagle-search GUI  ${enable_gui}
 	Enable \"Open With\" menu   ${OPEN_WITH}

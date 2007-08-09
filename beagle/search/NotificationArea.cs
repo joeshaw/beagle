@@ -107,6 +107,10 @@ namespace Search {
 			set { icon.SetFromStock (value, Gtk.IconSize.Dialog); }
 		}
 
+		public Gdk.Pixbuf Pixbuf {
+			set { icon.Pixbuf = value; }
+		}
+
 		public NotificationArea Area {
 			set { area = value; }
 		}

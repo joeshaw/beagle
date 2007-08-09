@@ -62,8 +62,10 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
+	$(srcdir)/NetworkService.cs		\
 	$(srcdir)/Note.cs               	\
 	$(srcdir)/OperaHistory.cs		\
+	$(srcdir)/Password.cs			\
 	$(srcdir)/PathFinder.cs			\
 	$(srcdir)/PullingReader.cs      	\
 	$(srcdir)/ReflectionFu.cs		\
@@ -120,16 +122,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
 	$(srcdir)/PropertyKeywordAttribute.cs
 
-if ENABLE_THUNDERBIRD
-UTIL_CSFILES +=					\
-	$(srcdir)/Thunderbird.cs
-endif
-
-if HAS_LIBCHM 
-UTIL_CSFILES +=					\
-	$(srcdir)/ChmFile.cs
-endif
-
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
 	-r:System.Data				\
@@ -138,7 +130,22 @@ UTIL_ASSEMBLIES =				\
 	-r:System.Web				\
 	-r:ICSharpCode.SharpZipLib
 
+if ENABLE_THUNDERBIRD
+UTIL_CSFILES +=					\
+	$(srcdir)/Thunderbird.cs
+endif
 
+if ENABLE_AVAHI
+CSFLAGS += -define:ENABLE_AVAHI
+UTIL_CSFILES += 				\
+	$(srcdir)/AvahiBrowser.cs
+UTIL_ASSEMBLIES += $(AVAHI_SHARP_LIBS)
+endif
+
+if HAS_LIBCHM 
+UTIL_CSFILES +=					\
+	$(srcdir)/ChmFile.cs
+endif
 
 if ENABLE_INOTIFY
 INOTIFY_EXE = Inotify.exe
@@ -164,7 +171,7 @@ UI_UTIL_ASSEMBLIES =				\
 	-r:Util.dll
 
 if ENABLE_GALAGO
-UI_UTIL_CSFILES +=					\
+UI_UTIL_CSFILES +=				\
 	$(srcdir)/Galago.cs
 
 UI_UTIL_ASSEMBLIES += 				\

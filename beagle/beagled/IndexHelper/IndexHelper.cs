@@ -149,7 +149,7 @@ namespace Beagle.IndexHelper {
 			Log.Debug ("Starting messaging server");
 			bool server_has_been_started = false;
 			try {
-				server = new Server ("socket-helper");
+				server = new Server ("socket-helper", false);
 				server.Start ();
 				server_has_been_started = true;
 			} catch (InvalidOperationException ex) {

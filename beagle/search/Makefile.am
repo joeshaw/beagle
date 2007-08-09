@@ -21,6 +21,10 @@ if ENABLE_THUNDERBIRD
 CSFLAGS += -define:ENABLE_THUNDERBIRD
 endif
 
+if ENABLE_AVAHI
+CSFLAGS += -define:ENABLE_AVAHI
+endif
+
 pkglib_DATA = Search.exe Search.exe.mdb
 
 BIN_WRAPPERS = beagle-search

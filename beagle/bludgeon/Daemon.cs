@@ -86,7 +86,7 @@ namespace Bludgeon {
 				Beagle.ResponseMessage response = null;
 				try {
 					//Log.Spew ("Pinging daemon!");
-					response = request.Send ();
+					response = request.Send () [0];
 				} catch { }
 				
 				if (response == null) {
@@ -185,7 +185,7 @@ namespace Bludgeon {
 
 				Beagle.ResponseMessage response = null;
 				try {
-					response = request.Send ();
+					response = request.Send () [0];
 				} catch { }
 
 				if (response == null) {

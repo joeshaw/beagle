@@ -39,6 +39,7 @@ using Log = Beagle.Util.Log;
 using Stopwatch = Beagle.Util.Stopwatch;
 
 namespace Beagle.Daemon {
+
 	class BeagleDaemon {
 
 		public static Thread MainLoopThread = null;
@@ -49,6 +50,7 @@ namespace Beagle.Daemon {
 		private static bool arg_replace = false;
 		private static bool arg_disable_scheduler = false;
 		private static bool arg_indexing_test_mode = false;
+		private static bool arg_server = false;
 		private static bool arg_heap_shot = false;
 		private static bool arg_heap_shot_snapshots = true;
 
@@ -58,12 +60,16 @@ namespace Beagle.Daemon {
 			set { disable_textcache = value; }
 		}
 
+#if ENABLE_AVAHI
+		private static Beagle.Daemon.Network.Zeroconf zeroconf = null;
+#endif
+
 		public static bool StartServer ()
 		{
 			Logger.Log.Debug ("Starting messaging server");
 
 			try {
-				server = new Server ("socket");
+				server = new Server ("socket", arg_server);
 				server.Start ();
 			} catch (InvalidOperationException) {
 				return false;
@@ -161,7 +167,8 @@ namespace Beagle.Daemon {
 				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
 				"  --indexing-delay <t>\tWait 't' seconds before indexing.  (Default 60 seconds)\n" +
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
-				"  --disable-text-cache\tDisable the use of the text cache used to provide snippets.\n";
+				"  --disable-text-cache\tDisable the use of the text cache used to provide snippets.\n" +
+				"  --server\t\tEnable remote queries to the daemon.\n";
 
 			Console.WriteLine (usage);
 		}
@@ -227,6 +234,11 @@ namespace Beagle.Daemon {
 			// warning if not.  The actual advice calls will fail silently.
 			FileAdvise.TestAdvise ();
 
+#if ENABLE_AVAHI
+			if (arg_server)
+                	        zeroconf = new Beagle.Daemon.Network.Zeroconf ();
+#endif
+
 			Conf.WatchForUpdates ();
 
 			stopwatch.Stop ();
@@ -241,6 +253,7 @@ namespace Beagle.Daemon {
 				Scheduler.Global.EmptyQueueEvent += OnEmptySchedulerQueue;
 				Scheduler.Global.Add (null); // pulse the scheduler
 			}
+
 			return false;
 		}
 
@@ -412,6 +425,10 @@ namespace Beagle.Daemon {
 
 				case "--disable-text-cache":
 					disable_textcache = true;
+					break;
+					
+				case "--server":
+					arg_server = true;
 					break;
 				
 				case "--version":
@@ -642,6 +659,10 @@ namespace Beagle.Daemon {
 
 		private static void OnShutdown ()
 		{
+#if ENABLE_AVAHI
+			if (arg_server)
+				zeroconf.Dispose ();
+#endif			
 			// Stop our Inotify threads
 			Inotify.Stop ();
 

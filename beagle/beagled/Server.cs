@@ -27,108 +27,162 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
+using System.Timers;
 using Mono.Unix;
 
 using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	class ConnectionHandler {
+	class HttpItemHandler {
+		private Hashtable items = new Hashtable ();
 
-		private static int connection_count = 0;
-		private static XmlSerializer resp_serializer = null;
-		private static XmlSerializer req_serializer = null;
-
-		private object client_lock = new object ();
-		private object blocking_read_lock = new object ();
-
-		private UnixClient client;
-		private RequestMessageExecutor executor = null; // Only set in the keepalive case
-		private Thread thread;
-		private bool in_blocking_read;
-
-		public ConnectionHandler (UnixClient client)
+		public void RegisterHit (Hit hit)
 		{
-			this.client = client;
+			Logger.Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
+			if (hit.Uri != null)
+				items [hit.Uri] = hit;
+			else
+				Logger.Log.Debug ("httpitemhandler: cannot register hits with no URIs");
 		}
 
-		// Perform expensive serialization all at once. Do this before signal handler is setup.
-		public static void Init ()
+		public void HandleRequest (HttpListenerContext context, System.Uri path)
 		{
-			resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+			Hit requested = (Hit) items [path];
+
+			if (requested != null) {
+				//TODO: We can only handle files for now
+				Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
+				context.Response.ContentType = requested.MimeType;
+				
+				/*if (requested ["Type"] != "File") {
+					Logger.Log.Debug ("httpitemhandler: can only serve files");
+					return;
+				}*/
+			
+				StreamReader r = new StreamReader (new FileStream (requested.Uri.LocalPath, FileMode.Open));
+				StreamWriter w = new StreamWriter (context.Response.OutputStream);
+				
+				w.Write (r.ReadToEnd ());
+				w.Close ();
+				
+				context.Response.Close ();
+			}
+		}
+	}
+
+	class HttpConnectionHandler : ConnectionHandler {
+		private HttpListenerContext	 context; 	//The object that we use for getting the request and sending the response
+		private HttpListener	listener; 		//The listener
+		private HttpItemHandler item_handler;   //The item server/handler
+		private System.Timers.Timer			keepalive_timer;
+		private System.Guid id;
+
+		public HttpConnectionHandler (System.Guid guid, HttpListenerContext context, HttpItemHandler item_handler)
+		{
+			this.id = guid;
+			this.context = context;
+			this.item_handler = item_handler;
 		}
 
-		public bool SendResponse (ResponseMessage response)
+		public override void HandleConnection ()
 		{
-			lock (this.client_lock) {
-				if (this.client == null)
-					return false;
+			Logger.Log.Debug ("httpserver: serving request for " + context.Request.Url);
+			
+			//Query request: read content and forward to base.HandleConnection for processing
+			context.Response.KeepAlive = true;
+			context.Response.ContentType = "charset=utf-8";
+			context.Response.SendChunked = true;
+			
+			Shutdown.WorkerStart (this.context.Request.InputStream, String.Format ("HandleConnection ({0})", ++connection_count));
+
+			/////
+
+			// Read the data off the socket and store it in a
+			// temporary memory buffer.  Once the end-of-message
+			// character has been read, discard remaining data
+			// and deserialize the request.
+			byte[] network_data = new byte [4096];
+			MemoryStream buffer_stream = new MemoryStream ();
+			int bytes_read, total_bytes = 0, end_index = -1;
+
+			do {
+				bytes_read = 0;
 
 				try {
-#if ENABLE_XML_DUMP
-					MemoryStream mem_stream = new MemoryStream ();
-					XmlFu.SerializeUtf8 (resp_serializer, mem_stream, new ResponseWrapper (response));
-					mem_stream.Seek (0, SeekOrigin.Begin);
-					StreamReader r = new StreamReader (mem_stream);
-					Logger.Log.Debug ("Sending response:\n{0}\n", r.ReadToEnd ());
-					mem_stream.Seek (0, SeekOrigin.Begin);
-					mem_stream.WriteTo (this.client.GetStream ());
-					mem_stream.Close ();
-#else
-					XmlFu.SerializeUtf8 (resp_serializer, this.client.GetStream (), new ResponseWrapper (response));
-#endif
-					// Send an end of message marker
-					this.client.GetStream ().WriteByte (0xff);
-					this.client.GetStream ().Flush ();
+					lock (this.blocking_read_lock)
+						this.in_blocking_read = true;
+
+					lock (this.client_lock) {
+						// The connection may have been closed within this loop.
+						if (this.context != null)
+							bytes_read = this.context.Request.InputStream.Read (network_data, 0, 4096);
+					}
+
+					lock (this.blocking_read_lock)
+						this.in_blocking_read = false;
 				} catch (Exception e) {
-					if (e is IOException && e.InnerException is SocketException)
-						Log.Debug ("Remote side disconnected before we could send {0}", response.GetType ());
-					else
-						Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					// Aborting the thread mid-read will
+					// cause an IOException to be thorwn,
+					// which sets the ThreadAbortException
+					// as its InnerException.MemoryStream
+					if (!(e is IOException || e is ThreadAbortException))
+						throw;
 
-					return false;
+					// Reset the unsightly ThreadAbortException
+					Thread.ResetAbort ();
+
+					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
+					this.thread = null;
+					Server.MarkHandlerAsKilled (this);
+					Shutdown.WorkerFinished (network_data);
+					return;
 				}
 
-				return true;
-			}
-		}
+				total_bytes += bytes_read;
 
-		public void CancelIfBlocking ()
-		{
-			// Work around some crappy .net behavior.  We can't
-			// close a socket and have it exit out of a blocking
-			// read, so we have to abort the thread it's blocking
-			// in.
-			lock (this.blocking_read_lock) {
-				if (this.in_blocking_read) {
-					this.thread.Abort ();
+				if (bytes_read > 0) {
+					// 0xff signifies end of message
+					end_index = ArrayFu.IndexOfByte (network_data, (byte) 0xff);
+
+					buffer_stream.Write (network_data, 0,
+							     end_index == -1 ? bytes_read : end_index);
 				}
-			}
+			} while (bytes_read > 0 && end_index == -1);
+			
+			Logger.Log.Debug ("httpserver: received request message, handling");
+			
+			buffer_stream.Seek (0, SeekOrigin.Begin);
+			base.HandleConnection (buffer_stream);
+			
+			Server.MarkHandlerAsKilled (this);
+			Shutdown.WorkerFinished (context.Request.InputStream);
 		}
 		
-		public void Close ()
+		public override void Close ()
 		{
-			CancelIfBlocking ();
-
-			// It's important that we abort the thread before we
-			// grab the lock here and close the underlying
-			// UnixClient, or else we'd deadlock between here and
-			// the Read() in HandleConnection()
-			lock (this.client_lock) {
-				if (this.client != null) {
-					this.client.Close ();
-					this.client = null;
-				}
-			}
-
 			if (this.executor != null) {
 				this.executor.Cleanup ();
 				this.executor.AsyncResponseEvent -= OnAsyncResponse;
+			}
+			
+			if (keepalive_timer != null)
+				keepalive_timer.Stop ();
+				
+			CancelIfBlocking ();
+			
+			//ResponseStream tries to send bytes before closing, so 
+			//just ignore the possible exception if the socket's closed.
+			try {
+				context.Response.OutputStream.Close ();
+				context.Response.Close ();
+			} catch (IOException) {
+			} catch (SocketException) {
 			}
 		}
 
@@ -137,39 +191,105 @@ namespace Beagle.Daemon {
 			int bytes_read = 0;
 
 			try {
-				bytes_read = this.client.GetStream ().EndRead (ar);
+				bytes_read = this.context.Request.InputStream.EndRead (ar);
 			} catch (SocketException) {
-			} catch (IOException) { }
+			} catch (IOException) {
+			}
 
 			if (bytes_read == 0)
 				Close ();
 			else
 				SetupWatch ();
 		}
-
-		private void SetupWatch ()
+		
+		public void SendKeepAlive (object o, ElapsedEventArgs args)
 		{
-			if (this.client == null) {
-				this.Close ();
-				return;
+			if (this.listener == null) {
+			    Log.Debug ("Socket end point closed.");
+			    Close ();
+			    return;
 			}
 
-			this.client.GetStream ().BeginRead (new byte[1024], 0, 1024,
-							    new AsyncCallback (WatchCallback), null);
+			//if sending fails, the socket is closed and SendResponse will call Close.
+			SendResponse (new EmptyResponse ());
 		}
 
-		private void OnAsyncResponse (ResponseMessage response)
+		public override void SetupWatch ()
 		{
-			if (!SendResponse (response))
-				Close ();
+			keepalive_timer = new System.Timers.Timer ();
+			keepalive_timer.Interval = 5000;
+			keepalive_timer.Elapsed += new ElapsedEventHandler (SendKeepAlive);
+			keepalive_timer.Start ();
 		}
 
-		public void HandleConnection ()
+		public void TransformResponse (ref ResponseMessage response)
+		{
+			if (response.GetType () == typeof (HitsAddedResponse)) {
+				foreach (Hit h in (response as HitsAddedResponse).Hits) {
+					item_handler.RegisterHit (h);
+					
+					h.Uri = new System.Uri(context.Request.Url.ToString () + id.ToString ());
+					h.Source = "Network";
+					h["beagle:Source"] = "Network";
+				}
+			}	
+		}
+
+		public override bool SendResponse (ResponseMessage response)
+		{	
+			//TransformResponse (ref response); Disable for now
+
+			bool r = false;
+
+			lock (this.client_lock) {
+				if (this.context == null)
+					return false;
+
+				r = SendResponse (response, context.Response.OutputStream);
+			}
+
+			if (r) {
+				Logger.Log.Debug ("httpserver: Sent response = " + response.ToString ());
+				//add end-of-document
+				context.Response.OutputStream.WriteByte (0xff);
+				context.Response.OutputStream.Flush ();
+			}
+			else {
+				this.Close ();
+			}
+			return r;
+		}
+	}
+
+	class UnixConnectionHandler : ConnectionHandler {
+		private UnixClient client;
+
+		public UnixConnectionHandler (UnixClient client)
+		{
+			this.client = client;
+		}
+
+		public override bool SendResponse(ResponseMessage response)
+		{
+			bool result = false;
+			
+			lock (this.client_lock) {
+				if (this.client == null) 
+					return false;
+				result = base.SendResponse(response, this.client.GetStream () );
+			}
+
+			if (result) {
+				// Send an end of message marker
+				this.client.GetStream().WriteByte (0xff);
+				this.client.GetStream().Flush ();
+			}
+			return result;
+		}			
+
+		public override void HandleConnection ()
 		{
 			this.thread = Thread.CurrentThread;
-
-			RequestMessage req = null;
-			ResponseMessage resp = null;
 
 			bool force_close_connection = false;
 			
@@ -203,7 +323,7 @@ namespace Beagle.Daemon {
 					// Aborting the thread mid-read will
 					// cause an IOException to be thorwn,
 					// which sets the ThreadAbortException
-					// as its InnerException.
+					// as its InnerException.MemoryStream
 					if (!(e is IOException || e is ThreadAbortException))
 						throw;
 
@@ -239,7 +359,145 @@ namespace Beagle.Daemon {
 			}
 
 			buffer_stream.Seek (0, SeekOrigin.Begin);
+			HandleConnection (buffer_stream);
 
+		cleanup:
+			buffer_stream.Close ();
+
+			if (force_close_connection)
+				Close ();
+			else
+				SetupWatch ();
+
+			Server.MarkHandlerAsKilled (this);
+			Shutdown.WorkerFinished (network_data);
+		}
+
+		public override void Close ()
+		{
+			CancelIfBlocking ();
+
+			// It's important that we abort the thread before we
+			// grab the lock here and close the underlying
+			// UnixClient, or else we'd deadlock between here and
+			// the Read() in HandleConnection()
+			lock (this.client_lock) {
+				if (this.client != null) {
+					this.client.Close ();
+					this.client = null;
+				}
+			}
+
+			if (this.executor != null) {
+				this.executor.Cleanup ();
+				this.executor.AsyncResponseEvent -= OnAsyncResponse;
+			}
+		}
+
+		public void WatchCallback (IAsyncResult ar)
+		{
+			int bytes_read = 0;
+
+			try {
+				bytes_read = this.client.GetStream ().EndRead (ar);
+			} catch (SocketException) {
+			} catch (IOException) { }
+
+			if (bytes_read == 0)
+				Close ();
+			else
+				SetupWatch ();
+		}
+
+		public override void SetupWatch ()
+		{
+			if (this.client == null) {
+				this.Close ();
+				return;
+			}
+
+			this.client.GetStream ().BeginRead (new byte[1024], 0, 1024,
+							    new AsyncCallback (WatchCallback), null);
+		}
+	}	
+
+	abstract class ConnectionHandler {
+
+		protected static int connection_count = 0;
+		private static XmlSerializer resp_serializer = null;
+		private static XmlSerializer req_serializer = null;
+
+		protected object client_lock = new object ();
+		protected object blocking_read_lock = new object ();
+
+		protected RequestMessageExecutor executor = null; // Only set in the keepalive case
+		protected Thread thread;
+		protected bool in_blocking_read;
+
+		public static void Init ()
+		{
+			resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+		}
+
+		public bool SendResponse (ResponseMessage response, Stream stream)
+		{
+
+				try {
+#if ENABLE_XML_DUMP
+					MemoryStream mem_stream = new MemoryStream ();
+					XmlFu.SerializeUtf8 (resp_serializer, mem_stream, new ResponseWrapper (response));
+					mem_stream.Seek (0, SeekOrigin.Begin);
+					StreamReader r = new StreamReader (mem_stream);
+					Logger.Log.Debug ("Sending response:\n{0}\n", r.ReadToEnd ());
+					mem_stream.Seek (0, SeekOrigin.Begin);
+					mem_stream.WriteTo (stream);
+					mem_stream.Close ();
+#else
+					XmlFu.SerializeUtf8 (resp_serializer, stream, new ResponseWrapper (response));
+#endif
+				} catch (Exception e) {
+					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					return false;
+				}
+
+				return true;
+		}
+
+		public void CancelIfBlocking ()
+		{
+			// Work around some crappy .net behavior.  We can't
+			// close a socket and have it exit out of a blocking
+			// read, so we have to abort the thread it's blocking
+			// in.
+			lock (this.blocking_read_lock) {
+				if (this.in_blocking_read) {
+					this.thread.Abort ();
+				}
+			}
+		}
+
+		protected void OnAsyncResponse (ResponseMessage response)
+		{
+			Logger.Log.Debug ("Sending response of type {0}", response.GetType ());
+			if (!SendResponse (response))
+				Close ();
+		}
+
+		abstract public void HandleConnection ();
+		abstract public void Close ();
+		abstract public void SetupWatch ();
+		abstract public bool SendResponse (ResponseMessage response);
+
+		public void HandleConnection (Stream buffer_stream)
+		{
+			this.thread = Thread.CurrentThread;
+
+			RequestMessage req = null;
+			ResponseMessage resp = null;
+
+			bool force_close_connection = false;
+			
 #if ENABLE_XML_DUMP
 			StreamReader r = new StreamReader (buffer_stream);
 			Logger.Log.Debug ("Received request:\n{0}\n", r.ReadToEnd ());
@@ -319,9 +577,6 @@ namespace Beagle.Daemon {
 			// Release our reference to Thread.CurrentThread, which
 			// is a static instance (although thread-local)
 			this.thread = null;
-
-			Server.MarkHandlerAsKilled (this);
-			Shutdown.WorkerFinished (network_data);
 		}
 	}
 
@@ -330,9 +585,13 @@ namespace Beagle.Daemon {
 		private static bool initialized = false;
 
 		private string socket_path;
-		private UnixListener listener;
+		private UnixListener unix_listener;
+		private HttpListener http_listener;
 		private static Hashtable live_handlers = new Hashtable ();
 		private bool running = false;
+		private bool enable_http = false;
+
+		public static Hashtable item_handlers = new Hashtable ();
 
 		static Server ()
 		{
@@ -340,19 +599,19 @@ namespace Beagle.Daemon {
 				ScanAssemblyForExecutors (assembly);
 		}
 
-		public Server (string name)
+		public Server (string name, bool enable_http)
 		{
 			// Use the default name when passed null
 			if (name == null)
 				name = "socket";
 
 			this.socket_path = Path.Combine (PathFinder.GetRemoteStorageDir (true), name);
-			this.listener = new UnixListener (this.socket_path);
+			this.unix_listener = new UnixListener (this.socket_path);
+			this.enable_http = enable_http;
 		}
 
-		public Server () : this (null)
+		public Server (bool enable_http) : this (null, enable_http)
 		{
-
 		}
 
 		// Perform expensive serialization all at once. Do this before signal handler is setup.
@@ -382,11 +641,13 @@ namespace Beagle.Daemon {
 
 		private void Run ()
 		{
-			this.listener.Start ();
 			this.running = true;
+			this.unix_listener.Start ();
 
 			if (! Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path)))
 				return;
+
+			ConnectionHandler handler = null;
 
 			while (this.running) {
 				UnixClient client;
@@ -394,7 +655,7 @@ namespace Beagle.Daemon {
 					// This will block for an incoming connection.
 					// FIXME: But not really, it'll only wait a second.
 					// see the FIXME in UnixListener for more info.
-					client = this.listener.AcceptUnixClient ();
+					client = this.unix_listener.AcceptUnixClient ();
 				} catch (SocketException) {
 					// If the listener is stopped while we
 					// wait for a connection, a
@@ -412,16 +673,114 @@ namespace Beagle.Daemon {
 
 				// If client is null, the socket timed out.
 				if (client != null) {
-					ConnectionHandler handler = new ConnectionHandler (client);
+					handler = new UnixConnectionHandler (client);
 					lock (live_handlers)
 						live_handlers [handler] = handler;
 					ExceptionHandlingThread.Start (new ThreadStart (handler.HandleConnection));
 				}
 			}
-			
+
 			Shutdown.WorkerFinished (this);
 
 			Logger.Log.Debug ("Server '{0}' shut down", this.socket_path);
+		}
+		
+		private void HttpRun ()
+		{
+			http_listener = new HttpListener ();
+			int port = 4000;
+			bool s;
+			string prefix;
+
+			do {
+				prefix = "http://*:" + port.ToString () + "/";
+				s = true;
+				try {	
+					http_listener.Prefixes.Add(prefix);
+					this.http_listener.Start();
+				}
+				catch (SocketException) {
+					http_listener.Prefixes.Remove(prefix);
+					port++;
+					s = false;
+				}
+			} while (!s);
+
+			Shutdown.WorkerStart (this.http_listener, String.Format ("server '{0}'", prefix));
+
+			Logger.Log.Debug("httpserver: Listening on " + prefix);
+
+			while (this.running)
+			{
+				HttpListenerContext context  = null;
+				try {
+					context = http_listener.GetContext();
+				}
+				catch (Exception e)	{
+					Logger.Log.Warn("httpserver: Exception while getting context: " + e.Message );
+				}
+				if (context != null) {
+					//New query or hit request?
+					if (context.Request.RawUrl == "/") {
+						//New query
+						//Create a new GUID for the query
+						Guid g = System.Guid.NewGuid ();
+						HttpItemHandler i = new HttpItemHandler ();
+						item_handlers [g] = i;
+						
+						ConnectionHandler handler = new HttpConnectionHandler (g, context, i);
+						lock (live_handlers)
+								live_handlers [handler] = handler;
+						ExceptionHandlingThread.Start (new ThreadStart (handler.HandleConnection));
+					}
+					else {
+						//Hit request
+						//second Uri segment contains the guid
+						System.Uri uri = context.Request.Url;
+						string path;
+						string g = uri.Segments [1];
+
+						if (g [g.Length - 1] == '/')
+							g = g.Remove (g.Length -1 , 1);
+
+						System.Guid guid;
+						
+						try {
+							guid = new Guid (g);
+						} catch (FormatException) {
+							//TODO: return HTTP error;
+							Logger.Log.Debug ("httpserver: invalid query guid: {0}", g);
+							context.Response.Close ();
+							continue;
+						}
+
+						if (uri.Query.Length > 0)
+							path = uri.Query.Remove (0,1);
+						else {
+							//TODO: return HTTP error;
+							Logger.Log.Debug ("httpserver: empty querystring in item request");
+							context.Response.Close ();
+							continue;
+						}
+
+						System.Uri item_uri = new Uri (path);
+
+						HttpItemHandler handler = (HttpItemHandler) item_handlers [guid];
+
+						if (handler == null) {
+							//TODO: return HTTP error;
+							Logger.Log.Debug ("httpserver: query {0} does not exist.", g);
+							context.Response.Close ();
+						} else {
+							Logger.Log.Debug ("httpserver: Asked for item {0} on query {1}", path, g);
+							handler.HandleRequest (context, item_uri);
+						}
+					}
+				}
+			}
+
+			Shutdown.WorkerFinished (this.http_listener);
+			Logger.Log.Debug ("Server '{0}' shut down", prefix);
 		}
 
 		public void Start ()
@@ -429,16 +788,22 @@ namespace Beagle.Daemon {
 			if (!initialized)
 				throw new Exception ("Server must be initialized before starting");
 
-			if (!Shutdown.ShutdownRequested)
+			if (!Shutdown.ShutdownRequested) {
+				if (enable_http)
+					ExceptionHandlingThread.Start (new ThreadStart (this.HttpRun));
 				ExceptionHandlingThread.Start (new ThreadStart (this.Run));
+			}
 		}
 
 		public void Stop ()
 		{
 			if (this.running) {
 				this.running = false;
-				this.listener.Stop ();
+				this.unix_listener.Stop ();
+				if (enable_http)
+					this.http_listener.Close ();
 			}
+
 			File.Delete (this.socket_path);
 		}
 

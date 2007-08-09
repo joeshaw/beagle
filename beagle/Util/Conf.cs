@@ -26,11 +26,13 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Serialization;
 using System.Text.RegularExpressions;
+using Mono.Unix;
 
 using Beagle.Util;
 
@@ -46,6 +48,7 @@ namespace Beagle.Util {
 		public static IndexingConfig Indexing = null;
 		public static DaemonConfig Daemon = null;
 		public static SearchingConfig Searching = null;
+		public static NetworkingConfig Networking = null;
 
 		private static string configs_dir;
 		private static Hashtable mtimes;
@@ -145,6 +148,10 @@ namespace Beagle.Util {
 		        Searching = (SearchingConfig) temp;
 			NotifySubscribers (Searching);
 
+			LoadFile (typeof (NetworkingConfig), Networking, out temp, force);
+		    	Networking = (NetworkingConfig) temp;
+			NotifySubscribers (Networking);
+			
 			watching_for_updates = true;
 		}
 
@@ -597,7 +604,118 @@ namespace Beagle.Util {
 				output = "Could not find requested exclude to remove.";
 				return false;
 			}
+		}
 
+		[ConfigSection (Name="networking")]
+		public class NetworkingConfig : Section 
+		{
+			// Index sharing service is disabled by default
+			private bool service_enabled = false;
+
+			// Password protect our local indexes
+			private bool password_required = true;
+
+			// The name and password for the local network service
+			private string service_name = String.Format ("{0} ({1})", UnixEnvironment.UserName, UnixEnvironment.MachineName);
+			private string service_password = String.Empty;
+
+			// This is a list of registered and paired nodes which
+			// the local client can search
+			private ArrayList network_services = new ArrayList ();
+			
+			public bool ServiceEnabled {
+				get { return service_enabled; }
+				set { service_enabled = value; }
+			}
+
+			public bool PasswordRequired {
+				get { return password_required; }
+				set { password_required = value; }
+			}
+
+			public string ServiceName {
+				get { return service_name; }
+				set { service_name = value; }
+			}
+
+			public string ServicePassword {
+				get { return service_password; }
+				set { service_password = value; }
+			}
+
+			[XmlArray]
+			[XmlArrayItem (ElementName="NetworkService", Type=typeof (NetworkService))]
+			public ArrayList NetworkServices {
+				get { return network_services; }
+				set { network_services = value; }
+			}
+
+			[ConfigOption (Description="List available network services for querying", IsMutator=false)]
+			internal bool ListNetworkServices (out string output, string [] args)
+			{
+				output = "Currently registered network services:\n";
+
+				foreach (NetworkService service in network_services)
+					output += " - " + service.ToString () + "\n";
+
+#if ENABLE_AVAHI
+				output += "\n";
+				output += "Available network services:\n";
+				
+				try {
+				
+				AvahiBrowser browser = new AvahiBrowser ();
+				//browser.Start ();
+
+				foreach (NetworkService service in browser.GetServicesBlocking ())
+					output += " - " + service.ToString () + "\n";
+
+				browser.Dispose ();
+
+				} catch (Exception e) {
+					Console.WriteLine (e);
+				}
+#endif
+
+				return true;
+			}
+
+			[ConfigOption (Description="Add a network service for querying", Params=2, ParamsDescription="name, hostname:port")]
+			internal bool AddNetworkService (out string output, string [] args)
+			{
+				string name = args [0];
+				string uri = args [1];
+				
+				if (uri.Split (':').Length < 2)
+					uri = uri.Trim() + ":4000";
+				
+				NetworkService service = new NetworkService (name, new Uri (uri), false, null);
+				network_services.Add (service);
+				
+				output = "Network service '" + service + "' added";
+
+				return true;
+			}
+			
+			[ConfigOption (Description="Remove a network service from querying", Params=1, ParamsDescription="name")]
+			internal bool RemoveNetworkService (out string output, string [] args)
+			{
+				string name = args[0];
+
+				foreach (NetworkService service in network_services) {
+					if (service.Name != name)
+						continue;
+
+					network_services.Remove (service);
+					output = "Network service '" + service.Name + "' removed";
+					
+					return true;
+				}
+
+				output = "Network service '" + name + "' not found in registered services";
+
+				return false;
+			}
 		}
 
 		public class Section {

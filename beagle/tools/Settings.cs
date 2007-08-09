@@ -25,10 +25,11 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
-using System.Reflection;
 using System.Threading;
+using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 
 using Mono.Unix;
 using Mono.Unix.Native;
@@ -44,12 +45,15 @@ public class SettingsDialog
 {
 	public static void Main (string[] args)
 	{
-		SettingsDialog settings = new SettingsDialog ();
+		SettingsDialog settings = new SettingsDialog (args);
 		settings.Run ();
 	}
 
 	////////////////////////////////////////////////////////////////
 	// Widgets
+
+	[Widget] Gtk.Window settings_dialog;
+	[Widget] Notebook notebook;
 
 	[Widget] VBox administration_frame;
 
@@ -70,18 +74,39 @@ public class SettingsDialog
 	[Widget] Button display_up_button;
 	[Widget] Button display_down_button;
 
-	[Widget] Gtk.Window settings_dialog;
-
 	[Widget] ScrolledWindow include_sw;
 	[Widget] ScrolledWindow exclude_sw;
 
-	IncludeView include_view;
-	ExcludeView exclude_view;
+	private IncludeView include_view;
+	private ExcludeView exclude_view;
+
+	////////////////////////////////////////////////////////////////
+	// Zeroconf
+
+#if ENABLE_AVAHI
+	[Widget] VBox networking_box;
+
+        [Widget] Alignment networking_settings_box;
+        [Widget] Alignment networking_password_box;
+
+        [Widget] ScrolledWindow networking_sw;
+
+        [Widget] CheckButton allow_global_access_toggle;
+        [Widget] CheckButton require_password_toggle;
+
+        [Widget] Button add_host_button;
+        [Widget] Button remove_host_button;        
+        
+        [Widget] Entry index_name_entry;
+        [Widget] Entry password_entry;
+
+        private NetworkingView networking_view;
+#endif
 
 	////////////////////////////////////////////////////////////////
 	// Initialize       
 
-	public SettingsDialog ()
+	public SettingsDialog (string[] args)
 	{
 		Application.Init ();
 
@@ -103,10 +128,45 @@ public class SettingsDialog
 		exclude_view.Show ();
 		exclude_sw.Child = exclude_view;
 
+#if ENABLE_AVAHI
+		networking_view = new NetworkingView ();
+		networking_view.Selection.Changed += new EventHandler (OnHostSelected);
+		networking_view.Show ();
+                networking_sw.Child = networking_view;
+		networking_box.Show ();
+#endif
+
 		LoadConfiguration ();
 
 		Conf.Subscribe (typeof (Conf.IndexingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		Conf.Subscribe (typeof (Conf.SearchingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+#if ENABLE_AVAHI
+		Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+#endif
+
+		ParseArgs (args);
+	}
+
+	private void ParseArgs (string[] args)
+	{
+		if (args.Length < 1)
+			return;
+		
+		foreach (string s in args) {
+			switch (s) {
+			case "--searching":
+				notebook.Page = 0;
+				return;
+			case "--indexing":
+				notebook.Page = 1;
+				return;
+#if ENABLE_AVAHI
+			case "--networking":
+				notebook.Page = 2;
+				return;
+#endif
+			}
+		}
 	}
 
 	public void Run ()
@@ -139,6 +199,17 @@ public class SettingsDialog
 
 		foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes)
 			exclude_view.AddItem (exclude_item);
+
+#if ENABLE_AVAHI
+                foreach (NetworkService s in Conf.Networking.NetworkServices)
+                        networking_view.AddNode (s);
+                                                                
+                allow_global_access_toggle.Active = Conf.Networking.ServiceEnabled;
+                require_password_toggle.Active = Conf.Networking.PasswordRequired;
+                index_name_entry.Text = Conf.Networking.ServiceName;
+                string password = Conf.Networking.ServicePassword.PadRight (12);
+                password_entry.Text = password.Substring (0, 12);
+#endif
 	}
 
 	private void SaveConfiguration ()
@@ -156,6 +227,14 @@ public class SettingsDialog
 		
 		Conf.Indexing.Roots = include_view.Includes;
 		Conf.Indexing.Excludes = exclude_view.Excludes;
+
+#if ENABLE_AVAHI
+                Conf.Networking.ServiceEnabled = allow_global_access_toggle.Active;
+                Conf.Networking.ServiceName = index_name_entry.Text;
+                Conf.Networking.PasswordRequired = require_password_toggle.Active;
+                Conf.Networking.ServicePassword = Password.Encode (password_entry.Text);
+                Conf.Networking.NetworkServices = networking_view.Nodes;
+#endif
 
 		Conf.Save (true);
 	}
@@ -427,6 +506,94 @@ public class SettingsDialog
 		exclude_view.AddItem (exclude_item);
 	}
 
+	private void OnAddHostClicked (object o, EventArgs args) 	 
+	{
+#if ENABLE_AVAHI
+                string error_message = null;
+                bool throw_error = false;
+
+                AddHostDialog dialog = new AddHostDialog (settings_dialog);
+                ResponseType resp = (ResponseType) dialog.Run ();
+                
+                if (resp != ResponseType.Ok) {
+                        dialog.Destroy ();
+                        return;
+                }
+
+		ICollection<NetworkService> new_nodes = dialog.GetSelectedHosts ();
+		
+		foreach (NetworkService s in new_nodes)
+			Console.WriteLine (s.Name);
+
+                dialog.Destroy ();
+                
+                // Check if the new entry matches an existing netbeagle entry
+                foreach (NetworkService old_node in networking_view.Nodes) {
+                        foreach (NetworkService node in new_nodes) {
+                                if (node == old_node) {
+                                        throw_error = true;
+                                        error_message = Catalog.GetString ("Remote host already present in the list.");
+                                } 
+                        }
+                }
+                
+                if (throw_error) {
+                        HigMessageDialog.RunHigMessageDialog (settings_dialog,
+                                                              DialogFlags.Modal,
+                                                              MessageType.Warning,
+                                                              ButtonsType.Ok,
+                                                              Catalog.GetString ("Netbeagle Node not added"),
+                                                              error_message);
+                } else {
+                        foreach (NetworkService node in new_nodes)
+                                networking_view.AddNode (node);
+                }
+#endif
+	}
+	  	 
+	private void OnRemoveHostClicked (object o, EventArgs args) 	 
+	{
+#if ENABLE_AVAHI
+		// Confirm removal 	 
+		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog, 	 
+								 DialogFlags.Modal, 	 
+								 MessageType.Question, 	 
+								 ButtonsType.YesNo, 	 
+								 Catalog.GetString ("Remove host"), 	 
+								 Catalog.GetString ("Are you sure you wish to remove this host from the list?")); 	 
+	  	 
+		ResponseType response = (ResponseType) dialog.Run ();
+		dialog.Destroy ();
+	  	 
+		if (response != ResponseType.Yes) 	 
+			return; 	 
+		
+		networking_view.RemoveSelectedNode (); 	 
+		remove_host_button.Sensitive = false;
+#endif
+	} 	 
+	  	 
+	private void OnHostSelected (object o, EventArgs args) 	 
+	{
+#if ENABLE_AVAHI
+		remove_host_button.Sensitive = true;
+#endif  
+	}
+	
+	private void OnGlobalAccessToggled (object o, EventArgs args)
+	{
+#if ENABLE_AVAHI
+		networking_settings_box.Sensitive = allow_global_access_toggle.Active;
+#endif
+	}
+	
+	private void OnRequirePasswordToggled (object o, EventArgs args)
+	{
+#if ENABLE_AVAHI
+		networking_password_box.Sensitive = require_password_toggle.Active;
+#endif
+	}
+
 	////////////////////////////////////////////////////////////////
 	// IncludeView 
 
@@ -603,6 +770,108 @@ public class SettingsDialog
 		}
 	}
 
+#if ENABLE_AVAHI
+
+	////////////////////////////////////////////////////////////////
+	// NetworkingView 
+
+	class NetworkingView : TreeView 	 
+	{ 	 
+		private ListStore store; 	 
+		private ArrayList nodes = new ArrayList (); 	 
+	  	
+		public ArrayList Nodes { 	 
+			get { return nodes; } 	 
+		}
+
+		public bool HasSelection {
+			get { return (Selection.CountSelectedRows () > 0); }
+		}
+	  	 
+		public NetworkingView ()
+		{ 	 
+			store = new ListStore (typeof (NetworkService));
+			this.Model = store;
+
+			TreeViewColumn column = new TreeViewColumn ();
+			column.Title = Catalog.GetString ("Name");
+			CellRendererText renderer = new CellRendererText ();
+			column.PackStart (renderer, true);
+			column.SetCellDataFunc (renderer, NameCellFunc);
+			AppendColumn (column);
+
+                        column = new TreeViewColumn ();
+                        column.Title = Catalog.GetString ("Address");
+                        renderer = new CellRendererText ();
+                        column.PackStart (renderer, true);
+                        column.SetCellDataFunc (renderer, AddressCellFunc);
+                        AppendColumn (column);
+		
+		}
+
+                public void NameCellFunc (TreeViewColumn col, CellRenderer cell, TreeModel model, TreeIter iter) 
+                {
+                        CellRendererText renderer = (CellRendererText) cell;
+                        NetworkService s = (NetworkService) model.GetValue (iter, 0);
+                        renderer.Markup = s.Name;
+                }
+                
+                public void AddressCellFunc (TreeViewColumn col, CellRenderer cell, TreeModel model, TreeIter iter)
+                {
+                        CellRendererText renderer = (CellRendererText) cell;
+                        NetworkService s = (NetworkService) model.GetValue (iter, 0);
+                        renderer.Markup = String.Format ("{0}:{1}", s.GetUri ().Host, s.GetUri ().Port);
+                }
+	  	 
+		public void AddNode (NetworkService service) 	 
+		{ 	 
+			nodes.Add (service); 	 
+			store.AppendValues (service); 	 
+		} 	 
+		
+
+		private NetworkService find_node; 	 
+		private TreeIter found_iter; 	 
+
+		public void RemoveNode (NetworkService service) 	 
+		{ 	 
+			find_node = service; 	 
+			found_iter = TreeIter.Zero; 	 
+			
+			this.Model.Foreach (new TreeModelForeachFunc (ForeachFindNode)); 	 
+			
+			store.Remove (ref found_iter); 	 
+			nodes.Remove (service); 	 
+		} 	 
+	  	
+		private bool ForeachFindNode (TreeModel model, TreePath path, TreeIter iter) 	 
+		{ 	 
+			if ((NetworkService) model.GetValue (iter, 0) == find_node) { 	 
+				found_iter = iter; 	 
+				return true; 	 
+			} 	 
+			
+			return false; 	 
+		} 	 
+	  	
+		public void RemoveSelectedNode () 	 
+		{ 	 
+			TreeModel model; 	 
+			TreeIter iter; 	 
+			
+			if (!this.Selection.GetSelected(out model, out iter)) { 	 
+				return; 	 
+			}
+
+			NetworkService node = (NetworkService)model.GetValue(iter, 0); 	 
+			
+			store.Remove (ref iter); 	 
+			nodes.Remove (node); 	 
+		} 	 
+	  	
+	}
+#endif
+
 	////////////////////////////////////////////////////////////////
 	// PublicfolderView 
 
@@ -682,7 +951,7 @@ public class SettingsDialog
 			publicFolders.Remove (path);
 		}
 
-	    // Handle drag and drop data. Enables users to drag a folder that he wishes 
+		// Handle drag and drop data. Enables users to drag a folder that he wishes 
 		// to add for indexing from Nautilus.
 		// FIXME: Pass checks as in OnAddIncludeButtonClicked
 		private void HandleData (object o, DragDataReceivedArgs args) {
@@ -956,4 +1225,232 @@ public class SettingsDialog
 			add_exclude_dialog.Destroy ();
 		}
 	}
+
+
+#if ENABLE_AVAHI
+
+        ////////////////////////////////////////////////////////////////
+        // PasswordDialog
+
+        class PasswordDialog : Dialog
+        {
+                [Widget] private Dialog password_dialog;
+                [Widget] private Label title_label;
+                [Widget] private Entry password_entry;
+		
+                public string Password {
+                        get { return password_entry.Text; }
+                }
+		
+                public PasswordDialog (string name) : base (IntPtr.Zero)
+                {
+                        Glade.XML gxml = new Glade.XML (null, "settings.glade", "password_dialog", "beagle");
+                        gxml.Autoconnect (this);
+
+                        Raw = password_dialog.Handle;
+
+                        Title = String.Format (Catalog.GetString ("Connecting to {0}"), name);
+                        Present ();
+                }
+        }
+
+        ////////////////////////////////////////////////////////////////
+        // AddHostDialog
+        
+        public class AddHostDialog : Dialog
+        {
+                const int COL_NAME = 0;
+                const int COL_PIXBUF = 1;
+                const int COL_AUTH = 2;
+                const int COL_HOST = 3;
+                const int COL_PORT = 4;
+                
+                [Glade.Widget] private Dialog add_host_dialog;
+                [Glade.Widget] private RadioButton mdns_radio_button;
+                [Glade.Widget] private RadioButton static_radio_button;
+                [Glade.Widget] private Alignment static_section;
+                [Glade.Widget] private Entry name_entry;
+                [Glade.Widget] private Entry address_entry;
+                [Glade.Widget] private Entry password_entry;
+                [Glade.Widget] private SpinButton port_spin_button;
+                [Glade.Widget] private IconView icon_view;
+                
+                private AvahiBrowser browser;
+
+                private ListStore store;
+                private Gdk.Pixbuf unlocked_icon;
+                private Gdk.Pixbuf locked_icon;
+                
+                public ICollection<NetworkService> GetSelectedHosts ()
+		{
+			List<NetworkService> services = new List<NetworkService> ();
+                        
+			if (this.mdns_radio_button.Active == false) {
+				Uri uri = new Uri (String.Format ("http://{0}:{1}", address_entry.Text, port_spin_button.ValueAsInt));
+				bool pw_required = (password_entry.Text.Length > 0) ? true : false;
+				string name = null;
+				
+				if (name_entry.Text.Length > 0)
+					name = name_entry.Text;
+				else
+					name = "Unnamed";
+
+				services.Add (new NetworkService (name, uri, pw_required, "X"));
+			} else {
+				TreeIter iter;
+
+				foreach (TreePath path in icon_view.SelectedItems) {
+					if (store.GetIter (out iter, path) == false)
+						continue;
+					
+					// FIXME: Searching by name is not the most correct thing to do
+					string name = (string) store.GetValue (iter, COL_NAME);
+					Console.WriteLine ("+ " + name);
+
+					NetworkService s = (NetworkService) browser.GetServiceByName (name);
+					
+					if (s != null)
+						services.Add (s);
+				}
+			}
+			
+			return services;
+		}
+                
+                public AddHostDialog (Gtk.Window parent) : base (null, parent, DialogFlags.DestroyWithParent)
+                {
+                        Glade.XML gxml = new Glade.XML (null, "settings.glade", "add_host_dialog", null);
+                        gxml.Autoconnect (this);
+                        Raw = add_host_dialog.Handle;
+                        
+                        this.TransientFor = parent;
+
+                        mdns_radio_button.Toggled += new EventHandler (OnRadioButtonToggled);
+                        
+                        // load the image to use for each node
+                        unlocked_icon = Gtk.IconTheme.Default.LoadIcon ("gnome-fs-network", 
+                                                                        48, (IconLookupFlags) 0);
+                        locked_icon = Gtk.IconTheme.Default.LoadIcon ("gtk-dialog-authentication", 
+                                                                      48, (IconLookupFlags) 0);
+                        
+                        CreateStore ();
+                        icon_view.Model = store;
+                        icon_view.TextColumn = COL_NAME;
+                        icon_view.PixbufColumn = COL_PIXBUF;
+                        icon_view.ColumnSpacing = 24;
+                        icon_view.ItemActivated += new ItemActivatedHandler (OnItemActivated);
+                        icon_view.GrabFocus ();
+
+                        this.ShowAll ();
+
+                        try {
+                                browser = new AvahiBrowser ();
+                                browser.HostFound += new AvahiEventHandler (OnHostFound);
+                                browser.HostRemoved += new AvahiEventHandler (OnHostRemoved);
+                                browser.Start ();
+                        } catch (Exception e) {
+                                //Console.Error.WriteLine ("Avahi Daemon must be unavailable. Hiding MDns stuff.");
+                                static_radio_button.Toggle ();                                
+                                icon_view.Visible = false;
+                                mdns_radio_button.Visible = false;
+                                static_radio_button.Visible = false;
+                        }
+                }
+                
+                private void CreateStore ()
+                {
+                        store = new ListStore (typeof (string),     // Name
+                                               typeof (Gdk.Pixbuf), // Icon
+                                               typeof (bool),       // Requires authenticatio
+                                               typeof (string),     // hostname
+                                               typeof (int));       // port
+                        
+                        store.DefaultSortFunc = delegate (TreeModel model, TreeIter a, TreeIter b) {
+                                string a_name = (string) model.GetValue (a, COL_NAME);
+                                string b_name = (string) model.GetValue (b, COL_NAME);
+                                
+                                return String.Compare (a_name, b_name);
+                        };
+                        
+                        store.SetSortColumnId (COL_NAME, SortType.Ascending);
+                }
+
+                private void OnHostFound (object sender, AvahiEventArgs args)
+                {
+                        store.AppendValues (args.Name, 
+                                            (args.Service.IsProtected == true) ? locked_icon : unlocked_icon,
+                                            args.Service.IsProtected,
+                                            args.Address.Host,
+                                            args.Address.Port);
+
+                        icon_view.QueueDraw ();
+                }
+
+                private void OnHostRemoved (object sender, AvahiEventArgs args)
+                {
+                        find_node = args.Address.Host;
+                       found_iter = TreeIter.Zero;
+                        
+                       store.Foreach (new TreeModelForeachFunc (ForeachFindNode));
+                       store.Remove (ref found_iter);
+                }
+
+               private string find_node;
+               private TreeIter found_iter;
+
+               private bool ForeachFindNode (TreeModel model, TreePath path, TreeIter iter)
+               {
+                       if ((string) model.GetValue (iter, COL_HOST) == find_node) {
+                               found_iter = iter;
+                               return true;
+                       }
+
+                       return false;
+               }
+                
+                private void OnItemActivated (object sender, ItemActivatedArgs args)
+                {
+                        TreeIter iter;
+                        store.GetIter (out iter, args.Path);
+
+                        try {
+                                string host = (string) store.GetValue (iter, COL_HOST);
+                                int port = (int) store.GetValue (iter, COL_PORT);
+
+                                Console.WriteLine ("Host activated: {0}", 
+                                                   String.Format ("{0}:{1}", host.Trim (), port));
+                                
+                                // The user has double clicked on the icon, so they probably expect
+                                // the same behavior as selecting this icon and clicking "Add".
+                                Respond (ResponseType.Ok);
+                        } catch (Exception e) {
+                                Console.Error.WriteLine ("Exception: {0}", e.Message);
+                        }
+                }
+                
+                private void OnRadioButtonToggled (object sender, EventArgs args)
+                {
+                        if (mdns_radio_button.Active) {
+                                icon_view.Sensitive = true;
+                                static_section.Sensitive = false;
+                        } else {
+                                icon_view.Sensitive = false;
+                                static_section.Sensitive = true;
+                        }
+                }
+
+                public override void Destroy ()
+                {
+                        if (browser != null) {
+                                browser.Dispose ();
+                                browser.HostFound -= OnHostFound;
+                                browser.HostRemoved -= OnHostRemoved;
+                                browser = null;
+                        }
+                        
+                        base.Destroy ();
+                }
+   
+	}
+#endif
 }

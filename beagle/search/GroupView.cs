@@ -135,7 +135,9 @@ namespace Search {
 
 			if (selection != null)
 				selection.State = StateType.Normal;
+
 			selection = (Gtk.Widget)tile;
+
 			if (selection != null)
 				selection.State = StateType.Selected;
 		}
@@ -157,7 +159,6 @@ namespace Search {
 		private bool GroupInScope (TileGroup group)
 		{
 			ScopeType scopetype = Utils.TileGroupToScopeType (group);
-
 			return (scope & scopetype) == scopetype;
 		}
 

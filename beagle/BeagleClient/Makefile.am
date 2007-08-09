@@ -8,6 +8,10 @@ CSFLAGS = 						\
 	-define:PKGLIBDIR=$(pkglibdir)			\
 	$(BEAGLE_DEFINES)
 
+if ENABLE_AVAHI
+CSFLAGS += -define:ENABLE_AVAHI
+endif
+
 CSFILES = 						\
 	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/Client.cs				\
@@ -29,7 +33,6 @@ CSFILES = 						\
 
 LOCAL_ASSEMBLIES =					\
 	../Util/Util.dll
-
 
 ASSEMBLIES = 						\
 	$(BEAGLED_LIBS)                 		\

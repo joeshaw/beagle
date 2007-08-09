@@ -52,6 +52,7 @@ public class QueryTool {
 	private static DateTime lastQueryTime = DateTime.Now;
 
 	private static MainLoop main_loop = null;
+
 	// CLI args
 	private static bool keep_running = false;
 	private static bool verbose = false;
@@ -86,7 +87,7 @@ public class QueryTool {
 
 			if (verbose) {
 				SnippetRequest sreq = new SnippetRequest (query, hit);
-				SnippetResponse sresp = (SnippetResponse) sreq.Send ();
+				SnippetResponse sresp = (SnippetResponse) ((ResponseMessage []) sreq.Send ()) [0];
 				Console.WriteLine ("PaUri: {0}", hit.ParentUri != null ? hit.ParentUri.ToString () : "(null)");
 				Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
 				Console.WriteLine (" Type: {0}", hit.Type);
@@ -123,7 +124,7 @@ public class QueryTool {
 		}
 	}
 
-	private static void OnFinished (FinishedResponse response)
+	private static void OnFinished ()
 	{
 		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",
@@ -159,6 +160,12 @@ public class QueryTool {
 			"              \t\t\tthe actual results.\n" +
 			"  --max-hits\t\t\tLimit number of search results per backend\n" +
 			"            \t\t\t(default 100)\n" +
+			"\n" +
+			"  --local <yes|no>\t\tQuery local system (default yes)\n" +
+			"  --network <yes|no>\t\tQuery other beagle systems in the neighbourhood domain specified in config (default no)\n" +
+			"                    \t\tUse 'beagle-config networking AddNeighborhoodBeagleNode hostname:portnumber' to add a remote beagle system\n" +
+			"                    \t\tThe service by default runs in port 4000\n" +
+			"\n" +
 			"  --flood\t\t\tExecute the query over and over again.  Don't do that.\n" +
 			"  --listener\t\t\tExecute an index listener query.  Don't do that either.\n" +
 			"  --help\t\t\tPrint this usage message.\n" +
@@ -350,22 +357,25 @@ public class QueryTool {
 				System.Environment.Exit (0);
 				break;
 
+			case "--network":
+				if (++i >= args.Length) PrintUsageAndExit ();
+				if (args [i].ToLower () == "yes")
+					query.AddDomain (QueryDomain.Neighborhood);
+				break;
+
 			default:
 				if (query_str.Length > 0)
 					query_str.Append (' ');
 				query_str.Append (args [i]);
 				
 				break;
-				
 			}
 
 			++i;
 		}
 
 		if (listener) {
-
 			query.IsIndexListener = true;
-
 		} else {
 		
 			if (query_str.Length > 0)
@@ -386,7 +396,6 @@ public class QueryTool {
 
 		query.HitsAddedEvent += OnHitsAdded;
 		query.HitsSubtractedEvent += OnHitsSubtracted;
-
 
 		if (! keep_running)
 			query.FinishedEvent += OnFinished;

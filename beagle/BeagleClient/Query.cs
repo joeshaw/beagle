@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
@@ -40,13 +41,14 @@ namespace Beagle {
 		Local        = 1,
 		System       = 2,
 		Neighborhood = 4,
-		Global       = 8
+		Global       = 8,
+		All          = 15 /* 1 | 2 | 4 | 8 */
 	}
 
 	public class Query : RequestMessage {
 
 		// FIXME: This is a good default when on an airplane.
-		private Beagle.QueryDomain domainFlags = QueryDomain.Local | QueryDomain.System; 
+		private Beagle.QueryDomain domain_flags = QueryDomain.Local | QueryDomain.System; 
 
 		private ArrayList parts = new ArrayList ();
 		private ArrayList mimeTypes = new ArrayList ();
@@ -60,7 +62,13 @@ namespace Beagle {
 		private QueryPart_Or hit_type_part = null;
 		private QueryPart_Or source_part = null;
 
+#if ENABLE_AVAHI
+		private AvahiBrowser avahi_browser = null;
+#endif
+
 		private bool is_index_listener = false;
+		
+		private int nodes_finished;
 
 		// Events to make things nicer to clients
 		public delegate void HitsAdded (HitsAddedResponse response);
@@ -69,8 +77,16 @@ namespace Beagle {
 		public delegate void HitsSubtracted (HitsSubtractedResponse response);
 		public event HitsSubtracted HitsSubtractedEvent;
 
-		public delegate void Finished (FinishedResponse response);
+		public delegate void NodeFinished (FinishedResponse response);
+		public event NodeFinished NodeFinishedEvent;
+		
+		public delegate void Finished ();
 		public event Finished FinishedEvent;
+
+#if ENABLE_AVAHI
+		public delegate void HostFound (object o, AvahiEventArgs args);
+		public event HostFound UnknownHostFoundEvent;
+#endif
 
 		public Query () : base (true)
 		{
@@ -79,11 +95,25 @@ namespace Beagle {
 			this.RegisterAsyncResponseHandler (typeof (FinishedResponse), OnFinished);
 			this.RegisterAsyncResponseHandler (typeof (ErrorResponse), OnError);
 			this.RegisterAsyncResponseHandler (typeof (SearchTermResponse), OnSearchTerms);
+
+#if ENABLE_AVAHI
+                        avahi_browser = new AvahiBrowser ();
+                        avahi_browser.HostFound += new AvahiEventHandler (OnHostFound);
+                        avahi_browser.HostRemoved += new AvahiEventHandler (OnHostRemoved);
+                        avahi_browser.Start ();
+#endif
 		}
 
 		public Query (string str) : this ()
 		{
 			AddText (str);
+		}
+
+		~Query ()
+		{
+#if ENABLE_AVAHI
+			avahi_browser.Dispose ();
+#endif
 		}
 
 		///////////////////////////////////////////////////////////////
@@ -107,15 +137,28 @@ namespace Beagle {
 		private void OnFinished (ResponseMessage r)
 		{
 			FinishedResponse response = (FinishedResponse) r;
-
-			if (this.FinishedEvent != null)
-				this.FinishedEvent (response);
+	
+			if (this.NodeFinishedEvent != null)
+				this.NodeFinishedEvent (response);
+				
+			if (++nodes_finished == clients.Count && this.FinishedEvent != null) {
+				Logger.Log.Debug ("Query: All nodes finished."); 
+				this.FinishedEvent ();
+			}
 		}
 
 		private void OnError (ResponseMessage r)
 		{
 			ErrorResponse response = (ErrorResponse) r;
+			
+			Logger.Log.Warn ("Query: Error returned by a client: " + response.ErrorMessage );
+			
+			if (++nodes_finished == clients.Count && this.FinishedEvent != null) {
+				Logger.Log.Debug ("Query: All nodes done."); 
+				this.FinishedEvent ();
+			}
 
+			//TODO: Ignore errorresponses from network nodes or let user decide
 			throw new ResponseMessageException (response);
 		}
 
@@ -124,6 +167,34 @@ namespace Beagle {
 			SearchTermResponse response = (SearchTermResponse) r;
 			ProcessSearchTermResponse (response);
 		}
+
+		///////////////////////////////////////////////////////////////
+
+#if ENABLE_AVAHI
+                private void OnHostFound (object sender, AvahiEventArgs args)
+                {
+                        // Here we should add this host to the current query if
+                        // we recognize it as a pre-registered host.
+                        foreach (NetworkService service in Conf.Networking.NetworkServices) {
+				if (service.Cookie == args.Service.Cookie && service.Name == args.Service.Name) {
+					// FIXME: Here is where we add the host to the current query!!!
+                                        Logger.Log.Debug ("NetworkService: Found service '{0}', adding to query...", service.Name);
+                                        return;
+                                }
+                        }
+                        
+                        Logger.Log.Debug ("NetworkService: Unknown service '{0}' has been detected...", args.Service.Name);
+
+                        if (UnknownHostFoundEvent != null)
+                                UnknownHostFoundEvent (this, args);
+                }
+
+                private void OnHostRemoved (object sender, AvahiEventArgs args)
+                {
+                        // FIXME: This host should now be removed from the current query
+                        Logger.Log.Debug ("NetworkService: Service '{0}' has been removed...", args.Service.Name);
+                }
+#endif
 
 		///////////////////////////////////////////////////////////////
 
@@ -241,8 +312,7 @@ namespace Beagle {
 			return false;
 		}
 
-		[XmlArrayItem (ElementName="MimeType",
-			       Type=typeof (string))]
+		[XmlArrayItem (ElementName="MimeType", Type=typeof (string))]
 		[XmlArray (ElementName="MimeTypes")]
 		public ArrayList MimeTypes {
 			get { return mimeTypes; }
@@ -333,8 +403,7 @@ namespace Beagle {
 			return false;
 		}
 
-		[XmlArrayItem (ElementName="Source",
-			       Type=typeof (string))]
+		[XmlArrayItem (ElementName="Source", Type=typeof (string))]
 		[XmlArray (ElementName="Sources")]
 		public ArrayList Sources {
 			get { return searchSources; }
@@ -348,23 +417,64 @@ namespace Beagle {
 		///////////////////////////////////////////////////////////////
 
 		public QueryDomain QueryDomain {
-			get { return domainFlags; }
-			set { domainFlags = value; }
+			get { return domain_flags; }
+			set { domain_flags = value; }
 		}
 
-		public void AddDomain (Beagle.QueryDomain d)
+		private Dictionary<string, bool> hosts_added = new Dictionary<string, bool> ();
+
+		public void AddDomain (Beagle.QueryDomain domain)
 		{
-			domainFlags |= d;
+			domain_flags |= domain;
+
+			ArrayList network_services = null;
+
+			if (domain == QueryDomain.Neighborhood) {
+				network_services = Conf.Networking.NetworkServices;
+			}
+
+			if (network_services == null && domain <= Beagle.QueryDomain.System) {
+				SetLocal (true);
+				return;
+			}
+
+			foreach (NetworkService service in network_services) {
+				if (hosts_added.ContainsKey (service.UriString))
+					continue;
+
+				Logger.Log.Debug ("Query: Adding '{0}' to query!", service.UriString);
+
+				hosts_added [service.UriString] = true;
+				SetRemote (service.UriString);
+			}
 		}
 
-		public void RemoveDomain (Beagle.QueryDomain d)
+		public void AddRemoteDomain (Beagle.QueryDomain domain, string url)
 		{
-			domainFlags &= ~d;
+			if (domain <= Beagle.QueryDomain.System)
+				throw new Exception ("I meant _remote_ domain!");
+
+			domain_flags |= domain;
+
+			if (! hosts_added.ContainsKey (url)) {
+				hosts_added [url] = true;
+				SetRemote (url);
+			}
 		}
 
-		public bool AllowsDomain (Beagle.QueryDomain d)
+		public void RemoveDomain (Beagle.QueryDomain domain)
 		{
-			return (domainFlags & d) != 0;
+			domain_flags &= ~domain;
+
+			if (domain <= Beagle.QueryDomain.System)
+				SetLocal (false);
+			else
+				throw new NotImplementedException ("Removing already added remote domains not supported");
+		}
+
+		public bool AllowsDomain (Beagle.QueryDomain domain)
+		{
+			return (domain_flags & domain) != 0;
 		}
 
 		///////////////////////////////////////////////////////////////
@@ -379,9 +489,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public bool IsEmpty {
-			get { return parts.Count == 0
-				      && mimeTypes.Count == 0
-				      && searchSources.Count == 0; }
+			get { return parts.Count == 0 && mimeTypes.Count == 0 && searchSources.Count == 0; }
 		}
 
 		public override string ToString ()
