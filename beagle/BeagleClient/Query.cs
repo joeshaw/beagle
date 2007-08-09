@@ -68,7 +68,7 @@ namespace Beagle {
 
 		private bool is_index_listener = false;
 		
-		private int nodes_finished;
+		private int nodes_finished = 0;
 
 		// Events to make things nicer to clients
 		public delegate void HitsAdded (HitsAddedResponse response);
@@ -77,10 +77,7 @@ namespace Beagle {
 		public delegate void HitsSubtracted (HitsSubtractedResponse response);
 		public event HitsSubtracted HitsSubtractedEvent;
 
-		public delegate void NodeFinished (FinishedResponse response);
-		public event NodeFinished NodeFinishedEvent;
-		
-		public delegate void Finished ();
+		public delegate void Finished (FinishedResponse response);
 		public event Finished FinishedEvent;
 
 #if ENABLE_AVAHI
@@ -138,12 +135,14 @@ namespace Beagle {
 		{
 			FinishedResponse response = (FinishedResponse) r;
 	
-			if (this.NodeFinishedEvent != null)
-				this.NodeFinishedEvent (response);
+			if (this.FinishedEvent != null)
+				this.FinishedEvent (response);
 				
+			// FIXME: This needs to be fixed when we break API
+			// so that the FinishedEvent is sent when all nodes finish.
 			if (++nodes_finished == clients.Count && this.FinishedEvent != null) {
-				Logger.Log.Debug ("Query: All nodes finished."); 
-				this.FinishedEvent ();
+				Logger.Log.Debug ("Query: All nodes finished!"); 
+				//this.FinishedEvent ();
 			}
 		}
 
@@ -151,14 +150,16 @@ namespace Beagle {
 		{
 			ErrorResponse response = (ErrorResponse) r;
 			
-			Logger.Log.Warn ("Query: Error returned by a client: " + response.ErrorMessage );
+			Logger.Log.Warn ("Query: Error returned by a client: {0}", response.ErrorMessage );
 			
+			// FIXME: This needs to be fixed when we break API
+			// so that the FinishedEvent is sent when all nodes finish.
 			if (++nodes_finished == clients.Count && this.FinishedEvent != null) {
-				Logger.Log.Debug ("Query: All nodes done."); 
-				this.FinishedEvent ();
+				Logger.Log.Debug ("Query: All nodes done on error!"); 
+				//this.FinishedEvent ();
 			}
 
-			//TODO: Ignore errorresponses from network nodes or let user decide
+			//FIXME: Ignore ErrorResponses from network nodes or let the user decide
 			throw new ResponseMessageException (response);
 		}
 

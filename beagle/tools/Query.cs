@@ -124,7 +124,7 @@ public class QueryTool {
 		}
 	}
 
-	private static void OnFinished ()
+	private static void OnFinished (FinishedResponse response)
 	{
 		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",

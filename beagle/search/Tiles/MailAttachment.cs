@@ -45,26 +45,6 @@ namespace Search.Tiles {
 			Description = Catalog.GetString ("Mail attachment");
 		}
 
-		// FIXME: This needs better handling in the daemon, attachments
-		// architecture sucks
-		private static bool IsAttachment (Beagle.Hit hit)
-		{
-			// check if there is parent and parent has attachments
-			string str = hit ["parent:fixme:hasAttachments"];
-			return (hit.ParentUri != null && str != null && (str == "true"));
-		}
-		
-		private static string GetHitProperty (Beagle.Hit hit, string name)
-		{
-			// FIXME: We should handle this case better, but
-			// for now, if we match an attachment, we just want
-			// to display the properties for the parent message.
-			if (!IsAttachment (hit))
-				return hit [name];
-			else
-				return hit ["parent:" + name];
-		}
-
 		public override void Open ()
 		{
 			SafeProcess p = MailMessage.GetClientProcess (Hit);

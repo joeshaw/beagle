@@ -50,7 +50,7 @@ namespace Beagle.Daemon.Network {
                 
                 public Zeroconf ()
 		{
-			Logger.Log.Debug ("Zerconf: Service started...");
+			Logger.Log.Debug ("Zeroconf: Service started...");
 
 			LoadConfiguration ();
                         Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
@@ -59,7 +59,7 @@ namespace Beagle.Daemon.Network {
 
                 public void Dispose ()
                 {
-			Logger.Log.Debug ("Zerconf: Service stopped...");
+			Logger.Log.Debug ("Zeroconf: Service stopped...");
 
 			if (entry_group != null) {
 				entry_group.Dispose ();
@@ -148,7 +148,7 @@ namespace Beagle.Daemon.Network {
 
                 private void HandleCollision ()
                 {
-                        Logger.Log.Info ("Zerconf: Service name collision - '{0}'", name);
+                        Logger.Log.Info ("Zeroconf: Service name collision - '{0}'", name);
 
                         Unpublish ();
                         collisions++;

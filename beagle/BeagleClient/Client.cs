@@ -110,10 +110,8 @@ namespace Beagle {
 
 			deserialize_stream.Close ();
 
-			// Run the handler in an idle handler
-			// so that events are thrown in the
-			// main thread instead of this inferior
-			// helper thread.
+			// Run the handler in an idle handler so that events are thrown
+			// in the main thread instead of this inferior helper thread.
 			EventThrowingClosure closure = new EventThrowingClosure (this, resp);
 			GLib.Idle.Add (new IdleHandler (closure.ThrowEvent));
 		}
@@ -128,6 +126,11 @@ namespace Beagle {
 				ex = e;
 			} catch (SocketException e) {
 				ex = e;
+			} catch (NotImplementedException) {
+				// FIXME: A workaround for the HttpClient when we can't
+				// get a stream so we get at least local results!
+				// I'll fix this soon.
+				return;
 			}
 
 			if (ex != null) {
@@ -453,13 +456,21 @@ namespace Beagle {
 			http_request.AllowWriteStreamBuffering = false;
 			http_request.SendChunked = true;
 			
-			Stream stream = http_request.GetRequestStream ();
+			try {
+				Stream stream = http_request.GetRequestStream ();
 			
-			base.SendRequest (request, stream);
-			stream.Flush ();
-			stream.Close ();
-
-			Logger.Log.Debug ("Sent request");
+				base.SendRequest (request, stream);
+				stream.Flush ();
+				stream.Close ();
+				
+				Logger.Log.Debug ("HttpClient: Sent request");
+			} catch (WebException e) {
+				// FIXME: A workaround for the HttpClient when we can't
+				// get a stream so we get at least local results!
+				// I'll fix this soon.
+				Logger.Log.Debug (e, "HttpClient: SendRequest failed:");
+				throw new NotImplementedException ();
+			}
 		}
 		
 		public override ResponseMessage Send (RequestMessage request)
@@ -541,9 +552,7 @@ namespace Beagle {
 			try {
 				stream.BeginRead (this.network_data, 0, this.network_data.Length,
 						  new AsyncCallback (ReadCallback), stream);
-			}
-			catch (IOException)
-			{
+			} catch (IOException) {
 				Logger.Log.Debug ("Caught IOException in BeginRead");
 				Close ();
 			}

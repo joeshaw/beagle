@@ -207,10 +207,10 @@ namespace Beagle {
 		virtual public void SendAsync ()
 		{
 			lock (clients) {
+				// FIXME: Throw a custom exception and catch it upwards
 				if (this.clients.Count == 0)
-					// FIXME: Throw a custom exception and catch it upwards, also better message
-					throw new Exception ("No where to send data, add local querydomain or add neighbourhood domain with some hosts");
-
+					throw new Exception ("No clients available for querying");
+				
 				foreach (ClientContainer c in this.clients.Values) {
 					if (c.Client != null)
 						c.Client.Close ();
@@ -219,6 +219,9 @@ namespace Beagle {
 					c.Client.AsyncResponseEvent += OnAsyncResponse;
 					c.Client.ClosedEvent += OnClosedEvent;
 					c.Client.SendAsync (this);
+					
+					// FIXME: Maybe it's not right to throw an exception anymore (silently fail)?
+					// Or maybe throw exceptions only for local fails?
 				}
 			}
 		}
@@ -239,6 +242,9 @@ namespace Beagle {
 			}
 		}
 
+		// FIXME: This still breaks API!!!
+		// Was only a ResponseMessage prior to merge, not an array.
+		// I'm not sure how to fix it, yet :-)
 		public ResponseMessage[] Send ()
 		{
 			ArrayList responses = new ArrayList ();
@@ -255,8 +261,8 @@ namespace Beagle {
 				// Add some nice syntactic sugar by throwing an
 				// exception if the response is an error.
 				
-				//TODO: Maybe it's not right to throw an exception anymore (silently fail)? Or maybe throw
-				//exceptions only for local fails?
+				// FIXME: Maybe it's not right to throw an exception anymore (silently fail)? 
+				// Or maybe throw exceptions only for local fails?
 				ErrorResponse err = resp as ErrorResponse;		
 
 				if (err != null)	

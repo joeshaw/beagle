@@ -204,7 +204,7 @@ namespace Bludgeon {
 					Hits [hit.Uri] = hit;
 			}
 
-			public void OnFinished ()
+			public void OnFinished (FinishedResponse response)
 			{
 				query.Close ();
 				
