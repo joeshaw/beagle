@@ -98,8 +98,6 @@ namespace Beagle.Filters {
 			stream.Dispose ();
 			parser.Dispose ();
 
-			Mono.Unix.Native.Syscall.close (mail_fd);
-
 			if (this.message == null)
 				Error ();
 		}
