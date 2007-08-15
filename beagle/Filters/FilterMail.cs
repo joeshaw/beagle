@@ -51,6 +51,7 @@ namespace Beagle.Filters {
 	public class FilterMail : Beagle.Daemon.Filter, IDisposable {
 
 		private static bool gmime_initialized = false;
+		private static bool gmime_broken = false;
 
 		private GMime.Message message;
 		private PartHandler handler;
@@ -78,13 +79,22 @@ namespace Beagle.Filters {
 		protected override void DoOpen (FileInfo info)
 		{
 			if (!gmime_initialized) {
+				gmime_initialized = true;
+
+				// Only try initialization once; if it fails, it'll never work.
 				try {
 					GMime.Global.Init ();
-					gmime_initialized = true;
-				} catch {
+				} catch (Exception e) {
+					Log.Error (e, "Unable to initialize GMime");
+					gmime_broken = true;
 					Error ();
 					return;
 				}
+			}
+
+			if (gmime_broken) {
+				Error ();
+				return;
 			}
 
 			int mail_fd = Mono.Unix.Native.Syscall.open (info.FullName, Mono.Unix.Native.OpenFlags.O_RDONLY);

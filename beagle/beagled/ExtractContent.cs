@@ -375,6 +375,16 @@ class ExtractContentTool {
 				Console.WriteLine ("Unable to filter {0}: {1}", uri, e.Message);
 				return -1;
 			}
+			
+			// Super Lame Hack: gtk-sharp up to 2.10 requires a main loop
+			// to dispose of any managed wrappers around GObjects.  Since
+			// we don't have one, we'll process all the pending items in
+			// a loop here.  This is particularly an issue with maildirs,
+			// because we need the loop to clean up after GMime.  Without
+			// it, GMime's streams are never completely unref'd, the
+			// file descriptors aren't closed, and we run out and crash.
+			while (GLib.MainContext.Pending ())
+				GLib.MainContext.Iteration ();
 		}
 		if (writer != null)
 			writer.Close ();
