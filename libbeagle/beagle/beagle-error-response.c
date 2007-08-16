@@ -80,7 +80,7 @@ enum {
 };
 
 static BeagleParserHandler parser_handlers[] = {
-	{ "Message",
+	{ "ErrorMessage",
 	  -1,
 	  PARSER_STATE_MESSAGE,
 	  NULL,
