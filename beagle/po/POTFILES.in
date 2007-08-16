@@ -1,7 +1,6 @@
 # List of source files containing translatable strings.
 # Please keep this file in alphabetical order.
 [encoding: UTF-8]
-glue/eggtrayicon.c
 ContactViewer/ContactViewer.cs
 ContactViewer/ContactWindow.cs
 ContactViewer/contactviewer.glade
@@ -42,6 +41,7 @@ search/Tiles/OpenWithMenu.cs
 search/Tiles/Presentation.cs
 search/Tiles/RSSFeed.cs
 search/Tiles/Spreadsheet.cs
+search/Tiles/Task.cs
 search/Tiles/TextDocument.cs
 search/Tiles/TileAction.cs
 search/Tiles/TileActivator.cs
