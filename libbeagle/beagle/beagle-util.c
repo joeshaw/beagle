@@ -25,6 +25,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -156,3 +157,29 @@ beagle_util_daemon_is_running (void)
 	
 	return TRUE;
 }
+
+char*
+_set_c_locale ()
+{
+	char *old_locale, *saved_locale;
+
+	/* Get the name of the current locale.  */
+	old_locale = setlocale (LC_ALL, NULL);
+
+	/* Copy the name so it won't be clobbered by setlocale. */
+	saved_locale = strdup (old_locale);
+
+	/* Now it is safe to change the locale temporarily. */
+	setlocale (LC_ALL, "C");
+
+	return saved_locale;
+}
+
+void _reset_locale (char *old_locale)
+{
+	/* Restore the original locale. */
+	setlocale (LC_ALL, old_locale);
+
+	free (old_locale);
+}
+

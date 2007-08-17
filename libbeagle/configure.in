@@ -4,7 +4,7 @@
 
 AC_INIT(beagle/beagle.h)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(libbeagle, 0.2.16)
+AM_INIT_AUTOMAKE(libbeagle, 0.3)
 
 ########################################################################
 

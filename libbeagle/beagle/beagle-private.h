@@ -119,6 +119,9 @@ BeagleResponse *_beagle_parser_context_get_response (BeagleParserContext *ctx);
 
 GString *_beagle_query_part_to_xml    (BeagleQueryPart *part);
 
+char *_set_c_locale ();
+void _reset_locale (char *old_locale);
+
 void _beagle_query_part_append_standard_header (GString *data,
 						BeagleQueryPart *part,
 						const char *xsi_type);
