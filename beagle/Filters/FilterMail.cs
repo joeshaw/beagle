@@ -362,7 +362,12 @@ namespace Beagle.Filters {
 							// Even for mails found on disk, MailMessage hitype is set
 							child.HitType = "MailMessage";
 							child.MimeType = mime_type;
-							child.CacheContent = false;
+
+							// If this is the richest part we found for multipart emails, add its content to textcache
+							if (this.depth == 1 && this.count == 0)
+								child.CacheContent = true;
+							else
+								child.CacheContent = false;
 
 							string filename = ((GMime.Part) part).Filename;
 

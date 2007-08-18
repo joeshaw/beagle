@@ -95,13 +95,6 @@ namespace Beagle.Daemon.KMailQueryable {
 					     string srcpath,
 					     Inotify.EventType type)
 		{
-			//FIXME this case should NEVER occur, still it does
-			if (mail_directories == null) {
-				Logger.Log.Debug ("*** WEIRD AVIRAM CASE for :" + mail_root);
-				Logger.Log.Debug ("Received inotify event{3} for {4}: path={0}, subitem={1}, srcpath={2}", path, subitem, srcpath, type, mail_root);
-				return;
-			}
-			
 			if (subitem == "")
 				return;
 			string fullPath = Path.Combine (path, subitem);
@@ -372,7 +365,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			Indexable indexable = new Indexable (file_uri);
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
-			indexable.CacheContent = false;
+			indexable.CacheContent = true;
 			indexable.Crawled = crawl;
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
