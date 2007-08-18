@@ -360,10 +360,10 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 				hit->source);
 
 	/* Temporarily set the locale to "C" to convert floating point numbers. */
-	char * old_locale = _set_c_locale ();
+	char * old_locale = _beagle_util_set_c_locale ();
 	g_string_append_printf (data, " Score=\"%f\"",
 				hit->score);
-	_reset_locale (old_locale);
+	_beagle_util_reset_locale (old_locale);
 
 	g_string_append (data, ">");
 

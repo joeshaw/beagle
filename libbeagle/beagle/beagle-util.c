@@ -159,7 +159,7 @@ beagle_util_daemon_is_running (void)
 }
 
 char*
-_set_c_locale ()
+_beagle_util_set_c_locale ()
 {
 	char *old_locale, *saved_locale;
 
@@ -175,7 +175,7 @@ _set_c_locale ()
 	return saved_locale;
 }
 
-void _reset_locale (char *old_locale)
+void _beagle_util_reset_locale (char *old_locale)
 {
 	/* Restore the original locale. */
 	setlocale (LC_ALL, old_locale);
