@@ -311,20 +311,15 @@
   (return-type "GType")
 )
 
-(define-function beagle_daemon_information_request_new
-  (c-name "beagle_daemon_information_request_new")
-  (is-constructor-of "BeagleDaemonInformationRequest")
-  (return-type "BeagleDaemonInformationRequest*")
-)
-
 (define-function beagle_daemon_information_request_new_specific
   (c-name "beagle_daemon_information_request_new_specific")
+  (is-constructor-of "BeagleDaemonInformationRequest")
   (return-type "BeagleDaemonInformationRequest*")
   (parameters
-    '("gboolean" "get_version")
-    '("gboolean" "get_sched_info")
-    '("gboolean" "get_index_status")
-    '("gboolean" "get_is_indexing")
+    '("gboolean" "get_version" (default "TRUE") (null-ok))
+    '("gboolean" "get_sched_info" (default "TRUE") (null-ok))
+    '("gboolean" "get_index_status" (default "TRUE") (null-ok))
+    '("gboolean" "get_is_indexing" (default "TRUE") (null-ok))
   )
 )
 
