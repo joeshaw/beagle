@@ -43,15 +43,13 @@ class SnippetTestTool {
 		foreach (string arg in args)
 			query.AddText (arg);
 
-		string snippet;
-		snippet = SnippetFu.GetSnippet (args, delegate {
-				string input = Console.ReadLine ();
-				if (String.IsNullOrEmpty (input))
-					return null;
-				else
-					return input;
-			});
+		SnippetReader snippet_reader;
+		// FIXME: Oops ... does not quit by passing empty line
+		snippet_reader = SnippetFu.GetSnippet (args, Console.In, false); //delegate {
 
-		Console.WriteLine ("Snippet:\n'{0}'", snippet);
+		bool first = true;
+		foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ()) {
+			Console.WriteLine ("\nSnippet:\n{0}", snippet_line.ToString ());
+		}
 	}
 }

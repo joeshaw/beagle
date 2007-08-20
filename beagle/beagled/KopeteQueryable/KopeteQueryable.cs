@@ -219,7 +219,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 			return true;
 		}
 
-		public override string GetSnippet (string [] query_terms, Hit hit)
+		public override ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)
 		{
 			TextReader reader = TextCache.UserCache.GetReader (hit.Uri);
 
@@ -228,11 +228,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 			KopeteSnippetReader snippet_reader = new KopeteSnippetReader (reader);
 
-			string snippet = SnippetFu.GetSnippet (query_terms, snippet_reader);
-			
-			snippet_reader.Close ();
-
-			return snippet;
+			return SnippetFu.GetSnippet (query_terms, snippet_reader, full_text);
 		}
 
 		private class KopeteSnippetReader : TextReader {

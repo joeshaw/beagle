@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
 using System.Xml.Serialization;
 
@@ -39,18 +40,18 @@ namespace Beagle.Daemon {
 		{
 			SnippetRequest request = (SnippetRequest) req;
 			Queryable queryable = QueryDriver.GetQueryable (request.Hit.Source);
-			string snippet;
+			ISnippetReader snippet_reader;
+			bool full_text = request.FullText;
 
-			if (queryable == null)
-				snippet = String.Format ("ERROR: No queryable object matches '{0}'", request.Hit.Source);
-			else
-				snippet = queryable.GetSnippet (request.QueryTerms, request.Hit);
+			if (queryable == null) {
+				string s;
+				s = String.Format ("ERROR: No queryable object matches '{0}'", request.Hit.Source);
+				snippet_reader = new SnippetReader (new StringReader (s), null, false);
+				full_text = false;
+			} else
+				snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
 
-			// Before we send a snippet over the wire, clean up any
-			// characters that would be invalid in XML.
-			snippet = StringFu.CleanupInvalidXmlCharacters (snippet);
-
-			return new SnippetResponse (snippet);
+			return new SnippetResponse (new SnippetList (full_text, snippet_reader));
 		}
 	}
 }

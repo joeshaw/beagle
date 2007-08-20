@@ -84,7 +84,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		public string GetSnippet (string[] query_terms, Hit hit)
+		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text)
 		{
 			if (hit == null)
 				return null;
@@ -96,7 +96,7 @@ namespace Beagle.Daemon {
 			}
 
 			try {
-				return iqueryable.GetSnippet (query_terms, hit);
+				return iqueryable.GetSnippet (query_terms, hit, full_text);
 			} catch (Exception ex) {
 				Logger.Log.Warn (ex, "Caught exception calling DoQuery on '{0}'", Name);
 			}

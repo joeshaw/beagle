@@ -345,7 +345,7 @@ namespace Beagle.Daemon.PidginQueryable {
 			return true;
 		}
 
-		public override string GetSnippet (string [] query_terms, Hit hit)
+		public override ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)
 		{
 			TextReader reader = TextCache.UserCache.GetReader (hit.Uri);
 
@@ -357,11 +357,7 @@ namespace Beagle.Daemon.PidginQueryable {
 			if (line[0] == '<')
 				reader = new HtmlRemovingReader (reader);
 
-			string snippet = SnippetFu.GetSnippet (query_terms, reader);
-			
-			reader.Close ();
-
-			return snippet;
+			return SnippetFu.GetSnippet (query_terms, reader, full_text);
 		}
 	}
 }

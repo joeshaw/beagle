@@ -349,7 +349,7 @@ namespace Beagle.Daemon {
 
 		/////////////////////////////////////////
 
-		protected string GetSnippetFromTextCache (string [] query_terms, Uri uri)
+		protected SnippetReader GetSnippetFromTextCache (string [] query_terms, Uri uri, bool full_text)
 		{
 			// Look up the hit in our text cache.  If it is there,
 			// use the cached version to generate a snippet.
@@ -359,17 +359,12 @@ namespace Beagle.Daemon {
 			if (reader == null)
 				return null;
 
-			string snippet = SnippetFu.GetSnippet (query_terms, reader);
-			reader.Close ();
-
-			return snippet;
+			return SnippetFu.GetSnippet (query_terms, reader, full_text);
 		}
 
-		// When remapping, override this with
-		// return GetSnippetFromTextCache (query_terms, remapping_fn (hit.Uri))
-		virtual public string GetSnippet (string [] query_terms, Hit hit)
+		virtual public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)
 		{
-			return GetSnippetFromTextCache (query_terms, hit.Uri);
+			return GetSnippetFromTextCache (query_terms, hit.Uri, full_text);
 		}
 
 		/////////////////////////////////////////

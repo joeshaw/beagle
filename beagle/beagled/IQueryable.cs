@@ -41,7 +41,7 @@ namespace Beagle.Daemon {
 			      IQueryResult result,
 			      IQueryableChangeData data);
 
-		string GetSnippet (string[] query_terms, Hit hit);
+		ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text);
 
 		QueryableStatus GetQueryableStatus ();
 	}

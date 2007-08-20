@@ -55,7 +55,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		override public string GetSnippet (string[] query_terms, Hit hit) 
+		override public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text) 
 		{
 			if (text_cache == null)
 				return null;
@@ -65,10 +65,7 @@ namespace Beagle.Daemon {
 			if (reader == null)
 				return null;
 			
-			string snippet = SnippetFu.GetSnippet (query_terms, reader);
-			reader.Close ();
-			
-			return snippet;
+			return SnippetFu.GetSnippet (query_terms, reader, full_text);
 		}
 
 		override protected bool HitIsValid (Uri uri)
