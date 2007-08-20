@@ -52,5 +52,7 @@ struct _BeagleSnippetResponseClass {
 GType                 beagle_snippet_response_get_type    (void);
 G_CONST_RETURN char * beagle_snippet_response_get_snippet (BeagleSnippetResponse *response);
 
+/* FIXME: Add other APIs from C# to get detailed information about snippets. */
+
 #endif /* __BEAGLE_SNIPPET_RESPONSE_H */
 

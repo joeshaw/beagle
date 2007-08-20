@@ -1469,6 +1469,15 @@
   )
 )
 
+(define-method set_full_text
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_set_full_text")
+  (return-type "none")
+  (parameters
+    '("gboolean" "set_full_text" (default "FALSE") (null-ok))
+  )
+)
+
 (define-method set_query
   (of-object "BeagleSnippetRequest")
   (c-name "beagle_snippet_request_set_query")

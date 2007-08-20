@@ -37,6 +37,7 @@
 typedef struct {
 	BeagleQuery *query;
 	BeagleHit *hit;
+	gboolean set_full_text;
 } BeagleSnippetRequestPrivate;
 
 #define BEAGLE_SNIPPET_REQUEST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_SNIPPET_REQUEST, BeagleSnippetRequestPrivate))
@@ -56,6 +57,11 @@ beagle_snippet_request_to_xml (BeagleRequest *request, GError **err)
 	data = g_string_new (NULL);
 
 	_beagle_request_append_standard_header (data, "SnippetRequest");
+
+	if (priv->set_full_text)
+		g_string_append (data, "<FullText>true</FullText>");
+	else
+		g_string_append (data, "<FullText>false</FullText>");
 
 	_beagle_hit_to_xml (priv->hit, data);
 	
@@ -111,6 +117,12 @@ beagle_snippet_request_class_init (BeagleSnippetRequestClass *klass)
 static void
 beagle_snippet_request_init (BeagleSnippetRequest *snippet_request)
 {
+	BeagleSnippetRequestPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (snippet_request));
+	
+	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (snippet_request);
+	priv->set_full_text = FALSE;
 }
 
 /**
@@ -155,7 +167,7 @@ beagle_snippet_request_set_hit (BeagleSnippetRequest *request,
 }
 
 /**
- * beagle_snippet_request_set:
+ * beagle_snippet_request_set_query:
  * @request: a #BeagleSnippetRequest
  * @query: a #BeagleQuery
  *
@@ -180,3 +192,22 @@ beagle_snippet_request_set_query (BeagleSnippetRequest *request,
 	priv->query = query;
 }
 
+/**
+ * beagle_snippet_request_set_full_text:
+ * @request: a #BeagleSnippetRequest
+ * @query: boolean
+ *
+ * Request full cached text of this hit. The text will not be marked with search terms
+ * for performance reasons.
+ **/
+void 
+beagle_snippet_request_set_full_text (BeagleSnippetRequest *request,
+				      gboolean		    full_text)
+{
+	BeagleSnippetRequestPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (request));
+
+	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (request);
+	priv->set_full_text = full_text;
+}
