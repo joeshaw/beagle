@@ -28,7 +28,12 @@
 
 umask 022
 
+DEBUG=0
+
 if [ ! -x @sbindir@/beagle-build-index ] ; then
+    if [ "$DEBUG" = "1" ]; then
+	echo "$0: @sbindir@/beagle-build-index not found.  Exiting."
+    fi
     exit 1
 fi
 
@@ -37,13 +42,21 @@ CRAWL_USER=beagleindex
 export TMPDIR=/tmp
 
 # Mono requires a writable wapi directory
-MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "Can't create wapi directory!" ; exit 1 )
+MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "$0: Can't create wapi directory!" ; exit 1 )
 chown $CRAWL_USER $MONO_SHARED_DIR
 
-for crawl_file in @sysconfdir@/beagle/crawl-*; do 
+for crawl_file in @sysconfdir@/beagle/crawl-*; do
     unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME
 
+    if [ "$DEBUG" = "1" ]; then
+	echo "$0: Processing files in @sysconfdir@/beagle..."
+    fi
+
     if [ -f $crawl_file ] ; then
+	if [ "$DEBUG" = "1" ]; then
+	    echo "$0: Processing $crawl_file..."
+	fi
+
 	. $crawl_file
 
 	if [ -n "$CRAWL_ENABLED" -a "$CRAWL_ENABLED" = "yes" ] ; then
@@ -74,7 +87,21 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
                 IONICE="$IONICE -c 3"
             fi
 
-	    eval $IONICE su -s /bin/bash $CRAWL_USER -c \"MONO_SHARED_DIR=$MONO_SHARED_DIR @sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\" > /dev/null 2>&1
+	    COMMAND="$IONICE su -s /bin/bash $CRAWL_USER -c \"MONO_SHARED_DIR=$MONO_SHARED_DIR @sbindir@/beagle-build-index --target @localstatedir@/cache/beagle/indexes/$CRAWL_INDEX_NAME $OPTIONS $CRAWL_PATHS\""
+	    
+	    if [ "$DEBUG" = "1" ]; then
+		eval $COMMAND
+	    else
+		eval $COMMAND > /dev/null 2>&1
+	    fi
+
+	    if [ "$DEBUG" = "1" ]; then
+		echo "$0: Finished processing $crawl_file."
+	    fi
+	else
+	    if [ "$DEBUG" = "1" ]; then
+		echo "$0: Crawling is disabled for $crawl_file.  Skipping"
+	    fi
 	fi
     fi
 done
