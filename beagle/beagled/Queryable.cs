@@ -35,14 +35,13 @@ namespace Beagle.Daemon {
 
 	public class Queryable {
 
-		private QueryableFlavor flavor;
-		private IQueryable iqueryable;
+		private QueryableFlavor flavor = null;
+		private IQueryable iqueryable = null;
 
-		public Queryable (QueryableFlavor _flavor,
-				  IQueryable _iqueryable)
+		public Queryable (QueryableFlavor flavor, IQueryable iqueryable)
 		{
-			flavor = _flavor;
-			iqueryable = _iqueryable;
+			this.flavor = flavor;
+			this.iqueryable = iqueryable;
 		}
 		
 		public void Start ()

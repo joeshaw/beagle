@@ -1,9 +1,10 @@
 //
 // Timeline.cs: Store chronological events
 //
-// Lukas Lipka <lukas@pmad.net>
-//
 // Copyright (C) 2004 Novell, Inc.
+//
+// AUTHORS:
+//   Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;

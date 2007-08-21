@@ -40,48 +40,54 @@ using Beagle.Util;
 namespace Beagle.Daemon {
 
 	class HttpItemHandler {
+
 		private Hashtable items = new Hashtable ();
 
 		public void RegisterHit (Hit hit)
 		{
 			Logger.Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
-			if (hit.Uri != null)
-				items [hit.Uri] = hit;
-			else
+
+			if (hit.Uri == null) {
 				Logger.Log.Debug ("httpitemhandler: cannot register hits with no URIs");
+				return;
+			}
+
+			items [hit.Uri] = hit;
 		}
 
 		public void HandleRequest (HttpListenerContext context, System.Uri path)
 		{
 			Hit requested = (Hit) items [path];
 
-			if (requested != null) {
-				//TODO: We can only handle files for now
-				Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
-				context.Response.ContentType = requested.MimeType;
-				
-				/*if (requested ["Type"] != "File") {
-					Logger.Log.Debug ("httpitemhandler: can only serve files");
-					return;
-				}*/
+			if (requested == null)
+				return;
+
+			Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
+			context.Response.ContentType = requested.MimeType;
 			
-				StreamReader r = new StreamReader (new FileStream (requested.Uri.LocalPath, FileMode.Open));
-				StreamWriter w = new StreamWriter (context.Response.OutputStream);
-				
-				w.Write (r.ReadToEnd ());
-				w.Close ();
-				
-				context.Response.Close ();
-			}
+			// FIXME: We can only handle files for now
+			/*if (requested ["Type"] != "File") {
+			  Logger.Log.Debug ("httpitemhandler: can only serve files");
+			  return;
+			}*/
+			
+			StreamReader r = new StreamReader (new FileStream (requested.Uri.LocalPath, FileMode.Open));
+			StreamWriter w = new StreamWriter (context.Response.OutputStream);
+			
+			w.Write (r.ReadToEnd ());
+			w.Close ();
+			
+			context.Response.Close ();
 		}
 	}
 
 	class HttpConnectionHandler : ConnectionHandler {
-		private HttpListenerContext	 context; 	//The object that we use for getting the request and sending the response
-		private HttpListener	listener; 		//The listener
-		private HttpItemHandler item_handler;   //The item server/handler
-		private System.Timers.Timer			keepalive_timer;
-		private System.Guid id;
+
+		private HttpListenerContext context = null;
+		private HttpListener listener = null;
+		private HttpItemHandler item_handler = null;
+		private System.Timers.Timer keepalive_timer = null;
+		private System.Guid id = Guid.Empty;
 
 		public HttpConnectionHandler (System.Guid guid, HttpListenerContext context, HttpItemHandler item_handler)
 		{
@@ -92,16 +98,14 @@ namespace Beagle.Daemon {
 
 		public override void HandleConnection ()
 		{
-			Logger.Log.Debug ("httpserver: serving request for " + context.Request.Url);
+			Logger.Log.Debug ("HTTP Server: Serving request for {0}", context.Request.Url);
 			
-			//Query request: read content and forward to base.HandleConnection for processing
+			// Query request: read content and forward to base.HandleConnection for processing
 			context.Response.KeepAlive = true;
 			context.Response.ContentType = "charset=utf-8";
 			context.Response.SendChunked = true;
 			
 			Shutdown.WorkerStart (this.context.Request.InputStream, String.Format ("HandleConnection ({0})", ++connection_count));
-
-			/////
 
 			// Read the data off the socket and store it in a
 			// temporary memory buffer.  Once the end-of-message
@@ -155,7 +159,7 @@ namespace Beagle.Daemon {
 				}
 			} while (bytes_read > 0 && end_index == -1);
 			
-			Logger.Log.Debug ("httpserver: received request message, handling");
+			Logger.Log.Debug ("HTTP Server: Handling received request message");
 			
 			buffer_stream.Seek (0, SeekOrigin.Begin);
 			base.HandleConnection (buffer_stream);
@@ -222,16 +226,19 @@ namespace Beagle.Daemon {
 			keepalive_timer.Start ();
 		}
 
-		public void TransformResponse (ref ResponseMessage response)
+		public void TransformResponse (ref ResponseMessage message)
 		{
-			if (response.GetType () == typeof (HitsAddedResponse)) {
-				foreach (Hit h in (response as HitsAddedResponse).Hits) {
-					item_handler.RegisterHit (h);
-					
-					h.Uri = new System.Uri(context.Request.Url.ToString () + id.ToString ());
-					h.Source = "Network";
-					h["beagle:Source"] = "Network";
-				}
+			HitsAddedResponse response = message as HitsAddedResponse;
+
+			if (response == null)
+				return;
+
+			foreach (Hit hit in response.Hits) {
+				hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
+				hit.Source = "Network";
+				hit ["beagle:Source"] = "Network";
+
+				item_handler.RegisterHit (hit);
 			}	
 		}
 
@@ -245,7 +252,7 @@ namespace Beagle.Daemon {
 				if (this.context == null)
 					return false;
 
-				r = SendResponse (response, context.Response.OutputStream);
+				r = base.SendResponse (response, context.Response.OutputStream);
 			}
 
 			if (r) {
@@ -253,16 +260,17 @@ namespace Beagle.Daemon {
 				//add end-of-document
 				context.Response.OutputStream.WriteByte (0xff);
 				context.Response.OutputStream.Flush ();
-			}
-			else {
+			} else {
 				this.Close ();
 			}
+
 			return r;
 		}
 	}
 
 	class UnixConnectionHandler : ConnectionHandler {
-		private UnixClient client;
+
+		private UnixClient client = null;
 
 		public UnixConnectionHandler (UnixClient client)
 		{
@@ -688,99 +696,100 @@ namespace Beagle.Daemon {
 		private void HttpRun ()
 		{
 			http_listener = new HttpListener ();
+			string prefix = null;
 			int port = 4000;
-			bool s;
-			string prefix;
+			bool success = false;
 
 			do {
-				prefix = "http://*:" + port.ToString () + "/";
-				s = true;
+				prefix = String.Format ("http://*:{0}/", port);
+				success = true;
+
 				try {	
-					http_listener.Prefixes.Add(prefix);
-					this.http_listener.Start();
-				}
-				catch (SocketException) {
-					http_listener.Prefixes.Remove(prefix);
+					http_listener.Prefixes.Add (prefix);
+					http_listener.Start();
+				} catch (SocketException) {
+					http_listener.Prefixes.Remove (prefix);
+					success = false;
 					port++;
-					s = false;
 				}
-			} while (!s);
+			} while (!success);
 
-			Shutdown.WorkerStart (this.http_listener, String.Format ("server '{0}'", prefix));
-
-			Logger.Log.Debug("httpserver: Listening on " + prefix);
+			Shutdown.WorkerStart (this.http_listener, String.Format ("HTTP Server '{0}'", prefix));
+			Logger.Log.Debug ("HTTP Server: Listening on {0}", prefix);
 
 			while (this.running)
 			{
 				HttpListenerContext context  = null;
+
 				try {
-					context = http_listener.GetContext();
+					context = http_listener.GetContext ();
+				} catch (Exception e) {
+					Logger.Log.Warn (e, "HTTP Server: Exception while getting context:");
 				}
-				catch (Exception e)	{
-					Logger.Log.Warn("httpserver: Exception while getting context: " + e.Message );
-				}
-				if (context != null) {
-					//New query or hit request?
-					if (context.Request.RawUrl == "/") {
-						//New query
-						//Create a new GUID for the query
-						Guid g = System.Guid.NewGuid ();
-						HttpItemHandler i = new HttpItemHandler ();
-						item_handlers [g] = i;
-						
-						ConnectionHandler handler = new HttpConnectionHandler (g, context, i);
-						lock (live_handlers)
-								live_handlers [handler] = handler;
-						ExceptionHandlingThread.Start (new ThreadStart (handler.HandleConnection));
+
+				if (context == null)
+					continue;
+
+				if (context.Request.RawUrl == "/") {
+					// We have received a new query request
+					Guid guid = Guid.NewGuid ();
+					HttpItemHandler item_handler = new HttpItemHandler ();
+					item_handlers [guid] = item_handler;
+					
+					ConnectionHandler handler = new HttpConnectionHandler (guid, context, item_handler);
+
+					lock (live_handlers)
+						live_handlers [handler] = handler;
+
+					ExceptionHandlingThread.Start (new ThreadStart (handler.HandleConnection));
+				} else {
+					// We have received a hit request
+					Uri uri = context.Request.Url;
+					string path = null;
+
+					// Second Uri segment contains the Guid
+					string g = uri.Segments [1];
+					
+					if (g [g.Length - 1] == '/')
+						g = g.Remove (g.Length -1 , 1);
+					
+					Guid guid = Guid.Empty;
+					
+					try {
+						guid = new Guid (g);
+					} catch (FormatException) {
+						// FIXME: return HTTP error
+						Logger.Log.Debug ("HTTP Server: Invalid query guid '{0}'", g);
+						context.Response.Close ();
+						continue;
 					}
-					else {
-						//Hit request
-						//second Uri segment contains the guid
-						System.Uri uri = context.Request.Url;
-						string path;
-						string g = uri.Segments [1];
-
-						if (g [g.Length - 1] == '/')
-							g = g.Remove (g.Length -1 , 1);
-
-						System.Guid guid;
-						
-						try {
-							guid = new Guid (g);
-						} catch (FormatException) {
-							//TODO: return HTTP error;
-							Logger.Log.Debug ("httpserver: invalid query guid: {0}", g);
-							context.Response.Close ();
-							continue;
-						}
-
-						if (uri.Query.Length > 0)
-							path = uri.Query.Remove (0,1);
-						else {
-							//TODO: return HTTP error;
-							Logger.Log.Debug ("httpserver: empty querystring in item request");
-							context.Response.Close ();
-							continue;
-						}
-
-						System.Uri item_uri = new Uri (path);
-
-						HttpItemHandler handler = (HttpItemHandler) item_handlers [guid];
-
-						if (handler == null) {
-							//TODO: return HTTP error;
-							Logger.Log.Debug ("httpserver: query {0} does not exist.", g);
-							context.Response.Close ();
-						} else {
-							Logger.Log.Debug ("httpserver: Asked for item {0} on query {1}", path, g);
-							handler.HandleRequest (context, item_uri);
-						}
+					
+					if (uri.Query.Length > 0) {
+						path = uri.Query.Remove (0,1);
+					} else {
+						// FIXME: return HTTP error
+						Logger.Log.Debug ("HTTP Server: Empty query string in item request");
+						context.Response.Close ();
+						continue;
+					}
+					
+					System.Uri item_uri = new Uri (path);					
+					HttpItemHandler handler = (HttpItemHandler) item_handlers [guid];
+					
+					if (handler == null) {
+						// FIXME: return HTTP error
+						Logger.Log.Debug ("HTTP Server: Query ({0}) does not exist", g);
+						context.Response.Close ();
+					} else {
+						Logger.Log.Debug ("HTTP Server: Asked for item '{0}' on query '{1}'", path, g);
+						handler.HandleRequest (context, item_uri);
 					}
 				}
 			}
+				
 
-			Shutdown.WorkerFinished (this.http_listener);
-			Logger.Log.Debug ("Server '{0}' shut down", prefix);
+			Shutdown.WorkerFinished (http_listener);
+			Logger.Log.Debug ("HTTP Server: '{0}' shut down...", prefix);
 		}
 
 		public void Start ()
@@ -819,7 +828,7 @@ namespace Beagle.Daemon {
 		// a RequestMessageExecutor.
 		private class SimpleRequestMessageExecutor : RequestMessageExecutor {
 
-			RequestMessageHandler handler;
+			private RequestMessageHandler handler;
 			
 			public SimpleRequestMessageExecutor (RequestMessageHandler handler)
 			{

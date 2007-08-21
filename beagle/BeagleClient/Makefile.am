@@ -14,7 +14,6 @@ endif
 
 CSFILES = 						\
 	$(srcdir)/AssemblyInfo.cs			\
-	$(srcdir)/Client.cs				\
 	$(srcdir)/Hit.cs                		\
 	$(srcdir)/IIndexableGenerator.cs       		\
 	$(srcdir)/Indexable.cs          		\
@@ -29,6 +28,8 @@ CSFILES = 						\
 	$(srcdir)/QueryableStatus.cs			\
 	$(srcdir)/RemoteControl.cs			\
 	$(srcdir)/Snippet.cs				\
+	$(srcdir)/Transport.cs				\
+	$(srcdir)/UnixTransport.cs			\
 	$(srcdir)/Versioned.cs
 
 LOCAL_ASSEMBLIES =					\

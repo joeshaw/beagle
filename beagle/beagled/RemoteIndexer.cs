@@ -143,7 +143,7 @@ namespace Beagle.Daemon {
 
 				//Logger.Log.Debug ("Sending request!");
 				try {
-					response = (request.Send () as ResponseMessage[]) [0] as RemoteIndexerResponse;
+					response = request.Send () as RemoteIndexerResponse;
 					//Logger.Log.Debug ("Done sending request");
 				} catch (ResponseMessageException ex) {
 					Logger.Log.Debug ("Caught ResponseMessageException: {0}", ex.Message);

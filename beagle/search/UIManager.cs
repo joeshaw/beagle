@@ -364,7 +364,7 @@ namespace Search {
 
 			string[] people = new string[] { "Anna Dirks <anna@novell.com>",
 							 "Fredrik Hedberg <fredrik@avafan.com>",
-							 "Lukas Lipka <lukas@pmad.net>",
+							 "Lukas Lipka <lukaslipka@gmail.com>",
 							 "Joe Shaw <joeshaw@novell.com>", 
 							 "Jakub Steiner <jimmac@novell.com>",
 							 "Dan Winship <danw@novell.com>" };

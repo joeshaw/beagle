@@ -87,7 +87,7 @@ public class QueryTool {
 
 			if (verbose) {
 				SnippetRequest sreq = new SnippetRequest (query, hit);
-				SnippetResponse sresp = (SnippetResponse) ((ResponseMessage []) sreq.Send ()) [0];
+				SnippetResponse sresp = (SnippetResponse) sreq.Send ();
 				Console.WriteLine ("PaUri: {0}", hit.ParentUri != null ? hit.ParentUri.ToString () : "(null)");
 				Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
 				Console.WriteLine (" Type: {0}", hit.Type);

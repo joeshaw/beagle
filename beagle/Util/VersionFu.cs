@@ -50,7 +50,7 @@ namespace Beagle.Util {
 			if (title != null && desc != null)
 				text.AppendFormat ("{0}: {1}.\n", title.Title, desc.Description);
 
-			text.Append ("Web page: http://beagle-project.org\n");
+			text.Append ("Web page: http://www.beagle-project.org/\n");
 			text.Append ("Copyright (C) 2004-2007 Novell, Inc.\n");
 
 			Console.WriteLine (text);

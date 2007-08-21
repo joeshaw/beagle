@@ -71,6 +71,7 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.LabyrinthQueryable.LabyrinthQueryable),
 	typeof (Beagle.Daemon.LifereaQueryable.LifereaQueryable),
 	typeof (Beagle.Daemon.NautilusMetadataQueryable.NautilusMetadataQueryable),
+	typeof (Beagle.Daemon.NetworkServicesQueryable.NetworkServicesQueryable),
 	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable),
 	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
 	typeof (Beagle.Daemon.StaticQueryable),

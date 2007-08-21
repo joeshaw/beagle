@@ -50,7 +50,6 @@ namespace Beagle.Daemon {
 		private static bool arg_replace = false;
 		private static bool arg_disable_scheduler = false;
 		private static bool arg_indexing_test_mode = false;
-		private static bool arg_server = false;
 		private static bool arg_heap_shot = false;
 		private static bool arg_heap_shot_snapshots = true;
 
@@ -69,7 +68,8 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting messaging server");
 
 			try {
-				server = new Server ("socket", arg_server);
+				// FIXME: Start the HTTP server automatically?
+				server = new Server ("socket", true);
 				server.Start ();
 			} catch (InvalidOperationException) {
 				return false;
@@ -148,7 +148,6 @@ namespace Beagle.Daemon {
 			string usage =
 				"Usage: beagled [OPTIONS]\n\n" +
 				"Options:\n" +
-				"  --version\t\tShow version of daemon, Mono, and Sqlite.\n" +
 				"  --foreground, --fg\tRun the daemon in the foreground.\n" +
 				"  --background, --bg\tRun the daemon in the background.\n" +
 				"  --backend\t\tConfigure which backends to use.  Specifically:\n" +
@@ -161,14 +160,13 @@ namespace Beagle.Daemon {
 				"  --help\t\tPrint this usage message.\n" +
 				"  --version\t\tPrint version information.\n" +
 				"\n" +
-				"Advance options:\n" +
+				"Advanced options:\n" +
 				"  --debug\t\tWrite out debugging information.\n" +
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
 				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
 				"  --indexing-delay <t>\tWait 't' seconds before indexing.  (Default 60 seconds)\n" +
 				"  --disable-scheduler\tDisable the use of the scheduler.\n" +
-				"  --disable-text-cache\tDisable the use of the text cache used to provide snippets.\n" +
-				"  --server\t\tEnable remote queries to the daemon.\n";
+				"  --disable-text-cache\tDisable the use of the text cache used to provide snippets.\n";
 
 			Console.WriteLine (usage);
 		}
@@ -235,8 +233,7 @@ namespace Beagle.Daemon {
 			FileAdvise.TestAdvise ();
 
 #if ENABLE_AVAHI
-			if (arg_server)
-                	        zeroconf = new Beagle.Daemon.Network.Zeroconf ();
+               	        zeroconf = new Beagle.Daemon.Network.Zeroconf ();
 #endif
 
 			Conf.WatchForUpdates ();
@@ -378,24 +375,6 @@ namespace Beagle.Daemon {
 					++i; // we used next_arg
 					break;
 				
-				case "--allow-backend":
-					// FIXME: This option is deprecated and will be removed in a future release.
-					// --allow-backend is deprecated, use --backends 'name' instead
-					// it will disable reading the list of enabled/disabled backends
-					// from conf and start the backend given
-					if (next_arg != null)
-						QueryDriver.OnlyAllow (next_arg);
-					++i; // we used next_arg
-					break;
-					
-				case "--deny-backend":
-					// FIXME: This option is deprecated and will be removed in a future release.
-					// deprecated: use --backends -'name' instead
-					if (next_arg != null)
-						QueryDriver.Deny (next_arg);
-					++i; // we used next_arg
-					break;
-
 			       case "--add-static-backend": 
 					if (next_arg != null)
 						QueryDriver.AddStaticQueryable (next_arg);
@@ -427,10 +406,6 @@ namespace Beagle.Daemon {
 					disable_textcache = true;
 					break;
 					
-				case "--server":
-					arg_server = true;
-					break;
-				
 				case "--version":
 					VersionFu.PrintVersion ();
 					Environment.Exit (0);
@@ -660,8 +635,7 @@ namespace Beagle.Daemon {
 		private static void OnShutdown ()
 		{
 #if ENABLE_AVAHI
-			if (arg_server)
-				zeroconf.Dispose ();
+			zeroconf.Dispose ();
 #endif			
 			// Stop our Inotify threads
 			Inotify.Stop ();

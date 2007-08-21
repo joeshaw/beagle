@@ -105,7 +105,7 @@ public class InfoTool {
 			get_version = get_sched_info = get_index_status = get_is_indexing = true;
 
 		try {
-			response = (DaemonInformationResponse) ((ResponseMessage [] ) request.Send ())[0];
+			response = (DaemonInformationResponse) request.Send ();
 		} catch (Beagle.ResponseMessageException) {
 			Console.WriteLine ("Could not connect to the daemon.");
 			return 1;

@@ -28,6 +28,7 @@ using System;
 using System.Collections;
 using System.Xml.Serialization;
 
+using Beagle;
 using Beagle.Util;
 
 namespace Beagle.Daemon {
@@ -38,7 +39,9 @@ namespace Beagle.Daemon {
 		public int            RemoteIndexMinorVersion;
 		public IndexerRequest Request;
 
-		public RemoteIndexerRequest () : base ("socket-helper")
-		{ }
+		public RemoteIndexerRequest ()
+		{
+			RegisterTransport (new UnixTransport ("socket-helper"));
+		}
 	}
 }

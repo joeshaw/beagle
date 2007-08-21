@@ -1,7 +1,7 @@
 //
 // ImLogWindow.cs
 //
-// Lukas Lipka <lukas@pmad.net>
+// Lukas Lipka <lukaslipka@gmail.com>
 // Raphael  Slinckx <rslinckx@gmail.com>
 //
 // Copyright (C) 2005 Novell, Inc.

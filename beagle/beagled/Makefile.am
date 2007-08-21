@@ -370,6 +370,11 @@ nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
 NAUTILUS_QUERYABLE_CSFILES =					\
 	$(nautilusqueryable)/NautilusMetadataQueryable.cs
 
+networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
+NETWORK_SERVICES_QUERYABLE =					\
+	$(networkservicesqueryable)/NetworkServicesQueryable.cs	\
+	$(networkservicesqueryable)/HttpTransport.cs
+
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
 	$(KMAIL_QUERYABLE_CSFILES)				\
@@ -390,6 +395,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
+	$(NETWORK_SERVICES_QUERYABLE)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
