@@ -51,6 +51,8 @@ namespace Beagle {
 
 		public SnippetRequest (Query query, Hit hit) : base (false)
 		{
+			this.RegisterTransport (new UnixTransport ());
+
 			this.QueryTerms = new string [query.StemmedText.Count];
 			int i = 0;
 			foreach (string term in query.StemmedText) {
