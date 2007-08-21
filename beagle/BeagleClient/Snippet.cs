@@ -253,6 +253,9 @@ namespace Beagle {
 		{
 			writer.WriteAttributeString ("FullText", (FullText ? "true" : "false"));
 
+			if (snippet_reader == null)
+				return;
+
 			// If fulltext is false, read lines from snippet reader
 			if (! FullText) {
  				foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ()) {
@@ -288,6 +291,10 @@ namespace Beagle {
 		{
 			FullText = Convert.ToBoolean (reader.GetAttribute ("FullText"));
 			reader.MoveToContent ();
+
+			if (reader.IsEmptyElement) // no <snippetline>...</snippetline>
+				return;
+
 			reader.Read ();
 			reader.MoveToContent (); // Keep doing this, to skip over the whitespaces
 			while (reader.Name == "SnippetLine" && reader.NodeType == XmlNodeType.Element) {
