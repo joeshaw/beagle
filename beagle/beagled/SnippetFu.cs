@@ -128,7 +128,7 @@ namespace Beagle.Daemon {
 		SlidingWindow sliding_window;
 
 		const int between_snippet_words = 6;
-		const int soft_snippet_limit = 400;
+		const int soft_snippet_limit = 200;
 
 		public SnippetReader (TextReader line_reader, string[] query_terms, bool full_text)
 		{
@@ -309,7 +309,7 @@ namespace Beagle.Daemon {
 				snippet_line.AddNonMatchFragment (after_match);
 				//Console.WriteLine ("Adding [{0}, {1}]:[{2}]", prev_match_end_pos, pos - 1, after_match);
 
-				Console.WriteLine ("Sending snippet: {0}", snippet_line.ToString ());
+				//Console.WriteLine ("Sending snippet: {0}", snippet_line.ToString ());
 				return snippet_line;
 			}
 
