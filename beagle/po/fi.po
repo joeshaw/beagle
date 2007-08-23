@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-16 17:55+0300\n"
+"POT-Creation-Date: 2007-08-23 07:40+0300\n"
 "PO-Revision-Date: 2007-03-31 17:18+0300\n"
 "Last-Translator: Joonas Niilola <juippis@opensuse.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -1375,8 +1375,8 @@ msgid ""
 "In order for you to perform Beagle searches on this computer, you must enter "
 "a password."
 msgstr ""
-"Jotta voisit suorittaa beagle-hakuja tällä tietokoneella, täytyy sinun "
-"antaa salasana."
+"Jotta voisit suorittaa beagle-hakuja tällä tietokoneella, täytyy sinun antaa "
+"salasana."
 
 #: ../tools/settings.glade.h:25
 msgid "Index data while on _battery power"
@@ -1542,35 +1542,37 @@ msgstr "Yksilöllinen numero"
 msgid ""
 "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
 msgstr ""
+"Kuoren käsittelyn kiirellisyys väliltä 1 (kiirellisin) ja 9 (vähiten kiirellinen)"
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr ""
+msgstr "Vuosi, kuukausi ja päivä (CCYYMMDD), jolloin palvelu lähetti aineiston"
 
 #: ../Util/F-Spot/IptcFile.cs:191
 msgid ""
 "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
 msgstr ""
+"Tunti, minuutti ja sekunti (HHMMSS+HHMM), jolloin palvelu lähetti aineiston"
 
 #: ../Util/F-Spot/IptcFile.cs:193
 msgid "The character set designation"
-msgstr ""
+msgstr "Merkistökoodaus"
 
 #: ../Util/F-Spot/IptcFile.cs:195
 msgid "External globally unique object identifier"
-msgstr ""
+msgstr "Ulkoinen yksilöllinen oliotunniste"
 
 #: ../Util/F-Spot/IptcFile.cs:200
 msgid "Abstract Relationship Method (ARM) identifier"
-msgstr ""
+msgstr "Abstract Relationship Method (ARM) -tunniste"
 
 #: ../Util/F-Spot/IptcFile.cs:202
 msgid "Abstract Relationship Method (ARM) version number."
-msgstr ""
+msgstr "Abstract Relationship Method (ARM) -versionumero."
 
 #: ../Util/F-Spot/IptcFile.cs:205
 msgid "Number identifying the IIM version this application record uses"
-msgstr ""
+msgstr "Sovellustietueen käyttämän IIM-version tunnistava numero"
 
 #: ../Util/F-Spot/IptcFile.cs:207
 msgid "Object type reference"
@@ -1586,11 +1588,11 @@ msgstr "Kohteen nimi"
 
 #: ../Util/F-Spot/IptcFile.cs:220
 msgid "Status of the objectdata according to the provider"
-msgstr ""
+msgstr "Oliotiedon tila tarjoajan mukaan"
 
 #: ../Util/F-Spot/IptcFile.cs:224
 msgid "Location within a city or area where the object originates"
-msgstr ""
+msgstr "Kohteen lähteen sijainti kaupungissa tai alueella"
 
 #: ../Util/F-Spot/IptcFile.cs:227
 msgid "Name of the city the content is focussing on"
@@ -1602,12 +1604,13 @@ msgstr "Tekijänoikeustiedot tiedostolle"
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
-msgstr ""
+msgstr "Sisällön aiheen lähdemaan koko nimi"
 
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid ""
 "Two or three letter ISO3166 code of the country of the focus of the content"
 msgstr ""
+"Sisällön aiheen lähdemaan kaksi- tai kolmikirjaiminen ISO3166-koodi"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
@@ -1615,7 +1618,7 @@ msgstr "Sisällön luoja"
 
 #: ../Util/F-Spot/IptcFile.cs:242
 msgid "Provider of the object"
-msgstr ""
+msgstr "Kohteen tarjoaja"
 
 #: ../Util/F-Spot/IptcFile.cs:245
 msgid "The title of the author or creator"
@@ -1626,6 +1629,7 @@ msgid ""
 "The person involved in writing, editing or correcting the object data or "
 "caption/abstract"
 msgstr ""
+"Kohteen sisällön tai esittelyn kirjoittamiseen osallistunut henkilö"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
@@ -1635,10 +1639,11 @@ msgstr "Sisällön otsikko"
 msgid ""
 "Instructions from the creator to the receiver not covered by other fields"
 msgstr ""
+"Muut ohjeet sisällöntuottajalta käyttäjälle"
 
 #: ../Util/F-Spot/IptcFile.cs:258
 msgid "Intellectual genre of the object"
-msgstr ""
+msgstr "Kohteen aihealue"
 
 #: ../Util/F-Spot/IptcFile.cs:271
 msgid "Unknown IIM DataSet"
