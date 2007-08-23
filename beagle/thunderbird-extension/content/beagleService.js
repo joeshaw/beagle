@@ -133,7 +133,7 @@ function addWarning (text, params, length)
 	try {
 		if (params == null)
 			warnings [warnings.length] = bundle.GetStringFromName (text);
-		else
+		else 
 			warnings [warnings.length] = bundle.formatStringFromName (text, params, length);
 	} catch (ex) {
 		warnings [warnings.length] = "Failed to add error message! You should report this as a bug. Details: " + ex;
@@ -420,6 +420,27 @@ var gBeagleDataCollector = {
 		
 		return null;
 	},
+	
+	// Some times Thunderbird lists "invalid" folders. An invalid folder is a folder where all messages have
+	// been downloaded but the mork database is not available. This probably only happen if a user is messing
+	// around with the file structure manually.
+	ValidFolder: function ()
+	{
+		var filePath = this.CurrentFolder.path.unixStyleFilePath + '.msf';
+
+		try {
+			var file = Components.classes ['@mozilla.org/file/local;1']
+				.createInstance (Components.interfaces.nsILocalFile);
+			if (!file)
+				return false;
+			
+			file.initWithPath (filePath);
+		} catch (ex) {
+			return false;
+		}
+		
+		return file.exists ();
+	},
 
 	// Add new mails to the indexing queue
 	Process: function ()
@@ -442,9 +463,14 @@ var gBeagleDataCollector = {
 			try {
 				this.CurrentEnumerator = this.CurrentFolder.getMessages (null);
 			} catch (ex) {
-				dump ('Failed to list messages in ' + this.CurrentFolder.prettyName + ': ' + ex + "\n");
-				addWarning ('failedListingMessages', [this.CurrentFolder.prettyName, ex], 2);
+				// Only display the error message to the user in case the folder is valid and
+				// messages could not be listed
+				if (this.ValidFolder ()) {
+					dump ('Failed to list messages in ' + this.CurrentFolder.prettyName + ': ' + ex + "\n");
+					addWarning ('failedListingMessages', [this.CurrentFolder.prettyName, ex], 2);
+				}
 				gBeagleIndexer.markFolderAsIndexed (this.CurrentFolder);
+				this.CurrentFolder = null;
 				return;
 			}
 		}

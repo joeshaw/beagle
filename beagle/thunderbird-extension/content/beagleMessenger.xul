@@ -65,7 +65,7 @@
 		{
 			window.openDialog ('chrome://beagle/content/beaglePrefs.xul',
 				'PreferenceWindow',
-				'chrome,toolbar,modal=yes,resizable=no',
+				'chrome,toolbar,modal=no,resizable=no',
 				'pref-indexing');
 		}
 
