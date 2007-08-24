@@ -14,7 +14,7 @@
       </Attributes>
     </Assembly>
   </Assemblies>
-  <Remarks>This documentation is part of the <!-- FIXME: add link to beagle project here -->Beagle project.</Remarks>
+  <Remarks><para>This documentation is part of the <!-- FIXME: add link to beagle project here -->Beagle project.</para>Beagle consists of a service which provides indexing and searching abilities of personal data and exports an interface which can be used to interact with the service. Details of the architecture can be found at <see href="http://beagle-project.org/Development">http://beagle-project.org/Development</see>.</Remarks>
   <Copyright>(C) 2007 D Bera</Copyright>
   <Types>
     <Namespace Name="Beagle">
