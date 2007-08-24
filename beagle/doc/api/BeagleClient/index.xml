@@ -14,8 +14,8 @@
       </Attributes>
     </Assembly>
   </Assemblies>
-  <Remarks>To be added.</Remarks>
-  <Copyright>To be added.</Copyright>
+  <Remarks>This documentation is part of the <!-- FIXME: add link to beagle project here -->Beagle project.</Remarks>
+  <Copyright>(C) 2007 D Bera</Copyright>
   <Types>
     <Namespace Name="Beagle">
       <Type Name="IIndexableGenerator" />
@@ -84,5 +84,5 @@
       <Type Name="QueryPartLogic" />
     </Namespace>
   </Types>
-  <Title>Beagle</Title>
+  <Title>BeagleClient</Title>
 </Overview>

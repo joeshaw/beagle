@@ -1,6 +1,6 @@
 <Namespace Name="Beagle">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>The Beagle namespace contains the classes necessary to interact with the Beagle service.</summary>
+    <remarks></remarks>
   </Docs>
 </Namespace>
