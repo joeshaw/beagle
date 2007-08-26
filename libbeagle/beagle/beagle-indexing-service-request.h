@@ -55,10 +55,12 @@ GType beagle_indexing_service_request_get_type (void);
 
 BeagleIndexingServiceRequest *beagle_indexing_service_request_new (void);
 
-void beagle_indexing_service_request_add    (BeagleIndexingServiceRequest *request, 
-					     BeagleIndexable              *indexable);
-void beagle_indexing_service_request_remove (BeagleIndexingServiceRequest *request,
-					     const char                   *uri);
+void beagle_indexing_service_request_add	(BeagleIndexingServiceRequest *request, 
+						 BeagleIndexable              *indexable);
+void beagle_indexing_service_request_remove	(BeagleIndexingServiceRequest *request,
+						 const char                   *uri);
+void beagle_indexing_service_request_set_source (BeagleIndexingServiceRequest *request,
+						 const char *source);
 
 #endif /* __BEAGLE_INDEXING_SERVICE_REQUEST_H */
 

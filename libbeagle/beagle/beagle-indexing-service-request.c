@@ -73,7 +73,7 @@ beagle_indexing_service_request_to_xml (BeagleRequest *request, GError **err)
 	for (list = priv->to_remove; list != NULL; list = list->next) {
 		char *str = list->data;
 
-		g_string_append_printf (data, "<string>%s</string>", str);
+		g_string_append_printf (data, "<Uri>%s</Uri>", str);
 	}
 	g_string_append (data, "</ToRemove>");
 	
