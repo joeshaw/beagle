@@ -30,23 +30,46 @@ using System.Collections;
 using System.IO;
 
 using Beagle;
+using Beagle.Util;
 using Beagle.Daemon;
 
 class MasterDeleteTool {
 
+	// Remapping hack from DumpIndex
+	static Uri RemapUri (LuceneQueryingDriver driver, Uri uri)
+	{
+		// We only need to remap URIs in the file system backend
+		if (driver.IndexName != "FileSystemIndex")
+			return uri;
+
+		FileAttributesStore fa_store = new FileAttributesStore (new FileAttributesStore_Mixed (Path.Combine (PathFinder.IndexDir, "FileSystemIndex"), driver.Fingerprint));
+
+		string path = uri.LocalPath;
+
+		Beagle.Daemon.FileAttributes attr = fa_store.Read (path);
+		if (attr == null) {
+			Console.WriteLine ("No file attribute info for {0}", uri);
+			return uri;
+		}
+
+		return new Uri ("uid:" + GuidFu.ToShortString (attr.UniqueId) + uri.Fragment);
+	}
+
 	static void Main (string[] args)
 	{
 		if (args.Length != 2) {
-			Console.WriteLine ("Usage: beagle-master-delete-button /path/to/index-dir uri-to-delete");
+			Console.WriteLine ("Usage: beagle-master-delete-button index-name uri-to-delete");
 			return;
 		}
 
-		string index_dir = args [0];
-		Uri uri_to_delete = new Uri (args [1], false);
+		string index_name = args [0];
 
-		LuceneQueryingDriver driver = new LuceneQueryingDriver (index_dir, -1, true);
+		LuceneQueryingDriver driver = new LuceneQueryingDriver (index_name, -1, true);
 
-		LuceneIndexingDriver indexer = new LuceneIndexingDriver (index_dir, false);
+		Uri uri = new Uri (args [1], false);
+		Uri uri_to_delete = RemapUri (driver, uri);
+
+		LuceneIndexingDriver indexer = new LuceneIndexingDriver (index_name, false);
 
 		Indexable indexable = new Indexable (uri_to_delete);
 		indexable.Type = IndexableType.Remove;
@@ -56,18 +79,18 @@ class MasterDeleteTool {
 
 		IndexerReceipt [] receipts = indexer.Flush (request);
 		if (receipts == null || receipts.Length == 0) {
-			Console.WriteLine ("Uri {0} not found in the index in {1}",
-					   uri_to_delete, index_dir);
+			Console.WriteLine ("Uri {0} not found in {1}",
+					   uri, index_name);
 			return;
 		}
 
 		IndexerRemovedReceipt r = receipts [0] as IndexerRemovedReceipt;
 		if (r == null || r.NumRemoved == 0) {
-			Console.WriteLine ("Uri {0} not found in the index in {1}",
-					   uri_to_delete, index_dir);
+			Console.WriteLine ("Uri {0} not found in {1}",
+					   uri, index_name);
 			return;
 		}
 
-		Console.WriteLine ("Uri {0} deleted", uri_to_delete);
+		Console.WriteLine ("Uri {0} deleted", uri);
 	}
 }
