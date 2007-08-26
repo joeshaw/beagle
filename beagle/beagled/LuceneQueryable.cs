@@ -460,8 +460,8 @@ namespace Beagle.Daemon {
 
 		virtual protected bool PreAddIndexableHook (Indexable indexable)
 		{
-			// By default, we like everything.
-			return true;
+			// By default, we like everything if we are not read-only
+			return ! read_only_mode;
 		}
 
 		// If we are remapping Uris, indexables should be added to the
@@ -476,7 +476,7 @@ namespace Beagle.Daemon {
 			return indexable.Uri;
 		}
 
-		virtual protected Uri PostRemoveHook (Indexable indexable)
+		virtual protected Uri PostRemoveHook (Indexable indexable, int num_removed)
 		{
 			// By default, remapped uri is the indexable uri
 			return indexable.Uri;
@@ -785,7 +785,7 @@ namespace Beagle.Daemon {
 		// add the indexable
 		virtual protected bool PreFilterGeneratedAddHook (Indexable indexable)
 		{
-			return true;
+			return ! read_only_mode;
 		}
 
 		virtual protected void PreFlushHook (IndexerRequest flushed_request)
@@ -946,11 +946,15 @@ namespace Beagle.Daemon {
 					// Call the appropriate hook
 					Uri notification_uri = indexable.Uri;
 					try {
-						notification_uri = PostRemoveHook (indexable);
+						notification_uri = PostRemoveHook (indexable, r.NumRemoved);
 					} catch (Exception ex) {
 						Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
 								 indexable.Uri);
 					}
+
+					// If nothing was removed, no need for change notification
+					if (r.NumRemoved <= 0)
+						continue;
 
 					// Add the removed Uri to the list for our
 					// change data.  This will be an external Uri

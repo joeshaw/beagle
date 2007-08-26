@@ -42,7 +42,6 @@ namespace Beagle {
 		{
 		}
 
-		[XmlAttribute]
 		public string Source {
 			get { return source; }
 			set { source = value; }

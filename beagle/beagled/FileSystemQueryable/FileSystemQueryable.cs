@@ -1623,8 +1623,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return UriFu.PathToFileUri (path);
 		}
 
-		override protected Uri PostRemoveHook (Indexable indexable)
+		override protected Uri PostRemoveHook (Indexable indexable, int num_remove)
 		{
+			// FIXME: If nothing is removed, something went wrong! Handle the situation better.
+			if (num_remove <= 0)
+				return indexable.Uri;
+
 			// Find the cached external Uri and remap the Uri in the receipt.
 			// We have to do this to make change notification work.
 			Uri external_uri;

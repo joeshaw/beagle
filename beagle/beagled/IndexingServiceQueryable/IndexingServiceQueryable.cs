@@ -255,27 +255,76 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 		}
 
 		private class IndexableGenerator : IIndexableGenerator {
-			private IEnumerator to_add_enumerator;
+			private IEnumerator to_add_enumerator = null, to_remove_uris_enumerator = null;
 			private int count = -1, done_count = 0;
+			// FIXME: Unused. Use this to store the submitter queryable in the localstate
+			// of the indexables and receive PostHooks() from LuceneQueryable
+			private LuceneQueryable submitter_queryable = null;
 
 			public IndexableGenerator (IEnumerable to_add)
 			{
 				this.to_add_enumerator = to_add.GetEnumerator ();
 			}
 
-			public IndexableGenerator (ICollection to_add) : this ((IEnumerable) to_add)
+			public IndexableGenerator (ICollection to_add) : this (to_add, null, null)
 			{
-				this.count = to_add.Count;
+			}
+
+			public IndexableGenerator (ICollection to_add, ICollection to_remove_uris) :
+				this (to_add, to_remove_uris, null)
+			{
+			}
+
+			public IndexableGenerator (ICollection to_add, ICollection to_remove_uris, LuceneQueryable submitter_queryable)
+			{
+				this.count = 0;
+				this.submitter_queryable = submitter_queryable;
+
+				if (to_add != null) {
+					this.to_add_enumerator = to_add.GetEnumerator ();
+					this.count += to_add.Count;
+				}
+
+				if (to_remove_uris != null) {
+					this.to_remove_uris_enumerator = to_remove_uris.GetEnumerator ();
+					this.count += to_remove_uris.Count;
+				}
+			}
+
+			public LuceneQueryable SubmitterQueryable {
+				set { submitter_queryable = value; }
 			}
 
 			public Indexable GetNextIndexable ()
 			{
+				if (to_remove_uris_enumerator != null) {
+					Uri uri_to_remove = to_remove_uris_enumerator.Current as Uri;
+					if (uri_to_remove == null)
+						return null;
+
+					return new Indexable (IndexableType.Remove, uri_to_remove);
+				}
+
+				if (to_add_enumerator == null)
+					return null;
+
 				return to_add_enumerator.Current as Indexable;
 			}
-			
+
 			public bool HasNextIndexable ()
 			{
 				++done_count;
+
+				if (to_remove_uris_enumerator != null) {
+					if (to_remove_uris_enumerator.MoveNext ())
+						return true;
+					else
+						to_remove_uris_enumerator = null;
+				}
+
+				if (to_add_enumerator == null)
+					return false;
+
 				return to_add_enumerator.MoveNext ();
 			}
 
@@ -316,20 +365,17 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 				}
 
 				backend = (LuceneQueryable) target.IQueryable;
-			}
-
-			foreach (Uri uri in isr.ToRemove) {
-				Log.Debug ("IndexingService: Removing {0}", uri);
-				Scheduler.Task task = backend.NewRemoveTask (uri);
-				ThisScheduler.Add (task);
+				Log.Debug ("Found backend for IndexingServiceRequest: {0}", backend.IndexName);
 			}
 
 			// FIXME: There should be a way for the request to control the
 			// scheduler priority of the task.
 
-			if (isr.ToAdd.Count > 0) {
-				Log.Debug ("IndexingService: Adding {0} indexables.", isr.ToAdd.Count);
-				IIndexableGenerator ind_gen = new IndexableGenerator (isr.ToAdd);
+			if (isr.ToAdd.Count > 0 || isr.ToRemove.Count > 0) {
+				Log.Debug ("IndexingService: Adding {0} indexables, removing {1} indexables.", isr.ToAdd.Count, isr.ToRemove.Count);
+
+				IndexableGenerator ind_gen;
+				ind_gen = new IndexableGenerator (isr.ToAdd, isr.ToRemove, this);
 				Scheduler.Task task = backend.NewAddTask (ind_gen);
 				task.Priority = Scheduler.Priority.Immediate;
 				ThisScheduler.Add (task);

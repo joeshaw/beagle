@@ -180,7 +180,7 @@ namespace Beagle.Daemon {
 			return indexable.Uri;
 		}
 
-		override protected Uri PostRemoveHook (Indexable indexable)
+		override protected Uri PostRemoveHook (Indexable indexable, int num_remove)
 		{
 			file_info_cache.Remove (indexable.Uri);
 			return indexable.Uri;
