@@ -44,11 +44,6 @@ class MasterDeleteTool {
 		string index_dir = args [0];
 		Uri uri_to_delete = new Uri (args [1], false);
 
-		if (! Directory.Exists (index_dir)) {
-			Console.WriteLine ("No such directory: {0}", index_dir);
-			return;
-		}
-
 		LuceneQueryingDriver driver = new LuceneQueryingDriver (index_dir, -1, true);
 
 		LuceneIndexingDriver indexer = new LuceneIndexingDriver (index_dir, false);
