@@ -38,7 +38,6 @@
 		<stringbundle id="bundle_beagle" src="chrome://beagle/locale/strings.properties"/>
 	</stringbundleset>
 
-	<script src="beagleMain.js"/>-
 	<script src="beagleUnindex.js"/>
 	<script src="beagle.js"/>
 

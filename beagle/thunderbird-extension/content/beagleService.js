@@ -399,6 +399,15 @@ var gBeagleDataCollector = {
 			// This check the overall type
 			if (!gBeagleIndexer.shouldIndexAccount (account)) 
 				continue;
+			else if (!account.incomingServer) { // Invalid accounts might exist for some reason
+				var email = "Unknown";
+				
+				if (account.defaultIdentity)
+					email = account.defaultIdentity.email;
+				
+				dump (account.key + ' does not have an incoming server! Sender address: ' + email + "\n");
+				continue;
+			}
 			
 			var allFolders = Components.classes ['@mozilla.org/supports-array;1']
 				.createInstance (Components.interfaces.nsISupportsArray);
