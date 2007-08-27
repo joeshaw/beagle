@@ -131,13 +131,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void OnObjectsAdded (object o, Evolution.ObjectsAddedArgs args)
 		{
-			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, this.cal_view.Client))
+			foreach (CalComponent cc in CalUtil.ICalToCalComponentArray (args.Objects.Handle, this.cal_view.Client))
 				AddCalComponent (cc);
 		}
 
 		private void OnObjectsModified (object o, Evolution.ObjectsModifiedArgs args)
 		{
-			foreach (CalComponent cc in CalUtil.CalCompFromICal (args.Objects.Handle, this.cal_view.Client))
+			foreach (CalComponent cc in CalUtil.ICalToCalComponentArray (args.Objects.Handle, this.cal_view.Client))
 				AddCalComponent (cc);
 		}
 
@@ -237,8 +237,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:application","evolution"));
 
-			foreach (string summary in cc.Summaries)
-				indexable.AddProperty (Property.New ("dc:title", summary));
+			indexable.AddProperty (Property.New ("dc:title", cc.Summary));
 
 			// We remember the note's text so that we can stuff it in
 			// the TextCache later.
@@ -270,8 +269,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			foreach (string description in cc.Descriptions)
 				indexable.AddProperty (Property.New ("fixme:description", description));
 
-			foreach (string summary in cc.Summaries)
-				indexable.AddProperty (Property.New ("fixme:summary", summary));
+			indexable.AddProperty (Property.New ("fixme:summary", cc.Summary));
 
 			foreach (string category in cc.Categories)
 				indexable.AddProperty (Property.NewUnsearched ("fixme:category", category));
@@ -293,8 +291,8 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			if (cc.Dtend != DateTime.MinValue)
 				indexable.AddProperty (Property.NewDate ("fixme:endtime", cc.Dtend.ToUniversalTime ()));
 
-			foreach (string attendee in cc.Attendees)
-				indexable.AddProperty (Property.New ("fixme:attendee", attendee));
+			foreach (CalComponentAttendee attendee in cc.Attendees)
+				indexable.AddProperty (Property.New ("fixme:attendee", attendee.value));
 
 			foreach (string comment in cc.Comments)
 				indexable.AddProperty (Property.New ("fixme:comment", comment));
@@ -302,14 +300,12 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			foreach (string description in cc.Descriptions)
 				indexable.AddProperty (Property.New ("fixme:description", description));
 
-			foreach (string summary in cc.Summaries)
-				indexable.AddProperty (Property.New ("fixme:summary", summary));
+			indexable.AddProperty (Property.New ("fixme:summary", cc.Summary));
 
 			foreach (string category in cc.Categories)
 				indexable.AddProperty (Property.NewUnsearched ("fixme:category", category));
 
-			foreach (string location in cc.Location)
-				indexable.AddProperty (Property.New ("fixme:location", location));
+			indexable.AddProperty (Property.New ("fixme:location", cc.Location));
 
 			return indexable;
 		}

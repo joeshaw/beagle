@@ -106,7 +106,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				// method inside libevolutionglue so that we can
 				// possibly catch a DllNotFoundException if it
 				// fails to load.
-				CalUtil.FreeGlueCompGLibSList (IntPtr.Zero); // This is a no-op
+				CalUtil.datetime_to_icaltimetype (new DateTime ()); // This is a no-op
 
 				// This is the first code which tries to open the
 				// evolution-data-server APIs.  Try to catch
@@ -117,6 +117,9 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				new SourcesHandler ("/apps/evolution/tasks/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Todo);
 				new SourcesHandler ("/apps/evolution/memos/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Journal);
 			} catch (DllNotFoundException ex) {
+				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
+				return;
+			} catch (EntryPointNotFoundException ex) {
 				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
 				return;
 			}		       
