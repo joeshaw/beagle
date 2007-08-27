@@ -58,6 +58,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private void SetupDefaultPatternsToIgnore ()
 		{
+			// Exclude home-dir/tmp
+			// FIXME: Make this user-overridable
+			string tmp_dir = PathFinder.HomeDir;
+			tmp_dir = Path.Combine (tmp_dir, "tmp");
+			exclude_paths.Add (new ExcludeItem (ExcludeType.Path, tmp_dir));
+
 			// FIXME: This probably shouldn't be hard-wired.  Or should it?
 			AddDefaultPatternToIgnore (new string [] {
 				                   ".*",
