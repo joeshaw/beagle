@@ -1,30 +1,296 @@
 # Basque translation for beagle
 # Copyright (c) 2006 Rosetta Contributors and Canonical Ltd 2006
 # This file is distributed under the same license as the beagle package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2006.
+# Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>, 2006.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
-"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-21 00:38+0000\n"
-"PO-Revision-Date: 2007-08-20 00:43+0000\n"
+"PO-Revision-Date: 2007-08-25 03:13+0100\n"
 "Last-Translator: Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>\n"
 "Language-Team: Basque <eu@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Rosetta-Export-Date: 2007-08-20 00:48:12+0000\n"
 
-#: ../glue/eggtrayicon.c:127
-msgid "Orientation"
-msgstr "Orientazioa"
+#: ../ContactViewer/ContactWindow.cs:74
+msgid "Open..."
+msgstr "Ireki..."
 
-#: ../glue/eggtrayicon.c:128
-msgid "The orientation of the tray."
-msgstr "Erretilularen orientazioa."
+#: ../ContactViewer/ContactWindow.cs:76
+#: ../search/Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "Irten"
+
+#: ../ContactViewer/ContactWindow.cs:79
+msgid "About"
+msgstr "Beagleri buruz"
+
+#: ../ContactViewer/ContactWindow.cs:95
+#: ../search/Tiles/Utils.cs:27
+msgid "Contacts"
+msgstr "Kontaktuak"
+
+#: ../ContactViewer/ContactWindow.cs:100
+msgid "Display name"
+msgstr "Pantaila-izena"
+
+#: ../ContactViewer/ContactWindow.cs:101
+msgid "Primary E-mail"
+msgstr "Lehen E-posta"
+
+#: ../ContactViewer/ContactWindow.cs:102
+msgid "Secondary E-mail"
+msgstr "Bigarren E-posta"
+
+#: ../ContactViewer/ContactWindow.cs:103
+msgid "Nickname"
+msgstr "Goitizena"
+
+#: ../ContactViewer/ContactWindow.cs:133
+#, csharp-format
+msgid ""
+"Unable to open mork database:\n"
+"\n"
+" {0}"
+msgstr ""
+"Ezin mork datubasea ireki:\n"
+"\n"
+"·{0}"
+
+#: ../ContactViewer/ContactWindow.cs:153
+msgid "The specified ID does not exist in this database!"
+msgstr "Zehaztutako IDa ez dago datubasean!"
+
+#: ../ContactViewer/ContactWindow.cs:180
+#, csharp-format
+msgid "Added {0} contact"
+msgstr "Kontaktu {0} gehituta"
+
+#: ../ContactViewer/ContactWindow.cs:204
+#, csharp-format
+msgid "Viewing {0}"
+msgstr "{0} ikusten"
+
+#: ../ContactViewer/ContactWindow.cs:244
+msgid "Select a mork database file"
+msgstr "Mork datubase-fitxategia hautatu"
+
+#: ../ContactViewer/ContactWindow.cs:311
+msgid "Primary E-Mail:"
+msgstr "Lehen E-posta:"
+
+#: ../ContactViewer/ContactWindow.cs:315
+#: ../ContactViewer/contactviewer.glade.h:37
+msgid "Screen name:"
+msgstr "Pantailako izena:"
+
+#: ../ContactViewer/ContactWindow.cs:319
+msgid "Home phone:"
+msgstr "Etxeko Telefonoa:"
+
+#: ../ContactViewer/ContactWindow.cs:323
+msgid "Mobile phone:"
+msgstr "Sakeleko telefonoa:"
+
+#: ../ContactViewer/ContactWindow.cs:327
+msgid "Web page:"
+msgstr "Webgunea:"
+
+#: ../ContactViewer/ContactWindow.cs:336
+msgid "Send E-Mail"
+msgstr "E-posta Bidali"
+
+#: ../ContactViewer/ContactWindow.cs:340
+msgid "Details..."
+msgstr "Xehetasunak..."
+
+#: ../ContactViewer/ContactWindow.cs:368
+msgid "Could not find a valid E-mail address!"
+msgstr "Ezin izan da baliozko E-posta helbiderik aurkitu!"
+
+#: ../ContactViewer/contactviewer.glade.h:1
+msgid "<b>Custom fields</b>"
+msgstr "<b>Eremu pertsonalizatuak</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:2
+msgid "<b>Home</b>"
+msgstr "<b>Helbidea</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:3
+msgid "<b>Internet</b>"
+msgstr "<b>Internet</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:4
+msgid "<b>Name</b>"
+msgstr "<b>Izena</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:5
+msgid "<b>Notes</b>"
+msgstr "<b>Oharrak</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:6
+msgid "<b>Phones</b>"
+msgstr "<b>Telefonoak</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:7
+msgid "<b>Work</b>"
+msgstr "<b>Lana</b>"
+
+#: ../ContactViewer/contactviewer.glade.h:8
+msgid "Additional E-Mail:"
+msgstr "E-Posta Gehigarria:"
+
+#: ../ContactViewer/contactviewer.glade.h:9
+#: ../tools/Settings.cs:804
+msgid "Address"
+msgstr "Helbidea"
+
+#: ../ContactViewer/contactviewer.glade.h:10
+msgid "Address:"
+msgstr "Helbidea:"
+
+#: ../ContactViewer/contactviewer.glade.h:11
+msgid "City:"
+msgstr "Hiria:"
+
+#: ../ContactViewer/contactviewer.glade.h:12
+msgid "Contact"
+msgstr "Kontaktua"
+
+#: ../ContactViewer/contactviewer.glade.h:13
+msgid "Contact Viewer"
+msgstr "Kontaktu-Ikustailea"
+
+#: ../ContactViewer/contactviewer.glade.h:14
+msgid "Country:"
+msgstr "Herrialdea:"
+
+#: ../ContactViewer/contactviewer.glade.h:15
+msgid "Custom 1:"
+msgstr "Pertsonalizatua 1:"
+
+#: ../ContactViewer/contactviewer.glade.h:16
+msgid "Custom 2:"
+msgstr "Pertsonalizatua 2:"
+
+#: ../ContactViewer/contactviewer.glade.h:17
+msgid "Custom 3:"
+msgstr "Pertsonalizatua 3:"
+
+#: ../ContactViewer/contactviewer.glade.h:18
+msgid "Custom 4:"
+msgstr "Pertsonalizatua 4:"
+
+#: ../ContactViewer/contactviewer.glade.h:19
+msgid "Department:"
+msgstr "Departamentua:"
+
+#: ../ContactViewer/contactviewer.glade.h:20
+msgid "Detailed view"
+msgstr "Xehetasunak"
+
+#. This is Display name
+#: ../ContactViewer/contactviewer.glade.h:22
+msgid "Display:"
+msgstr "Pantaila:"
+
+#: ../ContactViewer/contactviewer.glade.h:23
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-posta:"
+
+#: ../ContactViewer/contactviewer.glade.h:24
+msgid "Fax:"
+msgstr "Faxa:"
+
+#. This is First name
+#: ../ContactViewer/contactviewer.glade.h:26
+msgid "First:"
+msgstr "Izena:"
+
+#. This is Home phone number
+#: ../ContactViewer/contactviewer.glade.h:28
+msgid "Home:"
+msgstr "Etxekoa:"
+
+#. This is Last name
+#: ../ContactViewer/contactviewer.glade.h:30
+msgid "Last:"
+msgstr "Abizena:"
+
+#: ../ContactViewer/contactviewer.glade.h:31
+msgid "Mobile:"
+msgstr "Mugikorra:"
+
+#: ../ContactViewer/contactviewer.glade.h:32
+msgid "Nickname:"
+msgstr "Goitizena:"
+
+#: ../ContactViewer/contactviewer.glade.h:33
+msgid "Organization:"
+msgstr "Erakundea:"
+
+#: ../ContactViewer/contactviewer.glade.h:34
+msgid "Other"
+msgstr "Besterik"
+
+#: ../ContactViewer/contactviewer.glade.h:35
+msgid "Pager:"
+msgstr "Bilagailua:"
+
+#: ../ContactViewer/contactviewer.glade.h:36
+msgid "Preferred format:"
+msgstr "Formatu lehenetsia:"
+
+#: ../ContactViewer/contactviewer.glade.h:38
+msgid "State/Province"
+msgstr "Estatua/Probintzia"
+
+#: ../ContactViewer/contactviewer.glade.h:39
+msgid "State/Province:"
+msgstr "Estatua/Probintzia:"
+
+#: ../ContactViewer/contactviewer.glade.h:40
+#: ../search/Tiles/ArchivedFile.cs:76
+#: ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:173
+#: ../search/Tiles/Note.cs:69
+#: ../search/Tiles/RSSFeed.cs:59
+#: ../search/Tiles/Task.cs:41
+#: ../search/Tiles/WebHistory.cs:57
+msgid "Title:"
+msgstr "Izenburua:"
+
+#: ../ContactViewer/contactviewer.glade.h:41
+msgid ""
+"Unknown\n"
+"Plain text\n"
+"HTML"
+msgstr ""
+"Ezezaguna\n"
+"Testu hutsa\n"
+"HTML"
+
+#: ../ContactViewer/contactviewer.glade.h:44
+msgid "Web Page:"
+msgstr "Webgunea:"
+
+#. This is Work phone number
+#: ../ContactViewer/contactviewer.glade.h:46
+msgid "Work:"
+msgstr "Laneko Telefonoa:"
+
+#: ../ContactViewer/contactviewer.glade.h:47
+msgid "ZIP/Postal Code"
+msgstr "ZIP/Posta-kodea"
+
+#: ../ContactViewer/contactviewer.glade.h:48
+msgid "ZIP/Postal Code:"
+msgstr "ZIP/Posta-kodea:"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -34,25 +300,38 @@ msgstr "<b>Elkarrizketa-Historia</b>"
 msgid "IM Viewer"
 msgstr "IM Ikustailea"
 
-#: ../ImLogViewer/ImLogWindow.cs:102
+#: ../ImLogViewer/ImLogWindow.cs:108
+#: ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Elkarrizketak {0}-n"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Elkarrizketak {0}-n ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Elkarrizketak {0}-rekin"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
+#: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
 msgstr "Bilatu"
 
-#: ../search/beagle-search.desktop.in.h:2
+#: ../search/beagle-search.desktop.in.in.h:2
 msgid "Search for data on your desktop"
 msgstr "Datuak bilatu zure mahaigainean"
 
-#: ../search/Category.cs:108
+#: ../search/Category.cs:132
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "Diapositiba {0}"
+msgstr[1] "{0} emaitza"
+
+#: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} - guztira: {2}"
@@ -67,48 +346,31 @@ msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Ez da aurkitu \"{0}\"-rekin kointzidentziarik zure ordenagailuan."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid ""
-"You can change the scope of your search using the \"Search\" menu. A broader "
-"search scope might produce more results."
-msgstr ""
-"Zure bilaketaren esparrua aldatu dezakezu \"Bilatu\" menua erabiliz. "
-"Bilaketa esparru handiago batekin emaitza gehiago lortu ahalko dituzu."
+msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
+msgstr "Zure bilaketaren esparrua aldatu dezakezu \"Bilatu\" menua erabiliz. Bilaketa esparru handiago batekin emaitza gehiago lortu ahalko dituzu."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid ""
-"You should check the spelling of your search words to see if you "
-"accidentally misspelled any words."
-msgstr ""
-"Zure bilaketa-hitzen idazkera egiaztatu beharko zenuke, again hitzen bat "
-"gaizki idatzi duzu eta."
+msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
+msgstr "Zure bilaketa-hitzen idazkera egiaztatu beharko zenuke, again hitzen bat gaizki idatzi duzu eta."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
-"Maiuskula eta minuskulak erabil ditzakezu; bilaketan ez da halako "
-"bereizketarik egingo."
+msgstr "Maiuskula eta minuskulak erabil ditzakezu; bilaketan ez da halako bereizketarik egingo."
 
 #: ../search/Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
-"Aukerazko terminoak bilatzeko, OR (ingelerazko \"edo\") erabili. Adib: "
-"<b>Pantxoa OR Peio</b>"
+msgstr "Aukerazko terminoak bilatzeko, OR (ingelerazko \"edo\") erabili. Adib: <b>Pantxoa OR Peio</b>"
 
 #: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
-"Termino bat bilaketatik kanpo uzteko, minus ikurra jarri aurrean. Adib: <b>-"
-"lantegia</b>"
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "Termino bat bilaketatik kanpo uzteko, minus ikurra jarri aurrean. Adib: <b>-lantegia</b>"
 
 #: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr ""
-"Esaldi zehatz bat bilatzeko, komatxoak erabili. Abid: <b>\"txanpon baten "
-"truke\"</b>"
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Esaldi zehatz bat bilatzeko, komatxoak erabili. Abid: <b>\"txanpon baten truke\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Pages/QuickTips.cs:19
+#: ../search/UIManager.cs:92
 msgid "Quick Tips"
 msgstr "Aholku Laburrak"
 
@@ -117,12 +379,8 @@ msgid "Beagle cannot be run as root"
 msgstr "Beagle ezin da erro bezala exekutatu"
 
 #: ../search/Pages/RootUser.cs:13
-msgid ""
-"For security reasons, Beagle cannot be run as root.  You should restart as a "
-"regular user."
-msgstr ""
-"Segurtasun kontuak direla eta, Beagle ezin da erro erabiltzaile bezala "
-"exekutatu. Erabiltzaile arrunt bezala berrabiarazi beharko zenuke."
+msgid "For security reasons, Beagle cannot be run as root.  You should restart as a regular user."
+msgstr "Segurtasun kontuak direla eta, Beagle ezin da erro erabiltzaile bezala exekutatu. Erabiltzaile arrunt bezala berrabiarazi beharko zenuke."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -132,39 +390,110 @@ msgstr "Bilaketa-zerbitzua ez dago martxan"
 msgid "Start search service"
 msgstr "Bilaketa-zerbitzua abiarazi"
 
-#: ../search/Search.cs:149
+#: ../search/Search.cs:145
+#: ../search/Search.cs:261
+#: ../search/Tray/TrayIcon.cs:33
+msgid "Desktop Search"
+msgstr "Mahaigaineko Bilaketa"
+
+#: ../search/Search.cs:164
 msgid "_Find:"
 msgstr "_Bilatu:"
 
-#: ../search/Search.cs:163
+#: ../search/Search.cs:185
 msgid "Find Now"
 msgstr "Orain Bilatu"
 
-#: ../search/Search.cs:209
+#: ../search/Search.cs:244
 msgid "Type in search terms"
 msgstr "Bilaketa terminoak idatzi"
 
-#: ../search/Search.cs:210
+#: ../search/Search.cs:245
 msgid "Start searching"
 msgstr "Bilatzen hasi"
+
+#: ../search/Search.cs:280
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Mahaigaineko Bilaketa: {0}"
+
+#: ../search/Search.cs:296
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Hilabete {0} barru"
+msgstr[1] "{0} emaitza erakusten"
+
+#: ../search/Search.cs:298
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgstr "{1}-etik {0} emaitza hoberenak erakusten"
+
+#: ../search/Search.cs:539
+msgid "There are computers near you running Beagle"
+msgstr "Beagle darabilten ordenagailuak daude zugandik gertu"
+
+#: ../search/Search.cs:540
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Beste ordenagailuak bilatu ditzakezu \"Bilatu\" menutik."
+
+#: ../search/Search.cs:612
+msgid "Your data is being indexed"
+msgstr "Zure datuak indexatuak izaten ari dira"
+
+#: ../search/Search.cs:613
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr "Zure datuak indexatzeko prozesuan dabil bilaketa-zerbitzua. Bilaketen emaitzak ez dira hoberenak izango indexazioa amaitu den arte."
+
+#: ../search/Tiles/ArchivedFile.cs:39
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "{0} artxiboaren barruan"
+
+#: ../search/Tiles/ArchivedFile.cs:77
+msgid "File Name:"
+msgstr "Fitxategi-Izena:"
+
+#. Substring to move past the initial #
+#: ../search/Tiles/ArchivedFile.cs:78
+msgid "Inside File:"
+msgstr "Fitxategi Honetan:"
+
+#: ../search/Tiles/ArchivedFile.cs:81
+#: ../search/Tiles/File.cs:177
+msgid "Author:"
+msgstr "Egilea:"
+
+#: ../search/Tiles/Calendar.cs:47
+#: ../search/Tiles/Task.cs:44
+msgid "Description:"
+msgstr "Deskribapena:"
+
+#: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Ordua:"
+
+#: ../search/Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "Kokapena:"
+
+#: ../search/Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "Partaideak:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Posta bidali"
 
-#: ../search/Tiles/Contact.cs:69
-msgid "E-Mail:"
-msgstr "E-posta:"
-
-#: ../search/Tiles/Contact.cs:71
+#: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Sakeleko Telefonoa:"
 
-#: ../search/Tiles/Contact.cs:73
+#: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Laneko Telefonoa:"
 
-#: ../search/Tiles/Contact.cs:75
+#: ../search/Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Etxeko Telefonoa:"
 
@@ -178,26 +507,21 @@ msgstr "E-posta"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Tiles/File.cs:37
+#: ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Zakarrontzira Mugitu"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Note.cs:56
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Izenburua:"
-
-#: ../search/Tiles/File.cs:128 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:59
+#: ../search/Tiles/File.cs:174
+#: ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:70
 msgid "Last Edited:"
 msgstr "Azkenekoz Editatuta:"
 
-#: ../search/Tiles/File.cs:132
-msgid "Author:"
-msgstr "Egilea:"
-
-#: ../search/Tiles/File.cs:136 ../search/Tiles/Folder.cs:54
-#: ../search/Tiles/Image.cs:81
+#: ../search/Tiles/File.cs:179
+#: ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87
 msgid "Full Path:"
 msgstr "Bide Osoa:"
 
@@ -212,49 +536,92 @@ msgid_plural "Contains {0} Items"
 msgstr[0] "Elementu {0} dauka"
 msgstr[1] "{0} elementu dauzka"
 
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "Horma-paper modura ezarri"
 
-#: ../search/Tiles/Image.cs:78
+#: ../search/Tiles/Image.cs:84
+msgid "Tags:"
+msgstr "Etiketak:"
+
+#: ../search/Tiles/Image.cs:86
 msgid "Modified:"
 msgstr "Aldatuta:"
+
+#: ../search/Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Oharrak:"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM Elkarrizketa"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Tiles/IMLog.cs:96
+#: ../tools/settings.glade.h:29
 msgid "Name:"
 msgstr "Izena:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
 msgstr "Jasotze Data:"
 
-#: ../search/Tiles/MailAttachment.cs:46
+#: ../search/Tiles/IMLog.cs:101
+msgid "Status:"
+msgstr "Egoera:"
+
+#: ../search/Tiles/IMLog.cs:116
+msgid "Idle"
+msgstr "Ez aktibo"
+
+#: ../search/Tiles/IMLog.cs:123
+msgid "Away"
+msgstr "Absente"
+
+#: ../search/Tiles/IMLog.cs:126
+msgid "Offline"
+msgstr "Deskonektatuta"
+
+#: ../search/Tiles/IMLog.cs:129
+msgid "Available"
+msgstr "Eskuragarri"
+
+#: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "E-posta eranskina"
 
-#: ../search/Tiles/MailMessage.cs:54
+#: ../search/Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(izenbururik ez)"
+
+#: ../search/Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "E-postan bidali"
 
-#: ../search/Tiles/MailMessage.cs:86
+#: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
 msgstr "Gaia:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:102
 msgid "To:"
 msgstr "Nori:"
 
-#: ../search/Tiles/MailMessage.cs:90
+#: ../search/Tiles/MailMessage.cs:102
 msgid "From:"
 msgstr "Nork:"
 
-#: ../search/Tiles/MailMessage.cs:95
+#: ../search/Tiles/MailMessage.cs:105
 msgid "Date Sent:"
 msgstr "Bidaltze Data:"
+
+#: ../search/Tiles/MailMessage.cs:111
+msgid "Folder:"
+msgstr "Direktorioa:"
+
+#: ../search/Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Honekin Ireki"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -263,13 +630,17 @@ msgid_plural "{0} slides"
 msgstr[0] "Diapositiba {0}"
 msgstr[1] "{0} diapositiba"
 
-#: ../search/Tiles/RSSFeed.cs:48
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Site:"
 msgstr "Gunea:"
 
-#: ../search/Tiles/RSSFeed.cs:51
+#: ../search/Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "Ikuste Data:"
+
+#: ../search/Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Data:"
 
 #: ../search/Tiles/TextDocument.cs:37
 #, csharp-format
@@ -282,105 +653,104 @@ msgstr[1] "{0} orri"
 msgid "Open"
 msgstr "Ireki"
 
-#: ../search/Tiles/Utils.cs:24
-msgid "Application"
-msgstr "Aplikazioa"
+#: ../search/Tiles/Utils.cs:25
+msgid "Applications"
+msgstr "Aplikazioak"
 
-#: ../search/Tiles/Utils.cs:26
-msgid "Contact"
-msgstr "Kontaktua"
-
-#: ../search/Tiles/Utils.cs:28
+#: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "Egutegi Gertaerak"
 
-#: ../search/Tiles/Utils.cs:30
-msgid "Folder"
-msgstr "Karpeta"
+#: ../search/Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "Direktorioak"
 
-#: ../search/Tiles/Utils.cs:32
-msgid "Image"
-msgstr "Irudia"
+#: ../search/Tiles/Utils.cs:33
+msgid "Images"
+msgstr "Irudiak"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "Audioa"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Tiles/Utils.cs:37
 msgid "Video"
 msgstr "Bideoa"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "Dokumentuak"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "Elkarrizketak"
 
-#: ../search/Tiles/Utils.cs:42
-msgid "Website"
-msgstr "Webgunea"
+#: ../search/Tiles/Utils.cs:43
+msgid "Websites"
+msgstr "Webguneak"
 
-#: ../search/Tiles/Utils.cs:44
-msgid "News Feed"
-msgstr "Berri-jarioak"
+#: ../search/Tiles/Utils.cs:45
+msgid "News Feeds"
+msgstr "Berri-Jarioak"
 
-#: ../search/Tiles/Utils.cs:46
-msgid "Archive"
-msgstr "Artxiboa"
+#: ../search/Tiles/Utils.cs:47
+msgid "Archives"
+msgstr "Artxiboak"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Gaur"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
+#: ../search/Tiles/Utils.cs:132
+#: ../search/Tiles/Utils.cs:214
+#: ../Util/StringFu.cs:117
 msgid "Yesterday"
 msgstr "Atzo"
 
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Tiles/Utils.cs:134
+#: ../search/Tiles/Utils.cs:216
+#: ../Util/StringFu.cs:115
+msgid "Today"
+msgstr "Gaur"
+
+#: ../search/Tiles/Utils.cs:136
+#: ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Bihar"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "orain dela aste {0}"
 msgstr[1] "orain dela {0} aste"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
 msgstr[0] "Aste {0} barru"
 msgstr[1] "{0} aste barru"
 
-#: ../search/Tiles/Utils.cs:204
+#. Let's say a year and a half to stop saying months
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "orain dela hilabete {0}"
 msgstr[1] "orain dela {0} hilabete"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Hilabete {0} barru"
 msgstr[1] "{0} hilabete barru"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "orain dela urte {0}"
 msgstr[1] "orain dela {0} urte"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
@@ -388,42 +758,37 @@ msgstr[0] "Urte {0} barru"
 msgstr[1] "{0} urte barru"
 
 #. FIXME: We need filters for video in Beagle.
+#. They should land soon when entagged-sharp gets video support.
 #: ../search/Tiles/Video.cs:27
 msgid "Unknown duration"
 msgstr "Iraupen ezezaguna"
 
-#: ../search/Tiles/WebHistory.cs:53
+#: ../search/Tiles/WebHistory.cs:58
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:56
+#: ../search/Tiles/WebHistory.cs:59
 msgid "Accessed:"
 msgstr "Erabilia:"
 
-#: ../search/Tray/TrayIcon.cs:32
-msgid "Desktop Search"
-msgstr "Mahaigaineko Bilaketa"
-
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "Azkenaldiko Bilaketarik Ez"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Azkenaldiko Bilaketak"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Garbitu"
-
-#: ../search/Tray/TrayIcon.cs:86
-msgid "Quit"
-msgstr "Irten"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
 #. * to give an exact translation of the exact same set of English
 #. * words. Just provide a list of likely words the user might use
+#. * after the "type:" keyword to refer to each type of match.
+#.
 #: ../search/TypeFilter.cs:36
 msgid ""
 "file\n"
@@ -592,293 +957,295 @@ msgstr ""
 "pertsona\n"
 "jendea"
 
-#: ../search/UIManager.cs:42
+#: ../search/UIManager.cs:50
 msgid "Close Desktop Search"
 msgstr "Mahaigaineko Bilaketa Itxi"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/UIManager.cs:55
+#: ../search/UIManager.cs:80
 msgid "Exit Desktop Search"
 msgstr "Mahaigaineko Bilaketatik Irten"
 
-#: ../search/UIManager.cs:54
+#: ../search/UIManager.cs:62
 msgid "_Search"
 msgstr "_Bilaketa"
 
-#: ../search/UIManager.cs:57
+#: ../search/UIManager.cs:65
+msgid "Show _Categories"
+msgstr "_Kategoriak Erakutsi"
+
+#: ../search/UIManager.cs:68
 msgid "_Actions"
 msgstr "_Ekintzak"
 
-#: ../search/UIManager.cs:60
-msgid "Sor_t"
-msgstr "An_tolatu"
+#: ../search/UIManager.cs:71
+msgid "_View"
+msgstr "_Ikusi"
 
-#: ../search/UIManager.cs:63
+#: ../search/UIManager.cs:74
 msgid "_Help"
 msgstr "_Laguntza"
 
-#: ../search/UIManager.cs:72
+#: ../search/UIManager.cs:83
 msgid "_Contents"
 msgstr "_Edukiak"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:85
 msgid "Help - Table of Contents"
 msgstr "Laguntza - Edukien Taula"
 
-#: ../search/UIManager.cs:78
+#: ../search/UIManager.cs:89
 msgid "About Desktop Search"
 msgstr "Mahaigaineko Bilaketari Buruz"
 
-#: ../search/UIManager.cs:100
-msgid "_Everywhere"
-msgstr "_Edonon"
+#: ../search/UIManager.cs:111
+msgid "_All"
+msgstr "_Guztiak"
 
-#: ../search/UIManager.cs:102
-msgid "Search everywhere"
-msgstr "Edonon bilatu"
+#: ../search/UIManager.cs:121
+msgid "_None"
+msgstr "_Bat ere ez"
 
-#: ../search/UIManager.cs:105
-msgid "_Applications"
-msgstr "_Aplikazioak"
+#: ../search/UIManager.cs:135
+msgid "A_pplications"
+msgstr "A_plikazioak"
 
-#: ../search/UIManager.cs:107
+#: ../search/UIManager.cs:137
 msgid "Search applications"
 msgstr "Aplikazioak bilatu"
 
-#: ../search/UIManager.cs:110
+#: ../search/UIManager.cs:141
 msgid "_Contacts"
 msgstr "_Kontaktuak"
 
-#: ../search/UIManager.cs:112
+#: ../search/UIManager.cs:143
 msgid "Search contacts"
 msgstr "Kontaktuak bilatu"
 
-#: ../search/UIManager.cs:115
+#: ../search/UIManager.cs:147
 msgid "Ca_lendar events"
 msgstr "E_gutegi gertaerak"
 
-#: ../search/UIManager.cs:117
+#: ../search/UIManager.cs:149
 msgid "Search calendar events"
 msgstr "Egutegi gertaerak bilatu"
 
-#: ../search/UIManager.cs:120
+#: ../search/UIManager.cs:153
 msgid "_Documents"
 msgstr "_Dokumentuak"
 
-#: ../search/UIManager.cs:122
+#: ../search/UIManager.cs:155
 msgid "Search documents"
 msgstr "Dokumentuak bilatu"
 
-#: ../search/UIManager.cs:125
+#: ../search/UIManager.cs:159
 msgid "Conve_rsations"
 msgstr "Elka_rrizketak"
 
-#: ../search/UIManager.cs:127
+#: ../search/UIManager.cs:161
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "E-posta eta Istanteko Mezularitzan bilatu"
 
-#: ../search/UIManager.cs:130
+#: ../search/UIManager.cs:165
 msgid "_Images"
 msgstr "_Irudiak"
 
-#: ../search/UIManager.cs:132
+#: ../search/UIManager.cs:167
 msgid "Search images"
 msgstr "Irudiak bilatu"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:171
 msgid "_Media"
 msgstr "_Multimedia"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:173
 msgid "Search sound and video files"
 msgstr "Soinu eta bideo fitxategiak bilatu"
 
-#: ../search/UIManager.cs:144
-msgid "Date _Modified"
-msgstr "_Aldaketa Data"
+#: ../search/UIManager.cs:177
+msgid "_Folders"
+msgstr "_Karpetak"
 
-#: ../search/UIManager.cs:145
+#: ../search/UIManager.cs:179
+msgid "Search for folder names"
+msgstr "Direktorio-izenak bilatu"
+
+#: ../search/UIManager.cs:183
+msgid "_Websites"
+msgstr "_Webguneak"
+
+#: ../search/UIManager.cs:185
+msgid "Search website history"
+msgstr "Webgune-historian bilatu"
+
+#: ../search/UIManager.cs:189
+msgid "_News Feeds"
+msgstr "Berri-_Jarioak"
+
+#: ../search/UIManager.cs:191
+msgid "Search news feeds"
+msgstr "Berri-jarioak bilatu"
+
+#: ../search/UIManager.cs:195
+msgid "A_rchives"
+msgstr "Art_xiboak"
+
+#: ../search/UIManager.cs:197
+msgid "Search files in Archives"
+msgstr "Artxiboetako Fitxategiak bilatu"
+
+#: ../search/UIManager.cs:205
+msgid "Sort by Date _Modified"
+msgstr "_Aldaketa Dataren Arabera Antolatu"
+
+#: ../search/UIManager.cs:206
 msgid "Sort the most-recently-modified matches first"
 msgstr "Duela-denbora-gutxien-aldatutakoak eman lehenik"
 
-#: ../search/UIManager.cs:148
-msgid "_Name"
-msgstr "_Izena"
+#: ../search/UIManager.cs:209
+msgid "Sort by _Name"
+msgstr "Izenaren Arabera Antolatu"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:210
 msgid "Sort matches by name"
 msgstr "Izenaren arabera antolatu emaitzak"
 
-#: ../search/UIManager.cs:152
-msgid "_Relevance"
-msgstr "_Garrantzia"
+#: ../search/UIManager.cs:213
+msgid "Sort by _Relevance"
+msgstr "Garrantziaren Arabera Antolatu"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:214
 msgid "Sort the best matches first"
 msgstr "Kointzidentzia egokienak eman lehenik"
 
-#: ../tools/Settings.cs:223
+#: ../search/UIManager.cs:221
+msgid "Show Details"
+msgstr "Xehetasunak Erakutsi"
+
+#: ../search/UIManager.cs:354
+msgid "Couldn't launch web browser"
+msgstr "Ezin izan da web-arakatzailea abiarazi"
+
+#: ../tools/Settings.cs:248
 msgid "Reload configuration"
 msgstr "Konfigurazioa birkargatu"
 
-#: ../tools/Settings.cs:224
-msgid ""
-"The configuration file has been modified by another application. Do you wish "
-"to discard the currently displayed values and reload configuration from disk?"
-msgstr ""
-"Beste aplikazio batek aldatu du konfigurazio-fitxategia. Orain pantailan "
-"dituzun balioak baztertu nahi al dituzu diskan gordeta daudenak kargatzeko?"
+#: ../tools/Settings.cs:249
+msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
+msgstr "Beste aplikazio batek aldatu du konfigurazio-fitxategia. Orain pantailan dituzun balioak baztertu nahi al dituzu diskan gordeta daudenak kargatzeko?"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:387
 msgid "Select Path"
 msgstr "Bidea Aukeratu"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:406
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr ""
-"Hautatu duzun bidea jadanik indexatua izaten ari da, beraz, ez da gehitu."
+msgstr "Hautatu duzun bidea jadanik indexatua izaten ari da, beraz, ez da gehitu."
 
-#: ../tools/Settings.cs:284
-msgid ""
-"The selected path wasn't added. The list contains items that supercedes it "
-"and the data is already being indexed."
-msgstr ""
-"Ez da hautatutako bidea gehitu. Jadanik barne hartzen duen elementuren bat "
-"dago zerrendan, beraz, jadanik indexatua izaten ari da."
+#: ../tools/Settings.cs:409
+msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
+msgstr "Ez da hautatutako bidea gehitu. Jadanik barne hartzen duen elementuren bat dago zerrendan, beraz, jadanik indexatua izaten ari da."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:420
 msgid "Path not added"
 msgstr "Ez da bidea gehitu"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:429
 msgid "Remove obsolete paths"
 msgstr "Bide zaharrak ezabatu"
 
-#: ../tools/Settings.cs:305
-msgid ""
-"Adding this path will obsolete some of the existing include paths. This will "
-"result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr ""
-"Bide hau gehitzean zaharkiturik geratuko dira aurretik gehitutako bide "
-"batzuk. Ondorioz, bide zaharkituak kendu dira. Ziur al zaude bide hau gehitu "
-"nahi duzula?"
+#: ../tools/Settings.cs:430
+msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Bide hau gehitzean zaharkiturik geratuko dira aurretik gehitutako bide batzuk. Ondorioz, bide zaharkituak kendu dira. Ziur al zaude bide hau gehitu nahi duzula?"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:456
 msgid "Remove path"
 msgstr "Bidea ezabatu"
 
-#: ../tools/Settings.cs:332
-msgid ""
-"Are you sure you wish to remove this path from the list of directories to be "
-"included for indexing?"
-msgstr ""
-"Ziur al zaude bide hau indexatu beharreko direktorioen zerrendatik kendu "
-"nahi duzula?"
+#: ../tools/Settings.cs:457
+msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+msgstr "Ziur al zaude bide hau indexatu beharreko direktorioen zerrendatik kendu nahi duzula?"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:486
 msgid "Remove item"
 msgstr "Elementua kendu"
 
-#: ../tools/Settings.cs:362
-msgid ""
-"Are you sure you wish to remove this item from the list of data to be "
-"excluded from indexing?"
-msgstr ""
-"Ziur al zaude elementu hau indexaziotik kanpo utzi beharreko datuen "
-"zerrendatik kendu nahi duzula?"
+#: ../tools/Settings.cs:487
+msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+msgstr "Ziur al zaude elementu hau indexaziotik kanpo utzi beharreko datuen zerrendatik kendu nahi duzula?"
 
-#: ../tools/Settings.cs:405
-msgid "Invalid host entry"
-msgstr "Ostalari-sarrera baliogabea"
-
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:535
 msgid "Remote host already present in the list."
 msgstr "Urruneko ostalaria jadanik badago zerrendan"
 
-#: ../tools/Settings.cs:421
+#: ../tools/Settings.cs:545
 msgid "Netbeagle Node not added"
 msgstr "Ez da Netbeagle Nodoa gehitu"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:562
 msgid "Remove host"
 msgstr "Ostalaria kendu"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:563
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Ziur al zaude ostalari hau zerrendatik kendu nahi duzula?"
 
-#: ../tools/Settings.cs:459
-msgid "Select path"
-msgstr "Bidea hautatu"
-
-#: ../tools/Settings.cs:478
-msgid "The selected path is already configured for external access."
-msgstr "Hautatutako bidea jadanik konfiguratua dago kanpo-sarrerarako."
-
-#: ../tools/Settings.cs:502
-msgid "Remove public path"
-msgstr "Bide publikoa kendu"
-
-#: ../tools/Settings.cs:503
-msgid ""
-"Are you sure you wish to remove this entry from the list of public paths?"
-msgstr "Ziur al zaude bide hau bide publikoen zerrendatik kendu nahi duzula?"
-
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:625
+#: ../tools/Settings.cs:714
+#: ../tools/Settings.cs:797
+#: ../tools/Settings.cs:903
 msgid "Name"
 msgstr "Izena"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:708
 msgid "Type"
 msgstr "Mota"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:761
 msgid "Path:"
 msgstr "Bidea:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:764
 msgid "Pattern:"
 msgstr "Eredua:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:767
 msgid "Mail folder:"
 msgstr "Postaren direktorioa:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:1150
 msgid "Select Folder"
 msgstr "Direktorioa Hautatu"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1176
+#: ../tools/settings.glade.h:31
 msgid "P_ath:"
 msgstr "_Bidea:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1181
 msgid "M_ail folder:"
 msgstr "_Postaren direktorioa:"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1186
 msgid "P_attern:"
 msgstr "_Eredua:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1210
 msgid "Error adding path"
 msgstr "Errorea bidea gehitzean"
 
-#: ../tools/Settings.cs:1099
-msgid ""
-"The specified path could not be found and therefore it could not be added to "
-"the list of resources excluded for indexing."
-msgstr ""
-"Ezin izan da zehaztutako bidea aurkitu, beraz, ezin izan da indexaziotik "
-"kanpo uzteko baliabideen zerrendara gehitu."
+#: ../tools/Settings.cs:1211
+msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
+msgstr "Ezin izan da zehaztutako bidea aurkitu, beraz, ezin izan da indexaziotik kanpo uzteko baliabideen zerrendara gehitu."
 
-#: ../tools/Settings.cs:1129
-msgid "Show"
-msgstr "Erakutsi"
+#: ../tools/Settings.cs:1252
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "{0}-rekin konektatzen"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add Remote Host</b>"
-msgstr "<b>Urruneko Ostalaria Gehitu</b>"
+msgid ":"
+msgstr ":"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
@@ -909,234 +1276,513 @@ msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Postaren Direktorioa Hautatu</b>"
 
 #: ../tools/settings.glade.h:9
+msgid "<b>User Interface</b>"
+msgstr "<b>Erabiltzaile-Interfazea</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Pasahitza behar.</span>"
+
+#: ../tools/settings.glade.h:11
 msgid "Add Remote Host"
 msgstr "Urruneko Ostalaria Gehitu"
 
-#: ../tools/settings.glade.h:10
-msgid ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
-msgstr ""
-"Zure bilaketa-sarean sartu nahi duzun eta sare-bilaketak \n"
-"gaituta dituen urruneko ostalaria gehitu."
-
 #: ../tools/settings.glade.h:12
+msgid "Add a static host with a known address"
+msgstr "Helbide ezaguneko ostalari finkoa gehitu"
+
+#: ../tools/settings.glade.h:13
 msgid "Add any additional paths to be included for indexing."
 msgstr "Indexatzeko bide gehiago gehitu."
 
-#: ../tools/settings.glade.h:13
-msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr ""
-"Zure bilaketa-sarean sartu nahi dituzun eta sare-bilaketak gaituta dituzten "
-"urruneko ostalariak gehitu."
-
 #: ../tools/settings.glade.h:14
-msgid ""
-"Adjust which types of results should be visible, and in what order they "
-"should be presented when grouped by type."
-msgstr ""
-"Bistaratuko diren emaitza motak zehaztu, eta baita zein ordenetan antolatuko "
-"diren motaren arabera taldekatzean."
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Zure bilaketa-sarean sartu nahi dituzun eta sare-bilaketak gaituta dituzten urruneko ostalariak gehitu."
 
 #: ../tools/settings.glade.h:15
-msgid "Allow _external access to local search services"
-msgstr "Kanpo-sarr_era gaitu zure bilaketa-lokal zerbitzuetara"
+msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
+msgstr "Bistaratuko diren emaitza motak zehaztu, eta baita zein ordenetan antolatuko diren motaren arabera taldekatzean."
 
 #: ../tools/settings.glade.h:16
+msgid "Allow external access to local search services"
+msgstr "Kanpo-sarr_era gaitu bilaketa-lokal zerbitzuetara"
+
+#: ../tools/settings.glade.h:17
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "A_utomatikoki bilatu erabiltzaileak idazteari utzi ondoren"
+
+#: ../tools/settings.glade.h:19
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Display the search window by pressing:"
 msgstr "Bilaketa leihoa bistarazi hau sakatzean:"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
 msgid "Exclude Resource"
 msgstr "Baliabidea Baztertu"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:22
 msgid "Filename _pattern"
 msgstr "Fitxategi-izenaren _eredua"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:23
 msgid "I_ndex my home directory"
 msgstr "Nire _karpeta nagusia indexatu"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:24
+msgid "In order for you to perform Beagle searches on this computer, you must enter a password."
+msgstr "Pasahitza behar duzu ordenagailu honetan Beaglerekin bilaketak burutzeko."
+
+#: ../tools/settings.glade.h:25
+msgid "Index data while on _battery power"
+msgstr "Datuak indexatu _bateriarekin funtzionatzean ere"
+
+#: ../tools/settings.glade.h:26
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Indar gehiagorekin indexatu _Pantaila-babeslea aktibatuta dagoenean"
+
+#: ../tools/settings.glade.h:27
+msgid "Index name:"
+msgstr "Indize-izena:"
+
+#: ../tools/settings.glade.h:28
 msgid "Indexing"
 msgstr "Indexazioa"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:30
 msgid "Networking"
 msgstr "Sarea"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:32
+msgid "Password for {0}"
+msgstr "{0}-rnetzako pasahitza"
+
+#: ../tools/settings.glade.h:33
+msgid "Password:"
+msgstr "Pasahitza:"
+
+#: ../tools/settings.glade.h:34
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Mesedez, indexaziotik kanpo utzi nahi duzun baliabide bat hautatu."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:35
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr ""
-"Mesedez, indexaziotik kanpo utzi nahi duzun postaren direktorioa hautatu. "
+msgstr "Mesedez, indexaziotik kanpo utzi nahi duzun postaren direktorioa hautatu. "
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:36
+msgid "Require a password to search this computer remotely."
+msgstr "Pasahitza eskatu ordenagailu honetan urruneko-bilaketak egiteko."
+
+#: ../tools/settings.glade.h:37
 msgid "Search Preferences"
 msgstr "Bilaketaren Hobespenak"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:38
+msgid "Searching"
+msgstr "Bilatzen"
+
+#: ../tools/settings.glade.h:39
 msgid "Select Mail Folder"
 msgstr "Postaren Direktorioa Hautatu"
 
-#: ../tools/settings.glade.h:30
-msgid ""
-"Specify any resources, such as paths, patterns, mail folders or type of "
-"objects you wish to exclude from indexing."
-msgstr ""
-"Indexaziotik kanpo utzi nahi duzun edozein baliabide hautatu (bideak, "
-"ereduak, postaren direktorioak edo objektu motak)."
+#: ../tools/settings.glade.h:40
+msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
+msgstr "Indexaziotik kanpo utzi nahi duzun edozein baliabide hautatu (bideak, ereduak, postaren direktorioak edo objektu motak)."
 
-#: ../tools/settings.glade.h:31
-msgid "Specify paths that should be available for external access."
-msgstr ""
-"Kanpo-bilaketarako eskuragarri egon beharko litezkeen bideak zehaztu."
+#: ../tools/settings.glade.h:41
+msgid "This setting does not apply while on battery power."
+msgstr "Ezarpen hau ez da erabiliko bateriarekin funtzionatzean."
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:42
 msgid "Type:"
 msgstr "Mota:"
 
-#: ../tools/settings.glade.h:33
-msgid "_Address:"
-msgstr "_Helbidea:"
-
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:43
 msgid "_Allow Beagle to be run as root"
 msgstr "_Baimendu erro bezala erabiltzea Beagle"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:44
+msgid "_Browse..."
+msgstr "_Arakatu..."
+
+#: ../tools/settings.glade.h:45
+msgid "_Choose from a currently available hosts"
+msgstr "Oraintxe eskuragarri dauden ostalarien artetik _hautatu"
+
+#: ../tools/settings.glade.h:46
 msgid "_Folder path"
 msgstr "_Direktorioaren bidea"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:47
+msgid "_Hostname:"
+msgstr "_Ostalari-izena:"
+
+#: ../tools/settings.glade.h:48
 msgid "_Mail folder"
 msgstr "_Postaren direrektorioa"
 
-#: ../tools/settings.glade.h:37
-msgid "_Maximum number of results displayed:"
-msgstr "Bistarazitako _gehienezko emaitza kopurua:"
+#: ../tools/settings.glade.h:49
+msgid "_Password:"
+msgstr "_Pasahitza:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:50
 msgid "_Start search & indexing services automatically "
 msgstr "_Automatikoki abiarazi bilaketa eta indexazio zerbitzuak "
 
-#: ../tools/beagle-settings.desktop.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Mahaigaineko Bilaketa eta Indexazioa Konfiguratu"
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Mahaigaineko Bilaketa Konfiguratu"
 
-#: ../tools/beagle-settings.desktop.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Bilaketa eta indexazioaren propietateak konfiguratu"
-
-#: ../tools/beagle-settings.desktop.in.h:3
+#: ../tools/beagle-settings.desktop.in.in.h:2
 msgid "Search & Indexing"
 msgstr "Bilaketa eta Indexazioa"
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45
+#: ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Ordenagailu honetan"
 
-#: ../Util/ExifData.cs:226
+#: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
 msgstr "Irudien direktorioa"
 
-#: ../Util/ExifData.cs:228
+#: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
 msgstr "Koadro txikien direktorioa"
 
-#: ../Util/ExifData.cs:230
+#: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
 msgstr "Exif datuen direktorioa"
 
-#: ../Util/ExifData.cs:232
+#: ../Util/F-Spot/Exif.cs:254
 msgid "GPS Directory"
 msgstr "GPS direktorioa"
 
-#: ../Util/ExifData.cs:234
+#: ../Util/F-Spot/Exif.cs:256
 msgid "InterOperability Directory"
 msgstr "InterOperability direktorioa"
 
-#: ../Util/ExifData.cs:236
+#: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
 msgstr "Direktorio ezezaguna"
 
-#: ../Util/StringFu.cs:82
+#: ../Util/F-Spot/IptcFile.cs:175
+msgid "IPTC Information Interchange Model (IIM) Version number"
+msgstr "IPTC Information Interchange Model (IIM) bertsioaren zenbakia"
+
+#: ../Util/F-Spot/IptcFile.cs:177
+msgid "OSI Destination routing information"
+msgstr "OSI Helburu-bideratze informazioa"
+
+#: ../Util/F-Spot/IptcFile.cs:179
+msgid "IPTC file format"
+msgstr "IPTC fitxategi-formatua"
+
+#: ../Util/F-Spot/IptcFile.cs:181
+msgid "Identifies the provider and product"
+msgstr "Saltzailea eta produktua identifikatzen ditu"
+
+#: ../Util/F-Spot/IptcFile.cs:183
+msgid "A unique number identifying the envelope"
+msgstr "Gutun-azala identifikatzen duen zenbaki bakarra"
+
+#: ../Util/F-Spot/IptcFile.cs:185
+msgid "A unique number"
+msgstr "Zenbaki bakarra"
+
+#: ../Util/F-Spot/IptcFile.cs:187
+msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
+msgstr "Gutun-azalak kudeatzeko lehentasuna 1 (oso premiazkoa) eta 9 (premiarik ez) artean"
+
+#: ../Util/F-Spot/IptcFile.cs:189
+msgid "The year month and day (CCYYMMDD) the service sent the material"
+msgstr "Zerbitzuak materiala bidali zuen urte, hilabete eta eguna (CCAAMMDD)"
+
+#: ../Util/F-Spot/IptcFile.cs:191
+msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+msgstr "Zerbitzuak materiala bidali zuen ordu, minutu eta segundoa (HHMMSS+HHMM)"
+
+#: ../Util/F-Spot/IptcFile.cs:193
+msgid "The character set designation"
+msgstr "Karaktere-sorta izendatzea"
+
+#: ../Util/F-Spot/IptcFile.cs:195
+msgid "External globally unique object identifier"
+msgstr "Urruneko objektu-identifikatzaile global eta bakarra"
+
+#: ../Util/F-Spot/IptcFile.cs:200
+msgid "Abstract Relationship Method (ARM) identifier"
+msgstr "Abstract Relationship Method (ARM) identifikatzailea"
+
+#: ../Util/F-Spot/IptcFile.cs:202
+msgid "Abstract Relationship Method (ARM) version number."
+msgstr "Abstract Relationship Method (ARM) bertsio zenbakia."
+
+#: ../Util/F-Spot/IptcFile.cs:205
+msgid "Number identifying the IIM version this application record uses"
+msgstr "Aplikazio honen erregistroak darabilen IIM bertsioaren zenbakia"
+
+#: ../Util/F-Spot/IptcFile.cs:207
+msgid "Object type reference"
+msgstr "Objektu motaren erreferentzia"
+
+#: ../Util/F-Spot/IptcFile.cs:212
+msgid "Object attribute reference"
+msgstr "Objektuaren ezaugarrira erreferentzia"
+
+#: ../Util/F-Spot/IptcFile.cs:218
+#: ../Util/F-Spot/IptcFile.cs:222
+msgid "Object name"
+msgstr "Objektu-izena"
+
+#: ../Util/F-Spot/IptcFile.cs:220
+msgid "Status of the objectdata according to the provider"
+msgstr "Objektuen datuen egoera, hornitzailearen arabera"
+
+#: ../Util/F-Spot/IptcFile.cs:224
+msgid "Location within a city or area where the object originates"
+msgstr "Objektua sortzen den hiriaren edo eremuaren barneko kokapena"
+
+#: ../Util/F-Spot/IptcFile.cs:227
+msgid "Name of the city the content is focussing on"
+msgstr "Edukia fokatzen den hiriaren izena"
+
+#: ../Util/F-Spot/IptcFile.cs:230
+msgid "Copyright information for"
+msgstr "Copyright informazioa:"
+
+#: ../Util/F-Spot/IptcFile.cs:233
+msgid "Full name of the country of the focus of the content"
+msgstr "Edukia fokatzen den herrialdearen izen osoa"
+
+#: ../Util/F-Spot/IptcFile.cs:236
+msgid "Two or three letter ISO3166 code of the country of the focus of the content"
+msgstr "Edukia fokatzen den herrialdearen bi edo hiru hizkiko ISO3166 kodea"
+
+#: ../Util/F-Spot/IptcFile.cs:239
+msgid "Creator of the content"
+msgstr "Edukiaren sortzailea"
+
+#: ../Util/F-Spot/IptcFile.cs:242
+msgid "Provider of the object"
+msgstr "Objektuaren hornitzailea"
+
+#: ../Util/F-Spot/IptcFile.cs:245
+msgid "The title of the author or creator"
+msgstr "Autore edo sortzailearen izenburua"
+
+#: ../Util/F-Spot/IptcFile.cs:248
+msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
+msgstr "Objektuaren datuak edo epigrafea/laburpena idazten, editatzen edo zuzentzen duen pertsona"
+
+#: ../Util/F-Spot/IptcFile.cs:252
+msgid "Headline of the content"
+msgstr "Edukiaren Izenburua"
+
+#: ../Util/F-Spot/IptcFile.cs:255
+msgid "Instructions from the creator to the receiver not covered by other fields"
+msgstr "Sortzaileak hartzaileari beste eremuetan eman ez dizkion azalpenak"
+
+#: ../Util/F-Spot/IptcFile.cs:258
+msgid "Intellectual genre of the object"
+msgstr "Objektuaren genero intelektuala"
+
+#: ../Util/F-Spot/IptcFile.cs:271
+msgid "Unknown IIM DataSet"
+msgstr "IIM Datusorta Ezezaguna"
+
+#: ../Util/F-Spot/MetadataStore.cs:46
+msgid "Creator"
+msgstr "Sortzailea"
+
+#: ../Util/F-Spot/MetadataStore.cs:47
+msgid "Title"
+msgstr "Izenburua"
+
+#: ../Util/F-Spot/MetadataStore.cs:48
+msgid "Copyright"
+msgstr "Copyright"
+
+#: ../Util/F-Spot/MetadataStore.cs:49
+msgid "Subject and Keywords"
+msgstr "Gaia eta Gako-hitzak"
+
+#: ../Util/F-Spot/MetadataStore.cs:50
+msgid "Compression"
+msgstr "Konpresioa"
+
+#: ../Util/F-Spot/MetadataStore.cs:52
+msgid "Planar Configuration"
+msgstr "Konfigurazio Planarra"
+
+#: ../Util/F-Spot/MetadataStore.cs:54
+msgid "Orientation"
+msgstr "Orientazioa"
+
+#: ../Util/F-Spot/MetadataStore.cs:56
+msgid "Photometric Interpretation"
+msgstr "Interpretazio Photometrikoa"
+
+#: ../Util/F-Spot/MetadataStore.cs:58
+msgid "Resolution Unit"
+msgstr "Bereizmen Unitatea"
+
+#: ../Util/F-Spot/MetadataStore.cs:60
+msgid "Exposure Program"
+msgstr "Erakusketa Programa"
+
+#: ../Util/F-Spot/MetadataStore.cs:62
+msgid "Metering Mode"
+msgstr "Neurtze Modua"
+
+#: ../Util/F-Spot/MetadataStore.cs:64
+msgid "Exposure Mode"
+msgstr "Erakuste Modua"
+
+#: ../Util/F-Spot/MetadataStore.cs:66
+msgid "Custom Rendered"
+msgstr "Renderizatze Pertsonalizatua"
+
+#: ../Util/F-Spot/MetadataStore.cs:68
+msgid "Components Configuration"
+msgstr "Osagaien Konfigurazioa"
+
+#: ../Util/F-Spot/MetadataStore.cs:70
+msgid "Light Source"
+msgstr "Argi Iturria"
+
+#: ../Util/F-Spot/MetadataStore.cs:72
+msgid "Sensing Method"
+msgstr "Detekzio Modua"
+
+#: ../Util/F-Spot/MetadataStore.cs:74
+msgid "Color Space"
+msgstr "Kolore Gunea"
+
+#: ../Util/F-Spot/MetadataStore.cs:76
+msgid "White Balance"
+msgstr "Zuriaren Balantzea"
+
+#: ../Util/F-Spot/MetadataStore.cs:78
+msgid "Focal Plane Resolution Unit"
+msgstr "Planu Fokalaren Bereizmen Unitatea"
+
+#: ../Util/F-Spot/MetadataStore.cs:80
+msgid "File Source Type"
+msgstr "Fitxategiaren Jatorri Mota"
+
+#: ../Util/F-Spot/MetadataStore.cs:82
+msgid "Scene Capture Type"
+msgstr "Eszenaren Kaptura Mota"
+
+#: ../Util/F-Spot/MetadataStore.cs:84
+msgid "Gain Control"
+msgstr "Irabaztearen Kontrola"
+
+#: ../Util/F-Spot/MetadataStore.cs:86
+msgid "Contrast"
+msgstr "Kontrastea"
+
+#: ../Util/F-Spot/MetadataStore.cs:88
+msgid "Saturation"
+msgstr "Asetasuna"
+
+#: ../Util/F-Spot/MetadataStore.cs:90
+msgid "Sharpness"
+msgstr "Gardentasuna"
+
+#: ../Util/F-Spot/MetadataStore.cs:92
+msgid "Scene Type"
+msgstr "Eszena Mota"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:120
 msgid "MMM d"
 msgstr "MMM d"
 
-#: ../Util/StringFu.cs:85
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:123
 msgid "MMM d, yyyy"
 msgstr "yyyy MMM d"
 
-#: ../Util/StringFu.cs:88
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:126
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
-#: ../Util/StringFu.cs:94
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:132
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
-#: ../Util/StringFu.cs:111
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:149
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Gaur, {0}"
 
-#: ../Util/StringFu.cs:114
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:152
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Atzo, {0}"
 
-#: ../Util/StringFu.cs:117
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:157
 #, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "Orain dela {0} egun, {1}"
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "Orain dela {0} egun, {1}"
+msgstr[1] "Orain dela {0} egun, {1}"
 
-#: ../Util/StringFu.cs:122
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:163
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM d, h:mm tt"
 
-#: ../Util/StringFu.cs:127
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:168
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy MMMM d, h:mm tt"
 
-#: ../Util/StringFu.cs:137
+#: ../Util/StringFu.cs:178
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "Ordu {0}"
 msgstr[1] "{0} ordu"
 
-#: ../Util/StringFu.cs:144
+#: ../Util/StringFu.cs:185
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
 msgstr[0] "Minutu {0}"
 msgstr[1] "{0} minutu"
 
-#: ../Util/StringFu.cs:160
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:219
 #, csharp-format
-msgid "{0} bytes"
-msgstr "{0} byte"
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} byte"
 
-#: ../Util/StringFu.cs:164
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:223
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
-#: ../Util/StringFu.cs:167
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:226
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
