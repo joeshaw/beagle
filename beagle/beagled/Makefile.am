@@ -299,6 +299,7 @@ FILE_SYSTEM_QUERYABLE_CSFILES =					\
 
 pidginqueryable = $(srcdir)/PidginQueryable
 PIDGIN_QUERYABLE_CSFILES =					\
+	$(pidginqueryable)/PidginIndexableGenerator.cs		\
 	$(pidginqueryable)/PidginQueryable.cs
 
 tomboyqueryable = $(srcdir)/TomboyQueryable

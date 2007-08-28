@@ -25,10 +25,11 @@
 //
 
 using System;
-using System.Collections;
 using System.IO;
 using System.Text;
 using System.Threading;
+using System.Collections;
+using System.Collections.Generic;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -36,25 +37,24 @@ using Beagle.Util;
 namespace Beagle.Daemon.PidginQueryable {
 
 	[QueryableFlavor (Name="Pidgin", Domain=QueryDomain.Local, RequireInotify=false)]
-	public class PidginQueryable : LuceneFileQueryable, IIndexableGenerator {
+	public class PidginQueryable : LuceneFileQueryable {
 
-		private string config_dir, log_dir, icons_dir;
-		private int polling_interval_in_seconds = 60;
 		private PidginBuddyListReader list = new PidginBuddyListReader ();
+		private const uint polling_interval = 60000;
 
 		public PidginQueryable () : base ("PidginIndex")
 		{
-			config_dir = Path.Combine (PathFinder.HomeDir, ".gaim");
-			log_dir = Path.Combine (config_dir, "logs");
-			icons_dir = Path.Combine (config_dir, "icons");
 		}
 
 		/////////////////////////////////////////////////
 					
 		private void StartWorker() 
-		{	
-			if (! Directory.Exists (log_dir)) {
-				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForExistence));
+		{
+			bool gaim_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".gaim"));
+			bool pidgin_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".purple"));
+
+			if (!pidgin_exists && !gaim_exists) {
+				GLib.Timeout.Add (polling_interval, new GLib.TimeoutHandler (CheckForExistence));
 				return;
 			}
 
@@ -62,250 +62,40 @@ namespace Beagle.Daemon.PidginQueryable {
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
-
-			if (Inotify.Enabled) {
-				Log.Info ("Setting up inotify watches on Pidgin log directories");
-				Crawl (false);
+			
+			if (gaim_exists) {
+				new PidginIndexableGenerator (this, Path.Combine (PathFinder.HomeDir, ".gaim"));
 			}
 
-			Scheduler.Task task;
-			task = NewAddTask (this);
-			task.Tag = "Crawling Gaim logs";
-			task.Source = this;
-
-			if (!Inotify.Enabled) {
-				Scheduler.TaskGroup group = Scheduler.NewTaskGroup ("Repeating Pidgin log crawler", null, AddCrawlTask);
-				task.AddTaskGroup (group);
+			if (pidgin_exists) {
+				new PidginIndexableGenerator (this, Path.Combine (PathFinder.HomeDir, ".purple"));
 			}
-
-			ThisScheduler.Add (task);
 
 			stopwatch.Stop ();
-
-			Log.Info ("Pidgin log backend worker thread done in {0}", stopwatch); 
+			
+			Log.Info ("Pidgin log backend worker started in {0}", stopwatch); 
 		}
 		
 		public override void Start () 
 		{
 			base.Start ();
-			
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 
-		/////////////////////////////////////////////////
-
-		private void AddCrawlTask ()
-		{
-			Scheduler.Task task = Scheduler.TaskFromHook (new Scheduler.TaskHook (CrawlHook));
-			task.Tag = "Crawling ~/.gaim/logs to find new logfiles";
-			task.Source = this;
-			ThisScheduler.Add (task);
-		}
-
-		private void CrawlHook (Scheduler.Task task)
-		{
-			Crawl (true);
-			task.Reschedule = true;
-			task.TriggerTime = DateTime.Now.AddSeconds (polling_interval_in_seconds);
-		}
-
-		private void Crawl (bool index)
-		{
-			this.IsIndexing = true;
-
-			if (Inotify.Enabled)
-				Inotify.Subscribe (log_dir, OnInotifyNewProtocol, Inotify.EventType.Create);
-
-			// Walk through protocol subdirs
-			foreach (string proto_dir in DirectoryWalker.GetDirectories (log_dir))
-				CrawlProtocolDirectory (proto_dir, index);
-		}
-
-		private void CrawlProtocolDirectory (string proto_dir, bool index)
-		{
-			if (Inotify.Enabled)
-				Inotify.Subscribe (proto_dir, OnInotifyNewAccount, Inotify.EventType.Create);
-
-			// Walk through accounts
-			foreach (string account_dir in DirectoryWalker.GetDirectories (proto_dir))
-				CrawlAccountDirectory (account_dir, index);
-		}
-
-		private void CrawlAccountDirectory (string account_dir, bool index)
-		{
-			if (Inotify.Enabled)
-				Inotify.Subscribe (account_dir, OnInotifyNewRemote, Inotify.EventType.Create);
-
-			// Walk through remote user conversations
-			foreach (string remote_dir in DirectoryWalker.GetDirectories (account_dir)) {
-				if (remote_dir.IndexOf (".system") < 0)
-					CrawlRemoteDirectory (remote_dir, index);
-			}
-		}
-
-		private void CrawlRemoteDirectory (string remote_dir, bool index)
-		{
-			if (Inotify.Enabled)
-				Inotify.Subscribe (remote_dir, OnInotifyNewConversation, Inotify.EventType.CloseWrite | Inotify.EventType.Modify);
-
-			if (index) {
-				foreach (FileInfo file in DirectoryWalker.GetFileInfos (remote_dir))
-					if (FileIsInteresting (file.Name))
-						IndexLog (file.FullName, Scheduler.Priority.Delayed);
-
-				IsIndexing = false;
-			}
-		}
-
-		/////////////////////////////////////////////////
-
-		public string StatusName {
-			get { return "PidginQueryable"; }
-		}
-
-		private IEnumerator log_files = null;
-
-		public void PostFlushHook () { }
-
-		public bool HasNextIndexable ()
-		{
-			if (log_files == null)
-				log_files = DirectoryWalker.GetFileInfosRecursive (log_dir).GetEnumerator ();
-
-			if (log_files.MoveNext ())
-				return true;
-			else {
-				IsIndexing = false;
-				return false;
-			}
-		}
-
-		public Indexable GetNextIndexable ()
-		{
-			FileInfo file = (FileInfo) log_files.Current;
-
-			if (! file.Exists)
-				return null;
-
-			if (IsUpToDate (file.FullName))
-				return null;
-
-			Indexable indexable = PidginLogToIndexable (file.FullName);
-			
-			return indexable;
-		}
-
-		/////////////////////////////////////////////////
-
 		private bool CheckForExistence ()
 		{
-			if (!Directory.Exists (log_dir))
-				return true;
+			bool gaim_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".gaim"));
+			bool pidgin_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".purple"));
 
-			this.Start ();
-
-			return false;
-		}
-
-		private bool FileIsInteresting (string filename)
-		{
-			if (filename.Length < 21)
+			if (gaim_exists || pidgin_exists) {
+				this.Start ();
 				return false;
+			}
 
-			string ext = Path.GetExtension (filename);
-			if (ext != ".txt" && ext != ".html")
-				return false;
-
-			// Pre-gaim 2.0.0 logs are in the format "2005-07-22.161521.txt".  Afterward a
-			// timezone field as added, ie. "2005-07-22.161521-0500EST.txt".
-			//
-			// This is a lot uglier than a regexp, but they are so damn expensive.
-
-			return Char.IsDigit (filename [0]) && Char.IsDigit (filename [1])
-				&& Char.IsDigit (filename [2]) && Char.IsDigit (filename [3])
-				&& filename [4] == '-'
-				&& Char.IsDigit (filename [5]) && Char.IsDigit (filename [6])
-				&& filename [7] == '-'
-				&& Char.IsDigit (filename [8]) && Char.IsDigit (filename [9])
-				&& filename [10] == '.'
-				&& Char.IsDigit (filename [11]) && Char.IsDigit (filename [12])
-				&& Char.IsDigit (filename [13]) && Char.IsDigit (filename [14])
-				&& Char.IsDigit (filename [15]) && Char.IsDigit (filename [16])
-				&& (filename [17] == '+' || filename [17] == '-' || filename [17] == '.');
+			return true;
 		}
 
 		/////////////////////////////////////////////////
-
-		private void OnInotifyNewProtocol (Inotify.Watch watch,
-						string path, string subitem, string srcpath,
-						Inotify.EventType type)
-		{
-			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
-				return;
-
-			CrawlProtocolDirectory (Path.Combine (path, subitem), true);
-		}
-
-		private void OnInotifyNewAccount (Inotify.Watch watch,
-						string path, string subitem, string srcpath,
-						Inotify.EventType type)
-		{
-			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
-				return;
-
-			CrawlAccountDirectory (Path.Combine (path, subitem), true);
-		}
-
-		private void OnInotifyNewRemote (Inotify.Watch watch,
-						string path, string subitem, string srcpath,
-						Inotify.EventType type)
-		{
-			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) == 0)
-				return;
-
-			CrawlRemoteDirectory (Path.Combine (path, subitem), true);
-		}
-
-		private void OnInotifyNewConversation (Inotify.Watch watch,
-						string path, string subitem, string srcpath,
-						Inotify.EventType type)
-		{
-			if (subitem.Length == 0 || (type & Inotify.EventType.IsDirectory) != 0)
-				return;
-
-			if (FileIsInteresting (subitem))
-				IndexLog (Path.Combine (path, subitem), Scheduler.Priority.Immediate);			
-		}
-
-		/////////////////////////////////////////////////
-		
-		private static Indexable PidginLogToIndexable (string filename)
-		{
-			Uri uri = UriFu.PathToFileUri (filename);
-			Indexable indexable = new Indexable (uri);
-			indexable.ContentUri = uri;
-			indexable.Timestamp = File.GetLastWriteTimeUtc (filename);
-			indexable.MimeType = "beagle/x-pidgin-log";
-			indexable.HitType = "IMLog";
-			indexable.CacheContent = false;
-
-			return indexable;
-		}
-
-		private void IndexLog (string filename, Scheduler.Priority priority)
-		{
-			if (! File.Exists (filename))
-				return;
-
-			if (IsUpToDate (filename))
-				return;
-
-			Indexable indexable = PidginLogToIndexable (filename);
-			Scheduler.Task task = NewAddTask (indexable);
-			task.Priority = priority;
-			task.SubPriority = 0;
-			ThisScheduler.Add (task);
-		}
 
 		protected override double RelevancyMultiplier (Hit hit)
 		{
@@ -314,19 +104,11 @@ namespace Beagle.Daemon.PidginQueryable {
 
 		protected override bool HitFilter (Hit hit) 
 		{
-			// If the protocol isn't set (because maybe we got an
-			// exception while we were indexing), this isn't a
-			// valid hit.
-			if (hit ["fixme:protocol"] == null) {
-				Log.Warn ("Discarding IM log hit with missing protocol info: {0}", hit.Uri);
-				return false;
-			}
-
 			string speakingto = hit ["fixme:speakingto"];
 
 			// We have no idea who we're speaking to.  Bad, but we
 			// still want to present it.
-			if (speakingto == null || speakingto == String.Empty)
+			if (String.IsNullOrEmpty (speakingto))
 				return true;
 
 			ImBuddy buddy = list.Search (speakingto);
@@ -338,9 +120,9 @@ namespace Beagle.Daemon.PidginQueryable {
 			
 			if (buddy.Alias != "")
  				hit.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
- 				
+			
  			if (buddy.BuddyIconLocation != "")
- 				hit.AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", Path.Combine (icons_dir, buddy.BuddyIconLocation)));
+ 				hit.AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", buddy.BuddyIconLocation));
 			
 			return true;
 		}

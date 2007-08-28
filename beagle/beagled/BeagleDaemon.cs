@@ -539,7 +539,7 @@ namespace Beagle.Daemon {
 		{
 			if (prev_on_battery && (! SystemInformation.UsingBattery || Conf.Indexing.IndexOnBattery)) {
 				if (! SystemInformation.UsingBattery)
-					Log.Info ("Deletected a switch from battery to AC power.  Restarting scheduler.");
+					Log.Info ("Detected a switch from battery to AC power.  Restarting scheduler.");
 				Scheduler.Global.Start ();
 				prev_on_battery = false;
 			} else if (! prev_on_battery && SystemInformation.UsingBattery && ! Conf.Indexing.IndexOnBattery) {

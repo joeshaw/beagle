@@ -104,16 +104,31 @@ namespace Beagle.Util {
 	
 	public class PidginBuddyListReader : ImBuddyListReader {
 
+		private string icons_dir = null;
 		private string buddy_list_path = null;
-		private string buddy_list_dir = null;
 		private DateTime buddy_list_last_write;
 		private uint timeout_id;
 
 		public PidginBuddyListReader ()
 		{
-			string home = Environment.GetEnvironmentVariable ("HOME");
-			buddy_list_dir = Path.Combine (home, ".gaim");
-			buddy_list_path = Path.Combine (buddy_list_dir, "blist.xml");
+			string buddy_list_dir = Path.Combine (PathFinder.HomeDir, ".gaim");
+
+			if (Directory.Exists (Path.Combine (PathFinder.HomeDir, ".purple")))
+				buddy_list_dir = Path.Combine (PathFinder.HomeDir, ".purple");
+
+			this.icons_dir = Path.Combine (buddy_list_dir, "icons");
+			this.buddy_list_path = Path.Combine (buddy_list_dir, "blist.xml");
+			
+			if (File.Exists (buddy_list_path))
+				Read ();
+			
+			// Poll the file once every minute
+			timeout_id = GLib.Timeout.Add (60000, new GLib.TimeoutHandler (ReadTimeoutHandler));
+		}
+
+		public PidginBuddyListReader (string buddy_list_dir)
+		{
+			this.buddy_list_path = Path.Combine (buddy_list_dir, "blist.xml");
 			
 			if (File.Exists (buddy_list_path))
 				Read ();
@@ -209,9 +224,9 @@ namespace Beagle.Util {
 				case "setting":
 					foreach (XmlAttribute subattr in attr.Attributes) {
 						if (subattr.Name == "name" && subattr.Value == "buddy_icon") {
-							iconlocation = attr.InnerText;
+							iconlocation = Path.Combine (icons_dir, attr.InnerText);
 						} else if (subattr.Name == "name" && subattr.Value == "icon_checksum") {
-								iconchecksum = attr.InnerText;
+							iconchecksum = attr.InnerText;
 						}
 					}
 					break;
