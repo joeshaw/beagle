@@ -35,13 +35,13 @@ namespace Beagle.Daemon {
 
 	public class RemoteIndexerRequest : RequestMessage {
 
-		public string         RemoteIndexName;
-		public int            RemoteIndexMinorVersion;
+		public string RemoteIndexName;
+		public int RemoteIndexMinorVersion;
 		public IndexerRequest Request;
 
 		public RemoteIndexerRequest ()
+			: base (new UnixTransport ("socket-helper"))
 		{
-			RegisterTransport (new UnixTransport ("socket-helper"));
 		}
 	}
 }

@@ -75,9 +75,17 @@ namespace Beagle {
 
 		public event Closed ClosedEvent;
 
+		public RequestMessage (Transport transport)
+		{
+			this.RegisterTransport (transport);
+		}
+
 		public RequestMessage (bool keepalive)
 		{
 			this.keepalive = keepalive;
+
+			// Register the Unix socket transport by default
+			this.RegisterTransport (new UnixTransport ());
 		}
 
 		public RequestMessage ()

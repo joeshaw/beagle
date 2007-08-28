@@ -77,8 +77,6 @@ namespace Beagle {
 
 		public Query () : base (true)
 		{
-			this.RegisterTransport (new UnixTransport ());
-
 			this.RegisterAsyncResponseHandler (typeof (HitsAddedResponse), OnHitsAdded);
 			this.RegisterAsyncResponseHandler (typeof (HitsSubtractedResponse), OnHitsSubtracted);
 			this.RegisterAsyncResponseHandler (typeof (FinishedResponse), OnFinished);
