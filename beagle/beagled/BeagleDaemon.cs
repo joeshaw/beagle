@@ -68,8 +68,7 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting messaging server");
 
 			try {
-				// FIXME: Start the HTTP server automatically?
-				server = new Server ("socket", true);
+				server = new Server ("socket", Conf.Networking.ServiceEnabled);
 				server.Start ();
 			} catch (InvalidOperationException) {
 				return false;
