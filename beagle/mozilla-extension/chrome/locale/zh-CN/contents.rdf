@@ -4,23 +4,23 @@
 
 <!-- list all the packages being supplied by this jar -->
 <RDF:Seq about="urn:mozilla:locale:root">
-  <RDF:li resource="urn:mozilla:locale:en-US" />
+  <RDF:li resource="urn:mozilla:locale:zh-CN" />
 </RDF:Seq>
 
 <!-- locale information -->
-<RDF:Description about="urn:mozilla:locale:en-US"
+<RDF:Description about="urn:mozilla:locale:zh-CN"
   chrome:displayName="English(US)"
   chrome:author="Filia Tao"
-  chrome:name="en-US">
+  chrome:name="zh-CN">
   <chrome:packages>
-    <RDF:Seq about="urn:mozilla:locale:en-US:packages">
-      <RDF:li resource="urn:mozilla:locale:en-US:beagle" />
+    <RDF:Seq about="urn:mozilla:locale:zh-CN:packages">
+      <RDF:li resource="urn:mozilla:locale:zh-CN:beagle" />
     </RDF:Seq>
   </chrome:packages>
 </RDF:Description>
 
 <!-- version information -->
-<RDF:Description about="urn:mozilla:locale:en-US:beagle"
+<RDF:Description about="urn:mozilla:locale:zh-CN:beagle"
   chrome:localeVersion="1.4" />
 
 </RDF:RDF>
