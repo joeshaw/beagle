@@ -22,9 +22,9 @@
   
   <RDF:Description 
     RDF:about="urn:mozilla:package:beagle"
-    chrome:displayName="Beagle Indexer 0.1"
-    chrome:author="Alex Graveley"
-    chrome:authorURL="mailto:alex@hungry.com"
+    chrome:displayName="Beagle Indexer 0.2"
+    chrome:author="Filia Tao"
+    chrome:authorURL="mailto:filia.tao@gmail.com"
     chrome:name="beagle"
     chrome:extension="true"
     chrome:description="Index webpages you visit using the Beagle Indexing Engine."
