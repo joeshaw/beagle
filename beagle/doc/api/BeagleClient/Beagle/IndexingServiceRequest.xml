@@ -51,11 +51,6 @@
     <Member MemberName="Source">
       <MemberSignature Language="C#" Value="public string Source { set; get; };" />
       <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
-        </Attribute>
-      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>

@@ -21,6 +21,11 @@ SUBDIRS +=			\
 	beagled                 \
 	Filters
 
+if BUILD_DOCS
+SUBDIRS +=			\
+	doc
+endif
+
 if ENABLE_GUI
 SUBDIRS +=			\
 	images			\
