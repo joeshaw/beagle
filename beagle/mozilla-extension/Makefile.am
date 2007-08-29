@@ -1,56 +1,57 @@
 
 PROJECT = beagle
-VERSION = 0.1
+VERSION = 1.0.1
 
 all: $(PROJECT).xpi
 
-INNER_JAR_FILES = 			\
-	content/contents.rdf		\
-	content/about.xul		\
-	content/beagleOverlay.css	\
-	content/beagleOverlay.js	\
-	content/beagleOverlay.xul	\
-	content/beaglePrefs.js		\
-	content/beaglePrefs.xul		\
-	content/beagleAddDomainDialog.xul	\
-	content/md5.js			\
-	\
-	content/jslib/jslib.js		\
-	content/jslib/modules.js	\
-	content/jslib/debug/debug.js	\
-	content/jslib/io/dir.js		\
-	content/jslib/io/dirUtils.js	\
-	content/jslib/io/file.js	\
-	content/jslib/io/fileUtils.js	\
-	content/jslib/io/filesystem.js	\
-	\
-	locale/en-US/contents.rdf	\
-	locale/en-US/beagle.dtd		\
-	locale/en-US/beagle.properties	\
-	\
-	skin/classic/contents.rdf	\
-	skin/classic/beagle-big.png	\
-	skin/classic/beagle-disabled.png\
-	skin/classic/beagle-error.png	\
-	skin/classic/beagle.png
-
-OUTER_XPI_FILES = 		\
+XPI_FILES = 			\
 	chrome.manifest		\
 	install.rdf		\
-	chrome/$(PROJECT).jar
+	chrome/content/contents.rdf		\
+	chrome/content/beagleOverlay.js	\
+	chrome/content/beagleOverlay.xul	\
+	chrome/content/beaglePrefs.js		\
+	chrome/content/beaglePrefs.xul		\
+	chrome/content/beagleAddFilter.xul	\
+	chrome/content/beagleAddFilter.js	\
+	chrome/content/indexLink.xul	\
+	chrome/content/indexLink.js	\
+	chrome/content/indexBookmark.js	\
+	chrome/content/md5.js			\
+	chrome/content/utils.js	\
+	chrome/content/i18n.js	\
+	chrome/content/json.js	\
+	\
+	chrome/content/jslib/jslib.js		\
+	chrome/content/jslib/modules.js	\
+	chrome/content/jslib/debug/debug.js	\
+	chrome/content/jslib/io/dir.js		\
+	chrome/content/jslib/io/dirUtils.js	\
+	chrome/content/jslib/io/file.js	\
+	chrome/content/jslib/io/fileUtils.js	\
+	chrome/content/jslib/io/filesystem.js	\
+	\
+	chrome/locale/en-US/contents.rdf	\
+	chrome/locale/en-US/beagle.dtd		\
+	chrome/locale/en-US/beagle.properties	\
+	\
+	chrome/locale/zh-CN/contents.rdf	\
+	chrome/locale/zh-CN/beagle.dtd		\
+	chrome/locale/zh-CN/beagle.properties	\
+	\
+	chrome/skin/classic/contents.rdf	\
+	chrome/skin/classic/beagle-big.png	\
+	chrome/skin/classic/beagle-disabled.png\
+	chrome/skin/classic/beagle-error.png	\
+	chrome/skin/classic/beagle.png\
+	chrome/skin/classic/overlay.css	
 
-chrome/$(PROJECT).jar: $(INNER_JAR_FILES)
-	-@mkdir -p chrome
-	zip -q9 $@ $^
-
-$(PROJECT).xpi: $(OUTER_XPI_FILES)
+$(PROJECT).xpi: $(XPI_FILES)
 	zip -q9 $@ $^
 
 
 EXTRA_DIST =			\
-	$(INNER_JAR_FILES)	\
-	$(OUTER_XPI_FILES)
+	$(XPI_FILES)
 
 CLEANFILES =			\
-	chrome/$(PROJECT).jar	\
 	$(PROJECT).xpi
