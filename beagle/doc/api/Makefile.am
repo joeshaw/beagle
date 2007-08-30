@@ -12,7 +12,7 @@ if BUILD_DOCS
 SOURCESDIR=$(srcdir)
 TARGETS=beagle-docs.zip beagle-docs.tree beagle-docs.source
 
-monodocdir=$(SOURCESDIR)
+monodocdir=$(prefix)/lib/monodoc/sources
 monodoc_DATA=$(TARGETS)
 
 assemble: beagle-docs.zip beagle-docs.tree
