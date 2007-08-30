@@ -183,8 +183,6 @@ namespace Beagle.Filters {
 			if (file != null)
 				file.Dispose ();
 			
-			Log.Debug ("File should be closed now or very shortly.");
-			
 			// FIXME: Uncomment this when Shutdown() is available in gsf#
 			// Gsf.Global.Shutdown ();
 		}

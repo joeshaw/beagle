@@ -146,6 +146,8 @@ namespace Beagle.Filters {
 
 		override protected void DoClose ()
 		{
+			base.DoClose ();
+
 			if (! pull_started)
 				return;
 
