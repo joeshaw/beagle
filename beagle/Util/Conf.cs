@@ -476,7 +476,7 @@ namespace Beagle.Util {
 				set { index_home_dir = value; }
 			}
 
-			private bool index_on_battery = true;
+			private bool index_on_battery = false;
 			public bool IndexOnBattery {
 				get { return index_on_battery; }
 				set { index_on_battery = value; }
