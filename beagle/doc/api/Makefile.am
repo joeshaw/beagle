@@ -17,8 +17,10 @@ monodoc_DATA=$(TARGETS)
 
 assemble: beagle-docs.zip beagle-docs.tree
 
-beagle-docs.zip beagle-docs.tree: $(srcdir)/BeagleClient/*/*.xml $(srcdir)/BeagleClient/*.xml
+beagle-docs.zip: $(srcdir)/BeagleClient/*/*.xml $(srcdir)/BeagleClient/*.xml
 	$(MDASSEMBLER) --ecma $(srcdir)/BeagleClient --out beagle-docs
+
+beagle-docs.tree: beagle-docs.zip
 
 update-docs:
 	MONO_PATH=$(top_builddir)/Util $(UPDATER)
