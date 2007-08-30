@@ -41,7 +41,7 @@ fi
 AC_PATH_PROG(BASH, bash)
 AC_SUBST(BASH)
 
-# mozilla extension uses zip to create the jar/xpi files
+# firefox extension uses zip to create the jar/xpi files
 AC_PATH_PROG(ZIP, zip, no)
 if test "x$ZIP" = "xno"; then
 	AC_MSG_ERROR([You need to install the zip program])
@@ -641,7 +641,7 @@ search/Makefile
 search/beagle-search.desktop.in
 ImLogViewer/Makefile
 epiphany-extension/Makefile
-mozilla-extension/Makefile
+firefox-extension/Makefile
 thunderbird-extension/Makefile
 doc/Makefile
 doc/api/Makefile
@@ -669,9 +669,9 @@ echo "
 	wv1?			  ${enable_wv1}
 	libchm?			  ${has_libchm} 
 
-	Mozilla Extension?	  yes
+	Firefox Extension?	  yes
 	Epiphany Extension?	  ${enable_epiphany_extension}
-	Thunderbird backend? 	  ${enable_tbird}
+	Thunderbird Extension? 	  ${enable_tbird}
 
 	Local taglib-sharp?       ${internal_taglib}
 	Local SqliteClient?	  ${use_local_sqlite}
@@ -679,6 +679,8 @@ echo "
 
 	Monitor screensaver       ${have_xss}
 	beagle-search GUI	  ${enable_gui}
+
+	Build docs?               ${with_docs}
 "
 echo
 

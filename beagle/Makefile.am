@@ -34,7 +34,7 @@ SUBDIRS +=			\
 endif
 
 SUBDIRS +=			\
-	mozilla-extension	\
+	firefox-extension	\
 	tools
 
 if ENABLE_EPIPHANY_EXTENSION
