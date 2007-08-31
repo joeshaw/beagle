@@ -1,0 +1,32 @@
+#beagle extension for epiphany (python version) config file
+
+#auto index  (True or False)
+#turn this off , if you only want to index the page when you
+#click the menu item
+auto_index = True
+
+#prompt for keyword when on-demand index
+prompt_keyword = False
+
+#default action is index ?(True or False)
+default_index=True
+
+#white list first ?  (True or False)
+#when a ur match both black list and white list
+whitelist_first=True
+
+#index https pages (True or False)
+index_https=True
+
+#black list (regular expression list)
+#a line for a regular expression
+#alwasy add a ',' at the end of the line
+blacklist = [
+'.*debian.org*',
+'.*not_index_this_site_another.com.*',
+]
+
+#white list (regular expression list)
+whitelist=[
+'.*google.com.*',
+]

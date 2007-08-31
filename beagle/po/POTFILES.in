@@ -4,6 +4,8 @@
 ContactViewer/ContactViewer.cs
 ContactViewer/ContactWindow.cs
 ContactViewer/contactviewer.glade
+epiphany-extension/beagle.ephy-extension.in
+epiphany-extension/beagle.py.in
 ImLogViewer/ImLogViewer.cs
 ImLogViewer/ImLogViewer.glade
 ImLogViewer/ImLogWindow.cs

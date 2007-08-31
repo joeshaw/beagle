@@ -1677,3 +1677,35 @@ msgstr "{0:0.0} KB"
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
+#: beagleIndexer.py:159
+msgid "beagle is indexing %s"
+msgstr "beagle 正在索引 %s"
+
+#: beagleIndexer.py:179
+msgid "beagle is indexing link %s"
+msgstr "beagle 正在索引链接 %s"
+
+#: beagleIndexer.py:214
+msgid "Index This Page"
+msgstr "索引当前页面"
+
+#: beagleIndexer.py:216
+msgid "Index Link"
+msgstr "索引链接"
+
+#: beagleIndexer.py:218
+msgid "Reload Config File"
+msgstr "重新加载配置文件"
+
+#: beagleIndexer.py:222
+msgid "Auto Index"
+msgstr "自动索引"
+
+#: beagleIndexer.py:224
+msgid "Prompt key words when index on demand"
+msgstr "按需索引时提示输入关键字"
+
+#: beagleIndexer.py:245
+msgid "Extra keywords to index"
+msgstr "要索引的关键字"
+
