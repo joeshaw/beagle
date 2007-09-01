@@ -1,5 +1,5 @@
 <!-- ##### SECTION Title ##### -->
-beagle-indexable
+BeagleIndexable
 
 <!-- ##### SECTION Short_Description ##### -->
 
@@ -22,6 +22,15 @@ beagle-indexable
 
 </para>
 
+
+<!-- ##### ENUM BeagleIndexableType ##### -->
+<para>
+
+</para>
+
+@BEAGLE_INDEXABLE_TYPE_ADD: 
+@BEAGLE_INDEXABLE_TYPE_REMOVE: 
+@BEAGLE_INDEXABLE_TYPE_PROPERTY_CHANGE: 
 
 <!-- ##### ENUM BeagleIndexableFiltering ##### -->
 <para>
@@ -59,6 +68,24 @@ beagle-indexable
 @prop: 
 
 
+<!-- ##### FUNCTION beagle_indexable_get_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_type ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@type: 
+
+
 <!-- ##### FUNCTION beagle_indexable_get_uri ##### -->
 <para>
 
@@ -75,6 +102,24 @@ beagle-indexable
 
 @indexable: 
 @uri: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_parent_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_parent_uri ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@parent_uri: 
 
 
 <!-- ##### FUNCTION beagle_indexable_get_content_uri ##### -->
@@ -111,6 +156,24 @@ beagle-indexable
 
 @indexable: 
 @hot_content_uri: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_timestamp ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_indexable_set_timestamp ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@timestamp: 
 
 
 <!-- ##### FUNCTION beagle_indexable_get_delete_content ##### -->
@@ -203,7 +266,7 @@ beagle-indexable
 @filtering: 
 
 
-<!-- ##### FUNCTION beagle_indexable_get_type ##### -->
+<!-- ##### FUNCTION beagle_indexable_get_hit_type ##### -->
 <para>
 
 </para>
@@ -212,13 +275,13 @@ beagle-indexable
 @Returns: 
 
 
-<!-- ##### FUNCTION beagle_indexable_set_type ##### -->
+<!-- ##### FUNCTION beagle_indexable_set_hit_type ##### -->
 <para>
 
 </para>
 
 @indexable: 
-@type: 
+@hit_type: 
 
 
 <!-- ##### FUNCTION beagle_indexable_get_mime_type ##### -->
@@ -237,5 +300,14 @@ beagle-indexable
 
 @indexable: 
 @mime_type: 
+
+
+<!-- ##### FUNCTION beagle_indexable_get_source ##### -->
+<para>
+
+</para>
+
+@indexable: 
+@Returns: 
 
 

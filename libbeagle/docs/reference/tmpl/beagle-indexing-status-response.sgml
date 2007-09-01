@@ -1,5 +1,5 @@
 <!-- ##### SECTION Title ##### -->
-BeagleHitsAddedResponse
+BeagleIndexingStatusResponse
 
 <!-- ##### SECTION Short_Description ##### -->
 
@@ -17,22 +17,13 @@ BeagleHitsAddedResponse
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### STRUCT BeagleHitsAddedResponse ##### -->
+<!-- ##### STRUCT BeagleIndexingStatusResponse ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### FUNCTION beagle_hits_added_response_get_hits ##### -->
-<para>
-
-</para>
-
-@response: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hits_added_response_get_num_matches ##### -->
+<!-- ##### FUNCTION beagle_indexing_status_response_is_indexing ##### -->
 <para>
 
 </para>

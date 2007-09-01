@@ -46,15 +46,3 @@ BeagleRequest
 @beaglerequest: the object which received the signal.
 @arg1: 
 
-<!-- ##### STRUCT BeagleRequestClass ##### -->
-<para>
-
-</para>
-
-@parent_class: 
-@response_types: 
-@to_xml: 
-@closed: 
-@response: 
-@error: 
-

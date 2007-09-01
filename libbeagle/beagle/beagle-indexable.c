@@ -410,7 +410,7 @@ beagle_indexable_get_type (BeagleIndexable *indexable)
 /**
  * beagle_indexable_set_type:
  * @indexable: a #BeagleIndexable
- * @filtering: a #BeagleIndexableType
+ * @type: a #BeagleIndexableType
  *
  * Sets the #BeagleIndexableType of the given #BeagleIndexable.
  **/

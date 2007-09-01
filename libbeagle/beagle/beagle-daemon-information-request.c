@@ -113,7 +113,7 @@ beagle_daemon_information_request_init (BeagleDaemonInformationRequest *daemon_i
 {
 }
 
-/*
+/**
  * beagle_daemon_information_request_new:
  *
  * Creates a new #BeagleDaemonInformationRequest requesting all fields.
@@ -126,8 +126,12 @@ beagle_daemon_information_request_new (void)
 	return beagle_daemon_information_request_new_specific (TRUE, TRUE, TRUE, TRUE);
 }
 
-/*
+/**
  * beagle_daemon_information_request_new_specific:
+ * @get_version: Whether to retrieve version of the daemon.
+ * @get_sched_info: Whether to retrieve information about the current jobs in the daemon.
+ * @get_index_status: Whether to retrieve information about the indexes.
+ * @get_is_indexing: Whether to retrieve if any of the backends is doing any indexing now.
  *
  * Creates a new #BeagleDaemonInformationRequest allowing retrieval of specific fields.
  *

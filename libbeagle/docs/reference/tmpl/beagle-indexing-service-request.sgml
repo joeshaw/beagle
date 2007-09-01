@@ -49,3 +49,12 @@ BeagleIndexingServiceRequest
 @uri: 
 
 
+<!-- ##### FUNCTION beagle_indexing_service_request_set_source ##### -->
+<para>
+
+</para>
+
+@request: 
+@source: 
+
+

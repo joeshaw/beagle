@@ -102,6 +102,13 @@ beagle_query_part_property_init (BeagleQueryPartProperty *part)
 {
 }
 
+/**
+ * beagle_query_part_property_new:
+ *
+ * Creates a new #BeagleQueryPartProperty.
+ *
+ * Return value: a newly created #BeagleQueryPartProperty.
+ */
 BeagleQueryPartProperty *
 beagle_query_part_property_new (void)
 {
@@ -152,7 +159,7 @@ beagle_query_part_property_set_value (BeagleQueryPartProperty *part,
 /**
  * beagle_query_part_property_set_property_type:
  * @part: a #BeagleQueryPartProperty
- * @value: a value of #BeaglePropertyType
+ * @prop_type: a value of #BeaglePropertyType
  *
  * Sets the property type of the #BeagleQueryPartProperty to be queried for.
  **/

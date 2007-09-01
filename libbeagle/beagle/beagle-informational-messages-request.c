@@ -96,7 +96,7 @@ beagle_informational_messages_request_init (BeagleInformationalMessagesRequest *
 {
 }
 
-/*
+/**
  * beagle_informational_messages_request_new:
  *
  * Creates a new #BeagleInformationalMessagesRequest message.  You will need to

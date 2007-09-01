@@ -17,6 +17,16 @@ BeagleQuery
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### ENUM BeagleQueryDomain ##### -->
+<para>
+
+</para>
+
+@BEAGLE_QUERY_DOMAIN_LOCAL: 
+@BEAGLE_QUERY_DOMAIN_SYSTEM: 
+@BEAGLE_QUERY_DOMAIN_NEIGHBORHOOD: 
+@BEAGLE_QUERY_DOMAIN_GLOBAL: 
+
 <!-- ##### STRUCT BeagleQuery ##### -->
 <para>
 
@@ -52,6 +62,114 @@ BeagleQuery
 
 </para>
 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_add_part ##### -->
+<para>
+
+</para>
+
+@query: 
+@part: 
+
+
+<!-- ##### FUNCTION beagle_query_add_text ##### -->
+<para>
+
+</para>
+
+@query: 
+@str: 
+
+
+<!-- ##### FUNCTION beagle_query_add_mime_type ##### -->
+<para>
+
+</para>
+
+@query: 
+@mime_type: 
+
+
+<!-- ##### FUNCTION beagle_query_add_hit_type ##### -->
+<para>
+
+</para>
+
+@query: 
+@hit_type: 
+
+
+<!-- ##### FUNCTION beagle_query_add_source ##### -->
+<para>
+
+</para>
+
+@query: 
+@source: 
+
+
+<!-- ##### FUNCTION beagle_query_set_domain ##### -->
+<para>
+
+</para>
+
+@query: 
+@domain: 
+
+
+<!-- ##### FUNCTION beagle_query_add_domain ##### -->
+<para>
+
+</para>
+
+@query: 
+@domain: 
+
+
+<!-- ##### FUNCTION beagle_query_remove_domain ##### -->
+<para>
+
+</para>
+
+@query: 
+@domain: 
+
+
+<!-- ##### FUNCTION beagle_query_set_max_hits ##### -->
+<para>
+
+</para>
+
+@query: 
+@max_hits: 
+
+
+<!-- ##### FUNCTION beagle_query_get_max_hits ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_get_exact_text ##### -->
+<para>
+
+</para>
+
+@query: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_get_stemmed_text ##### -->
+<para>
+
+</para>
+
+@query: 
 @Returns: 
 
 

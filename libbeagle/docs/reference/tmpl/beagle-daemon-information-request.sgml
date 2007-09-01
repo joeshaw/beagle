@@ -17,11 +17,29 @@ BeagleDaemonInformationRequest
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT BeagleDaemonInformationRequest ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION beagle_daemon_information_request_new ##### -->
 <para>
 
 </para>
 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_daemon_information_request_new_specific ##### -->
+<para>
+
+</para>
+
+@get_version: 
+@get_sched_info: 
+@get_index_status: 
+@get_is_indexing: 
 @Returns: 
 
 

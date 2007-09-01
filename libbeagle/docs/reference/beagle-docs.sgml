@@ -20,9 +20,16 @@
     </para>
     <xi:include href="xml/beagle-query.xml"/>
     <xi:include href="xml/beagle-query-part.xml"/>
+    <xi:include href="xml/beagle-query-part-date.xml"/>
+    <xi:include href="xml/beagle-query-part-human.xml"/>
+    <xi:include href="xml/beagle-query-part-or.xml"/>
+    <xi:include href="xml/beagle-query-part-property.xml"/>
+    <xi:include href="xml/beagle-query-part-text.xml"/>
+    <xi:include href="xml/beagle-query-part-uri.xml"/>
+    <xi:include href="xml/beagle-query-part-wildcard.xml"/>
+    <xi:include href="xml/beagle-search-term-response.xml"/>
     <xi:include href="xml/beagle-hits-added-response.xml"/>
     <xi:include href="xml/beagle-hits-subtracted-response.xml"/>
-    <xi:include href="xml/beagle-cancelled-response.xml"/>
     <xi:include href="xml/beagle-finished-response.xml"/>
     <xi:include href="xml/beagle-hit.xml"/>
     <xi:include href="xml/beagle-property.xml"/>
@@ -44,7 +51,11 @@
     </para>
     <xi:include href="xml/beagle-daemon-information-response.xml"/>
     <xi:include href="xml/beagle-daemon-information-request.xml"/>
+    <xi:include href="xml/beagle-scheduler-information.xml"/>
+    <xi:include href="xml/beagle-queryable-status.xml"/>
     <xi:include href="xml/beagle-shutdown-request.xml"/>
+    <xi:include href="xml/beagle-informational-messages-request.xml"/>
+    <xi:include href="xml/beagle-indexing-status-response.xml"/>
   </chapter>
   <chapter>
     <title>Abstract base classes</title>

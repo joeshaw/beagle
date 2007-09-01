@@ -1,0 +1,60 @@
+<!-- ##### SECTION Title ##### -->
+BeagleQueryPartProperty
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleQueryPartProperty ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_query_part_property_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_part_property_set_key ##### -->
+<para>
+
+</para>
+
+@part: 
+@key: 
+
+
+<!-- ##### FUNCTION beagle_query_part_property_set_value ##### -->
+<para>
+
+</para>
+
+@part: 
+@value: 
+
+
+<!-- ##### FUNCTION beagle_query_part_property_set_property_type ##### -->
+<para>
+
+</para>
+
+@part: 
+@prop_type: 
+
+

@@ -32,3 +32,12 @@ BeagleErrorResponse
 @Returns: 
 
 
+<!-- ##### FUNCTION beagle_error_response_get_details ##### -->
+<para>
+
+</para>
+
+@response: 
+@Returns: 
+
+

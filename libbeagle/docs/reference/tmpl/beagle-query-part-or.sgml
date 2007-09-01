@@ -1,5 +1,5 @@
 <!-- ##### SECTION Title ##### -->
-BeagleHitsAddedResponse
+BeagleQueryPartOr
 
 <!-- ##### SECTION Short_Description ##### -->
 
@@ -17,27 +17,26 @@ BeagleHitsAddedResponse
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### STRUCT BeagleHitsAddedResponse ##### -->
+<!-- ##### STRUCT BeagleQueryPartOr ##### -->
 <para>
 
 </para>
 
 
-<!-- ##### FUNCTION beagle_hits_added_response_get_hits ##### -->
+<!-- ##### FUNCTION beagle_query_part_or_new ##### -->
 <para>
 
 </para>
 
-@response: 
 @Returns: 
 
 
-<!-- ##### FUNCTION beagle_hits_added_response_get_num_matches ##### -->
+<!-- ##### FUNCTION beagle_query_part_or_add_subpart ##### -->
 <para>
 
 </para>
 
-@response: 
-@Returns: 
+@part: 
+@subpart: 
 
 

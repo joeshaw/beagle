@@ -1,59 +1,13 @@
 <SECTION>
-<FILE>beagle-daemon-information-request</FILE>
-<TITLE>BeagleDaemonInformationRequest</TITLE>
-beagle_daemon_information_request_new
-<SUBSECTION Standard>
-BEAGLE_DAEMON_INFORMATION_REQUEST
-BEAGLE_IS_DAEMON_INFORMATION_REQUEST
-BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST
-beagle_daemon_information_request_get_type
-BEAGLE_DAEMON_INFORMATION_REQUEST_CLASS
-BEAGLE_IS_DAEMON_INFORMATION_REQUEST_CLASS
-BEAGLE_DAEMON_INFORMATION_REQUEST_GET_CLASS
-</SECTION>
-
-<SECTION>
-<FILE>beagle-client</FILE>
-<TITLE>BeagleClient</TITLE>
-BeagleClient
-beagle_client_new
-beagle_client_send_request
-beagle_client_send_request_async
-<SUBSECTION Standard>
-BEAGLE_CLIENT
-BEAGLE_IS_CLIENT
-BEAGLE_TYPE_CLIENT
-BEAGLE_CLIENT_CLASS
-BEAGLE_IS_CLIENT_CLASS
-BEAGLE_CLIENT_GET_CLASS
-<SUBSECTION Private>
-beagle_client_get_type
-</SECTION>
-
-
-<SECTION>
-<FILE>beagle-request</FILE>
-<TITLE>BeagleRequest</TITLE>
-BeagleRequest
-BeagleRequestClass
-<SUBSECTION Standard>
-BEAGLE_REQUEST
-BEAGLE_IS_REQUEST
-BEAGLE_TYPE_REQUEST
-BEAGLE_REQUEST_CLASS
-BEAGLE_IS_REQUEST_CLASS
-BEAGLE_REQUEST_GET_CLASS
-<SUBSECTION Private>
-beagle_request_get_type
-</SECTION>
-
-<SECTION>
 <FILE>beagle-daemon-information-response</FILE>
 <TITLE>BeagleDaemonInformationResponse</TITLE>
 BeagleDaemonInformationResponse
 beagle_daemon_information_response_get_version
+beagle_daemon_information_response_get_scheduler_information
 beagle_daemon_information_response_get_human_readable_status
+beagle_daemon_information_response_get_index_status
 beagle_daemon_information_response_get_index_information
+beagle_daemon_information_response_is_indexing
 <SUBSECTION Standard>
 BEAGLE_DAEMON_INFORMATION_RESPONSE
 BEAGLE_IS_DAEMON_INFORMATION_RESPONSE
@@ -66,19 +20,54 @@ beagle_daemon_information_response_get_type
 </SECTION>
 
 <SECTION>
-<FILE>beagle-error-response</FILE>
-<TITLE>BeagleErrorResponse</TITLE>
-BeagleErrorResponse
-beagle_error_response_get_message
+<FILE>beagle-indexing-status-response</FILE>
+<TITLE>BeagleIndexingStatusResponse</TITLE>
+BeagleIndexingStatusResponse
+beagle_indexing_status_response_is_indexing
 <SUBSECTION Standard>
-BEAGLE_ERROR_RESPONSE
-BEAGLE_IS_ERROR_RESPONSE
-BEAGLE_TYPE_ERROR_RESPONSE
-BEAGLE_ERROR_RESPONSE_CLASS
-BEAGLE_IS_ERROR_RESPONSE_CLASS
-BEAGLE_ERROR_RESPONSE_GET_CLASS
+BEAGLE_INDEXING_STATUS_RESPONSE
+BEAGLE_IS_INDEXING_STATUS_RESPONSE
+BEAGLE_TYPE_INDEXING_STATUS_RESPONSE
+BEAGLE_INDEXING_STATUS_RESPONSE_CLASS
+BEAGLE_IS_INDEXING_STATUS_RESPONSE_CLASS
+BEAGLE_INDEXING_STATUS_RESPONSE_GET_CLASS
 <SUBSECTION Private>
-beagle_error_response_get_type
+beagle_indexing_status_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-text</FILE>
+<TITLE>BeagleQueryPartText</TITLE>
+BeagleQueryPartText
+beagle_query_part_text_new
+beagle_query_part_text_set_text
+beagle_query_part_text_set_search_full_text
+beagle_query_part_text_set_search_properties
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_TEXT
+BEAGLE_IS_QUERY_PART_TEXT
+BEAGLE_TYPE_QUERY_PART_TEXT
+BEAGLE_QUERY_PART_TEXT_CLASS
+BEAGLE_IS_QUERY_PART_TEXT_CLASS
+BEAGLE_QUERY_PART_TEXT_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_text_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-informational-messages-request</FILE>
+<TITLE>BeagleInformationalMessagesRequest</TITLE>
+BeagleInformationalMessagesRequest
+beagle_informational_messages_request_new
+<SUBSECTION Standard>
+BEAGLE_INFORMATIONAL_MESSAGES_REQUEST
+BEAGLE_IS_INFORMATIONAL_MESSAGES_REQUEST
+BEAGLE_TYPE_INFORMATIONAL_MESSAGES_REQUEST
+BEAGLE_INFORMATIONAL_MESSAGES_REQUEST_CLASS
+BEAGLE_IS_INFORMATIONAL_MESSAGES_REQUEST_CLASS
+BEAGLE_INFORMATIONAL_MESSAGES_REQUEST_GET_CLASS
+<SUBSECTION Private>
+beagle_informational_messages_request_get_type
 </SECTION>
 
 <SECTION>
@@ -94,6 +83,23 @@ BEAGLE_IS_RESPONSE_CLASS
 BEAGLE_RESPONSE_GET_CLASS
 <SUBSECTION Private>
 beagle_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-wildcard</FILE>
+<TITLE>BeagleQueryPartWildcard</TITLE>
+BeagleQueryPartWildcard
+beagle_query_part_wildcard_new
+beagle_query_part_wildcard_set_query_string
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_WILDCARD
+BEAGLE_IS_QUERY_PART_WILDCARD
+BEAGLE_TYPE_QUERY_PART_WILDCARD
+BEAGLE_QUERY_PART_WILDCARD_CLASS
+BEAGLE_IS_QUERY_PART_WILDCARD_CLASS
+BEAGLE_QUERY_PART_WILDCARD_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_wildcard_get_type
 </SECTION>
 
 <SECTION>
@@ -113,19 +119,38 @@ beagle_shutdown_request_get_type
 </SECTION>
 
 <SECTION>
-<FILE>beagle-hits-added-response</FILE>
-<TITLE>BeagleHitsAddedResponse</TITLE>
-BeagleHitsAddedResponse
-beagle_hits_added_response_get_hits
+<FILE>beagle-query-part-uri</FILE>
+<TITLE>BeagleQueryPartUri</TITLE>
+BeagleQueryPartUri
+beagle_query_part_uri_new
+beagle_query_part_uri_set_uri
 <SUBSECTION Standard>
-BEAGLE_HITS_ADDED_RESPONSE
-BEAGLE_IS_HITS_ADDED_RESPONSE
-BEAGLE_TYPE_HITS_ADDED_RESPONSE
-BEAGLE_HITS_ADDED_RESPONSE_CLASS
-BEAGLE_IS_HITS_ADDED_RESPONSE_CLASS
-BEAGLE_HITS_ADDED_RESPONSE_GET_CLASS
+BEAGLE_QUERY_PART_URI
+BEAGLE_IS_QUERY_PART_URI
+BEAGLE_TYPE_QUERY_PART_URI
+BEAGLE_QUERY_PART_URI_CLASS
+BEAGLE_IS_QUERY_PART_URI_CLASS
+BEAGLE_QUERY_PART_URI_GET_CLASS
 <SUBSECTION Private>
-beagle_hits_added_response_get_type
+beagle_query_part_uri_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-date</FILE>
+<TITLE>BeagleQueryPartDate</TITLE>
+BeagleQueryPartDate
+beagle_query_part_date_new
+beagle_query_part_date_set_start_date
+beagle_query_part_date_set_end_date
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_DATE
+BEAGLE_IS_QUERY_PART_DATE
+BEAGLE_TYPE_QUERY_PART_DATE
+BEAGLE_QUERY_PART_DATE_CLASS
+BEAGLE_IS_QUERY_PART_DATE_CLASS
+BEAGLE_QUERY_PART_DATE_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_date_get_type
 </SECTION>
 
 <SECTION>
@@ -144,25 +169,42 @@ beagle_finished_response_get_type
 </SECTION>
 
 <SECTION>
-<FILE>beagle-hits-subtracted-response</FILE>
-<TITLE>BeagleHitsSubtractedResponse</TITLE>
-BeagleHitsSubtractedResponse
-beagle_hits_subtracted_response_get_uris
+<FILE>beagle-indexing-service-request</FILE>
+<TITLE>BeagleIndexingServiceRequest</TITLE>
+BeagleIndexingServiceRequest
+beagle_indexing_service_request_new
+beagle_indexing_service_request_add
+beagle_indexing_service_request_remove
+beagle_indexing_service_request_set_source
 <SUBSECTION Standard>
-BEAGLE_HITS_SUBTRACTED_RESPONSE
-BEAGLE_IS_HITS_SUBTRACTED_RESPONSE
-BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE
-beagle_hits_subtracted_response_get_type
-BEAGLE_HITS_SUBTRACTED_RESPONSE_CLASS
-BEAGLE_IS_HITS_SUBTRACTED_RESPONSE_CLASS
-BEAGLE_HITS_SUBTRACTED_RESPONSE_GET_CLASS
+BEAGLE_INDEXING_SERVICE_REQUEST
+BEAGLE_IS_INDEXING_SERVICE_REQUEST
+BEAGLE_TYPE_INDEXING_SERVICE_REQUEST
+BEAGLE_INDEXING_SERVICE_REQUEST_CLASS
+BEAGLE_IS_INDEXING_SERVICE_REQUEST_CLASS
+BEAGLE_INDEXING_SERVICE_REQUEST_GET_CLASS
+<SUBSECTION Private>
+beagle_indexing_service_request_get_type
 </SECTION>
 
 <SECTION>
 <FILE>beagle-query</FILE>
+BeagleQueryDomain
 <TITLE>BeagleQuery</TITLE>
 BeagleQuery
 beagle_query_new
+beagle_query_add_part
+beagle_query_add_text
+beagle_query_add_mime_type
+beagle_query_add_hit_type
+beagle_query_add_source
+beagle_query_set_domain
+beagle_query_add_domain
+beagle_query_remove_domain
+beagle_query_set_max_hits
+beagle_query_get_max_hits
+beagle_query_get_exact_text
+beagle_query_get_stemmed_text
 <SUBSECTION Standard>
 BEAGLE_QUERY
 BEAGLE_IS_QUERY
@@ -172,6 +214,42 @@ BEAGLE_IS_QUERY_CLASS
 BEAGLE_QUERY_GET_CLASS
 <SUBSECTION Private>
 beagle_query_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-daemon-information-request</FILE>
+<TITLE>BeagleDaemonInformationRequest</TITLE>
+BeagleDaemonInformationRequest
+beagle_daemon_information_request_new
+beagle_daemon_information_request_new_specific
+<SUBSECTION Standard>
+BEAGLE_DAEMON_INFORMATION_REQUEST
+BEAGLE_IS_DAEMON_INFORMATION_REQUEST
+BEAGLE_TYPE_DAEMON_INFORMATION_REQUEST
+BEAGLE_DAEMON_INFORMATION_REQUEST_CLASS
+BEAGLE_IS_DAEMON_INFORMATION_REQUEST_CLASS
+BEAGLE_DAEMON_INFORMATION_REQUEST_GET_CLASS
+<SUBSECTION Private>
+beagle_daemon_information_request_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-client</FILE>
+<TITLE>BeagleClient</TITLE>
+BeagleClient
+beagle_client_new
+beagle_client_new_from_socket_path
+beagle_client_send_request
+beagle_client_send_request_async
+<SUBSECTION Standard>
+BEAGLE_CLIENT
+BEAGLE_IS_CLIENT
+BEAGLE_TYPE_CLIENT
+BEAGLE_CLIENT_CLASS
+BEAGLE_IS_CLIENT_CLASS
+BEAGLE_CLIENT_GET_CLASS
+<SUBSECTION Private>
+beagle_client_get_type
 </SECTION>
 
 <SECTION>
@@ -191,6 +269,123 @@ beagle_snippet_response_get_type
 </SECTION>
 
 <SECTION>
+<FILE>beagle-error-response</FILE>
+<TITLE>BeagleErrorResponse</TITLE>
+BeagleErrorResponse
+beagle_error_response_get_message
+beagle_error_response_get_details
+<SUBSECTION Standard>
+BEAGLE_ERROR_RESPONSE
+BEAGLE_IS_ERROR_RESPONSE
+BEAGLE_TYPE_ERROR_RESPONSE
+BEAGLE_ERROR_RESPONSE_CLASS
+BEAGLE_IS_ERROR_RESPONSE_CLASS
+BEAGLE_ERROR_RESPONSE_GET_CLASS
+<SUBSECTION Private>
+beagle_error_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-or</FILE>
+<TITLE>BeagleQueryPartOr</TITLE>
+BeagleQueryPartOr
+beagle_query_part_or_new
+beagle_query_part_or_add_subpart
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_OR
+BEAGLE_IS_QUERY_PART_OR
+BEAGLE_TYPE_QUERY_PART_OR
+BEAGLE_QUERY_PART_OR_CLASS
+BEAGLE_IS_QUERY_PART_OR_CLASS
+BEAGLE_QUERY_PART_OR_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_or_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-request</FILE>
+<TITLE>BeagleRequest</TITLE>
+BeagleRequest
+<SUBSECTION Standard>
+BEAGLE_REQUEST
+BEAGLE_IS_REQUEST
+BEAGLE_TYPE_REQUEST
+BEAGLE_REQUEST_CLASS
+BEAGLE_IS_REQUEST_CLASS
+BEAGLE_REQUEST_GET_CLASS
+<SUBSECTION Private>
+beagle_request_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-property</FILE>
+<TITLE>BeagleQueryPartProperty</TITLE>
+BeagleQueryPartProperty
+beagle_query_part_property_new
+beagle_query_part_property_set_key
+beagle_query_part_property_set_value
+beagle_query_part_property_set_property_type
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_PROPERTY
+BEAGLE_IS_QUERY_PART_PROPERTY
+BEAGLE_TYPE_QUERY_PART_PROPERTY
+BEAGLE_QUERY_PART_PROPERTY_CLASS
+BEAGLE_IS_QUERY_PART_PROPERTY_CLASS
+BEAGLE_QUERY_PART_PROPERTY_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_property_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-hits-added-response</FILE>
+<TITLE>BeagleHitsAddedResponse</TITLE>
+BeagleHitsAddedResponse
+beagle_hits_added_response_get_hits
+beagle_hits_added_response_get_num_matches
+<SUBSECTION Standard>
+BEAGLE_HITS_ADDED_RESPONSE
+BEAGLE_IS_HITS_ADDED_RESPONSE
+BEAGLE_TYPE_HITS_ADDED_RESPONSE
+BEAGLE_HITS_ADDED_RESPONSE_CLASS
+BEAGLE_IS_HITS_ADDED_RESPONSE_CLASS
+BEAGLE_HITS_ADDED_RESPONSE_GET_CLASS
+<SUBSECTION Private>
+beagle_hits_added_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-search-term-response</FILE>
+<TITLE>BeagleSearchTermResponse</TITLE>
+BeagleSearchTermResponse
+<SUBSECTION Standard>
+BEAGLE_SEARCH_TERM_RESPONSE
+BEAGLE_IS_SEARCH_TERM_RESPONSE
+BEAGLE_TYPE_SEARCH_TERM_RESPONSE
+BEAGLE_SEARCH_TERM_RESPONSE_CLASS
+BEAGLE_IS_SEARCH_TERM_RESPONSE_CLASS
+BEAGLE_SEARCH_TERM_RESPONSE_GET_CLASS
+<SUBSECTION Private>
+beagle_search_term_response_get_type
+</SECTION>
+
+<SECTION>
+<FILE>beagle-query-part-human</FILE>
+<TITLE>BeagleQueryPartHuman</TITLE>
+BeagleQueryPartHuman
+beagle_query_part_human_new
+beagle_query_part_human_set_string
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART_HUMAN
+BEAGLE_IS_QUERY_PART_HUMAN
+BEAGLE_TYPE_QUERY_PART_HUMAN
+BEAGLE_QUERY_PART_HUMAN_CLASS
+BEAGLE_IS_QUERY_PART_HUMAN_CLASS
+BEAGLE_QUERY_PART_HUMAN_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_human_get_type
+</SECTION>
+
+<SECTION>
 <FILE>beagle-empty-response</FILE>
 <TITLE>BeagleEmptyResponse</TITLE>
 BeagleEmptyResponse
@@ -206,21 +401,19 @@ beagle_empty_response_get_type
 </SECTION>
 
 <SECTION>
-<FILE>beagle-indexing-service-request</FILE>
-<TITLE>BeagleIndexingServiceRequest</TITLE>
-BeagleIndexingServiceRequest
-beagle_indexing_service_request_new
-beagle_indexing_service_request_add
-beagle_indexing_service_request_remove
+<FILE>beagle-hits-subtracted-response</FILE>
+<TITLE>BeagleHitsSubtractedResponse</TITLE>
+BeagleHitsSubtractedResponse
+beagle_hits_subtracted_response_get_uris
 <SUBSECTION Standard>
-BEAGLE_INDEXING_SERVICE_REQUEST
-BEAGLE_IS_INDEXING_SERVICE_REQUEST
-BEAGLE_TYPE_INDEXING_SERVICE_REQUEST
-BEAGLE_INDEXING_SERVICE_REQUEST_CLASS
-BEAGLE_IS_INDEXING_SERVICE_REQUEST_CLASS
-BEAGLE_INDEXING_SERVICE_REQUEST_GET_CLASS
+BEAGLE_HITS_SUBTRACTED_RESPONSE
+BEAGLE_IS_HITS_SUBTRACTED_RESPONSE
+BEAGLE_TYPE_HITS_SUBTRACTED_RESPONSE
+BEAGLE_HITS_SUBTRACTED_RESPONSE_CLASS
+BEAGLE_IS_HITS_SUBTRACTED_RESPONSE_CLASS
+BEAGLE_HITS_SUBTRACTED_RESPONSE_GET_CLASS
 <SUBSECTION Private>
-beagle_indexing_service_request_get_type
+beagle_hits_subtracted_response_get_type
 </SECTION>
 
 <SECTION>
@@ -229,8 +422,7 @@ beagle_indexing_service_request_get_type
 BeagleSnippetRequest
 beagle_snippet_request_new
 beagle_snippet_request_set_hit
-beagle_snippet_request_add_query_term
-beagle_snippet_request_set_query_terms_from_query
+beagle_snippet_request_set_query
 <SUBSECTION Standard>
 BEAGLE_SNIPPET_REQUEST
 BEAGLE_IS_SNIPPET_REQUEST
@@ -243,93 +435,86 @@ beagle_snippet_request_get_type
 </SECTION>
 
 <SECTION>
-<FILE>beagle-cancelled-response</FILE>
-<TITLE>BeagleCancelledResponse</TITLE>
-BeagleCancelledResponse
-<SUBSECTION Standard>
-BEAGLE_CANCELLED_RESPONSE
-BEAGLE_IS_CANCELLED_RESPONSE
-BEAGLE_TYPE_CANCELLED_RESPONSE
-BEAGLE_CANCELLED_RESPONSE_CLASS
-BEAGLE_IS_CANCELLED_RESPONSE_CLASS
-BEAGLE_CANCELLED_RESPONSE_GET_CLASS
-<SUBSECTION Private>
-beagle_cancelled_response_get_type
-</SECTION>
-
-<SECTION>
-<TITLE>BeagleHit</TITLE>
-<FILE>beagle-hit</FILE>
-BeagleHit
-beagle_hit_ref
-beagle_hit_unref
-beagle_hit_get_uri
-beagle_hit_get_timestamp
-beagle_hit_get_type
-beagle_hit_get_mime_type
-beagle_hit_get_source
-beagle_hit_get_source_object_name
-beagle_hit_get_revision
-beagle_hit_get_id
-beagle_hit_get_score
-beagle_hit_get_score_multiplier
-beagle_hit_get_score_raw
-beagle_hit_get_property
-beagle_hit_lookup_property
-</SECTION>
-
-<SECTION>
 <FILE>beagle-query-part</FILE>
 BEAGLE_QUERY_PART_TARGET_ALL
-BEAGLE_QUERY_PART_TARGET_TEXT
-BEAGLE_QUERY_PART_TARGET_PROPERTIES
+BeagleQueryPartLogic
+<TITLE>BeagleQueryPart</TITLE>
 BeagleQueryPart
-beagle_query_part_new
-beagle_query_part_free
-beagle_query_part_set_target
-beagle_query_part_set_text
-beagle_query_part_set_keyword
-beagle_query_part_set_required
-beagle_query_part_set_prohibited
+beagle_query_part_set_logic
+<SUBSECTION Standard>
+BEAGLE_QUERY_PART
+BEAGLE_IS_QUERY_PART
+BEAGLE_TYPE_QUERY_PART
+BEAGLE_QUERY_PART_CLASS
+BEAGLE_IS_QUERY_PART_CLASS
+BEAGLE_QUERY_PART_GET_CLASS
+<SUBSECTION Private>
+beagle_query_part_get_type
 </SECTION>
 
 <SECTION>
 <FILE>beagle-property</FILE>
+<TITLE>BeagleProperty</TITLE>
 BeagleProperty
+BeaglePropertyType
 beagle_property_new
 beagle_property_free
+beagle_property_get_type
+beagle_property_set_type
 beagle_property_get_key
 beagle_property_set_key
 beagle_property_get_value
 beagle_property_set_value
 beagle_property_get_is_searched
 beagle_property_set_is_searched
-beagle_property_get_is_keyword
-beagle_property_set_is_keyword
+beagle_property_get_is_mutable
+beagle_property_set_is_mutable
+beagle_property_get_is_stored
+beagle_property_set_is_stored
+beagle_property_get_is_persistent
+beagle_property_set_is_persistent
 </SECTION>
 
 <SECTION>
-<FILE>beagle-timestamp</FILE>
-BeageTimestamp
-beagle_timestamp_new_from_string
-beagle_timestamp_new_from_unix_time
-beagle_timestamp_free
-beagle_timestamp_to_unix_time
+<FILE>beagle-hit</FILE>
+<TITLE>BeagleHit</TITLE>
+BEAGLE_HIT
+BeagleHit
+beagle_hit_ref
+beagle_hit_unref
+beagle_hit_get_uri
+beagle_hit_get_type
+beagle_hit_get_mime_type
+beagle_hit_get_source
+beagle_hit_get_parent_uri
+beagle_hit_get_timestamp
+beagle_hit_get_score
+beagle_hit_get_one_property
+beagle_hit_get_properties
+beagle_hit_get_all_properties
 </SECTION>
 
 <SECTION>
 <FILE>beagle-indexable</FILE>
+<TITLE>BeagleIndexable</TITLE>
 BeagleIndexable
+BeagleIndexableType
 BeagleIndexableFiltering
 beagle_indexable_new
 beagle_indexable_free
 beagle_indexable_add_property
+beagle_indexable_get_type
+beagle_indexable_set_type
 beagle_indexable_get_uri
 beagle_indexable_set_uri
+beagle_indexable_get_parent_uri
+beagle_indexable_set_parent_uri
 beagle_indexable_get_content_uri
 beagle_indexable_set_content_uri
 beagle_indexable_get_hot_content_uri
 beagle_indexable_set_hot_content_uri
+beagle_indexable_get_timestamp
+beagle_indexable_set_timestamp
 beagle_indexable_get_delete_content
 beagle_indexable_set_delete_content
 beagle_indexable_get_crawled
@@ -340,9 +525,48 @@ beagle_indexable_get_cache_content
 beagle_indexable_set_cache_content
 beagle_indexable_get_filtering
 beagle_indexable_set_filtering
-beagle_indexable_get_type
-beagle_indexable_set_type
+beagle_indexable_get_hit_type
+beagle_indexable_set_hit_type
 beagle_indexable_get_mime_type
 beagle_indexable_set_mime_type
+beagle_indexable_get_source
+<SUBSECTION Private>
+</SECTION>
+
+<SECTION>
+<FILE>beagle-timestamp</FILE>
+BeagleTimestamp
+beagle_timestamp_new_from_string
+beagle_timestamp_new_from_unix_time
+beagle_timestamp_free
+beagle_timestamp_to_unix_time
+</SECTION>
+
+<SECTION>
+<FILE>beagle-scheduler-information</FILE>
+<TITLE>BeagleSchedulerInformation</TITLE>
+BeagleSchedulerInformation
+beagle_scheduler_information_ref
+beagle_scheduler_information_unref
+beagle_scheduler_information_get_total_task_count
+beagle_scheduler_information_get_status_string
+beagle_scheduler_information_get_pending_tasks
+beagle_scheduler_information_get_future_tasks
+beagle_scheduler_information_get_blocked_tasks
+beagle_scheduler_information_to_human_readable_string
+</SECTION>
+
+<SECTION>
+<FILE>beagle-queryable-status</FILE>
+<TITLE>BeagleQueryableStatus</TITLE>
+BeagleQueryableStatus
+BeagleQueryableState
+beagle_queryable_status_ref
+beagle_queryable_status_unref
+beagle_queryable_status_get_name
+beagle_queryable_status_get_item_count
+beagle_queryable_status_get_state
+beagle_queryable_status_get_progress_percent
+beagle_queryable_status_get_is_indexing
 </SECTION>
 

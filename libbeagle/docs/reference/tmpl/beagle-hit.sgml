@@ -17,6 +17,14 @@ BeagleHit
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### MACRO BEAGLE_HIT ##### -->
+<para>
+
+</para>
+
+@x: 
+
+
 <!-- ##### STRUCT BeagleHit ##### -->
 <para>
 
@@ -41,15 +49,6 @@ BeagleHit
 
 
 <!-- ##### FUNCTION beagle_hit_get_uri ##### -->
-<para>
-
-</para>
-
-@hit: 
-@Returns: 
-
-
-<!-- ##### FUNCTION beagle_hit_get_timestamp ##### -->
 <para>
 
 </para>
@@ -85,7 +84,55 @@ BeagleHit
 @Returns: 
 
 
+<!-- ##### FUNCTION beagle_hit_get_parent_uri ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_timestamp ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
 <!-- ##### FUNCTION beagle_hit_get_score ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_one_property ##### -->
+<para>
+
+</para>
+
+@hit: 
+@key: 
+@value: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_properties ##### -->
+<para>
+
+</para>
+
+@hit: 
+@key: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_hit_get_all_properties ##### -->
 <para>
 
 </para>

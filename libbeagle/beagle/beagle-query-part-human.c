@@ -87,6 +87,13 @@ beagle_query_part_human_init (BeagleQueryPartHuman *part)
 	
 }
 
+/**
+ * beagle_query_part_human_new:
+ *
+ * Creates a new #BeagleQueryPartHuman.
+ *
+ * Return value: a newly created #BeagleQueryPartHuman.
+ */
 BeagleQueryPartHuman *
 beagle_query_part_human_new (void)
 {

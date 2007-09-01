@@ -87,6 +87,13 @@ beagle_query_part_uri_init (BeagleQueryPartUri *part)
 	
 }
 
+/**
+ * beagle_query_part_uri_new:
+ *
+ * Creates a new #BeagleQueryPartUri.
+ *
+ * Return value: a newly created #BeagleQueryPartUri.
+ */
 BeagleQueryPartUri *
 beagle_query_part_uri_new (void)
 {

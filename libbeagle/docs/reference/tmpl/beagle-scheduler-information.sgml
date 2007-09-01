@@ -1,0 +1,98 @@
+<!-- ##### SECTION Title ##### -->
+BeagleSchedulerInformation
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleSchedulerInformation ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_ref ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_unref ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_get_total_task_count ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_get_status_string ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_get_pending_tasks ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_get_future_tasks ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_get_blocked_tasks ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_scheduler_information_to_human_readable_string ##### -->
+<para>
+
+</para>
+
+@sched_info: 
+@Returns: 
+
+

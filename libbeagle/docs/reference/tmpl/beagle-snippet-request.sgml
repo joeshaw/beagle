@@ -40,3 +40,12 @@ BeagleSnippetRequest
 @hit: 
 
 
+<!-- ##### FUNCTION beagle_snippet_request_set_query ##### -->
+<para>
+
+</para>
+
+@request: 
+@query: 
+
+

@@ -100,6 +100,13 @@ beagle_query_part_date_init (BeagleQueryPartDate *part)
 
 }
 
+/**
+ * beagle_query_part_date_new:
+ *
+ * Creates a new #BeagleQueryPartDate.
+ *
+ * Return value: a newly created #BeagleQueryPartDate.
+ */
 BeagleQueryPartDate *
 beagle_query_part_date_new (void)
 {
@@ -129,7 +136,7 @@ beagle_query_part_date_set_start_date (BeagleQueryPartDate *part,
 /**
  * beagle_query_part_date_set_end_date:
  * @part: a #BeagleQueryPartDate
- * @start_date: a #BeagleTimestamp
+ * @end_date: a #BeagleTimestamp
  *
  * Sets the end date for the date range in a #BeagleQueryPartDate.
  **/

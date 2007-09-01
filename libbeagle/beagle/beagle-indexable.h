@@ -66,7 +66,7 @@ void             beagle_indexable_set_uri          (BeagleIndexable *indexable,
 G_CONST_RETURN char *
 beagle_indexable_get_parent_uri			    (BeagleIndexable *indexable);
 void             beagle_indexable_set_parent_uri    (BeagleIndexable *indexable,
-						    const char      *uri);
+						    const char       *parent_uri);
 
 G_CONST_RETURN char *
 beagle_indexable_get_content_uri                   (BeagleIndexable *indexable);

@@ -32,26 +32,26 @@
 
 typedef struct _BeagleSchedulerInformation BeagleSchedulerInformation;
 
-BeagleSchedulerInformation * beagle_scheduler_information_ref (BeagleSchedulerInformation *status);
-void beagle_scheduler_information_unref (BeagleSchedulerInformation *status);
+BeagleSchedulerInformation * beagle_scheduler_information_ref (BeagleSchedulerInformation *sched_info);
+void beagle_scheduler_information_unref (BeagleSchedulerInformation *sched_info);
 
 int
-beagle_scheduler_information_get_total_task_count (BeagleSchedulerInformation *status);
+beagle_scheduler_information_get_total_task_count (BeagleSchedulerInformation *sched_info);
 
 G_CONST_RETURN char *
-beagle_scheduler_information_get_status_string (BeagleSchedulerInformation *status);
+beagle_scheduler_information_get_status_string (BeagleSchedulerInformation *sched_info);
 
 GSList *
-beagle_scheduler_information_get_pending_tasks (BeagleSchedulerInformation *status);
+beagle_scheduler_information_get_pending_tasks (BeagleSchedulerInformation *sched_info);
 
 GSList *
-beagle_scheduler_information_get_future_tasks (BeagleSchedulerInformation *status);
+beagle_scheduler_information_get_future_tasks (BeagleSchedulerInformation *sched_info);
 
 GSList *
-beagle_scheduler_information_get_blocked_tasks (BeagleSchedulerInformation *status);
+beagle_scheduler_information_get_blocked_tasks (BeagleSchedulerInformation *sched_info);
 
 G_CONST_RETURN char *
-beagle_scheduler_information_to_human_readable_string (BeagleSchedulerInformation *status);
+beagle_scheduler_information_to_human_readable_string (BeagleSchedulerInformation *sched_info);
 
 #endif /* __BEAGLE_SCHEDULER_INFORMATION_H */
 

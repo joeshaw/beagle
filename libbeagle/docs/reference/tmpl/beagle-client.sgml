@@ -32,6 +32,15 @@ BeagleClient
 @Returns: 
 
 
+<!-- ##### FUNCTION beagle_client_new_from_socket_path ##### -->
+<para>
+
+</para>
+
+@socket_path: 
+@Returns: 
+
+
 <!-- ##### FUNCTION beagle_client_send_request ##### -->
 <para>
 

@@ -1,5 +1,5 @@
 <!-- ##### SECTION Title ##### -->
-BeagleCancelledResponse
+BeagleSearchTermResponse
 
 <!-- ##### SECTION Short_Description ##### -->
 
@@ -15,5 +15,11 @@ BeagleCancelledResponse
 </para>
 
 <!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleSearchTermResponse ##### -->
+<para>
+
+</para>
 
 

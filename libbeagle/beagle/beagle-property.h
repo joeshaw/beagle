@@ -59,7 +59,7 @@ gboolean beagle_property_get_is_searched (BeagleProperty *prop);
 void beagle_property_set_is_searched (BeagleProperty *prop, gboolean is_searched);
 
 gboolean beagle_property_get_is_mutable (BeagleProperty *prop);
-void beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_keyword);
+void beagle_property_set_is_mutable (BeagleProperty *prop, gboolean is_mutable);
 
 gboolean beagle_property_get_is_stored (BeagleProperty *prop);
 void beagle_property_set_is_stored (BeagleProperty *prop, gboolean is_stored);

@@ -301,7 +301,7 @@ beagle_property_set_is_persistent (BeagleProperty *prop, gboolean is_persistent)
 	prop->is_persistent = is_persistent != FALSE;
 }
 
-/**
+/*
  * Compares two BeagleProperty based on their keys.
  */
 int
@@ -310,7 +310,7 @@ _beagle_property_compare (BeagleProperty *prop_a, BeagleProperty *prop_b)
     return strcmp (prop_a->key, prop_b->key);
 }
 
-/**
+/*
  * Compares a BeagleProperty (wrt its key) and another given key.
  * Useful when trying to search for a property with a given key
  * in a list of BeagleProperty elements.

@@ -17,6 +17,12 @@ beagle-timestamp
 <!-- ##### SECTION Stability_Level ##### -->
 
 
+<!-- ##### STRUCT BeagleTimestamp ##### -->
+<para>
+
+</para>
+
+
 <!-- ##### FUNCTION beagle_timestamp_new_from_string ##### -->
 <para>
 

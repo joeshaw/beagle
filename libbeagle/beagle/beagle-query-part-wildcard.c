@@ -86,6 +86,13 @@ beagle_query_part_wildcard_init (BeagleQueryPartWildcard *part)
 {
 }
 
+/**
+ * beagle_query_part_wildcard_new:
+ *
+ * Creates a new #BeagleQueryPartWildcard.
+ *
+ * Return value: a newly created #BeagleQueryPartWildcard.
+ */
 BeagleQueryPartWildcard *
 beagle_query_part_wildcard_new (void)
 {

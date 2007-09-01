@@ -1,0 +1,60 @@
+<!-- ##### SECTION Title ##### -->
+BeagleQueryPartText
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleQueryPartText ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION beagle_query_part_text_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_query_part_text_set_text ##### -->
+<para>
+
+</para>
+
+@part: 
+@text: 
+
+
+<!-- ##### FUNCTION beagle_query_part_text_set_search_full_text ##### -->
+<para>
+
+</para>
+
+@part: 
+@search_full_text: 
+
+
+<!-- ##### FUNCTION beagle_query_part_text_set_search_properties ##### -->
+<para>
+
+</para>
+
+@part: 
+@search_properties: 
+
+

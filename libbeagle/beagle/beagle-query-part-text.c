@@ -99,6 +99,13 @@ beagle_query_part_text_init (BeagleQueryPartText *part)
     
 }
 
+/**
+ * beagle_query_part_text_new:
+ *
+ * Creates a new #BeagleQueryPartText.
+ *
+ * Return value: a newly created #BeagleQueryPartText.
+ */
 BeagleQueryPartText *
 beagle_query_part_text_new (void)
 {

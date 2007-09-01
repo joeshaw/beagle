@@ -1,5 +1,5 @@
 <!-- ##### SECTION Title ##### -->
-BeagleQueryPart
+BeagleQueryPartDate
 
 <!-- ##### SECTION Short_Description ##### -->
 
@@ -17,33 +17,35 @@ BeagleQueryPart
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### MACRO BEAGLE_QUERY_PART_TARGET_ALL ##### -->
+<!-- ##### STRUCT BeagleQueryPartDate ##### -->
 <para>
 
 </para>
 
 
-
-<!-- ##### ENUM BeagleQueryPartLogic ##### -->
+<!-- ##### FUNCTION beagle_query_part_date_new ##### -->
 <para>
 
 </para>
 
-@BEAGLE_QUERY_PART_LOGIC_REQUIRED: 
-@BEAGLE_QUERY_PART_LOGIC_PROHIBITED: 
-
-<!-- ##### STRUCT BeagleQueryPart ##### -->
-<para>
-
-</para>
+@Returns: 
 
 
-<!-- ##### FUNCTION beagle_query_part_set_logic ##### -->
+<!-- ##### FUNCTION beagle_query_part_date_set_start_date ##### -->
 <para>
 
 </para>
 
 @part: 
-@logic: 
+@start_date: 
+
+
+<!-- ##### FUNCTION beagle_query_part_date_set_end_date ##### -->
+<para>
+
+</para>
+
+@part: 
+@end_date: 
 
 

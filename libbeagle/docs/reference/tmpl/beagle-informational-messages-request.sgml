@@ -1,0 +1,41 @@
+<!-- ##### SECTION Title ##### -->
+BeagleInformationalMessagesRequest
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleInformationalMessagesRequest ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL BeagleInformationalMessagesRequest::indexing-status ##### -->
+<para>
+
+</para>
+
+@beagleinformationalmessagesrequest: the object which received the signal.
+@arg1: 
+
+<!-- ##### FUNCTION beagle_informational_messages_request_new ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+

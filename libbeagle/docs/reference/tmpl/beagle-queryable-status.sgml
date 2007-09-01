@@ -1,0 +1,100 @@
+<!-- ##### SECTION Title ##### -->
+BeagleQueryableStatus
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT BeagleQueryableStatus ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM BeagleQueryableState ##### -->
+<para>
+
+</para>
+
+@BEAGLE_QUERYABLE_STATE_NA: 
+@BEAGLE_QUERYABLE_STATE_IDLE: 
+@BEAGLE_QUERYABLE_STATE_CRAWLING: 
+@BEAGLE_QUERYABLE_STATE_INDEXING: 
+@BEAGLE_QUERYABLE_STATE_FLUSHING: 
+
+<!-- ##### FUNCTION beagle_queryable_status_ref ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_unref ##### -->
+<para>
+
+</para>
+
+@status: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_get_name ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_get_item_count ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_get_state ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_get_progress_percent ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
+<!-- ##### FUNCTION beagle_queryable_status_get_is_indexing ##### -->
+<para>
+
+</para>
+
+@status: 
+@Returns: 
+
+
