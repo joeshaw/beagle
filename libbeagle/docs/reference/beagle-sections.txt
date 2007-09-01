@@ -535,6 +535,7 @@ beagle_indexable_get_source
 
 <SECTION>
 <FILE>beagle-timestamp</FILE>
+<TITLE>BeagleTimestamp</TITLE>
 BeagleTimestamp
 beagle_timestamp_new_from_string
 beagle_timestamp_new_from_unix_time
