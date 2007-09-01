@@ -11,6 +11,7 @@ Subprojects include:
 	* SemWeb - Creative Commons Attribution License
 	* Parts of libegg (eggaccelerators.c and eggtrayicon.c) - GNU LGPL v2
 	* xdgmime - Academic Free License v2.0 or GNU LGPL v2
+	* jslib - Mozilla Public License v1.1
 
 -----------------------------------------------------------------------------
 
