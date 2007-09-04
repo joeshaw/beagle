@@ -22,7 +22,7 @@
       <Type Name="IIndexableGenerator" />
       <Type Name="ISnippetReader" />
       <Type Name="Hit" />
-      <Type Name="Versioned" />
+      <!-- Ignore <Type Name="Versioned" /> -->
       <Type Name="Indexable" />
       <Type Name="IndexingServiceRequest" />
       <Type Name="RequestMessage" />
@@ -33,18 +33,17 @@
       <Type Name="ResponseMessage" />
       <Type Name="InformationalMessagesRequest" />
       <Type Name="InformationalMessagesRequest+IndexingStatusDelegate" />
-      <Type Name="RequestWrapper" />
-      <Type Name="RequestMessageExecutor" />
-      <Type Name="RequestMessageExecutor+AsyncResponse" />
-      <Type Name="RequestMessageAttribute" />
-      <Type Name="ResponseWrapper" />
+      <!-- Ignore <Type Name="RequestMessageExecutor" /> -->
+      <!-- Ignore <Type Name="RequestMessageExecutor+AsyncResponse" /> -->
+      <!-- Ignore <Type Name="RequestMessageAttribute" /> -->
+      <!-- Ignore <Type Name="ResponseWrapper" /> -->
       <Type Name="EmptyResponse" />
       <Type Name="ErrorResponse" />
       <Type Name="ResponseMessageException" />
-      <Type Name="RequestMessageTypesAttribute" />
-      <Type Name="ResponseMessageTypesAttribute" />
-      <Type Name="RequestMessageExecutorTypesAttribute" />
-      <Type Name="PropertyList" />
+      <!-- Ignore <Type Name="RequestMessageTypesAttribute" /> -->
+      <!-- Ignore <Type Name="ResponseMessageTypesAttribute" /> -->
+      <!-- Ignore <Type Name="RequestMessageExecutorTypesAttribute" /> -->
+      <!-- Ignore <Type Name="PropertyList" /> -->
       <Type Name="Property" />
       <Type Name="Query" />
       <Type Name="Query+HitsAdded" />
@@ -83,6 +82,7 @@
       <Type Name="PropertyType" />
       <Type Name="QueryDomain" />
       <Type Name="QueryPartLogic" />
+      <!-- Ignore <Type Name="RequestWrapper" /> -->
     </Namespace>
   </Types>
   <Title>BeagleClient</Title>

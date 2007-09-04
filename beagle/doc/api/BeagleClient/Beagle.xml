@@ -6,7 +6,7 @@
 	    <item><term>Query the service.</term></item>
 	    <item><term>Submit data for indexing.</term></item>
 	    <item><term>Get current information about the index and the indexing process.</term></item>
-	    <item><term>Manage the service like stopping the service and optimizing the index.</term></item>
+	    <item><term>Control the service.</term></item>
 	</list>
     </remarks>
   </Docs>

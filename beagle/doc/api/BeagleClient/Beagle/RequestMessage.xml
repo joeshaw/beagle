@@ -14,7 +14,8 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
+        <summary>Default contructor.</summary>
+        <!--<remarks></remarks>-->
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -212,7 +213,7 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>An abstract class representing any kind of message sent to the service.</summary>
+    <remarks>This class encapsulates the different kinds of ways messages can be sent to the service. </remarks>
   </Docs>
 </Type>

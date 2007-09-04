@@ -502,7 +502,7 @@
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Represents a search query that can be asynchronously sent to the service.</summary>
+    <remarks>A Query consists of both the structural content of the search request and the logic of sending it to the service. A Query is always sent asynchronously; clients should listen to the various events for obtaining results.</remarks>
   </Docs>
 </Type>
