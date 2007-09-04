@@ -20,7 +20,7 @@
   <Types>
     <Namespace Name="Beagle">
       <Type Name="IIndexableGenerator" />
-      <Type Name="ISnippetReader" />
+      <!-- Ignore <Type Name="ISnippetReader" /> -->
       <Type Name="Hit" />
       <!-- Ignore <Type Name="Versioned" /> -->
       <Type Name="Indexable" />
