@@ -1,3 +1,4 @@
+//#define HTML_DEBUG
 // HtmlAgilityPack V1.0 - Simon Mourier <simonm@microsoft.com>
 
 /*
@@ -27,8 +28,6 @@ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-
-//#define HTML_DEBUG
 
 using System;
 using System.IO;
@@ -1755,7 +1754,9 @@ namespace HtmlAgilityPack
 							_pcdata_quote_char = _c;
 							_state = ParseState.PcDataQuote;
 							break;
-						} else if (_c == '/' && _text [_index - 2] == '/') {
+						} else if (_c == '/' &&
+							   _text [_index - 2] == '/' && // A nasty hack to prevent the 'foobar' in url(http://foobar) to be parsed as a comment
+							   _text [_index - 3] != ':') {
 							_state = ParseState.PcDataCommentSingleLine;
 							break;
 						} else if (_c == '*' && _text [_index - 2] == '/') {
