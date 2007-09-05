@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-18 03:17+0100\n"
-"PO-Revision-Date: 2007-08-18 23:06+0200\n"
+"POT-Creation-Date: 2007-09-05 03:17+0100\n"
+"PO-Revision-Date: 2007-09-05 20:36+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -291,6 +291,40 @@ msgstr "Código Postal/ZIP"
 #: ../ContactViewer/contactviewer.glade.h:48
 msgid "ZIP/Postal Code:"
 msgstr "Código postal/ZIP:"
+
+#: ../epiphany-extension/beagle.py.in:157
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle está indexando %s"
+
+#: ../epiphany-extension/beagle.py.in:177
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle está indexando el enlace %s"
+
+#: ../epiphany-extension/beagle.py.in:217
+msgid "Index This Page"
+msgstr "Indexar esta página"
+
+#: ../epiphany-extension/beagle.py.in:224
+msgid "Index Link"
+msgstr "Indexar enlace"
+
+#: ../epiphany-extension/beagle.py.in:231
+msgid "Reload Config File"
+msgstr "Recargar el archivo de configuración"
+
+#: ../epiphany-extension/beagle.py.in:240
+msgid "Auto Index"
+msgstr "Autoindexar"
+
+#: ../epiphany-extension/beagle.py.in:247
+msgid "Prompt key words when index on demand"
+msgstr "Preguntar palabras clave al indexar bajo demanda"
+
+#: ../epiphany-extension/beagle.py.in:274
+msgid "Extra keywords to index"
+msgstr "Palabras adicionales para indexar"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -1330,7 +1364,9 @@ msgstr "Añadir cualquier ruta adicional para incluirla en la indización."
 
 #: ../tools/settings.glade.h:14
 msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr "Añadir cualquier equipo remoto que tenga la búsqueda activada con el que quiera interconectarse."
+msgstr ""
+"Añadir cualquier equipo remoto que tenga la búsqueda activada con el que "
+"quiera interconectarse."
 
 #: ../tools/settings.glade.h:15
 msgid ""
