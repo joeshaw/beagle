@@ -28,4 +28,10 @@ cat >> beagle.defs << EOF
   (c-name "BeagleTimestamp")
   (gtype-id "BEAGLE_TYPE_TIMESTAMP")    
 )
+
+(define-pointer Indexable
+  (in-module "Beagle")
+  (c-name "BeagleIndexable")
+  (gtype-id "BEAGLE_TYPE_INDEXABLE")
+)
 EOF

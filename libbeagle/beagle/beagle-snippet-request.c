@@ -187,7 +187,7 @@ beagle_snippet_request_set_query (BeagleSnippetRequest *request,
 	g_object_ref (query);
 
 	if (priv->query != NULL)
-		g_object_unref (query);
+		g_object_unref (priv->query);
 
 	priv->query = query;
 }

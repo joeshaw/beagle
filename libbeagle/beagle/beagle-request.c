@@ -222,9 +222,6 @@ request_close (BeagleRequest *request)
 	g_source_remove (priv->io_watch);
 	priv->io_watch = 0;
 
-	/* Unref the request now that no more callbacks will be called. */
-	g_object_unref (request);
-
 	g_signal_emit (request, signals [CLOSED], 0);
 }
 
@@ -389,9 +386,6 @@ _beagle_request_send_async (BeagleRequest  *request,
 
 	if (!request_send (request, socket_path, err))
 		return FALSE;
-
-	/* Add a reference count to request to make sure it is not lost.*/
-	g_object_ref (request);
 
 	priv->io_watch = g_io_add_watch (priv->channel,
 					 G_IO_IN | G_IO_HUP | G_IO_ERR,

@@ -14,6 +14,7 @@ headers
 #define BEAGLE_TYPE_TIMESTAMP (beagle_timestamp_get_gtype ())
 #define BEAGLE_TYPE_QUERYABLE_STATUS	(beagle_queryable_status_get_gtype ())
 #define BEAGLE_TYPE_SCHEDULER_INFORMATION   (beagle_scheduler_information_get_gtype ())
+#define BEAGLE_TYPE_INDEXABLE	(beagle_indexable_get_gtype ())
 
 GType
 beagle_hit_get_gtype (void)
@@ -57,6 +58,15 @@ beagle_scheduler_information_get_gtype (void)
 	static GType our_type = 0;
 	if (!our_type)
 		our_type = g_pointer_type_register_static ("BeagleSchedulerInformation");
+	return our_type;
+}
+
+GType
+beagle_indexable_get_gtype (void)
+{
+	static GType our_type = 0;
+	if (!our_type)
+		our_type = g_pointer_type_register_static ("BeagleIndexable");
 	return our_type;
 }
 
