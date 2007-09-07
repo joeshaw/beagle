@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-23 07:40+0300\n"
+"POT-Creation-Date: 2007-09-07 20:26+0300\n"
 "PO-Revision-Date: 2007-03-31 17:18+0300\n"
 "Last-Translator: Joonas Niilola <juippis@opensuse.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -286,6 +286,40 @@ msgstr "Postinumero"
 #: ../ContactViewer/contactviewer.glade.h:48
 msgid "ZIP/Postal Code:"
 msgstr "Postinumero:"
+
+#: ../epiphany-extension/beagle.py.in:157
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle indekstoi %s"
+
+#: ../epiphany-extension/beagle.py.in:177
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle indeksoin linkkiä %s"
+
+#: ../epiphany-extension/beagle.py.in:217
+msgid "Index This Page"
+msgstr "Indeksoi tämä sivu"
+
+#: ../epiphany-extension/beagle.py.in:224
+msgid "Index Link"
+msgstr "Indeksoi linkki"
+
+#: ../epiphany-extension/beagle.py.in:231
+msgid "Reload Config File"
+msgstr "Lataa asetustiedosto uudestaan"
+
+#: ../epiphany-extension/beagle.py.in:240
+msgid "Auto Index"
+msgstr "Automaattinen indeksointi"
+
+#: ../epiphany-extension/beagle.py.in:247
+msgid "Prompt key words when index on demand"
+msgstr "Kysy avainsanoja indeksoitaessa tarvittaessa"
+
+#: ../epiphany-extension/beagle.py.in:274
+msgid "Extra keywords to index"
+msgstr "Ylimääräiset indeksoitavat avainsanat"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -1542,7 +1576,8 @@ msgstr "Yksilöllinen numero"
 msgid ""
 "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
 msgstr ""
-"Kuoren käsittelyn kiirellisyys väliltä 1 (kiirellisin) ja 9 (vähiten kiirellinen)"
+"Kuoren käsittelyn kiirellisyys väliltä 1 (kiirellisin) ja 9 (vähiten "
+"kiirellinen)"
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
@@ -1609,8 +1644,7 @@ msgstr "Sisällön aiheen lähdemaan koko nimi"
 #: ../Util/F-Spot/IptcFile.cs:236
 msgid ""
 "Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
-"Sisällön aiheen lähdemaan kaksi- tai kolmikirjaiminen ISO3166-koodi"
+msgstr "Sisällön aiheen lähdemaan kaksi- tai kolmikirjaiminen ISO3166-koodi"
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
@@ -1628,8 +1662,7 @@ msgstr "Kirjoittajan tai tekijän nimi"
 msgid ""
 "The person involved in writing, editing or correcting the object data or "
 "caption/abstract"
-msgstr ""
-"Kohteen sisällön tai esittelyn kirjoittamiseen osallistunut henkilö"
+msgstr "Kohteen sisällön tai esittelyn kirjoittamiseen osallistunut henkilö"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
@@ -1638,8 +1671,7 @@ msgstr "Sisällön otsikko"
 #: ../Util/F-Spot/IptcFile.cs:255
 msgid ""
 "Instructions from the creator to the receiver not covered by other fields"
-msgstr ""
-"Muut ohjeet sisällöntuottajalta käyttäjälle"
+msgstr "Muut ohjeet sisällöntuottajalta käyttäjälle"
 
 #: ../Util/F-Spot/IptcFile.cs:258
 msgid "Intellectual genre of the object"
