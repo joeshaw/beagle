@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-25 13:45+0200\n"
-"PO-Revision-Date: 2007-08-25 13:45+0100\n"
+"POT-Creation-Date: 2007-09-08 14:47+0200\n"
+"PO-Revision-Date: 2007-09-08 14:49+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -293,6 +293,40 @@ msgstr "ZIP/Postnummer"
 #: ../ContactViewer/contactviewer.glade.h:48
 msgid "ZIP/Postal Code:"
 msgstr "ZIP/Postnummer:"
+
+#: ../epiphany-extension/beagle.py.in:157
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle indexerar %s"
+
+#: ../epiphany-extension/beagle.py.in:177
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle indexerar länken %s"
+
+#: ../epiphany-extension/beagle.py.in:217
+msgid "Index This Page"
+msgstr "Indexera denna sida"
+
+#: ../epiphany-extension/beagle.py.in:224
+msgid "Index Link"
+msgstr "Indexera länk"
+
+#: ../epiphany-extension/beagle.py.in:231
+msgid "Reload Config File"
+msgstr "Läs om konfigurationsfil"
+
+#: ../epiphany-extension/beagle.py.in:240
+msgid "Auto Index"
+msgstr "Automatiskt index"
+
+#: ../epiphany-extension/beagle.py.in:247
+msgid "Prompt key words when index on demand"
+msgstr "Fråga efter nyckelord vid indexering vid behov"
+
+#: ../epiphany-extension/beagle.py.in:274
+msgid "Extra keywords to index"
+msgstr "Extra nyckelord att indexera"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
