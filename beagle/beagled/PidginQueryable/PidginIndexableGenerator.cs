@@ -253,15 +253,22 @@ namespace Beagle.Daemon.PidginQueryable {
 
 		/////////////////////////////////////////////////
 		
-		private static Indexable PidginLogToIndexable (string filename)
+		private Indexable PidginLogToIndexable (string filename)
 		{
+			FileInfo info = new FileInfo (filename);
 			Uri uri = UriFu.PathToFileUri (filename);
+
 			Indexable indexable = new Indexable (uri);
 			indexable.ContentUri = uri;
-			indexable.Timestamp = File.GetLastWriteTimeUtc (filename);
+			indexable.Timestamp = info.LastWriteTimeUtc;
 			indexable.MimeType = "beagle/x-pidgin-log";
 			indexable.HitType = "IMLog";
 			indexable.CacheContent = false;
+
+			ImBuddy buddy = queryable.ImBuddyListReader.Search (info.Directory.Name);
+
+			if (buddy != null && !String.IsNullOrEmpty (buddy.Alias))
+				indexable.AddProperty (Property.NewKeyword ("fixme:alias", buddy.Alias));
 
 			return indexable;
 		}
@@ -275,9 +282,11 @@ namespace Beagle.Daemon.PidginQueryable {
 				return;
 
 			Indexable indexable = PidginLogToIndexable (filename);
+
 			Scheduler.Task task = queryable.NewAddTask (indexable);
 			task.Priority = priority;
 			task.SubPriority = 0;
+
 			queryable.ThisScheduler.Add (task);
 		}		
 

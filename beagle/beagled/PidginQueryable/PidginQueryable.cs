@@ -42,7 +42,10 @@ namespace Beagle.Daemon.PidginQueryable {
 		private PidginBuddyListReader list = new PidginBuddyListReader ();
 		private const uint polling_interval = 60000;
 
-		public PidginQueryable () : base ("PidginIndex")
+		// 1: Add the speaking to persons alias as a keyword
+		const int MINOR_VERSION = 1;
+
+		public PidginQueryable () : base ("PidginIndex", MINOR_VERSION)
 		{
 		}
 
@@ -140,6 +143,10 @@ namespace Beagle.Daemon.PidginQueryable {
 				reader = new HtmlRemovingReader (reader);
 
 			return SnippetFu.GetSnippet (query_terms, reader, full_text);
+		}
+
+		public ImBuddyListReader ImBuddyListReader {
+			get { return list; }
 		}
 	}
 }

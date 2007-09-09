@@ -308,13 +308,13 @@ class ExtractContentTool {
 	{
 		SystemInformation.SetProcessName ("beagle-extract-content");
 
-		if (Array.IndexOf (args, "--debug") == -1)
-			Log.Disable ();
-
-		if (Array.IndexOf (args, "--help") != -1) {
+		if (args.Length < 1 || Array.IndexOf (args, "--help") != -1) {
 			PrintUsage ();
 			return 0;
 		}
+
+		if (Array.IndexOf (args, "--debug") == -1)
+			Log.Disable ();
 
 		if (Array.IndexOf (args, "--version") != -1) {
 			VersionFu.PrintVersion ();
