@@ -102,7 +102,7 @@ namespace Beagle.Daemon {
 			
 			// Query request: read content and forward to base.HandleConnection for processing
 			context.Response.KeepAlive = true;
-			context.Response.ContentType = "charset=utf-8";
+			context.Response.ContentType = "text/txt; charset=utf-8";
 			context.Response.SendChunked = true;
 			
 			Shutdown.WorkerStart (this.context.Request.InputStream, String.Format ("HandleConnection ({0})", ++connection_count));
@@ -730,6 +730,17 @@ namespace Beagle.Daemon {
 				if (context == null)
 					continue;
 
+				if (context.Request.HttpMethod == "GET") {
+					HandleStaticPages (context);
+					continue;
+				}
+
+				if (context.Request.HttpMethod != "POST") {
+					// FIXME: Send HTTP error
+					context.Response.Close ();
+					continue;
+				}
+
 				if (context.Request.RawUrl == "/") {
 					// We have received a new query request
 					Guid guid = Guid.NewGuid ();
@@ -790,6 +801,30 @@ namespace Beagle.Daemon {
 
 			Shutdown.WorkerFinished (http_listener);
 			Logger.Log.Debug ("HTTP Server: '{0}' shut down...", prefix);
+		}
+
+		private void HandleStaticPages (HttpListenerContext context)
+		{
+			Log.Debug ("GET request:" + context.Request.RawUrl);
+			context.Response.KeepAlive = false;
+			context.Response.StatusCode = (int) HttpStatusCode.OK;
+
+			if (context.Request.RawUrl == "/queryresult.xsl") {
+				context.Response.ContentType = "application/xml; charset=utf-8";
+				StreamReader r = new StreamReader (new FileStream ("webinterface/queryresult.xsl", FileMode.Open, FileAccess.Read));
+				StreamWriter w = new StreamWriter (context.Response.OutputStream);
+				w.Write (r.ReadToEnd ());
+				w.Close ();
+
+			} else /*if (context.Request.RawUrl == "/")*/ {
+				context.Response.ContentType = "text/html; charset=utf-8";
+				StreamReader r = new StreamReader (new FileStream ("webinterface/query.html", FileMode.Open, FileAccess.Read));
+				StreamWriter w = new StreamWriter (context.Response.OutputStream);
+				w.Write (r.ReadToEnd ());
+				w.Close ();
+			}
+
+			context.Response.Close ();
 		}
 
 		public void Start ()

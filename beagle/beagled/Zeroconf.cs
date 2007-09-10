@@ -81,9 +81,14 @@ namespace Beagle.Daemon.Network {
                         if (enabled != Conf.Networking.ServiceEnabled) {
                                 enabled = Conf.Networking.ServiceEnabled;
                                 
-                                if (enabled)
-					Publish ();
-				else
+                                if (enabled) {
+					try {
+						Publish ();
+					} catch (ClientException) {
+						Log.Error ("Could not start avahi");
+						return;
+					}
+				} else
 					Unpublish ();
                                 
                                 Logger.Log.Info ("Zeroconf: Index sharing is {0}", enabled ? "enabled" : "disabled");
