@@ -63,7 +63,9 @@ end_snippets (BeagleParserContext *ctx)
 	BeagleSnippetResponse *response = BEAGLE_SNIPPET_RESPONSE (_beagle_parser_context_get_response (ctx));
 	BeagleSnippetResponsePrivate *priv = BEAGLE_SNIPPET_RESPONSE_GET_PRIVATE (response);
 
-	priv->snippet = g_string_append (priv->snippet, "\n");
+	/* FIXME: Keep the formatting in sync with C#
+	 * priv->snippet = g_string_append (priv->snippet, "\n");
+	 */
 }
 
 static void

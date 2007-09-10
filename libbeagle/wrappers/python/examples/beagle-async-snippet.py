@@ -47,9 +47,11 @@ class TestCase:
 		print "-------------------------------------------"
    
 	def _on_snippet_received(self, request, response, hit):
-		print "Snippet received for %s" % hit.get_uri()
 		snippet = response.get_snippet()
-		print snippet
+		if (len(snippet) == 0):
+		    print "No snippet received for %s\n" % hit.get_uri()
+		else:
+		    print "Snippet received for %s: %s\n" % (hit.get_uri(), snippet)
     
 	def _on_snippet_closed(self, request, hit):
 		del self.hits [hit]
