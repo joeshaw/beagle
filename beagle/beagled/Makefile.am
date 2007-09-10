@@ -371,6 +371,10 @@ nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
 NAUTILUS_QUERYABLE_CSFILES =					\
 	$(nautilusqueryable)/NautilusMetadataQueryable.cs
 
+basketqueryable = $(srcdir)/BasketQueryable
+BASKET_QUERYABLE_CSFILES =					\
+	$(basketqueryable)/BasketQueryable.cs
+
 networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
 NETWORK_SERVICES_QUERYABLE =					\
 	$(networkservicesqueryable)/NetworkServicesQueryable.cs	\
@@ -396,6 +400,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
+	$(BASKET_QUERYABLE_CSFILES)				\
 	$(NETWORK_SERVICES_QUERYABLE)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
@@ -689,34 +694,6 @@ $(DUMP_INDEX_TARGET): $(DUMP_INDEX_CSFILES) $(DUMP_INDEX_LOCAL_ASSEMBLIES)
 
 ############################################################
 
-INDEX_WEB_CONTENT_WRAPPER = beagle-index-url
-INDEX_WEB_CONTENT_TARGET = IndexWebContent.exe
-
-$(INDEX_WEB_CONTENT_WRAPPER): $(srcdir)/$(WRAPPER_IN)
-	$(WRAPPER_SED) -e "s|\@target\@|$(INDEX_WEB_CONTENT_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
-	chmod +x $(INDEX_WEB_CONTENT_WRAPPER)
-
-
-INDEX_WEB_CONTENT_CSFLAGS = \
-	-target:exe
-
-INDEX_WEB_CONTENT_CSFILES = \
-	$(srcdir)/IndexWebContent.cs
-
-INDEX_WEB_CONTENT_LOCAL_ASSEMBLIES = \
-	../Util/Util.dll			\
-	../BeagleClient/Beagle.dll		\
-	./$(PLUGIN_TARGET)			\
-	./$(DAEMON_DLL_TARGET)
-
-INDEX_WEB_CONTENT_ASSEMBLIES =	\
-	$(INDEX_WEB_CONTENT_LOCAL_ASSEMBLIES:%=-r:%)
-
-$(INDEX_WEB_CONTENT_TARGET): $(INDEX_WEB_CONTENT_CSFILES) $(INDEX_WEB_CONTENT_LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(INDEX_WEB_CONTENT_CSFLAGS) $(INDEX_WEB_CONTENT_CSFILES) $(INDEX_WEB_CONTENT_ASSEMBLIES)
-
-############################################################
-
 MASTER_DELETE_WRAPPER = beagle-master-delete-button
 MASTER_DELETE_TARGET = MasterDelete.exe
 
@@ -859,8 +836,6 @@ ALL_TARGETS = 				\
 	$(INDEX_HELPER_WRAPPER)		\
 	$(BUILD_INDEX_TARGET)		\
 	$(BUILD_INDEX_WRAPPER)		\
-	$(INDEX_WEB_CONTENT_TARGET)	\
-	$(INDEX_WEB_CONTENT_WRAPPER)	\
 	$(EXTRACT_CONTENT_TARGET)	\
 	$(EXTRACT_CONTENT_WRAPPER)	\
 	$(DUMP_INDEX_TARGET)		\
@@ -887,7 +862,6 @@ man_MANS = 				\
 	beagle-dump-index.1		\
 	beagle-extract-content.8	\
 	beagle-imlogviewer.8		\
-	beagle-index-url.8		\
 	beagle-manage-index.8
 
 all: $(ALL_TARGETS)
@@ -927,8 +901,6 @@ endif
 	$(INSTALL_DATA) $(DAEMON_TARGET).mdb             $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET)        $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET).mdb    $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(INDEX_WEB_CONTENT_TARGET)      $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(INDEX_WEB_CONTENT_TARGET).mdb  $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET)           $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(INDEX_HELPER_TARGET).mdb       $(DESTDIR)$(pkglibdir)
 	$(INSTALL_DATA) $(BUILD_INDEX_TARGET)            $(DESTDIR)$(pkglibdir)
@@ -974,8 +946,6 @@ endif
 	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(EXTRACT_CONTENT_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(EXTRACT_CONTENT_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_WEB_CONTENT_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
 	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET).mdb
 	rm -f $(DESTDIR)$(pkglibdir)/$(DUMP_INDEX_TARGET)
@@ -985,8 +955,7 @@ endif
 
 BIN_WRAPPERS = \
 	$(DAEMON_WRAPPER)		\
-	$(EXTRACT_CONTENT_WRAPPER)	\
-	$(INDEX_WEB_CONTENT_WRAPPER)
+	$(EXTRACT_CONTENT_WRAPPER)
 
 SBIN_WRAPPERS = \
 	$(BUILD_INDEX_WRAPPER)		\
@@ -1010,7 +979,6 @@ EXTRA_DIST = \
 	$(THUNDERBIRD_CSFILES)			\
 	$(EXTRACT_CONTENT_CSFILES)		\
 	$(DUMP_INDEX_CSFILES)			\
-	$(INDEX_WEB_CONTENT_CSFILES)		\
 	$(SNIPPET_TEST_CSFILES)			\
 	$(INDEX_HELPER_CSFILES)			\
 	$(MASTER_DELETE_CSFILES)		\
@@ -1036,9 +1004,6 @@ CLEANFILES = \
 	$(DUMP_INDEX_TARGET)			\
 	$(DUMP_INDEX_TARGET).mdb		\
 	$(DUMP_INDEX_WRAPPER)			\
-	$(INDEX_WEB_CONTENT_TARGET)		\
-	$(INDEX_WEB_CONTENT_TARGET).mdb		\
-	$(INDEX_WEB_CONTENT_WRAPPER)		\
 	$(MASTER_DELETE_TARGET)			\
 	$(MASTER_DELETE_TARGET).mdb		\
 	$(MASTER_DELETE_WRAPPER)		\
