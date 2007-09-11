@@ -371,10 +371,6 @@ nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
 NAUTILUS_QUERYABLE_CSFILES =					\
 	$(nautilusqueryable)/NautilusMetadataQueryable.cs
 
-basketqueryable = $(srcdir)/BasketQueryable
-BASKET_QUERYABLE_CSFILES =					\
-	$(basketqueryable)/BasketQueryable.cs
-
 networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
 NETWORK_SERVICES_QUERYABLE =					\
 	$(networkservicesqueryable)/NetworkServicesQueryable.cs	\
@@ -400,7 +396,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
-	$(BASKET_QUERYABLE_CSFILES)				\
 	$(NETWORK_SERVICES_QUERYABLE)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
