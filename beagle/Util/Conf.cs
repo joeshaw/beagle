@@ -643,6 +643,17 @@ namespace Beagle.Util {
 				set { service_password = value; }
 			}
 
+			[ConfigOption (Description="Toggles whether searching over network will be enabled the next time the daemon starts.")]
+			internal bool NetworkSearch (out string output, string [] args)
+			{
+				if (service_enabled)
+					output = "Network search will be disabled.";
+				else
+					output = "Network search will be enabled.";
+				service_enabled = !service_enabled;
+				return true;
+			}
+
 			[XmlArray]
 			[XmlArrayItem (ElementName="NetworkService", Type=typeof (NetworkService))]
 			public ArrayList NetworkServices {
