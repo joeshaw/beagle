@@ -36,6 +36,7 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 
 [assembly: AssemblyTitle ("beagle-extract-content")]
@@ -404,7 +405,7 @@ class ExtractContentTool {
 			TokenStream outstream;
 			outstream = base.TokenStream (fieldName, reader);
 			outstream = new NoiseEmailHostFilter (outstream, true);
-			outstream = new PorterStemFilter (outstream);
+			outstream = new SnowballFilter (outstream, "English");
 
 			return outstream;
 		}
