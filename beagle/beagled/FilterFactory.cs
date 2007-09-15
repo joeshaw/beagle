@@ -131,7 +131,7 @@ namespace Beagle.Daemon {
 
 		static private ICollection CreateFilters (Uri uri, string extension, string mime_type)
 		{
-			Hashtable matched_filters_by_flavor = FilterFlavor.NewHashtable ();
+			SortedList matched_filters_by_flavor = FilterFlavor.NewHashtable ();
 
 			foreach (FilterFlavor flavor in FilterFlavor.Flavors) {
 				if (flavor.IsMatch (uri, extension, mime_type)) {

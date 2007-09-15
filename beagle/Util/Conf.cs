@@ -496,6 +496,19 @@ namespace Beagle.Util {
 				set { excludes = value; }
 			}
 
+			public struct Maildir {
+				public string Directory;
+				public string Extension;
+			}
+
+			private ArrayList maildirs = new ArrayList ();
+			[XmlArray]
+			[XmlArrayItem (ElementName="Maildir", Type=typeof(Maildir))]
+			public ArrayList Maildirs {
+				get { return maildirs; }
+				set { maildirs = value; }
+			}
+
 			[ConfigOption (Description="List the indexing roots", IsMutator=false)]
 			internal bool ListRoots (out string output, string [] args)
 			{
@@ -604,6 +617,54 @@ namespace Beagle.Util {
 				output = "Could not find requested exclude to remove.";
 				return false;
 			}
+
+			[ConfigOption (Description="Add a directory containing maildir emails. Use this when beagle is unable to determine the mimetype of files in this directory as message/rfc822",
+				       Params=2,
+				       ParamsDescription="path to the directory, extension (use * for any extension)")]
+			internal bool AddMaildir (out string output, string[] args)
+			{
+				Maildir maildir = new Maildir ();
+				maildir.Directory = args [0];
+				maildir.Extension = ((args [1] == null || args [1] == String.Empty) ? "*" : args [1]);
+				maildirs.Add (maildir);
+
+				output = String.Format ("Added maildir directory: {0} with extension '{1}'", maildir.Directory, maildir.Extension);
+				return true;
+			}
+
+			[ConfigOption (Description="Remove a directory from ListMaildirs",
+				       Params=2,
+				       ParamsDescription="path to the directory, extension")]
+			internal bool DelMaildir (out string output, string[] args)
+			{
+				args [1] = ((args [1] == null || args [1] == String.Empty) ? "*" : args [1]);
+
+				int count = -1;
+				foreach (Maildir maildir in maildirs) {
+					count ++;
+					if (maildir.Directory == args [0] && maildir.Extension == args [1])
+						break;
+				}
+
+				if (count != -1 && count != maildirs.Count) {
+					maildirs.RemoveAt (count);
+					output = "Maildir removed.";
+					return true;
+				}
+
+				output = "Could not find requested maildir to remove.";
+				return false;
+			}
+
+			[ConfigOption (Description="List user specified maildir directories", IsMutator=false)]
+			internal bool ListMaildirs (out string output, string [] args)
+			{
+				output = "User-specified maildir directories:\n";
+				foreach (Maildir maildir in maildirs)
+					output += String.Format (" - {0} with extension '{1}'\n", maildir.Directory, maildir.Extension);
+				return true;
+			}
+
 		}
 
 		[ConfigSection (Name="networking")]

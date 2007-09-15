@@ -74,6 +74,18 @@ namespace Beagle.Filters {
 		protected override void RegisterSupportedTypes ()
 		{
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("message/rfc822"));
+
+			// Add the list of user requested maildir directories
+			// This is useful if beagle (xdgmime) does not correctly detect the mimetypes
+			// of several maildir files as message/rfc822
+			foreach (Conf.IndexingConfig.Maildir maildir in Conf.Indexing.Maildirs) {
+				FilterFlavor flavor =
+					new FilterFlavor (new Uri (maildir.Directory + "/*").ToString (),
+							  maildir.Extension,
+							  null,
+							  1 /* Should be more than priority of text filter */);
+				AddSupportedFlavor (flavor);
+			}
 		}
 
 		protected override void DoOpen (FileInfo info)

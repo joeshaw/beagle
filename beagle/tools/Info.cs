@@ -160,14 +160,10 @@ public class InfoTool {
 			bool has_filter = false;
 
 			foreach (FilterFlavor flavor in filter.SupportedFlavors) {
-				if (flavor.MimeType != null && (! flavor.MimeType.StartsWith ("beagle"))) {
-					sb.Append ("  - " + flavor.MimeType + "\n");
-					has_filter = true;
-				}
-				if (flavor.Extension != null) {
-					sb.Append ("  - *" + flavor.Extension + "\n");
-					has_filter = true;
-				}
+				sb.Append ("  - ");
+				sb.Append (flavor);
+				sb.Append ("\n");
+				has_filter = true;
 			}
 
 			if (has_filter)

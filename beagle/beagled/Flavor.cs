@@ -42,17 +42,14 @@ namespace Beagle.Daemon {
 
 		public string Uri { 
 			get { return uri; }
-			set { uri = IsWild (value) ? null : value; }
 		}
 
 		public string Extension {
 			get { return extension; }
-			set { extension = IsWild (value) ? null : value; }
 		}
 
 		public string MimeType {
 			get { return mime_type; }
-			set { mime_type = IsWild (value) ? null : value; }
 		}
 
 		public int Priority {
@@ -114,41 +111,37 @@ namespace Beagle.Daemon {
 
 		public override string ToString ()
 		{
-			string ret = "";
+			string ret = String.Empty;
 
 			if (Uri != null)
 				ret += String.Format ("Uri: {0}", Uri);
 
 			if (Extension != null)
-				ret += String.Format ("Extension: {0}", Extension);
+				ret += String.Format ("{1}Extension: {0}", Extension, (ret == String.Empty ? "": ", "));
 
-			if (MimeType != null)
-				ret += String.Format ("MimeType: {0}", MimeType);
+			if (MimeType != null && ! MimeType.StartsWith ("beagle"))
+				ret += String.Format ("{1}MimeType: {0}", MimeType, (ret == String.Empty ? "": ", "));
 
 			return ret;
 		}
 
-		public class EqualityComparer : IEqualityComparer 
+		public class FlavorComparer : IComparer 
 		{
-			public new bool Equals (object obj1, object obj2) 
+			// flav [larger wt] < flav [smaller wt]
+			public int Compare (object obj1, object obj2) 
 			{
 				FilterFlavor flav1 = (FilterFlavor) obj1;
 				FilterFlavor flav2 = (FilterFlavor) obj2;
 
-				return flav1.Weight.Equals (flav2.Weight);
+				return flav2.Weight.CompareTo (flav1.Weight);
 			} 
-
-			public int GetHashCode (object o)
-			{
-				return o.ToString ().GetHashCode ();
-			}
 		}
 
-		static EqualityComparer equality_comparer = new EqualityComparer ();
+		static FlavorComparer flavor_comparer = new FlavorComparer ();
 
-		public static Hashtable NewHashtable ()
+		public static SortedList NewHashtable ()
 		{
-			return new Hashtable (equality_comparer);
+			return new SortedList (flavor_comparer);
 		}
 
 		////////////////////////////////////////////
