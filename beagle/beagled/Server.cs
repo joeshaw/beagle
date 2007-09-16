@@ -724,19 +724,33 @@ namespace Beagle.Daemon {
 				try {
 					context = http_listener.GetContext ();
 				} catch (Exception e) {
-					Logger.Log.Warn (e, "HTTP Server: Exception while getting context:");
+					// Log a warning if not due to shutdown
+					if (this.running)
+						Logger.Log.Warn (e, "HTTP Server: Exception while getting context:");
+					else
+						break;
 				}
 
 				if (context == null)
 					continue;
 
 				if (context.Request.HttpMethod == "GET") {
-					HandleStaticPages (context);
+					try {
+						HandleStaticPages (context);
+					} catch (IOException ex1) {
+						// Socket was shut down
+						Log.Debug ("Exception while serving static page: " + ex1.Message);
+						// FIXME: Should anything be done here to free "context" ? This context seems to remain in http_listener's ctxt table
+					} catch (SocketException ex2) {
+						// Socket is not connected anymore
+						Log.Debug ("Exception while serving static page: " + ex2.Message);
+					}
 					continue;
 				}
 
 				if (context.Request.HttpMethod != "POST") {
-					// FIXME: Send HTTP error
+					// FIXME: Send better HTTP error ?
+					context.Response.StatusCode = 404;
 					context.Response.Close ();
 					continue;
 				}
@@ -816,12 +830,14 @@ namespace Beagle.Daemon {
 				w.Write (r.ReadToEnd ());
 				w.Close ();
 
-			} else /*if (context.Request.RawUrl == "/")*/ {
+			} else if (context.Request.RawUrl == "/") {
 				context.Response.ContentType = "text/html; charset=utf-8";
 				StreamReader r = new StreamReader (new FileStream ("webinterface/query.html", FileMode.Open, FileAccess.Read));
 				StreamWriter w = new StreamWriter (context.Response.OutputStream);
 				w.Write (r.ReadToEnd ());
 				w.Close ();
+			} else {
+				context.Response.StatusCode = 404;
 			}
 
 			context.Response.Close ();
@@ -844,8 +860,22 @@ namespace Beagle.Daemon {
 			if (this.running) {
 				this.running = false;
 				this.unix_listener.Stop ();
-				if (enable_http)
-					this.http_listener.Close ();
+				if (enable_http) {
+					// Abort without bothering about anythin' else
+					this.http_listener.IgnoreWriteExceptions = true;
+					// FIXME FIXME FIXME: this.http_listener.Abort() is throwing
+					// IOExceptions when trying
+					// to close previous connections which were unexpectedly 
+					// closed by the client. That somehow points to a leak; why
+					// are those connections still present with listener ?
+					// http_listener should really be Abort()-ed and not Close()-ed
+					try {
+						this.http_listener.Close ();
+					} catch (IOException) {
+						Log.Debug ("IOException was thrown when trying to close previous connections which were unexpectedly closed by the client. This somehow points to a leak; why are those connections still present with listener ?");
+						Log.Debug ("Also this is preventing the abort() to complete and hence http_listener.GetContext() is still waiting for connections.");
+					}
+				}
 			}
 
 			File.Delete (this.socket_path);
