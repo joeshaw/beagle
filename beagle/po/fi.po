@@ -903,8 +903,8 @@ msgid ""
 msgstr ""
 "yhteystieto\n"
 "yhteystiedot\n"
-"kontakti\n"
-"kontaktit"
+"käyntikortti\n"
+"käyntikortit"
 
 #: ../search/TypeFilter.cs:43
 msgid ""
@@ -912,8 +912,7 @@ msgid ""
 "folders"
 msgstr ""
 "kansio\n"
-"kansiothakemisto\n"
-"hakemistot"
+"kansiot"
 
 #: ../search/TypeFilter.cs:44
 msgid ""
@@ -923,8 +922,7 @@ msgid ""
 msgstr ""
 "kuva\n"
 "kuvat\n"
-"valokuva\n"
-"valokuvat"
+"kv"
 
 #: ../search/TypeFilter.cs:45
 msgid "audio"
