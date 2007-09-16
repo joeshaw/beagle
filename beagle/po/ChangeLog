@@ -1,3 +1,8 @@
+2007-09-16  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation
+	* POTFILES.in: Add NotificationArea.cs
+
 2007-09-16  Ilkka Tuohela  <hile@iki.fi>
 
 	* fi.po: Updated Finnish translation.
