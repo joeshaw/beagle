@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections;
-
+using Mono.Posix;
 using Gtk;
 
 namespace Search {
@@ -59,7 +59,7 @@ namespace Search {
 
 			action_box = new HBox (false, 3);
 
-			Button hide_button = new Button ("Hide");
+			Button hide_button = new Button (Catalog.GetString ("Hide"));
 			hide_button.Clicked += OnHideClicked;
 			action_box.PackEnd (hide_button, false, true, 0);
 
