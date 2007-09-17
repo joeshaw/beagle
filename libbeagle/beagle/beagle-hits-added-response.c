@@ -90,12 +90,6 @@ start_hit (BeagleParserContext *ctx, const char **attrs)
 			priv->hit->parent_uri = g_strdup (attrs[i + 1]);
 		else if (strcmp (attrs[i], "Timestamp") == 0)
 			priv->hit->timestamp = beagle_timestamp_new_from_string (attrs[i + 1]);
-		else if (strcmp (attrs[i], "Type") == 0)
-			priv->hit->type = g_strdup (attrs[i + 1]);
-		else if (strcmp (attrs[i], "MimeType") == 0)
-			priv->hit->mime_type = g_strdup (attrs[i + 1]);
-		else if (strcmp (attrs[i], "Source") == 0)
-			priv->hit->source = g_strdup (attrs[i + 1]);
 		else if (strcmp (attrs[i], "Score") == 0)
 			priv->hit->score = g_ascii_strtod (attrs[i + 1], NULL);
 

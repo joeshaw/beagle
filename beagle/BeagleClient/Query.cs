@@ -54,14 +54,6 @@ namespace Beagle {
 		// FIXME: This is a good default when on an airplane.
 		private QueryDomain domain_flags = QueryDomain.Local | QueryDomain.System;
 
-		// These are DEPRECATED
-		private ArrayList mimeTypes = new ArrayList ();
-		private ArrayList hitTypes = new ArrayList ();
-		private ArrayList searchSources = new ArrayList ();
-		private QueryPart_Or mime_type_part = null;
-		private QueryPart_Or hit_type_part = null;
-		private QueryPart_Or source_part = null;
-
 		public delegate void HitsAdded (HitsAddedResponse response);
 		public event HitsAdded HitsAddedEvent;
 
@@ -211,142 +203,6 @@ namespace Beagle {
 						
 		///////////////////////////////////////////////////////////////
 
-		// This API is DEPRECATED.
-		// The mime type is now stored in the beagle:MimeType property.
-		// To restrict on mime type, just do a normal property query.
-
-		public void AddMimeType (string str)
-		{
-			mimeTypes.Add (str);
-
-			if (mime_type_part == null) {
-				mime_type_part = new QueryPart_Or ();
-				AddPart (mime_type_part);
-			}
-
-			// Create a part for this mime type.
-			QueryPart_Property part;
-			part = new QueryPart_Property ();
-			part.Type = PropertyType.Keyword;
-			part.Key = "beagle:MimeType";
-			part.Value = str;
-			mime_type_part.Add (part);
-		}
-
-		public bool AllowsMimeType (string str)
-		{
-			if (mimeTypes.Count == 0)
-				return true;
-			foreach (string mt in mimeTypes)
-				if (str == mt)
-					return true;
-			return false;
-		}
-
-		[XmlArrayItem (ElementName="MimeType", Type=typeof (string))]
-		[XmlArray (ElementName="MimeTypes")]
-		public ArrayList MimeTypes {
-			get { return mimeTypes; }
-		}
-
-		public bool HasMimeTypes {
-			get { return mimeTypes.Count > 0; }
-		}
-
-		///////////////////////////////////////////////////////////////
-
-		// This API is DEPRECATED.
-		// The hit type is now stored in the beagle:HitType property.
-		// To restrict on type, just do a normal property query.
-
-		public void AddHitType (string str)
-		{
-			hitTypes.Add (str);
-
-			if (hit_type_part == null) {
-				hit_type_part = new QueryPart_Or ();
-				AddPart (hit_type_part);
-			}
-
-			// Add a part for this hit type.
-			QueryPart_Property part;
-			part = new QueryPart_Property ();
-			part.Type = PropertyType.Keyword;
-			part.Key = "beagle:HitType";
-			part.Value = str;
-			hit_type_part.Add (part);
-		}
-
-		public bool AllowsHitType (string str)
-		{
-			if (hitTypes.Count == 0)
-				return true;
-			foreach (string ht in hitTypes)
-				if (str == ht)
-					return true;
-			return false;
-		}
-
-		[XmlArrayItem (ElementName="HitType",
-			       Type=typeof(string))]
-		[XmlArray (ElementName="HitTypes")]
-		public ArrayList HitTypes {
-			get { return hitTypes; }
-		}
-
-		[XmlIgnore]
-		public bool HasHitTypes {
-			get { return hitTypes.Count > 0; }
-		}
-
-		///////////////////////////////////////////////////////////////
-
-		// This API is DEPRECATED.
-		// The source is now stored in the beagle:Source property.
-		// To restrict on source, just do a normal property query.
-
-		public void AddSource (string str)
-		{
-			searchSources.Add (str);
-
-			if (source_part == null) {
-				source_part = new QueryPart_Or ();
-				AddPart (source_part);
-			}
-
-			// Add a part for this source type.
-			QueryPart_Property part;
-			part = new QueryPart_Property ();
-			part.Type = PropertyType.Keyword;
-			part.Key = "beagle:Source";
-			part.Value = str;
-			source_part.Add (part);
-		}
-		
-
-		public bool AllowsSource (string str)
-		{
-			if (searchSources.Count == 0)
-				return true;
-			foreach (string ss in searchSources)
-				if (str == ss)
-					return true;
-			return false;
-		}
-
-		[XmlArrayItem (ElementName="Source", Type=typeof (string))]
-		[XmlArray (ElementName="Sources")]
-		public ArrayList Sources {
-			get { return searchSources; }
-		}
-
-		[XmlIgnore]
-		public bool HasSources {
-			get { return searchSources.Count > 0; }
-		}
-
-		///////////////////////////////////////////////////////////////
-
 		public void AddDomain (QueryDomain domain)
 		{
 			domain_flags |= domain;
@@ -379,7 +235,7 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public bool IsEmpty {
-			get { return parts.Count == 0 && mimeTypes.Count == 0 && searchSources.Count == 0; }
+			get { return parts.Count == 0; }
 		}
 
 		public override string ToString ()

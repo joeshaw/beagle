@@ -42,6 +42,7 @@ void beagle_hit_unref (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_uri (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_type (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_mime_type (BeagleHit *hit);
+G_CONST_RETURN char *beagle_hit_get_file_type (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_source (BeagleHit *hit);
 G_CONST_RETURN char *beagle_hit_get_parent_uri (BeagleHit *hit);
 

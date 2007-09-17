@@ -68,9 +68,6 @@
 	<xsl:for-each select="Hit">
 	    <div class="Hit" id="{@Uri}"><a href="{@Uri}"><xsl:value-of select="@Uri"/></a><br/>
 		<span class="Timestamp">Timestamp:<i><xsl:value-of select="@Timestamp"/></i><b>|</b></span>
-		<span class="Type">Type:<i><xsl:value-of select="@Type"/></i><b>|</b></span>
-		<span class="MimeType">Mimetype:<i><xsl:value-of select="@MimeType"/></i><b>|</b></span>
-		<span class="Source">Source:<i><xsl:value-of select="@Source"/></i><b>|</b></span>
 		<span class="Score">Score:<i><xsl:value-of select="@Score"/></i></span>
 	    <xsl:apply-templates select="Properties"/>
 	    </div><hr/>

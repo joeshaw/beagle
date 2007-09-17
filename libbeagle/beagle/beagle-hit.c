@@ -90,9 +90,15 @@ beagle_hit_get_timestamp (BeagleHit *hit)
 G_CONST_RETURN char *
 beagle_hit_get_type (BeagleHit *hit)
 {
+	gboolean ret;
+	const char *value;
+
 	g_return_val_if_fail (hit != NULL, NULL);
 
-	return hit->type;
+	ret = beagle_hit_get_one_property (hit, "beagle:HitType", &value);
+	g_return_val_if_fail (ret != TRUE, NULL);
+
+	return value;
 }
 
 /**
@@ -106,9 +112,37 @@ beagle_hit_get_type (BeagleHit *hit)
 G_CONST_RETURN char *
 beagle_hit_get_mime_type (BeagleHit *hit)
 {
+	gboolean ret;
+	const char *value;
+
 	g_return_val_if_fail (hit != NULL, NULL);
 
-	return hit->mime_type;
+	ret = beagle_hit_get_one_property (hit, "beagle:MimeType", &value);
+	g_return_val_if_fail (ret != TRUE, NULL);
+
+	return value;
+}
+
+/**
+ * beagle_hit_get_file_type:
+ * @hit: a #BeagleHit
+ *
+ * For hits based on files, fetches the type of file for the given #BeagleHit.
+ *
+ * Return value: the file type of the #BeagleHit.
+ **/
+G_CONST_RETURN char *
+beagle_hit_get_file_type (BeagleHit *hit)
+{
+	gboolean ret;
+	const char *value;
+
+	g_return_val_if_fail (hit != NULL, NULL);
+
+	ret = beagle_hit_get_one_property (hit, "beagle:FileType", &value);
+	g_return_val_if_fail (ret != TRUE, NULL);
+
+	return value;
 }
 
 /**
@@ -122,9 +156,15 @@ beagle_hit_get_mime_type (BeagleHit *hit)
 G_CONST_RETURN char *
 beagle_hit_get_source (BeagleHit *hit)
 {
+	gboolean ret;
+	const char *value;
+
 	g_return_val_if_fail (hit != NULL, NULL);
 
-	return hit->source;
+	ret = beagle_hit_get_one_property (hit, "beagle:Source", &value);
+	g_return_val_if_fail (ret != TRUE, NULL);
+
+	return value;
 }
 
 /**
@@ -153,9 +193,6 @@ _beagle_hit_new (void)
 
 	hit->uri = NULL;
 	hit->timestamp = NULL;
-	hit->type = NULL;
-	hit->mime_type = NULL;
-	hit->source = NULL;
 
 	hit->properties = NULL;
 
@@ -211,9 +248,6 @@ beagle_hit_unref (BeagleHit *hit)
 	if (hit->ref_count == 0) {
 		g_free (hit->uri);
 		g_free (hit->parent_uri);
-		g_free (hit->type);
-		g_free (hit->mime_type);
-		g_free (hit->source);
 
 		if (hit->timestamp)
 			beagle_timestamp_free (hit->timestamp);
@@ -349,15 +383,11 @@ _beagle_hit_to_xml (BeagleHit *hit, GString *data)
 
 	g_free (tmp);
 
-	g_string_append_printf (data, " Uri=\"%s\" Type=\"%s\" MimeType=\"%s\"", 
-				hit->uri, hit->type, hit->mime_type);
+	g_string_append_printf (data, " Uri=\"%s\"", hit->uri);
 
 	if (hit->parent_uri)
 		g_string_append_printf (data, " ParentUri=\"%s\"", 
 				hit->parent_uri);
-
-	g_string_append_printf (data, " Source=\"%s\"", 
-				hit->source);
 
 	/* Temporarily set the locale to "C" to convert floating point numbers. */
 	char * old_locale = _beagle_util_set_c_locale ();

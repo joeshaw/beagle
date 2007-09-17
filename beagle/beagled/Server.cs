@@ -1,3 +1,4 @@
+#define ENABLE_XML_DUMP
 //
 // Server.cs
 //
@@ -235,7 +236,6 @@ namespace Beagle.Daemon {
 
 			foreach (Hit hit in response.Hits) {
 				hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
-				hit.Source = "Network";
 				hit ["beagle:Source"] = "Network";
 
 				item_handler.RegisterHit (hit);

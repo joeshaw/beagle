@@ -44,15 +44,6 @@ namespace Beagle {
 		// A URI of this Hit's container element
 		private Uri parent_uri = null;
 
-		// File, Web, MailMessage, IMLog, etc.
-		private string type = null;
-
-		// If applicable, otherwise set to null.
-		private string mimeType = null;
-
-		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
-		private string source = null;
-
 		// This is used to hold a copy of the Queryable in the
 		// server-side copy of the Hit.  It is always null
 		// on the client-side.
@@ -119,24 +110,28 @@ namespace Beagle {
 			}
 		}
 
-		// DEPRECATED: This is now stored as a property.
-		[XmlAttribute]
+		// File, Web, MailMessage, IMLog, etc.
+		[XmlIgnore]
 		public string Type {
-			get { return type; }
-			set { type = value; }
+			get { return GetFirstProperty ("beagle:HitType"); }
 		}
 
-		// DEPRECATED: This is now stored as a property.
-		[XmlAttribute]
+		// If applicable, could be null.
+		[XmlIgnore]
 		public string MimeType {
-			get { return mimeType; }
-			set { mimeType = value; }
+			get { return GetFirstProperty ("beagle:MimeType"); }
 		}
 	
-		[XmlAttribute]
+		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
+		[XmlIgnore]
 		public string Source {
-			get { return source; }
-			set { source = value; }
+			get { return GetFirstProperty ("beagle:Source"); }
+		}
+
+		// document, archive, image etc.
+		[XmlIgnore]
+		public string FileType {
+			get { return GetFirstProperty ("beagle:FileType"); }
 		}
 
 		[XmlIgnore]
@@ -394,6 +389,8 @@ namespace Beagle {
 
 		public override int GetHashCode ()
 		{
+			string type = Type;
+			string source = Source;
 			return (uri != null ? uri.ToString().GetHashCode () : 0)
 				^ (type != null ? type.GetHashCode () : 0)
 				^ (source != null ? source.GetHashCode () : 0);

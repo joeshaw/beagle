@@ -69,10 +69,22 @@ namespace Bludgeon {
 			if (allow_inexpensive && ! inside_an_or) {
 				int mime_type;
 				mime_type = random.Next (3);
-				if (mime_type == 0)
-					query.AddMimeType ("inode/directory");
-				else if (mime_type == 1)
-					query.AddMimeType ("text/plain");
+
+				QueryPart_Or mime_type_part = new QueryPart_Or ();
+				QueryPart_Property part;
+				part = new QueryPart_Property ();
+				part.Type = PropertyType.Keyword;
+				part.Key = "beagle:MimeType";
+
+				if (mime_type == 0) {
+					part.Value = "inode/directory";
+					mime_type_part.Add (part);
+					query.AddPart (mime_type_part);
+				} else if (mime_type == 1) {
+					part.Value = "text/plain";
+					mime_type_part.Add (part);
+					query.AddPart (mime_type_part);
+				}
 			}
 
 			// Every query must contain at least

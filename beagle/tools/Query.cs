@@ -146,12 +146,6 @@ public class QueryTool {
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
-			"  --mime <mime type>\t\t(DEPRECATED Use mimetype: property query.)\n" +
-			"  --type <hit type>\t\t(DEPRECATED Use hittype: property query.)\n" +
-			"  --source <source>\t\t(DEPRECATED Use source: property query.)\n" +
-			"                   \t\tSources list available from beagle-info --status.\n" +
-			"  --start <date>\t\t(DEPRECATED Use date range query syntax).\n" +
-			"  --end <date>\t\t\t(DEPRECATED Use date range query syntax).\n" +
 			"  --keywords\t\t\tLists the keywords allowed in 'query string'.\n" +
 			"            \t\t\tKeyword queries can be specified as keywordname:value e.g. ext:jpg\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
@@ -280,18 +274,6 @@ public class QueryTool {
 		while (i < args.Length) {
 			switch (args [i]) {
 
-			case "--mime":
-			        if (++i >= args.Length) PrintUsageAndExit ();
-				query.AddMimeType (args [i]);
-				break;
-			case "--type":
-			        if (++i >= args.Length) PrintUsageAndExit ();
-				query.AddHitType (args [i]);
-				break;
-			case "--source":
-			        if (++i >= args.Length) PrintUsageAndExit ();
-				query.AddSource (args [i]);
-				break;
 			case "--live-query":
 				keep_running = true;
 				break;
@@ -313,32 +295,6 @@ public class QueryTool {
 				listener = true;
 				keep_running = true;
 				break;
-			case "--start":
-				if (++i >= args.Length) PrintUsageAndExit ();
-				try {
-					start_date = DateTime.ParseExact (args[i], formats,
-									  CultureInfo.InvariantCulture,
-									  DateTimeStyles.None);
-				} catch (FormatException) {
-					Console.WriteLine ("Invalid start date");
-					System.Environment.Exit (-1);
-				}
-				start_date = start_date.ToUniversalTime ();
-				break;
-
-			case "--end":
-				if (++i >= args.Length) PrintUsageAndExit ();
-				try {
-					end_date = DateTime.ParseExact (args[i], formats,
-									CultureInfo.InvariantCulture,
-									DateTimeStyles.None);
-				} catch (FormatException) {
-					Console.WriteLine ("Invalid end date");
-					System.Environment.Exit (-1);
-				}
-				end_date = end_date.ToUniversalTime ();
-				break;
-
 			case "--keywords":
 				ReadBackendMappings ();
 				QueryDriver.ReadKeywordMappings ();

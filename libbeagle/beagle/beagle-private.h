@@ -46,9 +46,6 @@ struct _BeagleHit {
 	char *uri;
 	char *parent_uri;
 	BeagleTimestamp *timestamp;
-	char *type;
-	char *mime_type;
-	char *source;
 
 	double score;
 

@@ -974,11 +974,6 @@ namespace Beagle.Daemon {
 
 			AddPropertiesToHit (hit, doc, true);
 
-			// Get the Type and MimeType from the properties.
-			hit.Type = hit.GetFirstProperty ("beagle:HitType");
-			hit.MimeType = hit.GetFirstProperty ("beagle:MimeType");
-			hit.Source = hit.GetFirstProperty ("beagle:Source");
-
 			return hit;
 		}
 
