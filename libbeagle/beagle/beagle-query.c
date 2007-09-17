@@ -44,9 +44,6 @@
 
 typedef struct {
 	GSList *parts;      /* of BeagleQueryPart */
-	GSList *mime_types; /* of string */
-	GSList *hit_types;  /* of string */
-	GSList *sources;    /* of string */
 	int max_hits;
 
 	/* These are extracted from the BeagleSearchTermResponse */
@@ -91,63 +88,6 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 
 	g_string_append_len (data, "<Parts>", 7);
 
-	if (priv->mime_types != NULL) {
-		or_part = beagle_query_part_or_new ();
-
-		for (iter = priv->mime_types; iter!= NULL; iter = iter->next) {
-			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
-
-			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
-			beagle_query_part_property_set_key (prop_part, "beagle:MimeType");
-			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
-
-			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
-		}
-
-		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
-		g_string_append_len (data, sub_data->str, sub_data->len);
-		g_string_free (sub_data, TRUE);
-		g_object_unref (or_part);
-	}
-
-	if (priv->hit_types != NULL) {
-		or_part = beagle_query_part_or_new ();
-
-		for (iter = priv->hit_types; iter!= NULL; iter = iter->next) {
-			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
-
-			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
-			beagle_query_part_property_set_key (prop_part, "beagle:HitType");
-			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
-
-			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
-		}
-
-		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
-		g_string_append_len (data, sub_data->str, sub_data->len);
-		g_string_free (sub_data, TRUE);
-		g_object_unref (or_part);
-	}
-
-	if (priv->sources != NULL) {
-		or_part = beagle_query_part_or_new ();
-
-		for (iter = priv->sources; iter!= NULL; iter = iter->next) {
-			BeagleQueryPartProperty *prop_part = beagle_query_part_property_new ();
-
-			beagle_query_part_property_set_property_type (prop_part, BEAGLE_PROPERTY_TYPE_KEYWORD);
-			beagle_query_part_property_set_key (prop_part, "beagle:Source");
-			beagle_query_part_property_set_value (prop_part, (const char *) iter->data);
-
-			beagle_query_part_or_add_subpart (or_part, BEAGLE_QUERY_PART (prop_part));
-		}
-
-		sub_data = _beagle_query_part_to_xml (BEAGLE_QUERY_PART (or_part));
-		g_string_append_len (data, sub_data->str, sub_data->len);
-		g_string_free (sub_data, TRUE);
-		g_object_unref (or_part);
-	}
-
 	for (iter = priv->parts; iter != NULL; iter = iter->next) {
 		BeagleQueryPart *part = (BeagleQueryPart *) iter->data;
 
@@ -157,36 +97,6 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 	}
 
 	g_string_append_len (data, "</Parts>", 8);
-
-	g_string_append_len (data, "<MimeTypes>", 11);
-
-	for (iter = priv->mime_types; iter != NULL; iter = iter->next) {
-		const char *mime_type = (const char *) iter->data;
-
-		g_string_append_printf (data, "<MimeType>%s</MimeType>", mime_type);
-	}
-
-	g_string_append_len (data, "</MimeTypes>", 12);
-
-	g_string_append_len (data, "<HitTypes>", 10);
-
-	for (iter = priv->hit_types; iter != NULL; iter = iter->next) {
-		const char *hit_type = (const char *) iter->data;
-
-		g_string_append_printf (data, "<HitType>%s</HitType>", hit_type);
-	}
-
-	g_string_append_len (data, "</HitTypes>", 11);
-
-	g_string_append_len (data, "<Sources>", 9);
-
-	for (iter = priv->sources; iter != NULL; iter = iter->next) {
-		const char *source = (const char *) iter->data;
-
-		g_string_append_printf (data, "<Source>%s</Source>", source);
-	}
-
-	g_string_append_len (data, "</Sources>", 10);
 
 	g_string_append_len (data, "<QueryDomain>", 13);
 
@@ -252,15 +162,6 @@ beagle_query_finalize (GObject *obj)
 
 	g_slist_foreach (priv->parts, (GFunc) g_object_unref, NULL);
 	g_slist_free (priv->parts);
-
-	g_slist_foreach (priv->mime_types, (GFunc) g_free, NULL);
-	g_slist_free (priv->mime_types);
-
-	g_slist_foreach (priv->hit_types, (GFunc) g_free, NULL);
-	g_slist_free (priv->hit_types);
-
-	g_slist_foreach (priv->sources, (GFunc) g_free, NULL);
-	g_slist_free (priv->sources);
 
 	g_slist_foreach (priv->exact_text, (GFunc) g_free, NULL);
 	g_slist_free (priv->exact_text);
@@ -395,69 +296,6 @@ beagle_query_add_text (BeagleQuery *query, const char *str)
 	beagle_query_add_part (query, BEAGLE_QUERY_PART (part));
 }
 
-
-/**
- * beagle_query_add_mime_type:
- * @query: a #BeagleQuery
- * @mime_type: a mime type
- *
- * Adds an allowed mime type to the given #BeagleQuery.
- **/
-void
-beagle_query_add_mime_type (BeagleQuery *query,
-			    const char  *mime_type)
-{
-	BeagleQueryPrivate *priv;
-
-	g_return_if_fail (BEAGLE_IS_QUERY (query));
-	g_return_if_fail (mime_type != NULL);
-	
-	priv = BEAGLE_QUERY_GET_PRIVATE (query);
-
-	priv->mime_types = g_slist_prepend (priv->mime_types, g_strdup (mime_type));
-}
-
-/**
- * beagle_query_add_hit_type:
- * @query: a #BeagleQuery
- * @hit_type: a hit type
- *
- * Adds an allowed hit type to the given #BeagleQuery.
- **/
-void
-beagle_query_add_hit_type (BeagleQuery *query,
-			   const char  *hit_type)
-{
-	BeagleQueryPrivate *priv;
-
-	g_return_if_fail (BEAGLE_IS_QUERY (query));
-	g_return_if_fail (hit_type != NULL);
-
-	priv = BEAGLE_QUERY_GET_PRIVATE (query);
-
-	priv->hit_types = g_slist_prepend (priv->hit_types, g_strdup (hit_type));
-}
-
-/**
- * beagle_query_add_source:
- * @query: a #BeagleQuery
- * @source: a source
- *
- * Adds an allowed source to the given #BeagleQuery.
- **/
-void
-beagle_query_add_source (BeagleQuery *query,
-			 const char  *source)
-{
-	BeagleQueryPrivate *priv;
-
-	g_return_if_fail (BEAGLE_IS_QUERY (query));
-	g_return_if_fail (source != NULL);
-
-	priv = BEAGLE_QUERY_GET_PRIVATE (query);
-
-	priv->sources = g_slist_prepend (priv->sources, g_strdup (source));
-}
 
 /**
  * beagle_query_set_domain:

@@ -445,6 +445,12 @@
   (return-type "const-char*")
 )
 
+(define-method get_file_type
+  (of-object "BeagleHit")
+  (c-name "beagle_hit_get_file_type")
+  (return-type "const-char*")
+)
+
 (define-method get_source
   (of-object "BeagleHit")
   (c-name "beagle_hit_get_source")
@@ -1036,33 +1042,6 @@
   (return-type "none")
   (parameters
     '("const-char*" "str")
-  )
-)
-
-(define-method add_mime_type
-  (of-object "BeagleQuery")
-  (c-name "beagle_query_add_mime_type")
-  (return-type "none")
-  (parameters
-    '("const-char*" "mime_type")
-  )
-)
-
-(define-method add_hit_type
-  (of-object "BeagleQuery")
-  (c-name "beagle_query_add_hit_type")
-  (return-type "none")
-  (parameters
-    '("const-char*" "hit_type")
-  )
-)
-
-(define-method add_source
-  (of-object "BeagleQuery")
-  (c-name "beagle_query_add_source")
-  (return-type "none")
-  (parameters
-    '("const-char*" "source")
   )
 )
 

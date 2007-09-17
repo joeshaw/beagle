@@ -72,14 +72,6 @@ void         beagle_query_add_part     (BeagleQuery     *query,
 void         beagle_query_add_text     (BeagleQuery     *query,
 					const char      *str);
 
-void	     beagle_query_add_mime_type (BeagleQuery *query,
-					 const char  *mime_type);
-void	     beagle_query_add_hit_type  (BeagleQuery *query,
-					 const char  *hit_type);
-
-void         beagle_query_add_source (BeagleQuery *query,
-				      const char  *source);
-
 void         beagle_query_set_domain    (BeagleQuery *query,
 					 BeagleQueryDomain domain);
 void         beagle_query_add_domain    (BeagleQuery *query,
