@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<!DOCTYPE xsl:stylesheet [<!ENTITY nbsp "&#160;">]>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
 <xsl:output method="html" />
 
 <xsl:template match="/">
@@ -9,13 +10,54 @@
 </xsl:template>
 
 <xsl:template match="ResponseWrapper">
-    <xsl:apply-templates select="Message"/>
+    <xsl:apply-templates select="Message[@xsi:type = 'HitsAddedResponse']"/>
+    <xsl:apply-templates select="Message[@xsi:type = 'DaemonInformationResponse']"/>
 </xsl:template>
 
-<xsl:template match="Message">
+<xsl:template match="Message[@xsi:type = 'HitsAddedResponse']">
     <!--<xsl:apply-templates select="NumMatches"/>-->
     <xsl:apply-templates select="Hits"/>
     <!-- FIXME: Ignoring other types of messages -->
+</xsl:template>
+
+<xsl:template match="Message[@xsi:type = 'DaemonInformationResponse']">
+    <div id="version">Version: <xsl:value-of select="Version"/></div>
+    <div id="is_indexing">Indexing in progress: <xsl:value-of select="IsIndexing"/></div>
+    <xsl:apply-templates select="SchedulerInformation"/>
+    <xsl:apply-templates select="IndexStatus"/>
+</xsl:template>
+
+<xsl:template match="SchedulerInformation">
+    <div class="scheduler_information"><b>Tasks:</b><br/>
+	<span class="total_task_count">(<xsl:value-of select="@TotalTaskCount"/> tasks submitted)</span>
+	<ul>
+	<xsl:for-each select="PendingTasks/PendingTask">
+	    <li><i>(Pending)</i>&nbsp;<xsl:value-of select="."/></li>
+	</xsl:for-each>
+
+	<xsl:for-each select="FutureTasks/FutureTask">
+	    <li><i>(Future)</i>&nbsp;<xsl:value-of select="."/></li>
+	</xsl:for-each>
+
+	<xsl:for-each select="BlockedTasks/BlockedTask">
+	    <li><i>(Blocked)</i>&nbsp;<xsl:value-of select="."/></li>
+	</xsl:for-each>
+	</ul>
+    </div>
+</xsl:template>
+
+<xsl:template match="IndexStatus">
+    <b>Details of backends:</b><br/>
+    <ul class="indexstatus">
+	<xsl:for-each select="QueryableStatus">
+	    <li><div class="queryablestatus">
+		<span class="queryablestatus_name"><xsl:value-of select="@Name"/></span>&nbsp;
+		<span class="queryablestatus_progresspercent">(<xsl:value-of select="@ProgressPercent"/> %)</span>:
+		<span class="queryablestatus_itemcount"><xsl:value-of select="@ItemCount"/> items,</span>
+		<span class="queryablestatus_isindexing">currently indexing? <xsl:value-of select="@IsIndexing"/></span>,
+	    </div></li>
+	</xsl:for-each>
+    </ul>
 </xsl:template>
 
 <xsl:template match="NumMatches">
