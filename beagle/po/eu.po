@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-07 21:16+0200\n"
-"PO-Revision-Date: 2007-09-07 21:19+0200\n"
+"POT-Creation-Date: 2007-09-17 21:07+0200\n"
+"PO-Revision-Date: 2007-09-17 21:08+0200\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -366,6 +366,10 @@ msgstr[1] "{0} emaitz"
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} / {2}"
+
+#: ../search/NotificationArea.cs:62
+msgid "Hide"
+msgstr "Ezkutatu"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
