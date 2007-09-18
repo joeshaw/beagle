@@ -334,10 +334,12 @@ namespace Search.Tiles {
 			string command = null, item;
 			bool expects_uris = false;
 
+			string mimetype = hit.MimeType;
+
 			// FIXME: This is evil.  Nautilus should be handling
 			// inode/directory, not just x-directory/normal
-			if (hit.MimeType == "inode/directory")
-				hit.MimeType = "x-directory/normal";
+			if (mimetype == "inode/directory")
+				mimetype = "x-directory/normal";
 
 #if ENABLE_DESKTOP_LAUNCH
 			command = "desktop-launch";
@@ -347,14 +349,14 @@ namespace Search.Tiles {
 			expects_uris = true;
 #else
 			GnomeFu.VFSMimeApplication app;
-			app = GnomeFu.GetDefaultAction (hit.MimeType);
+			app = GnomeFu.GetDefaultAction (mimetype);
 			if (app.command != null) {
 				command = app.command;
 				expects_uris = (app.expects_uris != GnomeFu.VFSMimeApplicationArgumentType.Path);
 			}
 #endif			
 			if (command == null) {
-				Console.WriteLine ("Can't open MimeType '{0}'", hit.MimeType);
+				Console.WriteLine ("Can't open MimeType '{0}'", mimetype);
 				return;
 			}
 			
