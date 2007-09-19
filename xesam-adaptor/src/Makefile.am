@@ -10,6 +10,7 @@ XESAMADAPTOR_DIST_CSFILES =			\
 	$(srcdir)/Search.cs			\
 	$(srcdir)/Searcher.cs			\
 	$(srcdir)/Parser.cs			\
+	$(srcdir)/Ontologies.cs			\
 	$(srcdir)/XesamAdaptor.cs		
 
 XESAMADAPTOR_CSFILES = $(XESAMADAPTOR_DIST_CSFILES)

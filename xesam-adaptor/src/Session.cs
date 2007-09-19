@@ -38,7 +38,7 @@ namespace Beagle {
 			private string sortSecondary;
 			private string sortOrder;
 			private string vendorId;
-			private string vendorVersion;
+			private int vendorVersion;
 			private string vendorDisplay;
 			private int vendorXesam;
 			private string[] vendorOntologyFields;
@@ -90,7 +90,7 @@ namespace Beagle {
 				set { vendorId = value; }
 			}
 
-			public string VendorVersion {
+			public int VendorVersion {
 				get { return vendorVersion; }
 				set { vendorVersion = value; }
 			}
@@ -138,20 +138,20 @@ namespace Beagle {
 			public Session()
 			{
 				SearchLive = false;
-				HitFields = new string[] { "uri" };
+				HitFields = new string[] { "xesam:url" };
 				HitFieldsExtended = new string[] { };
 				HitSnippetLength = 200;
-				SortPrimary = "score";
+				SortPrimary = "xesam:score";
 				SortSecondary = "";
 				SortOrder = "descending";
 				VendorId = "Unknown";
-				VendorVersion = "0";
+				VendorVersion = 0;
 				VendorDisplay = "Unknown";
 				VendorXesam = 1;
 				VendorOntologyFields = new string[] { };
 				VendorOntologyContents = new string[] { };
 				VendorOntologyStorages = new string[] { };
-				VendorExtensions = new string[] { "uri" };
+				VendorExtensions = new string[] { };
 				// XXX: This is wrong. Needs to be fixed.
 				VendorOntologies = new string[][] { };
 				VendorMaxHits = 1000;

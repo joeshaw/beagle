@@ -40,19 +40,7 @@ namespace Beagle {
 			private static string ParseXesamField(XPathNavigator nav)
 			{
 				string field = nav.GetAttribute("name", "");
-				switch (field) {
-					case "dc:title":
-						return "title";
-					case "dc:author":
-						return "author";
-					case "dc:date":
-						return "date";
-					case "mime":
-						return "mimetype";
-					default:
-						Console.Error.WriteLine("Unsupported field: {0}", field);
-						return field.Replace(':', '-');
-				}
+				return Ontologies.ToBeagleField(field);
 			}
 
 			private static string ParseXesamData(XPathNavigator nav, ComparisonType dateComp)

@@ -58,7 +58,7 @@ namespace Beagle {
 		public class Searcher : ISearcher {
 			static private bool Debug = true;
 			// XXX: Assuming that you won't change the beagled version in between
-			static private string beagleVersion = null;
+			static private int beagleVersion = 0;
 			// XXX: Start worrying about threads?
 			private int sessionCount = 0;
 			private int searchCount = 0;
@@ -71,10 +71,10 @@ namespace Beagle {
 
 			public string NewSession()
 			{
-				if (beagleVersion == null) {
+				if (beagleVersion == 0) {
 					DaemonInformationRequest infoReq = new DaemonInformationRequest(true, false, false, false);
 					DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
-					beagleVersion = infoResp.Version;
+					beagleVersion = VersionStringToInt(infoResp.Version);
 				}
 
 				Session session = new Session();
@@ -388,6 +388,18 @@ namespace Beagle {
 			public object[][] GetHits(string s, int num)
 			{
 				return searches[s].GetHits(num);
+			}
+
+			private int VersionStringToInt(string version)
+			{
+				// FIXME: Ewwww!
+				if (version.StartsWith("0.2"))
+					return 2;
+				if (version.StartsWith("0.3"))
+					return 3;
+				else
+					// Is this really Beagle?
+					return 0;
 			}
 		}
 	}

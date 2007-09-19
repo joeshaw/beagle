@@ -57,9 +57,19 @@ namespace Beagle {
 				uri = hit.Uri;
 
 				foreach (string field in fields) {
-					switch (field) {
+					switch (Ontologies.ToBeagleField(field)) {
 						case "uri":
 							hitValue[i++] = hit.Uri.ToString();
+							break;
+
+						case "mimetype":
+							hitValue[i++] = hit.MimeType;
+							break;
+
+						default:
+							//XXX: This *will* break since we don't know what the expected
+							//type here is
+							hitValue[i++] = "";
 							break;
 					}
 				}
