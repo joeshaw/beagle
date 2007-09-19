@@ -1,5 +1,5 @@
 //
-// Parse.cs : Parser for the Xesam Query Language
+// Parser.cs : Parser for the Xesam Query Language
 //
 // Copyright (C) 2007 Arun Raghavan <arunissatan@gmail.com>
 //
@@ -165,7 +165,6 @@ namespace Beagle {
 					}
 				}
 
-				Console.Error.WriteLine("ParserReturns: {0}", q);
 				return q;
 			}
 
@@ -192,16 +191,21 @@ namespace Beagle {
 				nav.MoveToNext();	// Move to <query>
 
 				while (nav.Name != "query" && nav.MoveToNext()) { };
+
+				if (nav.Name == "userQuery") {
+					Console.Error.WriteLine("*** User queries are not currently supported");
+					return null;
+				}
 				
 				if (nav.Name != "query") {
-					Console.Error.WriteLine("No <query> {0}", nav.Name);
+					Console.Error.WriteLine("Didn't find a <query> (found {0})", nav.Name);
 					return null;
 				}
 
 				// XXX: Use query's type attribute
 
 				if (!nav.MoveToFirstChild() && !nav.MoveToNext()) {
-					Console.Error.WriteLine("No <query> children");
+					Console.Error.WriteLine("<query> element has no children");
 					return null;
 				}
 

@@ -46,7 +46,7 @@ namespace Beagle {
 			void StartSearch(string s);
 			void CloseSearch(string s);
 			string[] GetState();
-			int CountHits(string s);
+			int GetHitCount(string s);
 			object[][] GetHits(string s, int num);
 			event HitsAddedMethod HitsAdded;
 			event HitsRemovedMethod HitsRemoved;
@@ -119,9 +119,6 @@ namespace Beagle {
 					case "search.live": 
 						ret =  session.SearchLive;
 						break;
-					case "search.blocking": 
-						ret =  session.SearchBlocking;
-						break;
 					case "hit.fields":
 						ret =  session.HitFields;
 						break;
@@ -152,14 +149,23 @@ namespace Beagle {
 					case "vendor.xesam":
 						ret =  session.VendorXesam;
 						break;
-					case "vendor.fieldnames":
-						ret =  session.VendorFieldNames;
+					case "vendor.ontology.fields":
+						ret =  session.VendorOntologyFields;
+						break;
+					case "vendor.ontology.contents":
+						ret =  session.VendorOntologyContents;
+						break;
+					case "vendor.ontology.storages":
+						ret =  session.VendorOntologyStorages;
 						break;
 					case "vendor.extensions":
 						ret =  session.VendorExtensions;
 						break;
 					case "vendor.ontologies":
 						ret = session.VendorOntologies;
+						break;
+					case "vendor.maxhits":
+						ret = session.VendorMaxHits;
 						break;
 					default:
 						ret =  null;
@@ -191,10 +197,6 @@ namespace Beagle {
 					case "search.live": 
 						session.SearchLive = (bool)val;
 						ret =  session.SearchLive;
-						break;
-					case "search.blocking": 
-						session.SearchBlocking = (bool)val;
-						ret =  session.SearchBlocking;
 						break;
 					case "hit.fields":
 						session.HitFields = (string[])val;
@@ -236,9 +238,17 @@ namespace Beagle {
 						/* read-only */
 						ret =  session.VendorXesam;
 						break;
-					case "vendor.fieldnames":
+					case "vendor.ontology.fields":
 						/* read-only */
-						ret =  session.VendorFieldNames;
+						ret =  session.VendorOntologyFields;
+						break;
+					case "vendor.ontology.contents":
+						/* read-only */
+						ret =  session.VendorOntologyContents;
+						break;
+					case "vendor.ontology.storages":
+						/* read-only */
+						ret =  session.VendorOntologyStorages;
 						break;
 					case "vendor.extensions":
 						/* read-only */
@@ -247,6 +257,10 @@ namespace Beagle {
 					case "vendor.ontologies":
 						/* read-only */
 						ret = session.VendorOntologies;
+						break;
+					case "vendor.maxhits":
+						/* read-only */
+						ret = session.VendorMaxHits;
 						break;
 					default:
 						ret =  null;
@@ -353,20 +367,20 @@ namespace Beagle {
 				return ret;
 			}
 
-			public int CountHits(string s)
+			public int GetHitCount(string s)
 			{
 				Search search = searches[s];
 
 				if (search == null) {
 					if (Debug) 
-						Console.Error.WriteLine("Error: CountHits() -- {0} is not a valid search", s);
+						Console.Error.WriteLine("Error: GetHitCount() -- {0} is not a valid search", s);
 					return 0;
 				}
 
-				int ret = search.CountHits();
+				int ret = search.GetHitCount();
 
 				if (Debug) 
-					Console.Error.WriteLine("CountHits() -- {0}, {1}", s, ret);
+					Console.Error.WriteLine("GetHitCount() -- {0}, {1}", s, ret);
 
 				return ret;
 			}

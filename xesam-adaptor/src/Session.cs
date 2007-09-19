@@ -31,7 +31,6 @@ namespace Beagle {
 	namespace Xesam {
 		public class Session {
 			private bool searchLive;
-			private bool searchBlocking;
 			private string[] hitFields;
 			private string[] hitFieldsExtended;
 			private int hitSnippetLength;
@@ -42,20 +41,18 @@ namespace Beagle {
 			private string vendorVersion;
 			private string vendorDisplay;
 			private int vendorXesam;
-			private string[] vendorFieldNames;
+			private string[] vendorOntologyFields;
+			private string[] vendorOntologyContents;
+			private string[] vendorOntologyStorages;
 			private string[] vendorExtensions;
 			private string[][] vendorOntologies;
+			private int vendorMaxHits;
 
 			private List<Search> searches = new List<Search>();
 
 			public bool SearchLive {
 				get { return searchLive; }
 				set { searchLive = value; }
-			}
-
-			public bool SearchBlocking {
-				get { return searchBlocking; }
-				set { searchBlocking = value; }
 			}
 
 			public string[] HitFields {
@@ -108,14 +105,24 @@ namespace Beagle {
 				set { vendorXesam = value; }
 			}
 
-			public string[] VendorFieldNames {
-				get { return vendorFieldNames; }
-				set { vendorFieldNames = value; }
-			}
-
 			public string[] VendorExtensions {
 				get { return vendorExtensions; }
 				set { vendorExtensions = value; }
+			}
+
+			public string[] VendorOntologyFields {
+				get { return vendorOntologyFields; }
+				set { vendorOntologyFields = value; }
+			}
+
+			public string[] VendorOntologyContents {
+				get { return vendorOntologyContents; }
+				set { vendorOntologyContents = value; }
+			}
+
+			public string[] VendorOntologyStorages {
+				get { return vendorOntologyStorages; }
+				set { vendorOntologyStorages = value; }
 			}
 
 			public string[][] VendorOntologies {
@@ -123,10 +130,14 @@ namespace Beagle {
 				set { vendorOntologies = value; }
 			}
 
+			public int VendorMaxHits {
+				get { return vendorMaxHits; }
+				set { vendorMaxHits = value; }
+			}
+
 			public Session()
 			{
 				SearchLive = false;
-				SearchBlocking = true;
 				HitFields = new string[] { "uri" };
 				HitFieldsExtended = new string[] { };
 				HitSnippetLength = 200;
@@ -137,10 +148,13 @@ namespace Beagle {
 				VendorVersion = "0";
 				VendorDisplay = "Unknown";
 				VendorXesam = 1;
-				VendorFieldNames = new string[] { "uri" };
+				VendorOntologyFields = new string[] { };
+				VendorOntologyContents = new string[] { };
+				VendorOntologyStorages = new string[] { };
 				VendorExtensions = new string[] { "uri" };
 				// XXX: This is wrong. Needs to be fixed.
-				vendorOntologies = new string[][] { };
+				VendorOntologies = new string[][] { };
+				VendorMaxHits = 1000;
 			}
 
 			public Search CreateSearch(string searchID, string xmlQuery)

@@ -87,11 +87,6 @@ namespace Beagle {
 			}
 			*/
 
-			private bool isBlocking()
-			{
-				return parentSession.SearchBlocking;
-			}
-
 			public Search(string myID, Session parentSession, string xmlQuery)
 			{
 				this.parentSession = parentSession;
@@ -138,17 +133,20 @@ namespace Beagle {
 				mutex.ReleaseMutex();
 			}
 
-			public int CountHits()
+			public int GetHitCount()
 			{
-				if (isBlocking()) {
-					while (!finished) { /* XXX: Consider using a semaphore */ }
-				}
-				return hits.Count;
+				while (!finished) { /* XXX: Consider using a semaphore */ }
+				mutex.WaitOne();
+
+				int count = hits.Count + newHits.Count;
+
+				mutex.ReleaseMutex();
+				return count;
 			}
 
 			public object[][] GetHits(int num)
 			{
-				if (isBlocking()) {
+				if (newHits.Count < num) {
 					while (!finished) { /* XXX: Consider using a semaphore */ }
 				}
 
@@ -225,7 +223,8 @@ namespace Beagle {
 			{
 				Console.Error.WriteLine("Search finished");
 
-				// used for blocking searches
+				// might want to collect a few more OnFinished signals before being done
+				// for non-live searches
 				finished = true;
 
 				if (SearchDoneHandler != null) {
