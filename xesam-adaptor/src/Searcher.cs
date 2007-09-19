@@ -290,8 +290,10 @@ namespace Beagle {
 				if (session.SearchLive) {
 					search.HitsAddedHandler += HitsAdded;
 					search.HitsRemovedHandler += HitsRemoved;
-					search.SearchDoneHandler += SearchDone;
 				}
+				// SearchDone is emitted even if search.live is false
+				search.SearchDoneHandler += SearchDone;
+
 				searches.Add(searchId, search);
 
 				if (Debug) 
