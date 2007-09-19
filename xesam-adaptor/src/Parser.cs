@@ -181,8 +181,8 @@ namespace Beagle {
 				while (nav.Name != "query" && nav.MoveToNext()) { };
 
 				if (nav.Name == "userQuery") {
-					Console.Error.WriteLine("*** User queries are not currently supported");
-					return null;
+					Console.Error.WriteLine("*** User queries are not really supported! ***");
+					return nav.Value;
 				}
 				
 				if (nav.Name != "query") {

@@ -145,6 +145,9 @@ namespace Beagle {
 
 			public int GetHitCount()
 			{
+				if (!running)
+					return -1;
+
 				while (!finished) { /* XXX: Consider using a semaphore */ }
 				mutex.WaitOne();
 
@@ -156,6 +159,11 @@ namespace Beagle {
 
 			public object[][] GetHits(int num)
 			{
+				if (!running) {
+					// XXX: Do something not dumb
+					return (object[][]) (new object());
+				}
+
 				if (newHits.Count < num) {
 					while (!finished) { /* XXX: Consider using a semaphore */ }
 				}
