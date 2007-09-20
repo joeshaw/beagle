@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-05 03:17+0100\n"
-"PO-Revision-Date: 2007-09-05 20:36+0200\n"
+"POT-Creation-Date: 2007-09-20 06:25+0100\n"
+"PO-Revision-Date: 2007-09-20 11:51+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -368,6 +368,10 @@ msgstr[1] "{0} resultados"
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} de {2}"
+
+#: ../search/NotificationArea.cs:62
+msgid "Hide"
+msgstr "Ocultar"
 
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
