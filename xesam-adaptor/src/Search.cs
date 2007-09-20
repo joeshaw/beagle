@@ -90,13 +90,6 @@ namespace Beagle {
 			public event HitsRemovedMethod HitsRemovedHandler;
 			public event SearchDoneMethod SearchDoneHandler;
 
-			/*
-			private bool isLive()
-			{
-				return parentSession.SearchLive;
-			}
-			*/
-
 			public Search(string myID, Session parentSession, string xmlQuery)
 			{
 				this.parentSession = parentSession;

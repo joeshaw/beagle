@@ -287,12 +287,12 @@ namespace Beagle {
 
 				search = session.CreateSearch(searchId, xmlQuery);
 
+				// These two are emitted even if search.live is false
+				search.HitsAddedHandler += HitsAdded;
+				search.SearchDoneHandler += SearchDone;
 				if (session.SearchLive) {
-					search.HitsAddedHandler += HitsAdded;
 					search.HitsRemovedHandler += HitsRemoved;
 				}
-				// SearchDone is emitted even if search.live is false
-				search.SearchDoneHandler += SearchDone;
 
 				searches.Add(searchId, search);
 
