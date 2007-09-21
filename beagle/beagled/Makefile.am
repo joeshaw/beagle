@@ -464,7 +464,8 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/SnippetFu.cs					\
 	$(srcdir)/SqliteUtils.cs				\
 	$(srcdir)/StaticQueryable.cs				\
-	$(srcdir)/TextCache.cs
+	$(srcdir)/TextCache.cs					\
+	$(srcdir)/WebServer.cs
 
 DAEMON_DLL_LOCAL_ASSEMBLIES =					\
 	../Util/Util.dll					\

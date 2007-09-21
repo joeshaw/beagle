@@ -1,0 +1,14 @@
+body {
+	color: #444;
+	background: #fff url(title_bg.png) 0 -80px repeat-x;
+	position: relative;
+	margin: 40px;
+	font-family: trebuchet ms,luxi sans,sans-serif;
+	font-size: 96%;
+	text-align: center;
+}
+
+.header img{
+	float:left;
+	margin: 4px;
+}

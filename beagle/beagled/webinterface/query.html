@@ -1,5 +1,7 @@
 <html>
-<head><title>Beagle Search Web Interface</title>
+<head>
+<title>Beagle Search Web Interface</title>
+<LINK REL=StyleSheet HREF="default.css" TYPE="text/css">
 
 <script language="JavaScript1.2">
 	 var xmlhttp=false;
@@ -174,10 +176,11 @@ function test()
 </head>
 <body>
     <div id="header">
+	<img src="beagle-logo.png"/>
 	<form name="queryform" onsubmit='search(); return false;' action="POST">
     	    <input name="querytext" type="text" size="50" /><input type="submit" value="Search"/>
     	</form>
-	<span style="headerlink"><a href="" onclick='get_information(); return false;'>Current status</a></span>
+	<span class="headerlink"><a href="" onclick='get_information(); return false;'>Current status</a></span>
     </div>
 <div id="busycursor" style="text-align:center; display:none">Searching ...</div>
 <div id="NumMatches" style="display:none"></div>

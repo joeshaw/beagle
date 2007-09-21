@@ -1,4 +1,3 @@
-#define ENABLE_XML_DUMP
 //
 // Server.cs
 //
@@ -736,7 +735,7 @@ namespace Beagle.Daemon {
 
 				if (context.Request.HttpMethod == "GET") {
 					try {
-						HandleStaticPages (context);
+						WebServer.HandleStaticPages (context);
 					} catch (IOException ex1) {
 						// Socket was shut down
 						Log.Debug ("Exception while serving static page: " + ex1.Message);
@@ -815,32 +814,6 @@ namespace Beagle.Daemon {
 
 			Shutdown.WorkerFinished (http_listener);
 			Logger.Log.Debug ("HTTP Server: '{0}' shut down...", prefix);
-		}
-
-		private void HandleStaticPages (HttpListenerContext context)
-		{
-			Log.Debug ("GET request:" + context.Request.RawUrl);
-			context.Response.KeepAlive = false;
-			context.Response.StatusCode = (int) HttpStatusCode.OK;
-
-			if (context.Request.RawUrl == "/queryresult.xsl") {
-				context.Response.ContentType = "application/xml; charset=utf-8";
-				StreamReader r = new StreamReader (new FileStream ("webinterface/queryresult.xsl", FileMode.Open, FileAccess.Read));
-				StreamWriter w = new StreamWriter (context.Response.OutputStream);
-				w.Write (r.ReadToEnd ());
-				w.Close ();
-
-			} else if (context.Request.RawUrl == "/") {
-				context.Response.ContentType = "text/html; charset=utf-8";
-				StreamReader r = new StreamReader (new FileStream ("webinterface/query.html", FileMode.Open, FileAccess.Read));
-				StreamWriter w = new StreamWriter (context.Response.OutputStream);
-				w.Write (r.ReadToEnd ());
-				w.Close ();
-			} else {
-				context.Response.StatusCode = 404;
-			}
-
-			context.Response.Close ();
 		}
 
 		public void Start ()
