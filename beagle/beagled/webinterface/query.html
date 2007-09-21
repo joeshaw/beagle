@@ -175,16 +175,17 @@ function test()
 </script>
 </head>
 <body>
-    <div id="header">
+    <div class="header">
 	<img src="beagle-logo.png"/>
 	<form name="queryform" onsubmit='search(); return false;' action="POST">
     	    <input name="querytext" type="text" size="50" /><input type="submit" value="Search"/>
     	</form>
 	<span class="headerlink"><a href="" onclick='get_information(); return false;'>Current status</a></span>
+	<span class="headerlink"><a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a></span>
     </div>
-<div id="busycursor" style="text-align:center; display:none">Searching ...</div>
-<div id="NumMatches" style="display:none"></div>
+<div id="busycursor" class="busycursor">Searching ...</div>
+<div id="NumMatches" class="NumMatches"></div>
 <div id="xml"></div>
-<div id="results"></div>
+<div id="results" class="results"></div>
 </body>
 </html>

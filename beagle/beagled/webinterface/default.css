@@ -8,7 +8,39 @@ body {
 	text-align: center;
 }
 
+/************ header ***************/
+
 .header img{
 	float:left;
 	margin: 4px;
 }
+
+.header {
+	text-align: center;
+}
+
+.header form input {
+	border: 1px solid rgb(153, 51, 0);
+	margin: 5px;
+}
+
+/************ End header; Start "Searching ..." busy animation ************/
+
+.busycursor {
+	text-align: center;
+	display: none;
+}
+
+/************ End busy animation; Start showing number of matches, time taken etc. ******/
+
+.NumMatches {
+	display: none;
+}
+
+/************ End nummatches. Start result listing ***************/
+.results {
+	clear: left;
+	border-top: 1px dotted rgb(153, 51, 0);
+	text-align: left;
+}
+
