@@ -320,6 +320,8 @@ public class QueryTool {
 				break;
 
 			default:
+				if (args [i].StartsWith ("--"))
+					PrintUsageAndExit ();
 				if (query_str.Length > 0)
 					query_str.Append (' ');
 				query_str.Append (args [i]);
