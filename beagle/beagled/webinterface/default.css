@@ -1,3 +1,28 @@
+/*
+ * Copyright (2007) Debajyoti Bera
+ * Copyright (2007) Nirbheek Chauhan
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ * 
+ *
+ */
+
 body {
 	color: #444;
 	background: #fff url(title_bg.png) 0 -80px repeat-x;
@@ -31,10 +56,38 @@ body {
 
 /************ End header; Start status ************/
 
-/*#busycursor {*/
 #status {
 	padding: 0.5em;
 	text-align: center;
+	display: none;
+}
+
+/*********** End status; Start topbar *************/
+
+#topbar {
+	clear: left;
+	height: 2em;
+	background-color: #cccccc;
+	border-top: 1px dotted rgb(153, 51, 0);
+	margin-bottom: 0.5px;
+	margin-top: 0.5em;
+	padding-top: 0.25em;
+}
+
+#topbar-left {
+	float: left;
+	text-align: center;
+	padding-left: .5em;
+}
+
+#topbar-left a {
+	padding-right: .5em;
+}
+
+#topbar-right{
+	float: right;
+	text-align: center;
+	padding-right: .5em;
 	display: none;
 }
 
@@ -42,7 +95,6 @@ body {
 #results {
 	clear: left;
 	padding: 0.5em;
-	border-top: 1px dotted rgb(153, 51, 0);
 	text-align: left;
 }
 
