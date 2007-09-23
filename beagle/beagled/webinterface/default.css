@@ -10,37 +10,65 @@ body {
 
 /************ header ***************/
 
-.header img{
-	float:left;
+#header img{
+	float: left;
 	margin: 4px;
 }
 
-.header {
+#header {
 	text-align: center;
+	padding: 0.5em;
 }
 
-.header form input {
+#header form input {
 	border: 1px solid rgb(153, 51, 0);
 	margin: 5px;
 }
 
-/************ End header; Start "Searching ..." busy animation ************/
+#headerlinks {
+	float: center;
+}
 
-.busycursor {
+/************ End header; Start status ************/
+
+/*#busycursor {*/
+#status {
+	padding: 0.5em;
 	text-align: center;
 	display: none;
 }
 
-/************ End busy animation; Start showing number of matches, time taken etc. ******/
-
-.NumMatches {
-	display: none;
-}
-
-/************ End nummatches. Start result listing ***************/
-.results {
+/************ End status; Start result listing ***************/
+#results {
 	clear: left;
+	padding: 0.5em;
 	border-top: 1px dotted rgb(153, 51, 0);
 	text-align: left;
 }
 
+.Hit {
+        border-left: 1px solid rgb(152, 51, 0);
+        border-top: 1px solid rgb(152, 51, 0);
+	margin-bottom: 2em;
+}
+
+.Hit .Uri {
+	background-color:rgb(204, 204, 204);
+        padding: 0.5em;
+}
+
+.Timestamp, .Score {
+	margin: 0.5em;
+}
+
+.Properties {
+	margin-left: 0.5em;
+}
+
+/*********** End results; Start footer ************/
+
+#footer {
+	border-top: 1px dotted rgb(153, 51, 0);
+	padding: 0.5em;
+	text-align: center;
+}

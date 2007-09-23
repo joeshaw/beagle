@@ -21,8 +21,8 @@
 </xsl:template>
 
 <xsl:template match="Message[@xsi:type = 'DaemonInformationResponse']">
-    <div id="version">Version: <xsl:value-of select="Version"/></div>
-    <div id="is_indexing">Indexing in progress: <xsl:value-of select="IsIndexing"/></div>
+    <div id="version"><b>Version</b>: <i><xsl:value-of select="Version"/></i></div>
+    <div id="is_indexing"><b>Indexing in progress</b>: <i><xsl:value-of select="IsIndexing"/></i></div>
     <xsl:apply-templates select="SchedulerInformation"/>
     <xsl:apply-templates select="IndexStatus"/>
 </xsl:template>
@@ -66,11 +66,12 @@
 
 <xsl:template match="Hits">
 	<xsl:for-each select="Hit">
-	    <div class="Hit" id="{@Uri}"><a href="{@Uri}"><xsl:value-of select="@Uri"/></a><br/>
+	    <div class="Hit" id="{@Uri}">
+		<div class="Uri"><a href="{@Uri}"><xsl:value-of select="@Uri"/></a></div><br/>
 		<span class="Timestamp">Timestamp:<i><xsl:value-of select="@Timestamp"/></i><b>|</b></span>
 		<span class="Score">Score:<i><xsl:value-of select="@Score"/></i></span>
 	    <xsl:apply-templates select="Properties"/>
-	    </div><hr/>
+	    </div>
 	</xsl:for-each>
 </xsl:template>
 

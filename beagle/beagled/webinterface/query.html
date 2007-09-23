@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>Beagle Search Web Interface</title>
-<LINK REL=StyleSheet HREF="default.css" TYPE="text/css">
+<link rel=StyleSheet href="default.css" type="text/css">
 
 <script language="JavaScript1.2">
 	 var xmlhttp=false;
@@ -44,8 +44,7 @@ function search() {
 
     // FIXME: Till I find a good way to show a busy cursor ...
     document.queryform.querytext.disabled=true;
-    document.getElementById('busycursor').style.display='block';
-    document.getElementById('results').innerHTML="";
+    document.getElementById('status').style.display='block';
     return false;
 }
 
@@ -61,8 +60,7 @@ function get_information() {
 
     // FIXME: Till I find a good way to show a busy cursor ...
     document.queryform.querytext.disabled=true;
-    document.getElementById('busycursor').style.display='block';
-    document.getElementById('results').innerHTML="";
+    document.getElementById('status').style.display='block';
     return false;
 }
 
@@ -98,8 +96,9 @@ function state_change_search()
 	var responses = res.split('\uFFFD'); 
 	var parser = new DOMParser();
 
-	document.getElementById('busycursor').style.display='none';
-	document.getElementById('NumMatches').style.display='block';
+//	Appending without clearing is bad... mmkay?
+	document.getElementById('status').innerHTML='';
+	document.getElementById('results').innerHTML='';
 	var num_matches = 0;
 
 	for (var i=0; i<responses.length; ++i) {
@@ -116,7 +115,7 @@ function state_change_search()
 		var n = parseInt (num_matches_elems[0].textContent);
 		if (n > 0) {
 		    num_matches += n;
-		    document.getElementById('NumMatches').innerHTML=("(Showing " + num_matches + " matches)");
+		    document.getElementById('status').innerHTML=("Showing <i>" + num_matches + " matches</i>");
 		}
 	    }
 	    //var hits = response_dom.getElementsByTagName('Hit');
@@ -149,7 +148,8 @@ function state_change_info()
 	var responses = res.split('\uFFFD'); 
 	var parser = new DOMParser();
 
-	document.getElementById('busycursor').style.display='none';
+//	Appending without clearing is bad... mmkay?
+	document.getElementById('results').innerHTML='';
 
 	// there should be only one response in responses
 	for (var i=0; i<responses.length; ++i) {
@@ -175,17 +175,19 @@ function test()
 </script>
 </head>
 <body>
-    <div class="header">
+    <div id="header">
 	<img src="beagle-logo.png"/>
 	<form name="queryform" onsubmit='search(); return false;' action="POST">
     	    <input name="querytext" type="text" size="50" /><input type="submit" value="Search"/>
     	</form>
-	<span class="headerlink"><a href="" onclick='get_information(); return false;'>Current status</a></span>
-	<span class="headerlink"><a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a></span>
+	<span id="headerlinks">
+		<a href="" onclick='get_information(); return false;'>Current Status</a>&nbsp;|&nbsp;
+		<a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a>
+	</span>
     </div>
-<div id="busycursor" class="busycursor">Searching ...</div>
-<div id="NumMatches" class="NumMatches"></div>
-<div id="xml"></div>
-<div id="results" class="results"></div>
+    <div id="status">Searching...</div>
+    <div id="xml"></div>
+    <div id="results"></div>
+    <div id="footer">Web interface for <a href="http://beagle-project.org">Beagle</a> desktop search service <b>|</b> Copyright (C) 2007 Debajyoti Bera, Nirbheek Chauhan <b>|</b> Licensed under <a href="http://www.opensource.org/licenses/mit-license.php">MIT license</a></div>
 </body>
 </html>
