@@ -74,8 +74,10 @@ namespace Beagle {
 			// wire, and we check this.closed in there.
 			this.IsClosed = true;
 
-			if (client != null)
+			if (client != null) {
 				client.Close ();
+				client = null;
+			}
 
 			if (!previously_closed)
 				InvokeClosedEvent ();
