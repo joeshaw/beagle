@@ -64,6 +64,7 @@ namespace Beagle.Daemon {
 			mappings.Add ("/default.js", new PageMapping ("default.js", "text/javascript"));
 			mappings.Add ("/title_bg.png", new PageMapping ("title_bg.png", "image/png"));
 			mappings.Add ("/beagle-logo.png", new PageMapping ("beagle-logo.png", "image/png"));
+			mappings.Add ("/ajax-loader.gif", new PageMapping ("ajax-loader.gif", "image/gif"));
 		}
 
 		static byte[] buffer = new byte [1024];
