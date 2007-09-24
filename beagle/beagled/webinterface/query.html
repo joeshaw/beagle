@@ -27,197 +27,42 @@
 <title>Beagle Search Web Interface</title>
 <link rel=StyleSheet href="default.css" type="text/css">
 
+<script language="JavaScript1.2" src="default.js"></script>
 <script language="JavaScript1.2">
-
 /******* Initial fetching and loading of the xsl file *********/
-	 var xmlhttp=false;
-	 try { 
-	 	xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); 
-	 } catch (e) {
-	 	try { 
-			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); 
-		} catch (E) { 
-			xmlhttp = false; 
-		} 
+var xmlhttp=false;
+try { 
+	xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); 
+} catch (e) {
+ 	try { 
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); 
+	} catch (E) { 
+		xmlhttp = false; 
 	} 
-	if (!xmlhttp && typeof XMLHttpRequest!='undefined') { 
-		xmlhttp = new XMLHttpRequest(); 
-	}
-
-	// first get the XSLT file
-	var xsltProcessor = new XSLTProcessor();
-
-	// Load the xsl file using synchronous (third param is set to false) XMLHttpRequest
-	xmlhttp.open("GET", "/queryresult.xsl", false);
-	xmlhttp.send(null);
-
-	// Process the xsl file once and store it for later reuse
-	var xslRef = xmlhttp.responseXML;
-	xsltProcessor.importStylesheet(xslRef);
-
-function search() {
-    // get the search string
-    var query_str=document.queryform.querytext.value;
-    // FIXME: Escape query_str
-    if (query_str.length == 0)
-	return;
-
-    var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="Query"> <IsIndexListener>false</IsIndexListener> <Parts> <Part xsi:type="QueryPart_Human"> <Logic>Required</Logic> <QueryString>' + query_str + '</QueryString> </Part> </Parts> <MimeTypes /> <HitTypes /> <Sources /> <QueryDomain>Local System</QueryDomain> <MaxHits>100</MaxHits> </Message> </RequestWrapper> ';
-
-    var begin_date = Date.now();
-
-    xmlhttp.onreadystatechange = function () {state_change_search (begin_date);};
-    xmlhttp.open("POST", "/", true);
-    //XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
-    xmlhttp.overrideMimeType('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
-    //xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
-    xmlhttp.send(req_string);
-
-    // FIXME: Till I find a good way to show a busy cursor ...
-    document.queryform.querytext.disabled=true;
-    document.getElementById('status').style.display='block';
-    return false;
+} 
+if (!xmlhttp && typeof XMLHttpRequest!='undefined') { 
+	xmlhttp = new XMLHttpRequest(); 
 }
 
-function get_information() {
-    var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
+// first get the XSLT file
+var xsltProcessor = new XSLTProcessor();
 
-    xmlhttp.onreadystatechange = state_change_info;
-    xmlhttp.open("POST", "/", true);
-    //XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
-    xmlhttp.overrideMimeType('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
-    //xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
-    xmlhttp.send(req_string);
+// Load the xsl file using synchronous (third param is set to false) XMLHttpRequest
+xmlhttp.open("GET", "/queryresult.xsl", false);
+xmlhttp.send(null);
 
-    // FIXME: Till I find a good way to show a busy cursor ...
-    document.queryform.querytext.disabled=true;
-    document.getElementById('status').style.display='block';
-    return false;
-}
-
-function onError(e)
-{
-    alert("Error " + e.target.status + " occurred while receiving the document.");
-}
-
-var ii=0
-
-function state_change_search(begin_date)
-{
-    //alert("help");
-    if (xmlhttp.readyState==4) {
-	// FIXME: Should also check for status 200
-
-	var end_date = Date.now();
-	var elapsed = (end_date - begin_date)/1000;
-
-	//dump("Response:\n");
-	//dump(xmlhttp.responseText);
-	//dump("\n");
-	res = xmlhttp.responseText;
-
-	//alert(res.charCodeAt (0));
-	//alert(res.charCodeAt (1));
-	//alert(res.charCodeAt (2));
-	//var debug_index = res.indexOf ('</ResponseWrapper>');
-	//alert(res.charCodeAt(debug_index + 17));
-	//alert(res.charCodeAt(debug_index + 18));
-	//alert(res.charCodeAt(debug_index + 19));
-
-	// if charset is x-user-defined split by \uF7FF
-	// if charset is utf-8, split by FFFD
-	// And dont ask me why!
-	var responses = res.split('\uFFFD'); 
-	var parser = new DOMParser();
-
-//	Appending without clearing is bad... mmkay?
-//	document.getElementById('status').innerHTML='';
-	document.getElementById('results').innerHTML='';
-	document.getElementById('timetaken').innerHTML=(elapsed + ' seconds');
-	document.getElementById('numhits').innerHTML=0;
-	var num_matches = 0;
-
-	for (var i=0; i<responses.length; ++i) {
-	    if (responses[i].length <= 0)
-		continue;
-	    dump(responses[i]);
-	    dump('\n');
-
-	    //document.getElementById('xml').innerHTML += (responses[i].length + "</br>");
-	    var response_dom = parser.parseFromString(responses[i], "text/xml");
-
-	    var num_matches_elems = response_dom.getElementsByTagName('NumMatches');
-	    if (num_matches_elems.length > 0) {
-		var n = parseInt (num_matches_elems[0].textContent);
-		if (n > 0) {
-		    num_matches += n;
-		    document.getElementById('numhits').innerHTML=num_matches;
-		}
-	    }
-	    //var hits = response_dom.getElementsByTagName('Hit');
-	    //if (hits.length > 0) {
-	    //    document.getElementById('results').innerHTML = ("<i>" + hits[0].getAttribute('Timestamp') + "</i>");
-	    //    document.getElementById('xml').innerHTML = ("<i>" + hits[1].getAttribute('Timestamp') + "</i>");
-	    //}
-	    var fragment = xsltProcessor.transformToFragment(response_dom, document);
-	    document.getElementById('results').appendChild(fragment);
-	}
-
-	document.getElementById('topbar-right').style.display='block';
-	document.getElementById('status').style.display='none';
-    }
-
-    document.queryform.querytext.disabled=false;
-}
-
-function state_change_info()
-{
-    //alert("help");
-    if (xmlhttp.readyState==4) {
-	// FIXME: Should also check for status 200
-
-	//dump("Response:\n");
-	//dump(xmlhttp.responseText);
-	//dump("\n");
-
-	res = xmlhttp.responseText;
-
-	// if charset is x-user-defined split by \uF7FF
-	// if charset is utf-8, split by FFFD
-	// And dont ask me why!
-	var responses = res.split('\uFFFD'); 
-	var parser = new DOMParser();
-
-//	Appending without clearing is bad... mmkay?
-	document.getElementById('results').innerHTML='';
-	document.getElementById('topbar-right').style.display='none';
-
-	// there should be only one response in responses
-	for (var i=0; i<responses.length; ++i) {
-	    if (responses[i].length <= 0)
-		continue;
-	    dump(responses[i]);
-	    dump('\n');
-
-	    var response_dom = parser.parseFromString(responses[i], "text/xml");
-	    var fragment = xsltProcessor.transformToFragment(response_dom, document);
-	    document.getElementById('results').appendChild(fragment);
-	}
-
-	document.getElementById('status').style.display='none';
-    }
-
-    document.queryform.querytext.disabled=false;
-}
+// Process the xsl file once and store it for later reuse
+var xslRef = xmlhttp.responseXML;
+xsltProcessor.importStylesheet(xslRef);
 
 function test()
 {
     //document.getElementById('xml').innerHTML = ("<i>hello world</i> " + "foo");
-    document.getElementById('busycursor').style.display='block';
+    document.getElementById('topbar-right').style.display='block';
 }
 </script>
 </head>
-<body>
+<body onload="document.queryform.querytext.focus();">
     <div id="header">
 	<img src="beagle-logo.png"/>
 	<form name="queryform" onsubmit='search(); return false;' action="POST">
@@ -233,14 +78,15 @@ function test()
     <div id="topbar">
 	<span id="topbar-left">
 	    <a href="" onclick='show_all(); return false;'>All</a>
-	    <a href="" onclick='show_file_type ("document"); return false;'>Documents</a>
-	    <a href="" onclick='show_file_type(); return false;'>Images</a>
-	    <a href="" onclick='show_file_type(); return false;'>Media</a>
+	    <a href="" onclick='show_file_type("document"); return false;'>Documents</a>
+	    <a href="" onclick='show_file_type("image"); return false;'>Images</a>
+	    <a href="" onclick='show_file_type("audio"); return false;'>Music</a>
+	    <a href="" onclick='show_file_type("video"); return false;'>Video</a>
 	    <a href="" onclick='show_file_type("source"); return false;'>C#/Java ...</a>
-	    <a href="" onclick='show_file_type(); return false;'>Applications</a>
-	    <a href="" onclick='show_file_type(); return false;'>Archives</a>
-	    <a href="" onclick='show_file_type(); return false;'>Emails</a>
-	    <a href="" onclick='show_file_type(); return false;'>Links</a>
+	    <a href="" onclick='show_file_type("application"); return false;'>Applications</a>
+	    <a href="" onclick='show_file_type("archive"); return false;'>Archives</a>
+	    <a href="" onclick='show_file_type("mail"); return false;'>Emails</a>
+	    <a href="" onclick='show_hit_type("WebHistory", "FeedItem"); return false;'>Links</a>
 	</span>
 	<span id="topbar-right">Retrieved <span id="numhits">XXX</span> results in <span id="timetaken">0.4 secs</span></span>
     </div>
