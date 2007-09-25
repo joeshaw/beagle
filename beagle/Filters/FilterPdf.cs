@@ -13,6 +13,8 @@ using System.Diagnostics;
 
 using Beagle.Util;
 using Beagle.Daemon;
+using Beagle.Util.Xmp;
+using SemWeb;
 
 namespace Beagle.Filters {
 
@@ -39,7 +41,7 @@ namespace Beagle.Filters {
 		{
 			// create new external process
 			pc = new SafeProcess ();
-			pc.Arguments = new string [] { "pdfinfo", FileInfo.FullName };
+			pc.Arguments = new string [] { "pdfinfo", "-meta", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 			// See FIXME below for why this is false.
 			pc.RedirectStandardError = false;
@@ -92,6 +94,11 @@ namespace Beagle.Filters {
 						break;
 					case "Producer":
 						strMetaTag = "dc:appname";
+						break;
+					case "Metadata":
+						string xmpString = pout.ReadToEnd();
+						XmpFile xmp = new XmpFile (new MemoryStream(System.Text.Encoding.ASCII.GetBytes(xmpString)));
+						AddXmpProperties(xmp);
 						break;
 					}
 					if (strMetaTag != null) {
@@ -202,6 +209,49 @@ namespace Beagle.Filters {
 			pout.Close ();
 #endif
 			pc.Close ();
+		}
+		
+		private void AddXmpProperties (XmpFile xmp)
+		{
+			Resource subject_anon = null;
+			Resource creator_anon = null;
+			Resource rights_anon = null;
+			Resource title_anon = null;
+
+			foreach (Statement stmt in xmp.Store) {
+				if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject")) {
+					//Console.WriteLine ("found subject");
+					subject_anon = stmt.Object;
+				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:creator")) {
+					//Console.WriteLine ("found creator");
+					creator_anon = stmt.Object;
+				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:rights")) {
+					rights_anon = stmt.Object;
+				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:title")) {
+					if (stmt.Object is Literal)
+						AddProperty (Beagle.Property.New ("dc:title", ((Literal)stmt.Object).Value));
+					else if (stmt.Object is BNode)
+						title_anon = stmt.Object;
+				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("cc:license")) {
+					AddProperty (Beagle.Property.NewKeyword ("fixme:license", ((Literal)stmt.Object).Value));
+				}
+			}
+			
+			foreach (Statement stmt in xmp.Store) {
+				if (stmt.Subject == subject_anon && 
+				    stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
+					AddProperty (Beagle.Property.New ("dc:subject", ((Literal)stmt.Object).Value));
+				} else if (stmt.Subject == creator_anon &&  
+					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
+					AddProperty (Beagle.Property.New ("dc:creator", ((Literal)stmt.Object).Value));
+				} else if (stmt.Subject == rights_anon &&  
+					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
+					AddProperty (Beagle.Property.New ("dc:rights", ((Literal)stmt.Object).Value));
+				} else if (stmt.Subject == title_anon &&
+					   stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
+					AddProperty (Beagle.Property.New ("dc:title", ((Literal)stmt.Object).Value));
+				}
+			}
 		}
 	}
 }

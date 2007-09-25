@@ -198,7 +198,7 @@ namespace Beagle.Util {
 		public const string RdfsNS = "http://www.w3.org/2000/01/rdf-schema#";
 		public const string IViewNS = "http://ns.iview-multimedia.com/mediapro/1.0/";
 		public const string XmlNS = "http://iptc.org/std/Iptc4xmpCore/1.0/xmlns/";
-
+		public const string CcNS = "http://creativecommons.org/ns#";
 		// FIXME this needs to be parsable by System.Uri
 		public const string FSpotXMPBase = "http://fakebase.f-spot.org/internal/";
 
@@ -219,6 +219,7 @@ namespace Beagle.Util {
 			Namespaces.AddNamespace (RdfNS, "rdf");
 			Namespaces.AddNamespace (RdfsNS, "rdfs");
 			Namespaces.AddNamespace (IViewNS, "mediapro");
+			Namespaces.AddNamespace (CcNS, "cc");
 		}
 
 		public static MetadataStore Descriptions {

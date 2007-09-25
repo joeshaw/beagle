@@ -157,6 +157,8 @@ namespace Beagle.Filters {
 				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("tiff:Model")) {
 					// NOTE: the namespaces for xmp and beagle don't always match up
 					AddProperty (Beagle.Property.New ("exif:Model", ((Literal)stmt.Object).Value));
+				} else if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("cc:license")) {
+					AddProperty (Beagle.Property.NewKeyword ("fixme:license", ((Literal)stmt.Object).Value));
 				}
 			}
 			
