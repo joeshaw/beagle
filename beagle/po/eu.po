@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-09-17 21:07+0200\n"
-"PO-Revision-Date: 2007-09-17 21:08+0200\n"
+"PO-Revision-Date: 2007-09-25 21:00+0200\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -37,7 +37,7 @@ msgstr "Kontaktuak"
 
 #: ../ContactViewer/ContactWindow.cs:100
 msgid "Display name"
-msgstr "Bistaratu izena"
+msgstr "Pantaila-izena"
 
 #: ../ContactViewer/ContactWindow.cs:101
 msgid "Primary E-mail"
@@ -45,7 +45,7 @@ msgstr "Helb. elek. nagusia"
 
 #: ../ContactViewer/ContactWindow.cs:102
 msgid "Secondary E-mail"
-msgstr "Bigarren mailako helb.elek."
+msgstr "Bigarren helb.elek."
 
 #: ../ContactViewer/ContactWindow.cs:103
 msgid "Nickname"
@@ -76,7 +76,7 @@ msgstr[1] "{0} kontaktu gehituta"
 #: ../ContactViewer/ContactWindow.cs:204
 #, csharp-format
 msgid "Viewing {0}"
-msgstr "{0}. ikusten"
+msgstr "{0} ikusten"
 
 #: ../ContactViewer/ContactWindow.cs:244
 msgid "Select a mork database file"
@@ -105,7 +105,7 @@ msgstr "Web orria:"
 
 #: ../ContactViewer/ContactWindow.cs:336
 msgid "Send E-Mail"
-msgstr "Bidali mezua"
+msgstr "Bidali posta"
 
 #: ../ContactViewer/ContactWindow.cs:340
 msgid "Details..."
@@ -237,7 +237,7 @@ msgstr "Erakundea:"
 
 #: ../ContactViewer/contactviewer.glade.h:34
 msgid "Other"
-msgstr "Betelakoa"
+msgstr "Bestelakoa"
 
 #: ../ContactViewer/contactviewer.glade.h:35
 msgid "Pager:"
@@ -317,8 +317,9 @@ msgid "Auto Index"
 msgstr "Indexazio automatikoa"
 
 #: ../epiphany-extension/beagle.py.in:247
+#, fuzzy
 msgid "Prompt key words when index on demand"
-msgstr "Galdetu gako-hitzak eskatutakoan indexatzean"
+msgstr "Gako-hitzak galdetu indexatzeko eskatzean"
 
 #: ../epiphany-extension/beagle.py.in:274
 msgid "Extra keywords to index"
@@ -393,13 +394,13 @@ msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
 msgstr ""
-"Bilaketako hitzen idazkera egiaztatu beharko zenuke, again hitzen bat gaizki "
+"Bilaketako hitzen idazkera egiaztatu beharko zenuke, agian hitzen bat gaizki "
 "idatzi duzu eta."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr ""
-"Maiuskula eta minuskulak erabil ditzakezu, bilaketak ez ditu maiuskulak eta "
+"Maiuskula eta minuskulak erabil ditzakezu. Bilaketak ez ditu maiuskulak eta "
 "minuskulak bereizten."
 
 #: ../search/Pages/QuickTips.cs:11
@@ -433,8 +434,8 @@ msgid ""
 "For security reasons, Beagle cannot be run as root.  You should restart as a "
 "regular user."
 msgstr ""
-"Segurtasunagatik Beagle ezin da supererabiltzaile gisa exekutatu. Saioa "
-"erabiltzaile arrunt gisa hasi beharko zenuke."
+"Beagle ezin da supererabiltzaile gisa exekutatu, segurtasun arrazoiak direla eta. "
+"Saioa erabiltzaile arrunt gisa hasi beharko zenuke."
 
 #: ../search/Pages/StartDaemon.cs:19
 msgid "Search service not running"
@@ -459,7 +460,7 @@ msgstr "Bilatu orain"
 
 #: ../search/Search.cs:244
 msgid "Type in search terms"
-msgstr "Bilaketako terminoak"
+msgstr "Bilaketarako terminoak"
 
 #: ../search/Search.cs:245
 msgid "Start searching"
@@ -474,15 +475,15 @@ msgstr "Mahaigaineko bilaketa: {0}"
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
-msgstr[0] "Pareko {0} erakusten"
-msgstr[1] "Pareko {0} erakusten"
+msgstr[0] "Emaitz {0} erakusten"
+msgstr[1] "{0} emaitz erakusten"
 
 #: ../search/Search.cs:298
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Pareko aurrenekoa erakusten: {0} / {1} "
-msgstr[1] "Pareko aurrenekoak erakusten: {0} / {1}"
+msgstr[0] "Aurreneko emaitza erakusten: {0} / {1} "
+msgstr[1] "Aurreneko emaitzak erakusten: {0} / {1}"
 
 #: ../search/Search.cs:539
 msgid "There are computers near you running Beagle"
@@ -494,15 +495,13 @@ msgstr "Beste ordenagailuetan bila dezakezu \"Bilatu\" menua erabiliz."
 
 #: ../search/Search.cs:612
 msgid "Your data is being indexed"
-msgstr "Datuak indexatzen ari dira"
+msgstr "Datuak indexatzen ari da"
 
 #: ../search/Search.cs:613
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
-msgstr ""
-"Bilaketa-zerbitzua datuak indexatzen ari da. Bilaketen emaitzak ez dira "
-"erabatekoak izango indexazioa amaitu arte."
+msgstr "Bilaketa-zerbitzua datuak indexatzen ari da. Bilaketen emaitzak osatu gabekoak izango dira indexazioa amaitu arte."
 
 #: ../search/Tiles/ArchivedFile.cs:39
 #, csharp-format
@@ -516,7 +515,7 @@ msgstr "Fitxategi-izena:"
 #. Substring to move past the initial #
 #: ../search/Tiles/ArchivedFile.cs:78
 msgid "Inside File:"
-msgstr "Fitxategian:"
+msgstr "Fitxategi honetan:"
 
 #: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
 msgid "Author:"
@@ -641,7 +640,7 @@ msgstr "Eskuragarri"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
-msgstr "Mezuaren eranskina"
+msgstr "Postaren eranskina"
 
 #: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
@@ -818,7 +817,7 @@ msgstr "URLa:"
 
 #: ../search/Tiles/WebHistory.cs:59
 msgid "Accessed:"
-msgstr "Atzituta:"
+msgstr "Sarbidetuta:"
 
 #: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
@@ -1148,7 +1147,7 @@ msgstr "Ordenatu _aldatze-dataren arabera"
 
 #: ../search/UIManager.cs:206
 msgid "Sort the most-recently-modified matches first"
-msgstr "Ordenatu emaitzak azken aldatutakoetik hasiz"
+msgstr "Ordenatu emaitzak (azken aldatutakoak lehenengo)"
 
 #: ../search/UIManager.cs:209
 msgid "Sort by _Name"
@@ -1164,7 +1163,7 @@ msgstr "Ordenatu _garrantziaren arabera"
 
 #: ../search/UIManager.cs:214
 msgid "Sort the best matches first"
-msgstr "Ordenatu emaitz egokienetik hasiz"
+msgstr "Ordenatu emaitza egokienetik hasiz"
 
 #: ../search/UIManager.cs:221
 msgid "Show Details"
@@ -1192,15 +1191,13 @@ msgstr "Hautatu bide-izena"
 
 #: ../tools/Settings.cs:406
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "Hautatutako bide-izena dagoeneko indexatzeko hautatuta dago eta da gehituko."
+msgstr "Hautatutako bide-izena dagoeneko indexatzeko hautatuta dago eta ez da gehituko."
 
 #: ../tools/Settings.cs:409
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
-msgstr ""
-"Hautatutako bide-izena ez da gehitu. Barneratua duen elementuren bat dago "
-"zerrendan, beraz, jadanik indexatua izaten ari da."
+msgstr "Hautatutako bide-izena ez da gehitu. Zerrendak erreferentzia egiten dioten elementuak ditu eta jadanik datuak indexatzen ari da."
 
 #: ../tools/Settings.cs:420
 msgid "Path not added"
@@ -1228,7 +1225,7 @@ msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
-"Ziur zaude bide-izena kentzea nahi duzula indexatuko diren direktorioen "
+"Ziur zaude bide-izena kentzea nahi duzula indexatuko ez diren direktorioen "
 "zerrendatik?"
 
 #: ../tools/Settings.cs:486
@@ -1303,7 +1300,7 @@ msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
-"Ezin izan da zehaztutako bidea aurkitu, beraz, ezin izan da baliabideen "
+"Ezin izan da zehaztutako bidea aurkitu. Hori dela eta, ezin izan da baliabideen "
 "zerrendara gehitu indexaziotik kanpo uzteko."
 
 #: ../tools/Settings.cs:1252
@@ -1357,7 +1354,7 @@ msgstr "Gehitu urruneko ostalaria"
 
 #: ../tools/settings.glade.h:12
 msgid "Add a static host with a known address"
-msgstr "Gahitu helbide ezaguneko ostalari finkoa"
+msgstr "Gehitu helbide ezaguneko ostalari finkoa"
 
 #: ../tools/settings.glade.h:13
 msgid "Add any additional paths to be included for indexing."
@@ -1385,7 +1382,7 @@ msgstr "Alt"
 
 #: ../tools/settings.glade.h:18
 msgid "Automatically s_tart searching after the user has stopped typing"
-msgstr "Abiarazi a_utomatikoki bilaketa erabiltzaileak idazteari uztean"
+msgstr "Abiarazi bilaketa a_utomatikoki erabiltzaileak idazteari uztean"
 
 #: ../tools/settings.glade.h:19
 msgid "Ctrl"
@@ -1411,7 +1408,7 @@ msgstr "_Indexatu nire direktorio nagusia"
 msgid ""
 "In order for you to perform Beagle searches on this computer, you must enter "
 "a password."
-msgstr "Pasahitza sartu ordenagailu honetan Beaglerekin bilaketak burutzeko."
+msgstr "Pasahitza sartu Beaglerekin bilaketak burutzeko ordenagailu honetan."
 
 #: ../tools/settings.glade.h:25
 msgid "Index data while on _battery power"
@@ -1447,11 +1444,11 @@ msgstr "Hautatu baliabidea indexaziotik kanpo uzteko."
 
 #: ../tools/settings.glade.h:35
 msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Hautatu postaren direktorioa indexaziotik kanpo uzteko."
+msgstr "Hautatu postaren karpeta indexaziotik kanpo uzteko."
 
 #: ../tools/settings.glade.h:36
 msgid "Require a password to search this computer remotely."
-msgstr "Eskatu pasahitza ordenagailu honetan bilaketak egiteko urrunetik."
+msgstr "Eskatu pasahitza ordenagailu honetan bilaketak urrunetik egiteko."
 
 #: ../tools/settings.glade.h:37
 msgid "Search Preferences"
@@ -1555,7 +1552,7 @@ msgstr "IPTC Information Interchange Model (IIM) bertsioaren zenbakia"
 
 #: ../Util/F-Spot/IptcFile.cs:177
 msgid "OSI Destination routing information"
-msgstr "OSI helburuko bideratze-informazioa"
+msgstr "Helburuako OSI bideratze-informazioa"
 
 #: ../Util/F-Spot/IptcFile.cs:179
 msgid "IPTC file format"
