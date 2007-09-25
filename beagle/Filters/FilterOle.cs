@@ -141,6 +141,10 @@ namespace Beagle.Filters {
 				prop = docSumMeta.Lookup ("gsf:category");
 				if (prop != null)
 					AddProperty (Beagle.Property.New ("fixme:category", prop.Val as string));
+				
+				prop = docSumMeta.Lookup ("CreativeCommons_LicenseURL");
+				if (prop != null)
+					AddProperty (Beagle.Property.New ("fixme:license", prop.Val as string));
 			}
 
 			ExtractMetaData (sum_stream, doc_stream);
