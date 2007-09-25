@@ -41,13 +41,15 @@ namespace Beagle.Filters {
 		static private string [] ignore_strings = { "format"};
 		
 		static private string dcnamespace = "http://purl.org/dc/elements/1.1/";
+		static private string ccnamespace = "http://creativecommons.org/ns#";
 		
 		public FilterSvg ()
 		{
-			SetVersion (1);
+			SetVersion (2);
 			// FIXME: Should really set FileType as "image"
 			// But this does not extract common image properties,
 			// so will confuse everybody
+			// Version 2: Add file license metadata to properties.
 		}
 
 		protected override void RegisterSupportedTypes ()
@@ -154,8 +156,14 @@ namespace Beagle.Filters {
 							if (grab_text)
 								break;
 							
-							if (reader.IsEmptyElement)
-								break;
+							if (reader.IsEmptyElement){
+ 								if (reader.NamespaceURI == ccnamespace) {
+									if ( reader.LocalName == "license" ) {
+										AddProperty (Property.NewKeyword ("fixme:license", reader.GetAttribute("resource","http://www.w3.org/1999/02/22-rdf-syntax-ns#")));
+									}
+								}
+ 								break;
+							}
 
 							if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
 								break;
