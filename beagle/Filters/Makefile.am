@@ -105,7 +105,8 @@ CSFILES = 				\
 	$(srcdir)/FilterPls.cs		\
 	$(srcdir)/FilterPidginLog.cs	\
 	$(srcdir)/FilterKopeteLog.cs	\
-	$(srcdir)/FilterIgnore.cs
+	$(srcdir)/FilterIgnore.cs	\
+	$(srcdir)/FilterTeX.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\
