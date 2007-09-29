@@ -745,7 +745,7 @@ namespace Beagle.Util {
 				browser.Dispose ();
 
 				} catch (Exception e) {
-					Console.WriteLine (e);
+					Console.WriteLine ("Cannot connect to avahi service: " + e.Message);
 				}
 #endif
 
