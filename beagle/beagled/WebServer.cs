@@ -69,6 +69,15 @@ namespace Beagle.Daemon {
 
 		static byte[] buffer = new byte [1024];
 
+#if false
+
+		internal static void HandleStaticPages (HttpListenerContext context)
+		{
+			context.Response.StatusCode = 404;
+			context.Response.Close ();
+			return;
+		}
+# else
 		internal static void HandleStaticPages (HttpListenerContext context)
 		{
 			Log.Debug ("GET request:" + context.Request.RawUrl);
@@ -102,5 +111,6 @@ namespace Beagle.Daemon {
 
 			context.Response.Close ();
 		}
+#endif
 	}
 }
