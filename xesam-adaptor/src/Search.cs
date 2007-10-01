@@ -63,7 +63,8 @@ namespace Beagle {
 							break;
 
 						case "mimetype":
-							hitValue[i++] = hit.MimeType;
+							// hit.MimeType may be null
+							hitValue[i++] = hit.MimeType + "";
 							break;
 
 						default:
