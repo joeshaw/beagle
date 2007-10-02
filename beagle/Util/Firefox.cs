@@ -62,18 +62,18 @@ namespace Beagle.Util
 	{
 		const string RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 		const string NC="http://home.netscape.com/NC-rdf#";
-		List<Beagle.Util.DownloadedFile> templist; 
+		List<DownloadedFile> templist; 
 		string profile_dir;
 		
 		public Firefox(string profiledir)
 		{
-			templist = new System.Collections.Generic.List<Beagle.Util.DownloadedFile> ();
+			templist = new System.Collections.Generic.List<DownloadedFile> ();
 			profile_dir = profiledir;
 		}
 		
-		public List<Beagle.Util.DownloadedFile> GetDownloads()
+		public List<DownloadedFile> GetDownloads()
 		{
-			XmlReader read = new System.Xml.XmlTextReader (File.OpenText (Path.Combine( profile_dir , "downloads.rdf" )));
+			XmlReader read = new XmlTextReader (File.OpenText (Path.Combine( profile_dir , "downloads.rdf" )));
 		
 			XmlDocument xpdoc = new XmlDocument();
 			xpdoc.Load(read);
@@ -83,11 +83,11 @@ namespace Beagle.Util
 
 			XPathNavigator xnav = xpdoc.CreateNavigator ();
 			
-			System.Xml.XPath.XPathNodeIterator xnodeitr = xnav.Select ("//RDF:Description",nsMgr);
+			XPathNodeIterator xnodeitr = xnav.Select ("//RDF:Description",nsMgr);
 
 			xnodeitr.MoveNext();
 			while(xnodeitr.MoveNext()){
-				Beagle.Util.DownloadedFile temp = new DownloadedFile ();
+				DownloadedFile temp = new DownloadedFile ();
 				Console.WriteLine (xnodeitr.Count);
 				temp.Local =xnodeitr.Current.GetAttribute ("about",RDF);
 				xnodeitr.Current.MoveToChild ("URL",NC);

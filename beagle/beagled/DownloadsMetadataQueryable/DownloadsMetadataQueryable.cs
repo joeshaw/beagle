@@ -45,7 +45,7 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 		private FileSystemQueryable.FileSystemQueryable target_queryable;
 		private Firefox internalff;
 		
-		private List<Beagle.Util.DownloadedFile> downedfiles; 
+		private List<DownloadedFile> downedfiles; 
 		System.Collections.IEnumerator enumer;
 		public DownloadsMetadataQueryable ()
 		{
@@ -104,7 +104,7 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 
 		/////////////////////////////////////////////////
 
-		public Indexable GetIndexable (Beagle.Util.DownloadedFile df)
+		public Indexable GetIndexable (DownloadedFile df)
 		{
 			Indexable indexable = new Indexable (new Uri(df.Local));
 			indexable.Type = IndexableType.PropertyChange;
@@ -145,7 +145,7 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 			if (attr != null)
 				last_checked = attr.LastWriteTime;
 			Firefox f = new Firefox(profile_dir);
-			foreach (Beagle.Util.DownloadedFile df in f.GetDownloads()) {
+			foreach (DownloadedFile df in f.GetDownloads()) {
 				Indexable indexable = GetIndexable (df);
 
 				Scheduler.Task task;
@@ -166,7 +166,9 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 
 		
 		
-		public void PostFlushHook () { }
+		public void PostFlushHook () { 
+			FileAttributesStore.AttachLastWriteTime (Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
+		}
 
 		public bool HasNextIndexable ()
 		{
@@ -176,18 +178,16 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 				enumer = downedfiles.GetEnumerator ();
 			}
 			
-			if(enumer.MoveNext()){
-				
-				FileAttributesStore.AttachLastWriteTime (Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
+			if(enumer.MoveNext())
 				return true;
-			}			
+					
 			
 			return false; 
 		}
 
 		public Indexable GetNextIndexable ()
 		{
-			return GetIndexable ( (Beagle.Util.DownloadedFile) enumer.Current);
+			return GetIndexable ( (DownloadedFile) enumer.Current);
 		}
 
 	}
