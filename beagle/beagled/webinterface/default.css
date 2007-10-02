@@ -104,6 +104,8 @@ body {
 	border-top: 1px solid rgb(152, 51, 0);*/
 	padding: 0.5em;
 	float: left;
+	overflow: hidden;
+	width: 96%;
 }
 
 .Title {
@@ -122,6 +124,7 @@ body {
 	float: left;
 	text-align: left;
 	font-weight: bold;
+	width: 70%;
 }
 
 .Timestamp {
