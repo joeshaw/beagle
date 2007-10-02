@@ -10,10 +10,6 @@ endif
 
 SUBDIRS =
 
-if ENABLE_GUI
-SUBDIRS += po
-endif
-
 SUBDIRS +=			\
 	Util			\
 	glue			\
@@ -28,6 +24,7 @@ endif
 
 if ENABLE_GUI
 SUBDIRS +=			\
+	po			\
 	images			\
 	search			\
 	ImLogViewer
