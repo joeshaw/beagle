@@ -229,13 +229,12 @@ function toggle_category(category) {
 	// Get all the category checkboxes, global variable
 	category_checkboxes = document.getElementById('topbar-left').getElementsByTagName('input');
 	// Get all the result categories, global variable
-	result_categories = document.getElementById('results').getElementsByTagName('div');
+	result_categories = document.getElementById('results').childNodes;
 	// If "All" is clicked..
 	if (category.name == "All") {
 		// If checked right now, it was unchecked earlier
 		if (category.checked) {
 			// Show all results
-			document.getElementById('results').style.display= 'block';
 			for (var i = 0; i < result_categories.length; ++i) {
 				result_categories[i].style.display = 'block';
 			}
@@ -245,7 +244,10 @@ function toggle_category(category) {
 			}
 		} else {
 			// Hide all results
-			document.getElementById('results').style.display= 'none';
+			for (var i = 0; i < result_categories.length; ++i) {
+				result_categories[i].style.display = 'none';
+			}
+
 			// Uncheck all the categories
 			for (var i = 0; i < category_checkboxes.length; ++i) {
 				category_checkboxes[i].checked = false;
