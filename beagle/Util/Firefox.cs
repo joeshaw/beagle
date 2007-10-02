@@ -29,7 +29,8 @@ using System.Xml;
 using System.Xml.XPath;
 using System.Collections.Generic;
 
-namespace Beagle.Util{
+namespace Beagle.Util
+{
 	public class DownloadedFile
 	{
 		private string local_uri;
@@ -38,17 +39,20 @@ namespace Beagle.Util{
 		{
 			
 		}
-		public DownloadedFile(string loc, string remote){
+		public DownloadedFile(string loc, string remote)
+		{
 			local_uri=loc;
 			remote_uri=remote;
 		}
 		
-		public string Local{
+		public string Local
+		{
 			get { return local_uri; }
 			set { local_uri = value;}
 		}
 		
-		public string Remote{
+		public string Remote
+		{
 			get { return remote_uri; }
 			set { remote_uri = value;}
 		}
@@ -63,36 +67,32 @@ namespace Beagle.Util{
 		
 		public Firefox(string profiledir)
 		{
-			templist = new System.Collections.Generic.List<Beagle.Util.DownloadedFile>();
+			templist = new System.Collections.Generic.List<Beagle.Util.DownloadedFile> ();
 			profile_dir = profiledir;
 		}
 		
-		public List<Beagle.Util.DownloadedFile> GetDownloads(){
-			XmlReader read = new System.Xml.XmlTextReader(File.OpenText(Path.Combine(profile_dir,"downloads.rdf")));
+		public List<Beagle.Util.DownloadedFile> GetDownloads()
+		{
+			XmlReader read = new System.Xml.XmlTextReader (File.OpenText (Path.Combine( profile_dir , "downloads.rdf" )));
 		
 			XmlDocument xpdoc = new XmlDocument();
 			xpdoc.Load(read);
 			XmlNamespaceManager  nsMgr = new XmlNamespaceManager(xpdoc.NameTable);
-			nsMgr.AddNamespace("RDF",RDF);
-			nsMgr.AddNamespace("NC" ,NC);
+			nsMgr.AddNamespace ("RDF",RDF);
+			nsMgr.AddNamespace ("NC" ,NC);
 
+			XPathNavigator xnav = xpdoc.CreateNavigator ();
 			
-			XPathNavigator xnav = xpdoc.CreateNavigator();
-			
-			
-			System.Xml.XPath.XPathNodeIterator xnodeitr = xnav.Select("//RDF:Description",nsMgr);
-			
-			
+			System.Xml.XPath.XPathNodeIterator xnodeitr = xnav.Select ("//RDF:Description",nsMgr);
+
 			xnodeitr.MoveNext();
 			while(xnodeitr.MoveNext()){
-				Beagle.Util.DownloadedFile temp = new DownloadedFile();
-				Console.WriteLine(xnodeitr.Count);
-				temp.Local =xnodeitr.Current.GetAttribute("about",RDF);
-				
-
-				xnodeitr.Current.MoveToChild("URL",NC);
-				temp.Remote = xnodeitr.Current.GetAttribute("resource",RDF);
-				templist.Add(temp);
+				Beagle.Util.DownloadedFile temp = new DownloadedFile ();
+				Console.WriteLine (xnodeitr.Count);
+				temp.Local =xnodeitr.Current.GetAttribute ("about",RDF);
+				xnodeitr.Current.MoveToChild ("URL",NC);
+				temp.Remote = xnodeitr.Current.GetAttribute ("resource",RDF);
+				templist.Add (temp);
 			}			
 			return templist;
 		}

@@ -159,7 +159,8 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 		/////////////////////////////////////////////////
 
 		// IIndexableGenerator implementation
-		public string StatusName {
+		public string StatusName 
+		{
 			get { return "DownloadsMetadataQueryable"; }
 		}
 
@@ -170,14 +171,14 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 		public bool HasNextIndexable ()
 		{
 			if (!FileAttributesStore.IsUpToDate (Path.Combine(profile_dir,"downloads.rdf"))){
-				internalff = new Firefox(profile_dir);
-				downedfiles = internalff.GetDownloads();
-				enumer = downedfiles.GetEnumerator();
+				internalff = new Firefox (profile_dir);
+				downedfiles = internalff.GetDownloads ();
+				enumer = downedfiles.GetEnumerator ();
 			}
 			
 			if(enumer.MoveNext()){
 				
-				FileAttributesStore.AttachLastWriteTime ((string)Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
+				FileAttributesStore.AttachLastWriteTime (Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
 				return true;
 			}			
 			
@@ -186,7 +187,7 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 
 		public Indexable GetNextIndexable ()
 		{
-			return GetIndexable((Beagle.Util.DownloadedFile)enumer.Current);
+			return GetIndexable ( (Beagle.Util.DownloadedFile) enumer.Current);
 		}
 
 	}
