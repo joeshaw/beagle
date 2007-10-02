@@ -32,16 +32,16 @@
 /******* Initial fetching and loading of the xsl file *********/
 var xmlhttp=false;
 try { 
-	xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); 
+		xmlhttp = new ActiveXObject("Msxml2.XMLHTTP"); 
 } catch (e) {
- 	try { 
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); 
-	} catch (E) { 
-		xmlhttp = false; 
-	} 
+ 		try { 
+				xmlhttp = new ActiveXObject("Microsoft.XMLHTTP"); 
+		} catch (E) { 
+				xmlhttp = false; 
+		} 
 } 
 if (!xmlhttp && typeof XMLHttpRequest!='undefined') { 
-	xmlhttp = new XMLHttpRequest(); 
+		xmlhttp = new XMLHttpRequest(); 
 }
 
 // first get the XSLT file
@@ -57,42 +57,49 @@ xsltProcessor.importStylesheet(xslRef);
 
 function test()
 {
-    //document.getElementById('xml').innerHTML = ("<i>hello world</i> " + "foo");
-    document.getElementById('topbar-right').style.display='block';
+	//document.getElementById('xml').innerHTML = ("<i>hello world</i> " + "foo");
+	document.getElementById('topbar-right').style.display='block';
 }
 </script>
 </head>
 <body onload="document.queryform.querytext.focus();">
-    <div id="header">
-	<img src="beagle-logo.png"/>
-	<form name="queryform" onsubmit='search(); return false;' action="POST">
-    	    <input name="querytext" type="text" size="50" /><input type="submit" value="Search"/>
-    	</form>
-	<span id="headerlinks">
-		<a href="" onclick='get_information(); return false;'>Current Status</a>&nbsp;|&nbsp;
-		<a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a>
-	</span>
-    </div>
-    <div id="status"><img src="ajax-loader.gif"/></div>
+	<div id="header">
+		<a href="."><img src="beagle-logo.png"/></a>
+		<form name="queryform" onsubmit='search(); return false;' action="POST">
+			<input name="querytext" type="text" size="50" />
+			<input type="submit" value="Search"/>
+		</form>
+		<span id="headerlinks">
+			<a href="" onclick='get_information(); return false;'>Current Status</a>&nbsp;|&nbsp;
+			<a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a>
+		</span>
+	</div>
+	<div id="status">
+		<img src="ajax-loader.gif"/>
+	</div>
 
-    <div id="topbar">
-	<span id="topbar-left">
-	    <a href="" onclick='show_all(); return false;'>All</a>
-	    <a href="" onclick='show_file_type("document"); return false;'>Documents</a>
-	    <a href="" onclick='show_file_type("image"); return false;'>Images</a>
-	    <a href="" onclick='show_file_type("audio"); return false;'>Music</a>
-	    <a href="" onclick='show_file_type("video"); return false;'>Video</a>
-	    <a href="" onclick='show_file_type("source"); return false;'>C#/Java ...</a>
-	    <a href="" onclick='show_file_type("application"); return false;'>Applications</a>
-	    <a href="" onclick='show_file_type("archive"); return false;'>Archives</a>
-	    <a href="" onclick='show_file_type("mail"); return false;'>Emails</a>
-	    <a href="" onclick='show_hit_type("WebHistory", "FeedItem"); return false;'>Links</a>
-	</span>
-	<span id="topbar-right">Retrieved <span id="numhits">XXX</span> results in <span id="timetaken">0.4 secs</span></span>
-    </div>
-
-    <div id="xml"></div>
-    <div id="results"></div>
-    <div id="footer">Web interface for <a href="http://beagle-project.org">Beagle</a> desktop search service <b>|</b> Copyright (C) 2007 Debajyoti Bera, Nirbheek Chauhan <b>|</b> Licensed under <a href="http://www.opensource.org/licenses/mit-license.php">MIT license</a></div>
+	<div id="topbar">
+		<span id="topbar-left">
+			<form name="categories">
+			<input type="checkbox" name="All" checked onClick='toggle_category(this);'/>All
+			<input type="checkbox" name="Documents" checked onClick='toggle_category(this);'/>Documents
+			<input type="checkbox" name="Images" checked onClick='toggle_category(this);'/>Images
+			<input type="checkbox" name="Media" checked onClick='toggle_category(this);'/>Media
+			<input type="checkbox" name="Mail" checked onClick='toggle_category(this);'/>Mail
+			<input type="checkbox" name="Websites" checked onClick='toggle_category(this);'/>Websites
+			<input type="checkbox" name="IMLogs" checked onClick='toggle_category(this);'/>IM Logs
+			<input type="checkbox" name="Others" checked onClick='toggle_category(this);'/>Others
+			</form>
+		</span>
+		<span id="topbar-right">Retrieved <span id="numhits">XXX</span> results in <span id="timetaken">0.4 secs</span></span>
+	</div>
+	<!-- For a future login box for remote usage -->
+	<div id="login"></div>
+	<div id="xml"></div>
+	<div id="results"></div>
+	<div id="footer">
+		Web interface for <a href="http://beagle-project.org">Beagle</a> desktop search service <br/>
+		<p class='license'>Copyright (C) 2007 Debajyoti Bera, Nirbheek Chauhan, Licensed under <a href="http://www.opensource.org/licenses/mit-license.php">MIT license</a></p>
+	</div>
 </body>
 </html>

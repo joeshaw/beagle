@@ -1,0 +1,12 @@
+= TODO =
+
+ - Show snippets and metadata in the Hits
+ - Transform Timestamps
+ - Whole thing needs a facelift :-/
+ - Blocking another search while the current search is going on is not implemented properly yet.
+   Multiple xmlhttp search requests don't work with beagle.
+ - Implement `Beagle Settings`
+ - "Remember" category settings between searches
+ - Category mapping is incomplete
+ - Profiling and optimising of the code.
+ - Truncate long URLs while displaying them
