@@ -129,6 +129,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			indexable.Timestamp = data_file.LastWriteTimeUtc;
 			indexable.ContentUri = UriFu.PathToFileUri (data_file.FullName);
 			indexable.DeleteContent = true;
+			indexable.AddProperty( Property.New("fixme:host",uri.Host));
 
 			// Second line is the hit type
 			line = reader.ReadLine ();

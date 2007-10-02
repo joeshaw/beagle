@@ -43,6 +43,10 @@ namespace Search.Tiles {
 				Title = Catalog.GetString (String.Format ("Attachment to \"{0}\"", Hit ["parent:dc:title"]));
 
 			Description = Catalog.GetString ("Mail attachment");
+			
+			if ((Utils.GetFirstPropertyOfParent (hit, "fixme:isSent") == null)){
+				AddAction ( new TileAction (Catalog.GetString ("Find Messages From Sender"), Gtk.Stock.Find, FindAllFromSender));
+			}
 		}
 
 		public override void Open ()
@@ -58,6 +62,18 @@ namespace Search.Tiles {
 				p.Start ();
 			} catch (SafeProcessException e) {
 				Console.WriteLine ("Unable to run {0}: {1}", p.Arguments [0], e.Message);
+			}
+		}
+		
+		public void FindAllFromSender()
+		{
+			SafeProcess p = new SafeProcess ();
+			string addr = Search.Tiles.Utils.GetFirstPropertyOfParent(Hit,"fixme:from_address");
+			p.Arguments = new string [] { "beagle-search", String.Format ("mailfromaddr:{0}", addr) };
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching new search: " + e.Message);
 			}
 		}
 		

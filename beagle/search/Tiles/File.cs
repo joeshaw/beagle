@@ -35,6 +35,9 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
 			// AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
+			if (Hit.GetFirstProperty("dc:author") != null || Hit.GetFirstProperty("dc:creator") != null ){
+				AddAction( new TileAction("Find Documents From Same Author",Gtk.Stock.Find, FindSameAuthor));
+			}
 		}
 
 		static ThumbnailFactory thumbnailer = new ThumbnailFactory ();
@@ -180,6 +183,21 @@ namespace Search.Tiles {
 			details.AddSnippet ();
 
 			return details;
+		}
+		
+		public void FindSameAuthor()
+		{
+			SafeProcess p = new SafeProcess ();
+			string author = Hit.GetFirstProperty("dc:author");
+			if( String.IsNullOrEmpty(author))
+				 author = Hit.GetFirstProperty("dc:creator");
+			p.Arguments = new string [] { "beagle-search", String.Format ("author:{0} OR creator:{0}", author) };
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching new search: " + e.Message);
+			}
+			
 		}
 	}
 }

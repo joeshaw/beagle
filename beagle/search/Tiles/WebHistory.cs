@@ -31,6 +31,7 @@ namespace Search.Tiles {
 
 			Title = title;
 			Description = hit.Uri.ToString ();
+			AddAction( new Search.Tiles.TileAction("Find From Same Host",Gtk.Stock.Find,FindFromHost));
 		}
 
 		// We intentionally use a separate thumbnailer/thread from Tiles.File,
@@ -60,6 +61,19 @@ namespace Search.Tiles {
 			details.AddSnippet ();
 
 			return details;
+		}
+		
+		public void FindFromHost()
+		{
+			
+			SafeProcess p = new SafeProcess ();
+			//string addr = Search.Tiles.Utils.GetFirstPropertyOfParent(Hit,"fixme:from_address");
+			p.Arguments = new string [] { "beagle-search", String.Format ("host:{0}", Hit.Uri.Host) };
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching new search: " + e.Message);
+			}
 		}
 	}
 }

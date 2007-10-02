@@ -1,5 +1,6 @@
 using System;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Search.Tiles {
 
@@ -36,6 +37,9 @@ namespace Search.Tiles {
 				int count = Int32.Parse (Hit ["fixme:page-count"]);
 				Description = String.Format (Catalog.GetPluralString ("{0} page", "{0} pages", count), count);
 			}
+			
 		}
+		
+		
 	}
 }

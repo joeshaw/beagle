@@ -66,6 +66,9 @@ namespace Search.Tiles {
 
 			if (Utils.GetFirstPropertyOfParent (Hit, "fixme:client") == "evolution")
 				AddAction (new TileAction (Catalog.GetString ("Send in Mail"), SendInMail));
+			if ((Utils.GetFirstPropertyOfParent (hit, "fixme:isSent") == null)){
+				AddAction ( new TileAction (Catalog.GetString ("Find Messages From Sender"), Gtk.Stock.Find, FindAllFromSender));
+			}
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -173,6 +176,17 @@ namespace Search.Tiles {
 				p.Start () ;
 			} catch (Exception e) {
 				Console.WriteLine ("Error launching Evolution composer: " + e.Message);
+			}
+		}
+		public void FindAllFromSender()
+		{
+			SafeProcess p = new SafeProcess ();
+			string addr = Hit.GetFirstProperty("fixme:from_address");
+			p.Arguments = new string [] { "beagle-search", String.Format ("mailfromaddr:{0}", addr) };
+			try {
+				p.Start () ;
+			} catch (Exception e) {
+				Console.WriteLine ("Error launching new search: " + e.Message);
 			}
 		}
 	}

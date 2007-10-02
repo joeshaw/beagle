@@ -124,6 +124,9 @@ namespace Beagle.Daemon {
 
 			property_table.Add ("filetype",
 					    new PropertyDetail (PropertyType.Keyword, "beagle:FileType", "Type of content for HitType File"));
+					    
+			property_table.Add ("host",
+					    new PropertyDetail (PropertyType.Keyword, "fixme:host", "The host of this entitiy."));
 		}
 
 		public static void RegisterMapping (PropertyKeywordMapping mapping)
