@@ -48,6 +48,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileAdvise.cs			\
 	$(srcdir)/FileSystem.cs			\
+	$(srcdir)/Firefox.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
 	$(srcdir)/GuidFu.cs			\

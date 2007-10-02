@@ -396,6 +396,10 @@ OPERA_QUERYABLE_CSFILES =					\
 nautilusqueryable = $(srcdir)/NautilusMetadataQueryable
 NAUTILUS_QUERYABLE_CSFILES =					\
 	$(nautilusqueryable)/NautilusMetadataQueryable.cs
+	
+downloadqueryable = $(srcdir)/DownloadsMetadataQueryable
+DOWNLOADS_QUERYABLE_CSFILES =					\
+	$(downloadqueryable)/DownloadsMetadataQueryable.cs
 
 networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
 NETWORK_SERVICES_QUERYABLE =					\
@@ -423,6 +427,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
+	$(DOWNLOADS_QUERYABLE_CSFILES)				\
 	$(NETWORK_SERVICES_QUERYABLE)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
