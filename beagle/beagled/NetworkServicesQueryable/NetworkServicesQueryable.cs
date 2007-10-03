@@ -26,17 +26,24 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 		public bool AcceptQuery (Query query)
 		{
-			// FIXME: Disable all queries by default
-			return false;
+			return (Conf.Networking.NetworkServices.Count > 0);
 		}
 
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData data)
 		{
-			// Forward our local query to remote hosts
-			//query.Transports.Clear ();
-			//query.RegisterTransport (new HttpTransport ("http://flikr:4001/"));
-			//query.Keepalive = false;
-			//query.Send ();
+			// Get rid of the standard UnixTransport so that we can
+			// forward our local query to remote hosts.
+			query.Transports.Clear ();
+
+			foreach (NetworkService service in Conf.Networking.NetworkServices)
+				query.RegisterTransport (new HttpTransport (service.UriString));
+
+			ArrayList hits = new ArrayList ();
+
+			query.Keepalive = false;
+			query.Send ();
+
+			result.Add (hits);
 		}
 
 		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text)

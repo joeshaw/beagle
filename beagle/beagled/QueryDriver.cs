@@ -27,10 +27,12 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using Beagle.Util;
+
 namespace Beagle.Daemon {
 	
 	public class QueryDriver {
@@ -402,7 +404,7 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		static public string ListBackends ()
+		public static string ListBackends ()
 		{
 			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
 

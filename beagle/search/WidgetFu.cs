@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Search.Tiles {
+namespace Search {
 
 	public static class WidgetFu {
 		

@@ -38,9 +38,10 @@ beagle-search: beagle-search.in
 
 CSFILES =					\
 	$(srcdir)/Category.cs			\
-	$(srcdir)/ConversationCategory.cs	\
+	$(srcdir)/DetailsPane.cs		\
 	$(srcdir)/Entry.cs			\
 	$(srcdir)/GroupView.cs			\
+	$(srcdir)/ListCategory.cs		\
 	$(srcdir)/NotificationArea.cs		\
 	$(srcdir)/Panes.cs			\
 	$(srcdir)/Search.cs			\
@@ -48,7 +49,8 @@ CSFILES =					\
 	$(srcdir)/Spinner.cs			\
 	$(srcdir)/TileCategory.cs		\
 	$(srcdir)/TypeFilter.cs			\
-	$(srcdir)/UIManager.cs
+	$(srcdir)/UIManager.cs			\
+	$(srcdir)/WidgetFu.cs
 
 TILES = 					\
 	$(srcdir)/Tiles/ActionMenuItem.cs	\
@@ -59,7 +61,6 @@ TILES = 					\
 	$(srcdir)/Tiles/CApplet.cs		\
 	$(srcdir)/Tiles/Calendar.cs		\
 	$(srcdir)/Tiles/Contact.cs		\
-	$(srcdir)/Tiles/DetailsPane.cs		\
 	$(srcdir)/Tiles/File.cs			\
 	$(srcdir)/Tiles/Folder.cs		\
 	$(srcdir)/Tiles/HitFlavor.cs		\
@@ -82,8 +83,7 @@ TILES = 					\
 	$(srcdir)/Tiles/TileTemplate.cs		\
 	$(srcdir)/Tiles/Utils.cs		\
 	$(srcdir)/Tiles/Video.cs		\
-	$(srcdir)/Tiles/WebHistory.cs		\
-	$(srcdir)/Tiles/WidgetFu.cs		
+	$(srcdir)/Tiles/WebHistory.cs
 
 if ENABLE_OPEN_WITH
 TILES += $(srcdir)/Tiles/OpenWithMenu.cs

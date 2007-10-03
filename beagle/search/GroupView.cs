@@ -29,20 +29,21 @@ namespace Search {
 
 		public GroupView () : base (false, 0)
 		{
-			Category box = null;
 			categories = new Hashtable ();
 			tileSizeGroup = new Gtk.SizeGroup (Gtk.SizeGroupMode.Both);			
 
 			foreach (Tiles.TileGroupInfo info in Tiles.Utils.GroupInfo) {
+				Category box = null;
 								
 				if (info.Group == Tiles.TileGroup.Conversations)
-					box = new ConversationCategory (info);
+					box = new ListCategory (info);
 				else
 					box = new TileCategory (info, tileSizeGroup);
 
-				PackStart (box, false, false, 0);
 				box.NoShowAll = true;
 				box.CategoryToggle += OnCategoryToggle;
+				PackStart (box, false, false, 0);
+
 				categories [info.Group] = box;
 			}
 		}

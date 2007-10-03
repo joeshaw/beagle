@@ -3,6 +3,7 @@ using Mono.Unix;
 using System;
 using System.Diagnostics;
 
+using Beagle;
 using Beagle.Util;
 
 namespace Search {
@@ -35,7 +36,7 @@ namespace Search {
 		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] sort_entries;
-		private Gtk.ToggleActionEntry[] scope_entries, view_entries;
+		private Gtk.ToggleActionEntry[] scope_entries, view_entries, domain_entries;
 
 		public UIManager (MainWindow main_window)
 		{
@@ -64,6 +65,9 @@ namespace Search {
 				new ActionEntry ("Scope", null,
 						 Catalog.GetString ("Show _Categories"),
 						 null, null, null),
+				new ActionEntry ("Domain", null,
+						 Catalog.GetString ("Search _Domains"),
+						 null, null, null),
 				new ActionEntry ("Actions", null,
 						 Catalog.GetString ("_Actions"),
 						 null, null, null),
@@ -73,7 +77,6 @@ namespace Search {
 				new ActionEntry ("Help", null,
 						 Catalog.GetString ("_Help"),
 						 null, null, null),
-
 				quit_action_entry,
 				new ActionEntry ("Preferences", Gtk.Stock.Preferences,
 						 null, null,
@@ -216,6 +219,22 @@ namespace Search {
 			};
 			actions.Add (sort_entries, (int)SortType.Modified, OnSortChanged);
 
+			domain_entries = new ToggleActionEntry [] {
+				new ToggleActionEntry ("Local", null,
+						       Catalog.GetString ("_Local"),
+						       null,
+						       Catalog.GetString ("Search only on local computer"),
+						       OnDomainChanged,
+						       true),
+				new ToggleActionEntry ("Neighborhood", null,
+						       Catalog.GetString ("_Neighborhood"),
+						       null,
+						       Catalog.GetString ("Search on computers near me"),
+						       OnDomainChanged,
+						       false)
+			};
+			actions.Add (domain_entries);
+
 			view_entries = new ToggleActionEntry[] {
 				new ToggleActionEntry ("ShowDetails", null,
 						       Catalog.GetString ("Show Details"), null, null,
@@ -268,8 +287,11 @@ namespace Search {
 		"        <menuitem action='Folders'/>" +
 		"        <menuitem action='Websites'/>" +
 		"        <menuitem action='Feeds'/>" +
-		// You can't search inside archives, so turn this off for now
-		//"        <menuitem action='Archives'/>" +
+		"        <menuitem action='Archives'/>" +
+		"      </menu>" +
+		"      <menu action='Domain'>" +
+		"        <menuitem action='Local'/>" +
+		"        <menuitem action='Neighborhood'/>" +
 		"      </menu>" +
 		"      <separator/>" +
 		"      <menuitem action='Preferences'/>" +
@@ -372,7 +394,7 @@ namespace Search {
 #pragma warning disable 612 // don't warn that Gnome.About is deprecated
 			Gnome.About about = new Gnome.About ("Beagle Search",
 							     Beagle.Util.ExternalStringsHack.Version,
-							     "Copyright 2005-2006 Novell, Inc.",
+							     "Copyright 2005-2007 Novell, Inc.",
 							     null, people, null, null,
 							     logo);
 			about.Run ();
@@ -394,8 +416,7 @@ namespace Search {
 			if (ScopeChanged == null)
 				return;
 
-			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Action) obj).Name);
-			
+			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Action) obj).Name);			
 			ScopeChanged (scope, ((ToggleAction) obj).Active);
 		}
 
@@ -410,5 +431,16 @@ namespace Search {
 
 		public delegate void SortChangedDelegate (SortType scope);
 		public event SortChangedDelegate SortChanged;
+
+		private void OnDomainChanged (object o, EventArgs args)
+		{
+			QueryDomain domain = (QueryDomain)Enum.Parse (typeof (QueryDomain), ((Action)o).Name);
+
+			if (DomainChanged != null)
+				DomainChanged (domain, ((ToggleAction)o).Active);
+		}
+
+		public delegate void DomainChangedDelegate (QueryDomain domain, bool active);
+		public event DomainChangedDelegate DomainChanged;
 	}
 }

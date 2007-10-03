@@ -337,9 +337,6 @@ namespace Search {
 					TotalMatches = -1;
 					current_query.HitsAddedEvent -= OnHitsAdded;
 					current_query.HitsSubtractedEvent -= OnHitsSubtracted;
-#if ENABLE_AVAHI
-					current_query.UnknownHostFoundEvent -= OnUnknownHostFound;
-#endif
 					current_query.Close ();
 				}
 
@@ -360,9 +357,6 @@ namespace Search {
 				current_query.HitsAddedEvent += OnHitsAdded;
 				current_query.HitsSubtractedEvent += OnHitsSubtracted;
 				current_query.FinishedEvent += OnFinished;
-#if ENABLE_AVAHI
-				current_query.UnknownHostFoundEvent += OnUnknownHostFound;
-#endif
 
 				current_query.SendAsync ();
 				spinner.Start ();
@@ -464,9 +458,6 @@ namespace Search {
 				TotalMatches = -1;
 				current_query.HitsAddedEvent -= OnHitsAdded;
 				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
-#if ENABLE_AVAHI
-				current_query.UnknownHostFoundEvent -= OnUnknownHostFound;
-#endif
 				current_query.Close ();
 				current_query = null;
 			}
@@ -533,7 +524,6 @@ namespace Search {
 #if ENABLE_AVAHI
                 private void OnUnknownHostFound (object sender, AvahiEventArgs args)
                 {
-			Console.WriteLine ("Warn user blleeeh");
 			NotificationMessage m = new NotificationMessage ();
 			m.Pixbuf = WidgetFu.LoadThemeIcon ("network-workgroup", 48);
 			m.Title = Catalog.GetString ("There are computers near you running Beagle");

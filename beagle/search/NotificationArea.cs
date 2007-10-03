@@ -6,8 +6,9 @@
 
 using System;
 using System.Collections;
-using Mono.Posix;
+
 using Gtk;
+using Mono.Unix;
 
 namespace Search {
 

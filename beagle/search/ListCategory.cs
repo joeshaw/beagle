@@ -5,11 +5,11 @@ using System.Collections;
 
 namespace Search {
 
-	public class ConversationCategory : Category {
+	public class ListCategory : Category {
 
-		Gtk.SizeGroup col1, col2, col3;
+		private Gtk.SizeGroup col1, col2, col3;
 
-		public ConversationCategory (Tiles.TileGroupInfo info) : base (info, 1)
+		public ListCategory (Tiles.TileGroupInfo info) : base (info, 1)
 		{
 			col1 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);
 			col2 = new Gtk.SizeGroup (Gtk.SizeGroupMode.Horizontal);
