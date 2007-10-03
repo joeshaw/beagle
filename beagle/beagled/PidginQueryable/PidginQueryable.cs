@@ -100,11 +100,6 @@ namespace Beagle.Daemon.PidginQueryable {
 
 		/////////////////////////////////////////////////
 
-		protected override double RelevancyMultiplier (Hit hit)
-		{
-			return HalfLifeMultiplierFromProperty (hit, 0.25, "fixme:endtime", "fixme:starttime");
-		}
-
 		protected override bool HitFilter (Hit hit) 
 		{
 			string speakingto = hit ["fixme:speakingto"];
@@ -121,11 +116,11 @@ namespace Beagle.Daemon.PidginQueryable {
 			if (buddy == null) 
 				return true;
 			
-			if (buddy.Alias != "")
- 				hit.AddProperty (Beagle.Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
+			if (! String.IsNullOrEmpty (buddy.Alias))
+ 				hit.AddProperty (Property.NewKeyword ("fixme:speakingto_alias", buddy.Alias));
 			
- 			if (buddy.BuddyIconLocation != "")
- 				hit.AddProperty (Beagle.Property.NewUnsearched ("fixme:speakingto_icon", buddy.BuddyIconLocation));
+ 			if (! String.IsNullOrEmpty (buddy.BuddyIconLocation))
+ 				hit.AddProperty (Property.NewUnsearched ("fixme:speakingto_icon", buddy.BuddyIconLocation));
 			
 			return true;
 		}

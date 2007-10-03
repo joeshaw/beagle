@@ -47,7 +47,7 @@ namespace Beagle {
 		// This is used to hold a copy of the Queryable in the
 		// server-side copy of the Hit.  It is always null
 		// on the client-side.
-		private object sourceObject = null;
+		private object source_object = null;
 
 		// High scores imply greater relevance.
 		private double score = 0.0;
@@ -110,13 +110,13 @@ namespace Beagle {
 			}
 		}
 
-		// File, Web, MailMessage, IMLog, etc.
+		// File, WebHistory, MailMessage, IMLog, etc.
 		[XmlIgnore]
 		public string Type {
 			get { return GetFirstProperty ("beagle:HitType"); }
 		}
 
-		// If applicable, could be null.
+		// If applicable otherwise can be null.
 		[XmlIgnore]
 		public string MimeType {
 			get { return GetFirstProperty ("beagle:MimeType"); }
@@ -136,8 +136,8 @@ namespace Beagle {
 
 		[XmlIgnore]
 		public object SourceObject {
-			get { return sourceObject; }
-			set { sourceObject = value; }
+			get { return source_object; }
+			set { source_object = value; }
 		}
 
 		[XmlAttribute]
@@ -238,7 +238,7 @@ namespace Beagle {
 
 		[XmlArray (ElementName="Properties")]
 		[XmlArrayItem (ElementName="Property", Type=typeof (Property))]
-		public PropertyList property_list {
+		public PropertyList PropertyList {
 			get { return new PropertyList (properties); }
 			set {
 				foreach (Property prop in value)
@@ -248,6 +248,9 @@ namespace Beagle {
 
 		public void AddProperty (Property prop)
 		{
+			if (prop == null)
+				return;
+
 			int loc = properties.BinarySearch (prop);
 
 			// If the value is not in the array we get its position
@@ -260,6 +263,9 @@ namespace Beagle {
 
 		public void AddProperty (ICollection props)
 		{
+			if (props == null)
+				return;
+
 			properties.AddRange (props);
 			properties.Sort ();
 		}
@@ -267,10 +273,9 @@ namespace Beagle {
 
 		private bool FindProperty (string key, out int first, out int top)
 		{
-			
 			first = 0;
 			top = 0;
-
+			
 			int range = properties.Count - 1;
 			if (range < 0)
 				return false;
@@ -362,10 +367,11 @@ namespace Beagle {
 		public string GetFirstProperty (string key)
 		{
 			int first, top;
+
 			if (! FindProperty (key, out first, out top))
 				return null;
-			Property prop;
-			prop = properties [first] as Property;
+
+			Property prop = properties [first] as Property;
 			return prop.Value;
 		}
 
