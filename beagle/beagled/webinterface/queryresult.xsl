@@ -89,7 +89,7 @@
 	 <div class="Hit" id="{@Uri}">
 		<div class="Title">
 			<span class="Uri">
-				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[+]</a>
+				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>
 				<a href="{@Uri}">
 				<xsl:choose>
 				<xsl:when test="Properties/Property[@Key='beagle:ExactFilename']">
