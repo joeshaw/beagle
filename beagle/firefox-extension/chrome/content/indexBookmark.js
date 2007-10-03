@@ -153,15 +153,15 @@ var bookmarkIndexer = {
         log("index bookmark " + bookmark.URL );
         var meta = [
             bookmark.URL,
-            "FirefoxBookmark",
-            "text/plain", //TODO what the content type should be 
-            "t:name=" + bookmark.Name,
-            "t:path=" + bookmark.path,
+            "Bookmark",
+            "", //mimetype is null for bookmarks
+            "t:dc:title=" + bookmark.Name,
+            "t:dc:identifier=" + bookmark.path,
         ];
         if(bookmark.Description)
-            meta.push("t:description=" + bookmark.Description);
+            meta.push("t:dc:description=" + bookmark.Description);
         if(bookmark.ShortcutURL)
-            meta.push("t:shortcuturl=" + bookmark.ShortcutURL);
+            meta.push("t:fixme:shortcuturl=" + bookmark.ShortcutURL);
         //if(bookmark.LastModifiedDate)
         //    meta.push("k:lastmodifieddate=" + bookmark.LastModifiedDate);
         //if(bookmark.LastVisitDate)
