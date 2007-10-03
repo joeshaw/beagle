@@ -1,8 +1,9 @@
 [Desktop Entry]
-Encoding=UTF-8
 Exec=beagle-search --icon
 Name=Beagle Search Tool
 Terminal=false
+Type=Application
+StartupNotify=false
 X-KDE-autostart-phase=2
 X-KDE-autostart-after=panel
-X-KDE-StartupNotify=false
+X-GNOME-Autostart-enabled=false

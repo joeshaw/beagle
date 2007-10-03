@@ -1,12 +1,10 @@
 [Desktop Entry]
-Encoding=UTF-8
-X-SuSE-translate=true
 _Name=Search & Indexing
 _GenericName=Configure Desktop Search
 Exec=beagle-settings
 Icon=system-search
 Type=Application
-Categories=Application;Settings;AdvancedSettings;Utility;Filesystem;X-Ximian-Settings;
+Categories=Settings;Utility;Filesystem;X-Ximian-Settings;
 X-GNOME-Bugzilla-Bugzilla=GNOME
 X-GNOME-Bugzilla-Product=beagle
 X-GNOME-Bugzilla-Component=General
