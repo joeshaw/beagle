@@ -164,10 +164,10 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 			get { return "DownloadsMetadataQueryable"; }
 		}
 
-		
+		bool changed = true;
 		
 		public void PostFlushHook () { 
-			FileAttributesStore.AttachLastWriteTime (Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
+			//FileAttributesStore.AttachLastWriteTime (Path.Combine(profile_dir,"downloads.rdf"), DateTime.UtcNow);
 		}
 
 		public bool HasNextIndexable ()
@@ -178,9 +178,10 @@ namespace Beagle.Daemon.DownloadsMetadataQueryable {
 				enumer = downedfiles.GetEnumerator ();
 			}
 			
-			if(enumer.MoveNext())
+			if(enumer.MoveNext() && changed){
+				changed = !changed;
 				return true;
-					
+			}
 			
 			return false; 
 		}

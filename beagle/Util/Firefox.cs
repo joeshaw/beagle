@@ -73,27 +73,31 @@ namespace Beagle.Util
 		
 		public List<DownloadedFile> GetDownloads()
 		{
+			templist.Clear();
 			XmlReader read = new XmlTextReader (File.OpenText (Path.Combine( profile_dir , "downloads.rdf" )));
 		
 			XmlDocument xpdoc = new XmlDocument();
-			xpdoc.Load(read);
-			XmlNamespaceManager  nsMgr = new XmlNamespaceManager(xpdoc.NameTable);
-			nsMgr.AddNamespace ("RDF",RDF);
-			nsMgr.AddNamespace ("NC" ,NC);
+			try{
+				xpdoc.Load(read);
+				XmlNamespaceManager  nsMgr = new XmlNamespaceManager(xpdoc.NameTable);
+				nsMgr.AddNamespace ("RDF",RDF);
+				nsMgr.AddNamespace ("NC" ,NC);
 
-			XPathNavigator xnav = xpdoc.CreateNavigator ();
-			
-			XPathNodeIterator xnodeitr = xnav.Select ("//RDF:Description",nsMgr);
+				XPathNavigator xnav = xpdoc.CreateNavigator ();
+				
+				XPathNodeIterator xnodeitr = xnav.Select ("//RDF:Description",nsMgr);
 
-			xnodeitr.MoveNext();
-			while(xnodeitr.MoveNext()){
-				DownloadedFile temp = new DownloadedFile ();
-				Console.WriteLine (xnodeitr.Count);
-				temp.Local =xnodeitr.Current.GetAttribute ("about",RDF);
-				xnodeitr.Current.MoveToChild ("URL",NC);
-				temp.Remote = xnodeitr.Current.GetAttribute ("resource",RDF);
-				templist.Add (temp);
-			}			
+				xnodeitr.MoveNext();
+				while(xnodeitr.MoveNext()){
+					DownloadedFile temp = new DownloadedFile ();
+					temp.Local =xnodeitr.Current.GetAttribute ("about",RDF);
+					xnodeitr.Current.MoveToChild ("URL",NC);
+					temp.Remote = xnodeitr.Current.GetAttribute ("resource",RDF);
+					templist.Add (temp);
+				}			
+			}finally{
+				read.Close();
+			}
 			return templist;
 		}
 //		public static void Main(string[] args){
