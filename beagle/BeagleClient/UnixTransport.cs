@@ -51,6 +51,7 @@ namespace Beagle {
 		}
 
 		public UnixTransport (string client_name)
+			: base (true)
 		{
 			// Use the default socket name when passed null
 			if (String.IsNullOrEmpty (client_name))
@@ -172,7 +173,6 @@ namespace Beagle {
 				return;
 			}
 			
-
 			NetworkStream stream = this.client.GetStream ();
 			MemoryStream deserialize_stream = new MemoryStream ();
 

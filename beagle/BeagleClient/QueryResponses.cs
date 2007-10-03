@@ -35,6 +35,7 @@ namespace Beagle {
         // The various async responses from a Query request
 
 	public class HitsAddedResponse : ResponseMessage {
+
 		[XmlArray (ElementName="Hits")]
 		[XmlArrayItem (ElementName="Hit", Type=typeof (Hit))]
 		public ArrayList Hits;
@@ -52,6 +53,7 @@ namespace Beagle {
 	}
 
 	public class HitsSubtractedResponse : ResponseMessage {
+
 		private ICollection uris;
 
 		public HitsSubtractedResponse () { }
@@ -93,7 +95,8 @@ namespace Beagle {
 		}
 	}
 
-	public class FinishedResponse : ResponseMessage { }
+	public class FinishedResponse : ResponseMessage {
+	}
 
 	public class SearchTermResponse : ResponseMessage {
 		
@@ -104,7 +107,6 @@ namespace Beagle {
 		[XmlArray (ElementName="Stemmed")]
 		[XmlArrayItem (ElementName="Text", Type=typeof (string))]
 		public ArrayList StemmedText;
-
 
 		public SearchTermResponse ()
 		{

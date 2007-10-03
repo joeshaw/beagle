@@ -63,10 +63,6 @@ namespace Beagle {
 		public delegate void Finished (FinishedResponse response);
 		public event Finished FinishedEvent;
 
-#if ENABLE_AVAHI
-		public event AvahiEventHandler UnknownHostFoundEvent;
-#endif
-
 		public Query () : base (true)
 		{
 			this.RegisterAsyncResponseHandler (typeof (HitsAddedResponse), OnHitsAdded);

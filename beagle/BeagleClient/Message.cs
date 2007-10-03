@@ -176,20 +176,17 @@ namespace Beagle {
 
 		public ResponseMessage Send ()
 		{
+			if (transports.Count < 1)
+				throw new ResponseMessageException (String.Format ("No transport registered to handle '{0}'", this.GetType()));
+			
 			ResponseMessage resp = null;
 
-			// FIXME: Wait for all transports to finish
-			// before returning
-			bool has_transport = false;
+			// FIXME: Wait for all transports to finish before returning
 			foreach (Transport transport in transports) {
 				resp = transport.Send (this);
 				transport.Close ();
-				has_transport = true;
 			}
-
-			if (! has_transport)
-				throw new ResponseMessageException (String.Format ("No transport registered to handle '{0}'", this.GetType()));
-	
+				
 			// Add some nice syntactic sugar by throwing an
 			// exception if the response is an error.
 			ErrorResponse error = resp as ErrorResponse;		
@@ -308,7 +305,6 @@ namespace Beagle {
 		public ResponseMessageException (ErrorResponse response)
 			: base (response.ErrorMessage)
 		{ 
-			Log.Debug ("Creating a ResponseMessageException from an ErrorResponse");
 			this.details = response.Details;
 		}
 

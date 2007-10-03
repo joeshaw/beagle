@@ -41,6 +41,11 @@ namespace Beagle {
 
 	public abstract class Transport {
 
+		protected static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+		protected static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+
+		private bool local = false;
+
 		private MemoryStream buffer_stream = new MemoryStream ();
 		private bool closed = false;
 
@@ -50,11 +55,13 @@ namespace Beagle {
 		public event AsyncResponseDelegate AsyncResponse;
 		public event ClosedDelegate Closed;
 
-		public Transport (string id)
+		public Transport (bool local)
 		{
+			this.local = local;
 		}
 
-		public Transport () : this (null)
+		public Transport ()
+			: this (false)
 		{
 		}
 
@@ -69,9 +76,6 @@ namespace Beagle {
 		protected abstract void SendRequest (RequestMessage request);
 		protected abstract void ReadCallback (IAsyncResult ar);
 		protected abstract void BeginRead ();
-
-		protected static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
-		protected static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 		
 		protected void SendRequest (RequestMessage request, Stream stream)
 		{
@@ -166,6 +170,10 @@ namespace Beagle {
 
 				return false;
 			}
+		}
+
+		public bool IsLocal {
+			get { return local; }
 		}
 
 		protected MemoryStream BufferStream {
