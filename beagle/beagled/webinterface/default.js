@@ -60,21 +60,21 @@ function search ()
 	return false;
 }
 
-//function get_information ()
-//{
-//	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
-//
-//	xmlhttp.onreadystatechange = state_change_info;
-//	xmlhttp.open ("POST", "/", true);
-//	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
-//	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
-//	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
-//	xmlhttp.send (req_string);
-//
-//	document.queryform.querytext.disabled = true;
-//	document.getElementById ('status').style.display = 'block';
-//	return false;
-//}
+function get_information ()
+{
+	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
+
+	xmlhttp.onreadystatechange = state_change_info;
+	xmlhttp.open ("POST", "/", true);
+	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	document.queryform.querytext.disabled = true;
+	document.getElementById ('status').style.display = 'block';
+	return false;
+}
 
 function state_change_search (begin_date)
 {
