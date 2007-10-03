@@ -220,6 +220,13 @@ namespace Beagle.Daemon {
 
 		public override void SetupWatch ()
 		{
+			if (this.listener == null) {
+			    // Listener is already closed
+			    Log.Debug ("Socket end point closed.");
+			    Close ();
+			    return;
+			}
+
 			keepalive_timer = new System.Timers.Timer ();
 			keepalive_timer.Interval = 5000;
 			keepalive_timer.Elapsed += new ElapsedEventHandler (SendKeepAlive);
