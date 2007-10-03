@@ -80,6 +80,10 @@ public class SettingsDialog
 	private IncludeView include_view;
 	private ExcludeView exclude_view;
 
+	[Widget] TreeView backends_treeview;
+	
+	private ListStore backends_list_store;
+
 	////////////////////////////////////////////////////////////////
 	// Zeroconf
 
@@ -127,6 +131,13 @@ public class SettingsDialog
 		exclude_view.Selection.Changed += new EventHandler (OnExcludeSelected);
 		exclude_view.Show ();
 		exclude_sw.Child = exclude_view;
+
+		backends_list_store = new ListStore (typeof (string), typeof (bool));
+
+		backends_treeview.Model = backends_list_store;
+		backends_treeview.AppendColumn ("Active", new CellRendererToggle (), "active", 1);
+		backends_treeview.AppendColumn ("Active", new CellRendererText (), "text", 0);
+		
 
 #if ENABLE_AVAHI
 		networking_view = new NetworkingView ();
@@ -199,6 +210,8 @@ public class SettingsDialog
 
 		foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes)
 			exclude_view.AddItem (exclude_item);
+
+		//
 
 #if ENABLE_AVAHI
                 foreach (NetworkService s in Conf.Networking.NetworkServices)
