@@ -205,7 +205,7 @@ Includes:
 
 <xsl:template name="WebsiteHits">
 	<div id="Websites">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:HitType' and (@Value = 'WebHistory' or @Value = 'FirefoxBookmark')]]">
+		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:HitType' and (@Value = 'WebHistory' or @Value = 'Bookmark' or @Value = 'FeedItem')]]">
 			<xsl:apply-templates select="."/>
 		</xsl:for-each>
 	</div>
