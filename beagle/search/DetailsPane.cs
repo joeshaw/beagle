@@ -1,138 +1,174 @@
 using System;
 
-using Gtk;
+namespace Search.Tiles {
 
-namespace Search {
+	public class DetailsPane : Gtk.Table {
 
-	public class DetailsPane : Gtk.VBox {
+		public DetailsPane () : base (1, 2, false)
+		{
+			RowSpacing = ColumnSpacing = 6;
+			BorderWidth = 6;
+
+			icon = new Gtk.Image ();
+			icon.SetAlignment (0.5f, 0.0f);
+			icon.Show ();
+			Attach (icon, 0, 1, 0, 1, fill, fill, 6, 0);
+
+			SizeRequested += DetailsSizeRequested;
+		}
+
+		private Gtk.Image icon;
+		public Gtk.Image Icon {
+			get { return icon; }
+		}
+
+		private Gtk.Label snippet;
+		public Gtk.Label Snippet {
+			get { return snippet; }
+		}
+
+		bool maximized = false;
+
+		// FIXME: overriding OnSizeRequested directly results in a 0x0 req
+		[GLib.ConnectBefore]
+		private void DetailsSizeRequested (object obj, Gtk.SizeRequestedArgs args)
+		{
+			if (maximized)
+				return;
+
+			// Add a placeholder widget
+			Gtk.Label label = WidgetFu.NewLabel ("");
+			Attach (label, 0, 2, current_row, ++current_row, fill, expand, 0, 0);
+
+			Gtk.Table.TableChild[,] children = new Gtk.Table.TableChild[NColumns, NRows];
+
+			foreach (Gtk.Widget child in Children) {
+				Gtk.Table.TableChild tc = this[child] as Gtk.Table.TableChild;
+				children[tc.LeftAttach, tc.TopAttach] = tc;
+			}
+
+			// Expand the icon down to the bottom or the first label
+			if (children[0, 0] != null && children[0, 0].Child == icon) {
+				uint max_icon_row;
+				for (max_icon_row = 1; max_icon_row < NRows; max_icon_row++) {
+					if (children[0, max_icon_row] != null)
+						break;
+				}
+
+				children[0, 0].BottomAttach = max_icon_row;
+			}
+
+			// Expand all labels (except in column 0) rightward
+			for (uint row = 0; row < NRows; row++) {
+				for (uint col = 1; col < NColumns; col++) {
+					if (children[col, row] == null ||
+					    !(children[col, row].Child is Gtk.Label))
+						continue;
+					uint end = col + 1;
+					while (end < NColumns &&
+					       children[end, row] == null)
+						end++;
+					if (end > col + 1)
+						children[col, row].RightAttach = end;
+				}
+			}
+
+			// Vertically expand only the placeholder row
+			for (uint row = 0; row < NRows; row++) {
+				for (uint col = 1; col < NColumns; col++) {
+					if (children[col, row] == null)
+						continue;
+					children[col, row].YOptions = (row == NRows - 1) ? expand : fill;
+				}
+			}
+
+			maximized = true;
+		}
 
 		private const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
 		private const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
 
-		private Gtk.Table table = null;
-		private Gtk.Image icon = null;
-		private Gtk.Label snippet = null;
-
 		private uint current_row = 0;
 
-		public DetailsPane () : base (false, 5)
+		private Gtk.Label AddGrayLabel (string text, uint row, uint column)
 		{
-			this.BorderWidth = 5;
+			Gtk.Label label = WidgetFu.NewGrayLabel (text);
+			label.SetAlignment (1.0f, 0.0f);
+			label.Show ();
+			Attach (label, column, column + 1, row, row + 1, fill, fill, 0, 0);
+			maximized = false;
+			return label;
+		}
 
-			Gtk.HBox hbox = new Gtk.HBox (false, 5);
+		private Gtk.Label AddLabel (string text, uint row, uint column)
+		{
+			Gtk.Label label = WidgetFu.NewLabel (text);
+			label.Selectable = true;
+			label.SetAlignment (0.0f, 0.0f);
+			WidgetFu.EllipsizeLabel (label);
+			label.Show ();
+			Attach (label, column, column + 1, row, row + 1, expand, fill, 0, 0);
+			maximized = false;
+			return label;
+		}
 
-			icon = new Gtk.Image ();
-			icon.SetAlignment (0.5f, 0.0f);
-			hbox.PackStart (icon, false, true, 0);
-
-			table = new Gtk.Table (1, 2, false);
-			table.RowSpacing = 5;
-			table.ColumnSpacing = 5;
-			hbox.PackStart (table, true, true, 0);
-
-			hbox.ShowAll ();
-
-			PackStart (hbox, true, true, 0);
+		private Gtk.Label AddBoldLabel (string text, uint row, uint column)
+		{
+			Gtk.Label label = WidgetFu.NewBoldLabel (text);
+			label.SetAlignment (0.0f, 0.0f);
+			WidgetFu.EllipsizeLabel (label);
+			label.Show ();
+			Attach (label, column, column + 1, row, row + 1, expand, fill, 0, 0);
+			maximized = false;
+			return label;
 		}
 
 		public Gtk.Label AddTitleLabel (string text)
 		{
-			Gtk.Label label = WidgetFu.NewBoldLabel (text);
+			Gtk.Label label = AddBoldLabel (text, current_row++, 1);
 			label.SetAlignment (0.0f, 0.0f);
-			label.Show ();
-			WidgetFu.EllipsizeLabel (label);
-			table.Attach (label, 0, 2, current_row, current_row + 1, expand, fill, 0, 0);
-
-			current_row++;
-
+			label.Selectable = true;
 			return label;
 		}
 
 		public Gtk.Label AddTextLabel (string text)
 		{
-			Gtk.Label label = WidgetFu.NewLabel (text);
-			label.Selectable = true;
-			label.SetAlignment (0.0f, 0.0f);
-			label.Show ();
-			table.Attach (label, 0, 2, current_row, current_row + 1, expand, fill, 0, 0);
-
-			current_row++;
-
+			Gtk.Label label = AddLabel (text, current_row++, 1);
 			return label;
 		}
 
-		public void AddLabelPair (string header, string text)
+		public void AddLabelPair (string label, string text)
 		{
-			Gtk.Label h = WidgetFu.NewGrayLabel (header);
-			h.SetAlignment (1.0f, 0.0f);
-			h.Show ();
-			table.Attach (h, 0, 1, current_row, current_row + 1, fill, fill, 0, 0);
-
-			Gtk.Label t = WidgetFu.NewLabel (text);
-			t.Selectable = true;
-			t.SetAlignment (0.0f, 0.0f);
-			t.Show ();
-			table.Attach (t, 1, 2, current_row, current_row + 1, expand, fill, 0, 0);
-
-			current_row++;
-		}
-
-		public void AddNewLine ()
-		{
-			Gtk.Label label = WidgetFu.NewLabel ("");
-			label.Show ();
-			table.Attach (label, 0, 2, current_row, current_row + 1, fill, fill, 0, 0);
-
-			current_row++;
+			AddGrayLabel (label, current_row, 1);
+			AddLabel (text, current_row++, 2);
 		}
 
 		public Gtk.Label AddSnippet ()
-		{			
+		{
+			AddNewLine ();
+
 			snippet = WidgetFu.NewLabel ();
 			snippet.SetAlignment (0.0f, 0.0f);
 			snippet.Selectable = true;
 			WidgetFu.EllipsizeLabel (snippet);
 			snippet.Show ();
-			PackStart (snippet, false, true, 5);
-
-			AddTags ("test beagle lukas technology 2007");
+			Attach (snippet, 1, 2, current_row, ++current_row, expand, fill, 0, 0);
+			maximized = false;
 
 			return snippet;
 		}
 
-		private Gtk.Widget AddTags (string tags)
+		public Gtk.Label AddNewLine ()
 		{
-			Gtk.HBox hbox = new HBox (false, 5);
-
-			Gtk.Image icon = new Gtk.Image ("gtk-add", IconSize.Menu);
-			hbox.PackStart (icon, false, true, 0);
-			
-			Gtk.Label label = WidgetFu.NewLabel (tags);
-			label.Selectable = true;
-			label.SetAlignment (0.0f, 0.0f);
+			Gtk.Label label = WidgetFu.NewLabel ("");
 			label.Show ();
-			WidgetFu.EllipsizeLabel (label);
-			hbox.PackStart (label, true, true, 0);
-
-			hbox.ShowAll ();
-
-			PackStart (hbox, false, true, 0);
-
-			return hbox;
+			Attach (label, 1, 2, current_row, ++current_row, fill, fill, 0, 0);
+			return label;
 		}
 
 		public void GotSnippet (string text)
 		{
 			snippet.Markup = text;
-			snippet.Show ();
-		}
-
-		public Gtk.Image Icon {
-			get { return icon; }
-		}
-
-		public Gtk.Label Snippet {
-			get { return snippet; }
 		}
 	}
 }
