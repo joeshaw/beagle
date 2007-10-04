@@ -105,7 +105,7 @@
 					Conversation with&nbsp;
 					<xsl:choose>
 						<xsl:when test="Properties/Property[@Key='fixme:alias']">
-							<xsl:value-of select="Properties/Property[@Key='fixme:alias']/@Value"/>
+							<xsl:value-of select="Properties/Property[@Key='fixme:speakingto_alias']/@Value"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:value-of select="Properties/Property[@Key='fixme:speakingto']/@Value"/>
