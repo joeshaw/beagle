@@ -36,13 +36,20 @@ namespace Beagle.Util {
 		// static class
 		private SqliteUtils () { }
 
-		public static int DoNonQuery (SqliteConnection connection, string command_text)
+		public static int DoNonQuery (SqliteConnection connection, string command_text, string[] param_names, object[] param_args)
 		{
 			int ret = 0;
 
 			using (SqliteCommand command = new SqliteCommand ()) {
 				command.Connection = connection;
 				command.CommandText = command_text;
+
+				if (param_names != null) {
+					if (param_args == null || param_names.Length != param_args.Length)
+						throw new ArgumentException ("param_names, param_args", "param_names and param_args should have same number of items");
+					for (int i = 0; i < param_names.Length; ++i)
+						command.Parameters.Add (param_names [i], param_args [i]);
+				}
 
 				while (true) {
 					try {
@@ -60,9 +67,9 @@ namespace Beagle.Util {
 			return ret;
 		}
 			
-		public static int DoNonQuery (SqliteConnection connection, string format, params object [] args)
+		public static int DoNonQuery (SqliteConnection connection, string command_text)
 		{
-			return DoNonQuery (connection, String.Format (format, args));
+			return DoNonQuery (connection, command_text, null, null);
 		}
 
 		public static SqliteCommand QueryCommand (SqliteConnection connection, string where_format, params object [] where_args)

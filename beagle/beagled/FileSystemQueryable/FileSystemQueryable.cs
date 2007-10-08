@@ -1810,17 +1810,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// is stored in a property.
 			Uri uri = UriFu.EscapedStringToUri (hit ["beagle:InternalUri"]);
 
-			string path = TextCache.UserCache.LookupPathRaw (uri);
-
-			if (path == null)
+			TextReader reader = TextCache.UserCache.GetReader (uri);
+			if (reader == null)
 				return null;
 
-			// If this is self-cached, use the remapped Uri
-			if (path == TextCache.SELF_CACHE_TAG)
-				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath, full_text);
-
-			path = Path.Combine (TextCache.UserCache.TextCacheDir, path);
-			return SnippetFu.GetSnippetFromTextCache (query_terms, path, full_text);
+			return SnippetFu.GetSnippet (query_terms, reader, full_text);
 		}
 
 		override public void Start ()

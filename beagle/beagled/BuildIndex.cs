@@ -69,6 +69,7 @@ namespace Beagle.Daemon
 		};
 		
 		static string [] allowed_dirs = {
+			"config",
 			"Locks",
 			"PrimaryIndex",
 			"SecondaryIndex",
