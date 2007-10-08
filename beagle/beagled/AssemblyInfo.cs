@@ -58,7 +58,6 @@ using Beagle.Daemon;
 [assembly: IQueryableTypes (
 	typeof (Beagle.Daemon.AkregatorQueryable.AkregatorQueryable),
 	typeof (Beagle.Daemon.BlamQueryable.BlamQueryable),
-    typeof (Beagle.Daemon.DownloadsMetadataQueryable.DownloadsMetadataQueryable),
 	typeof (Beagle.Daemon.FileSystemQueryable.FileSystemQueryable),
 	typeof (Beagle.Daemon.IndexingServiceQueryable.IndexingServiceQueryable),
 	typeof (Beagle.Daemon.KBookmarkQueryable.KonqBookmarkQueryable),
