@@ -39,7 +39,7 @@ namespace Beagle.Util {
 		public delegate void EmptyQueueDelegate ();
 		public event EmptyQueueDelegate EmptyQueueEvent;
 
-		public static bool Debug = true;
+		private static bool Debug = false;
 
 		public enum Priority {
 

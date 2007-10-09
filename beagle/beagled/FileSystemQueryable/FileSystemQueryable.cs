@@ -40,7 +40,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[PropertyKeywordMapping (Keyword="ext", PropertyName="beagle:FilenameExtension", IsKeyword=true, Description="File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.")]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static public new bool Debug = true;
+		static internal bool Debug = false;
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
