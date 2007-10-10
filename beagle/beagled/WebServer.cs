@@ -51,9 +51,7 @@ namespace Beagle.Daemon {
 
 		private static Dictionary<string, PageMapping> mappings;
 
-		// FIXME: (If and) when released, this should be changed to ExternalStringsHack.SysConfDir+something
-		// FIXME FIXME: Keep security always in mind. The doggy doesn't like to be blamed :-X
-		const string WEBSERVER_DIR = "webinterface";
+		static string webserver_dir;
 
 		static WebServer ()
 		{
@@ -67,6 +65,15 @@ namespace Beagle.Daemon {
 			mappings.Add ("/title_bg.png", new PageMapping ("title_bg.png", "image/png"));
 			mappings.Add ("/beagle-logo.png", new PageMapping ("beagle-logo.png", "image/png"));
 			mappings.Add ("/ajax-loader.gif", new PageMapping ("ajax-loader.gif", "image/gif"));
+
+			webserver_dir = Environment.GetEnvironmentVariable ("BEAGLE_WEBSERVER_DIR");
+			if (webserver_dir != null && Directory.Exists (webserver_dir))
+				return;
+
+			webserver_dir = Path.Combine (ExternalStringsHack.SysConfDir, "beagle");
+			webserver_dir = Path.Combine (webserver_dir, "webinterface");
+			if (! Directory.Exists (webserver_dir))
+				webserver_dir = null;
 		}
 
 		static byte[] buffer = new byte [1024];
@@ -82,6 +89,12 @@ namespace Beagle.Daemon {
 # else
 		internal static void HandleStaticPages (HttpListenerContext context)
 		{
+			if (webserver_dir == null) {
+				context.Response.StatusCode = 404;
+				context.Response.Close ();
+				return;
+			}
+
 			Log.Debug ("GET request:" + context.Request.RawUrl);
 			context.Response.KeepAlive = false;
 			context.Response.StatusCode = (int) HttpStatusCode.OK;
@@ -104,7 +117,7 @@ namespace Beagle.Daemon {
 			PageMapping mapping = mappings [context.Request.RawUrl];
 			context.Response.ContentType = mapping.ContentType;
 
-			string path = Path.Combine (WEBSERVER_DIR, mapping.Filename);
+			string path = Path.Combine (webserver_dir, mapping.Filename);
 
 			using (BinaryReader r = new BinaryReader (new FileStream (path, FileMode.Open, FileAccess.Read))) {
 				using (BinaryWriter w = new BinaryWriter (context.Response.OutputStream)) {

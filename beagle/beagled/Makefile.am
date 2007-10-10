@@ -1,6 +1,16 @@
 autostartdir = $(sysconfdir)/xdg/autostart
 autostart_DATA = beagled-autostart.desktop
 
+webinterfacedir = $(sysconfdir)/beagle/webinterface
+webinterface_DATA =				\
+	$(srcdir)/webinterface/default.js	\
+	$(srcdir)/webinterface/beagle-logo.png	\
+	$(srcdir)/webinterface/query.html	\
+	$(srcdir)/webinterface/queryresult.xsl	\
+	$(srcdir)/webinterface/default.css	\
+	$(srcdir)/webinterface/ajax-loader.gif	\
+	$(srcdir)/webinterface/title_bg.png
+
 # Warnings we don't want to see.
 # Most of these are thanks to DotLucene.  It would be nice if we could use
 # "#pragma warning" on these.
@@ -991,6 +1001,7 @@ noinst_SCRIPTS=	\
 
 EXTRA_DIST = \
 	$(autostart_DATA)			\
+	$(webinterface_DATA)			\
 	$(WRAPPER_IN)   			\
 	$(DAEMON_WRAPPER_IN)			\
 	$(INDEX_HELPER_WRAPPER_IN)		\

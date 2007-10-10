@@ -20,6 +20,10 @@ if [ -z $installed ] ; then
     export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
     export BEAGLE_BACKEND_PATH=".${BEAGLE_BACKEND_PATH+:$BEAGLE_BACKEND_PATH}"
 
+    if [ -z $BEAGLE_WEBSERVER_DIR ] ; then
+	    export BEAGLE_WEBSERVER_DIR="./webinterface"
+    fi
+
 else
 
     # Otherwise default to running in the background
