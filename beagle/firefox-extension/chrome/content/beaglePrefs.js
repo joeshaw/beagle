@@ -24,6 +24,7 @@ var beaglePref = {
       'beagle.autoindex.active':{'type':'bool','default':true},
       'beagle.bookmark.last.indexed.date':{'type':'string','default':'0'},
       'beagle.first.run':{'type':'bool','default':true},
+      'beagle.storage.directory':{'type':'string','default':""},
     },
 
    

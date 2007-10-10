@@ -126,7 +126,6 @@ var beagle = {
             {
                 this.disable();
             }
-            this.dataPath = this.ENV.get("HOME") + "/.beagle/ToIndex";  
             if(!this.FILE_UTILS.exists(this.dataPath))
                 ;// do something here ? is it safe to create the dir ?
         }
@@ -208,11 +207,15 @@ var beagle = {
      *  check enviroment 
      */
     checkEnv : function()
-    {
-        if (!this.FILE_UTILS.exists (this.ENV.get("HOME") + "/.beagle")) {
+    {   
+        var storage_directory = this.pref.get("beagle.storage.directory"); 
+        if(storage_directory == "")
+            storage_directory = this.ENV.get("HOME") + "/.beagle";
+        if (!this.FILE_UTILS.exists (storage_directory)) {
             alert(_("beagle_check_env_error"));
             return false;
         }
+        this.dataPath = storage_directory + "/ToIndex";
         return true;
     },
 
