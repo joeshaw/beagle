@@ -6,6 +6,7 @@
 <xsl:template match="/">
 	<!--<html><body>-->
 	<xsl:apply-templates select="ResponseWrapper"/>
+	<xsl:apply-templates select="Process"/>
 	<!--</body></html>-->
 </xsl:template>
 
@@ -240,6 +241,11 @@ Includes:
 			</tr>
 		</xsl:for-each>
 	</table>
+</xsl:template>
+
+<xsl:template match="Process">
+    Beagle process with pid <i><xsl:value-of select="Id"/></i> running since <i><xsl:value-of select="StartTime"/></i><br/>
+    <a href="" onclick="shutdown_beagle(); return false;">Shutdown beagle</a><br/>
 </xsl:template>
 
 </xsl:stylesheet>

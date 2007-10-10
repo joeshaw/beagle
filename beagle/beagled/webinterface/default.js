@@ -76,6 +76,36 @@ function get_information ()
 	return false;
 }
 
+function get_process_information ()
+{
+	xmlhttp.onreadystatechange = state_change_info;
+	xmlhttp.open ("GET", "/processinfo", true);
+	xmlhttp.send (null);
+}
+
+function shutdown_beagle ()
+{
+	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="ShutdownRequest"/></RequestWrapper>';
+
+	xmlhttp.onreadystatechange = function () {
+			if (xmlhttp.readyState == 4) {
+				document.getElementById ('results').innerHTML = '<i>Shutdown request sent to beagle</i>';
+				document.getElementById ('status').style.display = 'none';
+				document.queryform.querytext.disabled = false;
+			}
+		}
+
+	xmlhttp.open ("POST", "/", true);
+	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	document.queryform.querytext.disabled = true;
+	document.getElementById ('status').style.display = 'block';
+	return false;
+}
+
 function state_change_search (begin_date)
 {
 	if (xmlhttp.readyState == 4) {
