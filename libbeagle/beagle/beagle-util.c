@@ -58,10 +58,44 @@ beagle_util_is_path_on_block_device (const char *path)
 	return (st.st_dev >> 8 != 0);
 }
 
+const char *
+beagle_util_get_home_dir ()
+{
+	const char *beagle_home;
+
+	/* C# API: First try BEAGLE_HOME */
+	beagle_home = g_getenv ("BEAGLE_HOME");
+	
+	/* Finally, beagle home is home dir */
+	if (beagle_home == NULL)
+		beagle_home = g_get_home_dir ();
+
+	return beagle_home;
+}
+
+const char *
+beagle_util_get_storage_dir ()
+{
+	const char *beagle_home;
+	const char *beagle_storage_dir;
+
+	/* Follow the C# API: First try BEAGLE_STORAGE */
+	beagle_storage_dir = g_getenv ("BEAGLE_STORAGE");
+
+	/* Then try BEAGLE_HOME/.beagle */
+	if (beagle_storage_dir == NULL) {
+		beagle_home = beagle_util_get_home_dir ();
+
+		/* Construct beagle storage dir */
+		beagle_storage_dir = g_build_filename (beagle_home, ".beagle", NULL);
+	}
+
+	return beagle_storage_dir;
+}
+
 char *
 beagle_util_get_socket_path (const char *client_name)
 {
-	const gchar *beagle_home;
 	const gchar *beagle_storage_dir;
 	gchar *socket_dir; /* this is same as remote_storage_dir in PathFinder.cs */
 	gchar *socket_path;
@@ -70,20 +104,7 @@ beagle_util_get_socket_path (const char *client_name)
 	if (!client_name) 
 		client_name = "socket";
 
-	/* Follow the C# API: First try BEAGLE_STORAGE */
-	beagle_storage_dir = g_getenv ("BEAGLE_STORAGE");
-
-	/* Then try BEAGLE_HOME/.beagle */
-	if (beagle_storage_dir == NULL) {
-		beagle_home = g_getenv ("BEAGLE_HOME");
-	
-		/* Finally, beagle home is home dir */
-		if (beagle_home == NULL)
-			beagle_home = g_get_home_dir ();
-
-		/* Construct beagle storage dir */
-		beagle_storage_dir = g_build_filename (beagle_home, ".beagle", NULL);
-	}
+	beagle_storage_dir = beagle_util_get_storage_dir ();
 
 	if (! beagle_util_is_path_on_block_device (beagle_storage_dir) ||
 	    getenv ("BEAGLE_SYNCHRONIZE_LOCALLY") != NULL) {
