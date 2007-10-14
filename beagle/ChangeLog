@@ -1,3 +1,8 @@
+2007-10-14  Yannig Marchegay  <yannig@marchegay.org>
+
+	* configure.in: Added 'oc' to ALL_LINGUAS.
+	* po/oc.po
+
 ------------------------------------------------------------------------
 r3697 | joeshaw | 2007-05-08 15:09:07 -0400 (Tue, 08 May 2007) | 1 line
 Changed paths:

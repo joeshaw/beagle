@@ -120,7 +120,7 @@ AM_CONDITIONAL(ENABLE_XDG_OPEN, test "x$XDG_OPEN" != "xno")
 AC_PROG_INTLTOOL([0.23])
 GETTEXT_PACKAGE=beagle
 AC_SUBST(GETTEXT_PACKAGE)
-ALL_LINGUAS="ar bg ca cs da de dz el en_CA en_GB es eu fi fr gl he hi hu it ja ka ko lt lv mk nb nl pa pl pt pt_BR ru sl sr sr@Latn sv th tr uk vi zh_CN zh_HK zh_TW"
+ALL_LINGUAS="ar bg ca cs da de dz el en_CA en_GB es eu fi fr gl he hi hu it ja ka ko lt lv mk nb nl oc pa pl pt pt_BR ru sl sr sr@Latn sv th tr uk vi zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Name of the package for translations])
 
