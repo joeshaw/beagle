@@ -3,7 +3,7 @@ SUBDIRS=beagle examples wrappers docs
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libbeagle-0.0.pc
+pkgconfig_DATA = libbeagle-1.0.pc
 
 EXTRA_DIST = $(pkgconfig_DATA)
 

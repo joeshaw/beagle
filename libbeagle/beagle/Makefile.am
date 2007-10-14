@@ -49,9 +49,10 @@ libbeagle_la_SOURCES = 				\
 	beagle-timestamp.c			\
 	beagle-util.c				
 
-libbeagle_la_LDFLAGS =		\
-	-no-undefined
-	-export-symbols-regex "^[^_].*"
+libbeagle_la_LDFLAGS =				\
+	-no-undefined				\
+	-export-symbols-regex "^[^_].*"		\
+	-version-info $(LIBBEAGLE_VERSION_INFO)
 
 libbeagle_la_LIBADD =		\
 	$(LIBBEAGLE_LIBS)

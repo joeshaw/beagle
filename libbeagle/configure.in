@@ -4,7 +4,7 @@
 
 AC_INIT(beagle/beagle.h)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(libbeagle, 0.3)
+AM_INIT_AUTOMAKE(libbeagle, [no-define])
 
 ########################################################################
 
@@ -27,9 +27,6 @@ AC_PROG_INSTALL
 AM_PROG_LIBTOOL
 AC_PROG_CC
 
-VERSION=${VERSION}
-AC_SUBST(VERSION)
-
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
 if test "x$PKG_CONFIG" = "xno"; then
 	AC_MSG_ERROR([You need to install pkg-config])
@@ -37,7 +34,7 @@ fi
 
 dnl library versioning
 dnl Increase when changing the API
-LIBBEAGLE_CURRENT=0
+LIBBEAGLE_CURRENT=1
 
 dnl Update when changing implementation of current API,
 dnl reset to 0 when changing CURRENT.  This is the revision of
@@ -49,6 +46,9 @@ LIBBEAGLE_AGE=0
 
 LIBBEAGLE_VERSION_INFO="$LIBBEAGLE_CURRENT:$LIBBEAGLE_REVISION:$LIBBEAGLE_AGE"
 AC_SUBST(LIBBEAGLE_VERSION_INFO)
+
+VERSION="$LIBBEAGLE_CURRENT.$LIBBEAGLE_REVISION"
+AC_SUBST(VERSION)
 
 PKG_CHECK_MODULES(LIBBEAGLE, [
 	gobject-2.0 >= $GOBJECT_REQUIRED
@@ -148,7 +148,7 @@ dnl ----------------------------------------------
 
 AC_OUTPUT([
 Makefile
-libbeagle-0.0.pc
+libbeagle-1.0.pc
 beagle/Makefile
 examples/Makefile
 docs/Makefile
