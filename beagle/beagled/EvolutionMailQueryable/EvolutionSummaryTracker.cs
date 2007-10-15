@@ -46,18 +46,42 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 			string filename = Path.Combine (directory, String.Format ("SummaryTracker-{0}-{1}.db", account_name, folder_name));
 			bool create_new_db = ! File.Exists (filename);
+			bool purge_old_db = false;
 
 			connection = GetConnection (filename);
 			try {
 				connection.Open ();
 			} catch (ApplicationException) {
-				create_new_db = true;
+				purge_old_db = true;
+			}
+
+			if (! create_new_db && ! purge_old_db) {
+				// Run a dummy SELECT statement to catch more errors
+				// indicating sqlite version mismatches.
+				using (SqliteCommand command = new SqliteCommand ()) {
+					command.Connection = connection;
+					command.CommandText = "SELECT flags FROM mapping WHERE uid = 'fo/ky'";
+
+					SqliteDataReader reader;
+
+					try {
+						reader = SqliteUtils.ExecuteReaderOrWait (command);
+						reader.Close ();
+					} catch (ApplicationException) {
+						purge_old_db = true;
+					}
+				}
+			}
+
+			if (purge_old_db) {
 				connection.Dispose ();
 
 				// Purge the old database and create a new one
 				File.Delete (filename);
 				connection = GetConnection (filename);
 				connection.Open ();
+
+				create_new_db = true;
 			}
 
 			if (create_new_db)
