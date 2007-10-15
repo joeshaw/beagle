@@ -4,8 +4,6 @@ TARGET = Beagle.dll
 
 CSFLAGS = 						\
 	-target:library					\
-	-define:PREFIX=$(prefix)			\
-	-define:PKGLIBDIR=$(pkglibdir)			\
 	$(BEAGLE_DEFINES)
 
 if ENABLE_AVAHI

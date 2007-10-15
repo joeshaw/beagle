@@ -114,15 +114,15 @@ namespace Beagle.Util {
 						      IntPtr context);
 		
 	
-		[DllImport ("libchm.so.0")]
+		[DllImport ("libchm.so.1")]
 		private static extern IntPtr  chm_open(string filename);
 		
-		[DllImport ("libchm.so.0")]
+		[DllImport ("libchm.so.1")]
 		private static extern ChmResolve chm_resolve_object(IntPtr raw,
 								    string  objPath,
 								    [Out] chmUnitInfo ui);
 		
-		[DllImport ("libchm.so.0")]
+		[DllImport ("libchm.so.1")]
 		private static extern UInt64 chm_retrieve_object(IntPtr raw,
 								 [In, Out] chmUnitInfo ui,
 								 IntPtr buf,
@@ -132,7 +132,7 @@ namespace Beagle.Util {
 		
 		
 
-		[DllImport ("libchm.so.0")]
+		[DllImport ("libchm.so.1")]
 		private static extern int chm_enumerate(IntPtr raw,
 							ChmEnumerate what,
 							ChmEnumerator e,
@@ -239,12 +239,21 @@ namespace Beagle.Util {
 			
 		}
 		
+		private static bool dll_not_found = false;
+
 		public bool Load(string path)
 		{
-			
+			if (dll_not_found)
+				return false;
+
 			//chmUnitInfo ui = new chmUnitInfo() ;
-			
-			this.chmfile = chm_open(path);
+
+			try {
+				this.chmfile = chm_open(path);
+			} catch (DllNotFoundException) {
+				Log.Error ("libchm.so.1 not found. Disabling chm file filtering.");
+				dll_not_found = true;
+			}
 		
 			if(this.chmfile == IntPtr.Zero) {
 				throw new System.Exception ("Invalid file Type, not a CHM file");	
