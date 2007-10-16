@@ -75,7 +75,6 @@ namespace Beagle.Util {
 			
 			Console.WriteLine ("Beagle: " + ExternalStringsHack.Version);
 			Console.WriteLine ("Mono: " + SystemInformation.MonoRuntimeVersion);
-			Console.WriteLine ("Sqlite: " + ExternalStringsHack.SqliteVersion);
 		}
 	}
 }

@@ -104,7 +104,6 @@ namespace Beagle.IndexHelper {
 
 			Log.Always ("Starting Index Helper process (version {0})", ExternalStringsHack.Version);
 			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
-			Log.Always ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
 			Log.Always ("Extended attributes are {0}", ExtendedAttribute.Supported ? "supported" : "not supported");
 			Log.Always ("Command Line: {0}",
 				    Environment.CommandLine != null ? Environment.CommandLine : "(null)");

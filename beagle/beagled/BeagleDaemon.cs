@@ -464,7 +464,6 @@ namespace Beagle.Daemon {
 
 			Log.Always ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
-			Log.Always ("Using sqlite version {0}", ExternalStringsHack.SqliteVersion);
 			Log.Always ("Command Line: {0}",
 					   Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 

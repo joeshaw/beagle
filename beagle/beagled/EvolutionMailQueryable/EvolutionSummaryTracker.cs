@@ -94,7 +94,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		private static SqliteConnection GetConnection (string filename)
 		{
 			SqliteConnection connection = new SqliteConnection ();
-			connection.ConnectionString = String.Format ("version={0},encoding=UTF-8,URI=file:{1}", ExternalStringsHack.SqliteVersion, filename);
+			connection.ConnectionString = String.Format ("version={0},encoding=UTF-8,URI=file:{1}", 3, filename);
 
 			return connection;
 		}

@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Threading;
 using Mono.Data.SqliteClient;
 
 namespace Beagle.Util {
@@ -67,16 +68,31 @@ namespace Beagle.Util {
 			get {
 				if (! tried_connection && File.Exists (PhotoStorePath)) {
 					connection = new SqliteConnection ();
-					connection.ConnectionString = "version=" + ExternalStringsHack.SqliteVersion
-						+ ",URI=file:" + PhotoStorePath;
+					connection.ConnectionString = "version=3,URI=file:" + PhotoStorePath;
 
 					// Try to open the f-spot store.  This
 					// will fail if there is a version
 					// mismatch.
 					try {
 						connection.Open ();
+
+						// Run a dummy SELECT statement to catch more errors
+						// indicating sqlite version mismatches.
+						using (SqliteCommand command = new SqliteCommand ()) {
+							command.Connection = connection;
+							command.CommandText = "SELECT id FROM tags WHERE name='dummy'";
+							SqliteDataReader reader = null;
+							while (reader == null) {
+								try {
+									reader = command.ExecuteReader ();
+								} catch (SqliteBusyException) {
+									Thread.Sleep (50);
+								}
+							}
+							reader.Close ();
+						}
 					} catch (ApplicationException) {
-						Logger.Log.Warn ("Unable to open F-Spot database: sqlite version mismatch");
+						Logger.Log.Warn ("Unable to open F-Spot database: no sqlite3 database found");
 						connection = null;
 					}
 

@@ -43,7 +43,5 @@ namespace Beagle.Util {
 		static public string KdePrefix {
 			get { return "@KDE_PREFIX@"; }
 		}
-
-		public const string SqliteVersion = "@SQLITE_MAJ_VER@";
 	}
 }
