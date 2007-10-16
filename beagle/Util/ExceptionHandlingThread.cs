@@ -62,6 +62,8 @@ namespace Beagle.Util {
 						 this.method.Target, this.method.Method);
 			}
 
+			Log.Debug ("Finished thread {0}", this.thread.Name);
+
 			lock (live_threads)
 				live_threads.Remove (this.thread);
 
@@ -131,9 +133,15 @@ namespace Beagle.Util {
 				foreach (Thread t in join_threads) {
 					++count;
 
-					if (! t.IsAlive)
+					if (! t.IsAlive) {
 						Log.Debug ("Skipping over finished thread {0} of {1}: {2}", count, join_threads.Count, t.Name);
-					else {
+						// If a thread from live_threads is not alive, that is a sign of a trouble
+						// Anyway, remove the thread from live_threads, since this thread is not anymore live
+						// This does not generally happen and should not happen,
+						// but rarely happens and in one case caused a continuous looping when somehow a thread remained in live_threads even though not alive
+						lock (live_threads)
+							live_threads.Remove (t);
+					} else {
 						Log.Debug ("Joining thread {0} of {1}: {2}", count, join_threads.Count, t.Name);
 						t.Join ();
 					}
