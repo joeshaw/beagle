@@ -42,6 +42,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		{
 			// Make the on-disk files for folders have sane names
 			folder_name = folder_name.Replace ('/', '-');
+			folder_name = folder_name.Replace (':', '_');
 			folder_name = folder_name.Replace (',', ' '); // Causes problems with the ConnectionString otherwise
 
 			string filename = Path.Combine (directory, String.Format ("SummaryTracker-{0}-{1}.db", account_name, folder_name));
