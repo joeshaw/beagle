@@ -20,10 +20,8 @@ webinterface_DATA =				\
 # 0168 = The variable 'foo' is declared but never used
 # 0169 = The private method/field 'foo' is never used
 # 0219 = Variable is assigned but never used
-# 0436 = Ignore imported type (local SqliteClient)
 
-# unsafe arg for Mono.Data.SqliteClient fork
-CSC = $(MCS) -debug -nowarn:0162,0164,0168,0169,0219,0436 -unsafe
+CSC = $(MCS) -debug -nowarn:0162,0164,0168,0169,0219,0436
 
 BACKENDDIR = $(pkglibdir)/Backends
 
@@ -293,25 +291,6 @@ SNOWBALL_CSFILES =							\
 
 ############################################################
 
-sqlitedir = $(srcdir)/Mono.Data.SqliteClient
-
-SQLITE_CSFILES =					\
-	$(sqlitedir)/SqliteCommand.cs			\
-	$(sqlitedir)/SqliteConnection.cs		\
-	$(sqlitedir)/Sqlite.cs				\
-	$(sqlitedir)/SqliteDataAdapter.cs		\
-	$(sqlitedir)/SqliteDataReader.cs		\
-	$(sqlitedir)/SqliteExceptions.cs		\
-	$(sqlitedir)/SqliteParameterCollection.cs	\
-	$(sqlitedir)/SqliteParameter.cs			\
-	$(sqlitedir)/SqliteRowUpdatedEventArgs.cs	\
-	$(sqlitedir)/SqliteRowUpdatedEventHandler.cs	\
-	$(sqlitedir)/SqliteRowUpdatingEventArgs.cs	\
-	$(sqlitedir)/SqliteRowUpdatingEventHandler.cs	\
-	$(sqlitedir)/SqliteTransaction.cs
-
-############################################################
-
 DAEMON_DLL_TARGET = BeagleDaemonLib.dll
 
 DAEMON_DLL_CSFLAGS = -target:library $(BEAGLE_DEFINES)
@@ -486,15 +465,8 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(BEAGLED_LIBS)                 			\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)			\
 	$(SHARPZIPLIB_LIBS)					\
-	-r:Mono.Data.SqliteClient				\
+	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
-
-if USE_LOCAL_SQLITE
-DAEMON_DLL_CSFILES += $(SQLITE_CSFILES)
-DAEMON_DLL_ASSEMBLIES += -r:System.Data
-else
-DAEMON_DLL_ASSEMBLIES += -r:Mono.Data.SqliteClient
-endif
 
 if ENABLE_AVAHI
 DAEMON_DLL_CSFLAGS += -define:ENABLE_AVAHI

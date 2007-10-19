@@ -38,7 +38,7 @@
 using System;
 using System.Collections;
 using System.IO;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 
 namespace Beagle.Util {
 
@@ -171,8 +171,8 @@ WHERE t1.pid=t2.id";
 			SqliteCommand command = new SqliteCommand ();
 			command.Connection = Connection;
 			command.CommandText = tags_sql_string;
-			command.Parameters.Add ("@AlbumsUrl", relative_path);
-			command.Parameters.Add ("@ImagesName", filename);
+			command.Parameters.AddWithValue ("@AlbumsUrl", relative_path);
+			command.Parameters.AddWithValue ("@ImagesName", filename);
 			//Console.WriteLine (tags_sql_string);
 			
 			SqliteDataReader reader = command.ExecuteReader ();

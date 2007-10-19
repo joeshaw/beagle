@@ -30,7 +30,7 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 using ICSharpCode.SharpZipLib.GZip;
 
 using Beagle.Util;

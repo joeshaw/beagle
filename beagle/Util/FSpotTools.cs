@@ -28,7 +28,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Threading;
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 
 namespace Beagle.Util {
 

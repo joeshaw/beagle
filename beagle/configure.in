@@ -70,7 +70,7 @@ PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED)
 BEAGLE_DEFINES=""
 
 # check for various mono DLLs that we need.
-needed_dlls="Mono.Data.SqliteClient Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
+needed_dlls="Mono.Data.Sqlite Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
   if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
@@ -268,14 +268,6 @@ else
 fi
 
 AM_CONDITIONAL(ENABLE_EVOLUTION, test "x$enable_evo" = "xyes")
-
-dnl ----------------------------------------------
-
-dnl Should we use our own copy of the sqlite bindings or the version
-dnl that got installed along with mono?
-
-use_local_sqlite="yes" # hard-wired for now
-AM_CONDITIONAL(USE_LOCAL_SQLITE, test "x$use_local_sqlite" = "xyes")
 
 dnl ----------------------------------------------
 
@@ -616,7 +608,6 @@ echo "
 	Thunderbird Extension? 	  ${enable_tbird}
 
 	Local taglib-sharp?       ${internal_taglib}
-	Local SqliteClient?	  ${use_local_sqlite}
 
 	Monitor screensaver       ${have_xss}
 	beagle-search GUI	  ${enable_gui}

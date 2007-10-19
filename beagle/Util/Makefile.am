@@ -125,7 +125,7 @@ UTIL_CSFILES = 			        	\
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
 	-r:System.Data				\
-	-r:Mono.Data.SqliteClient		\
+	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
 	-r:System.Web				\
 	-r:ICSharpCode.SharpZipLib

@@ -27,7 +27,7 @@
 using System;
 using System.Threading;
 
-using Mono.Data.SqliteClient;
+using Mono.Data.Sqlite;
 
 namespace Beagle.Util {
 
@@ -48,7 +48,7 @@ namespace Beagle.Util {
 					if (param_args == null || param_names.Length != param_args.Length)
 						throw new ArgumentException ("param_names, param_args", "param_names and param_args should have same number of items");
 					for (int i = 0; i < param_names.Length; ++i)
-						command.Parameters.Add (param_names [i], param_args [i]);
+						command.Parameters.AddWithValue (param_names [i], param_args [i]);
 				}
 
 				while (true) {
