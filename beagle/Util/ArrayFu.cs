@@ -49,6 +49,30 @@ namespace Beagle.Util {
 			}
 		}
 
+		public static bool Equal (string[] arr1, string[] arr2)
+		{
+			if (arr1 == null && arr2 == null)
+				return true;
+
+			if (arr1 == null || arr2 == null)
+				return false;
+
+			if (arr1.Length != arr2.Length)
+				return false;
+
+			string[] new_1 = (string[]) arr1.Clone ();
+			string[] new_2 = (string[]) arr2.Clone ();
+
+			Array.Sort (new_1);
+			Array.Sort (new_2);
+
+			for (int i = 0; i < new_1.Length; ++ i)
+				if (new_1 [i] != new_2 [i])
+					return false;
+
+			return true;
+		}
+
 		// FIXME: These can all go away when we switch to generics.
 
 		// This is designed to be used instead of Array.IndexOf as it reduces

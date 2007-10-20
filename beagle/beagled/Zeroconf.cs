@@ -52,8 +52,8 @@ namespace Beagle.Daemon.Network {
 		{
 			Logger.Log.Debug ("Zeroconf: Service started...");
 
-			LoadConfiguration ();
-                        Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+			LoadConfiguration (null);
+                        Conf.Subscribe (Conf.Names.NetworkingConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		}
                 
 
@@ -72,14 +72,18 @@ namespace Beagle.Daemon.Network {
 			}
                 }
 
-		private void LoadConfiguration ()
+		private void LoadConfiguration (Config config)
 		{
+			if (config == null)
+				config = Conf.Get (Conf.Names.NetworkingConfig);
+
 			if (String.IsNullOrEmpty (name))
-				name = Conf.Networking.ServiceName;
+				// Whats a good default value ?
+				name = config.GetOption (Conf.Names.ServiceName, String.Empty);
 
 			// Check to see if our enabled status hasn't changed
-                        if (enabled != Conf.Networking.ServiceEnabled) {
-                                enabled = Conf.Networking.ServiceEnabled;
+                        if (enabled != config.GetOption (Conf.Names.ServiceEnabled, enabled)) {
+                                enabled = config.GetOption (Conf.Names.ServiceEnabled, enabled);
                                 
                                 if (enabled) {
 					try {
@@ -95,13 +99,16 @@ namespace Beagle.Daemon.Network {
                         }
 
                         // Handle index name changes
-                        if (String.Compare (name, Conf.Networking.ServiceName) != 0)
+                        if (String.Compare (name, config.GetOption (Conf.Names.ServiceName, name)) != 0)
 				Update ();
                 }
 
-		private void OnConfigurationChanged (Conf.Section section)
+		private void OnConfigurationChanged (Config config)
                 {
-			LoadConfiguration ();
+			if (config == null || config.Name != Conf.Names.NetworkingConfig)
+				return;
+
+			LoadConfiguration (config);
 		}
 
                 private void Publish ()
@@ -110,7 +117,7 @@ namespace Beagle.Daemon.Network {
                                 client = new Client ();
                         
                         try {
-				string [] args = new string [] { "Password=" + (Conf.Networking.PasswordRequired ? "true" : "false") };
+				string [] args = new string [] { "Password=" + (Conf.Networking.GetOption (Conf.Names.PasswordRequired, true) ? "true" : "false") };
 					
 				if (collisions > 0)
 					name += String.Format (" ({0})", collisions);

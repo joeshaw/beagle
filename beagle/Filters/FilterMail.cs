@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 using GMime;
@@ -78,10 +79,15 @@ namespace Beagle.Filters {
 			// Add the list of user requested maildir directories
 			// This is useful if beagle (xdgmime) does not correctly detect the mimetypes
 			// of several maildir files as message/rfc822
-			foreach (Conf.IndexingConfig.Maildir maildir in Conf.Indexing.Maildirs) {
+
+			List<string[]> values = Conf.Daemon.GetListOptionValues (Conf.Names.Maildirs);
+			if (values == null)
+				return;
+
+			foreach (string[] maildir in values) {
 				FilterFlavor flavor =
-					new FilterFlavor (new Uri (maildir.Directory + "/*").ToString (),
-							  maildir.Extension,
+					new FilterFlavor (new Uri (maildir [0] + "/*").ToString (),
+							  null, // No meaning of extension for maildir files
 							  null,
 							  1 /* Should be more than priority of text filter */);
 				AddSupportedFlavor (flavor);

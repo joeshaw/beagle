@@ -56,15 +56,18 @@ namespace Beagle.Daemon {
 			// set flag here to stop Allow() from calling ReadBackendsFromConf() again
 			done_reading_conf = true;
 
+			Config config = Conf.Get (Conf.Names.DaemonConfig);
+
 			// To allow static indexes, "static" should be in allowed_queryables
-			if (Conf.Daemon.AllowStaticBackend)
+			if (config.GetOption (Conf.Names.AllowStaticBackend, false))
 				Allow ("static");
 
-			if (Conf.Daemon.DeniedBackends == null)
+			List<string[]> values = config.GetListOptionValues (Conf.Names.DeniedBackends);
+			if (values == null)
 				return;
 			
-			foreach (string name in Conf.Daemon.DeniedBackends)
-				denied_queryables.Add (name.ToLower ());
+			foreach (string[] name in values)
+				denied_queryables.Add (name [0].ToLower ());
 		}
 
 		static public void OnlyAllow (string name)
@@ -254,8 +257,11 @@ namespace Beagle.Daemon {
 
 			if (UseQueryable ("static")) {
 				Logger.Log.Info ("Loading user-configured static indexes.");
-				foreach (string path in Conf.Daemon.StaticQueryables)
-					static_queryables.Add (path);
+				List<string[]> values = Conf.Daemon.GetListOptionValues (Conf.Names.StaticQueryables);
+				if (values != null) {
+					foreach (string[] path in values)
+						static_queryables.Add (path [0]);
+				}
 			}
 
 			foreach (string path in static_queryables) {

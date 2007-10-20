@@ -131,7 +131,9 @@ namespace Beagle.Util {
 		static public string GetRemoteStorageDir (bool create)
 		{
 			if (remote_storage_dir == null) {
-				if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && Conf.Daemon.IndexSynchronization) ||
+				bool index_synchronization = Conf.Daemon.GetOption (Conf.Names.IndexSynchronization, true);
+
+				if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && index_synchronization) ||
 				    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null) {
 					string index_pointer = Path.Combine (StorageDir, "remote_storage_dir");
 

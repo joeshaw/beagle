@@ -173,7 +173,7 @@ namespace Search {
 
 			// The auto search after timeout feauture is now optional
 			// and can be disabled.
-			if (Beagle.Util.Conf.Searching.BeagleSearchAutoSearch) {
+			if (Conf.BeagleSearch.GetOption (Conf.Names.BeagleSearchAutoSearch, true)) {
 				entry.Changed += OnEntryChanged;
 				entry.MoveCursor += OnEntryMoveCursor;
 			}
@@ -245,7 +245,8 @@ namespace Search {
 			tips.SetTip (button, Catalog.GetString ("Start searching"), "");
 			tips.Enable ();
 
-			if (Environment.UserName == "root" && ! Conf.Daemon.AllowRoot) {
+			if (Environment.UserName == "root" &&
+			    ! Conf.Daemon.GetOption (Conf.Names.AllowRoot, false)) {
 				pages.CurrentPage = pages.PageNum (rootuser);
 				entry.Sensitive = button.Sensitive = uim.Sensitive = false;
 			} else {
@@ -257,14 +258,19 @@ namespace Search {
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
 
-				string binding = Conf.Searching.ShowSearchWindowBinding.ToString ();
+				Config config = Conf.Get (Conf.Names.BeagleSearchConfig);
+				bool binding_ctrl = config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
+				bool binding_alt = config.GetOption (Conf.Names.KeyBinding_Alt, false);
+				string binding_key = config.GetOption (Conf.Names.KeyBinding_Key, "F12");
+
+				string binding = new KeyBinding (binding_key, binding_ctrl, binding_alt).ToString ();
 				string tip_text = Catalog.GetString ("Desktop Search");
 
 				if (binding != String.Empty) {
 					tip_text += String.Format (" ({0})", binding);
 
 					// Attach the hide/show keybinding
-					keybinder.Bind (Conf.Searching.ShowSearchWindowBinding.ToString (), OnTrayActivated);
+					keybinder.Bind (binding, OnTrayActivated);
 				}
 
 				tray.TooltipText = tip_text;

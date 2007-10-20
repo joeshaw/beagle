@@ -30,6 +30,7 @@ using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 
 using Beagle;
 using Beagle.Daemon;
@@ -209,8 +210,16 @@ public class InfoTool {
 				Console.WriteLine ("[System index] " + index_dir.Name + " (" + index_dir.FullName + ")");
 		} catch (DirectoryNotFoundException) { }
 
-		foreach (string index_path in Conf.Daemon.StaticQueryables)
-			Console.WriteLine ("[User index]   " + index_path);
+		Config config = Conf.Load (Conf.Names.DaemonConfig);
+		if (config == null)
+			return;
+
+		List<string[]> values = config.GetListOptionValues (Conf.Names.StaticQueryables);
+		if (values == null)
+			return;
+
+		foreach (string[] index_path in values)
+			Console.WriteLine ("[User index]   " + index_path [0]);
 	}
 	
 }

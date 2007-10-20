@@ -68,7 +68,7 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting messaging server");
 
 			try {
-				server = new Server ("socket", Conf.Networking.ServiceEnabled);
+				server = new Server ("socket", Conf.Networking.GetOption (Conf.Names.ServiceEnabled, false));
 				server.Start ();
 			} catch (InvalidOperationException) {
 				return false;
@@ -195,9 +195,13 @@ namespace Beagle.Daemon {
 			// Set up out-of-process indexing
 			LuceneQueryable.IndexerHook = new LuceneQueryable.IndexerCreator (RemoteIndexer.NewRemoteIndexer);
 
+			Config config = Conf.Get (Conf.Names.DaemonConfig);
+
 			// Initialize synchronization to keep the indexes local if PathFinder.StorageDir
 			// is on a non-block device, or if BEAGLE_SYNCHRONIZE_LOCALLY is set
-			if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) && Conf.Daemon.IndexSynchronization) ||
+
+			if ((! SystemInformation.IsPathOnBlockDevice (PathFinder.StorageDir) &&
+			     config.GetOption (Conf.Names.IndexSynchronization, true)) ||
 			    Environment.GetEnvironmentVariable ("BEAGLE_SYNCHRONIZE_LOCALLY") != null)
 				IndexSynchronization.Initialize ();
 
@@ -205,7 +209,7 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting QueryDriver");
 			QueryDriver.Start ();
 
-			bool initially_on_battery = SystemInformation.UsingBattery && ! Conf.Indexing.IndexOnBattery;
+			bool initially_on_battery = SystemInformation.UsingBattery && ! config.GetOption (Conf.Names.IndexOnBattery, false);
 
 			// Start the Global Scheduler thread
 			if (! arg_disable_scheduler) {
@@ -436,7 +440,7 @@ namespace Beagle.Daemon {
 				Environment.Exit (-1);
 			}
 
-			if (Environment.UserName == "root" && ! Conf.Daemon.AllowRoot) {
+			if (Environment.UserName == "root" && ! Conf.Daemon.GetOption (Conf.Names.AllowRoot, false)) {
 				Console.WriteLine ("You can not run beagle as root.  Beagle is designed to run from your own");
 				Console.WriteLine ("user account.  If you want to create multiuser or system-wide indexes, use");
 				Console.WriteLine ("the beagle-build-index tool.");
@@ -535,12 +539,14 @@ namespace Beagle.Daemon {
 
 		private static bool CheckBatteryStatus ()
 		{
-			if (prev_on_battery && (! SystemInformation.UsingBattery || Conf.Indexing.IndexOnBattery)) {
+			bool index_on_battery = Conf.Daemon.GetOption (Conf.Names.IndexOnBattery, false);
+
+			if (prev_on_battery && (! SystemInformation.UsingBattery || index_on_battery)) {
 				if (! SystemInformation.UsingBattery)
 					Log.Info ("Detected a switch from battery to AC power.  Restarting scheduler.");
 				Scheduler.Global.Start ();
 				prev_on_battery = false;
-			} else if (! prev_on_battery && SystemInformation.UsingBattery && ! Conf.Indexing.IndexOnBattery) {
+			} else if (! prev_on_battery && SystemInformation.UsingBattery && ! index_on_battery) {
 				Log.Info ("Detected a switch from AC power to battery.  Stopping scheduler.");
 				Scheduler.Global.Stop ();
 				prev_on_battery = true;

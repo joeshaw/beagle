@@ -44,6 +44,15 @@ CRAWL_RULES = \
 configdir = $(sysconfdir)/beagle
 config_DATA = $(CRAWL_RULES)
 
+GLOBAL_CONFIG_FILES = \
+	$(srcdir)/config-files/BeagleSearch.xml		\
+	$(srcdir)/config-files/Daemon.xml		\
+	$(srcdir)/config-files/FilesQueryable.xml	\
+	$(srcdir)/config-files/Networking.xml
+
+global_config_filesdir = $(sysconfdir)/beagle/config-files
+global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
+
 DOC_EXTRACTOR_TARGET  = DocExtractor.exe
 DOC_EXTRACTOR_WRAPPER = beagle-doc-extractor
 DOC_EXTRACTOR_CSFILES = $(srcdir)/DocExtractor.cs
@@ -222,6 +231,7 @@ EXTRA_DIST =				\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
 	$(CRAWL_RULES)			\
+	$(GLOBAL_CONFIG_FILES)		\
 	$(cron_SCRIPTS)			\
 	$(desktop_in_files)		\
 	$(desktop_DATA) 		\

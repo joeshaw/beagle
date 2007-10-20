@@ -26,7 +26,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 		public bool AcceptQuery (Query query)
 		{
-			return (Conf.Networking.NetworkServices.Count > 0);
+			return (Conf.Networking.GetListOptionValues (Conf.Names.NetworkServices).Count > 0);
 		}
 
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData data)
@@ -35,8 +35,11 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			// forward our local query to remote hosts.
 			query.Transports.Clear ();
 
-			foreach (NetworkService service in Conf.Networking.NetworkServices)
-				query.RegisterTransport (new HttpTransport (service.UriString));
+			List<string[]> network_services = Conf.Networking.GetListOptionValues (Conf.Names.NetworkServices);
+			if (network_services != null) {
+				foreach (string[] service in network_services)
+					query.RegisterTransport (new HttpTransport (service [1]));
+			}
 
 			ArrayList hits = new ArrayList ();
 

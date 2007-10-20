@@ -149,10 +149,11 @@ public class SettingsDialog
 
 		LoadConfiguration ();
 
-		Conf.Subscribe (typeof (Conf.IndexingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-		Conf.Subscribe (typeof (Conf.SearchingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+		Conf.Subscribe (Conf.Names.FilesQueryableConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+		Conf.Subscribe (Conf.Names.BeagleSearchConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+		Conf.Subscribe (Conf.Names.DaemonConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 #if ENABLE_AVAHI
-		Conf.Subscribe (typeof (Conf.NetworkingConfig), new Conf.ConfigUpdateHandler (OnConfigurationChanged));
+		Conf.Subscribe (Conf.Names.NetworkingConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 #endif
 
 		ParseArgs (args);
@@ -189,70 +190,141 @@ public class SettingsDialog
 	// Configuration
 
 	private void LoadConfiguration ()
-	{	
-		allow_root_toggle.Active = Conf.Daemon.AllowRoot;
-		auto_search_toggle.Active = Conf.Searching.BeagleSearchAutoSearch;
-		battery_toggle.Active = Conf.Indexing.IndexOnBattery;
-		screensaver_toggle.Active = Conf.Indexing.IndexFasterOnScreensaver;
+	{
+		Config fsq_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+		Config daemon_config = Conf.Get (Conf.Names.DaemonConfig);
+		Config bs_config = Conf.Get (Conf.Names.BeagleSearchConfig);
+
+		allow_root_toggle.Active = daemon_config.GetOption (Conf.Names.AllowRoot, false);
+		auto_search_toggle.Active = bs_config.GetOption (Conf.Names.BeagleSearchAutoSearch, true);
+		battery_toggle.Active = daemon_config.GetOption (Conf.Names.IndexOnBattery, false);
+		screensaver_toggle.Active = daemon_config.GetOption (Conf.Names.IndexFasterOnScreensaver, true);
 
 		autostart_toggle.Active = IsAutostartEnabled ();
 
-		KeyBinding show_binding = Conf.Searching.ShowSearchWindowBinding;
+		bool binding_ctrl = bs_config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
+		bool binding_alt = bs_config.GetOption (Conf.Names.KeyBinding_Alt, false);
+		string binding_key = bs_config.GetOption (Conf.Names.KeyBinding_Key, "F12");
+		KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
 		press_ctrl_toggle.Active = show_binding.Ctrl;
 		press_alt_toggle.Active = show_binding.Alt;
 		show_search_window_entry.Text = show_binding.Key;
 
-		if (Conf.Indexing.IndexHomeDir)
+		if (fsq_config.GetOption (Conf.Names.IndexHomeDir, true))
 			index_home_toggle.Active = true;
 
-		foreach (string include in Conf.Indexing.Roots)
-			include_view.AddPath (include);
+		List<string[]> values = fsq_config.GetListOptionValues (Conf.Names.Roots);
+		if (values != null)
+			foreach (string[] root in values)
+				include_view.AddPath (root [0]);
 
-		foreach (ExcludeItem exclude_item in Conf.Indexing.Excludes)
-			exclude_view.AddItem (exclude_item);
+		values = fsq_config.GetListOptionValues (Conf.Names.ExcludeSubdirectory);
+		if (values != null)
+			foreach (string[] subdir in values)
+				exclude_view.AddItem (new ExcludeItem (ExcludeType.Path, subdir [0]));
 
-		//
+		values = fsq_config.GetListOptionValues (Conf.Names.ExcludePattern);
+		if (values != null)
+			foreach (string[] pattern in values)
+				exclude_view.AddItem (new ExcludeItem (ExcludeType.Pattern, pattern [0]));
+
+		values = daemon_config.GetListOptionValues (Conf.Names.ExcludeMailfolder);
+		if (values != null)
+			foreach (string[] mailfolder in values)
+				exclude_view.AddItem (new ExcludeItem (ExcludeType.MailFolder, mailfolder [0]));
 
 #if ENABLE_AVAHI
-                foreach (NetworkService s in Conf.Networking.NetworkServices)
-                        networking_view.AddNode (s);
-                                                                
-                allow_global_access_toggle.Active = Conf.Networking.ServiceEnabled;
-                require_password_toggle.Active = Conf.Networking.PasswordRequired;
-                index_name_entry.Text = Conf.Networking.ServiceName;
-                string password = Conf.Networking.ServicePassword.PadRight (12);
+		Config networking_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+
+		List<string[]> services = networking_config.GetListOptionValues (Conf.Names.NetworkServices);
+		if (services != null) {
+			foreach (string[] svc in services) {
+				NetworkService s = new NetworkService ();
+				s.Name = svc [0];
+				s.UriString = svc [1];
+				s.IsProtected = false;
+				s.Cookie = null;
+				networking_view.AddNode (s);
+			}
+		}
+
+                allow_global_access_toggle.Active = networking_config.GetOption (Conf.Names.ServiceEnabled, false);
+                require_password_toggle.Active = networking_config.GetOption (Conf.Names.PasswordRequired, true);
+                index_name_entry.Text = networking_config.GetOption (Conf.Names.ServiceName, String.Empty);
+                string password = networking_config.GetOption (Conf.Names.ServicePassword, String.Empty);
+		password = password.PadRight (12);
                 password_entry.Text = password.Substring (0, 12);
 #endif
 	}
 
 	private void SaveConfiguration ()
 	{
-		Conf.Daemon.AllowRoot = allow_root_toggle.Active;
-		Conf.Searching.BeagleSearchAutoSearch = auto_search_toggle.Active;
-		Conf.Indexing.IndexOnBattery = battery_toggle.Active;
-		Conf.Indexing.IndexFasterOnScreensaver = screensaver_toggle.Active;
+		Config fsq_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+		Config daemon_config = Conf.Get (Conf.Names.DaemonConfig);
+		Config bs_config = Conf.Get (Conf.Names.BeagleSearchConfig);
+
+		daemon_config.SetOption (Conf.Names.AllowRoot, allow_root_toggle.Active);
+		bs_config.SetOption (Conf.Names.BeagleSearchAutoSearch,auto_search_toggle.Active);
+		daemon_config.SetOption (Conf.Names.IndexOnBattery,battery_toggle.Active);
+		daemon_config.SetOption (Conf.Names.IndexFasterOnScreensaver, screensaver_toggle.Active);
 		
-		Conf.Searching.ShowSearchWindowBinding = new KeyBinding (show_search_window_entry.Text, 
-									 press_ctrl_toggle.Active, 
-									 press_alt_toggle.Active);
-		
-		Conf.Indexing.IndexHomeDir = index_home_toggle.Active;
-		
-		Conf.Indexing.Roots = include_view.Includes;
-		Conf.Indexing.Excludes = exclude_view.Excludes;
+		bs_config.SetOption (Conf.Names.KeyBinding_Key, show_search_window_entry.Text);
+		bs_config.SetOption (Conf.Names.KeyBinding_Ctrl, press_ctrl_toggle.Active);
+		bs_config.SetOption (Conf.Names.KeyBinding_Alt, press_alt_toggle.Active);
+
+		fsq_config.SetOption (Conf.Names.IndexHomeDir, index_home_toggle.Active);
+
+		List<string[]> roots = new List<string[]> (include_view.Includes.Count);
+		foreach (string root in include_view.Includes) {
+			roots.Add (new string[1] {root});
+		}
+		fsq_config.SetListOptionValues (Conf.Names.Roots, roots);
+
+		List<string[]> excludes_path = new List<string[]> ();
+		List<string[]> excludes_pattern = new List<string[]> ();
+		List<string[]> excludes_mailfolder = new List<string[]> ();
+
+		foreach (ExcludeItem exclude in exclude_view.Excludes) {
+			if (exclude.Type == ExcludeType.Path)
+				excludes_path.Add (new string[1] {exclude.Value});
+			else if (exclude.Type == ExcludeType.Pattern)
+				excludes_pattern.Add (new string[1] {exclude.Value});
+			else if (exclude.Type == ExcludeType.MailFolder)
+				excludes_mailfolder.Add (new string[1] {exclude.Value});
+		}
+
+		if (excludes_path.Count > 0)
+			fsq_config.SetListOptionValues (Conf.Names.ExcludeSubdirectory, excludes_path);
+
+		if (excludes_pattern.Count > 0)
+			fsq_config.SetListOptionValues (Conf.Names.ExcludePattern, excludes_pattern);
+
+		if (excludes_mailfolder.Count > 0)
+			daemon_config.SetListOptionValues (Conf.Names.ExcludeMailfolder, excludes_mailfolder);
+
 
 #if ENABLE_AVAHI
-                Conf.Networking.ServiceEnabled = allow_global_access_toggle.Active;
-                Conf.Networking.ServiceName = index_name_entry.Text;
-                Conf.Networking.PasswordRequired = require_password_toggle.Active;
-                Conf.Networking.ServicePassword = Password.Encode (password_entry.Text);
-                Conf.Networking.NetworkServices = networking_view.Nodes;
+		Config networking_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+
+		networking_config.SetOption (Conf.Names.ServiceEnabled, allow_global_access_toggle.Active);
+		bs_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
+		bs_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
+		bs_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
+
+		List<string[]> svcs = new List<string[]> (networking_view.Nodes.Count);
+		foreach (NetworkService svc in networking_view.Nodes) {
+			svcs.Add (new string [4] {svc.Name, svc.UriString, Convert.ToString (svc.IsProtected), svc.Cookie});
+		}
+		networking_config.SetListOptionValues (Conf.Names.NetworkServices, svcs);
+		Conf.Save (networking_config);
 #endif
 
-		Conf.Save (true);
+		Conf.Save (fsq_config);
+		Conf.Save (bs_config);
+		Conf.Save (daemon_config);
 	}
 
-	private void OnConfigurationChanged (Conf.Section section)
+	private void OnConfigurationChanged (Config config)
 	{
 		HigMessageDialog dialog = new HigMessageDialog (settings_dialog,
 								DialogFlags.Modal,

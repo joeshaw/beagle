@@ -38,7 +38,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/CommandLineFu.cs		\
-	$(srcdir)/Conf.cs			\
+	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
 	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/DigikamTags.cs		\
