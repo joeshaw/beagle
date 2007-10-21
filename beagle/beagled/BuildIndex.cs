@@ -571,7 +571,7 @@ namespace Beagle.Daemon
 
 		static Indexable FileToIndexable (FileInfo file)
 		{
-			if (!file.Exists || Ignore (file) || fa_store.IsUpToDateAndFiltered (file.FullName))
+			if (!file.Exists || fa_store.IsUpToDateAndFiltered (file.FullName))
 				return null;
 
 			// Create the indexable and add the standard properties we

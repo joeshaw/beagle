@@ -37,10 +37,10 @@ namespace Beagle.Daemon {
 		
 		private QueryStringParser () { } // a static class
 
-		// Returns an ICollection of QueryPart objects.
-		static public ICollection Parse (string query_string) 
-		{
-			
+		private static Regex query_string_regex;
+		private static Regex extension_re;
+
+		static QueryStringParser () {
 			/* This is our regular Expression Pattern:
 			 * we expect something like this:
 			 * -key:"Value String"
@@ -58,9 +58,16 @@ namespace Beagle.Daemon {
 			 */
 			string Pattern = "(?<pm>[+-]?) ( (?<key>\\w+) :)? ( (\"(?<quote>[^\"]*)\"?) | (?<unquote>[^\\s\"]+) )";
 	
-			Regex r = new Regex (Pattern, RegexOptions.IgnorePatternWhitespace);
+			query_string_regex = new Regex (Pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
-			Match m = r.Match (query_string);
+			extension_re = new Regex (@"^\**\.\w*$", RegexOptions.Compiled);
+		}
+
+		// Returns an ICollection of QueryPart objects.
+		static public ICollection Parse (string query_string) 
+		{
+			
+			Match m = query_string_regex.Match (query_string);
 		
 			ArrayList parts;
 			parts = new ArrayList ();
@@ -164,8 +171,6 @@ namespace Beagle.Daemon {
 
 			// check for file extensions
 			// if match starts with *. or . and only contains letters we assume it's a file extension
-			Regex extension_re = new Regex (@"^\**\.\w*$");
-
 			if (extension_re.Match (text).Success || key.ToLower () == "ext" || key.ToLower () == "extension") {
 				
 				QueryPart_Property query_part = new QueryPart_Property ();
@@ -201,7 +206,20 @@ namespace Beagle.Daemon {
 					part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 					return part;
 				} catch (FormatException) {
-					Log.Debug ("Could not parse [{0}] as date query. Assuming text.", text);
+					Log.Warn ("Could not parse [{0}] as date query. Assuming text.", text);
+					return StringToQueryPart (text, IsProhibited);
+				}
+			}
+
+			// FIXME: i18n-izing "uri"
+			if (key == "uri") {
+				try {
+					QueryPart_Uri part = new QueryPart_Uri ();
+					part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
+					part.Uri = UriFu.EscapedStringToUri (text);
+					return part;
+				} catch (System.UriFormatException) {
+					Log.Warn ("Could not parse [{0}] as uri query. Assuming text.", text);
 					return StringToQueryPart (text, IsProhibited);
 				}
 			}
@@ -257,7 +275,7 @@ namespace Beagle.Daemon {
 
 			if (!is_present) {
 
-				Logger.Log.Debug ("Could not find property, parsed query '{0}' as text_query", query);
+				Logger.Log.Warn ("Could not find property, parsed query '{0}' as text_query", query);
 
 				return StringToQueryPart (query, IsProhibited);
 			}
