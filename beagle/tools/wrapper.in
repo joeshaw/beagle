@@ -18,6 +18,7 @@ if [ -z $installed ] ; then
     THIS_FILTERS="$TOOLDIR/../Filters"
     THIS_BACKENDS="$TOOLDIR/../beagled"
 else
+    THIS_LIB_DIR="@pkglibdir@:@libdir@"
     THIS_PATH="@pkglibdir@:@libdir@"
     THIS_EXE="@pkglibdir@/@target@"
 fi
