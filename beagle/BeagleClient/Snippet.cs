@@ -290,6 +290,7 @@ namespace Beagle {
 				writer.WriteEndElement ();
 				writer.WriteEndElement ();
 			}
+			snippet_reader.Close ();
 		}
 
 		public void ReadXml (XmlReader reader)
