@@ -432,6 +432,13 @@ namespace Beagle.Daemon {
 		// Returns null if no snippet for this uri
 		public TextReader GetReader (Uri uri)
 		{
+			bool self_cache = false;
+			return GetReader (uri, ref self_cache);
+		}
+
+		// If self_cache is true when called, then self_cache will be set upon return
+		public TextReader GetReader (Uri uri, ref bool self_cache)
+		{
 			SqliteCommand command;
 			SqliteDataReader reader = null;
 			byte[] blob = null;
@@ -440,21 +447,33 @@ namespace Beagle.Daemon {
 			command = NewCommand ("SELECT filename, data FROM textcache_data WHERE uri='{0}'", 
 			                      UriToString (uri));
 			reader = SqliteUtils.ExecuteReaderOrWait (command);
-			if (! SqliteUtils.ReadOrWait (reader))
+			if (! SqliteUtils.ReadOrWait (reader)) {
+				if (self_cache)
+					self_cache = false;
 				return null;
+			}
 
 			filename = reader.GetString (0);
-			blob = (byte []) reader.GetValue (1);
+			if (! reader.IsDBNull (1))
+				blob = reader.GetValue (1) as byte [];
 			reader.Close ();
 			command.Dispose ();
 
 			if (filename == SELF_CACHE_TAG) {
+				if (self_cache) {
+					self_cache = true;
+					return null;
+				}
+
 				if (! uri.IsFile) {
 					string msg = String.Format ("non-file uri {0} flagged as self-cached", uri);
 					throw new Exception (msg);
 				}
 				return new StreamReader (uri.LocalPath);
 			}
+
+			if (self_cache)
+				self_cache = false;
 
 			if (filename == BLOB_TAG && (blob == null || blob.Length == 0))
 				return null;

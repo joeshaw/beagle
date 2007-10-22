@@ -1824,7 +1824,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// is stored in a property.
 			Uri uri = UriFu.EscapedStringToUri (hit ["beagle:InternalUri"]);
 
-			TextReader reader = TextCache.UserCache.GetReader (uri);
+			bool self_cache = true;
+			TextReader reader = TextCache.UserCache.GetReader (uri, ref self_cache);
+
+			if (self_cache)
+				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath, full_text);
+
 			if (reader == null)
 				return null;
 

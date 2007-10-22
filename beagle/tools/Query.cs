@@ -59,6 +59,7 @@ public class QueryTool {
 	private static bool display_hits = true;
 	private static bool flood = false;
 	private static bool listener = false;
+	private static bool display_cached_text = false;
 	private static DateTime start_date = DateTime.MinValue;
 	private static DateTime end_date = DateTime.MinValue;
 
@@ -87,9 +88,13 @@ public class QueryTool {
 
 			if (verbose) {
 				SnippetRequest sreq = new SnippetRequest (query, hit);
+				if (display_cached_text)
+					sreq.FullText = true;
+
 				SnippetResponse sresp = (SnippetResponse) sreq.Send ();
 				Console.WriteLine ("PaUri: {0}", hit.ParentUri != null ? hit.ParentUri.ToString () : "(null)");
-				Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
+				if (! display_cached_text)
+					Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
 				Console.WriteLine (" Type: {0}", hit.Type);
 				Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
 				Console.WriteLine ("  Src: {0}", hit.Source);
@@ -102,6 +107,21 @@ public class QueryTool {
 						prop.Key,
 						(prop.Type != PropertyType.Date ? prop.Value : DateTimeUtil.ToString (StringFu.StringToDateTime (prop.Value))));
 				
+
+				if (display_cached_text) {
+					Console.WriteLine ("-- Cache -------------------------------------");
+					if (sresp.SnippetList.Snippets == null)
+						Console.WriteLine ("(empty)");
+					else {
+						foreach (SnippetLine snippet_line in sresp.SnippetList.Snippets) {
+							if (snippet_line == null || snippet_line.Fragments == null)
+								Console.WriteLine ("(empty)");
+							else
+								Console.WriteLine (((Fragment)snippet_line.Fragments [0]).Text);
+						}
+					}
+					Console.WriteLine ("----------------------------------------------");
+				}
 				Console.WriteLine ();
 			}
 
@@ -146,6 +166,10 @@ public class QueryTool {
 			"Usage: beagle-query [OPTIONS] <query string>\n\n" +
 			"Options:\n" +
 			"  --verbose\t\t\tPrint detailed information about each hit.\n" +
+			"  --cache\t\t\tShow the entire cached text instead of a snippet showing the matches, requires --verbose\n" +
+			"         \t\t\tFor large documents this will produce extremely large output,\n" +
+			"         \t\t\tso use this with uri queries or queries returning only a few results\n" + 
+			"         \t\t\tNot recommended for live-queries or stats-only queries.\n" +
 			"  --keywords\t\t\tLists the keywords allowed in 'query string'.\n" +
 			"            \t\t\tKeyword queries can be specified as keywordname:value e.g. ext:jpg\n" +
 			"  --live-query\t\t\tRun continuously, printing notifications if a\n" +
@@ -262,11 +286,6 @@ public class QueryTool {
 
 		StringBuilder query_str =  new StringBuilder ();
 
-		string[] formats = {
-			"yyyyMMdd",
-			"yyyyMMddHHmmss"
-		};
-
 		query = new Query ();
 
 		// Parse args
@@ -279,6 +298,9 @@ public class QueryTool {
 				break;
 			case "--verbose":
 				verbose = true;
+				break;
+			case "--cache":
+				display_cached_text = true;
 				break;
 			case "--stats-only":
 				verbose = true;

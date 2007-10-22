@@ -222,6 +222,11 @@ namespace Beagle {
 		[XmlAttribute]
 		public bool FullText = false;
 
+		[XmlIgnore]
+		public IEnumerable Snippets {
+			get { return snippets; }
+		}
+
 		// Returns a coloured snippet string as before
 		public override string ToString ()
 		{
