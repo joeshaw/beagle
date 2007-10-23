@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using System.Xml;
@@ -85,8 +86,8 @@ namespace Beagle.Daemon
 
 		static bool indexing = true, restart = false;
 
-		static ArrayList allowed_patterns = new ArrayList ();
-		static ArrayList denied_patterns = new ArrayList ();
+		static Regex allowed_regex = null;
+		static Regex denied_regex = null;
 
 		static Queue pending_files = new Queue ();
 		static Queue pending_directories = new Queue ();
@@ -112,7 +113,10 @@ namespace Beagle.Daemon
 
 			if (args.Length < 2)
 				PrintUsage ();
-		
+
+			ArrayList allowed_patterns = new ArrayList ();
+			ArrayList denied_patterns = new ArrayList ();
+
 			int i = 0;
 			while (i < args.Length) {
 			
@@ -273,13 +277,19 @@ namespace Beagle.Daemon
 				Environment.Exit (0);
 			}
 
-			// Setup some exclude patterns akin to FSQ/FileNameFilter.cs
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "*~"));
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "#*#"));
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "*.o"));
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "*.a"));
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "*.aux"));
-			denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, "*.tmp"));
+			// Setup regexes for allowed/denied patterns
+			if (allowed_patterns.Count > 0) {
+				allowed_regex = StringFu.GetPatternRegex (allowed_patterns);
+			} else {
+				// Read the exclude values from config
+				// For system-wide indexes, only the global config value will be used
+				Config config = Conf.Get (Conf.Names.FilesQueryableConfig);
+				List<string[]> values = config.GetListOptionValues (Conf.Names.ExcludePattern);
+				foreach (string[] exclude in values)
+					denied_patterns.Add (exclude [0]);
+				if (denied_patterns.Count > 0)
+					denied_regex = StringFu.GetPatternRegex (denied_patterns);
+			}
 
 			Log.Always ("Starting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
@@ -847,21 +857,13 @@ namespace Beagle.Daemon
 			if (FileSystem.IsSpecialFile (file.FullName))
 				return true;
 
-			if (allowed_patterns.Count > 0) {
-				foreach (ExcludeItem pattern in allowed_patterns)
-					if (pattern.IsMatch (file.Name))
-						return false;
-				
-				return true;
-			}
+			if (allowed_regex != null)
+				return ! allowed_regex.IsMatch (file.Name);
 
-			foreach (ExcludeItem pattern in denied_patterns)
-				if (pattern.IsMatch (file.Name))
-					return true;
+			if (denied_regex == null)
+				return false;
 
-			// FIXME: Add more stuff here
-			
-			return false;
+			return denied_regex.IsMatch (file.Name);
 		}
 	}
 }

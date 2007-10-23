@@ -30,6 +30,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 using Mono.Unix;
 
@@ -804,6 +805,32 @@ namespace Beagle.Util {
 
 			return line;
   		}
+
+		public static Regex GetPatternRegex (IEnumerable patterns)
+		{
+			StringBuilder sb = new StringBuilder ();
+			bool first = true;
+			Regex tmp_regex = null;
+			foreach (string pattern in patterns) {
+				try {
+					string regex_pattern;
+					if (pattern.Length >= 2 && pattern [0] == '/' && pattern.EndsWith ("/")) {
+						regex_pattern = pattern.Substring (1, pattern. Length - 2);
+					} else {
+						// Make *.foo to .*\.foo
+						regex_pattern = pattern.Replace (".", @"\.");
+						regex_pattern = regex_pattern.Replace ("*", ".*");
+					}
+					tmp_regex = new Regex (regex_pattern);
+					sb.Append (String.Format (@"{0}^(?:{1})$", first ? String.Empty : "|", regex_pattern));
+				} catch (System.ArgumentException) {
+					Log.Warn ("Ignoring invalid regex: [{0}]", pattern);
+				}
+				first = false;
+			}
+			Log.Debug (sb.ToString());
+			return new Regex (sb.ToString (), RegexOptions.Compiled);
+		}
 
 		public class OrdinalComparer : IComparer {
 
