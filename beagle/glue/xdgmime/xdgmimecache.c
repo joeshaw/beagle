@@ -297,7 +297,7 @@ cache_magic_lookup_data (XdgMimeCache *cache,
 	  for (n = 0; n < n_mime_types; n++)
 	    {
 	      if (mime_types[n] && 
-		  _xdg_mime_mime_type_equal (mime_types[n], non_match))
+		  xdg_mime_mime_type_equal (mime_types[n], non_match))
 		mime_types[n] = NULL;
 	    }
 	}
