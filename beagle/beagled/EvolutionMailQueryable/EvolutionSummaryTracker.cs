@@ -145,10 +145,9 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				SqliteUtils.DoNonQuery (connection,
 							"INSERT OR REPLACE INTO mapping " +
 							"  (uid, flags, last_seen) " +
-							"  VALUES ('{0}', {1}, {2})",
-							uid.Replace ("'", "''"),
-							flags,
-							StringFu.DateTimeToString (DateTime.UtcNow));
+							"  VALUES (@uid, @flags, @last_seen")",
+							new string [] {"@uid", "@flags", "@last_seen"},
+							new object [] {uid, flags, StringFu.DateTimeToString (DateTime.UtcNow)});
 			}
 		}
 
@@ -185,8 +184,9 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		{
 			lock (connection) {
 				SqliteUtils.DoNonQuery (connection,
-							"DELETE FROM mapping WHERE uid='{0}'",
-							uid.Replace ("'", "''"));
+							"DELETE FROM mapping WHERE uid=@uid",
+							new string [] {"@uid"},
+							new object [] {uid});
 			}
 		}
 
