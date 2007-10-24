@@ -1,7 +1,7 @@
 autostartdir = $(sysconfdir)/xdg/autostart
 autostart_DATA = beagled-autostart.desktop
 
-webinterfacedir = $(sysconfdir)/beagle/webinterface
+webinterfacedir = $(datadir)/beagle/webinterface
 webinterface_DATA =				\
 	$(srcdir)/webinterface/default.js	\
 	$(srcdir)/webinterface/beagle-logo.png	\

@@ -27,6 +27,7 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
 		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 		-e "s|\@localstatedir\@|$(localstatedir)|g"	\
+		-e "s|\@datadir\@|$(datadir)|g"			\
 		-e "s|\@VERSION\@|$(VERSION)|g"			\
 		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
 		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"		\

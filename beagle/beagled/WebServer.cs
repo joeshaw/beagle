@@ -70,7 +70,7 @@ namespace Beagle.Daemon {
 			if (webserver_dir != null && Directory.Exists (webserver_dir))
 				return;
 
-			webserver_dir = Path.Combine (ExternalStringsHack.SysConfDir, "beagle");
+			webserver_dir = Path.Combine (ExternalStringsHack.DataDir, "beagle");
 			webserver_dir = Path.Combine (webserver_dir, "webinterface");
 			if (! Directory.Exists (webserver_dir))
 				webserver_dir = null;
