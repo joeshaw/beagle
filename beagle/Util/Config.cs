@@ -665,8 +665,8 @@ namespace Beagle.Util {
 			if (values == null || values.Length != num_params)
 				throw new ArgumentException (String.Format ("Must be an array of {0} strings", num_params), "values");
 
-			Array.Resize (ref option.Values_String, option.Values_String.Length + 1);
-			option.Values_String [option.Values_String.Length - 1] = String.Join (option.Separator.ToString (), values);
+			Array.Resize (ref option.Values_String, option.Count + 1);
+			option.Values_String [option.Count - 1] = String.Join (option.Separator.ToString (), values);
 
 			option.Global = false;
 			return true;
@@ -686,9 +686,10 @@ namespace Beagle.Util {
 			string value = String.Join (option.Separator.ToString (), values);
 
 			bool found = false;
-			for (int i = 0; i < option.Values_String.Length; ++i) {
+			for (int i = 0; i < option.Count; ++i) {
 				if (found) {
 					// FIXME: Assuming no duplicates
+					// Shift everything one to the left after the value is found
 					option.Values_String [i-1] = option.Values_String [i];
 					continue;
 				}
@@ -698,7 +699,8 @@ namespace Beagle.Util {
 			}
 
 			if (found) {
-				Array.Resize (ref option.Values_String, option.Values_String.Length - 1);
+				// Now remove the last value
+				Array.Resize (ref option.Values_String, option.Count - 1);
 				option.Global = false;
 			}
 
@@ -811,6 +813,15 @@ namespace Beagle.Util {
 		public string[] Values_String = new string [0];
 
 		[XmlIgnore]
+		public int Count {
+			get {
+				if (Values_String == null)
+					return 0;
+				return Values_String.Length;
+			}
+		}
+
+		[XmlIgnore]
 		public string[] ParamNames {
 			get { return Parameter_String.Split (new char [] {Separator}); }
 		}
@@ -823,10 +834,10 @@ namespace Beagle.Util {
 		[XmlIgnore]
 		public List<string[]> Values {
 			get {
-				if (Values_String == null)
+				if (Count == 0)
 					return null;
 
-				List<string[]> list = new List<string[]> (Values_String.Length);
+				List<string[]> list = new List<string[]> (Count);
 				int num_params = NumParams;
 
 				foreach (string value in Values_String) {
