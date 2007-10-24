@@ -145,7 +145,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				SqliteUtils.DoNonQuery (connection,
 							"INSERT OR REPLACE INTO mapping " +
 							"  (uid, flags, last_seen) " +
-							"  VALUES (@uid, @flags, @last_seen")",
+							"  VALUES (@uid, @flags, @last_seen)",
 							new string [] {"@uid", "@flags", "@last_seen"},
 							new object [] {uid, flags, StringFu.DateTimeToString (DateTime.UtcNow)});
 			}
