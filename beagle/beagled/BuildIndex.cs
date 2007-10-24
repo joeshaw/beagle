@@ -285,8 +285,10 @@ namespace Beagle.Daemon
 				// For system-wide indexes, only the global config value will be used
 				Config config = Conf.Get (Conf.Names.FilesQueryableConfig);
 				List<string[]> values = config.GetListOptionValues (Conf.Names.ExcludePattern);
-				foreach (string[] exclude in values)
-					denied_patterns.Add (exclude [0]);
+				if (values != null)
+					foreach (string[] exclude in values)
+						denied_patterns.Add (exclude [0]);
+
 				if (denied_patterns.Count > 0)
 					denied_regex = StringFu.GetPatternRegex (denied_patterns);
 			}

@@ -169,8 +169,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			values = config.GetListOptionValues (Conf.Names.ExcludePattern);
-			foreach (string[] exclude in values)
-				AddExclude (exclude [0], true);
+			if (values != null)
+				foreach (string[] exclude in values)
+					AddExclude (exclude [0], true);
 
 			Conf.Subscribe (Conf.Names.FilesQueryableConfig, OnConfigurationChanged);
 		}
