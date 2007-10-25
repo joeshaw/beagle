@@ -44,9 +44,8 @@ namespace Beagle.Daemon {
 			bool full_text = request.FullText;
 
 			if (queryable == null) {
-				string s;
-				s = String.Format ("ERROR: No queryable object matches '{0}'", request.Hit.Source);
-				snippet_reader = new SnippetReader (new StringReader (s), null, false);
+				Log.Error ("SnippetExecutor: No queryable object matches '{0}'", request.Hit.Source);
+				snippet_reader = new SnippetReader (null, null, false);
 				full_text = false;
 			} else
 				snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
