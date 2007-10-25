@@ -60,8 +60,6 @@ public class QueryTool {
 	private static bool flood = false;
 	private static bool listener = false;
 	private static bool display_cached_text = false;
-	private static DateTime start_date = DateTime.MinValue;
-	private static DateTime end_date = DateTime.MinValue;
 
 	private static void OnHitsAdded (HitsAddedResponse response)
 	{
@@ -357,21 +355,8 @@ public class QueryTool {
 		if (listener) {
 			query.IsIndexListener = true;
 		} else {
-		
 			if (query_str.Length > 0)
 				query.AddText (query_str.ToString ());
-
-			if (start_date != DateTime.MinValue || end_date != DateTime.MinValue) {
-				QueryPart_DateRange part = new QueryPart_DateRange ();
-				
-				if (start_date != DateTime.MinValue)
-					part.StartDate = start_date;
-
-				if (end_date != DateTime.MinValue)
-					part.EndDate = end_date;
-				
-				query.AddPart (part);
-			}
 		}
 
 		query.HitsAddedEvent += OnHitsAdded;
