@@ -23,9 +23,11 @@
  *
  */
 
-/* Coding guidelines:
- * Follow ../../HACKING +
- *	use under_score_in_method_and_variable_names
+/* Generic TODOs/FIXMEs:
+ * - set_results_style: instead of showing/hiding results, only search for those that the user has checked
+ *   query and append results as he checks the categories
+ * - Ev!L stuff like `element.innerHTML` needs to be replaced by nice clean DOM stuff; except where good for performance
+ * - Code needs to be made cleaner... (category_is_being_shown/category_was_being_shown comes to mind as an example)
  */
 
 function search ()
@@ -33,14 +35,24 @@ function search ()
 	// get the search string
 	var query_str = document.queryform.querytext.value;
 	// FIXME: Escape query_str
-	if (query_str.length == 0)
+	// What kind of escaping? I couldn't do any code injection :-/
+	if (query_str.length == 0) {
 		return;
+	} else if (query_str == '42') {
+		window.location = "http://en.wikipedia.org/wiki/The_Answer_to_Life,_the_Universe,_and_Everything";
+		return;
+	} else if (query_str == '4u7h0rz') {
+		window.location = "http://svn.gnome.org/viewvc/beagle/trunk/beagle/AUTHORS?view=markup";
+		return;
+	}
 
-	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="Query"> <IsIndexListener>false</IsIndexListener> <Parts> <Part xsi:type="QueryPart_Human"> <Logic>Required</Logic> <QueryString>' + query_str + '</QueryString> </Part> </Parts> <MimeTypes /> <HitTypes /> <Sources /> <QueryDomain>Local System</QueryDomain> <MaxHits>100</MaxHits> </Message> </RequestWrapper> ';
+	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="Query"> <IsIndexListener>false</IsIndexListener> <Parts> <Part xsi:type="QueryPart_Human"> <Logic>Required</Logic> <QueryString>' + query_str + '</QueryString> </Part> </Parts> <MimeTypes/> <HitTypes/> <Sources/> <QueryDomain>Local System</QueryDomain> <MaxHits>100</MaxHits> </Message> </RequestWrapper> ';
 
 	var begin_date = Date.now ();
 
-	xmlhttp.onreadystatechange = function () {state_change_search (begin_date);};
+	xmlhttp.onreadystatechange = function () {
+		state_change_search (begin_date);
+	};
 	xmlhttp.open ("POST", "/", true);
 	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
 	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
@@ -49,14 +61,6 @@ function search ()
 
 	document.queryform.querytext.disabled = true;
 	document.getElementById ('status').style.display = 'block';
-	// START FIXME: Remove when search filtering is "remembered" between searches
-	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
-	// Uncheck all the categories
-	for (var i = 0; i < category_checkboxes.length; ++i) {
-		category_checkboxes [i].checked = false;
-	}
-	category_is_being_shown = false;
-	// END FIXME
 	return false;
 }
 
@@ -64,7 +68,9 @@ function get_information ()
 {
 	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
 
-	xmlhttp.onreadystatechange = state_change_info;
+	xmlhttp.onreadystatechange = function () {
+		state_change_info ();
+	};
 	xmlhttp.open ("POST", "/", true);
 	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
 	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
@@ -114,51 +120,40 @@ function state_change_search (begin_date)
 		var end_date = Date.now ();
 		var elapsed = (end_date - begin_date)/1000;
 
-		//dump("Response:\n");
-		//dump(xmlhttp.responseText);
-		//dump("\n");
+		dump("Response:\n");
+		dump(xmlhttp.responseText);
+		dump("\n");
 		res = xmlhttp.responseText;
 
 		// if charset is x-user-defined split by \uF7FF
 		// if charset is utf-8, split by FFFD
 		// And dont ask me why!
 		var responses = res.split ('\uFFFD'); 
-		var parser = new DOMParser ();
 
 		// Appending without clearing is bad... mmkay?
-		document.getElementById ('results').innerHTML = '';
-		document.getElementById ('timetaken').innerHTML = (elapsed + ' seconds');
-		document.getElementById ('numhits').innerHTML = 0;
+		reset_document_content ();
+		document.getElementById ('timetaken').textContent = (elapsed + ' seconds');
 		var num_matches = 0;
 
-		// Create blank xml document
-		var doc = document.implementation.createDocument ('', '', null);
-		// Hack to get the xml declaration (https://bugzilla.mozilla.org/show_bug.cgi?id=318086)
-		var xml_decl = doc.createProcessingInstruction ('xml', 'version="1.0" encoding="utf-8"'); 
-
-		// Create element <ResponseWrapper ...>
-		var res_wrapper = doc.createElement ('ResponseWrapper');
-		res_wrapper.setAttribute ('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-		res_wrapper.setAttribute ('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
-
-		// Create element <Message ...>
-		var msg_elem = doc.createElement ('Message');
-		msg_elem.setAttributeNS ('http://www.w3.org/2001/XMLSchema-instance', 'xsi:type', 'HitsAddedResponse');
-
-		// Create element <Hits>
-		var hits_elem = doc.createElement ('Hits');
-
-		// XXX: Process xml nodes before merging and sending to xsl
+		// Process hit xml nodes with xsl and append with javascript
 		for (var i = 0; i < responses.length; ++i) {
-			if (responses [i].length <= 0)
+			if (responses [i].length <= 0)  {
 				continue;
-
+			}
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
 			// FIXME: ignoring all other messages
 			hits = response_dom.getElementsByTagName ('Hit');
 			for (var j = 0; j < hits.length; ++j) {
-				// Clone every <Hit> (and its children) and append inside <Hits>
-				hits_elem.appendChild (hits [j].cloneNode (true));
+				// Copy the hit for modification(s)
+				var div_id = classify_hit (hits [j]);
+				var div = document.getElementById (div_id);
+				// Modifications...
+				var hit = hit_processor.transformToFragment (hits [j], document);
+				// Get timestamp and process it
+				var timestamp = hit.firstChild.firstChild.lastChild;
+				timestamp.innerHTML = '<b>Last Edited:</b>&nbsp;'+humanise_timestamp (timestamp.textContent);
+				// Process Hit using hitresult.xsl and append to `div`
+				div.appendChild (hit);
 			}
 
 			var num_matches_elems = response_dom.getElementsByTagName ('NumMatches');
@@ -166,28 +161,16 @@ function state_change_search (begin_date)
 				var n = parseInt (num_matches_elems [0].textContent);
 				if (n > 0) {
 					num_matches += n;
-					document.getElementById ('numhits').innerHTML = num_matches;
+					document.getElementById ('numhits').textContent = num_matches;
 				}
 			}
 		}
 
-		// Append <Hits> inside <Message ...>
-		msg_elem.appendChild (hits_elem);
-		// Append <Message ...> inside <ResponseWrapper ...>
-		res_wrapper.appendChild (msg_elem);
-		// Append everything inside the blank xml doc
-		doc.appendChild (res_wrapper);
-		doc.insertBefore (xml_decl, res_wrapper);
-
-		// Send	xml doc to xsl for processing
-		var result = xsltProcessor.transformToFragment (doc, document);
-		// Append resultant html inside <div id="results">
-		document.getElementById ('results').appendChild (result);
-		// If no results..
-		if (document.getElementById ('results').textContent == '') {
-			var no_results = document.createElement ('p');
-			no_results.appendChild (document.createTextNode ('No Results'));
-			document.getElementById ('results').appendChild (no_results);
+		set_results_style ();
+		if (num_matches  == 0) {
+			document.getElementById ('NoResults').style.display = 'block';
+		} else {
+			document.getElementById ('NoResults').style.display = 'none';
 		}
 		document.getElementById ('topbar').style.display = 'block';
 		document.getElementById ('status').style.display = 'none';
@@ -211,21 +194,20 @@ function state_change_info ()
 		// if charset is utf-8, split by FFFD
 		// And dont ask me why!
 		var responses = res.split ('\uFFFD'); 
-		var parser = new DOMParser ();
 
-//		Appending without clearing is bad... mmkay?
-		document.getElementById ('results').innerHTML = '';
-		document.getElementById ('topbar').style.display = 'none';
+		// Appending without clearing is bad... mmkay?
+		reset_document_style ();
+		reset_document_content ();
 
-		// there should be only one response in responses
+		// There should be only one response in responses
 		for (var i = 0; i < responses.length; ++i) {
 			if (responses [i].length <= 0)
 				continue;
-			dump (responses [i]);
-			dump ('\n');
+			//dump (responses [i]);
+			//dump ('\n');
 
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
-			var fragment = xsltProcessor.transformToFragment (response_dom, document);
+			var fragment = query_processor.transformToFragment (response_dom, document);
 			document.getElementById ('results').appendChild (fragment);
 		}
 
@@ -235,22 +217,140 @@ function state_change_info ()
 	document.queryform.querytext.disabled = false;
 }
 
-/* Start Fancy Stuff */
-/* This part shows/hides results
- * TODO:
- * - "Remember" choices between searches
- * - Categories.. opinions?
- */
+function classify_hit (hit)
+{
+	var categories = mapping.getElementsByTagName ('Category');
+	var properties = hit.getElementsByTagName ('Property');
+	var matchers, matchers_value, matchers_key, matcher;
+	// Iterate over all the categories in mapping.xml
+categs:	for (var i = 0; i < categories.length; ++i) {
+		matchers = mapping.evaluate ('NotType|Type', categories [i], null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+		// Iterate over all the <NotType> and <Type>s
+		while (matcher = matchers.iterateNext ()) {
+			matchers_key = matcher.getAttribute ('Key');
+			matchers_value = matcher.getAttribute ('Value');
+			// For each property of the hit
+			for (var k = 0; k < properties.length; ++k) {
+				// If it matches
+				if (properties [k].getAttribute ('Key') == matchers_key &&
+				    properties [k].getAttribute ('Value') == matchers_value) {
+					if (matcher.nodeName == "NotType") {
+						// It does not match this category
+						// Go to the next category.
+						continue categs;
+					} else if (matcher.nodeName == "Type") {
+						// Match found, return corresponding div id
+						return categories [i].getAttribute ('Name');
+					}
+				}
+			}
+		}
+	}
+	// No rule for `hit` found, classifying as "Others"
+	return 'Others';
+}
+
+// We're putting these here so they're reused. Much faster this way.
+var regexp = /^(.{4})(.{2})(.{2})/;
+var time = new Date ().toLocaleFormat ("%Y%m%d%H%M%S");
+var timestamp = new Date ();
+function humanise_timestamp (ts) 
+{
+	var array = regexp.exec (ts);
+	timestamp.setFullYear (array [1]);
+	// Erm. Months are counted from 0 in javascript for some reason <_<
+	timestamp.setMonth (array [2] - 1);
+	timestamp.setDate (array [3]);
+	// < 1 day
+	if ( (time - ts) < 1000000 ) {
+		return "Today";
+	// < 2 days
+	} else if ( (time - ts) < 2000000 ) {
+		return "Yesterday";
+	// < 7 days
+	} else if ( (time - ts) < 7000000 ) {
+		return timestamp.toLocaleFormat ('%A');
+	// < 1 year
+	} else if ( (time - ts) < 10000000000 ) {
+		return timestamp.toLocaleFormat ('%B %e');
+	} else {
+		return timestamp.toLocaleFormat ('%B %e, %Y')
+	}
+}
+
+function category_was_being_shown ()
+{
+	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
+	for (var i = 0; i < category_checkboxes.length; ++i) {
+		if (category_checkboxes [i].checked) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// FIXME: This should just use index.xsl or something
+function reset_document_content ()
+{
+	var results = document.getElementById ('results');
+	var categories = document.getElementById ('topbar-left').getElementsByTagName ('input');
+	var div;
+	// Reset the hit results
+	results.innerHTML = '';
+	for (var i = 0; i < categories.length; ++i) {
+		div = document.createElement ('div');
+		div.setAttribute ('class', 'Hits');
+		div.setAttribute ('id', categories [i].name);
+		results.appendChild (div);
+	}
+	div = document.createElement ('div');
+	div.setAttribute ('class', 'Hits');
+	div.setAttribute ('id', 'NoResults');
+	div.setAttribute ('style', 'display: none;');
+	div.appendChild (document.createTextNode ('No Results'));
+	results.appendChild (div);
+	document.getElementById ('numhits').textContent = '0';
+}
+
+function reset_document_style ()
+{
+	document.getElementById ('topbar').style.display = 'none';
+	var results_categories = document.getElementById ('results').childNodes;
+	// Reset the hit results' display
+	for (var i = 0; i < results_categories.length; ++i) {
+		results_categories [i].style.display = 'none';
+	}
+}
+
+function set_results_style ()
+{
+	// XXX Gotcha: this code assumes the arrays below match w.r.t. their indexes
+	// This will always be satisfied however, see mapping.xml: Note 2
+	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
+	var results_categories = document.getElementById ('results').childNodes;
+	if (category_was_being_shown ()) {
+		for (var i = 0; i < category_checkboxes.length; ++i) {
+			if (category_checkboxes [i].checked) {
+				results_categories [i].style.display = 'block';
+				category_is_being_shown = true;
+			}
+		}
+	} else {
+		for (var i = 0; i < results_categories.length; ++i) {
+			results_categories [i].style.display = 'block';
+		}
+	}
+}
 
 function toggle_hit (hit_toggle)
 {
-	if (hit_toggle.innerHTML == '[-]') {
-		hit_toggle.innerHTML = '[+]';
+	if (hit_toggle.textContent == '[-]') {
+		hit_toggle.textContent = '[+]';
 		//this.<span class="Uri">.<div class="Title">.<br/>.<div class="Data">
 		hit_toggle.parentNode.parentNode.nextSibling.nextSibling.style.display = 'none';
 
 	} else {
-		hit_toggle.innerHTML = '[-]';
+		hit_toggle.textContent = '[-]';
 		hit_toggle.parentNode.parentNode.nextSibling.nextSibling.style.display = 'block';
 	}
 }
@@ -263,10 +363,10 @@ function show_all ()
 	// Get all the category checkboxes
 	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
 	// Get all the result categories
-	var result_categories = document.getElementById ('results').childNodes;
+	var results_categories = document.getElementById ('results').childNodes;
 	// Show all results
-	for (var i = 0; i < result_categories.length; ++i) {
-		result_categories [i].style.display = 'block';
+	for (var i = 0; i < results_categories.length; ++i) {
+		results_categories [i].style.display = 'block';
 	}
 	// Uncheck all the categories
 	for (var i = 0; i < category_checkboxes.length; ++i) {
@@ -277,17 +377,17 @@ function show_all ()
 
 function toggle_category (category)
 {
-	// Get all the result categories
-	var result_categories = document.getElementById ('results').childNodes;
+	// Get all the results' categories
+	var results_categories = document.getElementById ('results').childNodes;
 	// if checked right now
 	if (category.checked) {
 		// If none of the categories are being shown..
 		if (category_is_being_shown == false) {
 			// Hide all results except the one selected
-			for (var i = 0; i < result_categories.length; ++i) {
-				if (result_categories [i].id == category.name)
+			for (var i = 0; i < results_categories.length; ++i) {
+				if (results_categories [i].id == category.name)
 					continue;
-				result_categories [i].style.display = 'none';
+				results_categories [i].style.display = 'none';
 			}
 		} else {
 			// Show result corresponding to category
@@ -299,3 +399,29 @@ function toggle_category (category)
 		document.getElementById (category.name).style.display = 'none';
 	}
 }
+
+/******* Initial fetching and loading of the xsl/xml files *********/
+
+// This works everywhere except IE
+var xmlhttp = new XMLHttpRequest (); 
+var query_processor = new XSLTProcessor ();
+var hit_processor = new XSLTProcessor ();
+var parser = new DOMParser ();
+var mapping;
+
+// Load queryresult.xsl using synchronous (third param is set to false) XMLHttpRequest
+xmlhttp.open ("GET", "/queryresult.xsl", false);
+xmlhttp.send (null);
+
+// Process it and store it for later reuse
+query_processor.importStylesheet (xmlhttp.responseXML);
+
+// Get Hit processing xsl
+xmlhttp.open ("GET", "/hitresult.xsl", false);
+xmlhttp.send (null);
+hit_processor.importStylesheet (xmlhttp.responseXML);
+
+// Get the mapping xml
+xmlhttp.open ("GET", "/mapping.xml", false);
+xmlhttp.send (null);
+mapping = xmlhttp.responseXML;

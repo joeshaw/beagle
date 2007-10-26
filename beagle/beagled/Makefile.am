@@ -4,12 +4,18 @@ autostart_DATA = beagled-autostart.desktop
 webinterfacedir = $(datadir)/beagle/webinterface
 webinterface_DATA =				\
 	$(srcdir)/webinterface/default.js	\
-	$(srcdir)/webinterface/beagle-logo.png	\
-	$(srcdir)/webinterface/query.html	\
+	$(srcdir)/webinterface/index.xml	\
+	$(srcdir)/webinterface/mapping.xml	\
+	$(srcdir)/webinterface/index.xsl	\
+	$(srcdir)/webinterface/hitresult.xsl	\
 	$(srcdir)/webinterface/queryresult.xsl	\
-	$(srcdir)/webinterface/default.css	\
-	$(srcdir)/webinterface/ajax-loader.gif	\
-	$(srcdir)/webinterface/title_bg.png
+	$(srcdir)/webinterface/default.css
+
+webinterfaceimagesdir = $(webinterfacedir)/images
+webinterfaceimages_DATA =				\
+	$(srcdir)/webinterface/images/beagle-logo.png	\
+	$(srcdir)/webinterface/images/busy-animation.gif	\
+	$(srcdir)/webinterface/images/title_bg.png
 
 # Warnings we don't want to see.
 # Most of these are thanks to DotLucene.  It would be nice if we could use
@@ -977,6 +983,7 @@ noinst_SCRIPTS=	\
 EXTRA_DIST = \
 	$(autostart_DATA)			\
 	$(webinterface_DATA)			\
+	$(webinterfaceimages_DATA)		\
 	$(WRAPPER_IN)   			\
 	$(DAEMON_WRAPPER_IN)			\
 	$(INDEX_HELPER_WRAPPER_IN)		\

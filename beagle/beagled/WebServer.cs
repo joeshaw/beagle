@@ -57,14 +57,17 @@ namespace Beagle.Daemon {
 		{
 			mappings = new Dictionary<string, PageMapping> ();
 
-			mappings.Add ("/", new PageMapping ("query.html", "text/html; charset=utf-8"));
-			mappings.Add ("/queryresult.xsl", new PageMapping ("queryresult.xsl", "application/xml; charset=utf-8"));
+			mappings.Add ("/", new PageMapping ("index.xml", "text/xml; charset=utf-8"));
+			mappings.Add ("/mapping.xml", new PageMapping ("mapping.xml", "text/xml; charset=utf-8"));
+			mappings.Add ("/index.xsl", new PageMapping ("index.xsl", "text/xml; charset=utf-8"));
+			mappings.Add ("/queryresult.xsl", new PageMapping ("queryresult.xsl", "text/xml; charset=utf-8"));
+			mappings.Add ("/hitresult.xsl", new PageMapping ("hitresult.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/default.css", new PageMapping ("default.css", "text/css"));
 			// If E4X is needed, change the content-type here
 			mappings.Add ("/default.js", new PageMapping ("default.js", "text/javascript"));
-			mappings.Add ("/title_bg.png", new PageMapping ("title_bg.png", "image/png"));
-			mappings.Add ("/beagle-logo.png", new PageMapping ("beagle-logo.png", "image/png"));
-			mappings.Add ("/ajax-loader.gif", new PageMapping ("ajax-loader.gif", "image/gif"));
+			mappings.Add ("/images/title_bg.png", new PageMapping ("images/title_bg.png", "image/png"));
+			mappings.Add ("/images/beagle-logo.png", new PageMapping ("images/beagle-logo.png", "image/png"));
+			mappings.Add ("/images/busy-animation.gif", new PageMapping ("images/busy-animation.gif", "image/gif"));
 
 			webserver_dir = Environment.GetEnvironmentVariable ("BEAGLE_WEBSERVER_DIR");
 			if (webserver_dir != null && Directory.Exists (webserver_dir))
