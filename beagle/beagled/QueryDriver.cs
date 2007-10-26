@@ -520,9 +520,13 @@ namespace Beagle.Daemon {
 					       QueryResult          result,
 					       IQueryableChangeData change_data)
 		{
-			if (queryable.AcceptQuery (query)) {
-				QueryClosure qc = new QueryClosure (queryable, query, result, change_data);
-				result.AttachWorker (qc);
+			try {
+				if (queryable.AcceptQuery (query)) {
+					QueryClosure qc = new QueryClosure (queryable, query, result, change_data);
+					result.AttachWorker (qc);
+				}
+			} catch (Exception ex) {
+				Logger.Log.Warn (ex, "Caught exception calling DoOneQuery on '{0}'", queryable.Name);
 			}
 		}
 
@@ -622,8 +626,7 @@ namespace Beagle.Daemon {
 			return search_term_response;
 		}
 
-		static private void QueryEachQueryable (Query       query,
-							QueryResult result)
+		static private void QueryEachQueryable (Query query, QueryResult result)
 		{
 			// The extra pair of calls to WorkerStart/WorkerFinished ensures:
 			// (1) that the QueryResult will fire the StartedEvent

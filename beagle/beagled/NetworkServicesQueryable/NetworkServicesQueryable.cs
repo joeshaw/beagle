@@ -26,7 +26,8 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 		public bool AcceptQuery (Query query)
 		{
-			return (Conf.Networking.GetListOptionValues (Conf.Names.NetworkServices).Count > 0);
+			List<string[]> services = Conf.Networking.GetListOptionValues (Conf.Names.NetworkServices);
+			return (services != null && services.Count > 0);
 		}
 
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData data)
@@ -44,7 +45,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			ArrayList hits = new ArrayList ();
 
 			query.Keepalive = false;
-			query.Send ();
+			query.SendAsync ();
 
 			result.Add (hits);
 		}
