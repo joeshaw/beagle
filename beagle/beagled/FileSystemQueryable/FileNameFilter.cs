@@ -161,11 +161,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Config config = Conf.Get (Conf.Names.FilesQueryableConfig);
 
 			List<string[]> values = config.GetListOptionValues (Conf.Names.ExcludeSubdirectory);
-			foreach (string[] exclude in values) {
-				// Excluded subdirectories can use environment variables
-				// like $HOME/tmp
-				string expanded_exclude = StringFu.ExpandEnvVariables (exclude [0]);
-				AddExclude (expanded_exclude, false);
+			if (values != null) {
+				foreach (string[] exclude in values) {
+					// Excluded subdirectories can use environment variables
+					// like $HOME/tmp
+					string expanded_exclude = StringFu.ExpandEnvVariables (exclude [0]);
+					AddExclude (expanded_exclude, false);
+				}
 			}
 
 			values = config.GetListOptionValues (Conf.Names.ExcludePattern);
