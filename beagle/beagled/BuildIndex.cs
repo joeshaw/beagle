@@ -66,7 +66,8 @@ namespace Beagle.Daemon
 			"FileAttributesStore.db",
 			"fingerprint",
 			"version",
-			"filterver.dat"
+			"filterver.dat",
+			"StaticIndex.xml"
 		};
 		
 		static string [] allowed_dirs = {
@@ -272,6 +273,32 @@ namespace Beagle.Daemon
 				}
 			}
 
+			string config_file_path = Path.Combine (arg_output, "StaticIndex.xml");
+			string prev_source = null;
+			if (File.Exists (config_file_path)) {
+				Config static_index_config = Conf.LoadFrom (config_file_path);
+				if (static_index_config == null) {
+					Log.Error ("Invalid configuation file {0}", config_file_path);
+					Environment.Exit (1);
+				}
+
+				prev_source = static_index_config.GetOption ("Source", null);
+				if (arg_source != null && prev_source != arg_source) {
+					Log.Error ("Source already set to {0} for existing static index. Cannot set source to {1}.", prev_source, arg_source);
+					Environment.Exit (1);
+				}
+
+				// If arg_source is not given, and prev_source is present, use prev_source
+				// as the arg_source. This is useful for re-running build-index without
+				// giving --arg_source for already existing static index
+				arg_source = prev_source;
+			}
+
+			if (arg_source == null) {
+				DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
+				arg_source = dir.Name;
+			}
+
 			if (SystemInformation.UsingBattery && arg_disable_on_battery) {
 				Log.Always ("Indexer is disabled when on battery power (--disable-on-battery)");
 				Environment.Exit (0);
@@ -330,6 +357,19 @@ namespace Beagle.Daemon
 
 			watch.Stop ();
 			Logger.Log.Debug ("Elapsed time {0}.", watch);
+
+			// Write this after indexing is done. This is because, if creating a new index,
+			// LuceneIndexingDriver.Create() is called which purges the entire directory.
+
+			if (prev_source == null) {
+				Config static_index_config = Conf.LoadNew ("StaticIndex.xml");
+
+				// Write StaticIndex.xml containing:
+				// The name of the source
+				static_index_config.SetOption ("Source", arg_source);
+				static_index_config ["Source"].Description = "Source of the static index";
+				Conf.SaveTo (static_index_config, config_file_path);
+			}
 
 			if (restart) {
 				Logger.Log.Debug ("Restarting beagle-build-index");
@@ -462,11 +502,6 @@ namespace Beagle.Daemon
 			// Tag the item for easy identification (for say, removal)
 			if (arg_tag != null)
 				indexable.AddProperty (Property.NewUnsearched("Tag", arg_tag));
-
-			if (arg_source == null) {
-				DirectoryInfo dir = new DirectoryInfo (StringFu.SanitizePath (arg_output));
-				arg_source = dir.Name;
-			}
 
 			indexable.Source = arg_source;
 

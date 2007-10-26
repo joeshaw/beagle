@@ -295,21 +295,40 @@ namespace Beagle.Daemon {
 				Logger.Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
 				return false;
 			}
-			
-			if (static_queryable != null) {
-				QueryableFlavor flavor = new QueryableFlavor ();
-				flavor.Name = index_dir.Name;
-				flavor.Domain = query_domain;
-				
-				Queryable queryable = new Queryable (flavor, static_queryable);
-				queryables.Add (queryable);
-				
-				iqueryable_to_queryable [static_queryable] = queryable;
 
-				return true;
+			if (static_queryable == null)
+				return false;
+
+			// Load StaticIndex.xml from index_dir.FullName/config
+			string config_file_path = Path.Combine (index_dir.FullName, "StaticIndex.xml");
+			Config static_index_config;
+			try {
+				static_index_config = Conf.LoadFrom (config_file_path);
+				if (static_index_config == null) {
+					Log.Error ("Unable to read config from {0}", config_file_path);
+					return false;
+				}
+			} catch (Exception e) {
+				Log.Error (e, "Caught exception while reading config from {0}", config_file_path);
+				return false;
 			}
 
-			return false;
+			string source = static_index_config.GetOption ("Source", null);
+			if (source == null) {
+				Log.Error ("Invalid config file: {0}", config_file_path);
+				return false;
+			}
+
+			QueryableFlavor flavor = new QueryableFlavor ();
+			flavor.Name = source;
+			flavor.Domain = query_domain;
+
+			Queryable queryable = new Queryable (flavor, static_queryable);
+			queryables.Add (queryable);
+
+			iqueryable_to_queryable [static_queryable] = queryable;
+
+			return true;
 		}
 
 		////////////////////////////////////////////////////////

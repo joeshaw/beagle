@@ -54,7 +54,10 @@ namespace Beagle.Util {
 	 * - To get the list of values for a list option:
 	 * List<string[]> values = config.GetListOptionValues (<name of option>);
 	 *
-	 * Both params and values can be null if the option is not found in the files.
+	 * Both params and values can be null if the option is not found.
+	 * SetOption will set existing bool/string options or create new string/bool options.
+	 * To create new list option, use NewListOption.
+	 *
 	 * Some standard config names and option names are listed in Conf.Names to avoid ambiguity.
 	 * If Conf.WatchForUpdates() is called, subsequent Conf.Get returns the
 	 * latest copy of the configuration and also caches the copy for future
@@ -257,7 +260,7 @@ namespace Beagle.Util {
 				return config;
 			}
 
-			return Config.LoadNew (name);
+			return LoadNew (name);
 		}
 
 		// Shorthands for these 4 popular configs
@@ -314,7 +317,7 @@ namespace Beagle.Util {
 
 		private static XmlSerializer conf_ser = new XmlSerializer (typeof (Config));
 
-		private static Config LoadFrom (string path)
+		public static Config LoadFrom (string path)
 		{
 			if (! File.Exists (path))
 				return null;
@@ -326,6 +329,13 @@ namespace Beagle.Util {
 				Log.Debug ("Done reading conf from " + path);
 			}
 
+			return config;
+		}
+
+		public static Config LoadNew (string name)
+		{
+			Config config = new Config ();
+			config.Name = name;
 			return config;
 		}
 
@@ -353,6 +363,25 @@ namespace Beagle.Util {
 			}
 
 			watching_for_updates = watching_for_updates_current;
+		}
+
+		public static void SaveTo (Config config, string path)
+		{
+			if (config == null)
+				return;
+
+			bool to_save = false;
+			foreach (Option option in config.Options.Values)
+				if (! option.Global)
+					to_save = true;
+
+			if (! to_save)
+				return;
+
+			using (StreamWriter writer = new StreamWriter (path)) {
+				conf_ser.Serialize (writer, config);
+				Console.WriteLine ("Done writing to " + path);
+			}
 		}
 
 		private static void CheckOldConfig ()
@@ -530,13 +559,6 @@ namespace Beagle.Util {
 		[XmlAttribute]
 		public string Name = String.Empty;
 
-		internal static Config LoadNew (string name)
-		{
-			Config config = new Config ();
-			config.Name = name;
-			return config;
-		}
-
 		private Hashtable options = new Hashtable ();
 
 		[XmlIgnore]
@@ -597,14 +619,21 @@ namespace Beagle.Util {
 			return option.Value;
 		}
 
-		public bool SetOption (string name, bool value)
+		public void SetOption (string name, bool value)
 		{
 			BoolOption option = this [name] as BoolOption;
-			if (option == null)
-				return false;
+			if (option == null) {
+				if (name == null)
+					throw new ArgumentException ("name cannot be null", "name");
+				if (options.Contains (name))
+					throw new ArgumentException ("cannot overwrite another option with the same name", "name");
+				option = new BoolOption ();
+				option.Name = name;
+				option.Global = false;
+				Options [name] = option;
+			}
 
 			option.Value = value;
-			return true;
 		}
 
 		public string GetOption (string name, string default_value)
@@ -616,14 +645,21 @@ namespace Beagle.Util {
 			return option.Value;
 		}
 
-		public bool SetOption (string name, string value)
+		public void SetOption (string name, string value)
 		{
 			StringOption option = this [name] as StringOption;
-			if (option == null)
-				return false;
+			if (option == null) {
+				if (name == null)
+					throw new ArgumentException ("name cannot be null", "name");
+				if (options.Contains (name))
+					throw new ArgumentException ("cannot overwrite another option with the same name", "name");
+				option = new StringOption ();
+				option.Name = name;
+				option.Global = false;
+				Options [name] = option;
+			}
 
 			option.Value = value;
-			return true;
 		}
 
 		public string[] GetListOptionParams (string name)
@@ -642,6 +678,31 @@ namespace Beagle.Util {
 				return null;
 
 			return option.Values;
+		}
+
+		public bool NewListOption (string name, char separator, string[] param_names)
+		{
+			ListOption option = this [name] as ListOption;
+			if (option != null)
+				return false;
+
+			if (name == null)
+				throw new ArgumentException ("name cannot be null", "name");
+			if (param_names == null)
+				throw new ArgumentException ("params cannot be null", "param_names");
+			if (param_names.Length == 0)
+				throw new ArgumentException ("params should contain non-zero values", "param_names");
+			if (this [name] != null)
+				throw new ArgumentException ("cannot overwrite another option with the same name", "name");
+
+			option = new ListOption ();
+			option.Name = name;
+			option.Global = false;
+			option.Separator = separator;
+			option.Parameter_String = String.Join (separator.ToString (), param_names);
+			Options [name] = option;
+
+			return true;
 		}
 
 		public bool SetListOptionValues (string name, List<string[]> values)
