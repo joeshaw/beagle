@@ -66,7 +66,6 @@
 		</div>
 		<div id="footer">
 			<xsl:call-template name="footer"/>
-			<a href="chrome://global/content/filepicker.xul"> abcd </a>
 		</div>
 	</body>
 </xsl:template>
