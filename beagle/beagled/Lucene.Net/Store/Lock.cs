@@ -81,7 +81,9 @@ namespace Lucene.Net.Store
 						fs.Close ();
 						ex.Append (" -- pid ").Append (pid);
 
-						if (System.IO.Directory.Exists ("/proc/" + pid))
+						if (pid == String.Empty)
+							ex.Append ("(empty)");
+						else if (System.IO.Directory.Exists ("/proc/" + pid))
 							ex.Append (" -- process exists");
 						else
 							ex.Append (" -- process does not exist, stale lockfile?");

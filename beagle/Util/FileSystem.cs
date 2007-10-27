@@ -150,4 +150,7 @@ namespace Beagle.Util {
 
 	}
 
+	public class NoSpaceException : Exception {
+	}
+
 }

@@ -82,11 +82,14 @@ namespace Lucene.Net.Store
 				Mono.Unix.Native.OpenFlags.O_CREAT |
 				Mono.Unix.Native.OpenFlags.O_EXCL,
 				Mono.Unix.Native.FilePermissions.S_IRUSR);
-		    if (fd == -1)
-			    throw new System.IO.IOException ("Could not create lock file: "
-				    + Mono.Unix.Native.Stdlib.strerror (
-					    Mono.Unix.Native.Stdlib.GetLastError ()
-				    ));
+		    if (fd == -1) {
+			    Mono.Unix.Native.Errno error = Mono.Unix.Native.Stdlib.GetLastError ();
+			    if (error == Mono.Unix.Native.Errno.ENOSPC)
+				    throw new Beagle.Util.NoSpaceException ();
+			    else
+				    throw new System.IO.IOException ("Could not create lock file: "
+					    + Mono.Unix.Native.Stdlib.strerror (error));
+		    }
 
 		    // This code replaces the commented-out code below because
 		    // it ends up being much faster.  The reason for this is
@@ -108,7 +111,13 @@ namespace Lucene.Net.Store
 			    do {
 				    ret = Mono.Unix.Native.Syscall.write (fd, ptr, (ulong) s.Length);
 			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
-			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
+			    if ((int)ret == -1) {
+				    Mono.Unix.Native.Errno error = Mono.Unix.Native.Stdlib.GetLastError ();
+				    if (error == Mono.Unix.Native.Errno.ENOSPC)
+					    throw new Beagle.Util.NoSpaceException ();
+				    else
+					    Mono.Unix.UnixMarshal.ThrowExceptionForError (error);
+			    }
 		    } finally {
 			    Mono.Unix.UnixMarshal.FreeHeap (ptr);
 
@@ -123,6 +132,10 @@ namespace Lucene.Net.Store
 		    //w.Close ();
                     return true;
                 }
+		catch (Beagle.Util.NoSpaceException e)
+		{
+			throw e;
+		}
                 catch (Exception e)
                 {
 		    Log ("Exception in CreateNew for file:" + lockFile.FullName + ":" + e);
