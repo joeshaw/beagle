@@ -50,10 +50,12 @@ namespace Beagle.Daemon
 			"FileAttributesStore.db",
 			"fingerprint",
 			"version",
-			"filterver.dat"
+			"filterver.dat",
+			"StaticIndex.xml"
 		};
 		
 		static string [] allowed_dirs = {
+			"config",
 			"Locks",
 			"PrimaryIndex",
 			"SecondaryIndex",
