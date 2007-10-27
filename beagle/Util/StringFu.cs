@@ -703,7 +703,9 @@ namespace Beagle.Util {
 			
 			System.Text.StringBuilder sb = 
 				new System.Text.StringBuilder ( (dollar_pos == 0 ? "" : path.Substring (0, dollar_pos)));
-			
+
+			bool env_var_found = false;
+
 			while (dollar_pos != -1 && dollar_pos + 1 < path.Length) {
 				// FIXME: kconfigbase.cpp contains an additional case, $(expression)/.kde/...
 				// Ignoring such complicated expressions for now. Volunteers ;) ?
@@ -725,11 +727,15 @@ namespace Beagle.Util {
 							end_pos ++;
 						var_name = path.Substring (dollar_pos + 1, end_pos - dollar_pos - 1);
 					}
+
 					string value_env = null;
 					if (var_name != String.Empty)
 						value_env = Environment.GetEnvironmentVariable (var_name);
 					if (value_env != null) {
 						sb.Append (value_env);
+						env_var_found = true;
+					} else {
+						env_var_found = false;
 					}
 					// else, no environment variable with that name exists. ignore
 				}else // else, ignore the first '$', second one will be expanded
@@ -743,6 +749,9 @@ namespace Beagle.Util {
 					sb.Append (path.Substring (end_pos, dollar_pos - end_pos));
 				}
 			}
+
+			if (! env_var_found)
+				return null;
 
 			return sb.ToString ();
 		}

@@ -726,7 +726,6 @@ namespace Beagle.Daemon {
 				}
 			} while (!success);
 
-			Console.WriteLine (http_listener.Prefixes.Count);
 			Shutdown.WorkerStart (this.http_listener, String.Format ("HTTP Server '{0}'", prefix));
 			Log.Always ("HTTP Server: Listening on {0}", prefix);
 
