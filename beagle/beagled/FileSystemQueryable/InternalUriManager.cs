@@ -306,13 +306,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		internal void RegisterNewId (string name, DirectoryModel dir, Guid id)
 		{
-			Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
+			//Log.Debug ("Registering {0}={1}", name, GuidFu.ToShortString (id));
 			cached_uid_by_path [Path.Combine (dir.FullName, name)] = id;
 		}
 
 		internal void ForgetNewId (string path)
 		{
-			Log.Debug ("Forgetting {0}", path);
+			//Log.Debug ("Forgetting {0}", path);
 			cached_uid_by_path.Remove (path);
 		}
 

@@ -48,8 +48,6 @@ namespace Beagle.Daemon {
 
 	public class TextCache {
 
-		static public bool Debug = false;
-
 		private const string SELF_CACHE_TAG = "*self*";
 		private const string BLOB_TAG = "*blob*";
 
@@ -321,7 +319,7 @@ namespace Beagle.Daemon {
 				if (stream != null)
 					throw new Exception ("Already writing to a file on disk.");
 
-				Log.Debug ("Large cached text, storing in file {0}", path);
+				//Log.Debug ("Large cached text, storing in file {0}", path);
 				FileStream file_stream = new FileStream (path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
 				// We don't expect to need this again in the near future.
 				FileAdvise.FlushCache (file_stream);
@@ -397,12 +395,12 @@ namespace Beagle.Daemon {
 			// - if buffer is null, write <uri, path, null> in db
 			if (buffer == null) {
 				Insert (uri, path, null);
-				Log.Debug ("Storing {0} on disk: {1}", uri, path);
+				//Log.Debug ("Storing {0} on disk: {1}", uri, path);
 			} else {
 			// - if buffer is not null, remove earlier file at path and write <uri, ** BLOB **, buffer> in db
 				File.Delete (Path.Combine (text_cache_dir, path));
 				Insert (uri, BLOB_TAG, buffer);
-				Log.Debug ("Storing {0} on db with {1} bytes", uri, buffer.Length);
+				//Log.Debug ("Storing {0} on db with {1} bytes", uri, buffer.Length);
 			}
 		}
 
