@@ -59,7 +59,14 @@ function search ()
 	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
 	xmlhttp.send (req_string);
 
+	// https://bugzilla.mozilla.org/show_bug.cgi?id=167801
+	// The focus would have moved to some hidden element and would be
+	// lost foreveh! Instead ... we cheat and set the focus explicitly
+	// to a harmless element.
+	document.queryform.querysubmit.focus ();
+
 	document.queryform.querytext.disabled = true;
+	document.queryform.querysubmit.disabled = true;
 	document.getElementById ('status').style.display = 'block';
 	return false;
 }
@@ -78,6 +85,7 @@ function get_information ()
 	xmlhttp.send (req_string);
 
 	document.queryform.querytext.disabled = true;
+	document.queryform.querysubmit.disabled = true;
 	document.getElementById ('status').style.display = 'block';
 	return false;
 }
@@ -98,6 +106,7 @@ function shutdown_beagle ()
 				document.getElementById ('results').innerHTML = '<i>Shutdown request sent to beagle</i>';
 				document.getElementById ('status').style.display = 'none';
 				document.queryform.querytext.disabled = false;
+				document.queryform.querysubmit.disabled = false;
 			}
 		}
 
@@ -108,6 +117,7 @@ function shutdown_beagle ()
 	xmlhttp.send (req_string);
 
 	document.queryform.querytext.disabled = true;
+	document.queryform.querysubmit.disabled = true;
 	document.getElementById ('status').style.display = 'block';
 	return false;
 }
@@ -177,6 +187,8 @@ function state_change_search (begin_date)
 	}
 
 	document.queryform.querytext.disabled = false;
+	document.queryform.querytext.focus ();
+	document.queryform.querysubmit.disabled = false;
 }
 
 function state_change_info ()
@@ -215,6 +227,7 @@ function state_change_info ()
 	}
 
 	document.queryform.querytext.disabled = false;
+	document.queryform.querysubmit.disabled = false;
 }
 
 function classify_hit (hit)

@@ -101,6 +101,11 @@ body {
 	padding-right: .5em;
 }
 
+[disabled]{
+	color:#933;
+	background-color:gray;
+}
+
 /************ End status; Start result listing ***************/
 #results {
 	clear: left;
