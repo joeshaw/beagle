@@ -11,10 +11,11 @@ ImLogViewer/ImLogViewer.glade
 ImLogViewer/ImLogWindow.cs
 search/beagle-search.desktop.in.in
 search/Category.cs
-search/ConversationCategory.cs
 search/Entry.cs
 search/GroupView.cs
 search/NotificationArea.cs
+search/ListCategory.cs
+search/WidgetFu.cs
 search/Pages/Base.cs
 search/Pages/NoMatch.cs
 search/Pages/QuickTips.cs
@@ -54,7 +55,6 @@ search/Tiles/TileTemplate.cs
 search/Tiles/Utils.cs
 search/Tiles/Video.cs
 search/Tiles/WebHistory.cs
-search/Tiles/WidgetFu.cs
 search/Tray/NotificationArea.cs
 search/Tray/TrayIcon.cs
 search/TypeFilter.cs
@@ -64,7 +64,7 @@ tools/Settings.cs
 tools/settings.glade
 tools/beagle-settings.desktop.in.in
 Util/ChmFile.cs
-Util/Conf.cs
+Util/Config.cs
 Util/Evolution.cs
 Util/F-Spot/Exif.cs
 Util/F-Spot/IptcFile.cs
