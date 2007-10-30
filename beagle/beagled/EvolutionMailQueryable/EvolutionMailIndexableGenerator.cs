@@ -105,8 +105,8 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		protected bool IgnoreFolder (string path)
 		{
 			// FIXME: Use System.IO.Path
-			foreach (ExcludeItem exclude in excludes) {
-				if (exclude.IsMatch (path))
+			foreach (string exclude in excludes) {
+				if (path.StartsWith (exclude))
 					return true;
 			}
 			return false;

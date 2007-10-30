@@ -174,10 +174,10 @@ namespace Beagle.Daemon
 
 					if (next_arg.IndexOf (',') != -1) {
 						foreach (string pattern in next_arg.Split (','))
-							allowed_patterns.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+							allowed_patterns.Add (pattern);
 						
 					} else {
-						allowed_patterns.Add (new ExcludeItem (ExcludeType.Pattern, next_arg));
+						allowed_patterns.Add (next_arg);
 					}
 					
 					++i;
@@ -189,10 +189,10 @@ namespace Beagle.Daemon
 
 					if (next_arg.IndexOf (',') != -1) {
 						foreach (string pattern in next_arg.Split (','))
-							denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
+							denied_patterns.Add (pattern);
 
 					} else {
-						denied_patterns.Add (new ExcludeItem (ExcludeType.Pattern, next_arg));
+						denied_patterns.Add (next_arg);
 					}
 
 					++i;

@@ -44,22 +44,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private ArrayList exclude_paths = new ArrayList ();
 		
 		// User defined exclude patterns
+		private Regex exclude_regex = null;
 		private ArrayList exclude_patterns = new ArrayList ();
-		private Dictionary<string, ExcludeItem> exclude_patterns_table = new Dictionary<string, ExcludeItem> ();
 
-		// Our default exclude patterns
-		private ArrayList exclude_patterns_default = new ArrayList ();
-
-		/////////////////////////////////////////////////////////////
-
-		// Setup our default exclude patterns.
-
-		private void AddDefaultPatternToIgnore (IEnumerable patterns)
-		{
-			foreach (string pattern in patterns)
-				exclude_patterns_default.Add (new ExcludeItem (ExcludeType.Pattern, pattern));
-		}
-		
 		/////////////////////////////////////////////////////////////
 
 		private void AddExclude (string value, bool is_pattern)
@@ -75,7 +62,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				queryable.RemoveDirectory (value);
 			} else {
 				exclude_patterns.Add (value);
-				exclude_patterns_table.Add (value, new ExcludeItem (ExcludeType.Pattern, value));
 			}
 		}
 
@@ -88,7 +74,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				exclude_paths.Remove (value);
 			} else {
 				exclude_patterns.Remove (value);
-				exclude_patterns_table.Remove (value);
 			}
 		}
 		
@@ -129,6 +114,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				foreach (string[] exclude in values)
 					// RemoveQuotes from beginning and end
 					AddExclude (exclude [0], true);
+
+			exclude_regex = StringFu.GetPatternRegex (exclude_patterns);
 
 			Conf.WatchForUpdates ();
 			Conf.Subscribe (Conf.Names.FilesQueryableConfig, OnConfigurationChanged);
@@ -190,6 +177,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// Process any excludes we found to be new
 				foreach (string pattern in excludes_to_add)
 					AddExclude (pattern, true);
+
+				exclude_regex = StringFu.GetPatternRegex (exclude_patterns);
 			}
 
 			// If an exclude pattern is removed, we need to recrawl everything
@@ -233,15 +222,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					return true;
 			
 			// Exclude patterns
-			foreach (string pattern in exclude_patterns_table.Keys)
-				if (exclude_patterns_table [pattern].IsMatch (name))
-					return true;
-			
-			// Default exclude patterns
-			//foreach (ExcludeItem exclude in exclude_patterns_default)
-			//	if (exclude.IsMatch (name))
-			//		return true;
-			
+			if (exclude_regex != null && exclude_regex.IsMatch (name))
+				return true;
+
 			if (parent == null) {
 				if (Debug)
 					Logger.Log.Debug ("*** Parent is null (name={0}, is_directory={1}", name, is_directory);
