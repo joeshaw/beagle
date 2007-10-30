@@ -694,6 +694,8 @@ namespace Lucene.Net.Index
 					int minSegment = segmentInfos.Count - mergeFactor;
 					MergeSegments(minSegment < 0?0:minSegment);
 				}
+
+				segmentInfos.Optimize (directory);
 			}
 		}
 		

@@ -150,5 +150,26 @@ namespace Lucene.Net.Index
 			sis.Read(directory);
 			return sis.GetVersion();
 		}
+
+		public void Optimize(Directory directory)
+		{
+			string[] files = directory.List();
+
+			System.Collections.ArrayList segment_names = new System.Collections.ArrayList();
+			foreach (SegmentInfo si in this)
+				segment_names.Add (si.name);
+
+			foreach (string file in files) {
+				string basename = System.IO.Path.GetFileNameWithoutExtension (file);
+				if (segment_names.Contains (basename))
+					continue;
+
+				if (basename == IndexFileNames.DELETABLE || basename == IndexFileNames.SEGMENTS)
+					continue;
+
+				Console.WriteLine ("WARNING! Deleting stale data {0}", file);
+				directory.DeleteFile (file);
+			}
+		}
 	}
 }
