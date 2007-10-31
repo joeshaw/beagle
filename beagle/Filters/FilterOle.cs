@@ -62,12 +62,11 @@ namespace Beagle.Filters {
 				Input input = new InputStdio (info.FullName);
 				
 				if (input != null) {
-					Input uncompressed_input = input.Uncompress();
+					input = input.Uncompress();
+					file = new InfileMSOle (input);
 					input.Dispose ();
-					file = new InfileMSOle (uncompressed_input);
-					uncompressed_input.Dispose ();
 				}
-				
+
 				if (input == null || file == null) {
 					Log.Warn ("Unable to open '{0}': input/file is null", info.FullName);
 					Error ();

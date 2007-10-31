@@ -469,8 +469,7 @@ namespace Beagle.Filters {
 						AppendText (strData.ToString());
 						if (IsHot)
 							HotDown ();
-						else
-							AppendStructuralBreak ();
+						AppendStructuralBreak ();
 						//Console.WriteLine ("Text : {0}", strData);
 					}  else if (opcode == RecordType.TypeCode.TextHeaderAtom) {
 						data = stream.Read (4);
