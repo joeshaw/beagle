@@ -1,3 +1,4 @@
+//#define XDGMIME_DEBUG
 //
 // XdgMime.cs
 //
@@ -67,6 +68,10 @@ namespace Beagle.Util {
 			if (mime_type != null)
 				return mime_type;
 
+#if XDGMIME_DEBUG
+			Console.WriteLine ("From xattr: [{0}]", mime_type);
+#endif
+
 			string content_mime_type, extension_mime_type;
 
 			FileStream fs = null;
@@ -96,7 +101,15 @@ namespace Beagle.Util {
 				content_mime_type = UNKNOWN_MIME_TYPE;
 			}
 
+#if XDGMIME_DEBUG
+			Console.WriteLine ("From content: [{0}]", content_mime_type);
+#endif
+
 			extension_mime_type = Marshal.PtrToStringAnsi (xdg_mime_get_mime_type_from_file_name (file_path));
+
+#if XDGMIME_DEBUG
+			Console.WriteLine ("From extension: [{0}]", extension_mime_type);
+#endif
 
 			if (content_mime_type == UNKNOWN_MIME_TYPE)
 				mime_type = extension_mime_type;
@@ -123,6 +136,10 @@ namespace Beagle.Util {
 
 				default:
 					
+#if XDGMIME_DEBUG
+					Console.WriteLine ("extension mimetype subclass of content mimetype ? {0}", xdg_mime_mime_type_subclass (extension_mime_type, content_mime_type));
+#endif
+
 					if (xdg_mime_mime_type_subclass (extension_mime_type, content_mime_type))
 						mime_type = extension_mime_type;
 					else
@@ -139,6 +156,10 @@ namespace Beagle.Util {
 			    && len > 0
 			    && ValidateUTF8 (buf, len))
 				mime_type = "text/plain";
+
+#if XDGMIME_DEBUG
+			Console.WriteLine ("Detected: [{0}]", mime_type);
+#endif
 
 			return mime_type;
 		}
