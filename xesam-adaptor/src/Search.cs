@@ -131,6 +131,9 @@ namespace Beagle {
 			{
 				mutex.WaitOne();
 				if (running) {
+					query.HitsAddedEvent -= OnHitsAdded;
+					query.HitsSubtractedEvent -= OnHitsSubtracted;
+					query.FinishedEvent -= OnFinished;
 					query.Close();
 					running = false;
 				}
@@ -192,7 +195,7 @@ namespace Beagle {
 				mutex.WaitOne();
 
 				// cache the hits and keep them nice and safe
-				Console.Error.WriteLine("{0}: Got some hits: {1}", id, response.NumMatches);
+				Console.Error.WriteLine("{0}: Got some hits: {1}", id, response.Hits.Count);
 				foreach (Beagle.Hit bHit in response.Hits) {
 					Console.Error.WriteLine("+Hit: {0}", bHit.Uri);
 					newHits.Add(hitCount++, new Xesam.Hit(hitCount, bHit, parentSession.HitFields));

@@ -58,7 +58,7 @@ namespace Beagle {
 		public class Searcher : ISearcher {
 			static private bool Debug = true;
 			// XXX: Assuming that you won't change the beagled version in between
-			static private int beagleVersion = 0;
+			static private uint beagleVersion = 0;
 			// XXX: Start worrying about threads?
 			private int sessionCount = 0;
 			private int searchCount = 0;
@@ -74,7 +74,7 @@ namespace Beagle {
 				if (beagleVersion == 0) {
 					DaemonInformationRequest infoReq = new DaemonInformationRequest(true, false, false, false);
 					DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
-					beagleVersion = VersionStringToInt(infoResp.Version);
+					beagleVersion = (uint)VersionStringToInt(infoResp.Version);
 				}
 
 				Session session = new Session();
@@ -155,8 +155,8 @@ namespace Beagle {
 					case "vendor.ontology.contents":
 						ret =  session.VendorOntologyContents;
 						break;
-					case "vendor.ontology.storages":
-						ret =  session.VendorOntologyStorages;
+					case "vendor.ontology.sources":
+						ret =  session.VendorOntologySources;
 						break;
 					case "vendor.extensions":
 						ret =  session.VendorExtensions;
@@ -207,7 +207,7 @@ namespace Beagle {
 						ret =  session.HitFieldsExtended;
 						break;
 					case "hit.snippet.length":
-						session.HitSnippetLength = (int)val;
+						session.HitSnippetLength = (uint)val;
 						ret =  session.HitSnippetLength;
 						break;
 					case "sort.primary":
@@ -246,9 +246,9 @@ namespace Beagle {
 						/* read-only */
 						ret =  session.VendorOntologyContents;
 						break;
-					case "vendor.ontology.storages":
+					case "vendor.ontology.sources":
 						/* read-only */
-						ret =  session.VendorOntologyStorages;
+						ret =  session.VendorOntologySources;
 						break;
 					case "vendor.extensions":
 						/* read-only */
@@ -279,6 +279,7 @@ namespace Beagle {
 				}
 				return ret;
 			}
+
 			public string NewSearch(string s, string xmlQuery)
 			{
 				Session session = sessions[s];
@@ -288,6 +289,7 @@ namespace Beagle {
 				search = session.CreateSearch(searchId, xmlQuery);
 
 				// These two are emitted even if search.live is false
+				// If you touch these, look at Close() too
 				search.HitsAddedHandler += HitsAdded;
 				search.SearchDoneHandler += SearchDone;
 				if (session.SearchLive) {

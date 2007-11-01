@@ -33,20 +33,20 @@ namespace Beagle {
 			private bool searchLive;
 			private string[] hitFields;
 			private string[] hitFieldsExtended;
-			private int hitSnippetLength;
+			private uint hitSnippetLength;
 			private string sortPrimary;
 			private string sortSecondary;
 			private string sortOrder;
 			private string vendorId;
-			private int vendorVersion;
+			private uint vendorVersion;
 			private string vendorDisplay;
-			private int vendorXesam;
+			private uint vendorXesam;
 			private string[] vendorOntologyFields;
 			private string[] vendorOntologyContents;
-			private string[] vendorOntologyStorages;
+			private string[] vendorOntologySources;
 			private string[] vendorExtensions;
 			private string[][] vendorOntologies;
-			private int vendorMaxHits;
+			private uint vendorMaxHits;
 
 			private List<Search> searches = new List<Search>();
 
@@ -65,7 +65,7 @@ namespace Beagle {
 				set { hitFieldsExtended = value; }
 			}
 
-			public int HitSnippetLength {
+			public uint HitSnippetLength {
 				get { return hitSnippetLength; }
 				set { hitSnippetLength = value; }
 			}
@@ -90,7 +90,7 @@ namespace Beagle {
 				set { vendorId = value; }
 			}
 
-			public int VendorVersion {
+			public uint VendorVersion {
 				get { return vendorVersion; }
 				set { vendorVersion = value; }
 			}
@@ -100,7 +100,7 @@ namespace Beagle {
 				set { vendorDisplay = value; }
 			}
 
-			public int VendorXesam {
+			public uint VendorXesam {
 				get { return vendorXesam; }
 				set { vendorXesam = value; }
 			}
@@ -120,9 +120,9 @@ namespace Beagle {
 				set { vendorOntologyContents = value; }
 			}
 
-			public string[] VendorOntologyStorages {
-				get { return vendorOntologyStorages; }
-				set { vendorOntologyStorages = value; }
+			public string[] VendorOntologySources {
+				get { return vendorOntologySources; }
+				set { vendorOntologySources = value; }
 			}
 
 			public string[][] VendorOntologies {
@@ -130,7 +130,7 @@ namespace Beagle {
 				set { vendorOntologies = value; }
 			}
 
-			public int VendorMaxHits {
+			public uint VendorMaxHits {
 				get { return vendorMaxHits; }
 				set { vendorMaxHits = value; }
 			}
@@ -147,10 +147,10 @@ namespace Beagle {
 				VendorId = "Unknown";
 				VendorVersion = 0;
 				VendorDisplay = "Unknown";
-				VendorXesam = 1;
+				VendorXesam = 90;
 				VendorOntologyFields = new string[] { };
 				VendorOntologyContents = new string[] { };
-				VendorOntologyStorages = new string[] { };
+				VendorOntologySources = new string[] { };
 				VendorExtensions = new string[] { };
 				// XXX: This is wrong. Needs to be fixed.
 				VendorOntologies = new string[][] { };
