@@ -13,5 +13,11 @@
     <BoolOption Name="IndexOnBattery" Description="Allow beagle to continue indexing when on battery">false</BoolOption>
     <BoolOption Name="IndexFasterOnScreensaver" Description="Allow beagle to speed up indexing when on screensaver">true</BoolOption>
     <ListOption Name="Maildirs" Description="Maildir directories" Params="Path" Separator=","></ListOption>
-    <ListOption Name="ExcludeMailfolder" Description="Exclude these mail folders" Params="Mail folder" Separator=","/>
+    <ListOption Name="ExcludeMailfolder" Description="Exclude these mail folders" Params="Mail folder" Separator=",">
+	<Value>spam</Value>
+	<Value>outbox</Value>
+	<Value>trash</Value>
+	<Value>drafts</Value>
+	<Value>templates</Value>
+    </ListOption>
 </BeagleConf>

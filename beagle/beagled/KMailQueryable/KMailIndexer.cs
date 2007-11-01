@@ -77,11 +77,6 @@ namespace Beagle.Daemon.KMailQueryable {
 			mbox_files = new ArrayList ();
 
 			excludes = new ArrayList ();
-			excludes.Add ("spam");
-			excludes.Add ("outbox");
-			excludes.Add ("trash");
-			excludes.Add ("drafts");
-
 			List<string[]> values = Conf.Daemon.GetListOptionValues (Conf.Names.ExcludeMailfolder);
 			if (values == null)
 				return;
