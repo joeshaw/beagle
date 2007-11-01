@@ -452,7 +452,14 @@ namespace Beagle.Daemon {
 				while (! next && ! Shutdown.ShutdownRequested && num_indexed <= RequestFlushThreshold) {
 					Indexable generated_indexable = null;
 
-					if (! di.Filter.GenerateNextIndexable (out generated_indexable)) {
+					bool next_indexable = false;
+					try {
+						next_indexable = di.Filter.GenerateNextIndexable (out generated_indexable);
+					} catch (Exception e) {
+						Log.Error (e, "Error while generating next indexable from {0}", di.Indexable.DisplayUri);
+					}
+
+					if (! next_indexable) {
 						// Mark it for indexing and leave it in the stack
 						di.Indexable.LocalState ["HasNextIndexable"] = false;
 						next = true;
