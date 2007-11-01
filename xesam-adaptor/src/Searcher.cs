@@ -32,8 +32,8 @@ using org.freedesktop.DBus;
 
 namespace Beagle {
 	namespace Xesam {
-		public delegate void HitsAddedMethod (string searchId, int count);
-		public delegate void HitsRemovedMethod (string searchId, int[] hitIds);
+		public delegate void HitsAddedMethod (string searchId, uint count);
+		public delegate void HitsRemovedMethod (string searchId, uint[] hitIds);
 		public delegate void SearchDoneMethod (string searchId);
 
 		[Interface("org.freedesktop.xesam.Search")]
@@ -46,8 +46,9 @@ namespace Beagle {
 			void StartSearch(string s);
 			void CloseSearch(string s);
 			string[] GetState();
-			int GetHitCount(string s);
-			object[][] GetHits(string s, int num);
+			uint GetHitCount(string s);
+			object[][] GetHitData(string s, uint[] ids, string[] fields);
+			object[][] GetHits(string s, uint num);
 			event HitsAddedMethod HitsAdded;
 			event HitsRemovedMethod HitsRemoved;
 			// XXX: We don't implement HitsModified and StateChanged because there is no
@@ -371,7 +372,7 @@ namespace Beagle {
 				return ret;
 			}
 
-			public int GetHitCount(string s)
+			public uint GetHitCount(string s)
 			{
 				Search search = searches[s];
 
@@ -381,7 +382,7 @@ namespace Beagle {
 					return 0;
 				}
 
-				int ret = search.GetHitCount();
+				uint ret = search.GetHitCount();
 
 				if (Debug) 
 					Console.Error.WriteLine("GetHitCount() -- {0}, {1}", s, ret);
@@ -389,12 +390,17 @@ namespace Beagle {
 				return ret;
 			}
 
-			public object[][] GetHits(string s, int num)
+			public object[][] GetHits(string s, uint num)
 			{
 				return searches[s].GetHits(num);
 			}
 
-			private int VersionStringToInt(string version)
+			public object[][] GetHitData(string s, uint[] ids, string[] fields)
+			{
+				return searches[s].GetHitData(ids, fields);
+			}
+
+			private uint VersionStringToInt(string version)
 			{
 				// FIXME: Ewwww!
 				if (version.StartsWith("0.2"))

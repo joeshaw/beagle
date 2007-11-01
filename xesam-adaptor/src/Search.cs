@@ -32,11 +32,12 @@ using Beagle;
 namespace Beagle {
 	namespace Xesam {
 		public class Hit {
-			private int id;
+			private uint id;
 			private Uri uri;
 			private object[] hitValue;
+			private Beagle.Hit bHit;
 
-			public int Id {
+			public uint Id {
 				get { return id; }
 			}
 
@@ -48,9 +49,14 @@ namespace Beagle {
 				get { return uri; }
 			}
 
-			public Hit(int id, Beagle.Hit hit, string[] fields)
+			public Beagle.Hit BeagleHit {
+				get { return bHit; }
+			}
+
+			public Hit(uint id, Beagle.Hit hit, string[] fields)
 			{
 				this.id = id;
+				bHit = hit;
 				hitValue = new object[fields.Length];
 				int i = 0;
 
@@ -82,9 +88,9 @@ namespace Beagle {
 			private Query query;
 			private string id;
 			private bool running, finished;
-			private int hitCount = 0;
-			private Dictionary<int, Xesam.Hit> hits;
-			private Dictionary<int, Xesam.Hit> newHits;
+			private uint hitCount = 0;
+			private Dictionary<uint, Xesam.Hit> hits;
+			private Dictionary<uint, Xesam.Hit> newHits;
 
 			public Mutex mutex;	// Generic Dictonaries are not thread-safe
 			public event HitsAddedMethod HitsAddedHandler;
@@ -97,8 +103,8 @@ namespace Beagle {
 				id = myID;
 				running = false;
 				finished = false;
-				hits = new Dictionary<int, Xesam.Hit>();
-				newHits = new Dictionary<int, Xesam.Hit>();
+				hits = new Dictionary<uint, Xesam.Hit>();
+				newHits = new Dictionary<uint, Xesam.Hit>();
 				mutex = new Mutex();
 
 				query = new Query();
@@ -140,21 +146,21 @@ namespace Beagle {
 				mutex.ReleaseMutex();
 			}
 
-			public int GetHitCount()
+			public uint GetHitCount()
 			{
 				if (!running)
-					return -1;
+					return 0;
 
 				while (!finished) { /* XXX: Consider using a semaphore */ }
 				mutex.WaitOne();
 
-				int count = hits.Count + newHits.Count;
+				uint count = (uint)(hits.Count + newHits.Count);
 
 				mutex.ReleaseMutex();
 				return count;
 			}
 
-			public object[][] GetHits(int num)
+			public object[][] GetHits(uint num)
 			{
 				if (!running) {
 					// XXX: Do something not dumb
@@ -168,11 +174,11 @@ namespace Beagle {
 				mutex.WaitOne();
 
 				// XXX: TBD -- sorting
-				List<int> returned = new List<int>();
+				List<uint> returned = new List<uint>();
 				List<object[]> ret = new List<object[]>();
 				int i = 1;
 
-				foreach (KeyValuePair<int, Xesam.Hit> kvp in newHits) {
+				foreach (KeyValuePair<uint, Xesam.Hit> kvp in newHits) {
 					ret.Add(kvp.Value.Value);
 					returned.Add(kvp.Key);
 					hits.Add(kvp.Key, kvp.Value);
@@ -180,13 +186,28 @@ namespace Beagle {
 						break;
 				}
 
-				foreach (int key in returned) {
+				foreach (uint key in returned) {
 					newHits.Remove(key);
 				}
 
 				Console.Error.WriteLine("GetHits(): returning {0} hits ({1} requested)", i-1, num);
 				mutex.ReleaseMutex();
 
+				return ret.ToArray();
+			}
+
+			public object[][] GetHitData(uint[] ids, string[] fields)
+			{
+				List<object[]> ret = new List<object[]>();
+				mutex.WaitOne();
+
+				foreach (uint id in ids) {
+					Hit hit = new Hit(id, hits[id].BeagleHit, fields);
+					ret.Add(hit.Value);
+				}
+
+				Console.Error.WriteLine("GetHits(): returning {0} hits", ret.Count);
+				mutex.ReleaseMutex();
 				return ret.ToArray();
 			}
 
@@ -202,7 +223,7 @@ namespace Beagle {
 				}
 
 				if (newHits.Count > 0 && HitsAddedHandler != null) {
-					HitsAddedHandler(id, response.Hits.Count);
+					HitsAddedHandler(id, (uint)response.Hits.Count);
 				}
 
 				mutex.ReleaseMutex();
@@ -212,10 +233,10 @@ namespace Beagle {
 			{
 				mutex.WaitOne();
 
-				List<int> removed = new List<int>();
+				List<uint> removed = new List<uint>();
 
 				Console.Error.WriteLine("Removing some hits");
-				foreach (KeyValuePair<int, Xesam.Hit> kvp in hits) {
+				foreach (KeyValuePair<uint, Xesam.Hit> kvp in hits) {
 					foreach (Uri uri in response.Uris) {
 						if (kvp.Value.Uri == uri) {
 							Console.Error.WriteLine("-Hit: {0}", uri);
@@ -224,7 +245,7 @@ namespace Beagle {
 					}
 				}
 
-				foreach (int key in removed) {
+				foreach (uint key in removed) {
 					hits.Remove(key);
 				}
 
