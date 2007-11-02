@@ -1,23 +1,27 @@
-/***************************************************************************
-    copyright            : (C) 2007 by Brian Nickel
-    email                : brian.nickel@gmail.com
- ***************************************************************************/
+//
+// ListTag.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Copyright (C) 2007 Brian Nickel
+//
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
 
-/***************************************************************************
- *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
- *   2.1 as published by the Free Software Foundation.                     *
- *                                                                         *
- *   This library is distributed in the hope that it will be useful, but   *
- *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
- *   Lesser General Public License for more details.                       *
- *                                                                         *
- *   You should have received a copy of the GNU Lesser General Public      *
- *   License along with this library; if not, write to the Free Software   *
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
- *   USA                                                                   *
- ***************************************************************************/
+using System;
 
 namespace TagLib.Riff
 {
@@ -69,10 +73,17 @@ namespace TagLib.Riff
          return fields.GetValues (id);
       }
       
-      public StringCollection GetValuesAsStringCollection (ByteVector id)
-      {
-         return fields.GetValuesAsStringCollection (id);
-      }
+		public string [] GetValuesAsStrings (ByteVector id)
+		{
+			return fields.GetValuesAsStrings (id);
+		}
+		
+		[Obsolete("Use GetValuesAsStrings(ByteVector)")]
+		public StringCollection GetValuesAsStringCollection (ByteVector id)
+		{
+			return new StringCollection (
+				fields.GetValuesAsStrings (id));
+		}
       
       public uint GetValueAsUInt (ByteVector id)
       {
@@ -94,6 +105,7 @@ namespace TagLib.Riff
          fields.SetValue (id, value);
       }
       
+		[Obsolete("Use SetValue(ByteVector,string[])")]
       public void SetValue (ByteVector id, StringCollection value)
       {
          fields.SetValue (id, value);

@@ -2,6 +2,8 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/Ape/Tag.cs \
 	$(srcdir)/TagLib/Ape/Item.cs \
 	$(srcdir)/TagLib/Ape/Footer.cs \
+	$(srcdir)/TagLib/Ape/File.cs \
+	$(srcdir)/TagLib/Ape/StreamHeader.cs \
 	$(srcdir)/TagLib/Asf/Guid.cs \
 	$(srcdir)/TagLib/Asf/StreamPropertiesObject.cs \
 	$(srcdir)/TagLib/Asf/UnknownObject.cs \
@@ -9,11 +11,14 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/Asf/Object.cs \
 	$(srcdir)/TagLib/Asf/ExtendedContentDescriptionObject.cs \
 	$(srcdir)/TagLib/Asf/ContentDescriptionObject.cs \
+	$(srcdir)/TagLib/Asf/MetadataLibraryObject.cs \
 	$(srcdir)/TagLib/Asf/HeaderObject.cs \
+	$(srcdir)/TagLib/Asf/HeaderExtensionObject.cs \
 	$(srcdir)/TagLib/Asf/File.cs \
 	$(srcdir)/TagLib/Asf/FilePropertiesObject.cs \
 	$(srcdir)/TagLib/Asf/PaddingObject.cs \
 	$(srcdir)/TagLib/Asf/ContentDescriptor.cs \
+	$(srcdir)/TagLib/Asf/DescriptionRecord.cs \
 	$(srcdir)/TagLib/Mpc/StreamHeader.cs \
 	$(srcdir)/TagLib/Mpc/File.cs \
 	$(srcdir)/TagLib/Ogg/GroupedComment.cs \
@@ -42,6 +47,7 @@ TAGLIB_CSFILES = \
 	$(srcdir)/TagLib/NonContainer/Tag.cs \
 	$(srcdir)/TagLib/Id3v1/Tag.cs \
 	$(srcdir)/TagLib/Id3v1/StringHandler.cs \
+	$(srcdir)/TagLib/Id3v2/Frames/PopularimeterFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/PlayCountFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/PrivateFrame.cs \
 	$(srcdir)/TagLib/Id3v2/Frames/RelativeVolumeFrame.cs \

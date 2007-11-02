@@ -1,23 +1,25 @@
-/***************************************************************************
-    copyright            : (C) 2007 by Brian Nickel
-    email                : brian.nickel@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
- *   2.1 as published by the Free Software Foundation.                     *
- *                                                                         *
- *   This library is distributed in the hope that it will be useful, but   *
- *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
- *   Lesser General Public License for more details.                       *
- *                                                                         *
- *   You should have received a copy of the GNU Lesser General Public      *
- *   License along with this library; if not, write to the Free Software   *
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
- *   USA                                                                   *
- ***************************************************************************/
+//
+// Picture.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Copyright (C) 2007 Brian Nickel
+// 
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
 
 using System;
 
@@ -49,13 +51,13 @@ namespace TagLib.Flac
          int mimetype_length = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         _mimetype = data.Mid (pos, mimetype_length).ToString (StringType.Latin1);
+         _mimetype = data.ToString (StringType.Latin1, pos, mimetype_length);
          pos += mimetype_length;
          
          int description_length = (int) data.Mid (pos, 4).ToUInt ();
          pos += 4;
          
-         _description = data.Mid (pos, description_length).ToString (StringType.UTF8);
+         _description = data.ToString (StringType.UTF8, pos, description_length);
          pos += description_length;
          
          _width = (int) data.Mid (pos, 4).ToUInt ();

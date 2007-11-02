@@ -1,6 +1,29 @@
+//
+// File.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Copyright (C) 2007 Brian Nickel
+//
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using System;
 
 namespace TagLib.Riff
 {
@@ -77,9 +100,8 @@ namespace TagLib.Riff
             bool tag_found = false;
             
             Seek (position);
-            string fourcc = ReadBlock (4).ToString ();
+            string fourcc = ReadBlock (4).ToString (StringType.UTF8);
             uint   size = ReadBlock (4).ToUInt (false);
-            
             switch (fourcc)
             {
             case "fmt ":
@@ -90,15 +112,19 @@ namespace TagLib.Riff
                }
                break;
             case "data":
-               if (stream_format == "WAVE" && style != ReadStyle.None && codecs.Length == 1 && codecs [0] is WaveFormatEx)
-                  duration += TimeSpan.FromSeconds ((double) size / (double) ((WaveFormatEx) codecs [0]).AverageBytesPerSecond);
+               if (stream_format == "WAVE") {
+                  if (style != ReadStyle.None && codecs.Length == 1 && codecs [0] is WaveFormatEx)
+                     duration += TimeSpan.FromSeconds ((double) size / (double) ((WaveFormatEx) codecs [0]).AverageBytesPerSecond);
+                  InvariantStartPosition = position;
+                  InvariantEndPosition = position + size;
+               }
                break;
             case "LIST":
             {
-               switch (ReadBlock (4).ToString ())
-               {
-               case "hdrl":
-                  if (stream_format == "AVI " && style != ReadStyle.None)
+					switch (ReadBlock (4).ToString (StringType.UTF8))
+					{
+					case "hdrl":
+						if (stream_format == "AVI " && style != ReadStyle.None)
                   {
                      AviHeaderList header_list = new AviHeaderList (this, position + 12, (int) (size - 4));
                      duration = header_list.Header.Duration;
@@ -116,6 +142,12 @@ namespace TagLib.Riff
                   if (read_tags && mid_tag == null)
                      mid_tag = new MovieIdTag (this, position + 12, (int) (size - 4));
                   tag_found = true;
+                  break;
+               case "movi":
+                  if (stream_format == "AVI ") {
+                     InvariantStartPosition = position;
+                     InvariantEndPosition = position + size;
+                  }
                   break;
                }
                break;

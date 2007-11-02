@@ -1,3 +1,26 @@
+//
+// TermsOfUseFrame.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Copyright (C) 2007 Brian Nickel
+//
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
+
 using System.Collections;
 using System;
 
@@ -116,8 +139,8 @@ namespace TagLib.Id3v2
             throw new CorruptFileException ("Not enough bytes in field.");
          
          encoding = (StringType) data [0];
-         language = data.Mid (1, 3).ToString (StringType.Latin1);
-         text = data.ToString (encoding, 4);
+         language = data.ToString (StringType.Latin1, 1, 3);
+         text = data.ToString (encoding, 4, data.Count - 4);
       }
 
       protected override ByteVector RenderFields (byte version)

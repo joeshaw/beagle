@@ -1,7 +1,29 @@
+//
+// SynchronizedLyricsFrame.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Copyright (C) 2007 Brian Nickel
+//
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TagLib.Id3v2;
 
 namespace TagLib.Id3v2
 {
@@ -173,17 +195,17 @@ namespace TagLib.Id3v2
             throw new CorruptFileException ("Not enough bytes in field.");
          
          text_encoding = (StringType) data [0];
-         language = data.Mid (1, 3).ToString (StringType.Latin1);
+         language = data.ToString (StringType.Latin1, 1, 3);
          timestamp_format = (TimestampFormat) data [4];
          lyrics_type = (SynchedTextType) data [5];
          
-         ByteVector delim = TextDelimiter (text_encoding);
+         ByteVector delim = ByteVector.TextDelimiter (text_encoding);
          int delim_index = data.Find (delim, 6);
          
          if (delim_index < 0)
             throw new CorruptFileException ("Text delimiter expected.");
          
-         description = data.Mid (6, delim_index - 6).ToString (text_encoding);
+         description = data.ToString (text_encoding, 6, delim_index - 6);
          
          int offset = delim_index + delim.Count;
          List<SynchedText> l = new List<SynchedText> ();
@@ -194,7 +216,7 @@ namespace TagLib.Id3v2
             if (delim_index < offset)
                throw new CorruptFileException ("Text delimiter expected.");
             
-            string text = data.Mid (offset, delim_index - offset).ToString (text_encoding);
+            string text = data.ToString (text_encoding, offset, delim_index - offset);
             offset = delim_index + delim.Count;
             
             if (offset + 4 > data.Count)
@@ -210,7 +232,7 @@ namespace TagLib.Id3v2
       protected override ByteVector RenderFields (byte version)
       {
          StringType encoding = CorrectEncoding(TextEncoding, version);
-         ByteVector delim = TextDelimiter (encoding);
+         ByteVector delim = ByteVector.TextDelimiter (encoding);
          ByteVector v = new ByteVector ();
          
          v.Add ((byte)encoding);

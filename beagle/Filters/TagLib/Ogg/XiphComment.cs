@@ -1,24 +1,29 @@
-/***************************************************************************
-    copyright            : (C) 2005 by Brian Nickel
-    email                : brian.nickel@gmail.com
-    based on             : tag.cpp from TagLib
- ***************************************************************************/
-
-/***************************************************************************
- *   This library is free software; you can redistribute it and/or modify  *
- *   it  under the terms of the GNU Lesser General Public License version  *
- *   2.1 as published by the Free Software Foundation.                     *
- *                                                                         *
- *   This library is distributed in the hope that it will be useful, but   *
- *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
- *   Lesser General Public License for more details.                       *
- *                                                                         *
- *   You should have received a copy of the GNU Lesser General Public      *
- *   License along with this library; if not, write to the Free Software   *
- *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
- *   USA                                                                   *
- ***************************************************************************/
+//
+// XiphComment.cs:
+//
+// Author:
+//   Brian Nickel (brian.nickel@gmail.com)
+//
+// Original Source:
+//   xiphcomment.cpp from TagLib
+//
+// Copyright (C) 2005-2007 Brian Nickel
+// Copyright (C) 2003 Scott Wheeler (Original Implementation)
+//
+// This library is free software; you can redistribute it and/or modify
+// it  under the terms of the GNU Lesser General Public License version
+// 2.1 as published by the Free Software Foundation.
+//
+// This library is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public
+// License along with this library; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+//
 
 using System;
 using System.Collections;
@@ -32,74 +37,95 @@ namespace TagLib.Ogg
       //////////////////////////////////////////////////////////////////////////
       // private properties
       //////////////////////////////////////////////////////////////////////////
-      private Dictionary<string, StringCollection> field_list;
+      private Dictionary<string,string[]> field_list = new Dictionary<string,string[]> ();
       private string vendor_id;
-      private string comment_field;
+      private string comment_field = "DESCRIPTION";
       
       //////////////////////////////////////////////////////////////////////////
       // public methods
       //////////////////////////////////////////////////////////////////////////
-      public XiphComment () : base ()
-      {
-         field_list = new Dictionary<string, StringCollection> ();
-         comment_field = "DESCRIPTION";
-      }
-      
-      public XiphComment (ByteVector data) : this ()
-      {
-         Parse (data);
-      }
+		public XiphComment ()
+		{
+		}
+		
+		public XiphComment (ByteVector data)
+		{
+			Parse (data);
+		}
       
       public override void Clear ()
       {
          field_list.Clear ();
       }
       
-      public string [] GetField (string key)
-      {
-         key = key.ToUpper (CultureInfo.InvariantCulture);
-         return (field_list.ContainsKey (key)) ? field_list [key].ToArray () : new string [0];
-      }
-      
-      public string GetFirstField (string key)
-      {
-         string [] values = GetField (key);
-         return (values.Length > 0) ? values [0] : null;
-      }
-      
-      public void SetField (string key, uint number)
-      {
-         if (number == 0)
-            RemoveField (key);
-         else
-            SetField (key, number.ToString (CultureInfo.InvariantCulture));
-      }
-      
-      public void SetField (string key, params string [] values)
-      {
-         key = key.ToUpper (CultureInfo.InvariantCulture);
-         
-         StringCollection results = new StringCollection ();
-         
-         if (values != null)
-            foreach (string value in values)
-               if (value != null && value.Trim ().Length != 0)
-                  results.Add (value);
-         
-         if (results.Count == 0)
-            RemoveField (key);
-         else if (field_list.ContainsKey (key))
-            field_list [key] = results;
-         else
-            field_list.Add (key, results);
-      }
-      
-      public void RemoveField (string key)
-      {
-         StringCollection values;
-         if (field_list.TryGetValue (key.ToUpper (CultureInfo.InvariantCulture), out values))
-            values.Clear ();
-      }
+		public string [] GetField (string key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			
+			key = key.ToUpper (CultureInfo.InvariantCulture);
+			
+			if (!field_list.ContainsKey (key))
+				return new string [0];
+			
+			return (string []) field_list [key].Clone ();
+		}
+		
+		public string GetFirstField (string key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			
+			string [] values = GetField (key);
+			return (values.Length > 0) ? values [0] : null;
+		}
+		
+		public void SetField (string key, uint number)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			
+			if (number == 0)
+				RemoveField (key);
+			else
+				SetField (key, number.ToString (
+					CultureInfo.InvariantCulture));
+		}
+		
+		public void SetField (string key, params string [] values)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			
+			key = key.ToUpper (CultureInfo.InvariantCulture);
+			
+			if (values == null || values.Length == 0) {
+				RemoveField (key);
+				return;
+			}
+			
+			List <string> result = new List<string> ();
+			foreach (string text in values)
+				if (text != null && text.Trim ().Length != 0)
+					result.Add (text);
+			
+			if (result.Count == 0)
+				RemoveField (key);
+			else if (field_list.ContainsKey (key))
+				field_list [key] = result.ToArray ();
+			else
+				field_list.Add (key, result.ToArray ());
+		}
+		
+		public void RemoveField (string key)
+		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
+			
+			key = key.ToUpper (CultureInfo.InvariantCulture);
+			
+			field_list.Remove (key);
+		}
       
       public ByteVector Render (bool addFramingBit)
       {
@@ -119,20 +145,12 @@ namespace TagLib.Ogg
 
          data.Add (ByteVector.FromUInt (FieldCount, false));
 
-         // Iterate over the the field lists.  Our iterator returns a
-         // std::pair<String, StringCollection> where the first String is the field name and
-         // the StringCollection is the values associated with that field.
-
-         foreach (KeyValuePair<string, StringCollection> de in field_list)
+         foreach (KeyValuePair<string,string[]> entry in field_list)
          {
             // And now iterate over the values of the current list.
 
-            string field_name = de.Key;
-            StringCollection values = de.Value;
-
-            foreach (string value in values)
-            {
-               ByteVector field_data = ByteVector.FromString (field_name, StringType.UTF8);
+            foreach (string value in entry.Value) {
+               ByteVector field_data = ByteVector.FromString (entry.Key, StringType.UTF8);
                field_data.Add ((byte) '=');
                field_data.Add (ByteVector.FromString (value, StringType.UTF8));
 
@@ -148,10 +166,10 @@ namespace TagLib.Ogg
          return data;
       }
       
-      public IEnumerator<string> GetEnumerator()
-      {
-         return field_list.Keys.GetEnumerator();
-      }
+		public IEnumerator<string> GetEnumerator()
+		{
+			return field_list.Keys.GetEnumerator();
+		}
       
       IEnumerator IEnumerable.GetEnumerator()
       {
@@ -163,29 +181,25 @@ namespace TagLib.Ogg
       //////////////////////////////////////////////////////////////////////////
       public override TagTypes TagTypes {get {return TagTypes.Xiph;}}
       
-      public override bool IsEmpty
-      {
-         get
-         {
-            foreach (StringCollection l in field_list.Values)
-               if (!l.IsEmpty)
-                  return false;
-            
-            return true;
-         }
-      }
-      
-      public uint FieldCount
-      {
-         get
-         {
-            uint count = 0;
-            foreach (StringCollection l in field_list.Values)
-               count += (uint) l.Count;
-            
-            return count;
-         }
-      }
+		public override bool IsEmpty {
+			get {
+				foreach (string [] values in field_list.Values)
+					if (values.Length != 0)
+						return false;
+				
+				return true;
+			}
+		}
+		
+		public uint FieldCount {
+			get {
+				uint count = 0;
+				foreach (string [] values in field_list.Values)
+					count += (uint) values.Length;
+				
+				return count;
+			}
+		}
       
       public string VendorId
       {
@@ -203,14 +217,14 @@ namespace TagLib.Ogg
       
       public override string [] AlbumArtists
       {
-         get {return GetField ("ARTIST");}
-         set {SetField ("ARTIST", value);}
+         get {return GetField ("ALBUMARTIST");}
+         set {SetField ("ALBUMARTIST", value);}
       }
       
       public override string [] Performers
       {
-         get {return GetField ("PERFORMER");}
-         set {SetField ("PERFORMER", value);}
+         get {return GetField ("ARTIST");}
+         set {SetField ("ARTIST", value);}
       }
       
       public override string [] Composers
@@ -363,8 +377,9 @@ namespace TagLib.Ogg
          get
          {
             string text = GetFirstField ("TEMPO");
-            uint value;
-            return (text != null && uint.TryParse (text, out value)) ? value : 0;
+            double value;
+            return (text != null && double.TryParse (text, out value)
+		&& value > 0) ? (uint) Math.Round (value) : 0;
          }
          set {SetField ("TEMPO", value);}
       }
@@ -383,7 +398,7 @@ namespace TagLib.Ogg
          int vendor_length = (int) data.Mid (pos, 4).ToUInt (false);
          pos += 4;
 
-         vendor_id = data.Mid (pos, vendor_length).ToString (StringType.UTF8);
+         vendor_id = data.ToString (StringType.UTF8, pos, vendor_length);
          pos += vendor_length;
 
          // Next the number of fields in the comment vector.
@@ -399,7 +414,7 @@ namespace TagLib.Ogg
             int comment_length = (int) data.Mid (pos, 4).ToUInt (false);
             pos += 4;
 
-            string comment = data.Mid (pos, comment_length).ToString (StringType.UTF8);
+            string comment = data.ToString (StringType.UTF8, pos, comment_length);
             pos += comment_length;
 
             int comment_separator_position = comment.IndexOf ('=');
@@ -407,11 +422,17 @@ namespace TagLib.Ogg
             string key = comment.Substring (0, comment_separator_position).ToUpper (CultureInfo.InvariantCulture);
             string value = comment.Substring (comment_separator_position + 1);
             
-            if (field_list.ContainsKey (key))
-               field_list [key].Add (value);
-            else
-               SetField (key, value);
-         }
-      }
-   }
+            
+				string [] values;
+				
+				if (field_list.TryGetValue (key, out values)) {
+					Array.Resize <string> (ref values,
+						values.Length + 1);
+					values [values.Length - 1] = value;
+					field_list [key] = values;
+				} else
+					SetField (key, value);
+			}
+		}
+	}
 }

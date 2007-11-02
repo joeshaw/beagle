@@ -1,6 +1,6 @@
 //
-// ContentDescriptor.cs: Provides a representation of an ASF Content Descriptor
-// to be used in combination with ExtendedContentDescriptionObject.
+// DescriptionRecord.cs: Provides a representation of an ASF Description Record
+// to be used in combination with MetadataLibaryObject.
 //
 // Author:
 //   Brian Nickel (brian.nickel@gmail.com)
@@ -26,53 +26,11 @@ using System;
 
 namespace TagLib.Asf {
 	/// <summary>
-	///    Indicates the type of data stored in a <see
-	///    cref="ContentDescriptor" /> or <see cref="DescriptionRecord" />
-	///    object.
+	///    This class provides a representation of an ASF Description Record
+	///    to be used in combination with <see cref="MetadataLibraryObject"
+	///    />.
 	/// </summary>
-	public enum DataType {
-		/// <summary>
-		///    The descriptor contains Unicode (UTF-16LE) text.
-		/// </summary>
-		Unicode = 0,
-		
-		/// <summary>
-		///    The descriptor contains binary data.
-		/// </summary>
-		Bytes = 1,
-		
-		/// <summary>
-		///    The descriptor contains a boolean value.
-		/// </summary>
-		Bool = 2,
-		
-		/// <summary>
-		///    The descriptor contains a 4-byte DWORD value.
-		/// </summary>
-		DWord = 3,
-		
-		/// <summary>
-		///    The descriptor contains a 8-byte QWORD value.
-		/// </summary>
-		QWord = 4,
-		
-		/// <summary>
-		///    The descriptor contains a 2-byte WORD value.
-		/// </summary>
-		Word = 5,
-		
-		/// <summary>
-		///    The descriptor contains a 16-byte GUID value.
-		/// </summary>
-		Guid = 6
-	}
-	
-	/// <summary>
-	///    This class provides a representation of an ASF Content
-	///    Descriptor to be used in combination with <see
-	///    cref="ExtendedContentDescriptionObject" />.
-	/// </summary>
-	public class ContentDescriptor
+	public class DescriptionRecord
 	{
 		#region Private Fields
 		
@@ -82,7 +40,17 @@ namespace TagLib.Asf {
 		private DataType type = DataType.Unicode;
 		
 		/// <summary>
-		///    Contains the descriptor name.
+		///    Contains the language list index.
+		/// </summary>
+		private ushort lang_list_index = 0;
+		
+		/// <summary>
+		///    Contains the stream number.
+		/// </summary>
+		private ushort stream_number = 0;
+		
+		/// <summary>
+		///    Contains the record name.
 		/// </summary>
 		private string name = null;
 		
@@ -101,6 +69,11 @@ namespace TagLib.Asf {
 		/// </summary>
 		private ulong longValue = 0;
 		
+		/// <summary>
+		///    Contains the GUID value.
+		/// </summary>
+		private System.Guid guidValue = System.Guid.Empty;
+		
 		#endregion
 		
 		
@@ -109,9 +82,17 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -120,17 +101,29 @@ namespace TagLib.Asf {
 		///    A <see cref="string" /> object containing the value for
 		///    the new instance.
 		/// </param>
-		public ContentDescriptor (string name, string value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          string value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.strValue = value;
 		}
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -139,8 +132,12 @@ namespace TagLib.Asf {
 		///    A <see cref="ByteVector" /> object containing the value
 		///    for the new instance.
 		/// </param>
-		public ContentDescriptor (string name, ByteVector value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          ByteVector value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.type = DataType.Bytes;
 			this.byteValue = new ByteVector (value);
@@ -148,9 +145,17 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -159,8 +164,12 @@ namespace TagLib.Asf {
 		///    A <see cref="uint" /> value containing the value
 		///    for the new instance.
 		/// </param>
-		public ContentDescriptor (string name, uint value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          uint value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.type = DataType.DWord;
 			this.longValue = value;
@@ -168,9 +177,17 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -179,8 +196,12 @@ namespace TagLib.Asf {
 		///    A <see cref="ulong" /> value containing the value
 		///    for the new instance.
 		/// </param>
-		public ContentDescriptor (string name, ulong value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          ulong value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.type = DataType.QWord;
 			this.longValue = value;
@@ -188,9 +209,17 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -199,8 +228,12 @@ namespace TagLib.Asf {
 		///    A <see cref="ushort" /> value containing the value
 		///    for the new instance.
 		/// </param>
-		public ContentDescriptor (string name, ushort value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          ushort value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.type = DataType.Word;
 			this.longValue = value;
@@ -208,9 +241,17 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> with a specified name and
-		///    and value.
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
 		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
 		/// <param name="name">
 		///    A <see cref="string" /> object containing the name of the
 		///    new instance.
@@ -219,8 +260,12 @@ namespace TagLib.Asf {
 		///    A <see cref="bool" /> value containing the value
 		///    for the new instance.
 		/// </param>
-		public ContentDescriptor (string name, bool value)
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          bool value)
 		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
 			this.name = name;
 			this.type = DataType.Bool;
 			this.longValue = value ? 1uL : 0;
@@ -228,7 +273,39 @@ namespace TagLib.Asf {
 		
 		/// <summary>
 		///    Constructs and initializes a new instance of <see
-		///    cref="ContentDescriptor" /> by reading its contents from
+		///    cref="DescriptionRecord" /> with a specified language,
+		///    stream, name, and value.
+		/// </summary>
+		/// <param name="languageListIndex">
+		///    A <see cref="ushort" /> value containing the language
+		///    list index of the new instance.
+		/// </param>
+		/// <param name="streamNumber">
+		///    A <see cref="ushort" /> value containing the stream
+		///    number of the new instance.
+		/// </param>
+		/// <param name="name">
+		///    A <see cref="string" /> object containing the name of the
+		///    new instance.
+		/// </param>
+		/// <param name="value">
+		///    A <see cref="System.Guid" /> value containing the value
+		///    for the new instance.
+		/// </param>
+		public DescriptionRecord (ushort languageListIndex,
+		                          ushort streamNumber, string name,
+		                          System.Guid value)
+		{
+			this.lang_list_index = languageListIndex;
+			this.stream_number = streamNumber;
+			this.name = name;
+			this.type = DataType.Guid;
+			this.guidValue = value;
+		}
+		
+		/// <summary>
+		///    Constructs and initializes a new instance of <see
+		///    cref="DescriptionRecord" /> by reading its contents from
 		///    a file.
 		/// </summary>
 		/// <param name="file">
@@ -239,20 +316,20 @@ namespace TagLib.Asf {
 		///    <paramref name="file" /> is <see langword="null" />.
 		/// </exception>
 		/// <exception cref="CorruptFileException">
-		///    A valid descriptor could not be read.
+		///    A valid record could not be read.
 		/// </exception>
 		/// <remarks>
 		///    <paramref name="file" /> must be at a seek position at
-		///    which the descriptor can be read.
+		///    which the record can be read.
 		/// </remarks>
-		protected internal ContentDescriptor (Asf.File file)
+		protected internal DescriptionRecord (Asf.File file)
 		{
 			if (file == null)
 				throw new ArgumentNullException ("file");
 			
 			if (!Parse (file))
 				throw new CorruptFileException (
-					"Failed to parse content descriptor.");
+					"Failed to parse description record.");
 		}
 		
 		#endregion
@@ -260,6 +337,30 @@ namespace TagLib.Asf {
 		
 		
 		#region Public Properties
+		
+		/// <summary>
+		///    Gets the index of the language associated with the
+		///    current instance.
+		/// </summary>
+		/// <value>
+		///    A <see cref="ushort" /> value containing the index of the
+		///    language associated with the current instance.
+		/// </value>
+		public ushort LanguageListIndex {
+			get {return lang_list_index;}
+		}
+		
+		/// <summary>
+		///    Gets the index of the stream associated with the current
+		///    instance.
+		/// </summary>
+		/// <value>
+		///    A <see cref="ushort" /> value containing the index of the
+		///    stream associated with the current instance.
+		/// </value>
+		public ushort StreamNumber {
+			get {return stream_number;}
+		}
 		
 		/// <summary>
 		///    Gets the name of the current instance.
@@ -385,6 +486,18 @@ namespace TagLib.Asf {
 		}
 		
 		/// <summary>
+		///    Gets the GUID value contained in the current instance.
+		/// </summary>
+		/// <returns>
+		///    A <see cref="System.Guid" /> value containing the value
+		///    of the current instance.
+		/// </returns>
+		public System.Guid ToGuid ()
+		{
+			return guidValue;
+		}
+		
+		/// <summary>
 		///    Renders the current instance as a raw ASF Description
 		///    Record.
 		/// </summary>
@@ -414,6 +527,9 @@ namespace TagLib.Asf {
 			case DataType.Word:
 				value = Object.RenderWord ((ushort) longValue);
 				break;
+			case DataType.Guid:
+				value = guidValue.ToByteArray ();
+				break;
 			default:
 				return null;
 			}
@@ -421,9 +537,12 @@ namespace TagLib.Asf {
 			ByteVector name = Object.RenderUnicode (this.name);
 			
 			ByteVector output = new ByteVector ();
+			output.Add (Object.RenderWord (lang_list_index));
+			output.Add (Object.RenderWord (stream_number));
 			output.Add (Object.RenderWord ((ushort) name.Count));
-			output.Add (name);
+			output.Add (Object.RenderWord ((ushort) type));
 			output.Add (Object.RenderDWord ((uint) value.Count));
+			output.Add (name);
 			output.Add (value);
 			
 			return output;
@@ -441,7 +560,7 @@ namespace TagLib.Asf {
 		/// </summary>
 		/// <param name="file">
 		///    A <see cref="Asf.File" /> object to read the raw ASF
-		///    Content Descriptor from.
+		///    Description Record from.
 		/// </param>
 		/// <returns>
 		///    <see langword="true" /> if the data was read correctly.
@@ -449,39 +568,43 @@ namespace TagLib.Asf {
 		/// </returns>
 		protected bool Parse (Asf.File file)
 		{
-			int name_count = file.ReadWord ();
-			name = file.ReadUnicode (name_count);
+			// Field name          Field type Size (bits)
+			// Language List Index WORD       16
+			// Stream Number       WORD       16
+			// Name Length         WORD       16
+			// Data Type           WORD       16
+			// Data Length         DWORD      32
+			// Name                WCHAR      varies
+			// Data                See below  varies
 			
+			lang_list_index = file.ReadWord ();
+			stream_number = file.ReadWord ();
+			ushort name_length = file.ReadWord ();
 			type = (DataType) file.ReadWord ();
-			
-			int value_count = file.ReadWord ();
+			int data_length = (int) file.ReadDWord ();
+			name = file.ReadUnicode (name_length);
 			
 			switch (type)
 			{
 			case DataType.Word:
 				longValue = file.ReadWord ();
 				break;
-				
 			case DataType.Bool:
-				longValue = file.ReadDWord ();
-				break;
-				
 			case DataType.DWord:
 				longValue = file.ReadDWord ();
 				break;
-				
 			case DataType.QWord:
 				longValue = file.ReadQWord ();
 				break;
-				
 			case DataType.Unicode:
-				strValue = file.ReadUnicode (value_count);
+				strValue = file.ReadUnicode (data_length);
 				break;
-				
 			case DataType.Bytes:
-				byteValue = file.ReadBlock (value_count);
+				byteValue = file.ReadBlock (data_length);
 				break;
-				
+			case DataType.Guid:
+				guidValue = file.ReadGuid ();
+				break;
 			default:
 				return false;
 			}

@@ -1,15 +1,12 @@
 //
-// File.cs: Provides tagging and properties support for WavPack files.
+// File.cs: Provides tagging and properties support for Monkey's Audio APE
+// files.
 //
 // Author:
-//   Brian Nickel (brian.nickel@gmail.com)
+//   Helmut Wahrmann
 //
-// Original Source:
-//   wvfile.cpp from libtunepimp
-//
-// Copyright (C) 2006-2007 Brian Nickel
-// Copyright (C) 2006 by Lukáš Lalinský (Original Implementation)
-// Copyright (C) 2004 by Allan Sandfeld Jensen (Original Implementation)
+// Copyright (C) 2007 Helmut Wahrmann
+// Copyright (C) 2007 Brian Nickel
 //
 // This library is free software; you can redistribute it and/or modify
 // it  under the terms of the GNU Lesser General Public License version
@@ -28,19 +25,21 @@
 
 using System;
 
-namespace TagLib.WavPack {
+namespace TagLib.Ape {
 	/// <summary>
 	///    This class extends <see cref="TagLib.NonContainer.File" /> to
-	///    provide tagging and properties support for WavPack files.
+	///    provide tagging and properties support for Monkey's Audio APE
+	///    files.
 	/// </summary>
 	/// <remarks>
 	///    A <see cref="TagLib.Ape.Tag" /> will be added automatically to
 	///    any file that doesn't contain one. This change does not effect
-	///    the file and can be reversed using the following method:
+	///    the physical file until <see cref="Save" /> is called and can be
+	///    reversed using the following method:
 	///    <code>file.RemoveTags (file.TagTypes &amp; ~file.TagTypesOnDisk);</code>
 	/// </remarks>
-	[SupportedMimeType("taglib/wv", "wv")]
-	[SupportedMimeType("audio/x-wavpack")]
+	[SupportedMimeType("taglib/ape", "ape")]
+	[SupportedMimeType("audio/x-ape")]
 	public class File : TagLib.NonContainer.File
 	{
 		#region Private Fields
@@ -90,7 +89,8 @@ namespace TagLib.WavPack {
 		/// <exception cref="ArgumentNullException">
 		///    <paramref name="path" /> is <see langref="null" />.
 		/// </exception>
-		public File (string path) : base (path)
+		public File (string path)
+			: base (path)
 		{
 		}
 		
@@ -167,9 +167,10 @@ namespace TagLib.WavPack {
 		///    <see cref="TagLib.Ape.Tag" /> will be added to the end of
 		///    the file. All other tag types will be ignored.
 		/// </remarks>
-		public override TagLib.Tag GetTag (TagTypes type, bool create)
+		public override TagLib.Tag GetTag(TagTypes type, bool create)
 		{
-			Tag t = (Tag as TagLib.NonContainer.Tag).GetTag (type);
+			TagLib.Tag t = (Tag as TagLib.NonContainer.Tag)
+				.GetTag (type);
 			
 			if (t != null || !create)
 				return t;
@@ -215,10 +216,9 @@ namespace TagLib.WavPack {
 			if (header_block != null &&
 				propertiesStyle == ReadStyle.None)
 				return;
-				
-			Seek (start);
-			header_block = ReadBlock (
-				(int) StreamHeader.Size);
+			
+			Seek(start);
+				header_block = ReadBlock ((int)StreamHeader.Size);
 		}
 		
 		/// <summary>
@@ -269,7 +269,8 @@ namespace TagLib.WavPack {
 		{
 			StreamHeader header = new StreamHeader (header_block,
 				end - start);
-			return new Properties (TimeSpan.Zero, header);
+			
+			return new Properties(TimeSpan.Zero, header);
 		}
 		
 		#endregion
