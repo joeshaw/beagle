@@ -1506,7 +1506,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		override protected bool PreAddIndexableHook (Indexable indexable)
 		{
 			if (Debug)
-				Log.Debug ("Asking whether it's ok to index {0} [{1}]", indexable.Uri, indexable.DisplayUri);
+				Log.Debug ("Asking whether it's ok to index ({2}) {0} [{1}]", indexable.Uri, indexable.DisplayUri, indexable.Type);
 
 			// Internal URIs are always allowed.
 			if (indexable.Uri.Scheme == GuidFu.UriScheme)

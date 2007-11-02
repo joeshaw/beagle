@@ -302,5 +302,19 @@ namespace Beagle.Util {
 		{
 			return GetFileInfosRecursive (dirinfo.FullName);
 		}
+
+		static public int GetNumItems (string path)
+		{
+			int count = 0;
+			FileFilter counting_filter = delegate (string dir, string name) {
+							    count ++;
+							    return false;
+			};
+
+			FileEnumerator dir_enum = new FileEnumerator (path, counting_filter, null);
+			dir_enum.MoveNext ();
+			return count;
+		}
+
 	}
 }
