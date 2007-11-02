@@ -44,7 +44,7 @@ namespace Beagle.Daemon.OperaQueryable {
 		
 		// Just in case we want to index more types in the future
 		private readonly string[] indexed_mimetypes = new string [] {
-			"text/html"
+			"text/html", "text/plain", "application/pdf"
 		};
 		
 		public OperaIndexableGenerator(OperaIndexer indexer, string cache_dir)
