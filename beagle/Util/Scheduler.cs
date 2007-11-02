@@ -270,9 +270,9 @@ namespace Beagle.Util {
 						Logger.Log.Warn (ex,
 								 "Caught exception in DoTaskReal\n" +
 								 "        Tag: {0}\n" +
-								 "    Creator: {0}\n" +
-								 "Description: {0}\n" +
-								 "   Priority: {0} ({1})", 
+								 "    Creator: {1}\n" +
+								 "Description: {2}\n" +
+								 "   Priority: {3} ({4})", 
 								 Tag, Creator, Description, Priority, SubPriority);
 					}
 					sw.Stop ();
