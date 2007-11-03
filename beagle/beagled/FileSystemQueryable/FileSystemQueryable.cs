@@ -66,13 +66,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// the appropriate IndexableGenerator.
 		private FileCrawlTask file_crawl_task;
 
-		// An IndexableGenerator that batches file removals generated
+		// An IndexableGenerator that batches file removals and additions generated
 		// from the event backends, instead of creating one task per
 		// file/directory.
-		private RemovalGenerator removal_generator;
-
-		// An IndexableGenerator that batches file additions
-		private AdditionGenerator addition_generator;
+		private FileSystemEventsGenerator fs_event_generator;
 
 		private ArrayList roots = new ArrayList ();
 		private ArrayList roots_by_path = new ArrayList ();
@@ -105,8 +102,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			file_crawl_task = new FileCrawlTask (this);
 			file_crawl_task.Source = this;
 
-			removal_generator = new RemovalGenerator (this);
-			addition_generator = new AdditionGenerator (this);
+			fs_event_generator = new FileSystemEventsGenerator (this);
 
 			uid_manager = new UidManager (FileAttributesStore, Driver);
 			xmp_handler = new XmpSidecarStore (uid_manager, this);
@@ -894,25 +890,40 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		
 		//////////////////////////////////////////////////////////////////////////
 
-		private class RemovalGenerator : IIndexableGenerator {
+		// Task generator for file system events
+		// Single shared queue that everyone (should) add tasks to
+		// Maintains the order in which the events happened
+		private class FileSystemEventsGenerator : IIndexableGenerator {
 
 			private FileSystemQueryable queryable;
 			private Scheduler.Task self_task;
 
 			private object queue_lock = new object ();
-			private Queue dir_name_queue = new Queue ();
-			private Queue file_name_queue = new Queue ();
 
-			public RemovalGenerator (FileSystemQueryable queryable)
+			class Event {
+				internal string dir_name;
+				internal string file_name;
+				internal bool addition;
+
+				public Event (string dir_name, string file_name, bool addition)
+				{
+					this.dir_name = dir_name;
+					this.file_name = file_name;
+					this.addition = addition;
+				}
+			}
+
+			private Queue<Event> event_queue = new Queue<Event> ();
+
+			public FileSystemEventsGenerator (FileSystemQueryable queryable)
 			{
 				this.queryable = queryable;
 			}
 
-			public void Add (string dir_name, string file_name)
+			public void Add (string dir_name, string file_name, bool addition)
 			{
 				lock (queue_lock) {
-					dir_name_queue.Enqueue (dir_name);
-					file_name_queue.Enqueue (file_name);
+					event_queue.Enqueue (new Event (dir_name, file_name, addition));
 
 					if (self_task == null) {
 						self_task = queryable.NewAddTask (this);
@@ -924,13 +935,42 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			public Indexable GetNextIndexable ()
 			{
-				string dir_name, file_name;
+				Event evt = null;
 
-				lock (queue_lock) {
-					dir_name = (string) dir_name_queue.Dequeue ();
-					file_name = (string) file_name_queue.Dequeue ();
+				lock (queue_lock)
+					evt = event_queue.Dequeue ();
+
+				// evt should not be null
+				if (evt.addition)
+					return GetNextAdditionIndexable (evt.dir_name, evt.file_name);
+				else
+					return GetNextRemovalIndexable (evt.dir_name, evt.file_name);
+			}
+
+			public Indexable GetNextAdditionIndexable (string dir_name, string file_name)
+			{
+				DirectoryModel dir = queryable.GetDirectoryModelByPath (dir_name);
+				if (dir == null) {
+					Log.Warn ("AdditionGenerator.GetNextIndexable failed: Couldn't find DirectoryModel for '{0}'", dir_name);
+					return null;
 				}
 
+				Guid unique_id;
+				unique_id = queryable.RegisterFile (dir, file_name);
+
+				if (unique_id == Guid.Empty)
+					return null;
+
+				string path = Path.Combine (dir.FullName, file_name);
+
+				Indexable indexable;
+				indexable = queryable.FileToIndexable (path, unique_id, dir, false);
+
+				return indexable;
+			}
+
+			public Indexable GetNextRemovalIndexable (string dir_name, string file_name)
+			{
 				// A null file name means that we're dealing with a directory
 				bool is_directory = (file_name == null);
 				DirectoryModel dir = queryable.GetDirectoryModelByPath (dir_name);
@@ -965,92 +1005,18 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			public bool HasNextIndexable ()
 			{
 				lock (queue_lock) {
-					return (dir_name_queue.Count > 0);
+					return (event_queue.Count > 0);
 				}
 			}
 
 			public string StatusName {
-				get { return "Removals from file system backend"; }
+				get { return String.Format ("Events from file system backend: left ", event_queue.Count); }
 			}
 
 			public void PostFlushHook ()
 			{
 				lock (queue_lock) {
-					if (dir_name_queue.Count > 0)
-						self_task.Reschedule = true;
-					else
-						self_task = null;
-				}
-			}
-		}
-
-		private class AdditionGenerator : IIndexableGenerator {
-
-			private FileSystemQueryable queryable;
-			private Scheduler.Task self_task = null;
-
-			private object queue_lock = new object ();
-			private Queue dir_queue = new Queue ();
-			private Queue file_name_queue = new Queue ();
-
-			public AdditionGenerator (FileSystemQueryable queryable)
-			{
-				this.queryable = queryable;
-			}
-
-			public void Add (DirectoryModel dir, string file_name)
-			{
-				lock (queue_lock) {
-					dir_queue.Enqueue (dir);
-					file_name_queue.Enqueue (file_name);
-
-					if (self_task == null) {
-						self_task = queryable.NewAddTask (this);
-						self_task.Priority = Scheduler.Priority.Immediate;
-						queryable.ThisScheduler.Add (self_task);
-					}
-				}
-			}
-
-			public Indexable GetNextIndexable ()
-			{
-				DirectoryModel dir;
-				string file_name;
-
-				lock (queue_lock) {
-					dir = (DirectoryModel) dir_queue.Dequeue ();
-					file_name = (string) file_name_queue.Dequeue ();
-				}
-
-				Guid unique_id;
-				unique_id = queryable.RegisterFile (dir, file_name);
-
-				if (unique_id == Guid.Empty)
-					return null;
-
-				string path = Path.Combine (dir.FullName, file_name);
-
-				Indexable indexable;
-				indexable = queryable.FileToIndexable (path, unique_id, dir, false);
-
-				return indexable;
-			}
-
-			public bool HasNextIndexable ()
-			{
-				lock (queue_lock) {
-					return (dir_queue.Count > 0);
-				}
-			}
-
-			public string StatusName {
-				get { return "Additions to file system backend"; }
-			}
-
-			public void PostFlushHook ()
-			{
-				lock (queue_lock) {
-					if (dir_queue.Count > 0)
+					if (event_queue.Count > 0)
 						self_task.Reschedule = true;
 					else
 						self_task = null;
@@ -1344,12 +1310,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// action.
 
 			if (old_ignore && ! new_ignore) {
-				addition_generator.Add (new_dir, new_name);
+				fs_event_generator.Add (new_dir.FullName, new_name, true);
 				return;
 			}
 
 			if (! old_ignore && new_ignore) {
-				removal_generator.Add (new_dir.FullName, new_name);
+				fs_event_generator.Add (new_dir.FullName, new_name, false);
 				return;
 			}
 
@@ -1364,7 +1330,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// assume that the original file never made it
 				// into the index ---  thus we treat this as
 				// an Add.
-				addition_generator.Add (new_dir, new_name);
+				fs_event_generator.Add (new_dir.FullName, new_name, true);
 				return;
 			}
 
@@ -1890,7 +1856,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (is_directory)
 				AddDirectory (dir, file_name);
 			else
-				addition_generator.Add (dir, file_name);
+				fs_event_generator.Add (dir.FullName, file_name, true);
 		}
 
 		public void HandleRemoveEvent (string directory_name, string file_name, bool is_directory)
@@ -1901,9 +1867,9 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			if (is_directory)
-				removal_generator.Add (Path.Combine (directory_name, file_name), null);
+				fs_event_generator.Add (Path.Combine (directory_name, file_name), null, false);
 			else
-				removal_generator.Add (directory_name, file_name);
+				fs_event_generator.Add (directory_name, file_name, false);
 		}
 
 		public void HandleMoveEvent (string old_directory_name, string old_file_name,
