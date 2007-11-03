@@ -30,6 +30,8 @@ using System.Text;
 
 namespace Beagle.Util {
 
+	// Light weight textreader to remove HTML tags from the stream
+	// For heavy duty real html-to-text reader, use Filters/FilterHtml
 	public class HtmlRemovingReader : TextReader {
 
 		private TextReader reader;

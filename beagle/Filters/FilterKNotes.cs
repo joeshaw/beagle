@@ -108,7 +108,7 @@ namespace Beagle.Filters {
 				FilterHtml.HotCallback hot_up_cb = new FilterHtml.HotCallback (HotUp);
 				FilterHtml.HotCallback hot_down_cb = new FilterHtml.HotCallback (HotDown);
 
-				FilterHtml html_filter = new FilterHtml ();
+				FilterHtml html_filter = new FilterHtml (false);
 				html_filter.ExtractText (description,
 							 append_text_cb,
 							 add_prop_cb,

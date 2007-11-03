@@ -224,7 +224,8 @@ namespace Beagle.Filters {
 						AppendWord (s);
 						ret = AppendWhiteSpace ();
 					}
-				}
+				} else if (node.Name == "br") // both <br> and </br> are used - special case
+					ret = AppendStructuralBreak ();
 			} else { // (! node.StartTag)
 				if (isHot) {
 					HotDown ();
@@ -343,33 +344,29 @@ namespace Beagle.Filters {
 		{
 			enc = null;
 
-			foreach (Property prop in Indexable.Properties) {
-				if (prop.Key != StringFu.UnindexedNamespace + "encoding")
-					continue;
+			try {
+				foreach (Property prop in Indexable.Properties) {
+					if (prop.Key != StringFu.UnindexedNamespace + "encoding")
+						continue;
 
-				try {
 					enc = Encoding.GetEncoding ((string) prop.Value);
-				} catch (NotSupportedException) {
-					// Encoding passed in isn't supported.  Maybe
-					// we'll get lucky detecting it from the
-					// document instead.
+					break;
 				}
 
-				break;
-			}
-
-			if (enc == null) {
-				// we need to tell the parser to detect encoding,
-				HtmlDocument temp_doc = new HtmlDocument ();
-				try {
+				if (enc == null) {
+					// we need to tell the parser to detect encoding,
+					HtmlDocument temp_doc = new HtmlDocument ();
 					enc = temp_doc.DetectEncoding (Stream);
-				} catch (NotSupportedException) {
-					enc = Encoding.ASCII;
+					temp_doc = null;
+					Stream.Seek (0, SeekOrigin.Begin);
 				}
-				//Console.WriteLine ("Detected encoding:" + (enc == null ? "null" : enc.EncodingName));
-				temp_doc = null;
-				Stream.Seek (0, SeekOrigin.Begin);
+			} catch (NotSupportedException) {
+				// Encoding passed in isn't supported
 			}
+
+			// Default
+			if (enc == null)
+				enc = Encoding.ASCII;
 
 			doc = new HtmlDocument ();
 			doc.ReportNode += HandleNodeEventHead;
@@ -438,6 +435,23 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/html"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/xhtml+xml"));
 		}
-	}
 
+		public static TextReader GetHtmlReader (Stream stream, string charset)
+		{
+			if (stream == null)
+				throw new ArgumentNullException ("stream");
+
+			FilterHtml html_filter = new FilterHtml ();
+			html_filter.SnippetMode = false;
+
+			html_filter.Indexable = new Indexable (); // fake an indexable
+			html_filter.AddProperty (Property.NewUnsearched (StringFu.              UnindexedNamespace + "encoding", charset));
+
+			if (! html_filter.Open (stream, false))
+				throw new Exception ("Cannot open html");
+
+			TextReader pr = html_filter.GetTextReader ();
+			return pr;
+		}
+	}
 }

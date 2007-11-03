@@ -238,8 +238,9 @@ namespace Beagle.Daemon {
 		private ArrayList textPool;
 		private ArrayList hotPool;
 
-		private bool last_was_structural_break = true;
+		private bool last_was_structural_break = false;
 		const string WHITESPACE = " ";
+		const string NEWLINE = "\n";
 
 		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
 		 * Handles null str.
@@ -279,6 +280,8 @@ namespace Beagle.Daemon {
 				return true;
 
 			if (! string.IsNullOrEmpty (str)) {
+				last_was_structural_break = false;
+
 				// If the filter is not storing snippets, there
 				// is no need to break strings into different lines.
 				ReallyAddText (str);
@@ -336,14 +339,17 @@ namespace Beagle.Daemon {
 			*/
 
 			ReallyAddText (words);
-			text_builder.Append (WHITESPACE);
+			if (is_line) {
+				text_builder.Append (NEWLINE);
+				last_was_structural_break = true;
+			} else
+				text_builder.Append (WHITESPACE);
 
 			if (snippetWriter != null) {
 				snippetWriter.Write (words);
 
 				if (is_line) {
 					snippetWriter.WriteLine ();
-					last_was_structural_break = true;
 				} else {
 					snippetWriter.Write (WHITESPACE);
 				}
@@ -352,9 +358,17 @@ namespace Beagle.Daemon {
 			return UpdateCharsAdded (words.Length + 1);
 		}
 
+		// Does not check for structural breaks
 		public bool AppendChars (char[] buffer, int index, int count)
 		{
+			if (Debug)
+				Logger.Log.Debug ("AppendChars ()");
+
 			ReallyAddText (buffer, index, count);
+
+			if (snippetWriter != null)
+				snippetWriter.Write (buffer, index, count);
+
 			return UpdateCharsAdded (count);
 		}
 
@@ -366,15 +380,15 @@ namespace Beagle.Daemon {
 			if (Debug)
 				Logger.Log.Debug ("AppendWhiteSpace ()");
 
-			text_builder.Append (WHITESPACE);
-
 			if (last_was_structural_break)
 				return true;
 
-			if (snippetWriter != null) {
+			last_was_structural_break = false;
+
+			text_builder.Append (WHITESPACE);
+
+			if (snippetWriter != null)
 				snippetWriter.Write (WHITESPACE);
-				last_was_structural_break = false;
-			}
 
 			return UpdateCharsAdded (1);
 		}
@@ -384,14 +398,19 @@ namespace Beagle.Daemon {
 		 */
 		public bool AppendStructuralBreak ()
 		{
-			if (snippetWriter != null && ! last_was_structural_break) {
-				snippetWriter.WriteLine ();
-				last_was_structural_break = true;
-			}
+			if (Debug)
+				Logger.Log.Debug ("AppendStructuralBreak ()");
 
-			// When adding a "newline" to the textCache, we need to 
-			// append a "Whitespace" to the text pool.
-			text_builder.Append (WHITESPACE);
+			if (last_was_structural_break)
+				return true;
+
+			last_was_structural_break = true;
+
+			text_builder.Append (NEWLINE);
+
+			if (snippetWriter != null)
+				snippetWriter.WriteLine ();
+
 			return UpdateCharsAdded (1);
 		}
 
@@ -526,7 +545,7 @@ namespace Beagle.Daemon {
 
 		private string tempFile = null;
 		private FileSystemInfo currentInfo = null;
-		private FileStream currentStream = null;
+		private Stream currentStream = null;
 		private StreamReader currentReader = null;
 
 		public bool Open (TextReader reader)
@@ -598,6 +617,41 @@ namespace Beagle.Daemon {
 			return Open (new FileInfo (tempFile));
 		}
 
+		// This will throw an exception; callers should catch it and appropriately
+		// display the error message showing the filename etc.
+		public bool Open (Stream stream, bool store_tempfile)
+		{
+			if (store_tempfile)
+				return Open (stream);
+
+			currentStream = stream;
+
+			isFinished = false;
+			if (textPool == null)
+				textPool = new ArrayList ();
+			if (hotPool == null)
+				hotPool = new ArrayList ();
+			text_builder.Length = 0;
+
+			// Note: No call to DoOpen ()
+			// Some filter might need a DoOpen(),
+			// but then they should be stored in a tempfile.
+
+			DoPullProperties ();
+			
+			if (IsFinished) 
+				return true;
+			else if (HasError)
+				return false;
+			
+			DoPullSetup ();
+			
+			if (HasError)
+				return false;				
+
+			return true;
+		}
+
 		public bool Open (FileSystemInfo info)
 		{
 			isFinished = false;
@@ -617,11 +671,11 @@ namespace Beagle.Daemon {
 				if (preload) {
 					// Our default assumption is sequential reads.
 					// FIXME: Is this the right thing to do here?
-					FileAdvise.IncreaseReadAhead (currentStream);
+					FileAdvise.IncreaseReadAhead ((FileStream) currentStream);
 				
 					// Give the OS a hint that we will be reading this
 					// file soon.
-					FileAdvise.PreLoad (currentStream);				
+					FileAdvise.PreLoad ((FileStream) currentStream);				
 				}
 			}
 
@@ -632,25 +686,13 @@ namespace Beagle.Daemon {
 					return true;
 				else if (HasError)
 					return false;
-				
-				DoPullProperties ();
-				
-				if (IsFinished) 
-					return true;
-				else if (HasError)
-					return false;
-				
-				DoPullSetup ();
-				
-				if (HasError)
-					return false;				
+				    
+				return Open (currentStream, false);
 			} catch (Exception e) {
 				Log.Warn (e, "Unable to filter {0}:", info.FullName);
 				Cleanup (); // clean up temporary files on an exception
 				return false;
 			}
-
-			return true;
 		}
 
 		public bool Open (string path)
@@ -721,8 +763,8 @@ namespace Beagle.Daemon {
 			if (currentStream != null) {
 				// When crawling, give the OS a hint that we don't
 				// need to keep this file around in the page cache.
-				if (CrawlMode)
-					FileAdvise.FlushCache (currentStream);
+				if (CrawlMode && currentStream is FileStream)
+					FileAdvise.FlushCache ((FileStream) currentStream);
 
 				currentStream.Close ();
 				currentStream = null;

@@ -229,6 +229,11 @@ namespace Beagle.Filters {
 				return;
 			}
 
+			if (handler.HtmlPart) {
+				DoPullingReaderPull ();
+				return;
+			}
+
 			string l = handler.Reader.ReadLine ();
 
 			if (l == null)
@@ -237,6 +242,23 @@ namespace Beagle.Filters {
 				AppendText (l);
 				AppendStructuralBreak ();
 			}
+		}
+
+		char[] pulling_reader_buf = null;
+		const int BUFSIZE = 1024;
+		private void DoPullingReaderPull ()
+		{
+			if (pulling_reader_buf == null)
+				pulling_reader_buf = new char [BUFSIZE];
+
+			int count = handler.Reader.Read (pulling_reader_buf, 0, BUFSIZE);
+			if (count == 0) {
+				Finished ();
+				pulling_reader_buf = null;
+				return;
+			}
+
+			AppendChars (pulling_reader_buf, 0, count);
 		}
 
 		protected override void DoClose ()
@@ -262,6 +284,11 @@ namespace Beagle.Filters {
 			private int depth = 0; // part recursion depth
 			private ArrayList child_indexables = new ArrayList ();
 			private TextReader reader;
+
+			private bool html_part = false;
+			public bool HtmlPart {
+				get { return html_part; }
+			}
 
 			// Blacklist a handful of common MIME types that are
 			// either pointless on their own or ones that we don't
@@ -361,6 +388,15 @@ namespace Beagle.Filters {
 							no_child_needed = true;
 
 							this.reader = new StreamReader (stream);
+						} else if (mime_type == "text/html") {
+							no_child_needed = true;
+							html_part = true;
+							string enc = part.GetContentTypeParameter ("charset"); 
+							try {
+								this.reader = FilterHtml.GetHtmlReader (stream, enc);
+							} catch (Exception e) {
+								Log.Debug (e, "Exception while filtering HTML email {0}", this.indexable.Uri);
+							}
 						}
 					}
 
@@ -429,7 +465,6 @@ namespace Beagle.Filters {
 			}
 		}
 
-				       
 	}
 
 }
