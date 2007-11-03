@@ -68,7 +68,7 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting messaging server");
 
 			try {
-				server = new Server ("socket", Conf.Networking.GetOption (Conf.Names.ServiceEnabled, false));
+				server = new Server ("socket", false, Conf.Networking.GetOption (Conf.Names.ServiceEnabled, false));
 				server.Start ();
 			} catch (InvalidOperationException) {
 				return false;

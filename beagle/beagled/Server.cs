@@ -603,8 +603,10 @@ namespace Beagle.Daemon {
 		private HttpListener http_listener;
 		private static Hashtable live_handlers = new Hashtable ();
 		private bool running = false;
+		// FIXME: Should be changed to enable/disable network service at runtime
 		private bool enable_network_svc = false;
 		private bool webinterface = false; // web interface is enabled if (enable_network_svc || webinterface)
+		private bool indexhelper = false; // denotes if this is an instance of an IndexHelper
 
 		public static Hashtable item_handlers = new Hashtable ();
 
@@ -614,7 +616,7 @@ namespace Beagle.Daemon {
 				ScanAssemblyForExecutors (assembly);
 		}
 
-		public Server (string name, bool enable_network_svc)
+		public Server (string name, bool indexhelper, bool enable_network_svc)
 		{
 			// Use the default name when passed null
 			if (name == null)
@@ -623,9 +625,14 @@ namespace Beagle.Daemon {
 			this.socket_path = Path.Combine (PathFinder.GetRemoteStorageDir (true), name);
 			this.unix_listener = new UnixListener (this.socket_path);
 			this.enable_network_svc = enable_network_svc;
+			this.indexhelper = indexhelper;
+			if (this.indexhelper) {
+				this.enable_network_svc = false;
+				this.webinterface = false;
+			}
 		}
 
-		public Server (bool enable_network_svc) : this (null, enable_network_svc)
+		public Server (bool enable_network_svc) : this (null, false, enable_network_svc)
 		{
 		}
 
@@ -835,7 +842,10 @@ namespace Beagle.Daemon {
 			if (!initialized)
 				throw new Exception ("Server must be initialized before starting");
 
-			if (!Shutdown.ShutdownRequested) {
+			if (Shutdown.ShutdownRequested)
+				return;
+
+			if (! indexhelper) {
 				Config config = Conf.Get (Conf.Names.NetworkingConfig);
 				webinterface = config.GetOption ("WebInterface", false);
 				Conf.WatchForUpdates ();
@@ -843,14 +853,14 @@ namespace Beagle.Daemon {
 
 				if (enable_network_svc || webinterface)
 					ExceptionHandlingThread.Start (new ThreadStart (this.HttpRun));
-
-				ExceptionHandlingThread.Start (new ThreadStart (this.Run));
 			}
+
+			ExceptionHandlingThread.Start (new ThreadStart (this.Run));
 		}
 
 		private void StartWebserver ()
 		{
-			if (enable_network_svc || webinterface)
+			if (indexhelper || enable_network_svc || webinterface)
 				return;
 			webinterface = true;
 			ExceptionHandlingThread.Start (new ThreadStart (this.HttpRun));
@@ -885,7 +895,7 @@ namespace Beagle.Daemon {
 
 		private void StopWebserver ()
 		{
-			if (enable_network_svc || ! webinterface)
+			if (indexhelper || enable_network_svc || ! webinterface)
 				return;
 			
 			this.http_listener.IgnoreWriteExceptions = true;
