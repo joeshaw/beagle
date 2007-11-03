@@ -267,7 +267,7 @@ public class SettingsDialog
 		bs_config.SetOption (Conf.Names.BeagleSearchAutoSearch,auto_search_toggle.Active);
 		daemon_config.SetOption (Conf.Names.IndexOnBattery,battery_toggle.Active);
 		daemon_config.SetOption (Conf.Names.IndexFasterOnScreensaver, screensaver_toggle.Active);
-		
+
 		bs_config.SetOption (Conf.Names.KeyBinding_Key, show_search_window_entry.Text);
 		bs_config.SetOption (Conf.Names.KeyBinding_Ctrl, press_ctrl_toggle.Active);
 		bs_config.SetOption (Conf.Names.KeyBinding_Alt, press_alt_toggle.Active);
@@ -307,9 +307,9 @@ public class SettingsDialog
 		Config networking_config = Conf.Get (Conf.Names.FilesQueryableConfig);
 
 		networking_config.SetOption (Conf.Names.ServiceEnabled, allow_global_access_toggle.Active);
-		bs_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
-		bs_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
-		bs_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
+		networking_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
+		networking_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
+		networking_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
 
 		List<string[]> svcs = new List<string[]> (networking_view.Nodes.Count);
 		foreach (NetworkService svc in networking_view.Nodes) {
