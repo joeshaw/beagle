@@ -73,13 +73,22 @@ namespace Beagle.IndexHelper {
 			}
 
 			IndexerReceipt [] receipts = null;
-			if (remote_request.Request != null) // If we just want the item count, this will be null
-				receipts = indexer.Flush (remote_request.Request);
+			int item_count = 0;
+
+			try {
+				if (remote_request.Request != null) // If we just want the item count, this will be null
+					receipts = indexer.Flush (remote_request.Request);
+				item_count = indexer.GetItemCount ();
+			} catch (Exception e) {
+				// Send error response
+				++Count;
+				return new ErrorResponse (e);
+			}
 
 			// Construct a response containing the item count and
 			// the receipts produced by the actual indexing.
 			RemoteIndexerResponse response = new RemoteIndexerResponse ();
-			response.ItemCount = indexer.GetItemCount ();
+			response.ItemCount = item_count;
 			response.Receipts = receipts;
 
 			++Count;

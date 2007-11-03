@@ -182,6 +182,10 @@ namespace Beagle {
 			ResponseMessage resp = null;
 
 			// FIXME: Wait for all transports to finish before returning
+			// FIXME FIXME: If ErrorResponse is received, then Daemon will try
+			// to send the message. Since transport is closed ... this will cause
+			// all kinds of trouble like ObjectDisposedException. The same
+			// message cannot be resend in this model.
 			foreach (Transport transport in transports) {
 				resp = transport.Send (this);
 				transport.Close ();

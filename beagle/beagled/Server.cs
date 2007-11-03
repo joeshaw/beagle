@@ -144,7 +144,7 @@ namespace Beagle.Daemon {
 					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
 					this.thread = null;
 					Server.MarkHandlerAsKilled (this);
-					Shutdown.WorkerFinished (network_data);
+					Shutdown.WorkerFinished (context.Request.InputStream);
 					return;
 				}
 
@@ -295,9 +295,18 @@ namespace Beagle.Daemon {
 
 			if (result) {
 				// Send an end of message marker
-				this.client.GetStream().WriteByte (0xff);
-				this.client.GetStream().Flush ();
+				// FIXME: Should we return false if this fails ? I think we should.
+				// There is a timing issue here - sometimes, the sending above
+				// works and this one fails.
+				try {
+					this.client.GetStream().WriteByte (0xff);
+					this.client.GetStream().Flush ();
+				} catch (IOException e) {
+					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					result = false;
+				}
 			}
+
 			return result;
 		}			
 
@@ -855,7 +864,15 @@ namespace Beagle.Daemon {
 					ExceptionHandlingThread.Start (new ThreadStart (this.HttpRun));
 			}
 
-			ExceptionHandlingThread.Start (new ThreadStart (this.Run));
+			ExceptionHandlingThread.Start (new ThreadStart (delegate () {
+							    try {
+								    this.Run ();
+							    } catch (ThreadAbortException) {
+								    Thread.ResetAbort ();
+							    	    Log.Debug ("Breaking out of UnixListener -- shutdown requested");
+							    	    Shutdown.WorkerFinished (this);
+							    }
+						    }));
 		}
 
 		private void StartWebserver ()
