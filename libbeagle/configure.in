@@ -1,5 +1,5 @@
 ###
-### Welcome to libeagle's configure.in.  We hope you enjoy your stay.
+### Welcome to libbeagle's configure.in.  We hope you enjoy your stay.
 ###
 
 AC_INIT(beagle/beagle.h)
@@ -158,7 +158,7 @@ wrappers/python/Makefile
 ])
 
 echo "
-	libeagle bersion:         ${VERSION}
+	libbeagle version:         ${VERSION}
 	Prefix:			  ${prefix}
 
 	Enable docs               ${enable_gtk_doc}
