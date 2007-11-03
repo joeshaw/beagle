@@ -126,6 +126,14 @@ do_grab_key (Binding *binding)
 
 	TRACE (g_print ("Got accel %d, %d, %d\n", keysym, binding->keycode, virtual_mods));
 
+	if (binding->keycode == 0)
+		binding->keycode = XKeysymToKeycode (GDK_WINDOW_XDISPLAY (rootwin), 
+					     keysym);
+	if (binding->keycode == 0)
+		return FALSE;
+
+	TRACE (g_print ("Got keycode %d\n", binding->keycode));
+
 	egg_keymap_resolve_virtual_modifiers (keymap,
 					      virtual_mods,
 					      &binding->modifiers);
