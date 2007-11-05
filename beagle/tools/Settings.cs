@@ -80,10 +80,13 @@ public class SettingsDialog
 	private IncludeView include_view;
 	private ExcludeView exclude_view;
 
-	[Widget] TreeView backends_treeview;
-	
-	private ListStore backends_list_store;
+	////////////////////////////////////////////////////////////////
+	// Backends
 
+	[Widget] ScrolledWindow backends_sw;
+
+	private BackendView backend_view;
+	
 	////////////////////////////////////////////////////////////////
 	// Zeroconf
 
@@ -132,12 +135,9 @@ public class SettingsDialog
 		exclude_view.Show ();
 		exclude_sw.Child = exclude_view;
 
-		backends_list_store = new ListStore (typeof (string), typeof (bool));
-
-		backends_treeview.Model = backends_list_store;
-		backends_treeview.AppendColumn ("Active", new CellRendererToggle (), "active", 1);
-		backends_treeview.AppendColumn ("Active", new CellRendererText (), "text", 0);
-		
+		backend_view = new BackendView ();
+		backend_view.Show ();
+		backends_sw.Child = backend_view;
 
 #if ENABLE_AVAHI
 		networking_view = new NetworkingView ();
@@ -255,6 +255,13 @@ public class SettingsDialog
 		password = password.PadRight (12);
                 password_entry.Text = password.Substring (0, 12);
 #endif
+
+		values = daemon_config.GetListOptionValues (Conf.Names.DeniedBackends);
+		if (values != null)
+			foreach (string[] backend in values) {
+				backend_view.Set (backend[0], false);	
+				Console.WriteLine (backend[0]);
+			}
 	}
 
 	private void SaveConfiguration ()
@@ -318,6 +325,12 @@ public class SettingsDialog
 		networking_config.SetListOptionValues (Conf.Names.NetworkServices, svcs);
 		Conf.Save (networking_config);
 #endif
+		List<string[]> denied_backends = new List<string[]> ();
+
+foreach (string backend in backend_view.Denied)
+	denied_backends.Add (new string[] { backend });
+daemon_config.SetListOptionValues (Conf.Names.DeniedBackends, denied_backends);
+
 
 		Conf.Save (fsq_config);
 		Conf.Save (bs_config);
@@ -1538,4 +1551,100 @@ public class SettingsDialog
    
 	}
 #endif
+
+	////////////////////////////////////////////////////////////////
+	// BackendView
+
+	class BackendView : TreeView 
+	{
+		private ListStore store = null;
+
+		private string[] backends = new string[] {
+			"EvolutionMail",
+			"EvolutionDataServer",
+			"Thunderbird",
+			"Akregator",
+			"Blam",
+			"Files",
+			"IndexingService",
+			"KonqBookmark",
+			"KMail",
+			"KNotes",
+			"KOrganizer",
+			"KAddressBook",
+			"KonquerorHistory",
+			"Konversation",
+			"Kopete",
+			"Labyrinth",
+			"Liferea",
+			"NautilusMetadata",
+			"NetworkServices",
+			"Opera",
+			"Pidgin",
+			"Tomboy"
+		};
+
+		public BackendView ()
+		{
+			this.store = new ListStore (typeof (bool), typeof (string));
+
+			CellRendererToggle toggle = new CellRendererToggle ();
+			toggle.Activatable = true;
+			toggle.Toggled += OnToggled;
+
+			base.Model = store;
+			base.AppendColumn (null, toggle, "active", 0);
+			base.AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 1);
+
+			foreach (string backend in backends)
+				store.AppendValues (true, backend);
+		}
+
+		public void Set (string backend, bool enabled)
+		{
+			TreeIter iter;
+
+			if (! store.GetIterFirst (out iter))
+				return;
+			
+			do {
+				string name = (string) store.GetValue (iter, 1);
+
+				if (name == backend)
+					store.SetValue (iter, 0, enabled);
+			} while (store.IterNext (ref iter));
+		}
+
+		private void OnToggled (object o, ToggledArgs args)
+		{
+			TreeIter iter;
+
+			if (! store.GetIter (out iter, new TreePath (args.Path)))
+				return;
+
+			store.SetValue (iter, 0, ! (bool) store.GetValue (iter, 0));
+		}
+
+		private List<string> GetDenied ()
+		{
+			TreeIter iter;
+			List<string> denied = new List<string> ();
+
+			if (! store.GetIterFirst (out iter))
+				return null;
+			
+			do {
+				bool enabled = (bool) store.GetValue (iter, 0);
+				
+				if (! enabled)
+					denied.Add ((string) store.GetValue (iter, 1));
+			} while (store.IterNext (ref iter));
+
+			return denied;
+		}
+
+		public List<string> Denied {
+			get { return GetDenied (); }
+		}
+	}
 }
