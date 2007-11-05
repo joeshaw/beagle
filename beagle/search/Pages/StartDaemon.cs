@@ -9,21 +9,20 @@ namespace Search.Pages {
 
 	public class StartDaemon : Base {
 
-		public DaemonStarted DaemonStarted;
-
-		private Gtk.Button button;
+		public event DaemonStarted DaemonStarted;
 
 		public StartDaemon ()
 		{
-			HeaderIconStock = Stock.DialogError;
-			HeaderMarkup = "<big><b>" + Catalog.GetString ("Search service not running") + "</b></big>";
+			HeaderIconFromStock = Stock.DialogError;
+			Header = Catalog.GetString ("Search service not running");
 
 			Append (Catalog.GetString ("The search service does not appear to be running. " +
 						   "You can start it by clicking the button below."));
 
-			button = new Gtk.Button (Catalog.GetString ("Start search service"));
+			Gtk.Button button = new Gtk.Button (Catalog.GetString ("Start search service"));
 			button.Clicked += OnStartDaemon;
 			button.Show ();
+
 			Append (button);
 		}
 
@@ -48,7 +47,9 @@ namespace Search.Pages {
 
 		private bool DaemonStartedTimeout ()
 		{
-			DaemonStarted ();
+			if (DaemonStarted != null)
+				DaemonStarted ();
+
 			return false;
 		}
 	}

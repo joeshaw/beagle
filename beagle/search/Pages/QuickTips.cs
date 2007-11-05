@@ -6,7 +6,7 @@ namespace Search.Pages {
 
 	public class QuickTips : Base {
 
-		static string[] tips = new string[] {
+		private static string[] tips = new string[] {
 			Catalog.GetString ("You can use upper and lower case; search is case-insensitive."),
 			Catalog.GetString ("To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"),
 			Catalog.GetString ("To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"),
@@ -16,7 +16,7 @@ namespace Search.Pages {
 		public QuickTips ()
 		{
 			HeaderIcon = Beagle.Images.GetPixbuf ("quick-tips.png");
-			HeaderMarkup = "<big><b>" + Catalog.GetString ("Quick Tips") + "</b></big>";
+			Header = Catalog.GetString ("Quick Tips");
 			
 			foreach (string tip in tips)
 				Append (tip);

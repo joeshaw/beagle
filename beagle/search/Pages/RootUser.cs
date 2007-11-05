@@ -8,9 +8,11 @@ namespace Search.Pages {
 
 		public RootUser ()
 		{
-			HeaderIconStock = Stock.DialogError;
-			HeaderMarkup = "<big><b>" + Catalog.GetString ("Beagle cannot be run as root") + "</b></big>";
-			Append (Catalog.GetString ("For security reasons, Beagle cannot be run as root.  You should restart as a regular user."));
+			HeaderIconFromStock = Stock.DialogError;
+			Header = Catalog.GetString ("Beagle cannot be run as root");
+
+			Append (Catalog.GetString ("For security reasons, Beagle cannot be run as root. " +
+						   "You should restart as a regular user."));
 		}
 	}
 }

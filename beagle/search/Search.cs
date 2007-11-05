@@ -153,6 +153,7 @@ namespace Search {
 			vbox.Spacing = 3;
 
 			uim = new UIManager (this);
+			uim.DomainChanged += OnDomainChanged;
 			uim.ScopeChanged += OnScopeChanged;
 			uim.SortChanged += OnSortChanged;
 			uim.ToggleDetails += OnToggleDetails;
@@ -469,6 +470,21 @@ namespace Search {
 			}
 
 			pages.CurrentPage = pages.PageNum (quicktips);
+		}
+
+		private void OnDomainChanged (QueryDomain domain, bool active)
+		{
+			if (current_query == null)
+				return;
+
+			// FIXME: Most likely refire the query.
+			// Also keep the setting, so it can be used for future queries
+			// in this running instance.
+
+			if (active)
+				current_query.AddDomain (domain);
+			else
+				current_query.RemoveDomain (domain);
 		}
 
 		private void ShowInformation (Tiles.Tile tile)

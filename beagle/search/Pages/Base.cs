@@ -8,87 +8,55 @@ namespace Search.Pages {
 
 		private static Gdk.Pixbuf arrow = Beagle.Images.GetPixbuf ("tip-arrow.png");
 
-		Gtk.Fixed fixed_widget;
-		Gtk.Table table;
-		Gtk.Image headerIcon;
-		Gtk.Label header;
+		private Gtk.Table table;
+		private Gtk.Image header_icon;
+		private Gtk.Label header_label;
 
 		public Base ()
 		{
-			fixed_widget = new Fixed ();
-			fixed_widget.HasWindow = true;
-			Add (fixed_widget);
-
 			table = new Gtk.Table (1, 2, false);
-			table.RowSpacing = table.ColumnSpacing = 12;
+			table.RowSpacing = 12;
+			table.ColumnSpacing = 12;
 
-			headerIcon = new Gtk.Image ();
-			headerIcon.Yalign = 0.0f;
-			table.Attach (headerIcon, 0, 1, 0, 1,
-				      0, Gtk.AttachOptions.Fill,
-				      0, 0);
+			header_icon = new Gtk.Image ();
+			table.Attach (header_icon, 0, 1, 0, 1, Gtk.AttachOptions.Fill, Gtk.AttachOptions.Fill, 0, 5);
 
-			header = new Gtk.Label ();
-			header.SetAlignment (0.0f, 0.5f);
-			table.Attach (header, 1, 2, 0, 1,
-				      Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill,
-				      Gtk.AttachOptions.Fill,
-				      0, 0);
+			header_label = new Gtk.Label ();
+			header_label.SetAlignment (0.0f, 0.5f);
+			table.Attach (header_label, 1, 2, 0, 1, Gtk.AttachOptions.Fill | Gtk.AttachOptions.Expand, 0, 0, 5);
 
-			fixed_widget.Add (table);
-			fixed_widget.ShowAll ();
+			table.ShowAll ();			
+
+			Add (table);
 		}
 
 		protected override void OnRealized ()
 		{
 			base.OnRealized ();
-			ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
-		}
-
-		public Gdk.Pixbuf HeaderIcon {
-			set { headerIcon.Pixbuf = value; }
-		}
-
-		public string HeaderIconStock {
-			set { headerIcon.SetFromStock (value, Gtk.IconSize.Dnd); }
-		}
-
-		public string HeaderMarkup {
-			set { header.Markup = value; }
+			base.ModifyBg (Gtk.StateType.Normal, Style.Base (Gtk.StateType.Normal));
 		}
 
 		public void Append (string tip)
 		{
 			uint row = table.NRows;
-			Gtk.Image image;
-			Gtk.Label label;
 
-			image = new Gtk.Image (arrow);
-			image.Yalign = 0.0f;
-			image.Xalign = 1.0f;
+			Gtk.Image image = new Gtk.Image (arrow);
 			image.Show ();
-			table.Attach (image, 0, 1, row, row + 1,
-				      Gtk.AttachOptions.Fill,
-				      Gtk.AttachOptions.Fill,
-				      0, 0);
+			table.Attach (image, 0, 1, row, row + 1, Gtk.AttachOptions.Fill, Gtk.AttachOptions.Fill, 0, 0);
 
-			label = new Gtk.Label ();
+			Gtk.Label label = new Gtk.Label ();
 			label.Markup = tip;
 			label.SetAlignment (0.0f, 0.5f);
 			label.LineWrap = true;
 			label.ModifyFg (Gtk.StateType.Normal, label.Style.Foreground (Gtk.StateType.Insensitive));
 			label.Show ();
-			table.Attach (label, 1, 2, row, row + 1,
-				      Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill,
-				      0, 0, 0);
-
+			table.Attach (label, 1, 2, row, row + 1, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 0, 0);
 		}
 
 		public void Append (Gtk.Widget widget)
 		{
 			uint row = table.NRows;
-
-			table.Attach (widget, 1, 2, row, row + 1, 0, 0, 0, 0);
+			table.Attach (widget, 0, 2, row, row + 1, 0, 0, 0, 0);
 		}
 
 		protected override void OnSizeRequested (ref Gtk.Requisition req)
@@ -100,12 +68,25 @@ namespace Search.Pages {
 		{
 			base.OnSizeAllocated (allocation);
 
-			Gtk.Requisition tableReq = table.ChildRequisition;
-			allocation.X = Math.Max ((allocation.Width - tableReq.Width) / 2, 0);
-			allocation.Y = Math.Max ((allocation.Height - tableReq.Height) / 2, 0);
-			allocation.Width = tableReq.Width;
-			allocation.Height = tableReq.Height;
+			Gtk.Requisition table_req = table.ChildRequisition;
+			allocation.X = Math.Max ((allocation.Width - table_req.Width) / 2, 0);
+			allocation.Y = Math.Max ((allocation.Height - table_req.Height) / 2, 0);
+			allocation.Width = table_req.Width;
+			allocation.Height = table_req.Height;
+
 			table.SizeAllocate (allocation);
+		}
+
+		public Gdk.Pixbuf HeaderIcon {
+			set { header_icon.Pixbuf = value; }
+		}
+
+		public string HeaderIconFromStock {
+			set { header_icon.SetFromStock (value, Gtk.IconSize.Dnd); }
+		}
+
+		public string Header {
+			set { header_label.Markup = "<big><b>" + value + "</b></big>"; }
 		}
 	}
 }

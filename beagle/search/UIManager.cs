@@ -289,12 +289,16 @@ namespace Search {
 		"        <menuitem action='Feeds'/>" +
 		"        <menuitem action='Archives'/>" +
 		"      </menu>" +
+
+#if ENABLE_AVAHI
 		"      <menu action='Domain'>" +
 		"        <menuitem action='Local'/>" +
 		"        <menuitem action='Neighborhood'/>" +
 		"      </menu>" +
-		"      <separator/>" +
+#endif
+
 		"      <menuitem action='Preferences'/>" +
+		"      <separator/>" +
 		"      <menuitem action='Quit'/>" +
 		"    </menu>" +
 		"    <menu action='Actions'>" +

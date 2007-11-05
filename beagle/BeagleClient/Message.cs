@@ -176,32 +176,30 @@ namespace Beagle {
 
 		public ResponseMessage Send ()
 		{
-			if (transports.Count < 1)
-				throw new ResponseMessageException (String.Format ("No transport registered to handle '{0}'", this.GetType()));
-			
-			ResponseMessage resp = null;
+			if (transports.Count != 1)
+				throw new ResponseMessageException (String.Format ("Invalid number of transports on '{0}'", this.GetType()));
 
-			// FIXME: Wait for all transports to finish before returning
+			if (! transports [0].IsLocal)
+				throw new ResponseMessageException (String.Format ("Non-local transports not allowed on non-async message '{0}'", this.GetType()));
+
 			// FIXME FIXME: If ErrorResponse is received, then Daemon will try
 			// to send the message. Since transport is closed ... this will cause
 			// all kinds of trouble like ObjectDisposedException. The same
 			// message cannot be resend in this model.
-			foreach (Transport transport in transports) {
-				resp = transport.Send (this);
-				transport.Close ();
-			}
+			ResponseMessage response = transports [0].Send (this);
+			transports [0].Close ();
 				
 			// Add some nice syntactic sugar by throwing an
 			// exception if the response is an error.
-			ErrorResponse error = resp as ErrorResponse;		
+			ErrorResponse error = response as ErrorResponse;		
 
 			if (error != null)
 				throw new ResponseMessageException (error);
 			
-			if (resp == null)
+			if (response == null)
 				throw new ResponseMessageException ("Response is null");
 
-			return resp;
+			return response;
 		}
 
 		[XmlIgnore]
