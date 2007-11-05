@@ -426,6 +426,14 @@ fi
 
 AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
 
+# distcheck hack
+AC_ARG_ENABLE([epiphany-extension-install],
+	AS_HELP_STRING([--enable-epiphany-extension-install],[Install Epiphany Extension]),
+	[install_epiphany_extension=$enableval],
+	[install_epiphany_extension=yes])
+
+AM_CONDITIONAL([INSTALL_EPIPHANY_EXTENSION], [test "x$install_epiphany_extension" = "xyes"])
+
 dnl ----------------------------------------------
 
 dnl Galago

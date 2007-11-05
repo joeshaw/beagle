@@ -147,6 +147,7 @@ EXTRA_DIST =			\
 	$(TILES)		\
 	$(PAGES)		\
 	$(TRAY)			\
+	$(man_MANS)		\
 	$(desktop_DATA).in	\
 	$(autostart_DATA)	\
 	beagle-search.in	\

@@ -1,9 +1,6 @@
 # List of source files containing translatable strings.
 # Please keep this file in alphabetical order.
 [encoding: UTF-8]
-ContactViewer/ContactViewer.cs
-ContactViewer/ContactWindow.cs
-ContactViewer/contactviewer.glade
 epiphany-extension/beagle.ephy-extension.in
 epiphany-extension/beagle.py.in
 ImLogViewer/ImLogViewer.cs

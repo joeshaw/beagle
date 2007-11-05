@@ -8,8 +8,14 @@ beagle.py: beagle.py.in
 	-e "s|\@localedir\@|${localedir}|g"	\
 	< $(srcdir)/beagle.py.in > beagle.py
 
-extensiondir = $(EPIPHANY_EXTENSIONS_DIR)
-extension_DATA = $(extension_files) beagle.py
+# Hack to fix distcheck
+if INSTALL_EPIPHANY_EXTENSION
+	extensiondir = $(EPIPHANY_EXTENSIONS_DIR)
+	extension_DATA = $(extension_files) beagle.py
+else
+	extensiondir = $(libdir)/epiphany/extensions
+	extension_DATA = $(extension_files) beagle.py
+endif
 
 EXTRA_DIST = $(extension_in_files) beagle.py.in
 

@@ -220,7 +220,6 @@ uninstall-local:
 COND_CS_FILES =				\
 	$(srcdir)/ChmFile.cs		\
 	$(srcdir)/Galago.cs		\
-	$(srcdir)/Mork.cs		\
 	$(srcdir)/Thunderbird.cs
 
 EXTRA_DIST =			\
