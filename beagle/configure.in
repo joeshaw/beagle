@@ -459,7 +459,7 @@ if test "x$have_avahi_dependencies" = "xno"; then
 else
 
 	if test "x$enable_avahi" != "xno"; then
-		enable_avahi="yes"
+		enable_avahi="yes (EXPERIMENTAL)"
 	else
 		enable_avahi="no (disabled)"
 	fi

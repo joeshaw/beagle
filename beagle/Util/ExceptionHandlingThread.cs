@@ -53,6 +53,8 @@ namespace Beagle.Util {
 			this.thread.Name = String.Format ("EHT {0:00000} [{1:00000} {2}] {3}:{4}", wrap_gettid (), proc.Id, proc.ProcessName,
 							  method.Target == null ? method.Method.DeclaringType.ToString () : method.Target.ToString (), method.Method.Name);
 
+			Log.Debug ("Starting thread {0}", this.thread.Name);
+
 			try {
 				this.method ();
 			} catch (ThreadAbortException e) {
