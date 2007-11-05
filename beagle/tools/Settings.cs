@@ -258,10 +258,8 @@ public class SettingsDialog
 
 		values = daemon_config.GetListOptionValues (Conf.Names.DeniedBackends);
 		if (values != null)
-			foreach (string[] backend in values) {
-				backend_view.Set (backend[0], false);	
-				Console.WriteLine (backend[0]);
-			}
+			foreach (string[] backend in values)
+				backend_view.Set (backend[0], false);
 	}
 
 	private void SaveConfiguration ()
@@ -325,12 +323,12 @@ public class SettingsDialog
 		networking_config.SetListOptionValues (Conf.Names.NetworkServices, svcs);
 		Conf.Save (networking_config);
 #endif
+
 		List<string[]> denied_backends = new List<string[]> ();
 
-foreach (string backend in backend_view.Denied)
-	denied_backends.Add (new string[] { backend });
-daemon_config.SetListOptionValues (Conf.Names.DeniedBackends, denied_backends);
-
+		foreach (string backend in backend_view.Denied)
+			denied_backends.Add (new string[] { backend });
+		daemon_config.SetListOptionValues (Conf.Names.DeniedBackends, denied_backends);
 
 		Conf.Save (fsq_config);
 		Conf.Save (bs_config);
@@ -1566,27 +1564,50 @@ daemon_config.SetListOptionValues (Conf.Names.DeniedBackends, denied_backends);
 			"Akregator",
 			"Blam",
 			"Files",
-			"IndexingService",
-			"KonqBookmark",
+			//"IndexingService", // Leave this enabled, it is vital for the Firefox plugin
 			"KMail",
 			"KNotes",
 			"KOrganizer",
 			"KAddressBook",
+			"KonqBookmark",
 			"KonquerorHistory",
 			"Konversation",
 			"Kopete",
 			"Labyrinth",
 			"Liferea",
 			"NautilusMetadata",
-			"NetworkServices",
+			//"NetworkServices", // This is configurable in the network tab
 			"Opera",
 			"Pidgin",
 			"Tomboy"
 		};
 
+		private string[] descriptions = new string[] {
+			"Evolution's mail.",
+			"Evolution's address book, memos and tasks.",
+			"Thunderbird's email.",
+			"RSS feeds from Akregator.",
+			"RSS feeds from Blam.",
+			"Files and folders on the local file system.",
+			"Mail messages from KMail.",
+			"Notes from KNotes.",
+			"Agenda from KOrganizer.",
+			"Contacts from KAddressBook.",
+			"Konqueror's bookmarks.",
+			"Konqueror's history.",
+			"IMs and chats from Konversation.",
+			"IMs and chats from Kopete",
+			"Mind-maps from Labyrinth.",
+			"RSS freed from Liferea.",
+			"Nautilus' metadata (emblems, notes, etc.)",
+			"Opera's bookmarks and browsing history.",
+			"IMs and chats from Pidgin.",
+			"Notes from Tomboy."
+		};
+
 		public BackendView ()
 		{
-			this.store = new ListStore (typeof (bool), typeof (string));
+			this.store = new ListStore (typeof (bool), typeof (string), typeof (string));
 
 			CellRendererToggle toggle = new CellRendererToggle ();
 			toggle.Activatable = true;
@@ -1595,9 +1616,10 @@ daemon_config.SetListOptionValues (Conf.Names.DeniedBackends, denied_backends);
 			base.Model = store;
 			base.AppendColumn (null, toggle, "active", 0);
 			base.AppendColumn (Catalog.GetString ("Name"), new CellRendererText (), "text", 1);
+			base.AppendColumn (Catalog.GetString ("Description"), new CellRendererText (), "markup", 2);
 
-			foreach (string backend in backends)
-				store.AppendValues (true, backend);
+			for (int i = 0; i < backends.Length; i++)
+				store.AppendValues (true, backends [i], "<i>" + Catalog.GetString (descriptions [i]) + "</i>");
 		}
 
 		public void Set (string backend, bool enabled)

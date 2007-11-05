@@ -46,8 +46,9 @@ namespace Search.Pages {
 
 			Gtk.Label label = new Gtk.Label ();
 			label.Markup = tip;
-			label.SetAlignment (0.0f, 0.5f);
 			label.LineWrap = true;
+			label.Justify = Justification.Fill;
+			label.SetAlignment (0.0f, 0.5f);
 			label.ModifyFg (Gtk.StateType.Normal, label.Style.Foreground (Gtk.StateType.Insensitive));
 			label.Show ();
 			table.Attach (label, 1, 2, row, row + 1, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 0, 0);

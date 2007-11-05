@@ -252,8 +252,6 @@ namespace ImLogViewer {
 
 		protected override void Load ()
 		{
-			StringBuilder builder = new StringBuilder ();
-
 			ClearUtterances ();
 
 			string line = TextReader.ReadLine (); // throw away first line
