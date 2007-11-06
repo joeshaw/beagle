@@ -442,20 +442,22 @@ namespace Beagle.Daemon {
 			byte[] blob = null;
 			string filename = null;
 
-			command = NewCommand ("SELECT filename, data FROM textcache_data WHERE uri='{0}'", 
-			                      UriToString (uri));
-			reader = SqliteUtils.ExecuteReaderOrWait (command);
-			if (! SqliteUtils.ReadOrWait (reader)) {
-				if (self_cache)
-					self_cache = false;
-				return null;
-			}
+			lock (connection) {
+				command = NewCommand ("SELECT filename, data FROM textcache_data WHERE uri='{0}'", 
+				                      UriToString (uri));
+				reader = SqliteUtils.ExecuteReaderOrWait (command);
+				if (! SqliteUtils.ReadOrWait (reader)) {
+					if (self_cache)
+						self_cache = false;
+					return null;
+				}
 
-			filename = reader.GetString (0);
-			if (! reader.IsDBNull (1))
-				blob = reader.GetValue (1) as byte [];
-			reader.Close ();
-			command.Dispose ();
+				filename = reader.GetString (0);
+				if (! reader.IsDBNull (1))
+					blob = reader.GetValue (1) as byte [];
+				reader.Close ();
+				command.Dispose ();
+			}
 
 			if (filename == SELF_CACHE_TAG) {
 				if (self_cache) {
