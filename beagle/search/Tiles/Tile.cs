@@ -274,10 +274,11 @@ namespace Search.Tiles {
 			// other tags escaped.
 
 			// FIXME: hacky, fix the snippeting in the daemon
+			
 			snippet = GLib.Markup.EscapeText (((SnippetResponse)response).Snippet);
 			snippet = Regex.Replace (snippet, "&lt;font color=&quot;.*?&quot;&gt;&lt;b&gt;(.*?)&lt;/b&gt;&lt;/font&gt;", "<b>$1</b>");
-
-			EmitGotSnippet ();
+			if(snippet.Trim().Length > 0)
+				EmitGotSnippet ();
 		}
 
 		private void EmitGotSnippet ()

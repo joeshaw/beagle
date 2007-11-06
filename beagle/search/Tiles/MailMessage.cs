@@ -112,10 +112,9 @@ namespace Search.Tiles {
 
 			if (folder != null)
 				details.AddLabelPair (Catalog.GetString ("Folder:"), folder);
-
-			// Mail messages don't save snippets yet.
-			//details.AddSnippet ();
-
+			
+			details.AddSnippet ();
+			
 			return details;
 		}
 

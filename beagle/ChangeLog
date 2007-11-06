@@ -1,5 +1,13 @@
 2007-11-05  Kevin Kubasik <kevin@kubasik.net> 
 
+	* search/Tiles/MailMessage.cs: Make snippets visible in beagle-search for
+	  Evolution Mail, this may not be a go for release, but we should test it
+	  to help stress test the new textcache. 
+	* search/Tiles/Tile.cs: If snippet is empty after our HTML parsing fun, then
+	  don't EmitGotSnippet.
+
+2007-11-05  Kevin Kubasik <kevin@kubasik.net> 
+
 	* Util/OperaHistory.cs: Added a lastRead time to track the current in-memory
 	  index.
 	* beagled/OperaQueryable/OperaIndexer.cs: We don't care if a cache file was
