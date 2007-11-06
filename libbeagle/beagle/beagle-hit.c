@@ -96,7 +96,7 @@ beagle_hit_get_type (BeagleHit *hit)
 	g_return_val_if_fail (hit != NULL, NULL);
 
 	ret = beagle_hit_get_one_property (hit, "beagle:HitType", &value);
-	g_return_val_if_fail (ret != TRUE, NULL);
+	g_return_val_if_fail (ret == TRUE, NULL);
 
 	return value;
 }
@@ -118,7 +118,7 @@ beagle_hit_get_mime_type (BeagleHit *hit)
 	g_return_val_if_fail (hit != NULL, NULL);
 
 	ret = beagle_hit_get_one_property (hit, "beagle:MimeType", &value);
-	g_return_val_if_fail (ret != TRUE, NULL);
+	g_return_val_if_fail (ret == TRUE, NULL);
 
 	return value;
 }
@@ -140,7 +140,7 @@ beagle_hit_get_file_type (BeagleHit *hit)
 	g_return_val_if_fail (hit != NULL, NULL);
 
 	ret = beagle_hit_get_one_property (hit, "beagle:FileType", &value);
-	g_return_val_if_fail (ret != TRUE, NULL);
+	g_return_val_if_fail (ret == TRUE, NULL);
 
 	return value;
 }
@@ -162,7 +162,7 @@ beagle_hit_get_source (BeagleHit *hit)
 	g_return_val_if_fail (hit != NULL, NULL);
 
 	ret = beagle_hit_get_one_property (hit, "beagle:Source", &value);
-	g_return_val_if_fail (ret != TRUE, NULL);
+	g_return_val_if_fail (ret == TRUE, NULL);
 
 	return value;
 }
