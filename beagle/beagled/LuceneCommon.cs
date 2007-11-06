@@ -1036,10 +1036,14 @@ namespace Beagle.Daemon {
 
 		static public string Stem (string str)
 		{
-			stemmer.SetCurrent (str);
-			stemmer.Stem ();
-			string stemmed_str = stemmer.GetCurrent ();
-			stemmer.SetCurrent (String.Empty);
+			string stemmed_str;
+
+			lock (stemmer) {
+				stemmer.SetCurrent (str);
+				stemmer.Stem ();
+				stemmed_str = stemmer.GetCurrent ();
+				stemmer.SetCurrent (String.Empty);
+			}
 
 			return stemmed_str;
 		}
