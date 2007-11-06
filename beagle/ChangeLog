@@ -1,3 +1,15 @@
+2007-11-05  Kevin Kubasik <kevin@kubasik.net> 
+
+	* Util/OperaHistory.cs: Added a lastRead time to track the current in-memory
+	  index.
+	* beagled/OperaQueryable/OperaIndexer.cs: We don't care if a cache file was
+	  deleted, we don't delete the index entry, we just want to know when
+	  Opera has finished writing one.
+	* beagled/OperaQueryable/OperaIndexableGenerator.cs: Some small
+	  cleanups/changes to the Opera backend. Namely, Opera stores the content
+	  of webpages that are served gzipped in its cache gzipped. Also add logic
+	  to not re-read from disk if in-memory history index is up to date. 
+
 2007-10-14  Yannig Marchegay  <yannig@marchegay.org>
 
 	* configure.in: Added 'oc' to ALL_LINGUAS.

@@ -32,6 +32,7 @@ using Beagle;
 using Beagle.Util;
 using Beagle.Daemon;
 using FSQ = Beagle.Daemon.FileSystemQueryable;
+using ICSharpCode.SharpZipLib.GZip;
 
 namespace Beagle.Daemon.OperaQueryable {
 	
@@ -51,12 +52,16 @@ namespace Beagle.Daemon.OperaQueryable {
 		{
 			this.cache_dir = cache_dir;
 			this.indexer = indexer;
-			
+			if(history != null && history.GetLastRead() >= Directory.GetLastWriteTime(cache_dir)){
+				history_enumerator = history.GetEnumerator();
+				return;
+			}
 			try {
 				history = new OperaHistory (Path.Combine (cache_dir, "dcache4.url"));
 				history.Read ();
 				
 				history_enumerator = history.GetEnumerator ();
+				
 			} catch (Exception e) {
 				Logger.Log.Error (e, "Failed to list cache objects in {0}", 
 					Path.Combine (cache_dir, "dcache4.url"));
@@ -95,7 +100,7 @@ namespace Beagle.Daemon.OperaQueryable {
 			indexable.HitType = "WebHistory";
 			indexable.MimeType = row.MimeType;
 			indexable.Timestamp = row.LastChanged;
-			
+			indexable.AddProperty(Beagle.Property.NewKeyword("fixme:host",row.Address.Host));
 			indexable.AddProperty (Beagle.Property.NewDate ("fixme:saveTime", row.LocalSaveTime));
 			indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:size", row.Length));
 			indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:charset", row.Encoding.ToString ()));
@@ -103,8 +108,10 @@ namespace Beagle.Daemon.OperaQueryable {
 			indexable.AddProperty (Beagle.Property.NewKeyword (Property.ExactFilenamePropKey, row.LocalFileName));
 			indexable.AddProperty (Beagle.Property.NewKeyword (Property.FilenameExtensionPropKey, Path.GetExtension (row.LocalFileName)));
 			indexable.AddProperty (Beagle.Property.NewKeyword (Property.TextFilenamePropKey, Path.GetFileNameWithoutExtension (row.LocalFileName)));
-			
-			indexable.ContentUri = new Uri (Path.Combine (cache_dir, row.LocalFileName));
+			if(row.Compression == "gzip")	
+				indexable.SetBinaryStream(new GZipInputStream(File.OpenRead(Path.Combine (cache_dir, row.LocalFileName))));
+			else
+				indexable.ContentUri = new Uri (Path.Combine (cache_dir, row.LocalFileName));
 			
 			indexer.AttributeStore.AttachLastWriteTime (Path.Combine (cache_dir, row.LocalFileName), DateTime.UtcNow);
 			

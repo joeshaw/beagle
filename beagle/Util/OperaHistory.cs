@@ -35,7 +35,7 @@ namespace Beagle.Daemon.OperaQueryable {
 	public class OperaHistory {
 		private string filename;
 		private ArrayList rows;
-		
+		private DateTime lastRead;
 		public enum Directives : byte {
 			RowStart		=	0x01,	// Row start (new entry)
 			Address			=	0x03,	// Web address
@@ -193,13 +193,14 @@ namespace Beagle.Daemon.OperaQueryable {
 		{
 			this.filename = filename;
 			this.rows = new ArrayList ();
+			this.lastRead = DateTime.MinValue;
 		}
 		
 		public void Read ()
 		{
 			StreamReader stream = new StreamReader (filename);
 			BinaryReader binary = new BinaryReader (stream.BaseStream);
-			
+			this.lastRead = DateTime.Now;
 			// Skip first 12 bytes since their purpose is yet unknown
 			binary.BaseStream.Seek (12, SeekOrigin.Begin);
 			while (binary.ReadByte () == 1) {
@@ -226,7 +227,9 @@ namespace Beagle.Daemon.OperaQueryable {
 				
 					if (prop != null)
 						row.AddProperty (prop);
-				} catch { }
+				} catch(Exception e) { 
+					Beagle.Util.Logger.Log.Error(e);
+				}
 			}
 			
 			return row;
@@ -278,6 +281,11 @@ namespace Beagle.Daemon.OperaQueryable {
 		public IEnumerator GetEnumerator ()
 		{
 			return rows.GetEnumerator ();
+		}
+		
+		public DateTime GetLastRead() 
+		{
+			return this.lastRead;
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace Beagle.Daemon.OperaQueryable {
 			foreach (string dir in DirectoryWalker.GetDirectories (root_dir)) {
 				foreach (string file in DirectoryWalker.GetItems
 					(dir, new DirectoryWalker.FileFilter (IsCacheFile))) {
-						Inotify.Subscribe (dir, OnInotify, Inotify.EventType.MovedTo | Inotify.EventType.Delete);
+					Inotify.Subscribe (dir, OnInotify, Inotify.EventType.MovedTo | Inotify.EventType.CloseWrite);
 						cache_dirs.Add (dir);
 				}
 			}
