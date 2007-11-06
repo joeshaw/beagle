@@ -58,7 +58,7 @@ EXTRA_DIST = 			\
 	$(pkgconfig_DATA) 	\
 	beagle.spec
 
-DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install --enable-gtk-doc
+DISTCHECK_CONFIGURE_FLAGS = --disable-epiphany-extension-install --enable-docs
 
 DISTCLEANFILES = 		\
 	intltool-extract	\
