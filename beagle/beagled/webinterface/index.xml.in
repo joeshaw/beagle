@@ -29,4 +29,10 @@
 	<title>
 		Beagle Search Web Interface
 	</title>
+	<last_time>
+		@LAST_TIME@
+	</last_time>
+	<version>
+		@VERSION@
+	</version>
 </document>

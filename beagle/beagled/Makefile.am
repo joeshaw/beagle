@@ -1,21 +1,37 @@
 autostartdir = $(sysconfdir)/xdg/autostart
 autostart_DATA = beagled-autostart.desktop
 
-webinterfacedir = $(datadir)/beagle/webinterface
-webinterface_DATA =				\
+############################################################
+
+WEBINTERFACE_FILES =				\
 	$(srcdir)/webinterface/default.js	\
-	$(srcdir)/webinterface/index.xml	\
 	$(srcdir)/webinterface/mapping.xml	\
 	$(srcdir)/webinterface/index.xsl	\
 	$(srcdir)/webinterface/hitresult.xsl	\
 	$(srcdir)/webinterface/queryresult.xsl	\
 	$(srcdir)/webinterface/default.css
 
+WEBINTERFACE_INDEX_XML_IN=$(srcdir)/webinterface/index.xml.in
+WEBINTERFACE_INDEX_XML=$(srcdir)/webinterface/index.xml
+
+webinterfacedir = $(datadir)/beagle/webinterface
+webinterface_DATA =				\
+	$(WEBINTERFACE_INDEX_XML)		\
+	$(WEBINTERFACE_FILES)
+
 webinterfaceimagesdir = $(webinterfacedir)/images
-webinterfaceimages_DATA =				\
-	$(srcdir)/webinterface/images/beagle-logo.png	\
+webinterfaceimages_DATA =					\
+	$(srcdir)/webinterface/images/beagle-logo.png		\
 	$(srcdir)/webinterface/images/busy-animation.gif	\
 	$(srcdir)/webinterface/images/title_bg.png
+
+$(WEBINTERFACE_INDEX_XML): $(WEBINTERFACE_INDEX_XML_IN) $(WEBINTERFACE_FILES)
+	sed 	-e "s|\@VERSION\@|$(VERSION)|"			\
+		-e "s|\@LAST_TIME\@|$(shell date +'%x %X')|"	\
+		< $(WEBINTERFACE_INDEX_XML_IN) > $@
+
+
+############################################################
 
 # Warnings we don't want to see.
 # Most of these are thanks to DotLucene.  It would be nice if we could use
@@ -831,7 +847,7 @@ CRAWL_SYSTEM_IN = beagle-crawl-system.in
 CRAWL_SYSTEM = beagle-crawl-system
 
 $(CRAWL_SYSTEM): $(srcdir)/$(CRAWL_SYSTEM_IN)
-	$(WRAPPER_SEB) -e "s|\@target\@|$(CRAWL_SYSTEM)|g" < $(srcdir)/$(CRAWL_SYSTEM_IN) > $@
+	$(WRAPPER_SED) -e "s|\@target\@|$(CRAWL_SYSTEM)|g" < $(srcdir)/$(CRAWL_SYSTEM_IN) > $@
 	chmod +x $(CRAWL_SYSTEM)
 
 # OK, now back to our regularly scheduled program.  But notice all of the
@@ -859,7 +875,8 @@ ALL_TARGETS = 				\
 	$(MANAGE_INDEX_TARGET)		\
 	$(MANAGE_INDEX_WRAPPER)		\
 	$(MASTER_DELETE_TARGET)		\
-	$(MASTER_DELETE_WRAPPER)
+	$(MASTER_DELETE_WRAPPER)	\
+	$(WEBINTERFACE_INDEX_XML)
 
 if ENABLE_THUNDERBIRD
 ALL_TARGETS += $(THUNDERBIRD_TARGET)
@@ -1033,4 +1050,5 @@ CLEANFILES = \
 	$(BUILD_INDEX_TARGET).mdb		\
 	$(BUILD_INDEX_WRAPPER)			\
 	$(THUNDERBIRD_TARGET)			\
-	$(THUNDERBIRD_TARGET).mdb
+	$(THUNDERBIRD_TARGET).mdb		\
+	$(WEBINTERFACE_INDEX_XML)
