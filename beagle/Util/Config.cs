@@ -828,8 +828,8 @@ namespace Beagle.Util {
 		[XmlIgnore]
 		public string Value {
 			get {
-				if (Value_String == String.Empty)
-					return null;
+				if (Value_String == null)
+					return String.Empty;
 				return Value_String;
 			}
 			set {

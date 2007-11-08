@@ -234,7 +234,7 @@ public class SettingsDialog
 				exclude_view.AddItem (new ExcludeItem (ExcludeType.MailFolder, mailfolder [0]));
 
 #if ENABLE_AVAHI
-		Config networking_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+		Config networking_config = Conf.Get (Conf.Names.NetworkingConfig);
 
 		List<string[]> services = networking_config.GetListOptionValues (Conf.Names.NetworkServices);
 		if (services != null) {
@@ -309,7 +309,7 @@ public class SettingsDialog
 
 
 #if ENABLE_AVAHI
-		Config networking_config = Conf.Get (Conf.Names.FilesQueryableConfig);
+		Config networking_config = Conf.Get (Conf.Names.NetworkingConfig);
 
 		networking_config.SetOption (Conf.Names.ServiceEnabled, allow_global_access_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);

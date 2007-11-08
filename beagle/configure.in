@@ -467,7 +467,7 @@ if test "x$have_avahi_dependencies" = "xno"; then
 else
 
 	if test "x$enable_avahi" != "xno"; then
-		enable_avahi="yes (EXPERIMENTAL)"
+		enable_avahi="yes"
 	else
 		enable_avahi="no (disabled)"
 	fi
@@ -475,6 +475,10 @@ else
 fi
 
 AM_CONDITIONAL(ENABLE_AVAHI, test "x$enable_avahi" = "xyes")
+
+if test "x$enable_avahi" = "xyes"; then
+    enable_avahi="yes (EXPERIMENTAL)"
+fi
 
 dnl ----------------------------------------------
 
