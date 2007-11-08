@@ -719,6 +719,20 @@
                             <property name="visible">True</property>
                             <property name="spacing">6</property>
                             <child>
+                              <widget class="GtkCheckButton" id="allow_webinterface_toggle">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="label" translatable="yes">Enable web interface to local beagle service</property>
+                                <property name="use_underline">True</property>
+                                <property name="response_id">0</property>
+                                <property name="draw_indicator">True</property>
+                              </widget>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                              </packing>
+                            </child>
+                            <child>
                               <widget class="GtkCheckButton" id="allow_global_access_toggle">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -731,6 +745,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">False</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
@@ -842,7 +857,7 @@
                                 </child>
                               </widget>
                               <packing>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                           </widget>

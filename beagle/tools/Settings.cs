@@ -90,15 +90,16 @@ public class SettingsDialog
 	////////////////////////////////////////////////////////////////
 	// Zeroconf
 
-#if ENABLE_AVAHI
 	[Widget] VBox networking_box;
-
+        [Widget] CheckButton allow_webinterface_toggle;
+        [Widget] CheckButton allow_global_access_toggle;
         [Widget] Alignment networking_settings_box;
+
+#if ENABLE_AVAHI
         [Widget] Alignment networking_password_box;
 
         [Widget] ScrolledWindow networking_sw;
 
-        [Widget] CheckButton allow_global_access_toggle;
         [Widget] CheckButton require_password_toggle;
 
         [Widget] Button add_host_button;
@@ -144,17 +145,15 @@ public class SettingsDialog
 		networking_view.Selection.Changed += new EventHandler (OnHostSelected);
 		networking_view.Show ();
                 networking_sw.Child = networking_view;
-		networking_box.Show ();
 #endif
+		networking_box.Show ();
 
 		LoadConfiguration ();
 
 		Conf.Subscribe (Conf.Names.FilesQueryableConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		Conf.Subscribe (Conf.Names.BeagleSearchConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
 		Conf.Subscribe (Conf.Names.DaemonConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-#if ENABLE_AVAHI
 		Conf.Subscribe (Conf.Names.NetworkingConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
-#endif
 
 		ParseArgs (args);
 	}
@@ -172,11 +171,9 @@ public class SettingsDialog
 			case "--indexing":
 				notebook.Page = 1;
 				return;
-#if ENABLE_AVAHI
 			case "--networking":
 				notebook.Page = 2;
 				return;
-#endif
 			}
 		}
 	}
@@ -233,9 +230,11 @@ public class SettingsDialog
 			foreach (string[] mailfolder in values)
 				exclude_view.AddItem (new ExcludeItem (ExcludeType.MailFolder, mailfolder [0]));
 
-#if ENABLE_AVAHI
 		Config networking_config = Conf.Get (Conf.Names.NetworkingConfig);
+                allow_webinterface_toggle.Active = networking_config.GetOption ("WebInterface", false);
+                allow_global_access_toggle.Active = networking_config.GetOption (Conf.Names.ServiceEnabled, false);
 
+#if ENABLE_AVAHI
 		List<string[]> services = networking_config.GetListOptionValues (Conf.Names.NetworkServices);
 		if (services != null) {
 			foreach (string[] svc in services) {
@@ -248,7 +247,6 @@ public class SettingsDialog
 			}
 		}
 
-                allow_global_access_toggle.Active = networking_config.GetOption (Conf.Names.ServiceEnabled, false);
                 require_password_toggle.Active = networking_config.GetOption (Conf.Names.PasswordRequired, true);
                 index_name_entry.Text = networking_config.GetOption (Conf.Names.ServiceName, String.Empty);
                 string password = networking_config.GetOption (Conf.Names.ServicePassword, String.Empty);
@@ -308,10 +306,11 @@ public class SettingsDialog
 			daemon_config.SetListOptionValues (Conf.Names.ExcludeMailfolder, excludes_mailfolder);
 
 
-#if ENABLE_AVAHI
 		Config networking_config = Conf.Get (Conf.Names.NetworkingConfig);
 
+		networking_config.SetOption ("WebInterface", allow_webinterface_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServiceEnabled, allow_global_access_toggle.Active);
+#if ENABLE_AVAHI
 		networking_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
 		networking_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
@@ -321,8 +320,8 @@ public class SettingsDialog
 			svcs.Add (new string [4] {svc.Name, svc.UriString, Convert.ToString (svc.IsProtected), svc.Cookie});
 		}
 		networking_config.SetListOptionValues (Conf.Names.NetworkServices, svcs);
-		Conf.Save (networking_config);
 #endif
+		Conf.Save (networking_config);
 
 		List<string[]> denied_backends = new List<string[]> ();
 
@@ -680,7 +679,7 @@ public class SettingsDialog
 	{
 #if ENABLE_AVAHI
 		networking_settings_box.Sensitive = allow_global_access_toggle.Active;
-#endif
+#endif  
 	}
 	
 	private void OnRequirePasswordToggled (object o, EventArgs args)
