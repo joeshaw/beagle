@@ -5,10 +5,10 @@ autostart_DATA = beagled-autostart.desktop
 
 WEBINTERFACE_FILES =				\
 	$(srcdir)/webinterface/default.js	\
-	$(srcdir)/webinterface/mapping.xml	\
+	$(srcdir)/webinterface/mappings.xml	\
 	$(srcdir)/webinterface/index.xsl	\
 	$(srcdir)/webinterface/hitresult.xsl	\
-	$(srcdir)/webinterface/queryresult.xsl	\
+	$(srcdir)/webinterface/statusresult.xsl	\
 	$(srcdir)/webinterface/default.css
 
 WEBINTERFACE_INDEX_XML_IN=$(srcdir)/webinterface/index.xml.in
