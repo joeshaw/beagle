@@ -1,3 +1,0 @@
-#!/bin/sh
-export MONO_PATH=../dbus-sharp/src:/usr/lib/beagle:$MONO_PATH
-mono --debug $@

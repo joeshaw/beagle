@@ -1,4 +1,6 @@
-SUBDIRS = 		\
-	dbus-sharp	\
-	src
+SUBDIRS = src
 
+EXTRA_DIST = 
+
+MAINTAINERCLEANFILES = \
+	Makefile.in
