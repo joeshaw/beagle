@@ -87,7 +87,7 @@
 <xsl:template name="topbar">
 	<span id="topbar-left">
 		<form name="categories" autocomplete="off">
-			<a href="#" onclick='show_all (this); return false;' name="All">Show All</a>&nbsp;|&nbsp;
+			<a href="#" onclick='show_all_categories (this); return false;' name="All">Show All</a>&nbsp;|&nbsp;
 			<xsl:for-each select="document ('mappings.xml')/Mappings/Categories/Category/@Name">
 				<input type="checkbox" name="{.}" onClick='toggle_category (this);'/><xsl:value-of select="."/>
 			</xsl:for-each>

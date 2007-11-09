@@ -27,7 +27,7 @@
  * - set_results_style: instead of showing/hiding results, only search for those that the user has checked
  *   query and append results as he checks the categories
  * - Ev!L stuff like `element.innerHTML` needs to be replaced by nice clean DOM stuff; except where good for performance
- * - Code needs to be made cleaner... (category_is_being_shown/category_was_being_shown comes to mind as an example)
+ * - Code needs to be made cleaner... (category_is_being_shown/categories_being_shown comes to mind as an example)
  */
 
 function search ()
@@ -293,15 +293,16 @@ function humanise_timestamp (ts)
 	}
 }
 
-function category_was_being_shown ()
+function categories_being_shown ()
 {
 	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
+	var numcategs = 0;
 	for (var i = 0; i < category_checkboxes.length; ++i) {
 		if (category_checkboxes [i].checked) {
-			return true;
+			numcategs++;
 		}
 	}
-	return false;
+	return numcategs;
 }
 
 // FIXME: This should just use index.xsl or something
@@ -343,11 +344,10 @@ function set_results_style ()
 	// This will always be satisfied however, see mappings.xml: Note 2
 	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
 	var results_categories = document.getElementById ('results').childNodes;
-	if (category_was_being_shown ()) {
+	if (categories_being_shown () > 0) {
 		for (var i = 0; i < category_checkboxes.length; ++i) {
 			if (category_checkboxes [i].checked) {
 				results_categories [i].style.display = 'block';
-				category_is_being_shown = true;
 			}
 		}
 	} else {
@@ -370,10 +370,7 @@ function toggle_hit (hit_toggle)
 	}
 }
 
-// Initially, no specific category is being shown, all results are being shown.
-var category_is_being_shown = false;
-
-function show_all ()
+function show_all_categories ()
 {
 	// Get all the category checkboxes
 	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
@@ -381,23 +378,24 @@ function show_all ()
 	var results_categories = document.getElementById ('results').childNodes;
 	// Show all results
 	for (var i = 0; i < results_categories.length; ++i) {
+		if (results_categories [i].id == "NoResults")
+			continue;
 		results_categories [i].style.display = 'block';
 	}
 	// Uncheck all the categories
 	for (var i = 0; i < category_checkboxes.length; ++i) {
 		category_checkboxes [i].checked = false;
 	}
-	category_is_being_shown = false;
 }
 
 function toggle_category (category)
 {
 	// Get all the results' categories
 	var results_categories = document.getElementById ('results').childNodes;
-	// if checked right now
+	// If the user just checked the box
 	if (category.checked) {
-		// If none of the categories are being shown..
-		if (category_is_being_shown == false) {
+		// If this is the first category being shown..
+		if (categories_being_shown () == 1) {
 			// Hide all results except the one selected
 			for (var i = 0; i < results_categories.length; ++i) {
 				if (results_categories [i].id == category.name)
@@ -408,10 +406,15 @@ function toggle_category (category)
 			// Show result corresponding to category
 			document.getElementById (category.name).style.display = 'block';
 		}
-		category_is_being_shown = true;
 	} else {
-		// Hide result corresponding to category
-		document.getElementById (category.name).style.display = 'none';
+		// If none of the categories are being shown now
+		if (categories_being_shown () == 0) {
+			// The user doesn't like being shown nothing; show all the categories
+			show_all_categories ();
+		} else {
+			// Hide result corresponding to category
+			document.getElementById (category.name).style.display = 'none';
+		}
 	}
 }
 
