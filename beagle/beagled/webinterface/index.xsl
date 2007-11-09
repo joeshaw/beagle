@@ -48,7 +48,7 @@
 </xsl:template>
 
 <xsl:template name="body">
-	<body onload="document.queryform.querytext.focus();">
+	<body onload="document.queryform.querytext.focus ();">
 		<div id="header">
 			<xsl:call-template name="header"/>
 		</div>
@@ -72,33 +72,33 @@
 
 <xsl:template name="header">
 	<a href="."><img src="images/beagle-logo.png"/></a>
-	<form name="queryform" onsubmit='search(); return false;' action="POST">
+	<form name="queryform" onsubmit='search (); return false;' action="POST">
 		<input name="querytext" type="text" size="50" />
 		<input name="querysubmit" type="submit" value="Search"/>
 	</form>
 	<span id="headerlinks">
-		<a href="" onclick='get_information(); return false;'>Current Status</a>&nbsp;|&nbsp;
-		<a href="" onclick='get_process_information(); return false;'>Process Information</a>&nbsp;|&nbsp;
-		<a href="" onclick='alert("Not implemented"); return false;'>Beagle settings</a>
+		<a href="" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
+		<a href="" onclick='get_process_information (); return false;'>Process Information</a>&nbsp;|&nbsp;
+		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>
 	</span>
 </xsl:template>
 
 <xsl:template name="topbar">
 	<span id="topbar-left">
 		<form name="categories" autocomplete="off">
-			<a href="#" onclick='show_all(this); return false;' name="All">Show All</a>&nbsp;|&nbsp;
-			<xsl:for-each select="document('mappings.xml')/Categories/Category/@Name">
-				<input type="checkbox" name="{.}" onClick='toggle_category(this);'/><xsl:value-of select="."/>
+			<a href="#" onclick='show_all (this); return false;' name="All">Show All</a>&nbsp;|&nbsp;
+			<xsl:for-each select="document ('mappings.xml')/Categories/Category/@Name">
+				<input type="checkbox" name="{.}" onClick='toggle_category (this);'/><xsl:value-of select="."/>
 			</xsl:for-each>
 		</form>
 	</span>
 	<span id="topbar-right">
-		Retrieved <span id="numhits">XXX</span> results in <span id="timetaken">0.4 secs</span>
+		<span id="numhits">0</span> results for "<span id="query_str" stemmed=""></span>" in <span id="timetaken">0 secs</span>
 	</span>
 </xsl:template>
 
 <xsl:template name="results">
-	<xsl:for-each select="document('mappings.xml')/Categories/Category/@Name">
+	<xsl:for-each select="document ('mappings.xml')/Categories/Category/@Name">
 		<div class="Hits" id='{.}'>
 		</div>
 	</xsl:for-each>

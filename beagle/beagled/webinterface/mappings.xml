@@ -26,44 +26,50 @@
 
 <!-- 
 	Notes about this xml file:
-	 1. `Category/@Name` is the div id under which the Hit which matches will be put
-	 2. The order of each `Category` node is how they'll be displayed in <div id="topbar"> and <div id="results">
-	 3. Hits are matched in the following way:
-	    (! match any of the <NotType>s) && (match any one of the <Type>s)
-	 4. Each <Type> must be unique across Categories (ie, it must not be repeated. Ever.)
-	 5. <NotType> is used to exclude Hits from a Category
+	- `Category/@Name` is the div id under which the Hit which matches will be put
+	- The order of each `Category` node is how they'll be displayed in <div id="topbar"> and <div id="results">
+	- Hits are matched in the following way:
+	  (! match any of the <NotType>s) && (match any one of the <Type>s)
+	- The classification has been kept extremely simple/limited on purpose to make classification easy
+	- Each <Type> must be unique across Categories (ie, it must not be repeated. Ever.)
+	- <NotType> is used to exclude Hits from a Category
 		 * That <NotType> should ideally come up as a <Type> for some other Category
 		 * Though if it doesn't, the code(javascript/xsl) *should* put it into "Others"
 -->
 
 <Categories>
-	<Category Name='Documents'>
-		<Type Key='beagle:FileType' Value='document'/>
-		<Type Key='beagle:FileType' Value='archive'/>
-		<Type Key='beagle:FileType' Value='source'/>
-		<NotType Key='beagle:HitType' Value='MailMessage'/>
-		<NotType Key='beagle:HitType' Value='WebHistory'/>
+	<Category Name="Documents">
+		<Type Key="beagle:FileType" Value="document"/>
+		<Type Key="beagle:FileType" Value="archive"/>
+		<Type Key="beagle:FileType" Value="source"/>
+		<NotType Key="beagle:HitType" Value="MailMessage"/>
+		<NotType Key="beagle:HitType" Value="WebHistory"/>
 	</Category>
-	<Category Name='Images'>
-		<Type Key='beagle:FileType' Value='images'/>
+	<Category Name="Images">
+		<Type Key="beagle:FileType" Value="images"/>
 	</Category>
-	<Category Name='Media'>
-		<Type Key='beagle:FileType' Value='audio'/>
-		<Type Key='beagle:FileType' Value='video'/>
+	<Category Name="Media">
+		<Type Key="beagle:FileType" Value="audio"/>
+		<Type Key="beagle:FileType" Value="video"/>
 	</Category>
-	<Category Name='Mail'>
-		<Type Key='beagle:HitType' Value='MailMessage'/>
+	<Category Name="Mail">
+		<Type Key="beagle:HitType" Value="MailMessage"/>
 	</Category>
-	<Category Name='IM Logs'>
-		<Type Key='beagle:HitType' Value='IMLog'/>
+	<Category Name="IM Logs">
+		<Type Key="beagle:HitType" Value="IMLog"/>
 	</Category>
-	<Category Name='Websites'>
-		<Type Key='beagle:HitType' Value='WebHistory'/>
-		<Type Key='beagle:HitType' Value='Bookmark'/>
-		<Type Key='beagle:HitType' Value='FeedItem'/>
+	<Category Name="Websites">
+		<Type Key="beagle:HitType" Value="WebHistory"/>
+		<Type Key="beagle:HitType" Value="Bookmark"/>
+		<Type Key="beagle:HitType" Value="FeedItem"/>
 	</Category>
-	<Category Name='Others'>
-		<Type Key='beagle:FileType' Value='directory'/>
+	<Category Name="Others">
+		<Type Key="beagle:FileType" Value="directory"/>
 	</Category>
 </Categories>
 
+<PropertyMapping>
+	<Category Name="Documents">
+		<Property From="beagle:ExactFilename" To=""/>
+	</Category>
+</PropertyMapping>

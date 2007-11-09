@@ -28,19 +28,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <xsl:output method="html"/>
 
-<!-- FileType: document,directory,mail,image,audio,video,archive,package -->
-<!-- 
-<xsl:template match="Hits">
-	<xsl:call-template name="DocumentHits"/>
-	<xsl:call-template name="ImageHits"/>
-	<xsl:call-template name="MediaHits"/>
-	<xsl:call-template name="MailHits"/>
-	<xsl:call-template name="IMLogHits"/>
-	<xsl:call-template name="WebsiteHits"/>
-	<xsl:call-template name="OtherHits"/>
-</xsl:template>
--->
-
 <xsl:template match="NumMatches">
 	<p class="NumMatches">(Showing <xsl:value-of select="text()"/> matches)</p>
 </xsl:template>
@@ -100,7 +87,7 @@
 	</xsl:choose>
 </xsl:template>
 
-<!-- FIXME: This (currently non-exitant) mappin should go into mappings.xml and then be referenced from there. -->
+<!-- FIXME: This (currently non-exitant) mapping should go into mappings.xml and then be referenced from there. -->
 <xsl:template match="Properties">
 	<table class="Properties">
 		<xsl:for-each select="Property">
@@ -111,68 +98,5 @@
 		</xsl:for-each>
 	</table>
 </xsl:template>
-
-<!-- 
-Includes:
- - FileType = {document,archive,source}
- - HitType != {WebHistory,MailMessage}
--->
-<!--
-<xsl:template name="DocumentHits">
-	<div id="Documents">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:FileType' and (@Value = 'document' or @Value = 'archive' or @Value = 'source')] and Properties/Property[@Key = 'beagle:HitType' and (@Value != 'WebHistory' and @Value != 'MailMessage')]]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="ImageHits">
-	<div id="Images">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:FileType' and @Value = 'image']]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="MailHits">
-	<div id="Mail">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:HitType' and @Value = 'MailMessage']]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="MediaHits">
-	<div id="Media">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:FileType' and (@Value = 'audio' or @Value = 'video')]]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="IMLogHits">
-	<div id="IMLogs">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:HitType' and @Value = 'IMLog']]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="WebsiteHits">
-	<div id="Websites">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:HitType' and (@Value = 'WebHistory' or @Value = 'Bookmark' or @Value = 'FeedItem')]]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
-
-<xsl:template name="OtherHits">
-	<div id="Others">
-		<xsl:for-each select="Hit[Properties/Property[@Key = 'beagle:FileType' and (@Value = 'directory')]]">
-			<xsl:apply-templates select="."/>
-		</xsl:for-each>
-	</div>
-</xsl:template>
--->
 
 </xsl:stylesheet>
