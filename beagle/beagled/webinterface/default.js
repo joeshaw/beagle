@@ -234,7 +234,7 @@ function state_change_info ()
 
 function classify_hit (hit)
 {
-	var categories = mappings.getElementsByTagName ('Category');
+	var categories = mappings.getElementsByTagName ('Categories') [0].getElementsByTagName ('Category');
 	var properties = hit.getElementsByTagName ('Property');
 	var matchers, matchers_value, matchers_key, matcher;
 	// Iterate over all the categories in mappings.xml
