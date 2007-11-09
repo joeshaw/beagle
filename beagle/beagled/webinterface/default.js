@@ -103,9 +103,12 @@ function shutdown_beagle ()
 
 	xmlhttp.onreadystatechange = function () {
 		var results = document.getElementById ('results');
+		reset_document_content ();
 		if (xmlhttp.readyState == 4) {
-			results.createElement ('i');
-			results.createTextNode ('Shutdown request sent to beagle');
+			var message = document.createElement ('i');
+			var text = document.createTextNode ('Shutdown request sent to beagle');
+			message.appendChild (text);
+			results.appendChild (message);
 			document.getElementById ('status').style.display = 'none';
 			document.queryform.querytext.disabled = false;
 			document.queryform.querysubmit.disabled = false;
