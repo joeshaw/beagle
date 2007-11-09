@@ -44,6 +44,7 @@
 		<title><xsl:value-of select="/document/title"/></title>
 		<link rel="stylesheet" href="default.css" type="text/css"/>
 		<script src="default.js" type="text/javascript"></script>
+		<link rel="icon" href="images/favicon.png" type="image/png"/>
 	</head>
 </xsl:template>
 
