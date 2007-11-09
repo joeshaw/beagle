@@ -94,7 +94,7 @@
 		</form>
 	</span>
 	<span id="topbar-right">
-		<span id="numhits">0</span> results for "<span id="query_str" stemmed=""></span>" in <span id="timetaken">0 secs</span>
+		<span id="numhits">0</span> results in <span id="timetaken">0 secs</span>
 	</span>
 </xsl:template>
 
