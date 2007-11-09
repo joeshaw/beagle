@@ -32,7 +32,7 @@
 	  (! match any of the <NotType>s) && (match any one of the <Type>s)
 	- The classification has been kept extremely simple/limited on purpose to make classification easy
 	- Each <Type> must be unique across Categories (ie, it must not be repeated. Ever.)
-	- <NotType> is used to exclude Hits from a Category
+	- <NotType> is used to exclude Hits from a Category, all of them *must* be listed first
 		 * That <NotType> should ideally come up as a <Type> for some other Category
 		 * Though if it doesn't, the code(javascript/xsl) *should* put it into "Others"
 -->
@@ -41,14 +41,15 @@
 
 <Categories>
 	<Category Name="Documents">
+		<NotType Key="beagle:HitType" Value="MailMessage"/>
+		<NotType Key="beagle:HitType" Value="WebHistory"/>
 		<Type Key="beagle:FileType" Value="document"/>
 		<Type Key="beagle:FileType" Value="archive"/>
 		<Type Key="beagle:FileType" Value="source"/>
-		<NotType Key="beagle:HitType" Value="MailMessage"/>
-		<NotType Key="beagle:HitType" Value="WebHistory"/>
+		<Type Key="beagle:HitType" Value="Note"/>
 	</Category>
 	<Category Name="Images">
-		<Type Key="beagle:FileType" Value="images"/>
+		<Type Key="beagle:FileType" Value="image"/>
 	</Category>
 	<Category Name="Media">
 		<Type Key="beagle:FileType" Value="audio"/>
