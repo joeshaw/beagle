@@ -109,8 +109,8 @@
 </xsl:template>
 
 <xsl:template name="footer">
-	<a href="http://beagle-project.org/Beagle_Webinterface">Web interface</a> for <a href="http://beagle-project.org">Beagle</a> desktop search service<br/>
-	<p class='license'>Copyright &#xA9; 2007 Debajyoti Bera, Nirbheek Chauhan, Licensed under <a href="http://www.opensource.org/licenses/mit-license.php">MIT license</a></p>	
+	<a target="_blank" href="http://beagle-project.org/Beagle_Webinterface">Web interface</a> for <a target="_blank" href="http://beagle-project.org">Beagle</a> desktop search service<br/>
+	<p class='license'>Copyright &#xA9; 2007 Debajyoti Bera, Nirbheek Chauhan &nbsp;|&nbsp; <a target="_blank" href="http://svn.gnome.org/viewvc/beagle/trunk/beagle/COPYING?view=markup">Copying restrictions</a></p>
 	<p style="color:silver">Version: <xsl:value-of select="/document/version" /> last updated on <xsl:value-of select="/document/last_time" /></p>
 </xsl:template>
 
