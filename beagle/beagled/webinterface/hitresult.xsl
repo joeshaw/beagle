@@ -41,7 +41,7 @@
 		<div class="Title" name="Title">
 			<span class="Uri" name="Uri">
 				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>
-				<a href="{@Uri}">
+				<a target="_blank" href="{@Uri}">
 					<xsl:call-template name="Uri"/>
 				</a>
 			</span>

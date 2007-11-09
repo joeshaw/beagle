@@ -189,11 +189,11 @@ function state_change_search (begin_date)
 		}
 		document.getElementById ('topbar').style.display = 'block';
 		document.getElementById ('status').style.display = 'none';
-	}
 
-	document.queryform.querytext.disabled = false;
-	document.queryform.querytext.focus ();
-	document.queryform.querysubmit.disabled = false;
+		document.queryform.querytext.disabled = false;
+		document.queryform.querytext.focus ();
+		document.queryform.querysubmit.disabled = false;
+	}
 }
 
 function state_change_info ()
@@ -229,10 +229,10 @@ function state_change_info ()
 		}
 
 		document.getElementById ('status').style.display = 'none';
-	}
 
-	document.queryform.querytext.disabled = false;
-	document.queryform.querysubmit.disabled = false;
+		document.queryform.querytext.disabled = false;
+		document.queryform.querysubmit.disabled = false;
+	}
 }
 
 function classify_hit (hit)
