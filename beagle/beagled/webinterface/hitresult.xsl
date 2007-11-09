@@ -71,7 +71,7 @@
 	</div>
 </xsl:template>
 
-<!-- FIXME: This logic should go into mapping.xml and then be referenced from there. -->
+<!-- FIXME: This logic should go into mappings.xml and then be referenced from there. -->
 <xsl:template name="Uri">
 	<xsl:choose>
 		<xsl:when test="Properties/Property[@Key='beagle:ExactFilename']">
@@ -100,7 +100,7 @@
 	</xsl:choose>
 </xsl:template>
 
-<!-- FIXME: This (currently non-exitant) mappin should go into mapping.xml and then be referenced from there. -->
+<!-- FIXME: This (currently non-exitant) mappin should go into mappings.xml and then be referenced from there. -->
 <xsl:template match="Properties">
 	<table class="Properties">
 		<xsl:for-each select="Property">
