@@ -999,6 +999,7 @@ noinst_SCRIPTS=	\
 
 EXTRA_DIST = \
 	$(autostart_DATA)			\
+	$(WEBINTERFACE_INDEX_XML_IN)		\
 	$(webinterface_DATA)			\
 	$(webinterfaceimages_DATA)		\
 	$(WRAPPER_IN)   			\

@@ -59,6 +59,7 @@ namespace Beagle.Daemon {
 
 			mappings.Add ("/", new PageMapping ("index.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/mappings.xml", new PageMapping ("mappings.xml", "text/xml; charset=utf-8"));
+			mappings.Add ("/help.xml", new PageMapping ("help.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/index.xsl", new PageMapping ("index.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/statusresult.xsl", new PageMapping ("statusresult.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/hitresult.xsl", new PageMapping ("hitresult.xsl", "text/xml; charset=utf-8"));
@@ -73,6 +74,7 @@ namespace Beagle.Daemon {
 
 			webserver_dir = Environment.GetEnvironmentVariable ("BEAGLE_WEBSERVER_DIR");
 			if (webserver_dir != null) {
+				webserver_dir = Path.GetFullPath (webserver_dir);
 				if (! Directory.Exists (webserver_dir))
 					Log.Error ("BEAGLE_WEBSERVER_DIR ({0}) does not exist. Web interface disabled", webserver_dir);
 				else
