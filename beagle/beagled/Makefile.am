@@ -4,7 +4,6 @@ autostart_DATA = beagled-autostart.desktop
 ############################################################
 
 WEBINTERFACE_FILES =				\
-	$(srcdir)/webinterface/help.xml		\
 	$(srcdir)/webinterface/default.js	\
 	$(srcdir)/webinterface/mappings.xml	\
 	$(srcdir)/webinterface/index.xsl	\
@@ -25,13 +24,6 @@ webinterfaceimages_DATA =					\
 	$(srcdir)/webinterface/images/beagle-logo.png		\
 	$(srcdir)/webinterface/images/busy-animation.gif	\
 	$(srcdir)/webinterface/images/title_bg.png
-
-webinterfacehelpdir = $(webinterfacedir)/help
-webinterfacehelp_DATA =						\
-	$(srcdir)/webinterface/help/browsersettings.html	\
-	$(srcdir)/webinterface/help/quicktips.html		\
-	$(srcdir)/webinterface/help/querysyntax.html		\
-	$(srcdir)/webinterface/help/morehelp.html
 
 $(WEBINTERFACE_INDEX_XML): $(WEBINTERFACE_INDEX_XML_IN) $(WEBINTERFACE_FILES)
 	sed 	-e "s|\@VERSION\@|$(VERSION)|"			\

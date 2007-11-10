@@ -90,18 +90,6 @@ function get_information ()
 	return false;
 }
 
-function show_help ()
-{
-	xmlhttp.onreadystatechange = function () {
-		state_change_help ();
-	};
-	xmlhttp.open ("GET", "/help.xml", true);
-	// This somehow fixed a bug where clicking on "Help"
-	// after clicking on "Current Status" gave a null xmlhttp.responseXML
-	xmlhttp.overrideMimeType ('text/xml; charset=utf-8');
-	xmlhttp.send (null);
-}
-
 function shutdown_beagle ()
 {
 	if ( ! window.confirm ("Are you sure you want to Shutdown Beagle?")) {
@@ -240,28 +228,6 @@ function state_change_info ()
 		document.queryform.querytext.disabled = false;
 		document.queryform.querysubmit.disabled = false;
 	}
-}
-
-function state_change_help ()
-{
-	if (xmlhttp.readyState == 4) {
-		var help_xml = xmlhttp.responseXML;
-		var help_topics = help_xml.evaluate ('/Document/Topic', help_xml, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-		var help = document.getElementById ('help');
-		var topic;
-		reset_document_content ();
-		reset_document_style ();
-
-		while (topic = help_topics.iterateNext ()) {
-			// Using synchronous xmlhttp because beagled doesn't support multiple queries
-			xmlhttp.open ("GET", topic.getAttribute ('LoadFrom'), false);
-			xmlhttp.send (null);
-			if(xmlhttp.status == 200) {
-				help.innerHTML = help.innerHTML + xmlhttp.responseText;
-			}
-		}
-	}
-
 }
 
 function classify_hit (hit)
