@@ -364,12 +364,12 @@ function toggle_hit (hit_toggle)
 {
 	if (hit_toggle.textContent == '[-]') {
 		hit_toggle.textContent = '[+]';
-		//this.<span class="Uri">.<div class="Title">.<br/>.<div class="Data">
-		hit_toggle.parentNode.parentNode.nextSibling.nextSibling.style.display = 'none';
+		//this.<span class="Uri">.<div class="Title">.<div class="Data">
+		hit_toggle.parentNode.parentNode.nextSibling.style.display = 'none';
 
 	} else {
 		hit_toggle.textContent = '[-]';
-		hit_toggle.parentNode.parentNode.nextSibling.nextSibling.style.display = 'block';
+		hit_toggle.parentNode.parentNode.nextSibling.style.display = 'block';
 	}
 }
 

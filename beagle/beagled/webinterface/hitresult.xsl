@@ -40,7 +40,7 @@
 	 <div class="Hit" id="{@Uri}" name="Hit">
 		<div class="Title" name="Title">
 			<span class="Uri" name="Uri">
-				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>
+				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>&nbsp;
 				<a target="_blank" href="{@Uri}">
 					<xsl:call-template name="Uri"/>
 				</a>
@@ -48,7 +48,7 @@
 			<span class="Timestamp" name="Timestamp">
 				<xsl:value-of select="@Timestamp"/>
 			</span>
-		</div><br/>
+		</div>
 		<div class="Data" name="Data">
 			<xsl:apply-templates select="Properties"/>
 		</div>
