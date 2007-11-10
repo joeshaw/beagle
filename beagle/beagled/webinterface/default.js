@@ -90,15 +90,6 @@ function get_information ()
 	return false;
 }
 
-function get_process_information ()
-{
-	xmlhttp.onreadystatechange = function () {
-		state_change_info ();
-	};
-	xmlhttp.open ("GET", "/processinfo", true);
-	xmlhttp.send (null);
-}
-
 function show_help ()
 {
 	xmlhttp.onreadystatechange = function () {
@@ -113,16 +104,18 @@ function show_help ()
 
 function shutdown_beagle ()
 {
+	if ( ! window.confirm ("Are you sure you want to Shutdown Beagle?")) {
+		return;
+	}
 	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="ShutdownRequest"/></RequestWrapper>';
 
 	xmlhttp.onreadystatechange = function () {
-		var results = document.getElementById ('results');
-		reset_document_content ();
+		var message_div = document.getElementById ('shutdown_beagle');
 		if (xmlhttp.readyState == 4) {
 			var message = document.createElement ('i');
 			var text = document.createTextNode ('Shutdown request sent to beagle');
 			message.appendChild (text);
-			results.appendChild (message);
+			message_div.replaceChild (message, message_div.firstChild);
 			document.getElementById ('status').style.display = 'none';
 			document.queryform.querytext.disabled = false;
 			document.queryform.querysubmit.disabled = false;

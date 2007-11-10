@@ -121,14 +121,6 @@ namespace Beagle.Daemon {
 			context.Response.KeepAlive = false;
 			context.Response.StatusCode = (int) HttpStatusCode.OK;
 
-			if (context.Request.RawUrl == "/processinfo") {
-				context.Response.ContentType = "application/xml; charset=utf-8";
-				byte[] data = System.Text.Encoding.ASCII.GetBytes (GetProcessInformation ());
-				context.Response.OutputStream.Write (data, 0, data.Length);
-				context.Response.Close ();
-				return;
-			}
-
 			if (! mappings.ContainsKey (context.Request.RawUrl)) {
 				context.Response.StatusCode = 404;
 				context.Response.Close ();
@@ -157,25 +149,5 @@ namespace Beagle.Daemon {
 			context.Response.Close ();
 		}
 #endif
-
-		private static string GetProcessInformation ()
-		{
-			StringBuilder sb = new StringBuilder ();
-			sb.Append ("<?xml version='1.0' encoding='utf-8'?><Process>");
-
-			int beagled_id = System.Diagnostics.Process.GetCurrentProcess ().Id;
-			sb.Append ("<Id>");
-			sb.Append (beagled_id);
-			sb.Append ("</Id>");
-
-			DateTime start_time = System.Diagnostics.Process.GetCurrentProcess ().StartTime;
-			sb.Append ("<StartTime>");
-			sb.Append (start_time);
-			sb.Append ("</StartTime>");
-
-			sb.Append ("</Process>");
-
-			return sb.ToString ();
-		}
 	}
 }
