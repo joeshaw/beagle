@@ -59,16 +59,24 @@ namespace Beagle.Daemon {
 
 			mappings.Add ("/", new PageMapping ("index.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/mappings.xml", new PageMapping ("mappings.xml", "text/xml; charset=utf-8"));
+			mappings.Add ("/help.xml", new PageMapping ("help.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/index.xsl", new PageMapping ("index.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/statusresult.xsl", new PageMapping ("statusresult.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/hitresult.xsl", new PageMapping ("hitresult.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/default.css", new PageMapping ("default.css", "text/css"));
 			// If E4X is needed, change the content-type here
 			mappings.Add ("/default.js", new PageMapping ("default.js", "text/javascript"));
+			// "images" dir
 			mappings.Add ("/images/title_bg.png", new PageMapping ("images/title_bg.png", "image/png"));
 			mappings.Add ("/images/beagle-logo.png", new PageMapping ("images/beagle-logo.png", "image/png"));
 			mappings.Add ("/images/busy-animation.gif", new PageMapping ("images/busy-animation.gif", "image/gif"));
 			mappings.Add ("/images/favicon.png", new PageMapping ("images/favicon.png", "image/png"));
+			// "help" dir
+			mappings.Add ("/help/browsersettings.html", new PageMapping ("help/browsersettings.html", "text/html"));
+			mappings.Add ("/help/quicktips.html", new PageMapping ("help/quicktips.html", "text/html"));
+			mappings.Add ("/help/querysyntax.html", new PageMapping ("help/querysyntax.html", "text/html"));
+			mappings.Add ("/help/morehelp.html", new PageMapping ("help/morehelp.html", "text/html"));
+
 
 			webserver_dir = Environment.GetEnvironmentVariable ("BEAGLE_WEBSERVER_DIR");
 			if (webserver_dir != null) {
