@@ -112,6 +112,9 @@
 <xsl:template name="results">
 	<xsl:for-each select="document ('mappings.xml')/Mappings/Categories/Category/@Name">
 		<div class="Hits" id='{.}'>
+			<div> <!-- Not making it class="Hit" because it results in too much padding -->
+				<h3><xsl:value-of select="."/></h3>
+			</div>
 		</div>
 	</xsl:for-each>
 	<div class="Hits" id="NoResults" style="display: none;">

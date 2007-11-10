@@ -141,6 +141,7 @@ function state_change_search (begin_date)
 		var responses = res.split ('\uFFFD'); 
 
 		// Appending without clearing is bad... mmkay?
+		reset_document_style ();
 		reset_document_content ();
 		document.getElementById ('timetaken').textContent = elapsed + ' secs';
 		var num_matches = 0;
@@ -308,7 +309,7 @@ function reset_document_content ()
 {
 	var results = document.getElementById ('results');
 	var categories = document.getElementById ('topbar-left').getElementsByTagName ('input');
-	var div;
+	var div, div_category_name;
 	// Reset the divs
 	document.getElementById ('info').innerHTML = '';
 	document.getElementById ('help').innerHTML = '';
@@ -317,6 +318,10 @@ function reset_document_content ()
 		div = document.createElement ('div');
 		div.setAttribute ('class', 'Hits');
 		div.setAttribute ('id', categories [i].name);
+		div_category_name = document.createElement ('div');
+		// Not making it class="Hit" because it results in too much padding
+		div_category_name.innerHTML = '<h3>'+categories [i].name+'</h3>';
+		div.appendChild (div_category_name);
 		results.appendChild (div);
 	}
 	div = document.createElement ('div');
@@ -352,7 +357,8 @@ function set_results_style ()
 		}
 	} else {
 		for (var i = 0; i < results_categories.length; ++i) {
-			results_categories [i].style.display = 'block';
+			if (results_categories [i].childNodes.length > 1)
+				results_categories [i].style.display = 'block';
 		}
 	}
 }
@@ -376,16 +382,13 @@ function show_all_categories ()
 	var category_checkboxes = document.getElementById ('topbar-left').getElementsByTagName ('input');
 	// Get all the result categories
 	var results_categories = document.getElementById ('results').childNodes;
-	// Show all results
-	for (var i = 0; i < results_categories.length; ++i) {
-		if (results_categories [i].id == "NoResults")
-			continue;
-		results_categories [i].style.display = 'block';
-	}
 	// Uncheck all the categories
 	for (var i = 0; i < category_checkboxes.length; ++i) {
 		category_checkboxes [i].checked = false;
 	}
+	// Show results
+	// This should've been used here instead of that loop from the start..
+	set_results_style ();
 }
 
 function toggle_category (category)
