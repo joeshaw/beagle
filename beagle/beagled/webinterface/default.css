@@ -113,6 +113,18 @@ body {
 	text-align: left;
 }
 
+#info {
+	clear: left;
+	margin: 0.5em;
+	text-align: left;
+}
+
+#help {
+	clear: left;
+	margin: 0.5em;
+	text-align: left;
+}
+
 .Hit {
 	margin: 0.5em;
 	float: left;

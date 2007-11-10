@@ -225,7 +225,7 @@ function state_change_info ()
 
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
 			var fragment = query_processor.transformToFragment (response_dom, document);
-			document.getElementById ('results').appendChild (fragment);
+			document.getElementById ('info').appendChild (fragment);
 		}
 
 		document.getElementById ('status').style.display = 'none';
@@ -314,7 +314,9 @@ function reset_document_content ()
 	var results = document.getElementById ('results');
 	var categories = document.getElementById ('topbar-left').getElementsByTagName ('input');
 	var div;
-	// Reset the hit results
+	// Reset the divs
+	document.getElementById ('info').innerHTML = '';
+	document.getElementById ('help').innerHTML = '';
 	results.innerHTML = '';
 	for (var i = 0; i < categories.length; ++i) {
 		div = document.createElement ('div');

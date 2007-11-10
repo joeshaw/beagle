@@ -65,6 +65,10 @@
 		<div id="results">
 			<xsl:call-template name="results"/>
 		</div>
+		<div id="info">
+		</div>
+		<div id="help">
+		</div>
 		<div id="footer">
 			<xsl:call-template name="footer"/>
 		</div>
