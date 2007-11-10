@@ -68,6 +68,13 @@
 		<div id="info">
 		</div>
 		<div id="help">
+			<h3>Quick Tips</h3>
+			<ul>
+				<li>You can use upper and lower case; search is case-insensitive.</li>
+				<li>To search for optional terms, use OR.  ex: <b>George OR Ringo</b></li>
+				<li>To exclude search terms, use the minus symbol in front, such as <b>-cats</b></li>
+				<li>When searching for a phrase, add quotes. ex: <b>"There be dragons"</b></li>
+			</ul>
 		</div>
 		<div id="footer">
 			<xsl:call-template name="footer"/>
@@ -83,7 +90,8 @@
 	</form>
 	<span id="headerlinks">
 		<a href="" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
-		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>
+		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>&nbsp;|&nbsp;
+		<a href="help.html" target="_blank" >Help</a>
 	</span>
 </xsl:template>
 

@@ -122,6 +122,13 @@ body {
 #help {
 	clear: left;
 	margin: 0.5em;
+	margin-left: 25%;
+	text-align: left;
+}
+
+#help-topics {
+	clear: left;
+	margin: 0.5em;
 	text-align: left;
 }
 
