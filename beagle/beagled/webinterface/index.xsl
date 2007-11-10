@@ -84,7 +84,8 @@
 	<span id="headerlinks">
 		<a href="" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
 		<a href="" onclick='get_process_information (); return false;'>Process Information</a>&nbsp;|&nbsp;
-		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>
+		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>&nbsp;|&nbsp;
+		<a href="" onclick='show_help (); return false;'>Help</a>
 	</span>
 </xsl:template>
 

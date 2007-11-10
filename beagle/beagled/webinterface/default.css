@@ -125,6 +125,10 @@ body {
 	text-align: left;
 }
 
+.help-topic {
+	padding-bottom: 1em;
+}
+
 .Hit {
 	margin: 0.5em;
 	float: left;
