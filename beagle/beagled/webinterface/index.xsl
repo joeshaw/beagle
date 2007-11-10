@@ -25,7 +25,7 @@
 -->
 
 <!DOCTYPE xsl:stylesheet [<!ENTITY nbsp "&#160;">]>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 <xsl:output method="html"/>
 
 <!-- 
@@ -89,8 +89,8 @@
 		<input name="querysubmit" type="submit" value="Search"/>
 	</form>
 	<span id="headerlinks">
-		<a href="" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
-		<a href="" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>&nbsp;|&nbsp;
+		<a href="#" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
+		<a href="#" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>&nbsp;|&nbsp;
 		<a href="help.html" target="_blank" >Help</a>
 	</span>
 </xsl:template>
@@ -121,8 +121,8 @@
 
 <xsl:template name="footer">
 	<a target="_blank" href="http://beagle-project.org/Beagle_Webinterface">Web interface</a> for <a target="_blank" href="http://beagle-project.org">Beagle</a> desktop search service<br/>
-	<p class='license'>Copyright &#xA9; 2007 Debajyoti Bera, Nirbheek Chauhan &nbsp;|&nbsp; <a target="_blank" href="http://svn.gnome.org/viewvc/beagle/trunk/beagle/COPYING?view=markup">Copying restrictions</a></p>
-	<p style="color:silver">Version: <xsl:value-of select="/document/version" /> last updated on <xsl:value-of select="/document/last_time" /></p>
+	<p class="license">Copyright &#xA9; 2007 Debajyoti Bera, Nirbheek Chauhan &nbsp;|&nbsp; <a target="_blank" href="http://svn.gnome.org/viewvc/beagle/trunk/beagle/COPYING?view=markup">Copying restrictions</a></p>
+	<p class="version-info">Version: <xsl:value-of select="/document/version"/> last updated on <xsl:value-of select="/document/last_time"/></p>
 </xsl:template>
 
 <!-- 

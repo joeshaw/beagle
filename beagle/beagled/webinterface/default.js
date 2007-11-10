@@ -27,7 +27,7 @@
  * - set_results_style: instead of showing/hiding results, only search for those that the user has checked
  *   query and append results as he checks the categories
  * - Ev!L stuff like `element.innerHTML` needs to be replaced by nice clean DOM stuff; except where good for performance
- * - Code needs to be made cleaner... (category_is_being_shown/categories_being_shown comes to mind as an example)
+ * - Code needs to be made cleaner...
  */
 
 function search ()

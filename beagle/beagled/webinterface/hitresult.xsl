@@ -53,7 +53,7 @@
 			<xsl:apply-templates select="Properties"/>
 		</div>
 		<div class="XML" name="XML">
-			<xsl:copy-of select="."/> 
+			<!-- <xsl:copy-of select="."/> --> 
 		</div>
 	</div>
 </xsl:template>
@@ -87,7 +87,7 @@
 	</xsl:choose>
 </xsl:template>
 
-<!-- FIXME: This (currently non-exitant) mapping should go into mappings.xml and then be referenced from there. -->
+<!-- FIXME: This (currently non-existant) mapping should go into mappings.xml and then be referenced from there. -->
 <xsl:template match="Properties">
 	<table class="Properties">
 		<xsl:for-each select="Property">
