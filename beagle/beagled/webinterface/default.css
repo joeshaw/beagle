@@ -54,7 +54,7 @@ body {
 }
 
 #headerlinks {
-	float: center;
+	float: both;
 	margin-right: 1.2em;
 }
 

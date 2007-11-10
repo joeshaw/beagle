@@ -161,7 +161,7 @@ function state_change_search (begin_date)
 				var hit = hit_processor.transformToFragment (hits [j], document);
 				// Get timestamp and process it
 				var timestamp = hit.firstChild.firstChild.lastChild;
-				timestamp.innerHTML = '<b>Last Edited:</b>&nbsp;'+humanise_timestamp (timestamp.textContent);
+				timestamp.innerHTML = humanise_timestamp (timestamp.textContent);
 				// Process Hit using hitresult.xsl and append to `div`
 				div.appendChild (hit);
 			}
