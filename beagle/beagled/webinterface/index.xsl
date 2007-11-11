@@ -70,6 +70,7 @@
 		<div id="help">
 			<h3>Quick Tips</h3>
 			<ul>
+				<li>Help on <a target="_blank" href="/help.html#Open_Result_Links">opening the search results</a>.</li>
 				<li>You can use upper and lower case; search is case-insensitive.</li>
 				<li>To search for optional terms, use OR.  ex: <b>George OR Ringo</b></li>
 				<li>To exclude search terms, use the minus symbol in front, such as <b>-cats</b></li>
