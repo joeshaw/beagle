@@ -139,6 +139,7 @@ namespace Beagle.Daemon.KMailQueryable {
 					num_dir_crawled ++;
 					num_file_in_dir = DirectoryWalker.GetNumItems (current_dir.FullName);
 					num_file_in_dir_crawled = 0;
+					indexer.Progress = (double) num_dir_crawled / num_dirs;
 					Log.Info ("Scanning {0} maildir mails in {1}", num_file_in_dir, current_dir.FullName);
 
 					files_to_parse = DirectoryWalker.GetFileInfos (current_dir);
