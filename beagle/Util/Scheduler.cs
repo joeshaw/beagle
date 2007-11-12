@@ -74,6 +74,11 @@ namespace Beagle.Util {
 			public string Creator;
 			public string Description;
 
+			// Current status, to be implemented by instances
+			protected virtual string StatusName {
+				get { return null; }
+			}
+
 			public object Source = null; // this is just an opaque identifier
 
 			public ITaskCollector Collector = null;
@@ -381,6 +386,9 @@ namespace Beagle.Util {
 
 				if (Description != null)
 					sb.Append (Description).Append ('\n');
+
+				if (StatusName != null)
+					sb.Append ("Status: ").Append (StatusName).Append ('\n');
 			}
 		}
 

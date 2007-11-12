@@ -536,6 +536,10 @@ namespace Beagle.Daemon {
 				this.Tag = generator.StatusName;
 			}
 
+			protected override string StatusName {
+				get { return generator.StatusName; }
+			}
+
 			override protected void DoTaskReal ()
 			{
 				// Since this is a generator, we want the task to
