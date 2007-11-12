@@ -168,6 +168,37 @@ namespace Beagle.Daemon.KMailQueryable {
 			get { return "KMail"; }
 		}
 
+		protected override int ProgressPercent {
+			get {
+				if (! IsIndexing)
+					return -1;
+
+				double local_progress = 0.5;
+				if (local_indexer != null)
+					local_progress = local_indexer.Progress/2;
+				
+				double dimap_progress = 0.5;
+				if (dimap_indexer != null)
+					dimap_progress = dimap_indexer.Progress/2;
+
+				return (int) (local_progress * 100 + dimap_progress * 100);
+			}
+		}
+
+		private int indexer_indexing = 0;
+		internal bool Indexing {
+			set {
+				// FIXME: This only works because both indexers call
+				// Indexing=true exactly once and Indexing=false exactly once.
+				indexer_indexing += (value ? 1 : -1);
+
+				if (indexer_indexing == 0)
+					IsIndexing = false;
+				else
+					IsIndexing = true;
+			}
+		}
+
 		/** 
 		 * path of local maildir - mine is in ~/.Mail
 		 * This is distribution specific. Mandrake puts kmail mails in

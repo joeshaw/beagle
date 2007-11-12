@@ -54,6 +54,12 @@ namespace Beagle.Daemon.KMailQueryable {
 		private IEnumerator dir_enumerator = null;
 		private IEnumerator file_enumerator = null;
 
+		// counts for reporting progress percent
+		private int num_dirs = 0;
+		private int num_dir_crawled = -1;
+		private int num_file_in_dir = 0;
+		private int num_file_in_dir_crawled = 0;
+
 		private string account_name {
 			get { return indexer.AccountName; }
 		}
@@ -61,16 +67,25 @@ namespace Beagle.Daemon.KMailQueryable {
 		public KMaildirIndexableGenerator (KMailIndexer indexer, ArrayList mail_directories)
 		{
 			this.indexer = indexer;
+			this.indexer.Progress = 0;
+			this.indexer.Queryable.Indexing = true;
+
 			dirs_to_scan = new ArrayList ();
 
 			foreach (string directory in mail_directories) {
 				AddDirectory (directory);
 			}
 			dir_enumerator = dirs_to_scan.GetEnumerator ();
+
+			this.num_dirs = dirs_to_scan.Count;
 		}
 
 		public void PostFlushHook ()
 		{
+			if (num_file_in_dir == 0)
+				return;
+			indexer.Progress = (num_dir_crawled + ((double) num_file_in_dir_crawled / num_file_in_dir)) / num_dirs;
+			Log.Debug ("Progress {4} = ({0} + {1}/{2})/{3}", num_dir_crawled, num_file_in_dir_crawled, num_file_in_dir, num_dirs, current_dir.FullName);
 		}
 
 		private void AddDirectory (string _dir) {
@@ -89,7 +104,11 @@ namespace Beagle.Daemon.KMailQueryable {
 		}
 
 		public string StatusName {
-			get { return indexer.MailRoot; }
+			get {
+				if (current_dir == null)
+					return indexer.MailRoot;
+				return current_dir.FullName;
+			}
 		}
 
 		public Indexable GetNextIndexable ()
@@ -109,13 +128,23 @@ namespace Beagle.Daemon.KMailQueryable {
 				while (file_enumerator == null || !file_enumerator.MoveNext ()) {
 					if (!dir_enumerator.MoveNext ()) {
 						dir_enumerator = null;
+						indexer.Queryable.Indexing = false;
 						return false;
 					}
+
+					if (Shutdown.ShutdownRequested)
+						return false;
+
 					current_dir = (DirectoryInfo) dir_enumerator.Current;
-					Logger.Log.Info ("Scanning maildir feeds in " + current_dir.FullName);
+					num_dir_crawled ++;
+					num_file_in_dir = DirectoryWalker.GetNumItems (current_dir.FullName);
+					num_file_in_dir_crawled = 0;
+					Log.Info ("Scanning {0} maildir mails in {1}", num_file_in_dir, current_dir.FullName);
+
 					files_to_parse = DirectoryWalker.GetFileInfos (current_dir);
 					file_enumerator = files_to_parse.GetEnumerator ();
 				}
+				num_file_in_dir_crawled ++;
 				CrawlFile = (FileInfo) file_enumerator.Current;
 			} while (IsUpToDate (CrawlFile.FullName));
 		    

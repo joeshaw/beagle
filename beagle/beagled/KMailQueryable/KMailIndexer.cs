@@ -63,7 +63,18 @@ namespace Beagle.Daemon.KMailQueryable {
 		public KMailQueryable Queryable {
 		    get { return queryable; }
 		}
-		
+
+		////////////// Progress tracking //////////////////
+
+		private double progress = 0;
+
+		internal double Progress {
+			set { progress = value; }
+			get { return progress; }
+		}
+
+		///////////////////////////////////////////////////
+
 		private string lastGoodDirPath = ""; // cache last successful directory
 
 		public KMailIndexer (KMailQueryable queryable, string account, string root)
@@ -72,7 +83,6 @@ namespace Beagle.Daemon.KMailQueryable {
 			account_name = account;
 			mail_root = root;
 			mail_directories = new ArrayList ();
-			Log.Debug ("{1} mail_directories created for {0}", mail_root, mail_directories.Count);
 			folder_directories = new ArrayList ();
 			mbox_files = new ArrayList ();
 
