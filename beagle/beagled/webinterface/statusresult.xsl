@@ -40,20 +40,24 @@
 	<div id="version">
 		<b>Version</b>: <i><xsl:value-of select="Version"/></i>
 	</div>
-	<div id="is_indexing">
+	<div id="is-indexing">
 		<b>Indexing in progress</b>: <i><xsl:value-of select="IsIndexing"/></i>
 	</div>
-	<div id="shutdown_beagle">
+	<div id="shutdown-beagle">
 		<a href="#" onclick="shutdown_beagle (); return false;" title="Shutdown Beagle">Shutdown Beagle</a><br/>
-	</div><br/>
-	<xsl:apply-templates select="SchedulerInformation"/>
-	<xsl:apply-templates select="IndexStatus"/>
+	</div>
+	<div id="scheduler-information">
+		<xsl:apply-templates select="SchedulerInformation"/>
+	</div>
+	<div id="backend-information">
+		<xsl:apply-templates select="IndexStatus"/>
+	</div>
 </xsl:template>
 
 <xsl:template match="SchedulerInformation">
-	<div class="scheduler_information"><b>Tasks:</b><br/>
-		<span class="total_task_count">(<xsl:value-of select="@TotalTaskCount"/> tasks submitted)</span>
-		<ul>
+	<b>Tasks:</b><br/>
+	<span class="total-task-count">(<xsl:value-of select="@TotalTaskCount"/> tasks submitted)</span>
+	<ul>
 		<xsl:for-each select="PendingTasks/PendingTask">
 			<li><i>(Pending)</i>&nbsp;<xsl:value-of select="."/></li>
 		</xsl:for-each>
@@ -65,8 +69,7 @@
 		<xsl:for-each select="BlockedTasks/BlockedTask">
 			<li><i>(Blocked)</i>&nbsp;<xsl:value-of select="."/></li>
 		</xsl:for-each>
-		</ul>
-	</div>
+	</ul>
 </xsl:template>
 
 <xsl:template match="IndexStatus">
@@ -74,13 +77,38 @@
 	<ul class="indexstatus">
 		<xsl:for-each select="QueryableStatus">
 			<li><div class="queryablestatus">
-			<span class="queryablestatus_name"><xsl:value-of select="@Name"/></span>&nbsp;
-			<span class="queryablestatus_progresspercent">(<xsl:value-of select="@ProgressPercent"/> %)</span>:
-			<span class="queryablestatus_itemcount"><xsl:value-of select="@ItemCount"/> items,</span>
-			<span class="queryablestatus_isindexing">currently indexing? <xsl:value-of select="@IsIndexing"/></span>,
+				<xsl:choose>
+					<xsl:when test="@ItemCount = '-1'">
+						<xsl:call-template name="StatusBackendNotUsed"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="StatusBackendInUse"/>
+					</xsl:otherwise>
+				</xsl:choose>
 			</div></li>
 		</xsl:for-each>
 	</ul>
+</xsl:template>
+
+<xsl:template name="StatusBackendNotUsed">
+	<span class="queryablestatus-name">
+		<xsl:value-of select="@Name"/>&nbsp;:
+	</span>
+	<span class="queryablestatus-isindexing">
+		backend currently not in use
+	</span>
+</xsl:template>
+
+<xsl:template name="StatusBackendInUse">
+	<span class="queryablestatus-name">
+		<xsl:value-of select="@Name"/>&nbsp;:
+	</span>
+	<span class="queryablestatus-itemcount">
+		<xsl:value-of select="@ItemCount"/> items,&nbsp;
+	</span>
+	<span class="queryablestatus-isindexing">
+		currently indexing?&nbsp;<xsl:value-of select="@IsIndexing"/>
+	</span>
 </xsl:template>
 
 </xsl:stylesheet>
