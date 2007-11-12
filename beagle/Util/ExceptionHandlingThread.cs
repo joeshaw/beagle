@@ -64,14 +64,15 @@ namespace Beagle.Util {
 						 this.method.Target, this.method.Method);
 			}
 
-			Log.Debug ("Finished thread {0}", this.thread.Name);
-
 			lock (live_threads)
 				live_threads.Remove (this.thread);
 
 			// Reset variables to help the GC
 			this.method = null;
+			string thread_name = this.thread.Name;
 			this.thread = null;
+
+			Log.Debug ("Finished thread {0}", thread_name);
 		}
 
 		public static Thread Start (ThreadStart method)

@@ -39,6 +39,7 @@ namespace Beagle.Daemon {
 		static Hashtable workers = new Hashtable ();
 		static Hashtable workers_names = new Hashtable ();
 		static bool shutdownRequested = false;
+		static bool shutdownStarted = false;
 
 		public delegate void ShutdownHandler ();
 		public static event ShutdownHandler ShutdownEvent;
@@ -119,6 +120,13 @@ namespace Beagle.Daemon {
 		{
 			lock (shutdownLock) {
 				shutdownRequested = true;
+
+				// There should be only *ONE* call to BeginShutdown
+				// e.g. in IndexHelper, signalhandler and daemonmonitor thread
+				// both can call BeginShutdown. Prevent the deadlock.
+				if (shutdownStarted)
+					return;
+				shutdownStarted = true;
 			}
 
 			// FIXME: This whole "unconditional killing after 5 seconds because
