@@ -63,7 +63,7 @@ namespace Beagle.Daemon {
 			mappings.Add ("/index.xsl", new PageMapping ("index.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/statusresult.xsl", new PageMapping ("statusresult.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/hitresult.xsl", new PageMapping ("hitresult.xsl", "text/xml; charset=utf-8"));
-			mappings.Add ("/help.html", new PageMapping ("help.html", "text/html"));
+			mappings.Add ("/help.html", new PageMapping ("help.html", "text/html; charset=utf-8"));
 			mappings.Add ("/default.css", new PageMapping ("default.css", "text/css"));
 			// If E4X is needed, change the content-type here
 			mappings.Add ("/default.js", new PageMapping ("default.js", "text/javascript"));

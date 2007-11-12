@@ -5,6 +5,7 @@ autostart_DATA = beagled-autostart.desktop
 
 WEBINTERFACE_FILES =				\
 	$(srcdir)/webinterface/default.js	\
+	$(srcdir)/webinterface/help.html	\
 	$(srcdir)/webinterface/mappings.xml	\
 	$(srcdir)/webinterface/index.xsl	\
 	$(srcdir)/webinterface/hitresult.xsl	\
