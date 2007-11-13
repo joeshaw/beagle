@@ -24,6 +24,7 @@ webinterfaceimagesdir = $(webinterfacedir)/images
 webinterfaceimages_DATA =					\
 	$(srcdir)/webinterface/images/beagle-logo.png		\
 	$(srcdir)/webinterface/images/busy-animation.gif	\
+	$(srcdir)/webinterface/images/favicon.png		\
 	$(srcdir)/webinterface/images/title_bg.png
 
 $(WEBINTERFACE_INDEX_XML): $(WEBINTERFACE_INDEX_XML_IN) $(WEBINTERFACE_FILES)
