@@ -30,6 +30,92 @@
  * - Code needs to be made cleaner...
  */
 
+/************ Code for 'Current Status' **************/
+
+function get_information ()
+{
+	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
+
+	xmlhttp.onreadystatechange = function () {
+		state_change_info ();
+	};
+	xmlhttp.open ("POST", "/", true);
+	// XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	document.queryform.querytext.disabled = true;
+	document.queryform.querysubmit.disabled = true;
+	document.getElementById ('status').style.display = 'block';
+	return false;
+}
+
+function state_change_info ()
+{
+	if (xmlhttp.readyState == 4) {
+		// FIXME: Should also check for status 200
+		var res = xmlhttp.responseText;
+
+		// if charset is x-user-defined split by \uF7FF
+		// if charset is utf-8, split by FFFD
+		// And dont ask me why!
+		var responses = res.split ('\uFFFD'); 
+
+		// Appending without clearing is bad... mmkay?
+		reset_document_style ();
+		reset_document_content ();
+
+		// There should be only one response in responses
+		for (var i = 0; i < responses.length; ++i) {
+			if (responses [i].length <= 0)
+				continue;
+
+			var response_dom = parser.parseFromString (responses [i], "text/xml");
+			var fragment = query_processor.transformToFragment (response_dom, document);
+			document.getElementById ('info').appendChild (fragment);
+		}
+
+		document.getElementById ('status').style.display = 'none';
+		document.queryform.querytext.disabled = false;
+		document.queryform.querysubmit.disabled = false;
+	}
+}
+
+function shutdown_beagle ()
+{
+	if ( ! window.confirm ("Are you sure you want to Shutdown Beagle?")) {
+		return;
+	}
+	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="ShutdownRequest"/></RequestWrapper>';
+
+	xmlhttp.onreadystatechange = function () {
+		var message_div = document.getElementById ('shutdown_beagle');
+		if (xmlhttp.readyState == 4) {
+			var message = document.createElement ('i');
+			var text = document.createTextNode ('Shutdown request sent to beagle');
+			message.appendChild (text);
+			message_div.replaceChild (message, message_div.firstChild);
+			document.getElementById ('status').style.display = 'none';
+			document.queryform.querytext.disabled = false;
+			document.queryform.querysubmit.disabled = false;
+		}
+	};
+
+	xmlhttp.open ("POST", "/", true);
+	// XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	document.queryform.querytext.disabled = true;
+	document.queryform.querysubmit.disabled = true;
+	document.getElementById ('status').style.display = 'block';
+	return false;
+}
+
+/*************** Main code to handle search ****************/
+
 function search ()
 {
 	// get the search string
@@ -71,57 +157,6 @@ function search ()
 	return false;
 }
 
-function get_information ()
-{
-	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="DaemonInformationRequest"> <GetVersion>true</GetVersion><GetSchedInfo>true</GetSchedInfo><GetIndexStatus>true</GetIndexStatus> <GetIsIndexing>true</GetIsIndexing></Message></RequestWrapper>';
-
-	xmlhttp.onreadystatechange = function () {
-		state_change_info ();
-	};
-	xmlhttp.open ("POST", "/", true);
-	// XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
-	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
-	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
-	xmlhttp.send (req_string);
-
-	document.queryform.querytext.disabled = true;
-	document.queryform.querysubmit.disabled = true;
-	document.getElementById ('status').style.display = 'block';
-	return false;
-}
-
-function shutdown_beagle ()
-{
-	if ( ! window.confirm ("Are you sure you want to Shutdown Beagle?")) {
-		return;
-	}
-	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="ShutdownRequest"/></RequestWrapper>';
-
-	xmlhttp.onreadystatechange = function () {
-		var message_div = document.getElementById ('shutdown_beagle');
-		if (xmlhttp.readyState == 4) {
-			var message = document.createElement ('i');
-			var text = document.createTextNode ('Shutdown request sent to beagle');
-			message.appendChild (text);
-			message_div.replaceChild (message, message_div.firstChild);
-			document.getElementById ('status').style.display = 'none';
-			document.queryform.querytext.disabled = false;
-			document.queryform.querysubmit.disabled = false;
-		}
-	};
-
-	xmlhttp.open ("POST", "/", true);
-	// XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
-	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
-	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
-	xmlhttp.send (req_string);
-
-	document.queryform.querytext.disabled = true;
-	document.queryform.querysubmit.disabled = true;
-	document.getElementById ('status').style.display = 'block';
-	return false;
-}
-
 function state_change_search (begin_date)
 {
 	if (xmlhttp.readyState == 4) {
@@ -146,6 +181,8 @@ function state_change_search (begin_date)
 		document.getElementById ('timetaken').textContent = elapsed + ' secs';
 		var num_matches = 0;
 
+		//var _start = Date.now ();
+
 		// Process hit xml nodes with xsl and append with javascript
 		for (var i = 1; i < responses.length; ++i) {
 			if (responses [i].length <= 0)  {
@@ -155,15 +192,14 @@ function state_change_search (begin_date)
 			// FIXME: ignoring all other messages
 			var hits = response_dom.getElementsByTagName ('Hit');
 			for (var j = 0; j < hits.length; ++j) {
-				// Copy the hit for modification(s)
-				var div_id = classify_hit (hits [j]);
-				var div = document.getElementById (div_id);
-				// Modifications...
-				var hit = hit_processor.transformToFragment (hits [j], document);
 				// Get timestamp and process it
-				var timestamp = hit.firstChild.firstChild.lastChild;
-				timestamp.innerHTML = humanise_timestamp (timestamp.textContent);
+				var timestamp = (hits [j]).getAttribute ('Timestamp');
+				(hits [j]).setAttribute ('Timestamp', humanise_timestamp (timestamp));
+
+				var div_id = process_hit (hits [j]);
+				var div = document.getElementById (div_id);
 				// Process Hit using hitresult.xsl and append to `div`
+				var hit = hit_processor.transformToFragment (hits [j], document);
 				div.appendChild (hit);
 			}
 
@@ -176,6 +212,8 @@ function state_change_search (begin_date)
 				}
 			}
 		}
+
+		//alert (Date.now () - _start);
 
 		set_results_style ();
 		if (num_matches  == 0) {
@@ -191,47 +229,8 @@ function state_change_search (begin_date)
 		document.queryform.querysubmit.disabled = false;
 	}
 }
-
-function state_change_info ()
-{
-	if (xmlhttp.readyState == 4) {
-		// FIXME: Should also check for status 200
-
-		//dump("Response:\n");
-		//dump(xmlhttp.responseText);
-		//dump("\n");
-
-		var res = xmlhttp.responseText;
-
-		// if charset is x-user-defined split by \uF7FF
-		// if charset is utf-8, split by FFFD
-		// And dont ask me why!
-		var responses = res.split ('\uFFFD'); 
-
-		// Appending without clearing is bad... mmkay?
-		reset_document_style ();
-		reset_document_content ();
-
-		// There should be only one response in responses
-		for (var i = 0; i < responses.length; ++i) {
-			if (responses [i].length <= 0)
-				continue;
-			//dump (responses [i]);
-			//dump ('\n');
-
-			var response_dom = parser.parseFromString (responses [i], "text/xml");
-			var fragment = query_processor.transformToFragment (response_dom, document);
-			document.getElementById ('info').appendChild (fragment);
-		}
-
-		document.getElementById ('status').style.display = 'none';
-
-		document.queryform.querytext.disabled = false;
-		document.queryform.querysubmit.disabled = false;
-	}
-}
-
-function classify_hit (hit)
+/* Processes the hit and return the category */
+function process_hit (hit)
 {
 	var categories = mappings.getElementsByTagName ('Categories') [0].getElementsByTagName ('Category');
 	var properties = hit.getElementsByTagName ('Property');
@@ -291,6 +290,8 @@ function humanise_timestamp (ts)
 		return timestamp.toLocaleFormat ('%B %e, %Y')
 	}
 }
+
+/**************** Code to handle styles and ui issues ******************/
 
 function categories_being_shown ()
 {
