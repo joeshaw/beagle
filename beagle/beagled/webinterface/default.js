@@ -253,59 +253,139 @@ function state_change_search (begin_date)
 	}
 }
 
+/************ Hit categorization ****************/
+
+// The following logic is taken mappings.xml;
+// ideally, these functions should be auto-generated
+// from mappings.xml
+
+function is_document (properties)
+{
+	var hit_type = properties ['beagle:HitType'];
+	if (hit_type == null)
+		hit_type = '';
+
+	var file_type = properties ['beagle:FileType'];
+	if (file_type == null)
+		file_type = '';
+
+	return (hit_type != 'MailMessage' &&
+		hit_type != 'WebHistory' && (
+			file_type == 'document' ||
+			file_type == 'archive' ||
+			file_type == 'source' ||
+			hit_type == 'note'));
+}
+
+function is_image (properties)
+{
+	var file_type = properties ['beagle:FileType'];
+	if (file_type == null)
+		file_type = '';
+
+	return (file_type == 'image');
+}
+
+function is_media (properties)
+{
+	var file_type = properties ['beagle:FileType'];
+	if (file_type == null)
+		file_type = '';
+
+	return (file_type == 'audio' ||
+		file_type == 'video');
+}
+
+function is_mail (properties)
+{
+	var hit_type = properties ['beagle:HitType'];
+	if (hit_type == null)
+		hit_type = '';
+
+	return (hit_type == 'MailMessage');
+}
+
+function is_imlog (properties)
+{
+	var hit_type = properties ['beagle:HitType'];
+	if (hit_type == null)
+		hit_type = '';
+
+	return (hit_type == 'IMLog');
+}
+
+function is_website (properties)
+{
+	var hit_type = properties ['beagle:HitType'];
+	if (hit_type == null)
+		hit_type = '';
+
+	return (hit_type == 'WebHistory' ||
+		hit_type == 'Bookmark' ||
+		hit_type == 'FeedItem');
+}
+
+function is_other (properties)
+{
+	var file_type = properties ['beagle:FileType'];
+	if (file_type == null)
+		file_type = '';
+
+	return (file_type == 'directory');
+}
+
+// The order is important
+var category_funcs = new Array (
+	{'name': 'Mail'	    , 'func': is_mail	    },
+	{'name': 'Documents', 'func': is_document   },
+	{'name': 'Images'   , 'func': is_image	    },
+	{'name': 'Media'    , 'func': is_media	    },
+	{'name': 'IM Logs'  , 'func': is_imlog	    },
+	{'name': 'Websites' , 'func': is_website    },
+	{'name': 'Others'   , 'func': is_other	    }
+);
+
+function classify_hit (properties)
+{
+	for (var i = 0; i < category_funcs.length; ++ i) {
+		if ((category_funcs [i]).func (properties))
+			return (category_funcs [i]).name;
+	}
+
+	return "Others";
+}
+
 /* Processes the hit and return the category */
 function process_hit (hit)
 {
-	var categories = mappings.getElementsByTagName ('Categories') [0].getElementsByTagName ('Category');
 	var properties = hit.getElementsByTagName ('Property');
-	var matchers, matchers_value, matchers_key, matcher;
-	var first_time = true;
+	var property_table = {};
 
-	// Iterate over all the categories in mappings.xml
-categs:	for (var i = 0; i < categories.length; ++i) {
-		matchers = mappings.evaluate ('NotType|Type', categories [i], null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-		// Iterate over all the <NotType> and <Type>s
-		while (matcher = matchers.iterateNext ()) {
-			matchers_key = matcher.getAttribute ('Key');
-			matchers_value = matcher.getAttribute ('Value');
-			// For each property of the hit
-			for (var k = 0; k < properties.length; ++k) {
-				// Change the property names to more human friendly ones
-				if (first_time) {
-					var property_name = PropertyNameTable [properties [k].getAttribute ('Key')];
-					if (property_name == null)
-						property_name = properties [k].getAttribute ('Key');
-					properties [k].setAttribute ('Name', property_name);
-					//dump (property_name + "(" + properties [k].getAttribute ('Key') + ")=" + properties [k].getAttribute ('Value') + "\n");
+	for (var k = 0; k < properties.length; ++k) {
+		var key = properties [k].getAttribute ('Key');
+		var value = properties [k].getAttribute ('Value');
 
-					// Change the value of date properties
-					// Date properties are never used in mappings.xml
-					if (properties [k].getAttribute ('Type') == 'Date')
-						properties [k].setAttribute (
-							'Value',
-							humanise_timestamp (properties [k].getAttribute ('Value')));
-				}
+		property_table [key] = value;
 
-				// If it matches
-				if (properties [k].getAttribute ('Key') == matchers_key &&
-				    properties [k].getAttribute ('Value') == matchers_value) {
-					if (matcher.nodeName == "NotType") {
-						// It does not match this category
-						// Go to the next category.
-						continue categs;
-					} else if (matcher.nodeName == "Type") {
-						// Match found, return corresponding div id
-						return categories [i].getAttribute ('Name');
-					}
-				}
-			}
+		// Change the property names to more human friendly ones
+		var property_name = PropertyNameTable [key];
+		// Search for parent properties
+		if (property_name == null && (key.indexOf ('parent:') == 0))
+			property_name = PropertyNameTable [key.slice (7)];
+		if (property_name == null)
+			property_name = key;
+		properties [k].setAttribute ('Name', property_name);
 
-			first_time = false;
-		}
+		// Change the value of date properties
+		// Date properties are never used in mappings.xml
+		if (properties [k].getAttribute ('Type') == 'Date')
+			properties [k].setAttribute ('Value', humanise_timestamp (value));
 	}
-	// No rule for `hit` found, classifying as "Others"
-	return 'Others';
+
+	return classify_hit (property_table);
 }
+
+/************* Datetime parsing routines ***************/
 
 // We're putting these here so they're reused. Much faster this way.
 var regexp = /^(.{4})(.{2})(.{2})/;
