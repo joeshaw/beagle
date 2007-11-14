@@ -30,6 +30,20 @@
  * - Code needs to be made cleaner...
  */
 
+
+/************ Global state variables *****************/
+
+QueryState = {
+	'stemmed_str': '',
+	'hits': {}
+};
+
+function clear_query_state ()
+{
+	QueryState ['stemmed_str'] = '';
+	QueryState ['hits'] = {};
+}
+
 /************ Code for 'Current Status' **************/
 
 function get_information ()
@@ -207,14 +221,34 @@ function state_change_search (begin_date)
 		//var _start = Date.now ();
 
 		// Process hit xml nodes with xsl and append with javascript
-		for (var i = 1; i < responses.length; ++i) {
+		for (var i = 0; i < responses.length; ++i) {
 			if (responses [i].length <= 0)  {
 				continue;
 			}
+
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
+
+			var msg_node = response_dom.getElementsByTagName ('Message') [0];
+			if (msg_node.getAttributeNS ('http://www.w3.org/2001/XMLSchema-instance', 'type') == 'SearchTermResponse') {
+				var query_terms = msg_node.getElementsByTagName ('Stemmed') [0];
+				query_terms = query_terms.getElementsByTagName ('Text');
+				var stemmed_str = '';
+				for (var q_j = 0; q_j < query_terms.length; ++ q_j)
+					stemmed_str += ('<string>' + query_terms [q_j].textContent + '</string>');
+
+				QueryState ['stemmed_str'] = stemmed_str;
+				continue;
+			}
+
 			// FIXME: ignoring all other messages
-			var hits = response_dom.getElementsByTagName ('Hit');
+			if (msg_node.getAttributeNS ('http://www.w3.org/2001/XMLSchema-instance', 'type') != 'HitsAddedResponse')
+				continue;
+
+			var hits = msg_node.getElementsByTagName ('Hit');
 			for (var j = 0; j < hits.length; ++j) {
+				// Copy and store the hit node for snippet purposes before it is modified
+				(QueryState ['hits']) [hits [j].getAttribute ("Uri")] = hit_serializer.serializeToString (hits [j]);
+
 				// Get timestamp and process it
 				var timestamp = (hits [j]).getAttribute ('Timestamp');
 				(hits [j]).setAttribute ('Timestamp', humanise_timestamp (timestamp));
@@ -251,6 +285,84 @@ function state_change_search (begin_date)
 		document.queryform.querytext.focus ();
 		document.queryform.querysubmit.disabled = false;
 	}
+}
+
+/************ Snippet handling ******************/
+
+function get_snippet (div_link, uri)
+{
+	var snippet_div = div_link.parentNode;
+	var hit_xml = (QueryState ['hits']) [uri];
+	if (hit_xml == null) {
+		alert ('Error! Cannot fetch snippet for unregistered hit');
+		return;
+	}
+
+	//var query_str_stemmed = document.getElementById ('query_str').getAttribute ('stemmed');
+	var query_str_stemmed = 'futon';
+	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="SnippetRequest">' + hit_xml + '<QueryTerms>' + QueryState ['stemmed_str'] + '</QueryTerms> <FullText>false</FullText> </Message> </RequestWrapper>';
+
+	xmlhttp.onreadystatechange = function () {
+		state_change_snippet (snippet_div, uri);
+	};
+	
+	xmlhttp.open ("POST", "/", true);
+	// XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	// do fancy js dom stuff
+	return false;
+}
+
+function state_change_snippet (snippet_div, uri)
+{
+	if (xmlhttp.readyState == 4) {
+		// FIXME: Should also check for status 200
+
+		dump("Response:\n");
+		dump(xmlhttp.responseText);
+		dump("\n");
+
+		// Help the GC
+		(QueryState ['hits']) [uri] = '';
+
+		// if charset is x-user-defined split by \uF7FF
+		// if charset is utf-8, split by FFFD
+		// And dont ask me why!
+		var response = xmlhttp.responseText.split ('\uFFFD') [0];
+		var snippet_xml = parser.parseFromString (response, "text/xml");
+
+		var snippet = snippet_xml.getElementsByTagName ('Snippets') [0];
+		var snippet_lines = snippet.getElementsByTagName ('SnippetLine');
+		if (snippet_lines.length == 0) {
+			snippet_div.innerHTML = '<i>No matching occurrence</i>';
+			return;
+		}
+
+		// innerHTML is much much faster than manually adding lots of elements by DOM
+		var snippet_str = '';
+		for (var i = 0; i < snippet_lines.length; ++ i) {
+			var substr = '';
+			var fragments = snippet_lines [i].getElementsByTagName ('Fragment');
+			for (var j = 0; j < fragments.length; ++ j) {
+				var is_query_term = (fragments [j].getAttribute ('QueryTermIndex') != '-1');
+				if (is_query_term)
+					substr += '<b>';
+				substr += (fragments [j].textContent);
+				if (is_query_term)
+					substr += '</b>';
+			}
+
+			if (substr != '')
+				snippet_str += ('...' + substr + '...<br/>');
+		}
+
+		dump ("Snippet string: " + snippet_str + "\n");
+		snippet_div.innerHTML = snippet_str;
+	}
+
 }
 
 /************ Hit categorization ****************/
@@ -456,6 +568,8 @@ function reset_document_content ()
 	div.appendChild (document.createTextNode ('No Results'));
 	results.appendChild (div);
 	document.getElementById ('numhits').textContent = '0';
+
+	clear_query_state ();
 }
 
 function reset_document_style ()
@@ -554,6 +668,9 @@ var query_processor = new XSLTProcessor ();
 var hit_processor = new XSLTProcessor ();
 var parser = new DOMParser ();
 var mappings;
+
+// Create and store a default serializer
+var hit_serializer = new XMLSerializer ();
 
 // Load statusresult.xsl using synchronous (third param is set to false) XMLHttpRequest
 xmlhttp.open ("GET", "/statusresult.xsl", false);

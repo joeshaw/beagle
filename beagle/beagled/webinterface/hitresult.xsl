@@ -51,9 +51,9 @@
 		</div>
 		<div class="Data" name="Data">
 			<xsl:apply-templates select="Properties"/>
-		</div>
-		<div class="XML" name="XML">
-			<!-- <xsl:copy-of select="."/> --> 
+			<div class="Snippet">
+			    <a href="#" onclick="get_snippet (this, '{@Uri}'); return false;">Show Snippet</a>
+			</div>
 		</div>
 	</div>
 </xsl:template>
