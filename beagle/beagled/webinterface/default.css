@@ -184,6 +184,7 @@ body {
 
 td.SearchProperty a{
 	visibility: hidden;
+	text-decoration: none;
 }
 
 tr.Property:hover td.SearchProperty a {

@@ -9,6 +9,12 @@ PropertyNameTable = {
 'beagle:IsChild': '',
 'beagle:Source': 'Backend',
 'beagle:MimeType': 'Mimetype',
+'beagle:SplitFilename': '',
+'beagle:ExactFilename': 'Filename',
+'beagle:Filename': '',
+'beagle:FilenameExtension': '',
+'beagle:NoPunctFilename': '',
+'beagle:NoContent': '',
 // FilterAbiword.cs
 'fixme:appname': 'Creating application',
 'dc:description': 'Description',
