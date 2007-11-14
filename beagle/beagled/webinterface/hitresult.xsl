@@ -91,10 +91,12 @@
 <xsl:template match="Properties">
 	<table class="Properties">
 		<xsl:for-each select="Property">
-			<tr>
-			<td class="PropertyKey"><xsl:value-of select="@Key"/></td>
-			<td class="PropertyValue"><xsl:value-of select="@Value"/></td>
-			</tr>
+			<xsl:if test="@Name != ''">
+				<tr>
+				    <td class="PropertyKey" key="{@Key}"><xsl:value-of select="@Name"/></td>
+				<td class="PropertyValue"><xsl:value-of select="@Value"/></td>
+				</tr>
+			</xsl:if>
 		</xsl:for-each>
 	</table>
 </xsl:template>

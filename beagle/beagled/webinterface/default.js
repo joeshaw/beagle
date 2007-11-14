@@ -229,12 +229,15 @@ function state_change_search (begin_date)
 		document.queryform.querysubmit.disabled = false;
 	}
 }
+
 /* Processes the hit and return the category */
 function process_hit (hit)
 {
 	var categories = mappings.getElementsByTagName ('Categories') [0].getElementsByTagName ('Category');
 	var properties = hit.getElementsByTagName ('Property');
 	var matchers, matchers_value, matchers_key, matcher;
+	var first_time = true;
+
 	// Iterate over all the categories in mappings.xml
 categs:	for (var i = 0; i < categories.length; ++i) {
 		matchers = mappings.evaluate ('NotType|Type', categories [i], null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
@@ -244,6 +247,22 @@ categs:	for (var i = 0; i < categories.length; ++i) {
 			matchers_value = matcher.getAttribute ('Value');
 			// For each property of the hit
 			for (var k = 0; k < properties.length; ++k) {
+				// Change the property names to more human friendly ones
+				if (first_time) {
+					var property_name = PropertyNameTable [properties [k].getAttribute ('Key')];
+					if (property_name == null)
+						property_name = properties [k].getAttribute ('Key');
+					properties [k].setAttribute ('Name', property_name);
+					//dump (property_name + "(" + properties [k].getAttribute ('Key') + ")=" + properties [k].getAttribute ('Value') + "\n");
+
+					// Change the value of date properties
+					// Date properties are never used in mappings.xml
+					if (properties [k].getAttribute ('Type') == 'Date')
+						properties [k].setAttribute (
+							'Value',
+							humanise_timestamp (properties [k].getAttribute ('Value')));
+				}
+
 				// If it matches
 				if (properties [k].getAttribute ('Key') == matchers_key &&
 				    properties [k].getAttribute ('Value') == matchers_value) {
@@ -257,6 +276,8 @@ categs:	for (var i = 0; i < categories.length; ++i) {
 					}
 				}
 			}
+
+			first_time = false;
 		}
 	}
 	// No rule for `hit` found, classifying as "Others"

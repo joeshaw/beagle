@@ -67,6 +67,7 @@ namespace Beagle.Daemon {
 			mappings.Add ("/default.css", new PageMapping ("default.css", "text/css"));
 			// If E4X is needed, change the content-type here
 			mappings.Add ("/default.js", new PageMapping ("default.js", "text/javascript"));
+			mappings.Add ("/propname-table.js", new PageMapping ("propname-table.js", "text/javascript"));
 			mappings.Add ("/images/title_bg.png", new PageMapping ("images/title_bg.png", "image/png"));
 			mappings.Add ("/images/beagle-logo.png", new PageMapping ("images/beagle-logo.png", "image/png"));
 			mappings.Add ("/images/busy-animation.gif", new PageMapping ("images/busy-animation.gif", "image/gif"));

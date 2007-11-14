@@ -43,7 +43,8 @@
 	<head>
 		<title><xsl:value-of select="/document/title"/></title>
 		<link rel="stylesheet" href="default.css" type="text/css"/>
-		<script src="default.js" type="text/javascript"></script>
+		<script src="propname-table.js" type="text/javascript"/>
+		<script src="default.js" type="text/javascript"/>
 		<link rel="icon" href="images/favicon.png" type="image/png"/>
 	</head>
 </xsl:template>
