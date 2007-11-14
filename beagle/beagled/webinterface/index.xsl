@@ -125,8 +125,7 @@
 </xsl:template>
 
 <xsl:template name="footer">
-	<a target="_blank" href="http://beagle-project.org/Beagle_Webinterface">Web interface</a> for <a target="_blank" href="http://beagle-project.org">Beagle</a> desktop search service<br/>
-	<p class="license">Copyright &#xA9; 2007 Debajyoti Bera, Nirbheek Chauhan &nbsp;|&nbsp; <a target="_blank" href="http://svn.gnome.org/viewvc/beagle/trunk/beagle/COPYING?view=markup">Copying restrictions</a></p>
+	<p><a target="_blank" href="http://beagle-project.org/Beagle_Webinterface">Web interface</a> for <a target="_blank" href="http://beagle-project.org">Beagle</a> desktop search service &nbsp;|&nbsp; <a target="_blank" href="http://svn.gnome.org/viewvc/beagle/trunk/beagle/COPYING?view=markup">Copying restrictions</a></p>
 	<p class="version-info">Version: <xsl:value-of select="/document/version"/> last updated on <xsl:value-of select="/document/last_time"/></p>
 </xsl:template>
 
