@@ -114,6 +114,29 @@ function shutdown_beagle ()
 	return false;
 }
 
+/******** Code to handle searching of properties names ******/
+
+function search_property (search_property_node)
+{
+	// <tr><td><a>Search</a></td><td key="{@Key}">Key</td><td type="{@Type}">Value</td></tr>
+	//
+	var property_key  = search_property_node.parentNode.nextSibling.getAttribute ("key");
+	var property_type = search_property_node.parentNode.nextSibling.nextSibling.getAttribute ("type");
+	var property_val  = search_property_node.parentNode.nextSibling.nextSibling.textContent;
+	dump ("type = " + property_type + " key = " + property_key + " val = " + property_val + "\n");
+
+	var prefix = "";
+	if (property_type == "Text")
+		prefix = "property:";
+	else if (property_type == "Keyword")
+		prefix = "keyword:";
+	else
+		return;
+
+	document.queryform.querytext.value = (prefix + '"' + property_key + '=' + property_val + '"');
+	search ();
+}
+
 /*************** Main code to handle search ****************/
 
 function search ()

@@ -182,6 +182,14 @@ body {
 	margin-left: 0.5em;
 }
 
+td.SearchProperty a{
+	visibility: hidden;
+}
+
+tr.Property:hover td.SearchProperty a {
+	visibility: visible;
+}
+
 .XML {
 	display: none;
 }

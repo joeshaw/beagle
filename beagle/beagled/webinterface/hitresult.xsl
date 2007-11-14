@@ -92,9 +92,10 @@
 	<table class="Properties">
 		<xsl:for-each select="Property">
 			<xsl:if test="@Name != ''">
-				<tr>
-				    <td class="PropertyKey" key="{@Key}"><xsl:value-of select="@Name"/></td>
-				<td class="PropertyValue"><xsl:value-of select="@Value"/></td>
+				<tr class="Property">
+				<td class="SearchProperty"><a href="#" onclick="search_property(this); return false;">Search</a></td>
+				<td class="PropertyKey" key="{@Key}"><xsl:value-of select="@Name"/></td>
+				<td class="PropertyValue" type="{@Type}"><xsl:value-of select="@Value"/></td>
 				</tr>
 			</xsl:if>
 		</xsl:for-each>
