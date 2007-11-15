@@ -86,7 +86,7 @@ function state_change_info ()
 				continue;
 
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
-			var fragment = query_processor.transformToFragment (response_dom, document);
+			var fragment = status_processor.transformToFragment (response_dom, document);
 			document.getElementById ('info').appendChild (fragment);
 		}
 
@@ -289,7 +289,7 @@ function state_change_search (begin_date)
 
 /************ Snippet handling ******************/
 
-function get_snippet (div_link, uri)
+function get_snippet (div_link, uri, fulltext)
 {
 	var snippet_div = div_link.parentNode;
 	var hit_xml = (QueryState ['hits']) [uri];
@@ -299,11 +299,10 @@ function get_snippet (div_link, uri)
 	}
 
 	//var query_str_stemmed = document.getElementById ('query_str').getAttribute ('stemmed');
-	var query_str_stemmed = 'futon';
-	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="SnippetRequest">' + hit_xml + '<QueryTerms>' + QueryState ['stemmed_str'] + '</QueryTerms> <FullText>false</FullText> </Message> </RequestWrapper>';
+	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="SnippetRequest">' + hit_xml + '<QueryTerms>' + QueryState ['stemmed_str'] + '</QueryTerms> <FullText>' + fulltext + '</FullText> </Message> </RequestWrapper>';
 
 	xmlhttp.onreadystatechange = function () {
-		state_change_snippet (snippet_div, uri);
+		state_change_snippet (snippet_div, uri, fulltext);
 	};
 	
 	xmlhttp.open ("POST", "/", true);
@@ -316,15 +315,10 @@ function get_snippet (div_link, uri)
 	return false;
 }
 
-function state_change_snippet (snippet_div, uri)
+function state_change_snippet (snippet_div, uri, fulltext)
 {
 	if (xmlhttp.readyState == 4) {
 		// FIXME: Should also check for status 200
-
-		dump("Response:\n");
-		dump(xmlhttp.responseText);
-		dump("\n");
-
 		// Help the GC
 		(QueryState ['hits']) [uri] = '';
 
@@ -335,34 +329,50 @@ function state_change_snippet (snippet_div, uri)
 		var snippet_xml = parser.parseFromString (response, "text/xml");
 
 		var snippet = snippet_xml.getElementsByTagName ('Snippets') [0];
-		var snippet_lines = snippet.getElementsByTagName ('SnippetLine');
-		if (snippet_lines.length == 0) {
-			snippet_div.innerHTML = '<i>No matching occurrence</i>';
-			return;
-		}
 
-		// innerHTML is much much faster than manually adding lots of elements by DOM
-		var snippet_str = '';
-		for (var i = 0; i < snippet_lines.length; ++ i) {
-			var substr = '';
-			var fragments = snippet_lines [i].getElementsByTagName ('Fragment');
-			for (var j = 0; j < fragments.length; ++ j) {
-				var is_query_term = (fragments [j].getAttribute ('QueryTermIndex') != '-1');
-				if (is_query_term)
-					substr += '<b>';
-				substr += (fragments [j].textContent);
-				if (is_query_term)
-					substr += '</b>';
-			}
+		if (fulltext)
+			show_fulltext (snippet_div, snippet);
+		else
+			show_snippet (snippet_div, snippet);
+	}
+}
 
-			if (substr != '')
-				snippet_str += ('...' + substr + '...<br/>');
-		}
-
-		dump ("Snippet string: " + snippet_str + "\n");
-		snippet_div.innerHTML = snippet_str;
+function show_snippet (snippet_div, snippet)
+{
+	var snippet_lines = snippet.getElementsByTagName ('SnippetLine');
+	if (snippet_lines.length == 0) {
+		snippet_div.innerHTML = '<i>Search terms not found in text content</i>';
+		return;
 	}
 
+	dump (hit_serializer.serializeToString (snippet) + "\n");
+
+	var fragment = hit_processor.transformToFragment (snippet, document);
+	while (snippet_div.childNodes.length != 0)
+		snippet_div.removeChild (snippet_div.childNodes [0]);
+
+	snippet_div.appendChild (fragment);
+}
+
+function show_fulltext (snippet_div, snippet)
+{
+	var snippet_lines = snippet.getElementsByTagName ('SnippetLine');
+	if (snippet_lines.length == 0) {
+		snippet_div.innerHTML = '<i>No text content</i>';
+		return;
+	}
+
+	// Only one snippetline with one fragment
+	var fragment = snippet_lines [0].getElementsByTagName ('Fragment');
+	if (fragment == null) {
+		snippet_div.innerHTML = '<i>No text content</i>';
+		return;
+	}
+
+	var text = fragment [0].textContent;
+
+	var snippet_str = text.replace (/\n+/g, '<br/>');
+	snippet_div.innerHTML = snippet_str;
 }
 
 /************ Hit categorization ****************/
@@ -664,7 +674,7 @@ function toggle_category (category)
 
 // This works everywhere except IE
 var xmlhttp = new XMLHttpRequest (); 
-var query_processor = new XSLTProcessor ();
+var status_processor = new XSLTProcessor ();
 var hit_processor = new XSLTProcessor ();
 var parser = new DOMParser ();
 var mappings;
@@ -675,9 +685,8 @@ var hit_serializer = new XMLSerializer ();
 // Load statusresult.xsl using synchronous (third param is set to false) XMLHttpRequest
 xmlhttp.open ("GET", "/statusresult.xsl", false);
 xmlhttp.send (null);
-
 // Process it and store it for later reuse
-query_processor.importStylesheet (xmlhttp.responseXML);
+status_processor.importStylesheet (xmlhttp.responseXML);
 
 // Get Hit processing xsl
 xmlhttp.open ("GET", "/hitresult.xsl", false);

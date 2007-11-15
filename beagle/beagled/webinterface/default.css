@@ -145,6 +145,11 @@ body {
 	display: none;
 }
 
+.Hits div h3 {
+	padding: 0.4em;
+	background-color: #cccccc;
+}
+
 .Title {
 	padding: 0.4em;
 	float: left;
@@ -184,8 +189,11 @@ body {
 
 .Snippet {
         clear: left;
-	width: 100%;
+	width: 90%;
 	padding-top: 1em;
+	margin-left: 4em;
+	padding-left: 1em;
+	border-left: thin dotted green;
 }
 
 td.SearchProperty a{
@@ -195,6 +203,10 @@ td.SearchProperty a{
 
 tr.Property:hover td.SearchProperty a {
 	visibility: visible;
+}
+
+.PropertyValue {
+	color: #000066;
 }
 
 .XML {

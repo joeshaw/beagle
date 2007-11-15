@@ -41,6 +41,14 @@
 		<div class="Title" name="Title">
 			<span class="Uri" name="Uri">
 				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>&nbsp;
+				<xsl:choose>
+					<xsl:when test="Properties/Property[@Key='fixme:inside_archive']">
+					    <i>Archived&nbsp;</i>
+					</xsl:when>
+					<xsl:when test="Properties/Property[@Key='parent:fixme:hasAttachments']">
+					    <i>Attachment&nbsp;</i>
+					</xsl:when>
+				</xsl:choose>
 				<a target="_blank" href="{@Uri}">
 					<xsl:call-template name="Uri"/>
 				</a>
@@ -51,9 +59,7 @@
 		</div>
 		<div class="Data" name="Data">
 			<xsl:apply-templates select="Properties"/>
-			<div class="Snippet">
-			    <a href="#" onclick="get_snippet (this, '{@Uri}'); return false;">Show Snippet</a>
-			</div>
+			<xsl:call-template name="Snippet"/>
 		</div>
 	</div>
 </xsl:template>
@@ -87,6 +93,21 @@
 	</xsl:choose>
 </xsl:template>
 
+<xsl:template name="Snippet">
+	<xsl:choose>
+		<xsl:when test="Properties/Property[@Key='beagle:MimeType' and @Value='message/rfc822']">
+			<div class="Snippet">
+			    <a href="#" onclick="get_snippet (this, '{@Uri}', true); return false;">Show email</a>
+			</div>
+		</xsl:when>
+		<xsl:otherwise>
+			<div class="Snippet">
+			    <a href="#" onclick="get_snippet (this, '{@Uri}', false); return false;">Show Snippet</a>
+			</div>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:template>
+
 <!-- FIXME: This (currently non-existant) mapping should go into mappings.xml and then be referenced from there. -->
 <xsl:template match="Properties">
 	<table class="Properties">
@@ -100,6 +121,25 @@
 			</xsl:if>
 		</xsl:for-each>
 	</table>
+</xsl:template>
+
+<xsl:template match="Snippets">
+	<xsl:for-each select="SnippetLine">
+		<xsl:text>...</xsl:text>
+		<xsl:for-each select="Fragment">
+			<xsl:choose>
+				<xsl:when test="@QueryTermIndex != '-1'">
+					<!-- query term; bold this -->
+					<b><xsl:value-of select="."/></b>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
+		<xsl:text>...</xsl:text>
+		<br/>
+	</xsl:for-each>
 </xsl:template>
 
 </xsl:stylesheet>
