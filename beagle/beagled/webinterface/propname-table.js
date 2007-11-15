@@ -15,6 +15,7 @@ PropertyNameTable = {
 'beagle:FilenameExtension': '',
 'beagle:NoPunctFilename': '',
 'beagle:NoContent': '',
+'beagle:InternalUri': '',
 // FilterAbiword.cs
 'fixme:appname': 'Creating application',
 'dc:description': 'Description',

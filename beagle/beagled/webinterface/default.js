@@ -33,6 +33,8 @@
 
 /************ Global state variables *****************/
 
+MaxResultsPerBackend = 30; // arbitrary
+
 QueryState = {
 	'stemmed_str': '',
 	'hits': {}
@@ -169,7 +171,7 @@ function search ()
 		return;
 	}
 
-	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="Query"> <IsIndexListener>false</IsIndexListener> <Parts> <Part xsi:type="QueryPart_Human"> <Logic>Required</Logic> <QueryString>' + query_str + '</QueryString> </Part> </Parts> <QueryDomain>Local System</QueryDomain> <MaxHits>100</MaxHits> </Message> </RequestWrapper> ';
+	var req_string = '<?xml version="1.0" encoding="utf-8"?> <RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"> <Message xsi:type="Query"> <IsIndexListener>false</IsIndexListener> <Parts> <Part xsi:type="QueryPart_Human"> <Logic>Required</Logic> <QueryString>' + query_str + '</QueryString> </Part> </Parts> <QueryDomain>Local System</QueryDomain> <MaxHits>' + MaxResultsPerBackend + '</MaxHits> </Message> </RequestWrapper> ';
 
 	var begin_date = Date.now ();
 
@@ -220,6 +222,11 @@ function state_change_search (begin_date)
 
 		//var _start = Date.now ();
 
+		// Use document fragment to temporarily collect the hits in memory
+		var doc_fragments = {};
+		for (var f = 0; f < category_funcs.length; ++ f)
+			doc_fragments [(category_funcs [f])['name']] = document.createDocumentFragment ();
+
 		// Process hit xml nodes with xsl and append with javascript
 		for (var i = 0; i < responses.length; ++i) {
 			if (responses [i].length <= 0)  {
@@ -228,6 +235,7 @@ function state_change_search (begin_date)
 
 			var response_dom = parser.parseFromString (responses [i], "text/xml");
 
+			// Read SearchTermResponse message and store the stemmed string for snippet purpose
 			var msg_node = response_dom.getElementsByTagName ('Message') [0];
 			if (msg_node.getAttributeNS ('http://www.w3.org/2001/XMLSchema-instance', 'type') == 'SearchTermResponse') {
 				var query_terms = msg_node.getElementsByTagName ('Stemmed') [0];
@@ -254,10 +262,9 @@ function state_change_search (begin_date)
 				(hits [j]).setAttribute ('Timestamp', humanise_timestamp (timestamp));
 
 				var div_id = process_hit (hits [j]);
-				var div = document.getElementById (div_id);
 				// Process Hit using hitresult.xsl and append to `div`
 				var hit = hit_processor.transformToFragment (hits [j], document);
-				div.appendChild (hit);
+				doc_fragments [div_id].appendChild (hit);
 			}
 
 			var num_matches_elems = response_dom.getElementsByTagName ('NumMatches');
@@ -268,6 +275,12 @@ function state_change_search (begin_date)
 					document.getElementById ('numhits').textContent = num_matches;
 				}
 			}
+		}
+
+		// Blast all the generated hits into the document
+		for (var f = 0; f < category_funcs.length; ++ f) {
+			var div = document.getElementById (category_funcs [f].name);
+			div.appendChild (doc_fragments [category_funcs [f].name]);
 		}
 
 		//alert (Date.now () - _start);
@@ -457,6 +470,7 @@ function is_other (properties)
 }
 
 // The order is important
+// The 'name's are the names of the Categories in mapping.xml
 var category_funcs = new Array (
 	{'name': 'Mail'	    , 'func': is_mail	    },
 	{'name': 'Documents', 'func': is_document   },
@@ -571,6 +585,7 @@ function reset_document_content ()
 		div.appendChild (div_category_name);
 		results.appendChild (div);
 	}
+
 	div = document.createElement ('div');
 	div.setAttribute ('class', 'Hits');
 	div.setAttribute ('id', 'NoResults');
