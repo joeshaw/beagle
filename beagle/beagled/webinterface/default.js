@@ -700,7 +700,7 @@ function gup (name)
 	if( results == null )
 		return "";
 	else
-		return results[1];
+		return unescape (results[1]);
 }
 
 function init ()
