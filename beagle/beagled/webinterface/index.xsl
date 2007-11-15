@@ -50,7 +50,7 @@
 </xsl:template>
 
 <xsl:template name="body">
-	<body onload="document.queryform.querytext.focus ();">
+	<body onload="init ()">
 		<div id="header">
 			<xsl:call-template name="header"/>
 		</div>

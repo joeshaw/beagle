@@ -687,6 +687,39 @@ function toggle_category (category)
 
 /******* Initial fetching and loading of the xsl/xml files *********/
 
+// processing of query string parameters, if called as
+// http://localhost:4000/?search=foo+bar
+
+// from http://www.netlobo.com/url_query_string_javascript.html
+function gup (name)
+{
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+	var regexS = "[\\?&]"+name+"=([^&#]*)";
+	var regex = new RegExp( regexS );
+	var results = regex.exec( window.location.search );
+	if( results == null )
+		return "";
+	else
+		return results[1];
+}
+
+function init ()
+{
+	var query_str = '';
+	if (window.location.search)
+		query_str = gup ('search');
+
+	query_str = query_str.replace ('+', ' ');
+
+	if (query_str == '') {
+		document.queryform.querytext.focus ();
+		return;
+	}
+
+	document.queryform.querytext.value = query_str;
+	search ();
+}
+
 // This works everywhere except IE
 var xmlhttp = new XMLHttpRequest (); 
 var status_processor = new XSLTProcessor ();
