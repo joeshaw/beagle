@@ -113,18 +113,20 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			Log.Debug ("GET request:" + context.Request.RawUrl);
+			string request_path = context.Request.Url.LocalPath;
+			Log.Debug ("GET request:" + request_path);
+
 			context.Response.KeepAlive = false;
 			context.Response.StatusCode = (int) HttpStatusCode.OK;
 
-			if (! mappings.ContainsKey (context.Request.RawUrl)) {
+			if (! mappings.ContainsKey (request_path)) {
 				context.Response.StatusCode = 404;
 				context.Response.Close ();
 				return;
 			}
 
 			// Else serve the page
-			PageMapping mapping = mappings [context.Request.RawUrl];
+			PageMapping mapping = mappings [request_path];
 			context.Response.ContentType = mapping.ContentType;
 
 			string path = Path.Combine (webserver_dir, mapping.Filename);
