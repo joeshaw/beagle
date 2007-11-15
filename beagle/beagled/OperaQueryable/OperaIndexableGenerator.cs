@@ -99,17 +99,14 @@ namespace Beagle.Daemon.OperaQueryable {
 			
 			indexable.HitType = "WebHistory";
 			indexable.MimeType = row.MimeType;
-			indexable.Timestamp = row.LastChanged;
-			indexable.AddProperty(Beagle.Property.NewKeyword("fixme:host",row.Address.Host));
-			indexable.AddProperty (Beagle.Property.NewDate ("fixme:saveTime", row.LocalSaveTime));
+			indexable.Timestamp = row.LastVisited;
+			indexable.AddProperty(Beagle.Property.New ("fixme:host",row.Address.Host));
 			indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:size", row.Length));
-			indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:charset", row.Encoding.ToString ()));
-			indexable.AddProperty (Beagle.Property.NewUnsearched ("fixme:compression", row.Compression));
-			indexable.AddProperty (Beagle.Property.NewKeyword (Property.ExactFilenamePropKey, row.LocalFileName));
-			indexable.AddProperty (Beagle.Property.NewKeyword (Property.FilenameExtensionPropKey, Path.GetExtension (row.LocalFileName)));
-			indexable.AddProperty (Beagle.Property.NewKeyword (Property.TextFilenamePropKey, Path.GetFileNameWithoutExtension (row.LocalFileName)));
+			// hint for the filter about the charset
+			indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", row.Encoding.ToString ()));
+
 			if(row.Compression == "gzip")	
-				indexable.SetBinaryStream(new GZipInputStream(File.OpenRead(Path.Combine (cache_dir, row.LocalFileName))));
+				indexable.SetBinaryStream (new GZipInputStream (File.OpenRead (Path.Combine (cache_dir, row.LocalFileName))));
 			else
 				indexable.ContentUri = new Uri (Path.Combine (cache_dir, row.LocalFileName));
 			

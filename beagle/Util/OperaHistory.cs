@@ -39,12 +39,13 @@ namespace Beagle.Daemon.OperaQueryable {
 		public enum Directives : byte {
 			RowStart		=	0x01,	// Row start (new entry)
 			Address			=	0x03,	// Web address
+			LastVisited		=	0x04,	// Last visited
 			Length			=	0x08,	// Object length (e.g. image size)
 			MimeType		=	0x09,	// Mime type
 			Attributes		=	0x10,	// Attributes
 			Encoding		=	0x0A,	// Encoding used
 			Filename 		=	0x0D,	// Local filename used for this object
-			LocalSaveTime	=	0x15,	// Time when an object was saved to the harddrive
+			LocalSaveTime		=	0x15,	// Time when an object was saved to the harddrive
 			LastChanged		=	0x17,	// Time when the object was last modified on the server
 			Compression		=	0x20	// Compression algorithm used (usually gzip)
 		}
@@ -131,6 +132,17 @@ namespace Beagle.Daemon.OperaQueryable {
 						return encoding.GetString (GetContent (Directives.Filename));
 					} catch {
 						return String.Empty;
+					}
+				}
+			}
+			
+			public DateTime LastVisited {
+				get {
+					try {
+						byte[] content = GetContent (Directives.LastVisited);
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (BitConverter.ToInt64 (content, 0));
+					} catch {
+						return DateTime.MinValue;
 					}
 				}
 			}
