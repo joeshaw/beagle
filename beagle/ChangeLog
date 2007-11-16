@@ -1,3 +1,7 @@
+2007-11-16  Kevin Kubasik <kevin@kubasik.net> 
+
+	
+
 2007-11-05  Kevin Kubasik <kevin@kubasik.net> 
 
 	* search/Tiles/MailMessage.cs: Make snippets visible in beagle-search for
