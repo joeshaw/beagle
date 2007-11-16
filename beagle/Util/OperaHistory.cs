@@ -33,7 +33,6 @@ using System.Globalization;
 namespace Beagle.Daemon.OperaQueryable {
 	
 	public class OperaHistory {
-		private string filename;
 		private ArrayList rows;
 		private DateTime lastRead;
 		public enum Directives : byte {
@@ -203,21 +202,24 @@ namespace Beagle.Daemon.OperaQueryable {
 		
 		public OperaHistory (string filename)
 		{
-			this.filename = filename;
 			this.rows = new ArrayList ();
 			this.lastRead = DateTime.MinValue;
+
+			Read (filename);
 		}
 		
-		public void Read ()
+		private void Read (string filename)
 		{
-			StreamReader stream = new StreamReader (filename);
-			BinaryReader binary = new BinaryReader (stream.BaseStream);
-			this.lastRead = DateTime.Now;
-			// Skip first 12 bytes since their purpose is yet unknown
-			binary.BaseStream.Seek (12, SeekOrigin.Begin);
-			while (binary.ReadByte () == 1) {
-				int length = Convert.ToInt32 (GetLength (binary.ReadByte (), binary.ReadByte ()));
-				ReadLine (binary.ReadBytes (length));
+			using (StreamReader stream = new StreamReader (filename)) {
+				using (BinaryReader binary = new BinaryReader (stream.BaseStream)) {
+					this.lastRead = DateTime.Now;
+					// Skip first 12 bytes since their purpose is yet unknown
+					binary.BaseStream.Seek (12, SeekOrigin.Begin);
+					while (binary.ReadByte () == 1) {
+						int length = Convert.ToInt32 (GetLength (binary.ReadByte (), binary.ReadByte ()));
+						ReadLine (binary.ReadBytes (length));
+					}
+				}
 			}
 		}
 		

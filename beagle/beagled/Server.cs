@@ -694,8 +694,6 @@ namespace Beagle.Daemon {
 			if (! Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path)))
 				return;
 
-			ConnectionHandler handler = null;
-
 			while (this.running) {
 				UnixClient client;
 				try {
@@ -720,7 +718,7 @@ namespace Beagle.Daemon {
 
 				// If client is null, the socket timed out.
 				if (client != null) {
-					handler = new UnixConnectionHandler (client);
+					ConnectionHandler handler = new UnixConnectionHandler (client);
 					lock (live_handlers)
 						live_handlers [handler] = handler;
 					ExceptionHandlingThread.Start (new ThreadStart (handler.HandleConnection));

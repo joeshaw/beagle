@@ -58,8 +58,7 @@ namespace Beagle.Daemon.OperaQueryable {
 			}
 			try {
 				history = new OperaHistory (Path.Combine (cache_dir, "dcache4.url"));
-				history.Read ();
-				
+
 				history_enumerator = history.GetEnumerator ();
 				
 			} catch (Exception e) {
@@ -70,27 +69,28 @@ namespace Beagle.Daemon.OperaQueryable {
 		
 		public bool HasNextIndexable ()
 		{
-			do {
-				if (history_enumerator == null || !history_enumerator.MoveNext ()) {
-					if(history_enumerator != null && !history_enumerator.MoveNext ()){
-						history = null;
-						history_enumerator=null;
-					
-					}
-						
-					return false;
-				}
-			} while (!Allowed ((OperaHistory.Row) history_enumerator.Current) ||
-					IsUpToDate ((OperaHistory.Row) history_enumerator.Current));
-			
-			return true;
+			if (history_enumerator == null)
+				return false;
+
+			while (history_enumerator.MoveNext ()) {
+				OperaHistory.Row row = (OperaHistory.Row) history_enumerator.Current;
+				if (Allowed (row) && ! IsUpToDate (row))
+					return true;
+			}
+
+			history_enumerator = null;
+			history = null; // Help the GC here
+			return false;
 		}
-		
+
 		public Indexable GetNextIndexable ()
 		{
+			OperaHistory.Row row = (OperaHistory.Row) history_enumerator.Current;
+
 			try {
-				return OperaRowToIndexable ((OperaHistory.Row) history_enumerator.Current);
-			} catch {
+				return OperaRowToIndexable (row);
+			} catch (Exception ex) {
+				Log.Error (ex, "Unable to index {0} ({1})", row.Address, row.LocalFileName);
 				return null;
 			}
 		}
