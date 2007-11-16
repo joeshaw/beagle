@@ -72,7 +72,7 @@ namespace Beagle.Daemon.OperaQueryable {
 		{
 			do {
 				if (history_enumerator == null || !history_enumerator.MoveNext ()) {
-					if(!history_enumerator.MoveNext ()){
+					if(history_enumerator != null && !history_enumerator.MoveNext ()){
 						history = null;
 						history_enumerator=null;
 					
