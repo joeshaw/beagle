@@ -913,9 +913,9 @@ namespace Beagle.Util {
 				return list;
 			}
 			set {
-				if (value == null || value.Count == 0)
+				if (value == null)
 					return;
-
+				
 				int num_params = NumParams;
 				string[] values_string = new string[value.Count];
 

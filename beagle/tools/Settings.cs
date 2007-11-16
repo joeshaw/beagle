@@ -95,21 +95,21 @@ public class SettingsDialog
         [Widget] CheckButton allow_global_access_toggle;
         [Widget] Alignment networking_settings_box;
 
+        [Widget] ScrolledWindow networking_sw;
+
 #if ENABLE_AVAHI
         [Widget] Alignment networking_password_box;
 
-        [Widget] ScrolledWindow networking_sw;
-
         [Widget] CheckButton require_password_toggle;
 
-        [Widget] Button add_host_button;
-        [Widget] Button remove_host_button;        
-        
         [Widget] Entry index_name_entry;
         [Widget] Entry password_entry;
 
-        private NetworkingView networking_view;
 #endif
+        [Widget] Button add_host_button;
+        
+        private NetworkingView networking_view;
+        [Widget] Button remove_host_button;        
 
 	////////////////////////////////////////////////////////////////
 	// Initialize       
@@ -140,12 +140,10 @@ public class SettingsDialog
 		backend_view.Show ();
 		backends_sw.Child = backend_view;
 
-#if ENABLE_AVAHI
 		networking_view = new NetworkingView ();
 		networking_view.Selection.Changed += new EventHandler (OnHostSelected);
 		networking_view.Show ();
                 networking_sw.Child = networking_view;
-#endif
 		networking_box.Show ();
 
 		LoadConfiguration ();
@@ -234,7 +232,6 @@ public class SettingsDialog
                 allow_webinterface_toggle.Active = networking_config.GetOption ("WebInterface", false);
                 allow_global_access_toggle.Active = networking_config.GetOption (Conf.Names.ServiceEnabled, false);
 
-#if ENABLE_AVAHI
 		List<string[]> services = networking_config.GetListOptionValues (Conf.Names.NetworkServices);
 		if (services != null) {
 			foreach (string[] svc in services) {
@@ -247,6 +244,7 @@ public class SettingsDialog
 			}
 		}
 
+#if ENABLE_AVAHI
                 require_password_toggle.Active = networking_config.GetOption (Conf.Names.PasswordRequired, true);
                 index_name_entry.Text = networking_config.GetOption (Conf.Names.ServiceName, String.Empty);
                 string password = networking_config.GetOption (Conf.Names.ServicePassword, String.Empty);
@@ -314,13 +312,14 @@ public class SettingsDialog
 		networking_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
 		networking_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
+#endif
 
 		List<string[]> svcs = new List<string[]> (networking_view.Nodes.Count);
 		foreach (NetworkService svc in networking_view.Nodes) {
 			svcs.Add (new string [4] {svc.Name, svc.UriString, Convert.ToString (svc.IsProtected), svc.Cookie});
 		}
 		networking_config.SetListOptionValues (Conf.Names.NetworkServices, svcs);
-#endif
+
 		Conf.Save (networking_config);
 
 		List<string[]> denied_backends = new List<string[]> ();
@@ -603,7 +602,6 @@ public class SettingsDialog
 
 	private void OnAddHostClicked (object o, EventArgs args) 	 
 	{
-#if ENABLE_AVAHI
                 string error_message = null;
                 bool throw_error = false;
 
@@ -643,12 +641,10 @@ public class SettingsDialog
                         foreach (NetworkService node in new_nodes)
                                 networking_view.AddNode (node);
                 }
-#endif
 	}
 	  	 
 	private void OnRemoveHostClicked (object o, EventArgs args) 	 
 	{
-#if ENABLE_AVAHI
 		// Confirm removal 	 
 		HigMessageDialog dialog  = new HigMessageDialog (settings_dialog, 	 
 								 DialogFlags.Modal, 	 
@@ -665,14 +661,11 @@ public class SettingsDialog
 		
 		networking_view.RemoveSelectedNode (); 	 
 		remove_host_button.Sensitive = false;
-#endif
 	} 	 
 	  	 
 	private void OnHostSelected (object o, EventArgs args) 	 
 	{
-#if ENABLE_AVAHI
 		remove_host_button.Sensitive = true;
-#endif  
 	}
 	
 	private void OnGlobalAccessToggled (object o, EventArgs args)
@@ -865,8 +858,6 @@ public class SettingsDialog
 		}
 	}
 
-#if ENABLE_AVAHI
-
 	////////////////////////////////////////////////////////////////
 	// NetworkingView 
 
@@ -965,7 +956,6 @@ public class SettingsDialog
 		} 	 
 	  	
 	}
-#endif
 
 	////////////////////////////////////////////////////////////////
 	// PublicfolderView 
@@ -1348,6 +1338,7 @@ public class SettingsDialog
                         Present ();
                 }
         }
+#endif
 
         ////////////////////////////////////////////////////////////////
         // AddHostDialog
@@ -1370,7 +1361,9 @@ public class SettingsDialog
                 [Glade.Widget] private SpinButton port_spin_button;
                 [Glade.Widget] private IconView icon_view;
                 
+#if ENABLE_AVAHI
                 private AvahiBrowser browser;
+#endif  
 
                 private ListStore store;
                 private Gdk.Pixbuf unlocked_icon;
@@ -1392,6 +1385,7 @@ public class SettingsDialog
 
 				services.Add (new NetworkService (name, uri, pw_required, "X"));
 			} else {
+#if ENABLE_AVAHI
 				TreeIter iter;
 
 				foreach (TreePath path in icon_view.SelectedItems) {
@@ -1407,6 +1401,7 @@ public class SettingsDialog
 					if (s != null)
 						services.Add (s);
 				}
+#endif
 			}
 			
 			return services;
@@ -1438,6 +1433,7 @@ public class SettingsDialog
 
                         this.ShowAll ();
 
+#if ENABLE_AVAHI
                         try {
                                 browser = new AvahiBrowser ();
                                 browser.HostFound += new AvahiEventHandler (OnHostFound);
@@ -1450,6 +1446,10 @@ public class SettingsDialog
                                 mdns_radio_button.Visible = false;
                                 static_radio_button.Visible = false;
                         }
+#else
+                                icon_view.Visible = false;
+                                mdns_radio_button.Visible = false;
+#endif  
                 }
                 
                 private void CreateStore ()
@@ -1470,6 +1470,7 @@ public class SettingsDialog
                         store.SetSortColumnId (COL_NAME, SortType.Ascending);
                 }
 
+#if ENABLE_AVAHI
                 private void OnHostFound (object sender, AvahiEventArgs args)
                 {
                         store.AppendValues (args.Name, 
@@ -1489,6 +1490,7 @@ public class SettingsDialog
                        store.Foreach (new TreeModelForeachFunc (ForeachFindNode));
                        store.Remove (ref found_iter);
                 }
+#endif
 
                private string find_node;
                private TreeIter found_iter;
@@ -1536,18 +1538,18 @@ public class SettingsDialog
 
                 public override void Destroy ()
                 {
+#if ENABLE_AVAHI
                         if (browser != null) {
                                 browser.Dispose ();
                                 browser.HostFound -= OnHostFound;
                                 browser.HostRemoved -= OnHostRemoved;
                                 browser = null;
                         }
-                        
+#endif 
                         base.Destroy ();
                 }
    
 	}
-#endif
 
 	////////////////////////////////////////////////////////////////
 	// BackendView
