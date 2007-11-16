@@ -55,6 +55,8 @@ namespace Beagle.Daemon {
 			items [hit.Uri] = hit;
 		}
 
+		byte[] buffer = new byte [1024];
+
 		public void HandleRequest (HttpListenerContext context, System.Uri path)
 		{
 			Hit requested = (Hit) items [path];
@@ -71,12 +73,19 @@ namespace Beagle.Daemon {
 			  return;
 			}*/
 			
-			StreamReader r = new StreamReader (new FileStream (requested.Uri.LocalPath, FileMode.Open));
-			StreamWriter w = new StreamWriter (context.Response.OutputStream);
-			
-			w.Write (r.ReadToEnd ());
-			w.Close ();
-			
+			using (BinaryReader r = new BinaryReader (new FileStream (requested.Uri.LocalPath, FileMode.Open, FileAccess.Read))) {
+				using (BinaryWriter w = new BinaryWriter (context.Response.OutputStream)) {
+
+					int count = 1024;
+					while (count == 1024) {
+						count = r.Read (buffer, 0, count);
+						if (count == 0)
+							break;
+						w.Write (buffer, 0, count);
+					}
+				}
+			}
+
 			context.Response.Close ();
 		}
 	}
@@ -94,6 +103,10 @@ namespace Beagle.Daemon {
 			this.id = guid;
 			this.context = context;
 			this.item_handler = item_handler;
+		}
+
+		internal System.Guid Guid {
+			get { return id; }
 		}
 
 		public override void HandleConnection ()
@@ -657,6 +670,9 @@ namespace Beagle.Daemon {
 		{
 			lock (live_handlers) {
 				live_handlers.Remove (handler);
+
+				if (handler is HttpConnectionHandler)
+					item_handlers.Remove (((HttpConnectionHandler) handler).Guid);
 			}
 		}
 
