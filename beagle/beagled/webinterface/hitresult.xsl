@@ -37,10 +37,15 @@
 </xsl:template>
 
 <xsl:template match="Hit">
-	 <div class="Hit" id="{@Uri}" name="Hit">
+	<div class="Hit" id="{@Uri}" name="Hit">
 		<div class="Title" name="Title">
 			<span class="Uri" name="Uri">
-				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>[-]</a>&nbsp;
+				<a href="#" class="Toggle" onclick='toggle_hit(this); return false;'>
+					<xsl:choose>
+						<xsl:when test="@style='display: none'">[+]</xsl:when>
+						<xsl:otherwise>[-]</xsl:otherwise>
+					</xsl:choose>
+				</a>&nbsp;
 				<xsl:choose>
 					<xsl:when test="Properties/Property[@Key='fixme:inside_archive']">
 					    <i>Archived&nbsp;</i>
@@ -57,7 +62,7 @@
 				<xsl:value-of select="@Timestamp"/>
 			</span>
 		</div>
-		<div class="Data" name="Data">
+		<div class="Data" name="Data" style="{@style}">
 			<xsl:apply-templates select="Properties"/>
 			<xsl:call-template name="Snippet"/>
 		</div>

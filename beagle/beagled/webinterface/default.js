@@ -34,6 +34,7 @@
 /************ Global state variables *****************/
 
 MaxResultsPerBackend = 30; // arbitrary
+InitialExpanded = 5; // some low number
 
 QueryState = {
 	'stemmed_str': '',
@@ -224,8 +225,11 @@ function state_change_search (begin_date)
 
 		// Use document fragment to temporarily collect the hits in memory
 		var doc_fragments = {};
-		for (var f = 0; f < category_funcs.length; ++ f)
+		var category_count = {};
+		for (var f = 0; f < category_funcs.length; ++ f) {
 			doc_fragments [(category_funcs [f])['name']] = document.createDocumentFragment ();
+			category_count [(category_funcs [f])['name']] = 0;
+		}
 
 		// Process hit xml nodes with xsl and append with javascript
 		for (var i = 0; i < responses.length; ++i) {
@@ -262,8 +266,20 @@ function state_change_search (begin_date)
 				(hits [j]).setAttribute ('Timestamp', humanise_timestamp (timestamp));
 
 				var div_id = process_hit (hits [j]);
+
+				category_count [div_id] = category_count [div_id] + 1;
+				if (category_count [div_id] > InitialExpanded)
+					hits [j].setAttribute ('style', 'display: none');
+				else
+					hits [j].setAttribute ('style', 'display: block');
+
 				// Process Hit using hitresult.xsl and append to `div`
 				var hit = hit_processor.transformToFragment (hits [j], document);
+
+				// If more than InitialExpanded hits in this category, collapse them
+				//if (category_count [div_id] > InitialExpanded)
+				//	hit.style.display = 'none';
+
 				doc_fragments [div_id].appendChild (hit);
 			}
 
@@ -497,7 +513,8 @@ function process_hit (hit)
 	var properties = hit.getElementsByTagName ('Property');
 	var property_table = {};
 
-	for (var k = 0; k < properties.length; ++k) {
+	// Read on the internet and tested: going down is faster than going up
+	for (var k = properties.length - 1; k >= 0; -- k) {
 		var key = properties [k].getAttribute ('Key');
 		var value = properties [k].getAttribute ('Value');
 
