@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 using Beagle;
 using Beagle.Util;
@@ -42,12 +43,86 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 					query.RegisterTransport (new HttpTransport (service [1]));
 			}
 
-			ArrayList hits = new ArrayList ();
+			// - Turn an async operation (query.SendAsync)
+			// - to a sync operation (result.Add need to be called from this thread)
+			// - to an async operation (result.Add sends an async response to the client)
 
-			query.Keepalive = false;
-			query.SendAsync ();
+			// To prevent FinishedResponse being sent before HitsAddedResponse
+			Queue<ResponseMessage> response_queue = new Queue<ResponseMessage> (2);
 
-			result.Add (hits);
+			// Anonymous delegates cannot be un-registered ... hence
+			Query.HitsAdded hits_added_handler;
+			hits_added_handler = delegate (HitsAddedResponse response) {
+							lock (response_queue) {
+								response_queue.Enqueue (response);
+								Monitor.Pulse (response_queue);
+							}
+						};
+
+			Query.HitsSubtracted hits_subtracted_handler;
+			hits_subtracted_handler = delegate (HitsSubtractedResponse response) {
+							    lock (response_queue) {
+								    response_queue.Enqueue (response);
+								    Monitor.Pulse (response_queue);
+							    }
+						    };
+
+			Query.Finished finished_handler;
+			finished_handler = delegate (FinishedResponse response) {
+						lock (response_queue) {
+							response_queue.Enqueue (response);
+							Monitor.Pulse (response_queue);
+						}
+					    };
+
+			query.HitsAddedEvent += hits_added_handler;
+			query.HitsSubtractedEvent += hits_subtracted_handler;
+			query.FinishedEvent += finished_handler;
+			// FIXME: Need a closed event handler ? In case the remote server is closed ?
+			//query.ClosedEvent += delegate () { };
+
+			bool done = false;
+			Exception throw_me = null;
+
+			try {
+				query.SendAsync ();
+			} catch (Exception ex) {
+				throw_me = ex;
+				done = true;
+			}
+
+			while (! done) {
+				lock (response_queue) {
+					Monitor.Wait (response_queue);
+					while (response_queue.Count != 0) {
+						//Console.WriteLine ("Time to handle response ({0})", response_queue.Count);
+						ResponseMessage query_response = response_queue.Dequeue ();
+						if (query_response is FinishedResponse) {
+							//Console.WriteLine ("FinishedResponse. Do nothing");
+							done = true;
+						} else if (query_response is HitsAddedResponse) {
+							HitsAddedResponse response = (HitsAddedResponse) query_response;
+							//Console.WriteLine ("HitsAddedResponse. Adding {0} hits", response.NumMatches);
+							result.Add (response.Hits, response.NumMatches);
+						} else if (query_response is HitsSubtractedResponse) {
+							HitsSubtractedResponse response = (HitsSubtractedResponse) query_response;
+							//Console.WriteLine ("HitsAddedResponse. Removing {0} hits", response.Uris.Count);
+							result.Subtract (response.Uris);
+						}
+					}
+				}
+			}
+
+			query.HitsAddedEvent -= hits_added_handler;
+			query.HitsSubtractedEvent -= hits_subtracted_handler;
+			query.FinishedEvent -= finished_handler;
+
+			if (throw_me != null)
+				throw throw_me;
+
+			// FIXME FIXME FIXME: Live query does not work!
+
+			return;
 		}
 
 		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text)

@@ -95,6 +95,7 @@ namespace Beagle.Daemon {
 				if (cancelled)
 					return;
 				cancelled = true;
+				Monitor.Pulse (this);
 			}
 		}
 
