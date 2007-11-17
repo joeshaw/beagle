@@ -107,7 +107,15 @@
 		<xsl:value-of select="@ItemCount"/> items,&nbsp;
 	</span>
 	<span class="queryablestatus-isindexing">
-		currently indexing?&nbsp;<xsl:value-of select="@IsIndexing"/>
+		<xsl:choose>
+			<xsl:when test="@IsIndexing='true'">Currently indexing</xsl:when>
+			<xsl:otherwise>Currently not indexing</xsl:otherwise>
+		</xsl:choose>
+	</span>
+	<span class="queryablestatus-progresspercent">
+		<xsl:if test="@ProgressPercent != '-1'">
+		(Initial crawling: <xsl:value-of select="@ProgressPercent"/>)
+		</xsl:if>
 	</span>
 </xsl:template>
 

@@ -107,7 +107,7 @@ function shutdown_beagle ()
 	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="ShutdownRequest"/></RequestWrapper>';
 
 	xmlhttp.onreadystatechange = function () {
-		var message_div = document.getElementById ('shutdown_beagle');
+		var message_div = document.getElementById ('shutdown-beagle');
 		if (xmlhttp.readyState == 4) {
 			var message = document.createElement ('i');
 			var text = document.createTextNode ('Shutdown request sent to beagle');
