@@ -198,7 +198,6 @@ namespace Beagle {
 				} else {
 					deserialize_stream.Write (buffer, 0, end_index);
 					deserialize_stream.Seek (0, SeekOrigin.Begin);
-					Logger.Log.Debug ("We're here");
 
 #if ENABLE_XML_DUMP
 					StreamReader r = new StreamReader (deserialize_stream);

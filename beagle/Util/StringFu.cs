@@ -837,7 +837,7 @@ namespace Beagle.Util {
 				}
 				first = false;
 			}
-			Log.Debug (sb.ToString());
+			//Log.Debug (sb.ToString());
 			return new Regex (sb.ToString (), RegexOptions.Compiled);
 		}
 

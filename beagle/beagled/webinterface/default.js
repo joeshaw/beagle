@@ -140,7 +140,7 @@ function search_property (search_property_node)
 	var property_key  = search_property_node.parentNode.nextSibling.getAttribute ("key");
 	var property_type = search_property_node.parentNode.nextSibling.nextSibling.getAttribute ("type");
 	var property_val  = search_property_node.parentNode.nextSibling.nextSibling.textContent;
-	dump ("type = " + property_type + " key = " + property_key + " val = " + property_val + "\n");
+	//dump ("type = " + property_type + " key = " + property_key + " val = " + property_val + "\n");
 
 	var prefix = "";
 	if (property_type == "Text")
@@ -374,7 +374,7 @@ function show_snippet (snippet_div, snippet)
 		return;
 	}
 
-	dump (hit_serializer.serializeToString (snippet) + "\n");
+	//dump (hit_serializer.serializeToString (snippet) + "\n");
 
 	var fragment = hit_processor.transformToFragment (snippet, document);
 	while (snippet_div.childNodes.length != 0)

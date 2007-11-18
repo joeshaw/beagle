@@ -45,7 +45,7 @@ namespace Beagle.Daemon {
 
 		public void RegisterHit (Hit hit)
 		{
-			Logger.Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
+			//Logger.Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
 
 			if (hit.Uri == null) {
 				Logger.Log.Debug ("httpitemhandler: cannot register hits with no URIs");
@@ -64,7 +64,7 @@ namespace Beagle.Daemon {
 			if (requested == null)
 				return;
 
-			Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
+			//Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
 			context.Response.ContentType = requested.MimeType;
 			
 			// FIXME: We can only handle files for now
@@ -111,7 +111,7 @@ namespace Beagle.Daemon {
 
 		public override void HandleConnection ()
 		{
-			Logger.Log.Debug ("HTTP Server: Serving request for {0}", context.Request.Url);
+			//Logger.Log.Debug ("HTTP Server: Serving request for {0}", context.Request.Url);
 			
 			// Query request: read content and forward to base.HandleConnection for processing
 			context.Response.KeepAlive = true;
@@ -172,7 +172,7 @@ namespace Beagle.Daemon {
 				}
 			} while (bytes_read > 0 && end_index == -1);
 			
-			Logger.Log.Debug ("HTTP Server: Handling received request message");
+			//Logger.Log.Debug ("HTTP Server: Handling received request message");
 			
 			buffer_stream.Seek (0, SeekOrigin.Begin);
 			base.HandleConnection (buffer_stream);
@@ -275,7 +275,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (r) {
-				Logger.Log.Debug ("httpserver: Sent response = " + response.ToString ());
+				//Logger.Log.Debug ("httpserver: Sent response = " + response.ToString ());
 				//add end-of-document
 				context.Response.OutputStream.WriteByte (0xff);
 				context.Response.OutputStream.Flush ();
@@ -515,7 +515,7 @@ namespace Beagle.Daemon {
 
 		protected void OnAsyncResponse (ResponseMessage response)
 		{
-			Logger.Log.Debug ("Sending response of type {0}", response.GetType ());
+			//Logger.Log.Debug ("Sending response of type {0}", response.GetType ());
 			if (!SendResponse (response))
 				Close ();
 		}

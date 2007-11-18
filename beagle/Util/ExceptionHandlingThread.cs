@@ -53,7 +53,7 @@ namespace Beagle.Util {
 			this.thread.Name = String.Format ("EHT {0:00000} [{1:00000} {2}] {3}:{4}", wrap_gettid (), proc.Id, proc.ProcessName,
 							  method.Target == null ? method.Method.DeclaringType.ToString () : method.Target.ToString (), method.Method.Name);
 
-			Log.Debug ("Starting thread {0}", this.thread.Name);
+			//Log.Debug ("Starting thread {0}", this.thread.Name);
 
 			try {
 				this.method ();
@@ -72,7 +72,7 @@ namespace Beagle.Util {
 			string thread_name = this.thread.Name;
 			this.thread = null;
 
-			Log.Debug ("Finished thread {0}", thread_name);
+			//Log.Debug ("Finished thread {0}", thread_name);
 		}
 
 		public static Thread Start (ThreadStart method)

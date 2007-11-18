@@ -114,7 +114,7 @@ namespace Beagle.Daemon {
 			}
 
 			string request_path = context.Request.Url.LocalPath;
-			Log.Debug ("GET request:" + request_path);
+			//Log.Debug ("GET request:" + request_path);
 
 			context.Response.KeepAlive = false;
 			context.Response.StatusCode = (int) HttpStatusCode.OK;

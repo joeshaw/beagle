@@ -515,7 +515,7 @@ namespace Beagle.Daemon {
 			GLib.Idle.Add (new GLib.IdleHandler (StartupProcess));
 
 			// Start our event loop.
-			Logger.Log.Debug ("Starting main loop");
+			//Logger.Log.Debug ("Starting main loop");
 			main_loop.Run ();
 
 			// We're out of the main loop now, join all the
