@@ -6,6 +6,8 @@
     <ListOption Name="StaticQueryables" Description="Static queryables" Params="Index path" Separator=",">
     </ListOption>
     <ListOption Name="DeniedBackends" Description="Disabled backends" Params="Backend name" Separator=",">
+	<!-- Disabled by default EXPERIMENTAL -->
+	<Value>NetworkServices</Value>
     </ListOption>
     <BoolOption Name="AllowStaticBackend" Description="Search static indexes">true</BoolOption>
     <BoolOption Name="IndexSynchronization" Description="Synchronize indexes locally if home directory is on a network device (eg. NFS/Samba)">true</BoolOption>

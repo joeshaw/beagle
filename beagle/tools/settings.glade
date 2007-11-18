@@ -736,7 +736,7 @@
                               <widget class="GtkCheckButton" id="allow_global_access_toggle">
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
-                                <property name="label" translatable="yes">Allow external access to local search services</property>
+                                <property name="label" translatable="yes">Allow external access to local search services (EXPERIMENTAL)</property>
                                 <property name="use_underline">True</property>
                                 <property name="response_id">0</property>
                                 <property name="draw_indicator">True</property>

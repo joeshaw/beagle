@@ -1577,7 +1577,7 @@ public class SettingsDialog
 			"Labyrinth",
 			"Liferea",
 			"NautilusMetadata",
-			//"NetworkServices", // This is configurable in the network tab
+			"NetworkServices", // This should be configurable in the network tab
 			"Opera",
 			"Pidgin",
 			"Tomboy"
@@ -1601,6 +1601,7 @@ public class SettingsDialog
 			"Mind-maps from Labyrinth.",
 			"RSS freed from Liferea.",
 			"Nautilus' metadata (emblems, notes, etc.)",
+			"Search other search services in the network (EXPERIMENTAL)",
 			"Opera's bookmarks and browsing history.",
 			"IMs and chats from Pidgin.",
 			"Notes from Tomboy."
