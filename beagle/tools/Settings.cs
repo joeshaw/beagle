@@ -1599,7 +1599,7 @@ public class SettingsDialog
 			"IMs and chats from Konversation.",
 			"IMs and chats from Kopete",
 			"Mind-maps from Labyrinth.",
-			"RSS freed from Liferea.",
+			"RSS feeds from Liferea.",
 			"Nautilus' metadata (emblems, notes, etc.)",
 			"Search other search services in the network (EXPERIMENTAL)",
 			"Opera's bookmarks and browsing history.",
