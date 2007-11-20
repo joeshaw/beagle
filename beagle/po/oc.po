@@ -1,44 +1,47 @@
+# translation of oc.po to Occitan
 # Occitan translation of beagle
 # Copyright (C) 2007 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>.
 #
+# Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD\n"
+"Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-01-31 03:19+0000\n"
-"PO-Revision-Date: 2007-10-14 17:17+0200\n"
-"Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay>\n"
-"Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+"PO-Revision-Date: 2007-11-20 14:29+0100\n"
+"Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
+"Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
 
 #: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
 msgid "Orientation"
-msgstr ""
+msgstr "Orientacion"
 
 #: ../glue/eggtrayicon.c:128
 msgid "The orientation of the tray."
-msgstr ""
+msgstr "L'orientacion de la zòna de notificacion."
 
 #: ../ContactViewer/ContactWindow.cs:74
 msgid "Open..."
-msgstr ""
+msgstr "Dobrir..."
 
 #: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
 msgid "Quit"
-msgstr ""
+msgstr "Quitar"
 
 #: ../ContactViewer/ContactWindow.cs:79
 msgid "About"
-msgstr ""
+msgstr "A prepaus de"
 
 #: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:26
 msgid "Contacts"
-msgstr ""
+msgstr "Contactes"
 
 #: ../ContactViewer/ContactWindow.cs:100
 msgid "Display name"
@@ -54,7 +57,7 @@ msgstr ""
 
 #: ../ContactViewer/ContactWindow.cs:103
 msgid "Nickname"
-msgstr ""
+msgstr "Escais"
 
 #: ../ContactViewer/ContactWindow.cs:133
 #, csharp-format
@@ -109,7 +112,7 @@ msgstr ""
 
 #: ../ContactViewer/ContactWindow.cs:340
 msgid "Details..."
-msgstr ""
+msgstr "Detalhs..."
 
 #: ../ContactViewer/ContactWindow.cs:368
 msgid "Could not find a valid E-mail address!"
@@ -121,7 +124,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:2
 msgid "<b>Home</b>"
-msgstr ""
+msgstr "<b>Ostal</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:3
 msgid "<b>Internet</b>"
@@ -129,7 +132,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:4
 msgid "<b>Name</b>"
-msgstr ""
+msgstr "<b>Nom</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:5
 msgid "<b>Notes</b>"
@@ -141,7 +144,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:7
 msgid "<b>Work</b>"
-msgstr ""
+msgstr "<b>Trabalh</b>"
 
 #: ../ContactViewer/contactviewer.glade.h:8
 msgid "Additional E-Mail:"
@@ -149,19 +152,19 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:9
 msgid "Address"
-msgstr ""
+msgstr "Adreça"
 
 #: ../ContactViewer/contactviewer.glade.h:10
 msgid "Address:"
-msgstr ""
+msgstr "Adreça :"
 
 #: ../ContactViewer/contactviewer.glade.h:11
 msgid "City:"
-msgstr ""
+msgstr "Ciutat :"
 
 #: ../ContactViewer/contactviewer.glade.h:12
 msgid "Contact"
-msgstr ""
+msgstr "Contacte"
 
 #: ../ContactViewer/contactviewer.glade.h:13
 msgid "Contact Viewer"
@@ -169,7 +172,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:14
 msgid "Country:"
-msgstr ""
+msgstr "Païs\\:"
 
 #: ../ContactViewer/contactviewer.glade.h:15
 msgid "Custom 1:"
@@ -229,7 +232,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:32
 msgid "Nickname:"
-msgstr ""
+msgstr "Escais&nbsp;:"
 
 #: ../ContactViewer/contactviewer.glade.h:33
 msgid "Organization:"
@@ -237,7 +240,7 @@ msgstr ""
 
 #: ../ContactViewer/contactviewer.glade.h:34
 msgid "Other"
-msgstr ""
+msgstr "Autre"
 
 #: ../ContactViewer/contactviewer.glade.h:35
 msgid "Pager:"
@@ -260,7 +263,7 @@ msgstr ""
 #: ../search/Tiles/File.cs:140 ../search/Tiles/Note.cs:62
 #: ../search/Tiles/RSSFeed.cs:48 ../search/Tiles/WebHistory.cs:53
 msgid "Title:"
-msgstr ""
+msgstr "Títol:"
 
 #: ../ContactViewer/contactviewer.glade.h:41
 msgid ""
@@ -311,7 +314,7 @@ msgstr ""
 
 #: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:22
 msgid "Search"
-msgstr ""
+msgstr "Recercar"
 
 #: ../search/beagle-search.desktop.in.in.h:2
 msgid "Search for data on your desktop"
@@ -393,11 +396,11 @@ msgstr ""
 
 #: ../search/Search.cs:157
 msgid "_Find:"
-msgstr ""
+msgstr "_Recercar :"
 
 #: ../search/Search.cs:178
 msgid "Find Now"
-msgstr ""
+msgstr "Recercar ara"
 
 #: ../search/Search.cs:237
 msgid "Type in search terms"
@@ -448,15 +451,15 @@ msgstr ""
 
 #: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:144
 msgid "Author:"
-msgstr ""
+msgstr "Ancora"
 
 #: ../search/Tiles/Calendar.cs:54
 msgid "Description:"
-msgstr ""
+msgstr "Descripcion :"
 
 #: ../search/Tiles/Calendar.cs:57
 msgid "Location:"
-msgstr ""
+msgstr "Emplaçament :"
 
 #: ../search/Tiles/Calendar.cs:61
 msgid "Attendees:"
@@ -484,14 +487,14 @@ msgstr ""
 
 #: ../search/Tiles/File.cs:35
 msgid "E-Mail"
-msgstr ""
+msgstr "Corrièl"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
-msgstr ""
+msgstr "Desplaçar dins la banasta"
 
 #: ../search/Tiles/File.cs:141 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:63
@@ -505,7 +508,7 @@ msgstr ""
 
 #: ../search/Tiles/Folder.cs:31
 msgid "Empty"
-msgstr ""
+msgstr "Void"
 
 #: ../search/Tiles/Folder.cs:33
 #, csharp-format
@@ -523,11 +526,11 @@ msgstr ""
 
 #: ../search/Tiles/Image.cs:83
 msgid "Modified:"
-msgstr ""
+msgstr "Modificat :"
 
 #: ../search/Tiles/Image.cs:93
 msgid "Comment:"
-msgstr ""
+msgstr "Comentari :"
 
 #: ../search/Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -535,7 +538,7 @@ msgstr ""
 
 #: ../search/Tiles/IMLog.cs:92
 msgid "Name:"
-msgstr ""
+msgstr "Nom :"
 
 #: ../search/Tiles/IMLog.cs:93 ../search/Tiles/MailMessage.cs:105
 msgid "Date Received:"
@@ -543,23 +546,23 @@ msgstr ""
 
 #: ../search/Tiles/IMLog.cs:97
 msgid "Status:"
-msgstr ""
+msgstr "Estat :"
 
 #: ../search/Tiles/IMLog.cs:112
 msgid "Idle"
-msgstr ""
+msgstr "Inactiu"
 
 #: ../search/Tiles/IMLog.cs:119
 msgid "Away"
-msgstr ""
+msgstr "Absent(a)"
 
 #: ../search/Tiles/IMLog.cs:122
 msgid "Offline"
-msgstr ""
+msgstr "Desconnectat"
 
 #: ../search/Tiles/IMLog.cs:125
 msgid "Available"
-msgstr ""
+msgstr "Disponible"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
@@ -575,15 +578,15 @@ msgstr ""
 
 #: ../search/Tiles/MailMessage.cs:100
 msgid "Subject:"
-msgstr ""
+msgstr "Subjècte :"
 
 #: ../search/Tiles/MailMessage.cs:102
 msgid "To:"
-msgstr ""
+msgstr "Destinatari :"
 
 #: ../search/Tiles/MailMessage.cs:102
 msgid "From:"
-msgstr ""
+msgstr "Expedidor :"
 
 #: ../search/Tiles/MailMessage.cs:105
 msgid "Date Sent:"
@@ -591,11 +594,11 @@ msgstr ""
 
 #: ../search/Tiles/MailMessage.cs:111
 msgid "Folder:"
-msgstr ""
+msgstr "Repertòri :"
 
 #: ../search/Tiles/OpenWithMenu.cs:47
 msgid "Open With"
-msgstr ""
+msgstr "Dobrir amb"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
@@ -604,7 +607,7 @@ msgstr ""
 
 #: ../search/Tiles/RSSFeed.cs:49
 msgid "Site:"
-msgstr ""
+msgstr "Sit :"
 
 #: ../search/Tiles/RSSFeed.cs:50
 msgid "Date Viewed:"
@@ -617,35 +620,35 @@ msgstr "{0} pagina"
 
 #: ../search/Tiles/Tile.cs:179
 msgid "Open"
-msgstr ""
+msgstr "Dobrir"
 
 #: ../search/Tiles/Utils.cs:24
 msgid "Applications"
-msgstr ""
+msgstr "Aplicacions"
 
 #: ../search/Tiles/Utils.cs:28
 msgid "Calendar Events"
-msgstr ""
+msgstr "Eveniments de calendièr"
 
 #: ../search/Tiles/Utils.cs:30
 msgid "Folders"
-msgstr ""
+msgstr "Repertòris"
 
 #: ../search/Tiles/Utils.cs:32
 msgid "Images"
-msgstr ""
+msgstr "Imatges"
 
 #: ../search/Tiles/Utils.cs:34
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: ../search/Tiles/Utils.cs:36
 msgid "Video"
-msgstr ""
+msgstr "Vidèo"
 
 #: ../search/Tiles/Utils.cs:38
 msgid "Documents"
-msgstr ""
+msgstr "Documents"
 
 #: ../search/Tiles/Utils.cs:40
 msgid "Conversations"
@@ -666,16 +669,16 @@ msgstr ""
 #: ../search/Tiles/Utils.cs:133 ../search/Tiles/Utils.cs:215
 #: ../Util/StringFu.cs:116
 msgid "Yesterday"
-msgstr ""
+msgstr "Ièr"
 
 #: ../search/Tiles/Utils.cs:135 ../search/Tiles/Utils.cs:217
 #: ../Util/StringFu.cs:114
 msgid "Today"
-msgstr ""
+msgstr "Uèi"
 
 #: ../search/Tiles/Utils.cs:137 ../search/Tiles/Utils.cs:219
 msgid "Tomorrow"
-msgstr ""
+msgstr "Deman"
 
 #: ../search/Tiles/Utils.cs:235
 #, csharp-format
@@ -716,11 +719,11 @@ msgstr ""
 
 #: ../search/Tiles/WebHistory.cs:54
 msgid "URL:"
-msgstr ""
+msgstr "URL :"
 
 #: ../search/Tiles/WebHistory.cs:55
 msgid "Accessed:"
-msgstr ""
+msgstr "Darrièr accès :"
 
 #: ../search/Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
@@ -732,7 +735,7 @@ msgstr ""
 
 #: ../search/Tray/TrayIcon.cs:90
 msgid "Clear"
-msgstr ""
+msgstr "Netejar"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -868,7 +871,7 @@ msgstr ""
 
 #: ../search/UIManager.cs:62
 msgid "_Search"
-msgstr ""
+msgstr "_Recercar"
 
 #: ../search/UIManager.cs:65
 msgid "Show _Categories"
@@ -880,15 +883,15 @@ msgstr "_Accions"
 
 #: ../search/UIManager.cs:71
 msgid "_View"
-msgstr ""
+msgstr "_Visualizacion"
 
 #: ../search/UIManager.cs:74
 msgid "_Help"
-msgstr ""
+msgstr "_Ajuda"
 
 #: ../search/UIManager.cs:83
 msgid "_Contents"
-msgstr ""
+msgstr "_Somari"
 
 #: ../search/UIManager.cs:85
 msgid "Help - Table of Contents"
@@ -900,11 +903,11 @@ msgstr ""
 
 #: ../search/UIManager.cs:111
 msgid "_All"
-msgstr ""
+msgstr "_Totas"
 
 #: ../search/UIManager.cs:121
 msgid "_None"
-msgstr ""
+msgstr "_Pas cap"
 
 #: ../search/UIManager.cs:135
 msgid "A_pplications"
@@ -932,7 +935,7 @@ msgstr ""
 
 #: ../search/UIManager.cs:153
 msgid "_Documents"
-msgstr ""
+msgstr "_Documents"
 
 #: ../search/UIManager.cs:155
 msgid "Search documents"
@@ -948,7 +951,7 @@ msgstr ""
 
 #: ../search/UIManager.cs:165
 msgid "_Images"
-msgstr ""
+msgstr "_Imatges"
 
 #: ../search/UIManager.cs:167
 msgid "Search images"
@@ -964,7 +967,7 @@ msgstr ""
 
 #: ../search/UIManager.cs:177
 msgid "_Folders"
-msgstr ""
+msgstr "_Repertòris"
 
 #: ../search/UIManager.cs:179
 msgid "Search for folder names"
@@ -1020,7 +1023,7 @@ msgstr ""
 
 #: ../search/UIManager.cs:221
 msgid "Show Details"
-msgstr ""
+msgstr "Mostrar los detalhs"
 
 #: ../search/UIManager.cs:354
 msgid "Couldn't launch web browser"
@@ -1087,15 +1090,15 @@ msgstr ""
 #: ../tools/Settings.cs:455 ../tools/Settings.cs:544 ../tools/Settings.cs:631
 #: ../tools/Settings.cs:970
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../tools/Settings.cs:538
 msgid "Type"
-msgstr ""
+msgstr "Tipe"
 
 #: ../tools/Settings.cs:591
 msgid "Path:"
-msgstr ""
+msgstr "Camin:"
 
 #: ../tools/Settings.cs:594
 msgid "Pattern:"
@@ -1107,7 +1110,7 @@ msgstr ""
 
 #: ../tools/Settings.cs:878
 msgid "Select Folder"
-msgstr ""
+msgstr "Seleccionar un repertòri"
 
 #: ../tools/Settings.cs:904 ../tools/settings.glade.h:19
 msgid "P_ath:"
@@ -1133,7 +1136,7 @@ msgstr ""
 
 #: ../tools/Settings.cs:969
 msgid "Show"
-msgstr ""
+msgstr "Mostrar"
 
 #: ../tools/settings.glade.h:1
 msgid "<b>Administration</b>"
@@ -1149,7 +1152,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:4
 msgid "<b>General</b>"
-msgstr ""
+msgstr "<b>General</b>"
 
 #: ../tools/settings.glade.h:5
 msgid "<b>Privacy</b>"
@@ -1175,7 +1178,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:10
 msgid "Alt"
-msgstr ""
+msgstr "Alt"
 
 #: ../tools/settings.glade.h:11
 msgid "Automatically s_tart searching after the user has stopped typing"
@@ -1183,7 +1186,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:12
 msgid "Ctrl"
-msgstr ""
+msgstr "Ctrl"
 
 #: ../tools/settings.glade.h:13
 msgid "Display the search window by pressing:"
@@ -1233,7 +1236,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:26
 msgid "Type:"
-msgstr ""
+msgstr "Tipe :"
 
 #: ../tools/settings.glade.h:27
 msgid "_Allow Beagle to be run as root"
@@ -1241,7 +1244,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:28
 msgid "_Browse..."
-msgstr ""
+msgstr "_Examinar..."
 
 #: ../tools/settings.glade.h:29
 msgid "_Folder path"
@@ -1265,11 +1268,11 @@ msgstr ""
 
 #: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
-msgstr ""
+msgstr "Sus aqueste ordenador"
 
 #: ../Util/F-Spot/Exif.cs:248
 msgid "Image Directory"
-msgstr ""
+msgstr "Repertòri de las imatges"
 
 #: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
@@ -1289,7 +1292,7 @@ msgstr ""
 
 #: ../Util/F-Spot/Exif.cs:258
 msgid "Unknown Directory"
-msgstr ""
+msgstr "Repertòri desconegut"
 
 #: ../Util/F-Spot/IptcFile.cs:175
 msgid "IPTC Information Interchange Model (IIM) Version number"
@@ -1419,15 +1422,15 @@ msgstr ""
 
 #: ../Util/F-Spot/MetadataStore.cs:46
 msgid "Creator"
-msgstr ""
+msgstr "Creator"
 
 #: ../Util/F-Spot/MetadataStore.cs:47
 msgid "Title"
-msgstr ""
+msgstr "Títol"
 
 #: ../Util/F-Spot/MetadataStore.cs:48
 msgid "Copyright"
-msgstr ""
+msgstr "Copyright :"
 
 #: ../Util/F-Spot/MetadataStore.cs:49
 msgid "Subject and Keywords"
@@ -1435,7 +1438,7 @@ msgstr ""
 
 #: ../Util/F-Spot/MetadataStore.cs:50
 msgid "Compression"
-msgstr ""
+msgstr "Compression"
 
 #: ../Util/F-Spot/MetadataStore.cs:52
 msgid "Planar Configuration"
@@ -1503,11 +1506,11 @@ msgstr ""
 
 #: ../Util/F-Spot/MetadataStore.cs:86
 msgid "Contrast"
-msgstr ""
+msgstr "Contrast"
 
 #: ../Util/F-Spot/MetadataStore.cs:88
 msgid "Saturation"
-msgstr ""
+msgstr "Saturacion"
 
 #: ../Util/F-Spot/MetadataStore.cs:90
 msgid "Sharpness"
@@ -1542,13 +1545,13 @@ msgstr "{0}, {1}"
 #: ../Util/StringFu.cs:148
 #, csharp-format
 msgid "Today, {0}"
-msgstr ""
+msgstr "Uèi, a {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:151
 #, csharp-format
 msgid "Yesterday, {0}"
-msgstr ""
+msgstr "Ièr, a {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
 #: ../Util/StringFu.cs:156
@@ -1559,12 +1562,12 @@ msgstr ""
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:162
 msgid "MMMM d, h:mm tt"
-msgstr ""
+msgstr "d MMMM, a hh:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:167
 msgid "MMMM d yyyy, h:mm tt"
-msgstr ""
+msgstr "d MMMM yyyy, a hh:mm"
 
 #: ../Util/StringFu.cs:177
 #, csharp-format
