@@ -157,8 +157,8 @@ namespace Beagle.Daemon {
 				// Database schema: uri, filename, data
 				SqliteUtils.DoNonQuery (connection,
 							"CREATE TABLE textcache_data (            " +
-							"  uri      STRING UNIQUE NOT NULL,  " +
-							"  filename STRING NOT NULL,         " +
+							"  uri      TEXT UNIQUE NOT NULL,  " +
+							"  filename TEXT NOT NULL,         " +
 							"  data     BLOB                     " +
 							")");
 			}

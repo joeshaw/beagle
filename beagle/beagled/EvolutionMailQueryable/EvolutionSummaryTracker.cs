@@ -104,9 +104,9 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		{
 			SqliteUtils.DoNonQuery (connection,
 						"CREATE TABLE mapping (        " +
-						"  uid       STRING  UNIQUE,   " +
+						"  uid       TEXT    UNIQUE,   " +
 						"  flags     INTEGER NOT NULL, " +
-						"  last_seen STRING  NOT NULL  " +
+						"  last_seen TEXT    NOT NULL  " +
 						")");
 
 			SqliteUtils.DoNonQuery (connection,
