@@ -817,6 +817,9 @@ namespace Beagle.Util {
 
 		public static Regex GetPatternRegex (IEnumerable patterns)
 		{
+			if (patterns == null)
+				return null;
+
 			StringBuilder sb = new StringBuilder ();
 			bool first = true;
 			Regex tmp_regex = null;
@@ -837,7 +840,12 @@ namespace Beagle.Util {
 				}
 				first = false;
 			}
-			//Log.Debug (sb.ToString());
+
+			// If no patterns are there, prevent generating a regex that will match everything
+			if (sb.Length == 0)
+				return null;
+
+			//Log.Debug ("regex: [{0}]", sb.ToString());
 			return new Regex (sb.ToString (), RegexOptions.Compiled);
 		}
 
