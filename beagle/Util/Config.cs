@@ -284,6 +284,26 @@ namespace Beagle.Util {
 						Path.Combine (ExternalStringsHack.SysConfDir, "beagle"),
 						"config-files");
 
+		public static string GlobalDir {
+			get { return global_dir; }
+		}
+
+		// Utility method to check if global config files exist for the main config types
+		public static bool CheckGlobalConfig ()
+		{
+			foreach (string name in new string[] {  Names.FilesQueryableConfig,
+								Names.BeagleSearchConfig,
+								Names.DaemonConfig,
+								Names.NetworkingConfig}) {
+				string filename = (name + ".xml");
+				string global_file = Path.Combine (global_dir, filename);
+				if (! File.Exists (global_file))
+					return false;
+			}
+
+			return true;
+		}
+
 		// This is the core function to load, merge and return a config based on the local
 		// and the global config file.
 		// This should never return null since at least the global config file should be present

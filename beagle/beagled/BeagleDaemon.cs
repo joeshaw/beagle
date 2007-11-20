@@ -481,6 +481,12 @@ namespace Beagle.Daemon {
 				Log.Warn ("*** Snippets will not be returned for documents indexed in this session.");
 			}
 
+			// Check if global configuration files are installed
+			if (! Conf.CheckGlobalConfig ()) {
+				Console.WriteLine ("Global configuration files not found in {0}", Conf.GlobalDir);
+				Environment.Exit (-1);
+			}
+
 			// Start our memory-logging thread
 			if (arg_debug_memory)
 				ExceptionHandlingThread.Start (new ThreadStart (LogMemoryUsage));
