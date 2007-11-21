@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-13 15:28+0000\n"
-"PO-Revision-Date: 2007-11-13 20:23+0100\n"
+"POT-Creation-Date: 2007-11-19 23:26+0000\n"
+"PO-Revision-Date: 2007-11-21 14:54+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -162,8 +162,8 @@ msgid ""
 "For security reasons, Beagle cannot be run as root. You should restart as a "
 "regular user."
 msgstr ""
-"Por razones de seguridad, Beagle no se puede ejecutar como root. Debería reiniciarlo como "
-"un usuario normal."
+"Por razones de seguridad, Beagle no se puede ejecutar como root. Debería "
+"reiniciarlo como un usuario normal."
 
 #: ../search/Pages/StartDaemon.cs:17
 msgid "Search service not running"
@@ -954,11 +954,11 @@ msgstr "Mostrar detalles"
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
-#: ../tools/Settings.cs:343
+#: ../tools/Settings.cs:342
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:344
+#: ../tools/Settings.cs:343
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -967,15 +967,15 @@ msgstr ""
 "descartar los valores mostrados actualmente y recargar la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:482
+#: ../tools/Settings.cs:481
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:501
+#: ../tools/Settings.cs:500
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
-#: ../tools/Settings.cs:504
+#: ../tools/Settings.cs:503
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -983,15 +983,15 @@ msgstr ""
 "La ruta seleccionada no se ha añadido. La lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:515
+#: ../tools/Settings.cs:514
 msgid "Path not added"
 msgstr "La ruta no se ha añadido"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:523
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:525
+#: ../tools/Settings.cs:524
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1000,11 +1000,11 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:550
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:552
+#: ../tools/Settings.cs:551
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1012,11 +1012,11 @@ msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
 "excluirán de la indexación?"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:580
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:582
+#: ../tools/Settings.cs:581
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1024,68 +1024,68 @@ msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
 "excluir de la indexación?"
 
-#: ../tools/Settings.cs:630
+#: ../tools/Settings.cs:628
 msgid "Remote host already present in the list."
 msgstr "El equipo remoto ya está en la lista."
 
-#: ../tools/Settings.cs:640
+#: ../tools/Settings.cs:638
 msgid "Netbeagle Node not added"
 msgstr "No se añadió el nodo de Netbeagle"
 
-#: ../tools/Settings.cs:657
+#: ../tools/Settings.cs:653
 msgid "Remove host"
 msgstr "Quitar equipo"
 
-#: ../tools/Settings.cs:658
+#: ../tools/Settings.cs:654
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere eliminar este equipo de la lista?"
 
-#: ../tools/Settings.cs:720 ../tools/Settings.cs:809 ../tools/Settings.cs:892
-#: ../tools/Settings.cs:998 ../tools/Settings.cs:1617
+#: ../tools/Settings.cs:713 ../tools/Settings.cs:802 ../tools/Settings.cs:883
+#: ../tools/Settings.cs:988 ../tools/Settings.cs:1620
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:803
+#: ../tools/Settings.cs:796
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:856
+#: ../tools/Settings.cs:849
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:859
+#: ../tools/Settings.cs:852
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:862
+#: ../tools/Settings.cs:855
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:899
+#: ../tools/Settings.cs:890
 msgid "Address"
 msgstr "Dirección"
 
-#: ../tools/Settings.cs:1245
+#: ../tools/Settings.cs:1235
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1271 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1261 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:1276
+#: ../tools/Settings.cs:1266
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:1281
+#: ../tools/Settings.cs:1271
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:1305
+#: ../tools/Settings.cs:1295
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1306
+#: ../tools/Settings.cs:1296
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1093,12 +1093,12 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1347
+#: ../tools/Settings.cs:1337
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Conectándose a {0}"
 
-#: ../tools/Settings.cs:1618
+#: ../tools/Settings.cs:1621
 msgid "Description"
 msgstr "Descripción"
 
@@ -1177,8 +1177,8 @@ msgstr ""
 "deberían presentarse al agruparlos por tipo."
 
 #: ../tools/settings.glade.h:18
-msgid "Allow external access to local search services"
-msgstr "Permitir acceso externo a los servicios de búsqueda locales"
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "Permitir acceso externo a los servicios de búsqueda locales (EXPERIMENTAL)"
 
 #: ../tools/settings.glade.h:19
 msgid "Alt"
