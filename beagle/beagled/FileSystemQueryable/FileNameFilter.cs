@@ -157,7 +157,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			values = config.GetListOptionValues (Conf.Names.ExcludePattern);
 			if (values != null) {
 				ArrayList patterns = new ArrayList (values.Count);
-				foreach (string[] value in patterns)
+				foreach (string[] value in values)
 					patterns.Add (value [0]);
 
 				IList excludes_wanted = patterns;
