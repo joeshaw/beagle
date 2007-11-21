@@ -221,6 +221,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (path.StartsWith (exclude))
 					return true;
 			
+			// Hardcode this pattern without relying on config
+			if (name.StartsWith ("."))
+				return true;
+
 			// Exclude patterns
 			if (exclude_regex != null && exclude_regex.IsMatch (name))
 				return true;
