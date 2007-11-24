@@ -33,6 +33,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Reflection;
 
 using System.Xml;
 using System.Xml.Serialization;
@@ -46,6 +47,10 @@ using Beagle.Util;
 
 using Stopwatch = Beagle.Util.Stopwatch;
 using FSQ = Beagle.Daemon.FileSystemQueryable.FileSystemQueryable;
+
+// Assembly information
+[assembly: AssemblyTitle ("beagle-build-index")]
+[assembly: AssemblyDescription ("Build an index.")]
 
 namespace Beagle.Daemon 
 {
@@ -849,12 +854,9 @@ namespace Beagle.Daemon
 		
 		static void PrintUsage ()
 		{
-			string usage = 
-				"beagle-build-index: Build an index.\n" + 
-				"Web page: http://www.gnome.org/projects/beagle\n" +
-				"Copyright (C) 2005-2006 Novell, Inc.\n\n";
+			VersionFu.PrintHeader ();
 			
-			usage += 
+			string usage = 
 				"Usage: beagle-build-index [OPTIONS] --target <index_path> <path> [path]\n\n" +
 
 				"** WARNING **\n" +
@@ -875,6 +877,7 @@ namespace Beagle.Daemon
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
 				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
+				"  --disable-on-battery\t\tDisable indexer while on battery power.\n" +
 				"  --debug\t\t\tEcho verbose debugging information.\n\n";
 
 			
