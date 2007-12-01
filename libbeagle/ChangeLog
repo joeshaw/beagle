@@ -1,0 +1,1616 @@
+------------------------------------------------------------------------
+r4182 | dbera | 2007-11-11 14:41:55 -0500 (Sun, 11 Nov 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/configure.in
+
+There is a difference between library-version and package version. While library version for current libbeagle is 1.0.0, package version is 0.3.0.
+
+------------------------------------------------------------------------
+r4141 | dbera | 2007-11-05 22:32:22 -0500 (Mon, 05 Nov 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+
+Fix incorrect assertion.
+
+------------------------------------------------------------------------
+r4119 | dbera | 2007-11-03 09:47:34 -0400 (Sat, 03 Nov 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/configure.in
+
+Repeat after me, there is a difference between a beagle and an eagle.
+
+------------------------------------------------------------------------
+r4050 | dbera | 2007-10-14 15:29:05 -0400 (Sun, 14 Oct 2007) | 4 lines
+Changed paths:
+   M /trunk/libbeagle/Makefile.am
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/configure.in
+   D /trunk/libbeagle/libbeagle-0.0.pc.in
+   A /trunk/libbeagle/libbeagle-1.0.pc.in (from /trunk/libbeagle/libbeagle-0.0.pc.in:3933)
+
+Removing deprecated methods from libbeagle has made this library incompatible with earlier versions, so the version has to be bumped to 1:0:0.
+Accordingly ship the libbeagle-1.0.pc pkg-config file.
+Hopefully this is the right way to deal with library versioning. Python libraries have no version concept, so that is still a problem.
+
+------------------------------------------------------------------------
+r4048 | dbera | 2007-10-10 17:57:42 -0400 (Wed, 10 Oct 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+
+Follow C# api and provide beagle_util_get_home_dir/storage_dir for libbeagle.
+
+------------------------------------------------------------------------
+r3969 | dbera | 2007-09-17 08:11:42 -0400 (Mon, 17 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/wrappers/python/beagle.defs
+
+Remove more traces of Hit.MimeType/Type/Source from the bindings. Add hit.get_file_type to python bindings.
+
+------------------------------------------------------------------------
+r3968 | dbera | 2007-09-17 01:18:11 -0400 (Mon, 17 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Hit.cs
+   M /trunk/beagle/BeagleClient/Query.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/Server.cs
+   M /trunk/beagle/beagled/webinterface/queryresult.xsl
+   M /trunk/beagle/bludgeon/QueryFu.cs
+   M /trunk/beagle/tools/Query.cs
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+
+Remove deprecated options from tools/Query.cs and deprecated Hit.MimeType, Hit.Source, Hit.Type. These properties of Hit are available from the propertylist and hence no need to be stored separately. Provide convenience wrappers for these properties (existing clients would work; also these are special properties so they deserve their own properties) and add a wrapper for beagle:FileType property. Make the necessary changes in libbeagle too.
+
+------------------------------------------------------------------------
+r3952 | dbera | 2007-09-10 11:38:51 -0400 (Mon, 10 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-snippet-response.c
+   M /trunk/libbeagle/wrappers/python/examples/beagle-async-snippet.py
+
+Remove the last '\n' from a snippet. Print the snippets nicely in the example.
+
+------------------------------------------------------------------------
+r3951 | dbera | 2007-09-10 11:19:28 -0400 (Mon, 10 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/wrappers/python/examples/beagle-async-snippet.py
+
+Make the example simpler and use query_part_human for complex queries.
+
+------------------------------------------------------------------------
+r3945 | dbera | 2007-09-06 19:14:24 -0400 (Thu, 06 Sep 2007) | 5 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-request.c
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+   M /trunk/libbeagle/wrappers/python/beagle.defs
+   M /trunk/libbeagle/wrappers/python/beagle.override
+   D /trunk/libbeagle/wrappers/python/beagleinfo.py
+   D /trunk/libbeagle/wrappers/python/beaglesearch.py
+   A /trunk/libbeagle/wrappers/python/examples
+   A /trunk/libbeagle/wrappers/python/examples/beagle-async-snippet.py
+   A /trunk/libbeagle/wrappers/python/examples/beagleinfo.py (from /trunk/libbeagle/wrappers/python/beagleinfo.py:3933)
+   A /trunk/libbeagle/wrappers/python/examples/beaglesearch.py (from /trunk/libbeagle/wrappers/python/beaglesearch.py:3933)
+   M /trunk/libbeagle/wrappers/python/gen-defs.sh
+
+* Revert 3944. It does not make sense. If I request a callback to be called on some object, I should be responsible for making sure the object persists. If I want to automatically make sure that my object is not disposed off before the handler is called, then there are other (connect_object) methods that should be used.
+* Incorrect variable was unref-fed in beagle-snippet-request.c
+* Add Beagle.Indexable as a type to the python bindings.
+* Move all the examples to its own directory and provide an example of asynchronously retrieving snippets.
+
+------------------------------------------------------------------------
+r3944 | dbera | 2007-09-06 14:43:18 -0400 (Thu, 06 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+Increment the refcount of the passed request when asked to make an async query. Similarly, when the request is closed, decrement the refcount. This will prevent the request from accidentally slipping from beneath us before the async handler is called.
+
+------------------------------------------------------------------------
+r3937 | dbera | 2007-09-01 19:41:03 -0400 (Sat, 01 Sep 2007) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/docs/reference/beagle-sections.txt
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-queryable-status.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-scheduler-information.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-timestamp.sgml
+
+Typo.
+(Why do we store the autogenerated tmpl/* files in svn ?)
+
+------------------------------------------------------------------------
+r3936 | dbera | 2007-09-01 19:21:57 -0400 (Sat, 01 Sep 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.c
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-indexable.h
+   M /trunk/libbeagle/beagle/beagle-informational-messages-request.c
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/libbeagle/beagle/beagle-property.h
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+   M /trunk/libbeagle/beagle/beagle-scheduler-information.h
+   M /trunk/libbeagle/docs/reference/beagle-docs.sgml
+   M /trunk/libbeagle/docs/reference/beagle-sections.txt
+   D /trunk/libbeagle/docs/reference/beagle-undocumented.txt
+   M /trunk/libbeagle/docs/reference/beagle.types
+   D /trunk/libbeagle/docs/reference/tmpl/beagle-cancelled-response.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-client.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-daemon-information-request.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-daemon-information-response.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-error-response.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-hit.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-hits-added-response.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-indexable.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-indexing-service-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-indexing-status-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-informational-messages-request.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-property.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-date.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-human.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-or.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-property.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-text.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-uri.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part-wildcard.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-query-part.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-query.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-queryable-status.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-scheduler-information.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-search-term-response.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-snippet-request.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-timestamp.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-unused.sgml
+
+Cleanup documentation and bring it up-to-date.
+
+------------------------------------------------------------------------
+r3890 | dbera | 2007-08-26 16:02:35 -0400 (Sun, 26 Aug 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.c
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.h
+
+Add changes from the BeagleClient API.
+
+------------------------------------------------------------------------
+r3870 | dbera | 2007-08-20 08:48:14 -0400 (Mon, 20 Aug 2007) | 1 line
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+   M /trunk/libbeagle/beagle/beagle-snippet-response.c
+   M /trunk/libbeagle/beagle/beagle-snippet-response.h
+   M /trunk/libbeagle/wrappers/python/beagle.defs
+
+Make the necessary changes in snippet API in libbeagle and friends. As of now, only expose the snippetresponse->snippet (char *) as before instead of the detailed snippet structure. All clients should just work.
+------------------------------------------------------------------------
+r3864 | dbera | 2007-08-18 12:09:47 -0400 (Sat, 18 Aug 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/wrappers/python/beagle.defs
+
+Add default parameters to daemon-information-request constructor.
+
+------------------------------------------------------------------------
+r3863 | joeshaw | 2007-08-18 11:45:23 -0400 (Sat, 18 Aug 2007) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-util.c
+
+Namespace the new locale setting functions, keeping with convenction.
+
+
+------------------------------------------------------------------------
+r3861 | dbera | 2007-08-17 16:31:27 -0400 (Fri, 17 Aug 2007) | 4 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/configure.in
+
+Change the locale temporarily before creating the serialized xml message. Probably the only thing which matters here is the decimal character (from LC_NUMERIC), so currently only set/reset the locale while serializing hit.score which is the only floating point value to be serialized.
+
+Also bump libbeagle version to 0.3 to keep in sync with beagle.
+
+------------------------------------------------------------------------
+r3860 | joeshaw | 2007-08-16 13:50:37 -0400 (Thu, 16 Aug 2007) | 5 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-error-response.c
+
+Fix a change in the protocol that wasn't reflected in libbeagle.  The
+"Message" field in ErrorResponse has changed to "ErrorMessage".  This
+was causing lots of warnings in clients, and the field blank.
+
+
+------------------------------------------------------------------------
+r3625 | ccollier | 2007-04-05 10:59:15 -0400 (Thu, 05 Apr 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/gnome-autogen.sh
+   M /trunk/libbeagle/gnome-autogen.sh
+
+m4, not M4!!! :)
+
+
+------------------------------------------------------------------------
+r3609 | dbera | 2007-03-29 12:24:29 -0400 (Thu, 29 Mar 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-util.c
+
+Fixes 417880. Do the same thing as Pathfinder.GetRemoteStorage for libbeagle, specially the nfs mounted home directory logic.
+
+------------------------------------------------------------------------
+r3606 | dbera | 2007-03-27 22:02:03 -0400 (Tue, 27 Mar 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/examples/beagle-search.c
+
+Backout changes I accidentally committed. Time to quit.
+
+------------------------------------------------------------------------
+r3605 | dbera | 2007-03-27 21:56:57 -0400 (Tue, 27 Mar 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/AUTHORS
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/examples/beagle-search.c
+
+Add Raphael's name to AUTHORS (for python-bindings).
+
+------------------------------------------------------------------------
+r3597 | joeshaw | 2007-03-22 13:06:16 -0400 (Thu, 22 Mar 2007) | 3 lines
+Changed paths:
+   M /trunk/libbeagle
+   A /trunk/libbeagle/AUTHORS
+   A /trunk/libbeagle/COPYING
+   A /trunk/libbeagle/ChangeLog
+   A /trunk/libbeagle/INSTALL
+   A /trunk/libbeagle/NEWS
+   A /trunk/libbeagle/README
+   A /trunk/libbeagle/autogen.sh
+   A /trunk/libbeagle/configure.in
+   M /trunk/libbeagle/examples
+   A /trunk/libbeagle/gnome-autogen.sh
+
+Add a bunch of boilerplate files for libbeagle I forgot.
+
+
+------------------------------------------------------------------------
+r3591 | joeshaw | 2007-03-21 14:34:54 -0400 (Wed, 21 Mar 2007) | 7 lines
+Changed paths:
+   A /trunk/README
+   M /trunk/beagle/Makefile.am
+   D /trunk/beagle/acinclude.m4
+   M /trunk/beagle/configure.in
+   D /trunk/beagle/gtk-doc.make
+   D /trunk/beagle/libbeagle
+   D /trunk/beagle/wrappers
+   A /trunk/libbeagle (from /trunk/beagle/libbeagle:3590)
+   M /trunk/libbeagle/Makefile.am
+   A /trunk/libbeagle/acinclude.m4 (from /trunk/beagle/acinclude.m4:3590)
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/docs/reference/Makefile.am
+   M /trunk/libbeagle/examples/Makefile.am
+   A /trunk/libbeagle/gtk-doc.make (from /trunk/beagle/gtk-doc.make:3590)
+   A /trunk/libbeagle/wrappers (from /trunk/beagle/wrappers:3590)
+   M /trunk/libbeagle/wrappers/python/Makefile.am
+
+Move libbeagle out into its own separately-released toplevel module in
+the SVN tree.  This helps break the dependency loop for low-level things
+like GTK.
+
+Bump the version number up to 0.3.0. 
+
+
+------------------------------------------------------------------------
+r3587 | joeshaw | 2007-03-20 17:47:02 -0400 (Tue, 20 Mar 2007) | 4 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/examples/Makefile.am
+   A /trunk/beagle/libbeagle/examples/beagle-external-indexer.c (from /trunk/beagle/libbeagle/examples/beagle-search-provider.c:3586)
+   D /trunk/beagle/libbeagle/examples/beagle-search-provider.c
+
+Rename beagle-search-provider to beagle-external-indexer, since I think
+that makes it more clear what it's an example of.
+
+
+------------------------------------------------------------------------
+r3586 | joeshaw | 2007-03-20 17:45:18 -0400 (Tue, 20 Mar 2007) | 20 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/libbeagle/beagle/beagle-indexable.c
+   M /trunk/beagle/libbeagle/beagle/beagle-indexable.h
+   M /trunk/beagle/libbeagle/beagle/beagle-indexing-service-request.c
+   M /trunk/beagle/libbeagle/beagle/beagle-indexing-service-request.h
+   M /trunk/beagle/libbeagle/examples/beagle-search-provider.c
+
+Make some changes to libbeagle so that clients don't set the source on
+the indexable object anymore.
+
+* beagle-indexable.c: Remove beagle_indexable_set_source().  Add docs to
+the timestamp functions.  Don't serialize the source to XML anymore.
+
+* beagle-indexing-service-request.c: Get rid of
+beagle_indexing_service_request_new_for_service().  All indexing
+service requests will go through the indexing service backend, although
+indexed documents might not end up there.  Add
+beagle_indexing_service_request_set_source(), to let clients send
+indexable objects to whichever backend they want.  This is how client
+applications can set additional metadata on an already-indexed document.
+
+* beagle-search-provider.c: Update for API changes.
+
+* LuceneQueryable.cs: Don't allow clients to override the Source.  This
+will always be the backend that indexed the document.
+
+
+------------------------------------------------------------------------
+r3550 | dbera | 2007-03-11 20:08:23 -0400 (Sun, 11 Mar 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/beagle/Makefile.am
+   A /trunk/beagle/libbeagle/beagle/beagle-query-part-uri.c
+   A /trunk/beagle/libbeagle/beagle/beagle-query-part-uri.h
+   M /trunk/beagle/libbeagle/beagle/beagle.h
+   M /trunk/beagle/libbeagle/beagle/test-client.c
+
+Add libbeagle bindings for querypart_uri. No more complains for beagle support to metabar and nautilus metadata.
+
+------------------------------------------------------------------------
+r3544 | dbera | 2007-03-09 21:56:48 -0500 (Fri, 09 Mar 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/beagle/libbeagle/beagle/beagle-private.h
+   M /trunk/beagle/libbeagle/beagle/beagle-property.c
+   M /trunk/beagle/libbeagle/beagle/beagle-property.h
+
+libbeagle: Add the new IsPersistent property to libbeagle.
+
+------------------------------------------------------------------------
+r3530 | kkubasik | 2007-03-05 14:44:22 -0500 (Mon, 05 Mar 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/libbeagle/docs/reference/beagle-undocumented.txt
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-cancelled-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-client.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-daemon-information-request.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-daemon-information-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-empty-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-error-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-finished-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-hit.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-hits-added-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-hits-subtracted-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-indexable.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-indexing-service-request.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-property.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-query-part.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-query.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-request.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-shutdown-request.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-snippet-request.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-snippet-response.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-timestamp.sgml
+   M /trunk/beagle/libbeagle/docs/reference/tmpl/beagle-unused.sgml
+
+Kinda a pointless committ, but regenerated libbeagle docs
+------------------------------------------------------------------------
+r3427 | dbera | 2007-02-11 22:59:18 -0500 (Sun, 11 Feb 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/beagle/beagle-util.c
+
+Like C# API, make libbeagle also first try BEAGLE_STORAGE, then BEAGLE_HOME and finally, home_dir for location of .beagle.
+
+------------------------------------------------------------------------
+r3420 | dbera | 2007-02-11 16:41:07 -0500 (Sun, 11 Feb 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/examples/beagle-search.c
+
+Ahh... clean build before committing.
+
+------------------------------------------------------------------------
+r3418 | dbera | 2007-02-11 16:37:12 -0500 (Sun, 11 Feb 2007) | 7 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/QueryPart.cs
+   M /trunk/beagle/BeagleClient/Versioned.cs
+   M /trunk/beagle/Util/DateTimeUtil.cs
+   M /trunk/beagle/libbeagle/beagle/beagle-timestamp.c
+
+FAQ 1. My application uses datetimes from different sources. I also have to store it on disk.
+*      Always convert any datetime to UTC and use it in that form for internal usage. UTC is a good general framework.
+FAQ 2. My application is a client server app that needs to send and receive datetimes.
+*      XmlSerializer assumes localtime by default when deserialing. Hence, either change time to localtime before serializing or send a string representation of the UTC time and re-construct the correct time at the other end. The timezone part of the serialized timestamp does not mean anything useful and should be ignored completely.
+
+Beagle does 1. Beagle should have done 2 but everytime the datetime serialization problems were avoided using other fixes. This patch sends the datetime in its string representation. Also instead of printing the timezone in the output of beagle-query, print the datetime kind. As I said, the timezone does not say anything useful.
+
+------------------------------------------------------------------------
+r3416 | dbera | 2007-02-11 03:27:48 -0500 (Sun, 11 Feb 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/examples/beagle-search.c
+
+Add libbeagle example to fetch snippets.
+
+------------------------------------------------------------------------
+r3384 | dbera | 2007-02-06 11:24:12 -0500 (Tue, 06 Feb 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/beagle/beagle-hit.c
+
+beagle-hit.c: "(null)" does not deserialize to null Uri. Watch for null ParentUri when serializing.
+
+------------------------------------------------------------------------
+r3376 | dbera | 2007-02-05 13:12:15 -0500 (Mon, 05 Feb 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/libbeagle/beagle/beagle-hit.c
+
+* libbeagle/beagle/beagle-hit.c: Add ParentUri to snippet_request->hit. This is needed by some backends that check for parent uri while generating snippets.
+
+------------------------------------------------------------------------
+r3172 | joeshaw | 2006-12-30 11:08:20 -0500 (Sat, 30 Dec 2006) | 1 line
+Changed paths:
+   D /trunk/beagle/.cvsignore
+   D /trunk/beagle/BeagleClient/.cvsignore
+   D /trunk/beagle/Best/.cvsignore
+   D /trunk/beagle/Best/TrayIcon/.cvsignore
+   D /trunk/beagle/Best/TrayIcon/libtrayicon/.cvsignore
+   D /trunk/beagle/ContactViewer/.cvsignore
+   D /trunk/beagle/Filters/.cvsignore
+   D /trunk/beagle/ImLogViewer/.cvsignore
+   D /trunk/beagle/Renderers/.cvsignore
+   D /trunk/beagle/Tiles/.cvsignore
+   D /trunk/beagle/Util/.cvsignore
+   D /trunk/beagle/beagled/.cvsignore
+   D /trunk/beagle/beagled/Lucene.Net/.cvsignore
+   D /trunk/beagle/beagled/ThunderbirdQueryable/.cvsignore
+   D /trunk/beagle/beagled/WebServices/.cvsignore
+   D /trunk/beagle/beagled/WebServices/WebServer/.cvsignore
+   D /trunk/beagle/bludgeon/.cvsignore
+   D /trunk/beagle/chooser-fu/.cvsignore
+   D /trunk/beagle/epiphany-extension/.cvsignore
+   D /trunk/beagle/glue/.cvsignore
+   D /trunk/beagle/images/.cvsignore
+   D /trunk/beagle/indexer/.cvsignore
+   D /trunk/beagle/libbeagle/.cvsignore
+   D /trunk/beagle/libbeagle/beagle/.cvsignore
+   D /trunk/beagle/libbeagle/docs/.cvsignore
+   D /trunk/beagle/libbeagle/docs/reference/.cvsignore
+   D /trunk/beagle/libbeagle/examples/.cvsignore
+   D /trunk/beagle/mozilla-extension/.cvsignore
+   D /trunk/beagle/po/.cvsignore
+   D /trunk/beagle/search/.cvsignore
+   D /trunk/beagle/searchomatic/.cvsignore
+   D /trunk/beagle/templates/.cvsignore
+   D /trunk/beagle/tools/.cvsignore
+   D /trunk/beagle/wrappers/.cvsignore
+   D /trunk/beagle/wrappers/python/.cvsignore
+
+Remove .cvsignore files
+------------------------------------------------------------------------
+r3170 | joeshaw | 2006-12-30 11:03:51 -0500 (Sat, 30 Dec 2006) | 4 lines
+Changed paths:
+   D /temp
+   A /trunk/beagle (from /temp:3169)
+
+Move the code back in as trunk/beagle, since we'll be moving dead code
+into trunk/attic
+
+
+------------------------------------------------------------------------
+r3168 | joeshaw | 2006-12-30 11:02:09 -0500 (Sat, 30 Dec 2006) | 2 lines
+Changed paths:
+   A /temp (from /trunk:3167)
+   D /trunk
+
+Temporarily move the trunk
+
+------------------------------------------------------------------------
+r3122 | joeshaw | 2006-12-14 13:30:41 -0500 (Thu, 14 Dec 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-indexing-status-response.h
+   M /trunk/wrappers/python/beagle.defs
+
+Fix a typo in libbeagle that was causing the python bindings to break
+
+------------------------------------------------------------------------
+r3064 | dbera | 2006-12-03 22:32:25 -0500 (Sun, 03 Dec 2006) | 3 lines
+Changed paths:
+   M /trunk/BeagleClient/IndexingService.cs
+   M /trunk/BeagleClient/Message.cs
+   M /trunk/libbeagle/beagle/beagle-timestamp.c
+   M /trunk/libbeagle/examples
+   M /trunk/libbeagle/examples/.cvsignore
+   M /trunk/libbeagle/examples/Makefile.am
+   A /trunk/libbeagle/examples/beagle-search-provider.c
+
+Add example code to use beagle as a service provider.
+Set (correct) timezone info in BeagleTimestamp struct in libbeagle.
+
+------------------------------------------------------------------------
+r3055 | joeshaw | 2006-12-01 16:43:35 -0500 (Fri, 01 Dec 2006) | 10 lines
+Changed paths:
+   M /trunk/beagled/Server.cs
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   A /trunk/libbeagle/beagle/beagle-indexing-status-response.c
+   A /trunk/libbeagle/beagle/beagle-indexing-status-response.h
+   A /trunk/libbeagle/beagle/beagle-informational-messages-request.c
+   A /trunk/libbeagle/beagle/beagle-informational-messages-request.h
+   M /trunk/libbeagle/beagle/beagle-parser.c
+   M /trunk/libbeagle/beagle/beagle-request.c
+   M /trunk/libbeagle/beagle/beagle-search-term-response.c
+   M /trunk/libbeagle/beagle/beagle.h
+   M /trunk/libbeagle/examples/beagle-search.c
+   M /trunk/wrappers/python/beagle.defs
+
+Add the informational request message and indexing status response messages
+to libbeagle and the python bindings.  Also add sample usage to the
+examples/beagle-search.c file.
+
+Fix a logic bug in the libbeagle message parser that was causing problems
+if you sent different types of complex messages.  Remove some dead code.
+
+Add printing of the response in libbeagle apps if ENABLE_XML_DUMP is
+defined.
+
+------------------------------------------------------------------------
+r3037 | joeshaw | 2006-11-28 16:36:08 -0500 (Tue, 28 Nov 2006) | 32 lines
+Changed paths:
+   M /trunk/BeagleClient/AssemblyInfo.cs
+   A /trunk/BeagleClient/InformationalMessagesRequest.cs
+   M /trunk/BeagleClient/Makefile.am
+   M /trunk/BeagleClient/QueryableStatus.cs
+   M /trunk/BeagleClient/RemoteControl.cs
+   M /trunk/Util/Inotify.cs
+   M /trunk/Util/Scheduler.cs
+   M /trunk/beagled/AkregatorQueryable/AkregatorQueryable.cs
+   M /trunk/beagled/AssemblyInfo.cs
+   M /trunk/beagled/BlamQueryable/BlamQueryable.cs
+   M /trunk/beagled/EvolutionDataServerQueryable/EvolutionDataServerQueryable.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailDriver.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailIndexableGenerator.cs
+   M /trunk/beagled/FileSystemQueryable/FileCrawlTask.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagled/FileSystemQueryable/TreeCrawlTask.cs
+   M /trunk/beagled/GaimLogQueryable/GaimLogQueryable.cs
+   M /trunk/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   A /trunk/beagled/InformationalMessagesRequestExecutor.cs
+   M /trunk/beagled/KAddressBookQueryable/KabcQueryable.cs
+   M /trunk/beagled/KMailQueryable/KMailQueryable.cs
+   M /trunk/beagled/KonqBookmarkQueryable/KonqBookmarkQueryable.cs
+   M /trunk/beagled/KonqHistoryQueryable/KonqQueryable.cs
+   M /trunk/beagled/KopeteQueryable/KopeteQueryable.cs
+   M /trunk/beagled/LabyrinthQueryable/LabyrinthQueryable.cs
+   M /trunk/beagled/LifereaQueryable/LifereaQueryable.cs
+   M /trunk/beagled/LuceneQueryable.cs
+   M /trunk/beagled/Makefile.am
+   M /trunk/beagled/QueryDriver.cs
+   M /trunk/beagled/ThunderbirdQueryable/ThunderbirdQueryable.cs
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-queryable-status.c
+   M /trunk/libbeagle/beagle/beagle-queryable-status.h
+   M /trunk/search/NotificationArea.cs
+   M /trunk/search/Search.cs
+
+Add infrastructure to signal clients whether or not we're doing the initial
+index:
+
+* Add a new request message, InformationalMessagesRequest, which is an
+asynchronous message type for getting out-of-band, general messages from
+the daemon.
+
+* Add a new response message, IndexingStatusResponse, which indicates
+whether or not the daemon is doing the initial index.
+
+* Remove the use of QueryableState throughout the code; it never worked
+well and so it's been deprecated.
+
+* Make it the responsibility of the backend to report its crawl status,
+rather than trying to guess it using QueryableState.  This makes things
+a lot more reliable as backends can track this better than the
+infrastructure.  Add support to determine this to the files, evolution
+mail, evolution data server, and gaim log backends.
+
+* Make progress percentages pulled on-demand from the backend rather than
+stored as part of the LuceneQueryable.  This feels like a cleaner design.
+
+* Hook the beagle-search UI up to the new messages, so that it can
+detect changes and present the UI to the user.
+
+And also:
+
+* Clean up some usages of the Log class in the various backends, since I
+had to touch most of them up anyway, and in the Inotify code.
+
+* Improve some logging in the code, particularly in the FSQ backend.
+
+------------------------------------------------------------------------
+r3010 | kkubasik | 2006-11-19 11:03:47 -0500 (Sun, 19 Nov 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/examples
+   M /trunk/libbeagle/examples/.cvsignore
+
+Ignore beagle-info
+
+------------------------------------------------------------------------
+r2989 | dbera | 2006-11-12 16:42:28 -0500 (Sun, 12 Nov 2006) | 2 lines
+Changed paths:
+   M /trunk/BeagleClient/QueryResponses.cs
+   M /trunk/beagled/QueryResult.cs
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.h
+   M /trunk/libbeagle/examples/beagle-search.c
+   M /trunk/tools/Query.cs
+   M /trunk/wrappers/python/beagle.defs
+   M /trunk/wrappers/python/beaglesearch.py
+
+Set -1 as the default value of num_matches since 0 could be a valid num_match. Add libbeagle and python bindings.
+
+------------------------------------------------------------------------
+r2828 | joeshaw | 2006-09-15 15:28:45 -0400 (Fri, 15 Sep 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-queryable-status.c
+   M /trunk/libbeagle/beagle/beagle-scheduler-information.c
+
+Fix a few g_return_if_fail calls.  Patch from Joe Hardigan
+
+------------------------------------------------------------------------
+r2781 | llipka | 2006-08-27 03:53:43 -0400 (Sun, 27 Aug 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+   M /trunk/libbeagle/beagle/beagle-util.h
+
+Change C++ style comment to C style comment. Killed a warning about comma at an end of an enum list. (bgo #352948)
+
+------------------------------------------------------------------------
+r2741 | joeshaw | 2006-08-09 16:57:44 -0400 (Wed, 09 Aug 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle.h
+   M /trunk/wrappers/python/beagle.defs
+
+Update the python bindings for wildcard searches as well
+
+------------------------------------------------------------------------
+r2740 | joeshaw | 2006-08-09 16:38:35 -0400 (Wed, 09 Aug 2006) | 4 lines
+Changed paths:
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/BeagleClient/QueryPart.cs
+   M /trunk/beagled/LuceneCommon.cs
+   M /trunk/beagled/QueryStringParser.cs
+   M /trunk/libbeagle/beagle/Makefile.am
+   A /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+   A /trunk/libbeagle/beagle/beagle-query-part-wildcard.h
+
+Add support for wildcard queries.  Add ToString() methods to the Query and
+individual QueryPart classes.  Fix a buglet in the extension detection code
+in QueryStringParser, and also check for *.ext.
+
+------------------------------------------------------------------------
+r2699 | dbera | 2006-07-22 04:39:58 -0400 (Sat, 22 Jul 2006) | 5 lines
+Changed paths:
+   M /trunk/BeagleClient/QueryableStatus.cs
+   M /trunk/BeagleClient/RemoteControl.cs
+   M /trunk/Filters/FilterJpeg.cs
+   M /trunk/Util/Scheduler.cs
+   M /trunk/beagled/FileAttributesStore.cs
+   M /trunk/beagled/QueryDriver.cs
+   M /trunk/beagled/RemoteControlExecutors.cs
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.c
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.h
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   A /trunk/libbeagle/beagle/beagle-queryable-status.c
+   A /trunk/libbeagle/beagle/beagle-queryable-status.h
+   A /trunk/libbeagle/beagle/beagle-scheduler-information.c
+   A /trunk/libbeagle/beagle/beagle-scheduler-information.h
+   M /trunk/libbeagle/beagle/beagle.h
+   M /trunk/libbeagle/examples/Makefile.am
+   A /trunk/libbeagle/examples/beagle-info.c
+   M /trunk/wrappers/python/beagle.defs
+   M /trunk/wrappers/python/beagle.override
+   A /trunk/wrappers/python/beagleinfo.py
+
+Add methods and messages to retrieve specific information from beagle-info. Clients can now ask for only is_indexing or tasks and gets the value in a structured form. These can be be used in GUI for notifications and displaying status.
+Changed C and Python API to add these. Added C and Pythin examples.
+Added camera-model as a searchable property in jpeg files.
+Added the check back in AttributeStore, its actually helpful since dropping an attribute which isnt present can be costly.
+
+------------------------------------------------------------------------
+r2683 | joeshaw | 2006-07-10 16:25:38 -0400 (Mon, 10 Jul 2006) | 5 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+
+Move all the socket path stuff into beagle-util and have both
+beagle_client_new() and beagle_util_daemon_is_running() use it.  Reduces
+code duplication and makes the latter function correctly work with locally
+synchronized indexes.
+
+------------------------------------------------------------------------
+r2562 | llipka | 2006-04-22 05:27:56 -0400 (Sat, 22 Apr 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+
+Fix parameters for time ()
+
+------------------------------------------------------------------------
+r2561 | dbera | 2006-04-21 17:57:10 -0400 (Fri, 21 Apr 2006) | 8 lines
+Changed paths:
+   M /trunk/ChangeLog
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-indexable.h
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.c
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/wrappers/python/beagle.defs
+
+* Filters/FilterPackage.cs, Filters/FilterRPM.cs,
+Filters/FilterEbuild.cs: Add FilterPackage base class to contain the
+basic information about packages. Change FilterRPM, FilterEbuild to
+derive from FilterPackage.
+* libbeagle/beagle: Revive the C API for indexable-service. Also,
+allow creating indexable-service type index-request messages for
+others services.
+
+------------------------------------------------------------------------
+r2498 | llipka | 2006-04-03 15:49:43 -0400 (Mon, 03 Apr 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+   M /trunk/wrappers/python/beagle.defs
+
+added beagle_util_daemon_is_running ()
+
+------------------------------------------------------------------------
+r2271 | joeshaw | 2006-01-30 17:22:51 -0500 (Mon, 30 Jan 2006) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+Don't act on G_IO_HUP or G_IO_ERR until *after* we've read all our data, since
+it could (and often is) also G_IO_IN.  #329271
+
+------------------------------------------------------------------------
+r2220 | joeshaw | 2006-01-21 00:09:12 -0500 (Sat, 21 Jan 2006) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-property.c
+
+We need to #include string.h
+
+------------------------------------------------------------------------
+r2183 | dbera | 2006-01-14 20:45:58 -0500 (Sat, 14 Jan 2006) | 2 lines
+Changed paths:
+   M /trunk/ChangeLog
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+
+Fixed a crasher in libbeagle. It was trying to compare a BeagleProperty with a key.
+
+------------------------------------------------------------------------
+r2166 | joeshaw | 2006-01-11 17:37:51 -0500 (Wed, 11 Jan 2006) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/libbeagle/beagle/test-client.c
+   M /trunk/libbeagle/examples/beagle-search.c
+
+Update libbeagle to support multiple property values for a given key.  Based
+on patch by D Bera
+
+------------------------------------------------------------------------
+r2148 | joeshaw | 2006-01-05 17:37:12 -0500 (Thu, 05 Jan 2006) | 5 lines
+Changed paths:
+   M /trunk/BeagleClient/Client.cs
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   M /trunk/beagled/Server.cs
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+Allow clients to set the QueryDomain, and add support for this to libbeagle.
+Add additional XML dumping when ENABLE_XML_DUMP is enabled.  Move crawling
+and indexing of the IndexingService out of its constructor and into a Start
+method like other backends.
+
+------------------------------------------------------------------------
+r2137 | joeshaw | 2005-12-21 15:47:57 -0500 (Wed, 21 Dec 2005) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-timestamp.c
+
+Revert the last change for the timestamp.  sscanf() doesn't handle the +
+format specifier, but does do the right thing
+
+------------------------------------------------------------------------
+r2135 | joeshaw | 2005-12-21 14:44:20 -0500 (Wed, 21 Dec 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/examples/beagle-search.c
+
+Oops, forgot to commit this
+
+------------------------------------------------------------------------
+r2133 | joeshaw | 2005-12-21 14:28:59 -0500 (Wed, 21 Dec 2005) | 4 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-timestamp.c
+
+Fix date queries in libbeagle.  Many thanks to Bera for helping track this
+down.  Fix a bug in the timestamp string parsing code.  Remove source object
+name, since it's been dropped from the hit.
+
+------------------------------------------------------------------------
+r2132 | joeshaw | 2005-12-21 11:49:27 -0500 (Wed, 21 Dec 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/docs/reference/beagle.types
+
+Fix up the documentation's types file
+
+------------------------------------------------------------------------
+r2124 | joeshaw | 2005-12-13 16:25:19 -0500 (Tue, 13 Dec 2005) | 4 lines
+Changed paths:
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/BeagleClient/QueryResponses.cs
+   M /trunk/Best/BestWindow.cs
+   M /trunk/beagled/QueryExecutor.cs
+   M /trunk/beagled/QueryResult.cs
+   M /trunk/libbeagle/beagle/Makefile.am
+   D /trunk/libbeagle/beagle/beagle-cancelled-response.c
+   D /trunk/libbeagle/beagle/beagle-cancelled-response.h
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/beagle/beagle.h
+   M /trunk/wrappers/python/beagle.defs
+
+Purge the cancelled query response from the code.  It hasn't been used or sent
+since the dbus days, as the way to cancel a query now is simply to close the
+socket
+
+------------------------------------------------------------------------
+r2123 | joeshaw | 2005-12-13 15:46:20 -0500 (Tue, 13 Dec 2005) | 5 lines
+Changed paths:
+   M /trunk/BeagleClient/Property.cs
+   M /trunk/beagled/Filter.cs
+   M /trunk/beagled/FilterFactory.cs
+   M /trunk/beagled/LuceneCommon.cs
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/libbeagle/beagle/beagle-property.h
+   M /trunk/wrappers/python/beagle.defs
+
+Add support for unstored properties, for hinting filters.  Patch from Bera.
+Add support to libbeagle, and regenerate the python bindings for this and
+recent source changes to libbeagle.  Make properties searched and stored
+by default.
+
+------------------------------------------------------------------------
+r2121 | joeshaw | 2005-12-12 16:15:24 -0500 (Mon, 12 Dec 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query.c
+
+Change source restrictions into query parts in libbeagle
+
+------------------------------------------------------------------------
+r2116 | joeshaw | 2005-12-09 14:05:04 -0500 (Fri, 09 Dec 2005) | 4 lines
+Changed paths:
+   M /trunk/BeagleClient/Snippet.cs
+   M /trunk/Tiles/TileFromTemplate.cs
+   M /trunk/beagled/SnippetFu.cs
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/beagle/beagle-search-term-response.c
+   M /trunk/libbeagle/beagle/beagle-search-term-response.h
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+   M /trunk/libbeagle/beagle/beagle-snippet-request.h
+   M /trunk/libbeagle/beagle/test-client.c
+   M /trunk/tools/Query.cs
+
+Change the snippeting API a little, to take a Query rather than relying on
+clients to know whether to pass in stemmed text or not.  Fix up libbeagle
+to both properly get the text, and make it possible get snippets
+
+------------------------------------------------------------------------
+r2113 | joeshaw | 2005-12-07 18:03:08 -0500 (Wed, 07 Dec 2005) | 3 lines
+Changed paths:
+   M /trunk/BeagleClient/Message.cs
+   M /trunk/beagled/RemoteIndexer.cs
+   M /trunk/libbeagle/beagle/beagle-error-response.c
+   M /trunk/libbeagle/beagle/beagle-error-response.h
+
+Clean up some of the error handling in the message passing code to get rid of
+some workarounds, and make debugging easier.
+
+------------------------------------------------------------------------
+r2092 | joeshaw | 2005-12-02 12:01:51 -0500 (Fri, 02 Dec 2005) | 2 lines
+Changed paths:
+   M /trunk/epiphany-extension/ephy-beagle-extension.c
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-query-part-or.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+
+Fix several warnings thrown by GCC 4.1
+
+------------------------------------------------------------------------
+r2089 | joeshaw | 2005-11-29 14:35:54 -0500 (Tue, 29 Nov 2005) | 2 lines
+Changed paths:
+   M /trunk/configure.in
+   M /trunk/libbeagle/beagle/beagle-parser.c
+
+Support building against xulrunner
+
+------------------------------------------------------------------------
+r2084 | llipka | 2005-11-26 09:03:58 -0500 (Sat, 26 Nov 2005) | 2 lines
+Changed paths:
+   M /trunk/Best/BestTray.cs
+   M /trunk/Best/BestWindow.cs
+   M /trunk/Filters/HtmlAgilityPack/HtmlDocument.cs
+   M /trunk/Filters/HtmlAgilityPack/MixedCodeDocument.cs
+   M /trunk/Tiles/TileMailMessage.cs
+   M /trunk/Util/BetterBitArray.cs
+   M /trunk/Util/CompatFileChooser.cs
+   M /trunk/Util/FSpotTools.cs
+   M /trunk/Util/camel.cs
+   M /trunk/beagled/FileSystemQueryable/FileCrawlTask.cs
+   M /trunk/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-query-part-or.c
+
+Kill some warnings.
+
+------------------------------------------------------------------------
+r2079 | danw | 2005-11-22 10:23:26 -0500 (Tue, 22 Nov 2005) | 3 lines
+Changed paths:
+   M /trunk/ChangeLog
+   M /trunk/libbeagle/beagle/beagle-property.c
+
+	* libbeagle/beagle/beagle-property.c (prop_to_xml): encode the
+	"Type" attribute correctly. 322140.
+
+------------------------------------------------------------------------
+r2065 | joeshaw | 2005-11-15 15:02:42 -0500 (Tue, 15 Nov 2005) | 5 lines
+Changed paths:
+   M /trunk/Best
+   M /trunk/Best/.cvsignore
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-cancelled-response.h
+   M /trunk/libbeagle/beagle/beagle-client.h
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.h
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+   M /trunk/libbeagle/beagle/beagle-empty-response.h
+   M /trunk/libbeagle/beagle/beagle-error-response.h
+   M /trunk/libbeagle/beagle/beagle-finished-response.h
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.h
+   M /trunk/libbeagle/beagle/beagle-hits-subtracted-response.h
+   M /trunk/libbeagle/beagle/beagle-indexable.h
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.h
+   M /trunk/libbeagle/beagle/beagle-parser.h
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.h
+   M /trunk/libbeagle/beagle/beagle-query-part-date.h
+   M /trunk/libbeagle/beagle/beagle-query-part-human.h
+   M /trunk/libbeagle/beagle/beagle-query-part-or.h
+   M /trunk/libbeagle/beagle/beagle-query-part-property.h
+   M /trunk/libbeagle/beagle/beagle-query-part-text.h
+   M /trunk/libbeagle/beagle/beagle-query-part.h
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/beagle/beagle-request.h
+   M /trunk/libbeagle/beagle/beagle-response.h
+   M /trunk/libbeagle/beagle/beagle-search-term-response.h
+   M /trunk/libbeagle/beagle/beagle-shutdown-request.h
+   M /trunk/libbeagle/beagle/beagle-snippet-request.h
+   M /trunk/libbeagle/beagle/beagle-snippet-response.h
+   M /trunk/libbeagle/beagle/beagle-timestamp.h
+   M /trunk/libbeagle/beagle/beagle-util.h
+   M /trunk/libbeagle/beagle/beagle.h
+   M /trunk/tools
+   M /trunk/tools/.cvsignore
+   M /trunk/wrappers/python
+   M /trunk/wrappers/python/.cvsignore
+   M /trunk/wrappers/python/beagle.defs
+   M /trunk/wrappers/python/beagle.override
+   A /trunk/wrappers/python/fix.pl
+   M /trunk/wrappers/python/gen-defs.sh
+
+Change nearly every damn header file to conform to the much less
+aesthetically appealing typedef behavior that the python defs generator
+insists upon.  Tweak the generated defs file to make things happy for
+the python bindings.
+
+------------------------------------------------------------------------
+r2049 | joeshaw | 2005-11-09 11:22:13 -0500 (Wed, 09 Nov 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+
+Add the IsIndexing field to the DaemonInformationRequest in libbeagle
+
+------------------------------------------------------------------------
+r1946 | joeshaw | 2005-10-04 16:37:36 -0400 (Tue, 04 Oct 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query.c
+
+Change beagle_query_add_text() to use human query parts rather than text
+
+------------------------------------------------------------------------
+r1920 | trow | 2005-09-15 12:43:14 -0400 (Thu, 15 Sep 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/docs/reference
+   M /trunk/libbeagle/docs/reference/.cvsignore
+
+Be quiet!
+
+------------------------------------------------------------------------
+r1904 | joeshaw | 2005-09-09 17:31:37 -0400 (Fri, 09 Sep 2005) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-client.h
+   M /trunk/libbeagle/beagle/beagle-parser.c
+
+Add a beagle_client_new_from_socket_path() function.  Add a comment about
+behavior in beagle-parser.c
+
+------------------------------------------------------------------------
+r1856 | trow | 2005-08-29 01:34:08 -0400 (Mon, 29 Aug 2005) | 21 lines
+Changed paths:
+   M /trunk/BeagleClient/IIndexableGenerator.cs
+   M /trunk/BeagleClient/Indexable.cs
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/Filters/FilterDocbook.cs
+   M /trunk/Filters/FilterMail.cs
+   M /trunk/Filters/FilterMonodoc.cs
+   M /trunk/Util/Inotify.cs
+   M /trunk/beagled/AkregatorQueryable/AkregatorQueryable.cs
+   M /trunk/beagled/BlamQueryable/BlamQueryable.cs
+   M /trunk/beagled/BuildIndex.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailDriver.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailIndexableGenerator.cs
+   M /trunk/beagled/FileSystemQueryable/DirectoryIndexableGenerator.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagled/FilterFactory.cs
+   M /trunk/beagled/GaimLogQueryable/GaimLogQueryable.cs
+   M /trunk/beagled/IIndexer.cs
+   M /trunk/beagled/IndexHelper/RemoteIndexerExecutor.cs
+   M /trunk/beagled/IndexWebContent.cs
+   M /trunk/beagled/IndexerReceipts.cs
+   A /trunk/beagled/IndexerRequest.cs
+   M /trunk/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   M /trunk/beagled/KopeteQueryable/KopeteQueryable.cs
+   M /trunk/beagled/LifereaQueryable/LifereaQueryable.cs
+   M /trunk/beagled/LuceneCommon.cs
+   M /trunk/beagled/LuceneFileQueryable.cs
+   M /trunk/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagled/LuceneQueryable.cs
+   M /trunk/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagled/Makefile.am
+   M /trunk/beagled/RemoteIndexer.cs
+   M /trunk/beagled/RemoteIndexerRequest.cs
+   M /trunk/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/beagled/beagled-index-helper.in
+   M /trunk/bludgeon/Bludgeon.cs
+   M /trunk/bludgeon/Daemon.cs
+   M /trunk/bludgeon/FileModel.cs
+   A /trunk/bludgeon/HammerAttribute.cs
+   A /trunk/bludgeon/IHammer.cs
+   M /trunk/bludgeon/Log.cs
+   M /trunk/bludgeon/Makefile.am
+   M /trunk/bludgeon/SanityCheck.cs
+   A /trunk/bludgeon/TestBasic.cs
+   A /trunk/bludgeon/TestMove.cs
+   A /trunk/bludgeon/Toolbox.cs
+   M /trunk/configure.in
+   M /trunk/libbeagle/beagle/beagle-query.c
+
+A big commit, but not as big as it looks.  Some things were renamed
+(i.e. indexable.Type became indexable.HitType) and some APIs changed in minor
+ways (i.e. the addition of the PostFlushHook method to IIndexableGenerator),
+which required me to make trivial modifications to most of the backends.
+
+Incremented version number of 0.0.13.2.
+
+More Lucene refactoring: The process of adding and flushing an index is much
+cleaner, and we carry around our state in a much more natural way.  This
+allowed the file system backend to be simplified further while at the same
+time fixing various races.
+
+Mail backend fixes:
+Set the fixme:date property on imap messages w/o content.
+Deal gracefully with imap folders where we can't find the account.
+
+Bludgeon:
+Added all sorts of fancy new features.  You can now control how
+the test tree is modified, how many iterations, etc. from the command
+line.
+
+------------------------------------------------------------------------
+r1851 | joeshaw | 2005-08-25 18:33:22 -0400 (Thu, 25 Aug 2005) | 12 lines
+Changed paths:
+   M /trunk/BeagleClient/Client.cs
+   M /trunk/BeagleClient/QueryPart.cs
+   M /trunk/Filters/FilterPPT.cs
+   M /trunk/beagled/Server.cs
+   M /trunk/configure.in
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-query-part-date.h
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-human.h
+   A /trunk/libbeagle/beagle/beagle-query-part-or.c
+   A /trunk/libbeagle/beagle/beagle-query-part-or.h
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.h
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.h
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query-part.h
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+Add --enable-xml-dump configure option for seeing the XML messages
+before they are sent.
+
+Change the XML format to name subparts as Part rather than SubPart
+in OR parts to make things easier in C.
+
+Add OR parts to libbeagle, and generally clean up the query part
+stuff there a lot.  Add docs.
+
+Fix up the PowerPoint filter a little bit to correctly report
+error when it can't parse
+
+------------------------------------------------------------------------
+r1824 | joeshaw | 2005-08-18 17:37:10 -0400 (Thu, 18 Aug 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+
+Send along the type data in a QueryPart from libbeagle.  Fix from D Bera
+
+------------------------------------------------------------------------
+r1823 | trow | 2005-08-18 17:13:27 -0400 (Thu, 18 Aug 2005) | 4 lines
+Changed paths:
+   M /trunk/BeagleClient/Hit.cs
+   M /trunk/Tiles/Template.cs
+   M /trunk/beagled/GoogleDriver.cs
+   M /trunk/beagled/LuceneCommon.cs
+   M /trunk/beagled/LuceneQueryable.cs
+   M /trunk/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagled/WebServices/NetBeagleHandler.cs
+   M /trunk/beagled/WebServices/WebServiceBackEnd.cs
+   M /trunk/beagled/WebServices/WebServiceProxy.cs
+   M /trunk/bludgeon/Bludgeon.cs
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+
+Compute lucene-style scores for our hits.
+
+Removed deprecated properties from the Hit object.
+
+------------------------------------------------------------------------
+r1791 | trow | 2005-08-15 00:26:31 -0400 (Mon, 15 Aug 2005) | 12 lines
+Changed paths:
+   M /trunk/BeagleClient/Hit.cs
+   M /trunk/BeagleClient/Indexable.cs
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/BeagleClient/QueryPart.cs
+   M /trunk/BeagleClient/RemoteControl.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagled/IIndexer.cs
+   A /trunk/beagled/LuceneBitArray.cs
+   M /trunk/beagled/LuceneCommon.cs
+   M /trunk/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagled/LuceneQueryable.cs
+   M /trunk/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagled/Makefile.am
+   M /trunk/beagled/ManageIndex.cs
+   M /trunk/beagled/QueryResult.cs
+   M /trunk/beagled/RemoteControlExecutors.cs
+   M /trunk/beagled/RemoteIndexer.cs
+   M /trunk/beagled/RemoteIndexerRequest.cs
+   M /trunk/bludgeon/Bludgeon.cs
+   M /trunk/bludgeon/Daemon.cs
+   M /trunk/bludgeon/FileModel.cs
+   M /trunk/bludgeon/QueryFu.cs
+   M /trunk/bludgeon/SanityCheck.cs
+   M /trunk/bludgeon/Token.cs
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query-part.h
+
+Query logic fixes.
+
+All sorts of bludgeon hacking.
+
+Added some optimize-related infrastructure, and a way to request
+a full index optimization via RemoteControl.
+
+Small changes to our lucene index format: I moved the
+mime type and hit type out of special fields and into
+properties.  Some deprecated APIs remain behind to avoid
+breaking anything.
+
+------------------------------------------------------------------------
+r1766 | joeshaw | 2005-08-11 18:56:08 -0400 (Thu, 11 Aug 2005) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-util.c
+
+Don't use g_stat() because it has issues when dealing with whether to use
+stat() or stat64().  Fixes the nautilus and beagle-search crashes
+
+------------------------------------------------------------------------
+r1756 | fhedberg | 2005-08-11 16:29:53 -0400 (Thu, 11 Aug 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/Makefile.am
+
+Dist fixes.
+
+------------------------------------------------------------------------
+r1750 | joeshaw | 2005-08-11 12:20:04 -0400 (Thu, 11 Aug 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query.c
+   A /trunk/libbeagle/beagle/beagle-search-term-response.c
+   A /trunk/libbeagle/beagle/beagle-search-term-response.h
+
+Add the SearchTermResponse class to libbeagle and fix up a bunch of warnings
+
+------------------------------------------------------------------------
+r1728 | joeshaw | 2005-08-10 15:22:53 -0400 (Wed, 10 Aug 2005) | 2 lines
+Changed paths:
+   M /trunk/BeagleClient/Hit.cs
+   M /trunk/BeagleClient/Indexable.cs
+   M /trunk/BeagleClient/Property.cs
+   M /trunk/BeagleClient/Query.cs
+   M /trunk/BeagleClient/QueryPart.cs
+   M /trunk/BeagleClient/Versioned.cs
+   M /trunk/Filters/FilterDOC.cs
+   M /trunk/Filters/FilterMan.cs
+   M /trunk/Filters/FilterMonodoc.cs
+   M /trunk/Tiles/Template.cs
+   M /trunk/Tiles/TileNote.cs
+   M /trunk/Tiles/template-note.html
+   A /trunk/Util/BetterBitArray.cs
+   M /trunk/Util/DirectoryWalker.cs
+   M /trunk/Util/ExtendedAttribute.cs
+   M /trunk/Util/GuidFu.cs
+   M /trunk/Util/Inotify.cs
+   M /trunk/Util/Makefile.am
+   M /trunk/Util/Scheduler.cs
+   A /trunk/Util/SmallIntArray.cs
+   M /trunk/Util/StringFu.cs
+   A /trunk/Util/TopScores.cs
+   M /trunk/beagled/AkregatorQueryable/AkregatorQueryable.cs
+   M /trunk/beagled/BlamQueryable/BlamQueryable.cs
+   M /trunk/beagled/BuildIndex.cs
+   M /trunk/beagled/EvolutionDataServerQueryable/EvolutionDataServerQueryable.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailDriver.cs
+   M /trunk/beagled/EvolutionMailDriver/EvolutionMailIndexableGenerator.cs
+   M /trunk/beagled/FileAttributes.cs
+   M /trunk/beagled/FileAttributesStore.cs
+   M /trunk/beagled/FileAttributesStore_ExtendedAttribute.cs
+   M /trunk/beagled/FileAttributesStore_Mixed.cs
+   M /trunk/beagled/FileAttributesStore_Sqlite.cs
+   M /trunk/beagled/FileSystemQueryable/DirectoryIndexableGenerator.cs
+   A /trunk/beagled/FileSystemQueryable/DirectoryModel.cs
+   A /trunk/beagled/FileSystemQueryable/DirectoryState.cs
+   A /trunk/beagled/FileSystemQueryable/FileCrawlTask.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemModel.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagled/FileSystemQueryable/FileSystemWatcherBackend.cs
+   M /trunk/beagled/FileSystemQueryable/IFileEventBackend.cs
+   M /trunk/beagled/FileSystemQueryable/InotifyBackend.cs
+   A /trunk/beagled/FileSystemQueryable/LuceneNameResolver.cs
+   D /trunk/beagled/FileSystemQueryable/SanityCheck.cs
+   A /trunk/beagled/FileSystemQueryable/TreeCrawlTask.cs
+   D /trunk/beagled/FileSystemQueryable/UniqueIdStore.cs
+   M /trunk/beagled/FilterFactory.cs
+   M /trunk/beagled/GaimLogQueryable/GaimLogQueryable.cs
+   M /trunk/beagled/IFileAttributesStore.cs
+   M /trunk/beagled/IIndexer.cs
+   M /trunk/beagled/IndexHelper/RemoteIndexerExecutor.cs
+   A /trunk/beagled/IndexerReceipts.cs
+   M /trunk/beagled/KopeteQueryable/KopeteQueryable.cs
+   M /trunk/beagled/LifereaQueryable/LifereaQueryable.cs
+   M /trunk/beagled/Lucene.Net/Store/FSDirectory.cs
+   M /trunk/beagled/Lucene.Net/upstream-changes.diff
+   A /trunk/beagled/LuceneCommon.cs
+   M /trunk/beagled/LuceneDriver.cs
+   A /trunk/beagled/LuceneFileQueryable.cs
+   A /trunk/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagled/LuceneQueryable.cs
+   A /trunk/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagled/Makefile.am
+   M /trunk/beagled/ManageIndex.cs
+   M /trunk/beagled/NameIndex.cs
+   M /trunk/beagled/NameIndexTool.cs
+   A /trunk/beagled/NoiseFilter.cs
+   M /trunk/beagled/QueryDriver.cs
+   M /trunk/beagled/QueryResult.cs
+   A /trunk/beagled/QueryStringParser.cs
+   M /trunk/beagled/RemoteIndexer.cs
+   M /trunk/beagled/RemoteIndexerRequest.cs
+   M /trunk/beagled/RemoteIndexerResponse.cs
+   M /trunk/beagled/SanityCheckTool.cs
+   M /trunk/beagled/Server.cs
+   M /trunk/beagled/Shutdown.cs
+   M /trunk/beagled/SnippetFu.cs
+   M /trunk/beagled/StaticQueryable.cs
+   M /trunk/beagled/TermStatsTool.cs
+   M /trunk/beagled/TextCache.cs
+   M /trunk/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/libbeagle/beagle/Makefile.am
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/libbeagle/beagle/beagle-property.h
+   A /trunk/libbeagle/beagle/beagle-query-part-date.c
+   A /trunk/libbeagle/beagle/beagle-query-part-date.h
+   A /trunk/libbeagle/beagle/beagle-query-part-human.c
+   A /trunk/libbeagle/beagle/beagle-query-part-human.h
+   A /trunk/libbeagle/beagle/beagle-query-part-property.c
+   A /trunk/libbeagle/beagle/beagle-query-part-property.h
+   A /trunk/libbeagle/beagle/beagle-query-part-text.c
+   A /trunk/libbeagle/beagle/beagle-query-part-text.h
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query-part.h
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/docs/reference/beagle-undocumented.txt
+   M /trunk/tools/Query.cs
+   M /trunk/tools/Settings.cs
+   M /trunk/tools/beagle-crawl-system.in
+   M /trunk/tools/settings.glade
+
+Merge the more-better-lucene-branch back into HEAD
+
+------------------------------------------------------------------------
+r1595 | joeshaw | 2005-07-15 13:12:48 -0400 (Fri, 15 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+
+Add support for the locally synchronized storage dirs to libbeagle
+
+------------------------------------------------------------------------
+r1594 | trow | 2005-07-15 12:56:16 -0400 (Fri, 15 Jul 2005) | 6 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-indexable.h
+
+Added IndexableFiltering.AlreadyFiltered, a way for an indexable
+to indicate that its readers will always return nice, clean,
+ready-to-index text.
+Set AlreadyFiltered on indexables created from gaim logs.
+Updated libbeagle to know about the new IndexableFiltering option.
+
+------------------------------------------------------------------------
+r1586 | joeshaw | 2005-07-14 16:16:55 -0400 (Thu, 14 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+
+oops, forgot this
+
+------------------------------------------------------------------------
+r1585 | joeshaw | 2005-07-14 16:14:06 -0400 (Thu, 14 Jul 2005) | 3 lines
+Changed paths:
+   M /trunk/BeagleClient/Hit.cs
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+
+Don't keep Score around in libbeagle; just calculate it from the raw score and
+multiplier, since it's not serialized by the daemon
+
+------------------------------------------------------------------------
+r1555 | trow | 2005-07-08 12:47:09 -0400 (Fri, 08 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/Makefile.am
+   M /trunk/libbeagle/beagle/Makefile.am
+
+A small "make distcheck" fix.
+
+------------------------------------------------------------------------
+r1538 | dsd | 2005-07-06 16:51:41 -0400 (Wed, 06 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/ChangeLog
+   M /trunk/libbeagle/beagle/beagle-client.c
+
+libbeagle: Use /home/dsd/beagle-testing and check for existance of the relevant socket.
+
+------------------------------------------------------------------------
+r1536 | llipka | 2005-07-06 13:55:20 -0400 (Wed, 06 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle
+   M /trunk/libbeagle/beagle/.cvsignore
+   M /trunk/libbeagle/examples
+   M /trunk/libbeagle/examples/.cvsignore
+
+AVATAR is a conceptual HOTOL, SSTO spaceplane being developed by India's Defence Research and Development Organisation.
+
+------------------------------------------------------------------------
+r1535 | llipka | 2005-07-06 13:39:47 -0400 (Wed, 06 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle
+   M /trunk/libbeagle/.cvsignore
+
+Defining feudalism is difficult because there is no generally accepted agreement on what it means.
+
+------------------------------------------------------------------------
+r1530 | joeshaw | 2005-07-06 12:29:18 -0400 (Wed, 06 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-cancelled-response.c
+   M /trunk/libbeagle/beagle/beagle-cancelled-response.h
+   M /trunk/libbeagle/beagle/beagle-client.c
+   M /trunk/libbeagle/beagle/beagle-client.h
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.c
+   M /trunk/libbeagle/beagle/beagle-daemon-information-request.h
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+   M /trunk/libbeagle/beagle/beagle-empty-response.c
+   M /trunk/libbeagle/beagle/beagle-empty-response.h
+   M /trunk/libbeagle/beagle/beagle-error-response.c
+   M /trunk/libbeagle/beagle/beagle-error-response.h
+   M /trunk/libbeagle/beagle/beagle-finished-response.c
+   M /trunk/libbeagle/beagle/beagle-finished-response.h
+   M /trunk/libbeagle/beagle/beagle-hit.c
+   M /trunk/libbeagle/beagle/beagle-hit.h
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.h
+   M /trunk/libbeagle/beagle/beagle-hits-subtracted-response.c
+   M /trunk/libbeagle/beagle/beagle-hits-subtracted-response.h
+   M /trunk/libbeagle/beagle/beagle-indexable.c
+   M /trunk/libbeagle/beagle/beagle-indexable.h
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.c
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.h
+   M /trunk/libbeagle/beagle/beagle-parser.c
+   M /trunk/libbeagle/beagle/beagle-parser.h
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-property.c
+   M /trunk/libbeagle/beagle/beagle-property.h
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query-part.h
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-query.h
+   M /trunk/libbeagle/beagle/beagle-request.c
+   M /trunk/libbeagle/beagle/beagle-request.h
+   M /trunk/libbeagle/beagle/beagle-response.c
+   M /trunk/libbeagle/beagle/beagle-response.h
+   M /trunk/libbeagle/beagle/beagle-shutdown-request.c
+   M /trunk/libbeagle/beagle/beagle-shutdown-request.h
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+   M /trunk/libbeagle/beagle/beagle-snippet-request.h
+   M /trunk/libbeagle/beagle/beagle-snippet-response.c
+   M /trunk/libbeagle/beagle/beagle-snippet-response.h
+   M /trunk/libbeagle/beagle/beagle-timestamp.c
+   M /trunk/libbeagle/beagle/beagle-timestamp.h
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+   M /trunk/libbeagle/beagle/beagle.h
+
+add copyright headers to all the source files
+
+------------------------------------------------------------------------
+r1528 | joeshaw | 2005-07-06 12:05:25 -0400 (Wed, 06 Jul 2005) | 2 lines
+Changed paths:
+   M /trunk/Makefile.am
+   M /trunk/configure.in
+   A /trunk/libbeagle
+   A /trunk/libbeagle/.cvsignore
+   A /trunk/libbeagle/Makefile.am
+   A /trunk/libbeagle/beagle
+   A /trunk/libbeagle/beagle/.cvsignore
+   A /trunk/libbeagle/beagle/Makefile.am
+   A /trunk/libbeagle/beagle/beagle-cancelled-response.c
+   A /trunk/libbeagle/beagle/beagle-cancelled-response.h
+   A /trunk/libbeagle/beagle/beagle-client.c
+   A /trunk/libbeagle/beagle/beagle-client.h
+   A /trunk/libbeagle/beagle/beagle-daemon-information-request.c
+   A /trunk/libbeagle/beagle/beagle-daemon-information-request.h
+   A /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   A /trunk/libbeagle/beagle/beagle-daemon-information-response.h
+   A /trunk/libbeagle/beagle/beagle-empty-response.c
+   A /trunk/libbeagle/beagle/beagle-empty-response.h
+   A /trunk/libbeagle/beagle/beagle-error-response.c
+   A /trunk/libbeagle/beagle/beagle-error-response.h
+   A /trunk/libbeagle/beagle/beagle-finished-response.c
+   A /trunk/libbeagle/beagle/beagle-finished-response.h
+   A /trunk/libbeagle/beagle/beagle-hit.c
+   A /trunk/libbeagle/beagle/beagle-hit.h
+   A /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   A /trunk/libbeagle/beagle/beagle-hits-added-response.h
+   A /trunk/libbeagle/beagle/beagle-hits-subtracted-response.c
+   A /trunk/libbeagle/beagle/beagle-hits-subtracted-response.h
+   A /trunk/libbeagle/beagle/beagle-indexable.c
+   A /trunk/libbeagle/beagle/beagle-indexable.h
+   A /trunk/libbeagle/beagle/beagle-indexing-service-request.c
+   A /trunk/libbeagle/beagle/beagle-indexing-service-request.h
+   A /trunk/libbeagle/beagle/beagle-marshal.list
+   A /trunk/libbeagle/beagle/beagle-parser.c
+   A /trunk/libbeagle/beagle/beagle-parser.h
+   A /trunk/libbeagle/beagle/beagle-private.h
+   A /trunk/libbeagle/beagle/beagle-property.c
+   A /trunk/libbeagle/beagle/beagle-property.h
+   A /trunk/libbeagle/beagle/beagle-query-part.c
+   A /trunk/libbeagle/beagle/beagle-query-part.h
+   A /trunk/libbeagle/beagle/beagle-query.c
+   A /trunk/libbeagle/beagle/beagle-query.h
+   A /trunk/libbeagle/beagle/beagle-request.c
+   A /trunk/libbeagle/beagle/beagle-request.h
+   A /trunk/libbeagle/beagle/beagle-response.c
+   A /trunk/libbeagle/beagle/beagle-response.h
+   A /trunk/libbeagle/beagle/beagle-shutdown-request.c
+   A /trunk/libbeagle/beagle/beagle-shutdown-request.h
+   A /trunk/libbeagle/beagle/beagle-snippet-request.c
+   A /trunk/libbeagle/beagle/beagle-snippet-request.h
+   A /trunk/libbeagle/beagle/beagle-snippet-response.c
+   A /trunk/libbeagle/beagle/beagle-snippet-response.h
+   A /trunk/libbeagle/beagle/beagle-timestamp.c
+   A /trunk/libbeagle/beagle/beagle-timestamp.h
+   A /trunk/libbeagle/beagle/beagle-util.c
+   A /trunk/libbeagle/beagle/beagle-util.h
+   A /trunk/libbeagle/beagle/beagle.h
+   A /trunk/libbeagle/beagle/test-client.c
+   A /trunk/libbeagle/docs
+   A /trunk/libbeagle/docs/.cvsignore
+   A /trunk/libbeagle/docs/Makefile.am
+   A /trunk/libbeagle/docs/reference
+   A /trunk/libbeagle/docs/reference/.cvsignore
+   A /trunk/libbeagle/docs/reference/Makefile.am
+   A /trunk/libbeagle/docs/reference/beagle-docs.sgml
+   A /trunk/libbeagle/docs/reference/beagle-overrides.txt
+   A /trunk/libbeagle/docs/reference/beagle-sections.txt
+   A /trunk/libbeagle/docs/reference/beagle-undocumented.txt
+   A /trunk/libbeagle/docs/reference/beagle.types
+   A /trunk/libbeagle/docs/reference/tmpl
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-cancelled-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-client.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-daemon-information-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-daemon-information-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-empty-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-error-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-finished-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-hit.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-hits-added-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-hits-subtracted-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-indexable.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-indexing-service-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-property.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query-part.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-query.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-shutdown-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-snippet-request.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-snippet-response.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-timestamp.sgml
+   A /trunk/libbeagle/docs/reference/tmpl/beagle-unused.sgml
+   A /trunk/libbeagle/examples
+   A /trunk/libbeagle/examples/.cvsignore
+   A /trunk/libbeagle/examples/Makefile.am
+   A /trunk/libbeagle/examples/beagle-search.c
+   A /trunk/libbeagle/examples/beagle-shutdown.c
+   A /trunk/libbeagle/libbeagle-0.0.pc.in
+
+Add libbeagle, a C API for searching and indexing against the beagle daemon
+
+------------------------------------------------------------------------
