@@ -1,4 +1,213 @@
 
+Version 0.3.0
+1 December 2007
+
+* Many speed and memory performance improvements in both indexing and
+  searching throughout the code.
+
+* Support for date queries in the query language.  For example,
+  "date:2006" will return documents from 2006.  "date:2005.04" will
+  return documents from April 2005.  Ranges are also supported.  For
+  example, "date:2006.05.01-2007" will return all documents
+  between May 1, 2006 and December 31, 2006.
+
+* Rewritten Thunderbird backend, which uses a Thunderbird extension to
+  send data to be indexed to the Beagle daemon.
+
+* All new Firefox and Epiphany extensions.
+
+* Experimental network searches.  You can search between multiple
+  Beagle daemons, which can be automatically discovered through
+  Avahi.  Daemons can also be manually configured, useful for WAN
+  searches.
+
+* Experimental web interface to the Beagle daemon.  An AJAX interface
+  allows users to search for data through their web browser.
+
+* Support for additional external metadata on previously-indexed
+  documents.  This allows new backends or external applications to
+  attach metadata that can then be searched on.
+
+* New Nautilus metadata backend, implemented on top of the new
+  external metadata support.  Indexes Nautilus emblems and notes, and
+  adds search keywords for these.
+
+* Snowball analyzers are now used to process text.  This is the first
+  step toward language specific analyzers.
+
+* New Opera history backend.
+
+* Individual backends can now be enabled and disabled using the
+  beagle-settings tool.
+
+* Ignored file patterns (like *.o, *.a, *~, etc.) are no longer
+  hardcoded, and can be set through the configuration.
+
+* Changes to our TextCache to use a sqlite database for small files
+  and on-disk files for larger ones.  This makes the disk usage of the
+  TextCache much more efficient.
+
+* Use Mono's updated Mono.Data.Sqlite code, rather than our own hacked
+  up copy of the old Mono.Data.SqliteClient code.  As a result of
+  this, we now require sqlite3.
+
+* A new configuration system, which allows system administrators to
+  set defaults in /etc/beagle/config-files.  This also makes it easier
+  for backend and filter authors to add their own configuration
+  settings.
+
+* Use taglib-sharp (replacing unmaintained entagged-sharp) for
+  extracting metadata from audio files.
+
+* An option to turn off aggressive indexing of data while the
+  screensaver is on.
+
+* A new classification for files -- the "file type" -- which
+  classifies similar types together.  For instance, PNGs, JPEGs, and
+  GIFs all have file type "image".  These can be searched using the
+  "filetype" keyword.
+
+* Now store snippets for emails.
+
+* New extended attribute format.  Beagle now uses a single extended
+  attribute, user.Beagle, to store all of its information.  The old
+  format is migrated to the new one as files are reindexed.
+
+* Queries are run serially rather than in parallel, since most of the
+  search overhead is in disk IO.  Reduces memory usage considerably,
+  and helps prevent disk thrashing on large searches.
+
+* Print out warnings about possibly insufficient inotify watches, and
+  don't periodically recrawl directories that don't have them.  Fixes
+  the 100% CPU indexing loop bug of death.
+
+* Various tweaks to the scheduler, to make throttle large numbers of
+  tasks better.
+
+* Handle large batches of file deletions (ie, an "rm -rf" on a
+  directory) and file additions (ie, untarring into a watched
+  directory) in a much more efficient manner.
+
+* Require evolution-sharp 0.12, which implies Evlution 2.8 or 2.10
+  because of API changes to the library.
+
+* Some experimental support for XMP sidecar files.
+
+* A new QueryPart for searching explicitly for URIs.
+
+* Support for excluding KMail folders.
+
+* Support for indexing Evolution notes.
+
+* Refactor the indexing of IM conversations.
+
+* New TeX filter.
+
+* Structure snippets rather than returning them as HTML strings.
+  This gives application authors considerably more control over how
+  to display them.
+
+* Scan the first 4k of files to determine their MIME type in addition
+  to looking at the file extension, and choose the better match.
+
+* PDFs are now included when indexing system documentation.
+
+* Improvements to indexing files inside archives.  Now all extracted
+  files are handled in the index helper process, removing a costly
+  round trip.
+
+* Redirect crash logs from Mono into the Beagle log files.  They were
+  previously lost and users had to reproduce problems with --fg.
+
+* Add many more keywords to the query language; run beagle-query
+  --keywords to see a full list.
+
+* Lots and lots of indexing and searching bugfixes.  Too many to
+  count.
+
+* Translations:
+
+  - Arabic		   (Djihed Afifi)
+  - Basque		   (Mikel Paskual, Inaki Larranaga Murgoitio)
+  - Brazillian Portuguese  (Igor Pires Soares, Raul Pereira, 
+			    Leonardo Fontenelle, Og Maciel)
+  - British English	   (David Lodge)
+  - Catalan		   (Jordi Mas)
+  - Czech		   (Jakub Freidl)
+  - Dzongkha		   (Pema Geyleg)
+  - Finnish		   (Ilkka Tuohela)
+  - French		   (Guillaume Ayoub, Stéphane Raimbault,
+			    Christophe Bilard, Claude Paroz)
+  - Galician		   (Ignacio Casal Quinteiro)
+  - Hungarian		   (Gabor Kelemen)
+  - Japanese		   (Takeshi Aihana)
+  - Latvian		   (Raivis Dejus)
+  - Macedonian		   (Arangel Angov, Jovan Naumovski)
+  - Norwegian bokmål	   (Kjartan Maraas)
+  - Occitan		   (Yannig Marchegay)
+  - Polish		   (GNOME PL Team)
+  - Portuguese		   (Filipe Gomes)
+  - Simplified Chinese	   (Funda Wang) 
+  - Spanish		   (Roberto Majadas, Jorge Gonzalez)
+  - Swedish		   (Daniel Nylander)
+
+Contributors to this release: Debajyoti Bera, Joe Shaw, Lukas Lipka,
+Pierre Östlund, Tao Fei, Arun Raghavan, Nirbheek Chauhan, Kevin
+Kubasik, Alexis Christoforides, Kyle Ambroff, Fredrik Hedberg, Larry
+Ewing, Pat Double, Matteo Gottardi, Jose Carlos Garcia Sogo, Joseph
+Benavidez, Enrico Minack, JP Rosevear, Jason Kivlighn, and Stephane
+Loeuillet.
+
+Full set of changes:
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_3_0/beagle/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_3_0/libbeagle/ChangeLog
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_XESAM_0_1/ChangeLog
+
+------------------------------------------------------
+
+Version 0.2.18
+27 August 2007
+
+Notable changes:
+
+* Build and run against evolution-sharp 0.13.3.
+
+* No longer recrawl directories if we can't set up an inotify watch.
+  This fixes the looping bug of death when the screensaver kicks in.
+
+* Greatly improve indexing overhead with the beagle-build-index tool.
+
+* Display a warning in the log if the number of inotify watches runs
+  out.
+
+* Fix a problem in which beagle-search wouldn't work after a daemon
+  restart.  [bgo #463803]
+
+* Fix a bug in which processing large numbers of maildir files could
+  cause beagled to run out of file descriptors.  [bgo #466891]
+
+* Add support for the ~/.liferea_1.2 directory to the Liferea
+  backend.  [bgo #426573]
+
+* Add support for PDF keywords, and allow colons in PDF metadata.
+  [bgo #463003]
+
+* Ignore legal.xml files in the Docbook filter, since they're largely
+  content-less and frequently duplicated.
+
+* Fix the SQL used to retrieve tag information from the Digikam DB.
+  [bgo #454656]
+
+* Improve error reporting throughout.
+
+Contributors to this release: Joe Shaw, Debajyoti Bera, Lukas Lipka,
+Joseph Benavidez, JP Rosevear.
+
+Full set of changes:
+http://svn.gnome.org/viewcvs/*checkout*/beagle/tags/BEAGLE_0_2_18/ChangeLog
+
+------------------------------------------------------
+
 Version 0.2.17
 8 May 2007
 
