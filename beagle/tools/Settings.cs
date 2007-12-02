@@ -146,6 +146,10 @@ public class SettingsDialog
                 networking_sw.Child = networking_view;
 		networking_box.Show ();
 
+#if ENABLE_AVAHI
+		networking_settings_box.Visible = true;
+#endif  
+
 		LoadConfiguration ();
 
 		Conf.Subscribe (Conf.Names.FilesQueryableConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
