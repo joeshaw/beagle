@@ -45,8 +45,8 @@ namespace Search.Tiles {
 
 			// Draw the F-Spot overlay
 			if (size > 32 && Hit ["fspot:IsIndexed"] == "true") {
+				Gdk.Pixbuf emblem = WidgetFu.LoadThemeIcon ("f-spot", 24);
 				Gdk.Pixbuf icon = image.Pixbuf.Copy ();
-				Gdk.Pixbuf emblem = Beagle.Images.GetPixbuf ("emblem-fspot.png", 24, 24);
 
 				if (icon == null || emblem == null)
 					return;

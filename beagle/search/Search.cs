@@ -143,7 +143,7 @@ namespace Search {
 		public MainWindow () : base (WindowType.Toplevel)
 		{
 			Title = Catalog.GetString ("Desktop Search");
-			Icon = Beagle.Images.GetPixbuf ("system-search.png");
+			Icon = WidgetFu.LoadThemeIcon ("system-search", 16);
 
 			DefaultWidth = 700;
 			DefaultHeight = 550;

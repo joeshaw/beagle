@@ -386,7 +386,7 @@ namespace Search {
 
 		private void About (object obj, EventArgs args)
 		{
-			Gdk.Pixbuf logo = Beagle.Images.GetPixbuf ("system-search.png");
+			Gdk.Pixbuf logo = WidgetFu.LoadThemeIcon ("system-search", 48);
 
 			string[] people = new string[] { "Anna Dirks <anna@novell.com>",
 							 "Fredrik Hedberg <fredrik@avafan.com>",

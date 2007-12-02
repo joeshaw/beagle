@@ -10,7 +10,7 @@ namespace Search.Pages {
 
 		static NoMatch ()
 		{
-			icon = Beagle.Images.GetPixbuf ("no-match.png");
+			icon = WidgetFu.LoadThemeIcon ("face-surprise", 48);
 		}
 
 		public NoMatch (string query, bool suggest_scope)

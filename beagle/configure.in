@@ -576,7 +576,6 @@ AC_OUTPUT([
 Makefile
 Util/Makefile
 Util/Util.dll.config
-images/Makefile
 glue/Makefile
 BeagleClient/Makefile
 beagled/Makefile

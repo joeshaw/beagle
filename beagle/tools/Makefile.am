@@ -114,7 +114,7 @@ SETTINGS_CSFLAGS   =
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs
 SETTINGS_RESOURCES = $(srcdir)/settings.glade $(top_srcdir)/beagled/beagled-autostart.desktop $(top_srcdir)/search/beagle-search-autostart.desktop
 SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
-SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll -r:../images/Images.dll
+SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll
 
 if ENABLE_AVAHI
 SETTINGS_CSFLAGS += -define:ENABLE_AVAHI

@@ -13,8 +13,7 @@ CSFILES =				\
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
-	../Util/UiUtil.dll		\
-	../images/Images.dll
+	../Util/UiUtil.dll
 
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\

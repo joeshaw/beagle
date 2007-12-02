@@ -123,7 +123,7 @@ public class SettingsDialog
 		Glade.XML glade = new Glade.XML (null, "settings.glade", "settings_dialog", "beagle");
 		glade.Autoconnect (this);
 
-		settings_dialog.Icon = Beagle.Images.GetPixbuf ("system-search.png");
+		settings_dialog.Icon = IconTheme.Default.LoadIcon ("system-search", 16, IconLookupFlags.NoSvg);
 		administration_frame.Visible = (Environment.UserName == "root");
 
 		include_view = new IncludeView ();

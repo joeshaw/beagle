@@ -6,7 +6,7 @@ namespace Search.Pages {
 
 	public class Base : EventBox {
 
-		private static Gdk.Pixbuf arrow = Beagle.Images.GetPixbuf ("tip-arrow.png");
+		private static Gdk.Pixbuf arrow = WidgetFu.LoadThemeIcon ("go-next", 16);
 
 		private Gtk.Table table;
 		private Gtk.Image header_icon;
@@ -83,7 +83,7 @@ namespace Search.Pages {
 		}
 
 		public string HeaderIconFromStock {
-			set { header_icon.SetFromStock (value, Gtk.IconSize.Dnd); }
+			set { header_icon.SetFromStock (value, Gtk.IconSize.Dialog); }
 		}
 
 		public string Header {

@@ -136,7 +136,8 @@ namespace ImLogViewer {
 			
 			Glade.XML gxml = new Glade.XML (null, "ImLogViewer.glade", "imviewer", null);
 			gxml.Autoconnect (this);
-			imviewer.Icon = Beagle.Images.GetPixbuf ("system-search.png");
+
+			imviewer.Icon = IconTheme.Default.LoadIcon ("system-search", 16, IconLookupFlags.NoSvg);
 
 			conversation.PixelsAboveLines = 3;
 			conversation.LeftMargin = 4;

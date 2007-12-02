@@ -25,7 +25,6 @@ endif
 if ENABLE_GUI
 SUBDIRS +=			\
 	po			\
-	images			\
 	search			\
 	ImLogViewer
 endif
