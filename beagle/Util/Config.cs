@@ -34,7 +34,6 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using Mono.Unix;
 
 namespace Beagle.Util {
 
@@ -1331,7 +1330,7 @@ namespace Beagle.Util {
 		private bool password_required = true;
 
 		// The name and password for the local network service
-		private string service_name = String.Format ("{0} ({1})", UnixEnvironment.UserName, UnixEnvironment.MachineName);
+		private string service_name = String.Format ("{0} ({1})", Environment.UserName, System.Environment.MachineName);
 		private string service_password = String.Empty;
 
 		// This is a list of registered and paired nodes which
