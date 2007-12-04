@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Mono.Unix;
 using Beagle.Util;
 
@@ -71,6 +72,16 @@ namespace Search.Tiles {
 
 			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
+			StringBuilder sb = new StringBuilder();
+			if(Hit.GetFirstProperty("fixme:tag") != null){
+				foreach(string s in Hit.GetProperties("fixme:tag")){
+					sb.Append(s);
+					sb.Append(", ");
+				}
+				sb.Remove(sb.Length-2,2);
+				details.AddLabelPair (Catalog.GetString("Tags:"), sb.ToString());
+			}
+			
 			details.AddSnippet ();
 
 			return details;

@@ -29,6 +29,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Xml;
+using System.Collections.Generic;
 
 namespace Beagle.Util {
 
@@ -39,12 +40,14 @@ namespace Beagle.Util {
 		public  string subject;
 		public  string text;
 		public  DateTime timestamp;
+		public  List<string> tags;
 
 		//////////////////////////
 
 		protected Note (string _type, string _filename) {
 			this.type = _type;
 			this.filename = _filename;
+			this.tags = new List<string>();
 		}
 
 		// FIXME: this is a mess
@@ -112,6 +115,10 @@ namespace Beagle.Util {
 
 				if (doc.NodeType == XmlNodeType.Element && doc.Name == "title") {
 					note.subject = doc.ReadString ();
+					continue;
+				}
+				if (doc.NodeType == XmlNodeType.Element && doc.Name == "tag"){
+					note.tags.Add(doc.ReadString());
 					continue;
 				}
 
