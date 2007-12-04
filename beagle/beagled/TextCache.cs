@@ -132,6 +132,10 @@ namespace Beagle.Daemon {
 				} catch (ApplicationException ex) {
 					Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
 					create_new_db = true;
+				} catch (SqliteException ex) {
+					// When the table name changed from 0.2.18 -> 0.3.0.
+					Logger.Log.Warn ("Sqlite error: {0}. Purging textcache.", ex.Message);
+					create_new_db = true;
 				}
 
 				if (reader != null)
