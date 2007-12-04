@@ -10,7 +10,7 @@ namespace Search.Tiles {
 			BorderWidth = 6;
 
 			icon = new Gtk.Image ();
-			icon.SetAlignment (0.5f, 0.0f);
+			icon.SetAlignment (0.5f, 0.5f);
 			icon.Show ();
 			Attach (icon, 0, 1, 0, 1, fill, fill, 6, 0);
 

@@ -40,7 +40,10 @@ namespace Beagle.Filters {
 		static bool Debug = false;
 
 		public FilterTotem ()
-		{
+		{			
+			// 1: Priority update after FilterVideo was added
+			SetVersion (1);
+
 			PreLoad = false;
 			SetFileType ("video");
 		}
@@ -67,7 +70,10 @@ namespace Beagle.Filters {
 			string str;
 
 			while ((str = pout.ReadLine ()) != null) {
-				AddSupportedFlavor (FilterFlavor.NewFromMimeType (str));
+				FilterFlavor flavor = FilterFlavor.NewFromMimeType (str);
+				flavor.Priority = -1; // Prefer Totem filter over MPlayer
+
+				AddSupportedFlavor (flavor);
 
 				if (Debug)
 					Log.Debug ("Added {0} as a supported mime type for Totem video filter", str);

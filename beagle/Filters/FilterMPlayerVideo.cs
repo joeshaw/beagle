@@ -75,6 +75,9 @@ namespace Beagle.Filters {
 
 		public FilterMPlayerVideo ()
 		{
+			// 1: Priority update after FilterVideo was added
+			SetVersion (1);
+
 			PreLoad = false;
 			SetFileType ("video");
 		}
@@ -83,7 +86,7 @@ namespace Beagle.Filters {
 		{
 			foreach (string s in mime_types) {
 				FilterFlavor flavor = FilterFlavor.NewFromMimeType (s);
-				flavor.Priority = -1; // Prefer Totem over this one
+				flavor.Priority = -2; // Prefer Totem over this one
 
 				AddSupportedFlavor (flavor);
 			}

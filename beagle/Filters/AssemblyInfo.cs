@@ -30,9 +30,10 @@ using Beagle.Filters;
 
 // All filter types have to be listed here to be loaded.
 [assembly: Beagle.Daemon.FilterTypes (
+	 typeof(FilterAbiWord),
 	 typeof(FilterApplication),
 	 typeof(FilterArchive),
-	 typeof(FilterAbiWord),
+	 typeof(FilterAudio),
 	 typeof(FilterBMP),
 	 typeof(FilterBoo),
 	 typeof(FilterC),
@@ -57,18 +58,17 @@ using Beagle.Filters;
 	 typeof(FilterJavascript),
 	 typeof(FilterJpeg),
 	 typeof(FilterKAddressBook),
-	 typeof(FilterKnotes),
 	 typeof(FilterKOrganizer),
+	 typeof(FilterKnotes),
 	 typeof(FilterKonqHistory),
 	 typeof(FilterKopeteLog),
 	 typeof(FilterLabyrinth),
 	 typeof(FilterM3U),
+	 typeof(FilterMPlayerVideo),
 	 typeof(FilterMail),
 	 typeof(FilterMan),
 	 typeof(FilterMatlab),
 	 typeof(FilterMonodoc),
-	 typeof(FilterMPlayerVideo),
-	 typeof(FilterMusic),
 	 typeof(FilterOpenOffice),
 	 typeof(FilterPascal),
 	 typeof(FilterPdf),
@@ -94,5 +94,6 @@ using Beagle.Filters;
 	 typeof(FilterText),
 	 typeof(FilterTiff),
 	 typeof(FilterTotem),
+	 typeof(FilterVideo),
 	 typeof(FilterXslt)
 )]

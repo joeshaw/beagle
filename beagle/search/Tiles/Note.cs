@@ -73,7 +73,7 @@ namespace Search.Tiles {
 			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
 			
-			if(Hit.GetFirstProperty ("fixme:tag") != null){
+			if(! String.IsNullOrEmpty (Hit.GetFirstProperty ("fixme:tag"))) {
 				string tags = String.Join (", ", Hit.GetProperties ("fixme:tag"));
 				details.AddLabelPair (Catalog.GetString ("Tags:"), tags);
 			}

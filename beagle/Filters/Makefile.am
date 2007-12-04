@@ -48,65 +48,66 @@ CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs	\
 	$(HAP_CSFILES)			\
 	$(SWF_RTF_CSFILES)		\
-	$(srcdir)/FilterArchive.cs	\
-	$(srcdir)/FilterHtml.cs		\
-	$(srcdir)/FilterImage.cs	\
-	$(srcdir)/FilterJpeg.cs		\
-	$(srcdir)/FilterTiff.cs		\
-	$(srcdir)/FilterMan.cs		\
-	$(srcdir)/FilterOpenOffice.cs	\
-	$(srcdir)/FilterPdf.cs		\
-	$(srcdir)/FilterPng.cs		\
-	$(srcdir)/FilterText.cs	        \
-	$(srcdir)/FilterRTF.cs		\
-	$(srcdir)/FilterSource.cs	\
-	$(srcdir)/FilterC.cs		\
-	$(srcdir)/FilterCpp.cs		\
-	$(srcdir)/FilterCSharp.cs	\
-	$(srcdir)/FilterJava.cs		\
-	$(srcdir)/FilterPython.cs	\
-	$(srcdir)/FilterPerl.cs		\
-	$(srcdir)/FilterPhp.cs		\
-	$(srcdir)/FilterFortran.cs	\
-	$(srcdir)/FilterPascal.cs	\
 	$(srcdir)/FilterAbiword.cs	\
-	$(srcdir)/FilterSpreadsheet.cs	\
-	$(srcdir)/FilterJs.cs		\
-	$(srcdir)/FilterLisp.cs		\
-	$(srcdir)/FilterMatlab.cs	\
-	$(srcdir)/FilterScilab.cs	\
-	$(srcdir)/FilterDocbook.cs	\
-	$(srcdir)/FilterMonodoc.cs	\
-	$(srcdir)/FilterDesktop.cs	\
-	$(srcdir)/FilterMail.cs		\
-	$(srcdir)/FilterMusic.cs	\
-	$(srcdir)/FilterKonqHistory.cs	\
-	$(srcdir)/FilterShellscript.cs	\
-	$(srcdir)/FilterRuby.cs		\
-	$(srcdir)/FilterMPlayerVideo.cs	\
-	$(srcdir)/FilterTotem.cs	\
+	$(srcdir)/FilterArchive.cs	\
+	$(srcdir)/FilterAudio.cs	\
 	$(srcdir)/FilterBmp.cs		\
-	$(srcdir)/FilterExternal.cs	\
-	$(srcdir)/FilterEbuild.cs	\
-	$(srcdir)/FilterGif.cs		\
-	$(srcdir)/FilterXslt.cs		\
-	$(srcdir)/FilterRPM.cs		\
-	$(srcdir)/FilterPackage.cs	\
-	$(srcdir)/FilterDeb.cs		\
 	$(srcdir)/FilterBoo.cs		\
-	$(srcdir)/FilterSvg.cs		\
+	$(srcdir)/FilterC.cs		\
+	$(srcdir)/FilterCSharp.cs	\
+	$(srcdir)/FilterCpp.cs		\
+	$(srcdir)/FilterDeb.cs		\
+	$(srcdir)/FilterDesktop.cs	\
+	$(srcdir)/FilterDocbook.cs	\
+	$(srcdir)/FilterEbuild.cs	\
+	$(srcdir)/FilterExternal.cs	\
+	$(srcdir)/FilterFortran.cs	\
+	$(srcdir)/FilterGif.cs		\
+	$(srcdir)/FilterHtml.cs		\
+	$(srcdir)/FilterIgnore.cs	\
+	$(srcdir)/FilterImage.cs	\
+	$(srcdir)/FilterJava.cs		\
+	$(srcdir)/FilterJpeg.cs		\
+	$(srcdir)/FilterJs.cs		\
 	$(srcdir)/FilterKAddressBook.cs \
 	$(srcdir)/FilterKCal.cs		\
 	$(srcdir)/FilterKNotes.cs	\
 	$(srcdir)/FilterKOrganizer.cs	\
-	$(srcdir)/FilterLabyrinth.cs	\
-	$(srcdir)/FilterScribus.cs	\
-	$(srcdir)/FilterM3U.cs		\
-	$(srcdir)/FilterPls.cs		\
-	$(srcdir)/FilterPidginLog.cs	\
+	$(srcdir)/FilterKonqHistory.cs	\
 	$(srcdir)/FilterKopeteLog.cs	\
-	$(srcdir)/FilterIgnore.cs	\
-	$(srcdir)/FilterTeX.cs
+	$(srcdir)/FilterLabyrinth.cs	\
+	$(srcdir)/FilterLisp.cs		\
+	$(srcdir)/FilterM3U.cs		\
+	$(srcdir)/FilterMPlayerVideo.cs	\
+	$(srcdir)/FilterMail.cs		\
+	$(srcdir)/FilterMan.cs		\
+	$(srcdir)/FilterMatlab.cs	\
+	$(srcdir)/FilterMonodoc.cs	\
+	$(srcdir)/FilterOpenOffice.cs	\
+	$(srcdir)/FilterPackage.cs	\
+	$(srcdir)/FilterPascal.cs	\
+	$(srcdir)/FilterPdf.cs		\
+	$(srcdir)/FilterPerl.cs		\
+	$(srcdir)/FilterPhp.cs		\
+	$(srcdir)/FilterPidginLog.cs	\
+	$(srcdir)/FilterPls.cs		\
+	$(srcdir)/FilterPng.cs		\
+	$(srcdir)/FilterPython.cs	\
+	$(srcdir)/FilterRPM.cs		\
+	$(srcdir)/FilterRTF.cs		\
+	$(srcdir)/FilterRuby.cs		\
+	$(srcdir)/FilterScilab.cs	\
+	$(srcdir)/FilterScribus.cs	\
+	$(srcdir)/FilterShellscript.cs	\
+	$(srcdir)/FilterSource.cs	\
+	$(srcdir)/FilterSpreadsheet.cs	\
+	$(srcdir)/FilterSvg.cs		\
+	$(srcdir)/FilterTeX.cs		\
+	$(srcdir)/FilterText.cs	        \
+	$(srcdir)/FilterTiff.cs		\
+	$(srcdir)/FilterTotem.cs	\
+	$(srcdir)/FilterVideo.cs	\
+	$(srcdir)/FilterXslt.cs
 
 if ENABLE_GSF_SHARP
 CSFILES += 				\

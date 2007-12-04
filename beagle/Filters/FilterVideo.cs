@@ -1,53 +1,33 @@
 //
-// FilterMusic.cs : This is our interface to taglib-sharp's interface.
-// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
+//  FilterVideo.cs: TagLib# video filter
 //
-
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the "Software"),
-// to deal in the Software without restriction, including without limitation
-// the rights to use, copy, modify, merge, publish, distribute, sublicense,
-// and/or sell copies of the Software, and to permit persons to whom the
-// Software is furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-// DEALINGS IN THE SOFTWARE.
+//  Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;
 using System.IO;
 using Beagle.Daemon;
 using Beagle.Util;
+
 using TagLib;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="album", PropertyName="fixme:album", IsKeyword=false, Description="Album name of the music")]
-	[PropertyKeywordMapping (Keyword="artist", PropertyName="fixme:artist", IsKeyword=false, Description="Artist of the music")]
-	[PropertyKeywordMapping (Keyword="genre", PropertyName="fixme:genre", IsKeyword=true, Description="Genre of the music")]
-	public class FilterMusic : Beagle.Daemon.Filter {
+	public class FilterVideo : Beagle.Daemon.Filter {
 	
-		public FilterMusic ()
+		public FilterVideo ()
 		{
-			// 1: Added duration and bitrate property
-			// 2. Use TagLib-Sharp for filtering. Also index lots of new properties provided by TagLib#
-			SetVersion (2);
-			SetFileType ("audio");
+			SetFileType ("video");
 		}
 
 		protected override void RegisterSupportedTypes ()
 		{
-			foreach (string type in SupportedMimeType.AllMimeTypes)
+			foreach (string type in SupportedMimeType.AllMimeTypes) {
+				if (! type.StartsWith ("video/"))
+					continue;
+
 				AddSupportedFlavor (FilterFlavor.NewFromMimeType (type));
+			}
 		}
 
 		private string GetTaglibMimeType ()
@@ -88,20 +68,23 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			TagLib.File file;
+			TagLib.File file = null;
 			
 			try {
 				file = TagLib.File.Create (new StreamAbstraction (Stream), GetTaglibMimeType (), TagLib.ReadStyle.Average);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Exception filtering music");
+				Logger.Log.Warn (e, "Exception filtering video");
 				Finished();
 				return;
 			}
 
 			TagLib.Tag tag = file.Tag;
 
-			AddProperty (Beagle.Property.New ("fixme:album", tag.Album));
+			// FIXME: Most likely most of these don't make sense
+			// for video files.
+
 			AddProperty (Beagle.Property.New ("dc:title", tag.Title));
+			AddProperty (Beagle.Property.New ("fixme:album", tag.Album));
 
 			foreach (string artist in tag.AlbumArtists)
 				AddProperty (Beagle.Property.New ("fixme:artist", artist));
@@ -133,23 +116,20 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.NewUnsearched ("fixme:year", tag.Year));
 
 			foreach (TagLib.ICodec codec in file.Properties.Codecs) {
-				TagLib.IAudioCodec acodec = codec as TagLib.IAudioCodec;
+				TagLib.IVideoCodec vcodec = codec as TagLib.IVideoCodec;
 				
-				if (acodec != null && (acodec.MediaTypes & TagLib.MediaTypes.Audio) != TagLib.MediaTypes.None)
-				{
-					AddProperty (Beagle.Property.NewUnsearched ("fixme:bitrate", acodec.AudioBitrate));
-					AddProperty (Beagle.Property.NewUnsearched ("fixme:samplerate", acodec.AudioSampleRate));
-					AddProperty (Beagle.Property.NewUnsearched ("fixme:channels", acodec.AudioChannels));
+				if (vcodec != null && (vcodec.MediaTypes & TagLib.MediaTypes.Video) != TagLib.MediaTypes.None) {
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:video:codec", vcodec.Description));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:video:width", vcodec.VideoWidth));
+					AddProperty (Beagle.Property.NewUnsearched ("fixme:video:height", vcodec.VideoHeight));
+
 					// One codec is enough
 					break;
 				}
-				// FIXME: Get data from IVideoCodec too
                 	}
 
                 	if (file.Properties.MediaTypes != TagLib.MediaTypes.None)
 				AddProperty (Beagle.Property.NewUnsearched ("fixme:duration", file.Properties.Duration));
-
-			// FIXME: Store embedded picture and lyrics
 
 			Finished ();
 		}

@@ -1,6 +1,8 @@
 using System;
 using Mono.Unix;
 
+using Beagle.Util;
+
 namespace Search.Tiles {
 
 	public class VideoActivator : TileActivator {
@@ -22,9 +24,27 @@ namespace Search.Tiles {
 		{
 			Group = TileGroup.Video;
 
-			// FIXME: We need filters for video in Beagle.
-			// They should land soon when entagged-sharp gets video support.
-			Description = Catalog.GetString ("Unknown duration"); // FIXME: Duration from filters
+			Title = Hit ["beagle:ExactFilename"];
+
+			if (! String.IsNullOrEmpty (Hit ["fixme:video:codec"]))
+				Description = Hit ["fixme:video:codec"];
+			
+			if (! String.IsNullOrEmpty (Hit ["fixme:video:width"]))
+				Description += String.Format (" ({0}x{1})", Hit ["fixme:video:width"], Hit ["fixme:video:height"]);			
+		}
+
+		protected override DetailsPane GetDetails ()
+		{
+			DetailsPane details = new DetailsPane ();
+
+			details.AddTitleLabel (Title);
+			details.AddTextLabel (Description);
+			details.AddNewLine ();
+
+			details.AddLabelPair (Catalog.GetString ("Modified:"), Utils.NiceVeryLongDate (Hit.FileInfo.LastWriteTime));
+			details.AddLabelPair (Catalog.GetString ("Full Path:"), Hit.Uri.LocalPath);
+
+			return details;
 		}
 	}
 }
