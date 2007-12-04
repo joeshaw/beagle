@@ -80,7 +80,6 @@ beagle_query_to_xml (BeagleRequest *request, GError **err)
 	BeagleQueryPrivate *priv = BEAGLE_QUERY_GET_PRIVATE (request);
 	GString *data = g_string_new (NULL);
 	GString *sub_data;
-	BeagleQueryPartOr *or_part;
 	GSList *iter;
 	gboolean first = TRUE;
 
