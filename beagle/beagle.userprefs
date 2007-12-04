@@ -1,0 +1,31 @@
+﻿<UserCombinePreferences version="1.0" filename="/home/kkubasik/mysrc/beagle/beagle.mds">
+  <Files>
+    <File name="beagled/KonversationQueryable/KonversationQueryable.cs" line="40" column="13" />
+  </Files>
+  <Views>
+    <ViewMemento id="ProjectPad">
+      <Node expanded="True">
+        <Node name="beagle" expanded="True">
+          <Node name="beagled" expanded="True" selected="True">
+            <Node name="KonversationQueryable" expanded="True" />
+            <Node name="PidginQueryable" expanded="True" />
+          </Node>
+          <Node name="Util" expanded="True" />
+        </Node>
+      </Node>
+    </ViewMemento>
+    <ViewMemento id="ClassPad">
+      <Node expanded="True" />
+    </ViewMemento>
+    <ViewMemento id="ConnectionManagerPad">
+      <Node />
+    </ViewMemento>
+    <ViewMemento id="MonoDevelop.NUnit.TestPad">
+      <Node />
+    </ViewMemento>
+  </Views>
+  <Properties>
+    <Property key="ActiveWindow" value="/home/kkubasik/mysrc/beagle/beagled/KonversationQueryable/KonversationQueryable.cs" />
+    <Property key="ActiveConfiguration" value="Debug" />
+  </Properties>
+</UserCombinePreferences>

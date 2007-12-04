@@ -72,14 +72,10 @@ namespace Search.Tiles {
 
 			details.AddLabelPair (Catalog.GetString ("Title:"), Title);
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
-			StringBuilder sb = new StringBuilder();
-			if(Hit.GetFirstProperty("fixme:tag") != null){
-				foreach(string s in Hit.GetProperties("fixme:tag")){
-					sb.Append(s);
-					sb.Append(", ");
-				}
-				sb.Remove(sb.Length-2,2);
-				details.AddLabelPair (Catalog.GetString("Tags:"), sb.ToString());
+			
+			if(Hit.GetFirstProperty ("fixme:tag") != null){
+				string tags = String.Join (", ", Hit.GetProperties ("fixme:tag"));
+				details.AddLabelPair (Catalog.GetString ("Tags:"), tags);
 			}
 			
 			details.AddSnippet ();
