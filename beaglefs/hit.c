@@ -121,8 +121,9 @@ hit_thread_start (G_GNUC_UNUSED void *ignored)
 	request = BEAGLE_REQUEST (query);
 
 	beagle_query_add_text (query, query_text);
-	beagle_query_add_hit_type (query, "File");
-	beagle_query_add_hit_type (query, "IMLog");
+	beagle_query_add_text (query, "type:File");
+	beagle_query_add_text (query, "type:IMLog");
+
 
 	g_signal_connect (query,
 			  "hits-added",
