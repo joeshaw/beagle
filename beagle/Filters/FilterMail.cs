@@ -270,6 +270,7 @@ namespace Beagle.Filters {
 		{
 			if (this.handler != null && this.handler.Reader != null)
 				this.handler.Reader.Close ();
+
 			this.handler = null;
 
 			if (this.message != null) {
@@ -286,7 +287,7 @@ namespace Beagle.Filters {
 			private TextReader reader;
 
 			private bool html_part = false;
-			public bool HtmlPart {
+			internal bool HtmlPart {
 				get { return html_part; }
 			}
 
@@ -392,10 +393,36 @@ namespace Beagle.Filters {
 							no_child_needed = true;
 							html_part = true;
 							string enc = part.GetContentTypeParameter ("charset"); 
+							// DataWrapper.Stream is a very limited stream
+							// and does not allow Seek or Tell
+							// HtmlFilter requires Stream.Position=0.
+							// Play safe and create a memorystream
+							// for HTML parsing.
+
+							GMime.StreamMem mem_stream;
+							mem_stream = new GMime.StreamMem ();
+
+							GMime.Stream data_stream;
+							data_stream = ((StreamWrapper) stream).GMimeStream;
+							data_stream.WriteToStream (mem_stream);
+							data_stream.Flush ();
+
+							// The StreamWrapper and hence the memory_stream
+							// will be closed when the reader is closed
+							// after Pull()-ing is done.
+							System.IO.Stream html_stream; 
+							html_stream = new StreamWrapper (mem_stream);
+							html_stream.Seek (0, SeekOrigin.Begin);
+
+							stream.Close ();
+
 							try {
-								this.reader = FilterHtml.GetHtmlReader (stream, enc);
+								this.reader = FilterHtml.GetHtmlReader (html_stream, enc);
 							} catch (Exception e) {
 								Log.Debug (e, "Exception while filtering HTML email {0}", this.indexable.Uri);
+								this.reader = null;
+								html_stream.Close ();
+								html_part = false;
 							}
 						}
 					}
