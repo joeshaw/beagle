@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-19 23:26+0000\n"
-"PO-Revision-Date: 2007-11-21 14:54+0100\n"
+"POT-Creation-Date: 2007-12-06 03:17+0000\n"
+"PO-Revision-Date: 2007-12-06 13:52+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -247,7 +247,7 @@ msgid "Inside archive {0}"
 msgstr "Dentro del archivo {0}"
 
 #: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:176 ../search/Tiles/Note.cs:69
+#: ../search/Tiles/File.cs:176 ../search/Tiles/Note.cs:73
 #: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
 #: ../search/Tiles/WebHistory.cs:58
 msgid "Title:"
@@ -318,12 +318,12 @@ msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
 #: ../search/Tiles/File.cs:177 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:70
+#: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
 #: ../search/Tiles/File.cs:182 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87
+#: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Ruta completa:"
 
@@ -343,11 +343,11 @@ msgstr[1] "Contiene {0} elementos"
 msgid "Set as Wallpaper"
 msgstr "Poner como tapiz"
 
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Image.cs:84 ../search/Tiles/Note.cs:78
 msgid "Tags:"
 msgstr "Etiquetas:"
 
-#: ../search/Tiles/Image.cs:86
+#: ../search/Tiles/Image.cs:86 ../search/Tiles/Video.cs:44
 msgid "Modified:"
 msgstr "Modificado:"
 
@@ -561,12 +561,6 @@ msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "En {0} año"
 msgstr[1] "En {0} años"
-
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "Duración desconocida"
 
 #: ../search/Tiles/WebHistory.cs:59
 msgid "URL:"
@@ -800,7 +794,7 @@ msgstr "Ay_uda"
 
 #: ../search/UIManager.cs:86
 msgid "_Contents"
-msgstr "_Contenido"
+msgstr "_Índice"
 
 #: ../search/UIManager.cs:88
 msgid "Help - Table of Contents"
@@ -954,11 +948,11 @@ msgstr "Mostrar detalles"
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
-#: ../tools/Settings.cs:342
+#: ../tools/Settings.cs:346
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:343
+#: ../tools/Settings.cs:347
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -967,15 +961,15 @@ msgstr ""
 "descartar los valores mostrados actualmente y recargar la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:485
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:500
+#: ../tools/Settings.cs:504
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:507
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -983,15 +977,15 @@ msgstr ""
 "La ruta seleccionada no se ha añadido. La lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:514
+#: ../tools/Settings.cs:518
 msgid "Path not added"
 msgstr "La ruta no se ha añadido"
 
-#: ../tools/Settings.cs:523
+#: ../tools/Settings.cs:527
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:528
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1000,11 +994,11 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:550
+#: ../tools/Settings.cs:554
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:555
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1012,11 +1006,11 @@ msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
 "excluirán de la indexación?"
 
-#: ../tools/Settings.cs:580
+#: ../tools/Settings.cs:584
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:585
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1024,68 +1018,68 @@ msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
 "excluir de la indexación?"
 
-#: ../tools/Settings.cs:628
+#: ../tools/Settings.cs:632
 msgid "Remote host already present in the list."
 msgstr "El equipo remoto ya está en la lista."
 
-#: ../tools/Settings.cs:638
+#: ../tools/Settings.cs:642
 msgid "Netbeagle Node not added"
 msgstr "No se añadió el nodo de Netbeagle"
 
-#: ../tools/Settings.cs:653
+#: ../tools/Settings.cs:657
 msgid "Remove host"
 msgstr "Quitar equipo"
 
-#: ../tools/Settings.cs:654
+#: ../tools/Settings.cs:658
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere eliminar este equipo de la lista?"
 
-#: ../tools/Settings.cs:713 ../tools/Settings.cs:802 ../tools/Settings.cs:883
-#: ../tools/Settings.cs:988 ../tools/Settings.cs:1620
+#: ../tools/Settings.cs:717 ../tools/Settings.cs:806 ../tools/Settings.cs:887
+#: ../tools/Settings.cs:992 ../tools/Settings.cs:1624
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:796
+#: ../tools/Settings.cs:800
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:849
+#: ../tools/Settings.cs:853
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:856
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:855
+#: ../tools/Settings.cs:859
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:890
+#: ../tools/Settings.cs:894
 msgid "Address"
 msgstr "Dirección"
 
-#: ../tools/Settings.cs:1235
+#: ../tools/Settings.cs:1239
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1261 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1265 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:1266
+#: ../tools/Settings.cs:1270
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:1271
+#: ../tools/Settings.cs:1275
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:1295
+#: ../tools/Settings.cs:1299
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1296
+#: ../tools/Settings.cs:1300
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1093,12 +1087,12 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1337
+#: ../tools/Settings.cs:1341
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Conectándose a {0}"
 
-#: ../tools/Settings.cs:1621
+#: ../tools/Settings.cs:1625
 msgid "Description"
 msgstr "Descripción"
 
@@ -1203,8 +1197,8 @@ msgid "Display the search window by pressing:"
 msgstr "Mostrar la ventana de búsqueda al presionar:"
 
 #: ../tools/settings.glade.h:24
-msgid "Enable web interface to local beagle service"
-msgstr "Activar la interfaz web para el servicio local de Beagle"
+msgid "Enable web interface for local search service"
+msgstr "Activar la interfaz web para el servicio local de búsqueda"
 
 #: ../tools/settings.glade.h:25
 msgid "Enable/Disable backends from the indexing and searching process."
