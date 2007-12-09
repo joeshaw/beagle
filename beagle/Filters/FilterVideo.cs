@@ -26,7 +26,11 @@ namespace Beagle.Filters {
 				if (! type.StartsWith ("video/"))
 					continue;
 
-				AddSupportedFlavor (FilterFlavor.NewFromMimeType (type));
+				FilterFlavor flavor = FilterFlavor.NewFromMimeType (type);
+				// Use priority = 1 + FilterTotem priority
+				flavor.Priority = -1; // disable till the right properties are figured out
+
+				AddSupportedFlavor (flavor);
 			}
 		}
 

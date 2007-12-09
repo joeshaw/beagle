@@ -71,7 +71,7 @@ namespace Beagle.Filters {
 
 			while ((str = pout.ReadLine ()) != null) {
 				FilterFlavor flavor = FilterFlavor.NewFromMimeType (str);
-				flavor.Priority = -1; // Prefer Totem filter over MPlayer
+				flavor.Priority = 1; // Prefer Totem filter over MPlayer
 
 				AddSupportedFlavor (flavor);
 

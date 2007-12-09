@@ -84,12 +84,8 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			foreach (string s in mime_types) {
-				FilterFlavor flavor = FilterFlavor.NewFromMimeType (s);
-				flavor.Priority = -2; // Prefer Totem over this one
-
-				AddSupportedFlavor (flavor);
-			}
+			foreach (string s in mime_types)
+				AddSupportedFlavor (FilterFlavor.NewFromMimeType (s));
 		}
 		
 		private string AspectString(float aspect) {
