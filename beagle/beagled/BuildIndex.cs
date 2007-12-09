@@ -331,6 +331,11 @@ namespace Beagle.Daemon
 					denied_regex = StringFu.GetPatternRegex (denied_patterns);
 			}
 
+			if (arg_disable_directories && arg_delete) {
+				Log.Warn ("--enable-deletion is ignored as --disable-directories is used");
+				arg_delete = false;
+			}
+
 			Log.Always ("Starting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
 			// Set system priorities so we don't slow down the system
@@ -871,6 +876,8 @@ namespace Beagle.Daemon
 				"  --tag [tag]\t\t\tTag index data for identification.\n" + 
 				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
 				"  --enable-deletion\t\tRemove deleted files and directories from index.\n" +
+				"                   \t\tIndex should be created and always updated with this option.\n" +
+				"                   \t\tOption only works if --disable-directories is NOT specified.\n" +
 				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" +
 				"  --disable-directories\t\tDon't add directories to the index.\n" +
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
