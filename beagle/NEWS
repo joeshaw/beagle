@@ -1,3 +1,38 @@
+Version 0.3.1
+10 December 2007
+
+* Fix a crash sqlite3 users will face at startup when upgrading from 0.2.x.
+
+* Workaround a problem in which some HTML emails could cause
+ the index-helper to take lots of memory and go into an infinite loop
+ [bgo #501803].
+
+* Fix a bug in which beagle-settings would grow wide on long directories
+ [bgo #469298].
+
+* Hide the Avahi service settings if Avahi was not enabled at configure time.
+
+* Drop our Images.dll assembly; instead load Tango icons from the icon
+ theme and stock icons [bgo #398533].
+
+* Workaround a crash in mono when hostname is 16 characters or longer.
+
+* Update video tiles layout in beagle-search.
+
+* Use bash for all our scripts. Makes it possible to run beagle-index-info where
+/bin/sh is not linked to /bin/bash.
+
+* Translations:
+
+ - Catalan (Jordi Mas)
+ - Spanish (Jorge Gonzalez)
+
+Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_1/beagle/ChangeLog?view=markup
+
+------------------------------------------------------
 
 Version 0.3.0
 1 December 2007
