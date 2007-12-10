@@ -1,4 +1,191 @@
 ------------------------------------------------------------------------
+r4269 | dbera | 2007-12-10 15:32:12 -0500 (Mon, 10 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/NEWS
+
+Update NEWS for 0.3.1
+
+------------------------------------------------------------------------
+r4268 | dbera | 2007-12-10 13:18:47 -0500 (Mon, 10 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Bump version to 0.3.1
+
+------------------------------------------------------------------------
+r4267 | dbera | 2007-12-10 13:16:05 -0500 (Mon, 10 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/beagle-index-info
+   M /trunk/beagle/tools/beagle-ping
+   M /trunk/beagle/tools/beagle-status
+
+Use bash instead of /bin/sh. Our other scripts are bash based and bash has the exec -a property which is useful.
+
+------------------------------------------------------------------------
+r4266 | dbera | 2007-12-09 12:10:55 -0500 (Sun, 09 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+
+--enable-deletion requires the directories be indexed. Mention it clearly in the usage text. Also, --enable-deletion once used, should be always used - if it is skipped in some run when there were some deleted content, in subsequent re-runs those content will not be found and deleted. Both of these are bad limitations and IMO, should be removed.
+
+------------------------------------------------------------------------
+r4265 | dbera | 2007-12-09 00:05:25 -0500 (Sun, 09 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Bump mono requirement to 1.2.4 since now we require Mono.Data.Sqlite.
+
+------------------------------------------------------------------------
+r4264 | dbera | 2007-12-08 23:48:22 -0500 (Sat, 08 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterMPlayerVideo.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+   M /trunk/beagle/Filters/FilterVideo.cs
+
+Use positive priorities instead of negative priorities. Temporarily disable the new taglib-sharp based video filter for 0.3.1 (also the right properties need to be figured out for video files).
+
+------------------------------------------------------------------------
+r4263 | dbera | 2007-12-08 23:43:24 -0500 (Sat, 08 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/beagle/search/Tiles/Note.cs
+
+Tagging is not present in the current tomboy versions and future versions might have a totally different implementation. Mark the code by a fixme. Change fixme:tab by note:tag and store the (fictitous) tag as Text property instead of keyword.
+
+------------------------------------------------------------------------
+r4262 | dbera | 2007-12-06 09:03:17 -0500 (Thu, 06 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterMail.cs
+
+A workaround for the problem described in #501803. Store the HTML message in a memorystream and allow HTML filter to random access it for filtering. A better patch would be remove the memory stream hack (patch attached to #501803).
+
+------------------------------------------------------------------------
+r4261 | jorgegonz | 2007-12-06 07:52:37 -0500 (Thu, 06 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated spanish translation
+
+------------------------------------------------------------------------
+r4258 | llipka | 2007-12-04 18:03:26 -0500 (Tue, 04 Dec 2007) | 8 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   A /trunk/beagle/Filters/FilterAudio.cs (from /trunk/beagle/Filters/FilterMusic.cs:4250)
+   M /trunk/beagle/Filters/FilterMPlayerVideo.cs
+   D /trunk/beagle/Filters/FilterMusic.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+   A /trunk/beagle/Filters/FilterVideo.cs
+   M /trunk/beagle/Filters/Makefile.am
+   M /trunk/beagle/search/DetailsPane.cs
+   M /trunk/beagle/search/Tiles/Note.cs
+   M /trunk/beagle/search/Tiles/Video.cs
+
+Use taglib-sharp to filter video files. Otherwise use Totem/MPlayer filters.
+
+Taglib seems to work for most of the video files I have so it should be possible
+to just drop the Totem/MPlayer filters in the future.
+
+Update video tiles layout in beagle-search.
+
+
+------------------------------------------------------------------------
+r4257 | kkubasik | 2007-12-04 13:32:54 -0500 (Tue, 04 Dec 2007) | 1 line
+Changed paths:
+   D /trunk/beagle/Packages.mdse
+   D /trunk/beagle/beagle.userprefs
+   D /trunk/beagle/beagle.usertasks
+
+cleanup accidental files
+------------------------------------------------------------------------
+r4256 | kkubasik | 2007-12-04 08:55:09 -0500 (Tue, 04 Dec 2007) | 1 line
+Changed paths:
+   A /trunk/beagle/Packages.mdse
+   A /trunk/beagle/beagle.userprefs
+   A /trunk/beagle/beagle.usertasks
+   M /trunk/beagle/search/Tiles/Note.cs
+
+formatting fix
+------------------------------------------------------------------------
+r4255 | kkubasik | 2007-12-04 05:48:00 -0500 (Tue, 04 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/Util/Note.cs
+   M /trunk/beagle/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/beagle/search/Tiles/Note.cs
+
+Adding support for the indexing and display of Tomboy tags
+------------------------------------------------------------------------
+r4253 | dbera | 2007-12-03 23:43:51 -0500 (Mon, 03 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/README
+
+Fix link in README.
+
+------------------------------------------------------------------------
+r4252 | dbera | 2007-12-03 23:16:49 -0500 (Mon, 03 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+
+Use Environment.MachineName instead of UnixEnvironment.MachineName. Fixes https://bugzilla.novell.com/show_bug.cgi?id=MONO82460 (crash when hostname is 16 chars or longer).
+
+------------------------------------------------------------------------
+r4251 | dbera | 2007-12-03 22:51:09 -0500 (Mon, 03 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/TextCache.cs
+
+TextCache database format was changed in 0.3.0 but the textcache was not purged. This will cause problems for 0.2.18 users who used sqlite3 earlier. There is really a need for a version in TextCache.
+
+------------------------------------------------------------------------
+r4250 | jmas | 2007-12-03 03:55:13 -0500 (Mon, 03 Dec 2007) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ca.po
+
+2007-12-03  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation.
+
+
+------------------------------------------------------------------------
+r4249 | llipka | 2007-12-02 07:30:15 -0500 (Sun, 02 Dec 2007) | 4 lines
+Changed paths:
+   M /trunk/beagle/ImLogViewer/ImLogWindow.cs
+   M /trunk/beagle/ImLogViewer/Makefile.am
+   M /trunk/beagle/Makefile.am
+   M /trunk/beagle/configure.in
+   D /trunk/beagle/images
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/Pages/Base.cs
+   M /trunk/beagle/search/Pages/NoMatch.cs
+   M /trunk/beagle/search/Pages/QuickTips.cs
+   M /trunk/beagle/search/Search.cs
+   M /trunk/beagle/search/Tiles/Image.cs
+   M /trunk/beagle/search/Tiles/Note.cs
+   M /trunk/beagle/search/Tray/TrayIcon.cs
+   M /trunk/beagle/search/UIManager.cs
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/Settings.cs
+
+Fix #398533 – Beagle-Search Tango icons.
+
+Drop our Images.dll assembly and load all icons from the icon theme and stock icons.
+
+------------------------------------------------------------------------
+r4248 | llipka | 2007-12-02 06:20:01 -0500 (Sun, 02 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+   M /trunk/beagle/tools/settings.glade
+
+Fix #469298 – beagle-settings grows super wide on long directories.
+Also hide the Avahi service settings if avahi was not enabled at configure time.
+
+------------------------------------------------------------------------
+r4238 | joeshaw | 2007-12-01 18:48:07 -0500 (Sat, 01 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/ChangeLog
+
+Updated ChangeLog for 0.3.0 release
+------------------------------------------------------------------------
 r4237 | joeshaw | 2007-12-01 18:46:03 -0500 (Sat, 01 Dec 2007) | 1 line
 Changed paths:
    M /trunk/beagle/NEWS
