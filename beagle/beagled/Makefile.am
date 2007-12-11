@@ -439,6 +439,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
 	$(NETWORK_SERVICES_QUERYABLE)				\
 	$(srcdir)/AssemblyInfo.cs				\
+	$(srcdir)/BatteryMonitor.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
@@ -490,6 +491,7 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(BEAGLED_LIBS)                 			\
 	$(DAEMON_DLL_LOCAL_ASSEMBLIES:%=-r:%)			\
 	$(SHARPZIPLIB_LIBS)					\
+	$(NDESK_DBUS_LIBS)					\
 	-r:Mono.Data.Sqlite					\
 	-r:Mono.Posix
 
@@ -614,6 +616,7 @@ DAEMON_LOCAL_ASSEMBLIES =			\
 DAEMON_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
+	$(NDESK_DBUS_LIBS)			\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
 	-r:Mono.Posix
 
@@ -658,6 +661,7 @@ INDEX_HELPER_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(SHARPZIPLIB_LIBS)			\
 	$(INDEX_HELPER_LOCAL_ASSEMBLIES:%=-r:%)	\
+	$(NDESK_DBUS_LIBS)			\
 	-r:Mono.Posix
 
 $(INDEX_HELPER_TARGET): $(INDEX_HELPER_CSFILES) $(INDEX_HELPER_LOCAL_ASSEMBLIES)
@@ -810,6 +814,7 @@ BUILD_INDEX_LOCAL_ASSEMBLIES = \
 BUILD_INDEX_ASSEMBLIES = \
 	$(BEAGLED_LIBS)				\
 	$(DAEMON_LOCAL_ASSEMBLIES:%=-r:%)	\
+	$(NDESK_DBUS_LIBS)			\
 	-r:Mono.Posix
 
 $(BUILD_INDEX_TARGET): $(BUILD_INDEX_CSFILES) $(BUILD_INDEX_LOCAL_ASSEMBLIES)

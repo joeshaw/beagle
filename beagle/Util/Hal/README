@@ -1,0 +1,13 @@
+HalSharp (Hal#)
+===============
+	
+HalSharp is a managed implementation of Hal's exported D-Bus
+interface.
+
+The project is currently hosted at:
+
+	http://code.google.com/p/hal-sharp/
+
+Enjoy.
+
+

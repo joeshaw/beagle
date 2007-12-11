@@ -172,24 +172,20 @@ namespace Beagle.Daemon {
 
 		public static bool StartupProcess ()
 		{
-			Log.Debug ("Beginning main loop");
-
 			// Profile our initialization
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
 
 			// Fire up our server
 			if (! StartServer ()) {
-				if (arg_replace)
-				{
-					ReplaceExisting ();
-				}		
-				else {
+				if (! arg_replace) {
 					Logger.Log.Error ("Could not set up the listener for beagle requests.  "
 							  + "There is probably another beagled instance running.  "
 							  + "Use --replace to replace the running service");
 					Environment.Exit (1);
 				}
+
+				ReplaceExisting ();
 			}
 			
 			// Set up out-of-process indexing
@@ -209,24 +205,21 @@ namespace Beagle.Daemon {
 			Logger.Log.Debug ("Starting QueryDriver");
 			QueryDriver.Start ();
 
-			bool initially_on_battery = SystemInformation.UsingBattery && ! config.GetOption (Conf.Names.IndexOnBattery, false);
+			// Start our battery monitor so we can shut down the
+			// scheduler if needed.
+			BatteryMonitor.Init ();
+
+			bool initially_on_battery = ! BatteryMonitor.UsingAC && ! config.GetOption (Conf.Names.IndexOnBattery, false);
 
 			// Start the Global Scheduler thread
 			if (! arg_disable_scheduler) {
 				if (! initially_on_battery) {
 					Logger.Log.Debug ("Starting Scheduler thread");
 					Scheduler.Global.Start ();
-				} else
+				} else {
 					Log.Debug ("Beagle started on battery, not starting scheduler thread");
+				}
 			}
-
-			// Poll the battery status so we can shut down the
-			// scheduler if needed.  Ideally at some point this
-			// will become some sort of D-BUS signal, probably from
-			// something like gnome-power-manager.
-			prev_on_battery = initially_on_battery;
-			// Use 1 sec more than acpi poll interval
-			GLib.Timeout.Add (((int) SystemInformation.acpi_poll_delay + 1) * 1000, CheckBatteryStatus);
 
 			// Start our Inotify threads
 			Inotify.Start ();
@@ -458,21 +451,18 @@ namespace Beagle.Daemon {
 
 			MainLoopThread = Thread.CurrentThread;
 
-			Log.Initialize (PathFinder.LogDir,
-					"Beagle", 
-					// FIXME: We always turn on full debugging output!  We are still
-					// debugging this code, after all...
-					//arg_debug ? LogLevel.Debug : LogLevel.Warn,
-					LogLevel.Debug,
-					arg_fg);
-
+			// FIXME: We always turn on full debugging output!  We are still
+			// debugging this code, after all...
+			// arg_debug ? LogLevel.Debug : LogLevel.Warn
+			
+			Log.Initialize (PathFinder.LogDir, "Beagle", LogLevel.Debug, arg_fg);
 			Log.Always ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
 			Log.Always ("Command Line: {0}",
 					   Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
 			if (! ExtendedAttribute.Supported) {
-				Logger.Log.Warn ("Extended attributes are not supported on this filesystem.  " +
+				Logger.Log.Warn ("Extended attributes are not supported on this filesystem. " +
 						 "Performance will suffer as a result.");
 			}
 
@@ -483,13 +473,14 @@ namespace Beagle.Daemon {
 
 			// Check if global configuration files are installed
 			if (! Conf.CheckGlobalConfig ()) {
-				Console.WriteLine ("Global configuration files not found in {0}", Conf.GlobalDir);
+				Console.WriteLine ("Global configuration files not found in '{0}'", Conf.GlobalDir);
 				Environment.Exit (-1);
 			}
 
 			// Start our memory-logging thread
-			if (arg_debug_memory)
+			if (arg_debug_memory) {
 				ExceptionHandlingThread.Start (new ThreadStart (LogMemoryUsage));
+			}
 
 			// Do BEAGLE_EXERCISE_THE_DOG_HARDER-related processing.
 			ExerciseTheDogHarder ();
@@ -514,6 +505,9 @@ namespace Beagle.Daemon {
 
 			main_loop = new MainLoop ();
 			Shutdown.RegisterMainLoop (main_loop);
+			
+			// Init DBus
+			NDesk.DBus.BusG.Init ();
 
 			// Defer all actual startup until the main loop is
 			// running.  That way shutdowns during the startup
@@ -521,7 +515,6 @@ namespace Beagle.Daemon {
 			GLib.Idle.Add (new GLib.IdleHandler (StartupProcess));
 
 			// Start our event loop.
-			//Logger.Log.Debug ("Starting main loop");
 			main_loop.Run ();
 
 			// We're out of the main loop now, join all the
@@ -538,29 +531,6 @@ namespace Beagle.Daemon {
 
 			Log.Always ("Beagle daemon process shut down cleanly.");
 		}
-
-		/////////////////////////////////////////////////////////////////////////////
-		
-		private static bool prev_on_battery = false;
-
-		private static bool CheckBatteryStatus ()
-		{
-			bool index_on_battery = Conf.Daemon.GetOption (Conf.Names.IndexOnBattery, false);
-
-			if (prev_on_battery && (! SystemInformation.UsingBattery || index_on_battery)) {
-				if (! SystemInformation.UsingBattery)
-					Log.Info ("Detected a switch from battery to AC power.  Restarting scheduler.");
-				Scheduler.Global.Start ();
-				prev_on_battery = false;
-			} else if (! prev_on_battery && SystemInformation.UsingBattery && ! index_on_battery) {
-				Log.Info ("Detected a switch from AC power to battery.  Stopping scheduler.");
-				Scheduler.Global.Stop ();
-				prev_on_battery = true;
-			}
-
-			return true;
-		}
-
 
 		/////////////////////////////////////////////////////////////////////////////
 

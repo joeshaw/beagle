@@ -144,6 +144,9 @@ namespace Beagle.IndexHelper {
 			main_loop = new MainLoop ();
 			Shutdown.RegisterMainLoop (main_loop);
 
+			// Init DBus
+			NDesk.DBus.BusG.Init ();
+
 			// Start the server
 			Log.Debug ("Starting messaging server");
 			bool server_has_been_started = false;

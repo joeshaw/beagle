@@ -304,7 +304,7 @@ namespace Beagle.Daemon
 				arg_source = dir.Name;
 			}
 
-			if (SystemInformation.UsingBattery && arg_disable_on_battery) {
+			if (Battery.UsingBattery && arg_disable_on_battery) {
 				Log.Always ("Indexer is disabled when on battery power (--disable-on-battery)");
 				Environment.Exit (0);
 			}

@@ -185,68 +185,6 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		public const double acpi_poll_delay = 30;
-		const string ac_present_string = "on-line";
-
-		private static readonly string[] proc_ac_state_filenames = new string[] {
-			"/proc/acpi/ac_adapter/AC/state",
-			"/proc/acpi/ac_adapter/AC0/state",
-			"/proc/acpi/ac_adapter/ADp1/state",
-			"/proc/acpi/ac_adapter/ACAD/state"
-		};
-
-		private static string proc_ac_state_filename = null;
-		private static bool proc_ac_state_exists = true;
-		private static DateTime using_battery_time = DateTime.MinValue;
-		private static bool using_battery;
-
-		public static void CheckAcpi ()
-		{
-			if (! proc_ac_state_exists)
-				return;
-
-			if ((DateTime.Now - using_battery_time).TotalSeconds < acpi_poll_delay)
-				return;
-
-			if (proc_ac_state_filename == null) {
-				foreach (string s in proc_ac_state_filenames) {
-					if (File.Exists (s)) {
-						proc_ac_state_filename = s;
-						break;
-					}
-				}
-			}
-					
-			if (proc_ac_state_filename == null || ! File.Exists (proc_ac_state_filename)) {
-				proc_ac_state_exists = false;
-				using_battery = false;
-				return;
-			}
-
-			Stream stream = new FileStream (proc_ac_state_filename,
-							System.IO.FileMode.Open,
-							FileAccess.Read,
-							FileShare.Read);
-			TextReader reader = new StreamReader (stream);
-
-			string line = reader.ReadLine ();
-			using_battery = (line != null) && (line.IndexOf (ac_present_string) == -1);
-			
-			reader.Close ();
-			stream.Close ();
-
-			using_battery_time = DateTime.Now;
-		}
-
-		public static bool UsingBattery {
-			get { 
-				CheckAcpi ();
-				return using_battery;
-			}
-		}
-
-		///////////////////////////////////////////////////////////////
-
 		[DllImport ("libbeagleglue")]
 		extern static int get_vmsize ();
 
@@ -447,13 +385,12 @@ namespace Beagle.Util {
 		public static void Main ()
 		{
 			while (true) {
-				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6} {7}",
+				Console.WriteLine ("{0} {1} {2} {3} {4} {5} {6}",
 						   LoadAverageOneMinute,
 						   LoadAverageFiveMinute,
 						   LoadAverageFifteenMinute,
 						   ScreenSaverRunning,
 						   InputIdleTime,
-						   UsingBattery,
 						   DiskStatsReadReqs,
 						   VmSize);
 				System.Threading.Thread.Sleep (1000);
