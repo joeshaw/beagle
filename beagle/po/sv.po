@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-15 11:11+0100\n"
-"PO-Revision-Date: 2007-11-15 11:16+0100\n"
+"POT-Creation-Date: 2007-12-11 16:00+0100\n"
+"PO-Revision-Date: 2007-12-11 16:01+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -214,7 +214,7 @@ msgstr "Inne i arkivet {0}"
 #: ../search/Tiles/ArchivedFile.cs:76
 #: ../search/Tiles/Calendar.cs:44
 #: ../search/Tiles/File.cs:176
-#: ../search/Tiles/Note.cs:69
+#: ../search/Tiles/Note.cs:73
 #: ../search/Tiles/RSSFeed.cs:59
 #: ../search/Tiles/Task.cs:41
 #: ../search/Tiles/WebHistory.cs:58
@@ -290,13 +290,14 @@ msgstr "Flytta till papperskorg"
 
 #: ../search/Tiles/File.cs:177
 #: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:70
+#: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
 #: ../search/Tiles/File.cs:182
 #: ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:87
+#: ../search/Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Fullständig sökväg:"
 
@@ -317,10 +318,12 @@ msgid "Set as Wallpaper"
 msgstr "Ställ in som skrivbordsbakgrund"
 
 #: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Note.cs:78
 msgid "Tags:"
 msgstr "Taggar:"
 
 #: ../search/Tiles/Image.cs:86
+#: ../search/Tiles/Video.cs:44
 msgid "Modified:"
 msgstr "Ändrad:"
 
@@ -541,12 +544,6 @@ msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "Om {0} år"
 msgstr[1] "Om {0} år"
-
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "Okänd speltid"
 
 #: ../search/Tiles/WebHistory.cs:59
 msgid "URL:"
@@ -962,59 +959,59 @@ msgstr "Visa detaljer"
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
-#: ../tools/Settings.cs:343
+#: ../tools/Settings.cs:346
 msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
-#: ../tools/Settings.cs:344
+#: ../tools/Settings.cs:347
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från dina aktuella ändringar och läsa om inställningarna från disk?"
 
-#: ../tools/Settings.cs:482
+#: ../tools/Settings.cs:485
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:501
+#: ../tools/Settings.cs:504
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
-#: ../tools/Settings.cs:504
+#: ../tools/Settings.cs:507
 msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
 msgstr "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer den och datat blir redan indexerat."
 
-#: ../tools/Settings.cs:515
+#: ../tools/Settings.cs:518
 msgid "Path not added"
 msgstr "Sökvägen lades inte till"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:527
 msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
-#: ../tools/Settings.cs:525
+#: ../tools/Settings.cs:528
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas bort. Vill du fortfarande lägga till den?"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:554
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
-#: ../tools/Settings.cs:552
+#: ../tools/Settings.cs:555
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "Är du säker på att du vill ta bort denna sökväg från listan över kataloger som skall indexeras?"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:584
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
-#: ../tools/Settings.cs:582
+#: ../tools/Settings.cs:585
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "Är du säker på att du vill ta bort det här objektet från listan över data som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:630
+#: ../tools/Settings.cs:632
 msgid "Remote host already present in the list."
 msgstr "Fjärrvärden finns redan i listan."
 
-#: ../tools/Settings.cs:640
+#: ../tools/Settings.cs:642
 msgid "Netbeagle Node not added"
 msgstr "Netbeaglenod lades inte till"
 
@@ -1026,65 +1023,65 @@ msgstr "Ta bort värd"
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Är du säker på att du vill ta bort denna värd från listan?"
 
-#: ../tools/Settings.cs:720
-#: ../tools/Settings.cs:809
-#: ../tools/Settings.cs:892
-#: ../tools/Settings.cs:998
-#: ../tools/Settings.cs:1617
+#: ../tools/Settings.cs:717
+#: ../tools/Settings.cs:806
+#: ../tools/Settings.cs:887
+#: ../tools/Settings.cs:992
+#: ../tools/Settings.cs:1624
 msgid "Name"
 msgstr "Namn"
 
-#: ../tools/Settings.cs:803
+#: ../tools/Settings.cs:800
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:856
+#: ../tools/Settings.cs:853
 msgid "Path:"
 msgstr "Sökväg:"
 
-#: ../tools/Settings.cs:859
+#: ../tools/Settings.cs:856
 msgid "Pattern:"
 msgstr "Mönster:"
 
-#: ../tools/Settings.cs:862
+#: ../tools/Settings.cs:859
 msgid "Mail folder:"
 msgstr "E-postmapp:"
 
-#: ../tools/Settings.cs:899
+#: ../tools/Settings.cs:894
 msgid "Address"
 msgstr "Adress"
 
-#: ../tools/Settings.cs:1245
+#: ../tools/Settings.cs:1239
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:1271
+#: ../tools/Settings.cs:1265
 #: ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
-#: ../tools/Settings.cs:1276
+#: ../tools/Settings.cs:1270
 msgid "M_ail folder:"
 msgstr "E-postm_app:"
 
-#: ../tools/Settings.cs:1281
+#: ../tools/Settings.cs:1275
 msgid "P_attern:"
 msgstr "Mö_nster:"
 
-#: ../tools/Settings.cs:1305
+#: ../tools/Settings.cs:1299
 msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
-#: ../tools/Settings.cs:1306
+#: ../tools/Settings.cs:1300
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i listan på resurser som ska undanhållas från indexering."
 
-#: ../tools/Settings.cs:1347
+#: ../tools/Settings.cs:1341
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Ansluter till {0}"
 
-#: ../tools/Settings.cs:1618
+#: ../tools/Settings.cs:1625
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -1157,8 +1154,8 @@ msgid "Adjust which types of results should be visible, and in what order they s
 msgstr "Justera vilka typer av resultat som ska visas och i vilken ordning de ska presenteras när de grupperas efter typ."
 
 #: ../tools/settings.glade.h:18
-msgid "Allow external access to local search services"
-msgstr "Tillåt extern åtkomst till lokala söktjänster"
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "Tillåt extern åtkomst till lokala söktjänster (EXPERIMENTELL)"
 
 #: ../tools/settings.glade.h:19
 msgid "Alt"
@@ -1181,8 +1178,8 @@ msgid "Display the search window by pressing:"
 msgstr "Visa sökfönstret genom att trycka:"
 
 #: ../tools/settings.glade.h:24
-msgid "Enable web interface to local beagle service"
-msgstr "Aktivera webbgränssnitt till lokala beagletjänsten"
+msgid "Enable web interface for local search service"
+msgstr "Aktivera webbgränssnitt för lokal söktjänst"
 
 #: ../tools/settings.glade.h:25
 msgid "Enable/Disable backends from the indexing and searching process."
@@ -1655,6 +1652,8 @@ msgstr "Sök"
 msgid "Search for data on your desktop"
 msgstr "Sök efter data på ditt skrivbord"
 
+#~ msgid "Unknown duration"
+#~ msgstr "Okänd speltid"
 #~ msgid "Open..."
 #~ msgstr "Öppna..."
 #~ msgid "About"
