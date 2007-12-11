@@ -49,34 +49,75 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		/////////////////////////////////////////////////////////////
 
-		private void AddExclude (string value, bool is_pattern)
+		private void AddExcludePattern (string value)
 		{
 			if (String.IsNullOrEmpty (value))
 				return;
 
 			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Adding ExcludeItem (value={0}, type={1})", value, (is_pattern ? "Pattern" : "Path"));
+				Logger.Log.Debug ("FileNameFilter: Adding ExcludePattern '{0}'", value);
 
-			if (! is_pattern) {
-				exclude_paths.Add (value);
-				queryable.RemoveDirectory (value);
-			} else {
-				exclude_patterns.Add (value);
-			}
+			exclude_patterns.Add (value);
 		}
 
-		private void RemoveExclude (string value, bool is_pattern)
+		private void RemoveExcludePattern (string value)
 		{
-			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Removing ExcludeItem (value={0}, type={1})", value, (is_pattern ? "Pattern" : "Path"));
+			if (String.IsNullOrEmpty (value))
+				return;
 
-			if (! is_pattern) {
-				exclude_paths.Remove (value);
-			} else {
-				exclude_patterns.Remove (value);
-			}
+			if (Debug)
+				Logger.Log.Debug ("FileNameFilter: Removing ExcludePattern '{0}'", value);
+
+			exclude_patterns.Remove (value);
 		}
-		
+
+		private void AddExcludeDir (string value)
+		{
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			if (Debug)
+				Logger.Log.Debug ("FileNameFilter: Adding ExcludeDir '{0}'", value);
+
+			exclude_paths.Add (value);
+			queryable.RemoveDirectory (value);
+		}
+
+		private void RemoveExcludeDir (string value)
+		{
+			if (String.IsNullOrEmpty (value))
+				return;
+
+			if (Debug)
+				Logger.Log.Debug ("FileNameFilter: Removing ExcludeDir '{0}'", value);
+
+			exclude_paths.Remove (value);
+			// Make sure we re-crawl the paths we used to ignored but
+			// no longer do.
+			queryable.Recrawl (value);
+		}
+
+		// Returns the full directory path for this value, after stripping end '/' and expanding env variable
+		private static string GetExcludeDirectory (string value)
+		{
+			if (String.IsNullOrEmpty (value))
+				return null;
+
+			// Remove end '/'
+			if (value != "/")
+				value = value.TrimEnd ('/');
+
+			value = StringFu.ExpandEnvVariables (value);
+			if (String.IsNullOrEmpty (value))
+				return null;
+
+			value = Path.GetFullPath (value);
+			if (Directory.Exists (value))
+				return value;
+
+			return null;
+		}
+
 		/////////////////////////////////////////////////////////////
 
 		public FileNameFilter (FileSystemQueryable queryable)
@@ -97,23 +138,15 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			List<string[]> values = config.GetListOptionValues (Conf.Names.ExcludeSubdirectory);
 			if (values != null) {
-				foreach (string[] exclude in values) {
-					// Excluded subdirectories can use environment variables
-					// like $HOME/tmp
-					string expanded_exclude = StringFu.ExpandEnvVariables (exclude [0]);
-					if (expanded_exclude != null) {
-						expanded_exclude = Path.GetFullPath (expanded_exclude);
-						if (Directory.Exists (expanded_exclude))
-							AddExclude (expanded_exclude, false);
-					}
-				}
+				foreach (string[] value in values)
+					AddExcludeDir (GetExcludeDirectory (value [0]));
 			}
 
 			values = config.GetListOptionValues (Conf.Names.ExcludePattern);
 			if (values != null)
 				foreach (string[] exclude in values)
 					// RemoveQuotes from beginning and end
-					AddExclude (exclude [0], true);
+					AddExcludePattern (exclude [0]);
 
 			exclude_regex = StringFu.GetPatternRegex (exclude_patterns);
 
@@ -126,14 +159,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (config == null || config.Name != Conf.Names.FilesQueryableConfig)
 				return;
 
-			ArrayList exclude_paths_removed = new ArrayList ();
 			bool clear_fs_state = false;
 
 			List<string[]> values = config.GetListOptionValues (Conf.Names.ExcludeSubdirectory);
 			if (values != null) {
 				ArrayList subdirs = new ArrayList (values.Count);
-				foreach (string[] value in subdirs)
-					subdirs.Add (value [0]);
+				foreach (string[] value in values) {
+					string dir = GetExcludeDirectory (value [0]);
+					if (! String.IsNullOrEmpty (dir))
+						subdirs.Add (dir);
+				}
 
 				IList excludes_wanted = subdirs;
 				IList excludes_to_add, excludes_to_remove;
@@ -144,14 +179,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 						      	      out excludes_to_remove);
 
 				// Process any excludes we think we should remove
-				foreach (string path in excludes_to_remove) {
-					exclude_paths_removed.Add (path);
-					RemoveExclude (path, false);
-				}
+				foreach (string path in excludes_to_remove)
+					RemoveExcludeDir (path);
 
 				// Process any excludes we found to be new
 				foreach (string path in excludes_to_add)
-					AddExclude (path, true);
+					AddExcludeDir (path);
 			}
 
 			values = config.GetListOptionValues (Conf.Names.ExcludePattern);
@@ -171,12 +204,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// Process any excludes we think we should remove
 				foreach (string pattern in excludes_to_remove) {
 					clear_fs_state = true;
-					RemoveExclude (pattern, true);
+					RemoveExcludePattern (pattern);
 				}
 
 				// Process any excludes we found to be new
 				foreach (string pattern in excludes_to_add)
-					AddExclude (pattern, true);
+					AddExcludePattern (pattern);
 
 				exclude_regex = StringFu.GetPatternRegex (exclude_patterns);
 			}
@@ -185,11 +218,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// so that we can index those files which were previously ignored.
 			if (clear_fs_state)
 				queryable.RecrawlEverything ();
-
-			// Make sure we re-crawl the paths we used to ignored but
-			// no longer do.
-			foreach (string path in exclude_paths_removed) 
-				queryable.Recrawl (path);
 		}
 
 		/////////////////////////////////////////////////////////////
