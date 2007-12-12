@@ -222,7 +222,7 @@ namespace Beagle.IndexHelper {
 
 					if (heap_shot && increase > 1.20) {
 						Log.Debug ("Large memory increase detected.  Sending SIGPROF to ourself.");
-						Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGPROF);
+						Mono.Unix.Native.Syscall.kill (System.Diagnostics.Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGPROF);
 					}
 				}
 
