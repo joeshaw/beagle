@@ -244,6 +244,7 @@ uninstall-local:
 
 
 COND_CS_FILES =				\
+	$(srcdir)/AvahiBrowser.cs	\
 	$(srcdir)/ChmFile.cs		\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs

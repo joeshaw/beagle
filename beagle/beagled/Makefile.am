@@ -1006,6 +1006,7 @@ noinst_SCRIPTS=	\
 	$(SNIPPET_TEST_WRAPPER)
 
 EXTRA_DIST = \
+	$(srcdir)/Zeroconf.cs			\
 	$(autostart_DATA)			\
 	$(WEBINTERFACE_INDEX_XML_IN)		\
 	$(webinterface_DATA)			\
