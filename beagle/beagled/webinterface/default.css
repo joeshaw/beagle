@@ -211,6 +211,11 @@ tr.Property:hover td.SearchProperty a {
 	visibility: visible;
 }
 
+td.SearchProperty a img {
+	height: 15px;
+	border: 0px;
+}
+
 .PropertyValue {
 	color: #000066;
 }

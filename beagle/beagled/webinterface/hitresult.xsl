@@ -119,7 +119,7 @@
 		<xsl:for-each select="Property">
 			<xsl:if test="@Name != ''">
 				<tr class="Property">
-				<td class="SearchProperty"><a href="#" onclick="search_property(this); return false;">Search</a></td>
+				<td class="SearchProperty"><a href="#" onclick="search_property(this); return false;"><img src="images/system-search.png" alt="Search for this property and value" title="Search for this property and value" /></a></td>
 				<td class="PropertyKey" key="{@Key}"><xsl:value-of select="@Name"/></td>
 				<td class="PropertyValue" type="{@Type}"><xsl:value-of select="@Value"/></td>
 				</tr>
