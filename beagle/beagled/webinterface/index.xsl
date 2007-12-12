@@ -87,7 +87,7 @@
 <xsl:template name="header">
 	<a href="."><img src="images/beagle-logo.png"/></a>
 	<form name="queryform" onsubmit='search (); return false;' action="POST">
-		<input name="querytext" type="text" size="50" />
+		<input name="querytext" id="querytext" type="text" size="50" />
 		<input name="querysubmit" type="submit" value="Search"/>
 	</form>
 	<span id="headerlinks">

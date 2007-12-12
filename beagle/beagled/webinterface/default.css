@@ -53,6 +53,12 @@ body {
 	margin-bottom: 1.8em;
 }
 
+#querytext {
+	background-image: url('images/system-search.png');
+	background-repeat: no-repeat;
+	padding-left:20px;
+}
+
 #headerlinks {
 	margin-right: 1.2em;
 }
