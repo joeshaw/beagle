@@ -29,7 +29,7 @@ using System;
 namespace Beagle {
 	namespace Xesam {
 		class Ontologies {
-			public static string ToBeagleField(string xesamField) {
+			public static string XesamToBeagleField(string xesamField) {
 				switch (xesamField) {
 					case "dc:title":
 						goto case "xesam:title";
@@ -64,6 +64,70 @@ namespace Beagle {
 					default:
 						Console.Error.WriteLine("Unsupported field: {0}", xesamField);
 						return xesamField.Replace(':', '-');
+				}
+			}
+
+			public static string XesamToBeagleSource(string xesamSource)
+			{
+				switch (xesamSource) {
+					case "xesam:ArchivedFile":
+						return "filetype:archive";
+					case "xesam:File":
+						return "type:File";
+					case "xesam:MessageboxMessage":
+						return "type:MailMessage";
+
+					default:
+						Console.Error.WriteLine("Unsupported source: {0}", xesamSource);
+						return "";
+				}
+			}
+
+			public static string XesamToBeagleContent(string xesamContent)
+			{
+				switch (xesamContent) {
+					case "xesam:Archive":
+						return "filetype:archive";
+					case "xesam:Audio":
+						return "filetype:audio";
+					case "xesam:Bookmark":
+						return "type:Bookmark";
+					case "xesam:Contact":
+						return "type:Contact";
+					case "xesam:Document":
+						return "( filetype:document or filetype:documentation )";
+					case "xesam:Documentation":
+						return "filetype:documentation";
+					case "xesam:Email":
+						return "type:MailMessage";
+					case "xesam:IMMessage":
+						return "type:IMLog";
+					case "xesam:Image":
+						return "filetype:image";
+					case "xesam:Media":
+						return "( filetype:audio or filetype:video )";
+					case "xesam:Message":
+						return "( type:MailMessage or type:IMLog )";
+					case "xesam:RSSMessage":
+						return "type:FeedItem";
+					case "xesam:SourceCode":
+						return "filetype:source";
+					case "xesam:TextDocument":
+						return "filetype:document";
+					case "xesam:Video":
+						return "filetype:video";
+					case "xesam:Visual":
+						return "( filetype:image or filetype:video )";
+					case "xesam:Alarm":
+					case "xesam:Event":
+					case "xesam:FreeBusy":
+						return "type:Calendar";
+					case "xesam:Task":
+						return "type:Task";
+
+					default:
+						Console.Error.WriteLine("Unsupported content type: {0}", xesamContent);
+						return "";
 				}
 			}
 		}
