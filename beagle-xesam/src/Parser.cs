@@ -70,6 +70,7 @@ namespace Beagle {
 
 				return q;
 			}
+
 			private static string ParseXesamCollectible(XPathNavigator nav, CollectibleType col)
 			{
 				// Got XPathNavigator:
@@ -107,7 +108,21 @@ namespace Beagle {
 							nav.MoveToParent();
 							break;
 						case "inSet":
-							Console.Error.WriteLine("TBD: {0}", nav.Name);
+							nav.MoveToFirstChild();
+							string name = ParseXesamField(nav);
+							bool first = false;
+
+							q += "( ";
+							while (nav.MoveToNext()) {
+								if (!first)
+									first = true;
+								else
+									q += " or ";
+								q += name + ":" + ParseXesamData(nav, ComparisonType.Equals);
+							}
+							q += " )";
+
+							nav.MoveToParent();
 							break;
 						case "contains":
 							goto case "equals";
