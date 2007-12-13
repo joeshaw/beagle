@@ -1,5 +1,34 @@
 This is a list of issues we have while implementing the Xesam interface for
-Beagle:
+Beagle, in some sort of priority-order:
+
+* Hit Fields: Currently we can only return the "uri" and "mimetype" fields for
+	hits. We need to support everything that we can as defined in the
+	Xesam ontology draft
+
+* User Searches: User queries are supported as a hack. We don't parse them
+	at all. Since they're so similar to Beagle's native search language,
+	this works for now.
+
+	NOTE: Beagle doesn't support grouping of ANDs and ORs, it seems. We
+	either need to make some drastic changes at lower levels (more R&D
+	required), or break up at ORs and start multiple searches for a single
+	Xesam search (this is ugly).
+
+* <query> content and source: These two attributes of the <query> tag are
+	currently ignored
+
+* Ontologies: We need to establish an exhaustive mapping from Xesam's ontology
+	to the set of fields supported by Beagle. This is being worked on in
+	Beagle.Xesam.Ontologies.ToBeagleField
+
+	Also, How do we sanely set the default value for 
+	session.vendorOntologies as 
+	["xesam", "1.0", "$XDG_SYSTEM_DATA_DIR/share/ontologies/xesam-1.0"]
+
+* Fields/Sorting: We need the list of fields before we can handle these
+
+* Threading: We need to verify that we've got locks where we need and that a
+	blocking request does not block the adaptor as a whole
 
 * HitsModified: Beagle does not have an equivalent signal, because it'd need
 	to maintain a lot of state to track these changes. Instead, we just
@@ -20,17 +49,6 @@ Beagle:
 	status. Are we suppoed to throw a StateChanged on session (dbus session
 	or xesam session?) creation or something?
 
-* Grouping: Beagle doesn't support grouping of ANDs and ORs, it seems. We
-	either need to make some drastic changes at lower levels (more R&D
-	required), or break up at ORs and start multiple searches for a single
-	Xesam search (I don't like this approach -- it is ugly).
-
-* Ontologies: What is the default value for session.vendorOntologies?
-
 * Blocking searches: We stop blocking after the first OnFinished event. Maybe
 	we need to wait for a few more before throwing a SearchDone
 
-* Fields/Sorting: We need the list of fields before we can handle these
-
-* Threading: We need to verify that we've got locks where we need and that a
-	blocking request does not block the adaptor as a whole
