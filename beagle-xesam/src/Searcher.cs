@@ -36,31 +36,31 @@ namespace Beagle {
 		public delegate void HitsRemovedMethod (string searchId, uint[] hitIds);
 		public delegate void SearchDoneMethod (string searchId);
 
-		[Interface("org.freedesktop.xesam.Search")]
+		[Interface ("org.freedesktop.xesam.Search")]
 		public interface ISearcher {
-			string NewSession();
-			void CloseSession(string s);
-			object GetProperty(string s, string prop);
-			object SetProperty(string s, string prop, object val);
-			string NewSearch(string s, string xmlSearch);
-			void StartSearch(string s);
-			void CloseSearch(string s);
-			string[] GetState();
-			uint GetHitCount(string s);
-			object[][] GetHitData(string s, uint[] ids, string[] fields);
-			object[][] GetHits(string s, uint num);
+			string NewSession ();
+			void CloseSession (string s);
+			object GetProperty (string s, string prop);
+			object SetProperty (string s, string prop, object val);
+			string NewSearch (string s, string xmlSearch);
+			void StartSearch (string s);
+			void CloseSearch (string s);
+			string[] GetState ();
+			uint GetHitCount (string s);
+			object[][] GetHitData (string s, uint[] ids, string[] fields);
+			object[][] GetHits (string s, uint num);
 			event HitsAddedMethod HitsAdded;
 			event HitsRemovedMethod HitsRemoved;
-			// XXX: We don't implement HitsModified and StateChanged because there is no
+			// FIXME: We don't implement HitsModified and StateChanged because there is no
 			// simple corresponding entity in Beagle
 			event SearchDoneMethod SearchDone;
 		}
 
 		public class Searcher : ISearcher {
 			static private bool Debug = true;
-			// XXX: Assuming that you won't change the beagled version in between
+			// FIXME: Assuming that you won't change the beagled version in between
 			static private uint beagleVersion = 0;
-			// XXX: Start worrying about threads?
+			// FIXME: Start worrying about threads?
 			private int sessionCount = 0;
 			private int searchCount = 0;
 			private Dictionary<string, Session> sessions = new Dictionary<string, Session>();
@@ -70,51 +70,51 @@ namespace Beagle {
 			public event HitsRemovedMethod HitsRemoved;
 			public event SearchDoneMethod SearchDone;
 
-			public string NewSession()
+			public string NewSession ()
 			{
 				if (beagleVersion == 0) {
-					DaemonInformationRequest infoReq = new DaemonInformationRequest(true, false, false, false);
-					DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
-					beagleVersion = (uint)VersionStringToInt(infoResp.Version);
+					DaemonInformationRequest infoReq = new DaemonInformationRequest (true, false, false, false);
+					DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send ();
+					beagleVersion = (uint)VersionStringToInt (infoResp.Version);
 				}
 
-				Session session = new Session();
+				Session session = new Session ();
 				session.VendorId = "Beagle";
 				session.VendorVersion = beagleVersion;
 				session.VendorDisplay = "The Beagle desktop search tool";
-				// XXX: populate fieldnames, extensions
-				sessions.Add(Convert.ToString(sessionCount), session);
+				// FIXME: populate fieldnames, extensions
+				sessions.Add (Convert.ToString (sessionCount), session);
 
 				if (Debug) 
-					Console.Error.WriteLine("NewSession() -- {0}", sessionCount);
+					Console.Error.WriteLine ("NewSession() -- {0}", sessionCount);
 
-				return Convert.ToString(sessionCount++);
+				return Convert.ToString (sessionCount++);
 			}
 
-			public void CloseSession(string s)
+			public void CloseSession (string s)
 			{
-				Session session = sessions[s];
+				Session session = sessions [s];
 
 				if (s == null) {
 					if (Debug) 
-						Console.Error.WriteLine("Error: CloseSession() -- {0} is not a valid session", s);
+						Console.Error.WriteLine ("Error: CloseSession() -- {0} is not a valid session", s);
 					return;
 				}
 
-				session.Close();
-				sessions.Remove(s);
+				session.Close ();
+				sessions.Remove (s);
 
 				if (Debug) 
-					Console.Error.WriteLine("CloseSession() -- {0}", s);
+					Console.Error.WriteLine ("CloseSession() -- {0}", s);
 			}
 
-			public object GetProperty(string s, string prop)
+			public object GetProperty (string s, string prop)
 			{
-				Session session = sessions[s];
+				Session session = sessions [s];
 				object ret;
 
 				if (Debug) 
-					Console.Error.WriteLine("GetProperty() -- {0}, {1}", s, prop);
+					Console.Error.WriteLine ("GetProperty() -- {0}, {1}", s, prop);
 
 				switch (prop) {
 					case "search.live": 
@@ -175,24 +175,24 @@ namespace Beagle {
 
 				if (Debug) {
 					if (ret is string[]) {
-						Console.Error.Write(" `-- returning ");
+						Console.Error.Write (" `-- returning ");
 						foreach (string i in (string[])ret)
-							Console.Error.Write("\"{0}\" ", i);
-						Console.Error.WriteLine("");
+							Console.Error.Write ("\"{0}\" ", i);
+						Console.Error.WriteLine (String.Empty);
 					} else {
-						Console.Error.WriteLine(" `-- returning {0}", ret);
+						Console.Error.WriteLine (" `-- returning {0}", ret);
 					}
 				}
 				return ret;
 			}
 
-			public object SetProperty(string s, string prop, object val)
+			public object SetProperty (string s, string prop, object val)
 			{
-				Session session = sessions[s];
+				Session session = sessions [s];
 				object ret;
 
 				if (Debug) 
-					Console.Error.WriteLine("GetProperty() -- {0}, {1}", s, prop);
+					Console.Error.WriteLine ("GetProperty() -- {0}, {1}", s, prop);
 
 				switch (prop) {
 					case "search.live": 
@@ -270,24 +270,24 @@ namespace Beagle {
 
 				if (Debug) {
 					if (ret is string[]) {
-						Console.Error.Write(" `-- returning ");
+						Console.Error.Write (" `-- returning ");
 						foreach (string i in (string[])ret)
-							Console.Error.Write("\"{0}\" ", i);
-						Console.Error.WriteLine("");
+							Console.Error.Write ("\"{0}\" ", i);
+						Console.Error.WriteLine (String.Empty);
 					} else {
-						Console.Error.WriteLine(" `-- returning {0}", ret);
+						Console.Error.WriteLine (" `-- returning {0}", ret);
 					}
 				}
 				return ret;
 			}
 
-			public string NewSearch(string s, string xmlQuery)
+			public string NewSearch (string s, string xmlQuery)
 			{
-				Session session = sessions[s];
-				string searchId = Convert.ToString(searchCount++);
+				Session session = sessions [s];
+				string searchId = Convert.ToString (searchCount++);
 				Search search;
 
-				search = session.CreateSearch(searchId, xmlQuery);
+				search = session.CreateSearch (searchId, xmlQuery);
 
 				// These two are emitted even if search.live is false
 				// If you touch these, look at Close() too
@@ -297,63 +297,63 @@ namespace Beagle {
 					search.HitsRemovedHandler += HitsRemoved;
 				}
 
-				searches.Add(searchId, search);
+				searches.Add (searchId, search);
 
 				if (Debug) 
-					Console.Error.WriteLine("NewSearch() -- {0}, {1}, {2}", s, searchId, xmlQuery);
+					Console.Error.WriteLine ("NewSearch() -- {0}, {1}, {2}", s, searchId, xmlQuery);
 
 				return searchId;
 			}
 
-			public void StartSearch(string s)
+			public void StartSearch (string s)
 			{
-				Search search = searches[s];
+				Search search = searches [s];
 
 				if (search == null) {
 					if (Debug) 
-						Console.Error.WriteLine("Error: StartSearch() -- {0} is not a valid search", s);
+						Console.Error.WriteLine ("Error: StartSearch() -- {0} is not a valid search", s);
 					return;
 				}
 
-				search.Start();
+				search.Start ();
 				if (Debug) 
-					Console.Error.WriteLine("StartSearch() -- {0}", s);
+					Console.Error.WriteLine ("StartSearch() -- {0}", s);
 			}
 
-			public void CloseSearch(string s)
+			public void CloseSearch (string s)
 			{
-				Search search = searches[s];
+				Search search = searches [s];
 
 				if (search == null) {
 					if (Debug) 
-						Console.Error.WriteLine("Error: CloseSearch() -- {0} is not a valid search", s);
+						Console.Error.WriteLine ("Error: CloseSearch() -- {0} is not a valid search", s);
 					return;
 				}
 
-				search.Close();
-				searches.Remove(s);
+				search.Close ();
+				searches.Remove (s);
 
 				if (Debug) 
-					Console.Error.WriteLine("CloseSearch() -- {0}", s);
+					Console.Error.WriteLine ("CloseSearch() -- {0}", s);
 			}
 
-			public string[] GetState()
+			public string[] GetState ()
 			{
-				// XXX: Is there any way to find out if we're doing a FULL_INDEX ?
+				// FIXME: Is there any way to find out if we're doing a FULL_INDEX ?
 				string[] ret = new string[] { null, null };
 				if (Debug) 
-					Console.Error.WriteLine("GetState(): {0} - {1}", ret[0], ret[1]);
+					Console.Error.WriteLine ("GetState(): {0} - {1}", ret [0], ret [1]);
 
-				DaemonInformationRequest infoReq = new DaemonInformationRequest(false, false, true, true);
-				DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send();
+				DaemonInformationRequest infoReq = new DaemonInformationRequest (false, false, true, true);
+				DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send ();
 
 				if (infoResp.IsIndexing) {
-					ret[0] = "IDLE";
+					ret [0] = "IDLE";
 					return ret;
 				} else {
-					ret[0] = "UPDATE";
+					ret [0] = "UPDATE";
 
-					// XXX: We're just building total progress percentage as an average of all
+					// FIXME: We're just building total progress percentage as an average of all
 					// queryables' percentages
 					int qCount = 0;
 					int progress = 0;
@@ -364,48 +364,48 @@ namespace Beagle {
 						}
 					}
 
-					ret[1] = (progress/qCount).ToString();
+					ret [1] = (progress/qCount).ToString ();
 				}
 
 				if (Debug) 
-					Console.Error.WriteLine("GetState(): {0} - {1}", ret[0], ret[1]);
+					Console.Error.WriteLine ("GetState(): {0} - {1}", ret [0], ret [1]);
 				return ret;
 			}
 
-			public uint GetHitCount(string s)
+			public uint GetHitCount (string s)
 			{
-				Search search = searches[s];
+				Search search = searches [s];
 
 				if (search == null) {
 					if (Debug) 
-						Console.Error.WriteLine("Error: GetHitCount() -- {0} is not a valid search", s);
+						Console.Error.WriteLine ("Error: GetHitCount() -- {0} is not a valid search", s);
 					return 0;
 				}
 
-				uint ret = search.GetHitCount();
+				uint ret = search.GetHitCount ();
 
 				if (Debug) 
-					Console.Error.WriteLine("GetHitCount() -- {0}, {1}", s, ret);
+					Console.Error.WriteLine ("GetHitCount() -- {0}, {1}", s, ret);
 
 				return ret;
 			}
 
-			public object[][] GetHits(string s, uint num)
+			public object[][] GetHits (string s, uint num)
 			{
-				return searches[s].GetHits(num);
+				return searches [s].GetHits (num);
 			}
 
-			public object[][] GetHitData(string s, uint[] ids, string[] fields)
+			public object[][] GetHitData (string s, uint[] ids, string[] fields)
 			{
-				return searches[s].GetHitData(ids, fields);
+				return searches [s].GetHitData (ids, fields);
 			}
 
-			private uint VersionStringToInt(string version)
+			private uint VersionStringToInt (string version)
 			{
 				// FIXME: Ewwww!
-				if (version.StartsWith("0.2"))
+				if (version.StartsWith ("0.2"))
 					return 2;
-				if (version.StartsWith("0.3"))
+				if (version.StartsWith ("0.3"))
 					return 3;
 				else
 					// Is this really Beagle?

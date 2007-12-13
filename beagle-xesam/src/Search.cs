@@ -53,7 +53,7 @@ namespace Beagle {
 				get { return bHit; }
 			}
 
-			public Hit(uint id, Beagle.Hit hit, string[] fields)
+			public Hit (uint id, Beagle.Hit hit, string[] fields)
 			{
 				this.id = id;
 				bHit = hit;
@@ -63,20 +63,20 @@ namespace Beagle {
 				uri = hit.Uri;
 
 				foreach (string field in fields) {
-					switch (Ontologies.ToBeagleField(field)) {
+					switch (Ontologies.XesamToBeagleField (field)) {
 						case "uri":
-							hitValue[i++] = hit.Uri.ToString();
+							hitValue [i++] = hit.Uri.ToString ();
 							break;
 
 						case "mimetype":
 							// hit.MimeType may be null
-							hitValue[i++] = hit.MimeType + "";
+							hitValue [i++] = hit.MimeType + String.Empty;
 							break;
 
 						default:
-							//XXX: This *will* break since we don't know what the expected
+							//FIXME: This *will* break since we don't know what the expected
 							//type here is
-							hitValue[i++] = "";
+							hitValue [i++] = String.Empty;
 							break;
 					}
 				}
@@ -97,7 +97,7 @@ namespace Beagle {
 			public event HitsRemovedMethod HitsRemovedHandler;
 			public event SearchDoneMethod SearchDoneHandler;
 
-			public Search(string myID, Session parentSession, string xmlQuery)
+			public Search (string myID, Session parentSession, string xmlQuery)
 			{
 				this.parentSession = parentSession;
 				id = myID;
@@ -105,166 +105,166 @@ namespace Beagle {
 				finished = false;
 				hits = new Dictionary<uint, Xesam.Hit>();
 				newHits = new Dictionary<uint, Xesam.Hit>();
-				mutex = new Mutex();
+				mutex = new Mutex ();
 
-				query = new Query();
-				string qTxt = Parser.ParseXesamQuery(xmlQuery);
+				query = new Query ();
+				string qTxt = Parser.ParseXesamQuery (xmlQuery);
 
-				if (qTxt == null) {
-					// XXX: This is dumb -- we should die gracefully
-					qTxt = "";
+				if (string.IsNullOrEmpty (qTxt)) {
+					// FIXME: This is dumb -- we should die gracefully
+					qTxt = String.Empty;
 					finished = true;
 				}
 
-				query.AddText(qTxt);
+				query.AddText (qTxt);
 
 				query.HitsAddedEvent += OnHitsAdded;
 				query.HitsSubtractedEvent += OnHitsSubtracted;
 				query.FinishedEvent += OnFinished;
 			}
 
-			public void Start()
+			public void Start ()
 			{
-				mutex.WaitOne();
+				mutex.WaitOne ();
 				if (!running) {
 					running = true;
-					query.SendAsync();
+					query.SendAsync ();
 				}
-				mutex.ReleaseMutex();
+				mutex.ReleaseMutex ();
 			}
 
-			public void Close()
+			public void Close ()
 			{
-				mutex.WaitOne();
+				mutex.WaitOne ();
 				if (running) {
 					query.HitsAddedEvent -= OnHitsAdded;
 					query.HitsSubtractedEvent -= OnHitsSubtracted;
 					query.FinishedEvent -= OnFinished;
-					query.Close();
+					query.Close ();
 					running = false;
 				}
-				mutex.ReleaseMutex();
+				mutex.ReleaseMutex ();
 			}
 
-			public uint GetHitCount()
+			public uint GetHitCount ()
 			{
 				if (!running)
 					return 0;
 
-				while (!finished) { /* XXX: Consider using a semaphore */ }
-				mutex.WaitOne();
+				while (!finished) { /* FIXME: Consider using a semaphore */ }
+				mutex.WaitOne ();
 
 				uint count = (uint)(hits.Count + newHits.Count);
 
-				mutex.ReleaseMutex();
+				mutex.ReleaseMutex ();
 				return count;
 			}
 
-			public object[][] GetHits(uint num)
+			public object[][] GetHits (uint num)
 			{
 				if (!running) {
-					// XXX: Do something not dumb
-					return (object[][]) (new object());
+					// FIXME: Do something not dumb
+					return (object[][]) (new object ());
 				}
 
 				if (newHits.Count < num) {
-					while (!finished) { /* XXX: Consider using a semaphore */ }
+					while (!finished) { /* FIXME: Consider using a semaphore */ }
 				}
 
-				mutex.WaitOne();
+				mutex.WaitOne ();
 
-				// XXX: TBD -- sorting
+				// FIXME: TBD -- sorting
 				List<uint> returned = new List<uint>();
 				List<object[]> ret = new List<object[]>();
 				int i = 1;
 
 				foreach (KeyValuePair<uint, Xesam.Hit> kvp in newHits) {
-					ret.Add(kvp.Value.Value);
-					returned.Add(kvp.Key);
-					hits.Add(kvp.Key, kvp.Value);
+					ret.Add (kvp.Value.Value);
+					returned.Add (kvp.Key);
+					hits.Add (kvp.Key, kvp.Value);
 					if (i++ == num)
 						break;
 				}
 
 				foreach (uint key in returned) {
-					newHits.Remove(key);
+					newHits.Remove (key);
 				}
 
-				Console.Error.WriteLine("GetHits(): returning {0} hits ({1} requested)", i-1, num);
-				mutex.ReleaseMutex();
+				Console.Error.WriteLine ("GetHits(): returning {0} hits ({1} requested)", i-1, num);
+				mutex.ReleaseMutex ();
 
-				return ret.ToArray();
+				return ret.ToArray ();
 			}
 
-			public object[][] GetHitData(uint[] ids, string[] fields)
+			public object[][] GetHitData (uint[] ids, string[] fields)
 			{
 				List<object[]> ret = new List<object[]>();
-				mutex.WaitOne();
+				mutex.WaitOne ();
 
 				foreach (uint id in ids) {
-					Hit hit = new Hit(id, hits[id].BeagleHit, fields);
-					ret.Add(hit.Value);
+					Hit hit = new Hit (id, hits [id].BeagleHit, fields);
+					ret.Add (hit.Value);
 				}
 
-				Console.Error.WriteLine("GetHits(): returning {0} hits", ret.Count);
-				mutex.ReleaseMutex();
-				return ret.ToArray();
+				Console.Error.WriteLine ("GetHits(): returning {0} hits", ret.Count);
+				mutex.ReleaseMutex ();
+				return ret.ToArray ();
 			}
 
-			private void OnHitsAdded(HitsAddedResponse response)
+			private void OnHitsAdded (HitsAddedResponse response)
 			{
-				mutex.WaitOne();
+				mutex.WaitOne ();
 
 				// cache the hits and keep them nice and safe
-				Console.Error.WriteLine("{0}: Got some hits: {1}", id, response.Hits.Count);
+				Console.Error.WriteLine ("{0}: Got some hits: {1}", id, response.Hits.Count);
 				foreach (Beagle.Hit bHit in response.Hits) {
-					Console.Error.WriteLine("+Hit: {0}", bHit.Uri);
-					newHits.Add(hitCount++, new Xesam.Hit(hitCount, bHit, parentSession.HitFields));
+					Console.Error.WriteLine ("+Hit: {0}", bHit.Uri);
+					newHits.Add (hitCount++, new Xesam.Hit (hitCount, bHit, parentSession.HitFields));
 				}
 
 				if (newHits.Count > 0 && HitsAddedHandler != null) {
-					HitsAddedHandler(id, (uint)response.Hits.Count);
+					HitsAddedHandler (id, (uint)response.Hits.Count);
 				}
 
-				mutex.ReleaseMutex();
+				mutex.ReleaseMutex ();
 			}
 
-			private void OnHitsSubtracted(HitsSubtractedResponse response)
+			private void OnHitsSubtracted (HitsSubtractedResponse response)
 			{
-				mutex.WaitOne();
+				mutex.WaitOne ();
 
 				List<uint> removed = new List<uint>();
 
-				Console.Error.WriteLine("Removing some hits");
+				Console.Error.WriteLine ("Removing some hits");
 				foreach (KeyValuePair<uint, Xesam.Hit> kvp in hits) {
 					foreach (Uri uri in response.Uris) {
 						if (kvp.Value.Uri == uri) {
-							Console.Error.WriteLine("-Hit: {0}", uri);
-							removed.Add(kvp.Key);
+							Console.Error.WriteLine ("-Hit: {0}", uri);
+							removed.Add (kvp.Key);
 						}
 					}
 				}
 
 				foreach (uint key in removed) {
-					hits.Remove(key);
+					hits.Remove (key);
 				}
 
 				if (HitsRemovedHandler != null) {
-					HitsRemovedHandler(id, removed.ToArray());
+					HitsRemovedHandler (id, removed.ToArray ());
 				}
-				mutex.ReleaseMutex();
+				mutex.ReleaseMutex ();
 			}
 
-			private void OnFinished(FinishedResponse response)
+			private void OnFinished (FinishedResponse response)
 			{
-				Console.Error.WriteLine("Search finished");
+				Console.Error.WriteLine ("Search finished");
 
 				// might want to collect a few more OnFinished signals before being done
 				// for non-live searches
 				finished = true;
 
 				if (SearchDoneHandler != null) {
-					SearchDoneHandler(id);
+					SearchDoneHandler (id);
 				}
 			}
 		}

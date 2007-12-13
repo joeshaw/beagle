@@ -135,14 +135,14 @@ namespace Beagle {
 				set { vendorMaxHits = value; }
 			}
 
-			public Session()
+			public Session ()
 			{
 				SearchLive = false;
 				HitFields = new string[] { "xesam:url" };
 				HitFieldsExtended = new string[] { };
 				HitSnippetLength = 200;
 				SortPrimary = "xesam:score";
-				SortSecondary = "";
+				SortSecondary = String.Empty;
 				SortOrder = "descending";
 				VendorId = "Unknown";
 				VendorVersion = 0;
@@ -152,22 +152,22 @@ namespace Beagle {
 				VendorOntologyContents = new string[] { };
 				VendorOntologySources = new string[] { };
 				VendorExtensions = new string[] { };
-				// XXX: This is wrong. Needs to be fixed.
+				// FIXME: This is wrong. Needs to be fixed.
 				VendorOntologies = new string[][] { };
 				VendorMaxHits = 1000;
 			}
 
-			public Search CreateSearch(string searchID, string xmlQuery)
+			public Search CreateSearch (string searchID, string xmlQuery)
 			{
-				Search search = new Search(searchID, this, xmlQuery);
-				searches.Add(search);
+				Search search = new Search (searchID, this, xmlQuery);
+				searches.Add (search);
 				return search;
 			}
 
-			public void Close()
+			public void Close ()
 			{
 				foreach (Search s in searches) {
-					s.Close();
+					s.Close ();
 				}
 			}
 		}
