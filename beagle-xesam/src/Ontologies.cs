@@ -60,6 +60,11 @@ namespace Beagle {
 					goto case "xesam:url";
 				case "xesam:url":
 					return "uri";
+					
+				    case "xesam:fileExtension":
+					    goto case "fileExtension";
+				    case "fileExtension":
+				        return "beagle:FilenameExtension";
 
 				default:
 					Console.Error.WriteLine ("Unsupported field: {0}", xesamField);

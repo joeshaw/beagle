@@ -72,11 +72,35 @@ namespace Beagle {
 							// hit.MimeType may be null
 							hitValue [i++] = hit.MimeType + String.Empty;
 							break;
-
+					    case "title":
+						    if( hit.GetFirstProperty("dc:title") != null)
+							    hitValue[i++] = hit.GetFirstProperty("dc:title");
+						    break;
+						
+						case "author":
+						    if(  hit.GetFirstProperty("dc:author") != null)
+							    hitValue[i++] = hit.GetFirstProperty("dc:author");
+							break;
+						
+						case "creator":
+						    if( hit.GetFirstProperty("dc:creator") != null)
+							    hitValue[i++] = hit.GetFirstProperty("dc:creator");
+							break;
+						
+					    case "date":
+							hitValue[i++] = hit.Timestamp.ToString("s");
+							break;
+						
 						default:
 							//FIXME: This *will* break since we don't know what the expected
 							//type here is
-							hitValue [i++] = String.Empty;
+						    if(hit.GetFirstProperty(Ontologies.XesamToBeagleField(field)) != null){
+							    hitValue[i++] = hit.GetFirstProperty(Ontologies.XesamToBeagleField(field)).ToString();
+							}else {
+								
+								hitValue[i++] = String.Empty;
+							}
+
 							break;
 					}
 				}

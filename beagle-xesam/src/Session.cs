@@ -138,7 +138,11 @@ namespace Beagle {
 			public Session ()
 			{
 				SearchLive = false;
-				HitFields = new string[] { "xesam:url" };
+				HitFields = new string[] { "xesam:url" ,
+					"xesam:title",
+					"xesam:author", 
+					"dc:date", 
+					"xesam:fileExtension" };
 				HitFieldsExtended = new string[] { };
 				HitSnippetLength = 200;
 				SortPrimary = "xesam:score";
