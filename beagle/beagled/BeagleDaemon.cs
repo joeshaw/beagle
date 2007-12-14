@@ -506,9 +506,6 @@ namespace Beagle.Daemon {
 			main_loop = new MainLoop ();
 			Shutdown.RegisterMainLoop (main_loop);
 			
-			// Init DBus
-			NDesk.DBus.BusG.Init ();
-
 			// Defer all actual startup until the main loop is
 			// running.  That way shutdowns during the startup
 			// process work correctly.

@@ -22,6 +22,15 @@ namespace Beagle.Daemon {
 		public static void Init ()
 		{
 			try {
+				// Init DBus
+				NDesk.DBus.BusG.Init ();
+			} catch (Exception e) {
+				// Lack of specific exception
+				Log.Error (e, "Failed to access dbus session bus. Battery monitoring will be disabled.");
+				return;
+			}
+
+			try {
 				Manager manager = new Manager (new Context ());
 
 				foreach (Device device in manager.FindDeviceByCapability ("ac_adapter")) {
@@ -42,8 +51,11 @@ namespace Beagle.Daemon {
 		private static void OnPropertyModified (int num_changes, PropertyModification[] props)
 		{
 			foreach (PropertyModification p in props) {
-				if (p.Key == "ac_adapter.present")
-					CheckStatus ();
+				if (p.Key != "ac_adapter.present")
+					continue;
+
+				CheckStatus ();
+				return;
 			}
 		}
 
