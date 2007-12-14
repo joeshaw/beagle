@@ -459,6 +459,11 @@ namespace Beagle.Filters {
 									child.AddProperty (prop);
 							}
 
+							// Store length of attachment
+							long length = stream.Length;
+							if (length != -1)
+								child.AddProperty (Property.NewUnsearched ("fixme:filesize", length));
+
 							if (part.ContentType.Type.ToLower () == "text")
 								child.SetTextReader (new StreamReader (stream));
 							else

@@ -247,6 +247,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.Crawled = crawl_mode;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
 
+			FileInfo fi = new FileInfo (path);
+			if (fi == null)
+				return null; // You never know when files could vanish
+			indexable.AddProperty (Property.NewUnsearched ("fixme:filesize", fi.Length));
+
 			AddStandardPropertiesToIndexable (indexable, Path.GetFileName (path), parent, true);
 
 			indexable.LocalState ["Path"] = path;

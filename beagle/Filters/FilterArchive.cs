@@ -186,6 +186,7 @@ namespace Beagle.Filters {
 
 			child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
 			child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
+			child.AddProperty (Property.NewUnsearched ("fixme:filesize", a_entry.Size));
 
 			foreach (Property prop in Property.StandardFileProperties (Path.GetFileName (a_entry.Name), false))
 				child.AddProperty (prop);
