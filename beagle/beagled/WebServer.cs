@@ -72,6 +72,7 @@ namespace Beagle.Daemon {
 			mappings.Add ("/images/beagle-logo.png", new PageMapping ("images/beagle-logo.png", "image/png"));
 			mappings.Add ("/images/busy-animation.gif", new PageMapping ("images/busy-animation.gif", "image/gif"));
 			mappings.Add ("/images/favicon.png", new PageMapping ("images/favicon.png", "image/png"));
+			mappings.Add ("/images/system-search.png", new PageMapping ("images/system-search.png", "image/png"));
 
 			webserver_dir = Environment.GetEnvironmentVariable ("BEAGLE_WEBSERVER_DIR");
 			if (webserver_dir != null) {
