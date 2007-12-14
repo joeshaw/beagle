@@ -50,6 +50,7 @@ using Beagle.Filters;
 	 typeof(FilterDocbook),
 	 typeof(FilterEbuild),
 	 typeof(FilterExternal),
+     typeof(FilterEmpathyLog),
 	 typeof(FilterFortran),
 	 typeof(FilterGif),
 	 typeof(FilterHtml),

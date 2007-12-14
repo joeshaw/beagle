@@ -381,6 +381,11 @@ KOPETE_QUERYABLE_CSFILES =					\
 	$(kopetequeryable)/KopeteQueryable.cs 	 		\
 	$(kopetequeryable)/KopeteCrawler.cs
 
+empathyqueryable = $(srcdir)/EmpathyQueryable
+EMPATHY_QUERYABLE_CSFILES =					\
+	$(empathyqueryable)/EmpathyQueryable.cs 	 		\
+	$(empathyqueryable)/EmpathyCrawler.cs
+
 knotesqueryable = $(srcdir)/KNotesQueryable
 KNOTES_QUERYABLE_CSFILES =					\
 	$(knotesqueryable)/KNotesQueryable.cs
@@ -438,6 +443,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
 	$(NETWORK_SERVICES_QUERYABLE)				\
+	$(EMPATHY_QUERYABLE_CSFILES)			\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/BatteryMonitor.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\

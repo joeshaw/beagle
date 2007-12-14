@@ -70,6 +70,9 @@ namespace Search.Tiles {
 				all_icons[size] = icons = IconsForSize (size);
 
 			string protocol = Hit.GetFirstProperty ("fixme:protocol");
+			if(protocol == null)
+				protocol = String.Empty;
+			
 			if (icons [protocol] != null)
 				image.Pixbuf = (Gdk.Pixbuf)icons [protocol];
 			else

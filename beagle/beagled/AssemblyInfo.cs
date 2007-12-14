@@ -75,5 +75,6 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.OperaQueryable.OperaQueryable),
 	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
 	typeof (Beagle.Daemon.StaticQueryable),
-	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable)
+	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
+    typeof (Beagle.Daemon.EmpathyQueryable.EmpathyQueryable)                   
 )]

@@ -61,6 +61,7 @@ CSFILES = 				\
 	$(srcdir)/FilterDocbook.cs	\
 	$(srcdir)/FilterEbuild.cs	\
 	$(srcdir)/FilterExternal.cs	\
+	$(srcdir)/FilterEmpathyLog.cs	\
 	$(srcdir)/FilterFortran.cs	\
 	$(srcdir)/FilterGif.cs		\
 	$(srcdir)/FilterHtml.cs		\
