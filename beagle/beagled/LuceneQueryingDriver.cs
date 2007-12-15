@@ -54,6 +54,9 @@ namespace Beagle.Daemon {
 		public delegate bool UriFilter (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);
 
+		public LuceneQueryingDriver (string index_name, bool read_only)
+			: this (index_name, -1, read_only) { }
+
 		public LuceneQueryingDriver (string index_name, int minor_version, bool read_only) 
 			: base (index_name, minor_version)
 		{

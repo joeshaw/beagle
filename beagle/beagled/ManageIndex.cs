@@ -41,8 +41,6 @@ namespace Beagle.Daemon
 {
 	class ManageIndex 
 	{
-		static private LuceneIndexingDriver driver;
-
 		// Files and directories that are allowed to be in the target
 		// directory before we blow it away.  If we encounter any file
 		// or dir not in this list, we'll bail out.
@@ -78,7 +76,7 @@ namespace Beagle.Daemon
 			// Be *EXTRA PARANOID* about the contents of the target
 			// directory, because creating an indexing driver will
 			// nuke it.
-			if (Directory.Exists (index_dir)) {
+			if (args [1] != "info" && Directory.Exists (index_dir)) {
 
 				foreach (FileInfo info in DirectoryWalker.GetFileInfos (index_dir)) {
 					if (Array.IndexOf (allowed_files, info.Name) == -1) {
@@ -95,8 +93,6 @@ namespace Beagle.Daemon
 				}
 			}
 
-			driver = new LuceneIndexingDriver (index_dir, false);
-
 			switch (args [1]) {
 #if false
 			case "list":
@@ -107,15 +103,15 @@ namespace Beagle.Daemon
 				break;
 #endif
 			case "info":
-				ExecuteInfo ();
+				ExecuteInfo (index_dir);
 				break;
 
 			case "merge":
-				ExecuteMerge (args [2]);
+				ExecuteMerge (index_dir, args [2]);
 				break;
 
 			case "optimize":
-				ExecuteOptimize ();
+				ExecuteOptimize (index_dir);
 				break;
 			default:
 				Console.WriteLine ("Unknown command: {0}", args [1]);
@@ -222,8 +218,10 @@ namespace Beagle.Daemon
 		// join the primary- and secondary lucene indexes and if available, the
 		// file attributes store.
 
-		static void ExecuteMerge (string index_to_merge) 
+		static void ExecuteMerge (string index_dir, string index_to_merge) 
 		{
+			LuceneIndexingDriver driver = new LuceneIndexingDriver (index_dir, false);
+
 			if (!Path.IsPathRooted (index_to_merge))
 				index_to_merge = Path.GetFullPath (index_to_merge);
 			
@@ -271,8 +269,10 @@ namespace Beagle.Daemon
 		
 		// Get the total number of entries from the index.
 		
-		static void ExecuteInfo ()
+		static void ExecuteInfo (string index_dir)
 		{
+			LuceneQueryingDriver driver = new LuceneQueryingDriver (index_dir, true);
+
 			Console.WriteLine ("Total number of entries in index: {0}", driver.GetItemCount());
 		}
 
@@ -280,8 +280,10 @@ namespace Beagle.Daemon
 		
 		// Execute a lucene optimize-task on the index.
 
-		static void ExecuteOptimize ()
+		static void ExecuteOptimize (string index_dir)
 		{
+			LuceneIndexingDriver driver = new LuceneIndexingDriver (index_dir, false);
+
 			// Set system priorities so we don't slow down the system
 			SystemPriorities.ReduceIoPriority ();
 			SystemPriorities.SetSchedulerPolicyBatch ();
