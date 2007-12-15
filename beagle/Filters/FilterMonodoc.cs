@@ -29,6 +29,7 @@ using System.IO;
 using System.Xml;
 using System.Text;
 using System.Threading;
+using System.Collections;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -53,23 +54,36 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (new FilterFlavor ("file:///usr/lib/monodoc/sources/*", ".zip", null, 0));
 		}
 
-		override protected void DoOpen (FileInfo file)
-		{
-			try {
-				archive = new ZipFile (file.FullName);
-			} catch (Exception e) {
-				Logger.Log.Error ("Error while filtering Monodoc archive: {0}", e);
-				Error ();
+		public override bool HasGeneratedIndexable {
+			get {
+				try {
+					archive = new ZipFile (Stream);
+					entry_enumerator = GetNextEntryIndexable ().GetEnumerator ();
+					return true;
+				} catch (Exception e) {
+					Logger.Log.Error ("Error while filtering Monodoc archive: {0}", e);
+					// If we cannot scan archived entries, we take that as a failure
+					Error ();
+					return false;
+				}
 			}
 		}
 
-		override protected void DoPullProperties ()
-		{
-			if (archive == null) {
-				Error ();
-				return;
-			}
+		IEnumerator entry_enumerator = null;
 
+		public override bool GenerateNextIndexable (out Indexable child)
+		{
+			child = null;
+
+			if (entry_enumerator == null || ! entry_enumerator.MoveNext ())
+				return false;
+
+			child = (Indexable) entry_enumerator.Current;
+			return true;
+		}
+
+		private IEnumerable GetNextEntryIndexable ()
+		{
 			foreach (ZipEntry entry in archive) {
 				if (entry.Name.IndexOf (".") != -1)
 					continue;
@@ -84,28 +98,24 @@ namespace Beagle.Filters {
 				
 				Indexable type_indexable = TypeNodeToIndexable (type, FileInfo);
 				type_indexable.SetChildOf (this.Indexable);
-				AddIndexable (type_indexable);
+				type_indexable.StoreStream ();
+				type_indexable.CloseStreams ();
+				yield return type_indexable;
 				
 				foreach(XmlNode member in type.SelectNodes ("Members/Member")) {
 					Indexable member_indexable = MemberNodeToIndexable (member,
 											    FileInfo,
 											    type.Attributes ["FullName"].Value);
 					member_indexable.SetChildOf (this.Indexable);
-					AddIndexable (member_indexable);
+					member_indexable.StoreStream ();
+					member_indexable.CloseStreams ();
+					yield return member_indexable;
 				}
 			}
-			
-			// If we've successfully crawled the file but haven't 
-                        // found any indexables, we shouldn't consider it
-                        // successfull at all.
-                        if (! HasGeneratedIndexable) {
-                                Error ();
-                                return;
-                        }
-			
+
 			Finished ();
 		}
-		
+
 		static private Indexable TypeNodeToIndexable (XmlNode node, FileInfo file)
 		{
 			Indexable indexable = new Indexable (UriFu.PathToFileUri (file + "#T:" + node.Attributes ["FullName"].Value));

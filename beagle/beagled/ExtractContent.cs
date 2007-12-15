@@ -137,21 +137,23 @@ class ExtractContentTool {
 		Indexable generated_indexable;
 
 		bool first = true;
-		while (filter.GenerateNextIndexable (out generated_indexable)) {
-			if (generated_indexable == null)
-				continue;
+		if (filter.HasGeneratedIndexable) {
+			while (filter.GenerateNextIndexable (out generated_indexable)) {
+				if (generated_indexable == null)
+					continue;
 
-			if (first) {
-				Console.WriteLine ("Filter-generated indexables:");
-				first = false;
+				if (first) {
+					Console.WriteLine ("Filter-generated indexables:");
+					first = false;
+				}
+				
+				Console.WriteLine ("  {0}", generated_indexable.Uri);
+
+				if (show_generated)
+					generated_indexables.Add (generated_indexable);
+				else
+					generated_indexable.Cleanup ();
 			}
-			
-			Console.WriteLine ("  {0}", generated_indexable.Uri);
-
-			if (show_generated)
-				generated_indexables.Add (generated_indexable);
-			else
-				generated_indexable.Cleanup ();
 		}
 
 		if (! first)
@@ -390,6 +392,7 @@ class ExtractContentTool {
 		if (writer != null)
 			writer.Close ();
 
+		Console.Read ();
 		return 0;
 	}
 
