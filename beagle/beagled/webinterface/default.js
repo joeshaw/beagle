@@ -702,6 +702,27 @@ function toggle_category (category)
 	}
 }
 
+/******* Add to bookmark *******************************************/
+
+function bookmark_query ()
+{
+	// Firefox specific !
+	if (! window.sidebar) {
+		alert ("Cannot add bookmark in non Firefox browser!");
+		return;
+	}
+
+	// Using window.sidebar.addPanel () will create bookmark that will open in sidebar
+
+	alert ("Adding bookmark is deferred till the mystery of how to correctly add bookmarks is resolved!");
+}
+
+/******* Advance search GUI ****************************************/
+
+function show_advanced_search ()
+{
+}
+
 /******* Initial fetching and loading of the xsl/xml files *********/
 
 // processing of query string parameters, if called as

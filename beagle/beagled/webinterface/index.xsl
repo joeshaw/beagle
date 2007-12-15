@@ -85,15 +85,19 @@
 </xsl:template>
 
 <xsl:template name="header">
+	<div id="menubar">
+		<a href="#" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
+		<a href="#" onclick='alert ("Not implemented"); return false;'>Settings</a>&nbsp;|&nbsp;
+		<a href="help.html" target="_blank" >Help</a>
+	</div>
 	<a href="."><img src="images/beagle-logo.png"/></a>
 	<form name="queryform" onsubmit='search (); return false;' action="POST">
 		<input name="querytext" id="querytext" type="text" size="50" />
 		<input name="querysubmit" type="submit" value="Search"/>
 	</form>
-	<span id="headerlinks">
-		<a href="#" onclick='get_information (); return false;'>Current Status</a>&nbsp;|&nbsp;
-		<a href="#" onclick='alert ("Not implemented"); return false;'>Beagle settings</a>&nbsp;|&nbsp;
-		<a href="help.html" target="_blank" >Help</a>
+	<span id="searchoptions">
+		<a href="#" onclick='show_advanced_search (); return false;'>Advance search</a>&nbsp;|&nbsp;
+		<a href="#" onclick='bookmark_query (); return false;'>Bookmark current search</a>
 	</span>
 </xsl:template>
 

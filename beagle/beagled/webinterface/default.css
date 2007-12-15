@@ -27,13 +27,18 @@ body {
 	color: #444;
 	background: #fff url(images/title_bg.png) 0 -80px repeat-x;
 	position: relative;
-	margin: 40px;
+	margin: 30px;
 	font-family: trebuchet ms,luxi sans,sans-serif;
 	font-size: 96%;
 	text-align: center;
 }
 
 /************ header ***************/
+
+#menubar {
+	margin: -30px; /* with respect to body margin */
+	float: right;
+}
 
 #header img {
 	float: left;
@@ -59,7 +64,7 @@ body {
 	padding-left:20px;
 }
 
-#headerlinks {
+#searchoptions {
 	margin-right: 1.2em;
 }
 
