@@ -155,8 +155,12 @@ namespace Search.Tiles {
 			Attach (snippet, 1, 2, current_row, ++current_row, expand, fill, 0, 0);
 			maximized = false;
 
+			snippet_tip = new Gtk.Tooltips ();
+
 			return snippet;
 		}
+
+		Gtk.Tooltips snippet_tip;
 
 		public Gtk.Label AddNewLine ()
 		{
@@ -169,6 +173,10 @@ namespace Search.Tiles {
 		public void GotSnippet (string text)
 		{
 			snippet.Markup = text;
+			snippet_tip.SetTip (snippet,
+					    Beagle.Util.StringFu.ConvertSpecialEntities (text.Replace ("<b>", String.Empty).
+											 Replace ("</b>", String.Empty)),
+					    null);
 		}
 	}
 }

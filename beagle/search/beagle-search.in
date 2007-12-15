@@ -8,7 +8,7 @@ if [ -z $installed ] ; then
     THIS_EXE="./Search.exe"
 
     export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
-    export MONO_PATH="../BeagleClient:../images:../Util${MONO_PATH+:MONO_PATH}"
+    export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:MONO_PATH}"
 else
     THIS_EXE="@pkglibdir@/Search.exe"
 

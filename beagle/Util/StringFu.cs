@@ -810,7 +810,8 @@ namespace Beagle.Util {
 			line = line.Replace ("&gt;", ">");
 			line = line.Replace ("&quot;", "\"");
 			line = line.Replace ("&amp;", "&");
-			line = line.Replace ("&nbsp", " ");
+			line = line.Replace ("&nbsp;", " ");
+			line = line.Replace ("&apos;", "\'");
 
 			return line;
   		}
