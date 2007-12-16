@@ -222,6 +222,31 @@ class DumpIndexTool {
 		Console.WriteLine ();
 	}
 
+	// Dump the fields: we do this via direct Lucene access.
+	static void DumpOneIndex_Fields (string index_name)
+	{
+		LuceneQueryingDriver driver;
+		driver = new LuceneQueryingDriver (index_name, -1, true);
+		
+		IndexReader reader;
+		reader = IndexReader.Open (driver.PrimaryStore);
+
+		Console.WriteLine ("  -- Primary Index --");
+		foreach (DictionaryEntry fi in reader.GetFieldNames (IndexReader.FieldOption.ALL))
+			Console.WriteLine ("- [{0}]", fi.Key);
+		reader.Close ();
+
+		reader = IndexReader.Open (driver.SecondaryStore);
+		if (reader.MaxDoc () != 0) {
+			Console.WriteLine ("\n  -- Secondary Index --");
+			foreach (DictionaryEntry fi in reader.GetFieldNames (IndexReader.FieldOption.ALL))
+				Console.WriteLine ("- [{0}]", fi.Key);
+			reader.Close ();
+		}
+
+		Console.WriteLine ();
+	}
+
 	/////////////////////////////////////////////////////////
 		
 	public class IndexInfo : IComparable {
@@ -270,6 +295,12 @@ class DumpIndexTool {
 			DumpOneIndex_TermFrequencies (info.Name);
 	}
 
+	static void DumpIndexFields (ArrayList indexes)
+	{
+		foreach (IndexInfo info in indexes)
+			DumpOneIndex_Fields (info.Name);
+	}
+
 	/////////////////////////////////////////////////////////
 
 	static void PrintUsage ()
@@ -284,6 +315,7 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
   --uris                   Dump all Uris (default)
   --properties             Dump all properties
   --term-frequencies       Dump term frequencies
+  --fields                 Dump all fields
 
   --show-counts            Show index count totals (default)
   --hide-counts            Hide index count totals
@@ -305,7 +337,8 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 	enum Mode {
 		Uris,
 		Properties,
-		TermFrequencies
+		TermFrequencies,
+		Fields
 	}
 
 	static void Main (string [] args)
@@ -347,6 +380,10 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 				show_counts = false;
 				break;
 
+			case "--fields":
+				mode = Mode.Fields;
+				break;
+
 			default:
 				if (arg.StartsWith ("--indexdir="))
 					index_dirs.Add (arg.Remove (0, 11));
@@ -367,8 +404,8 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 			}
 		}
 
-		if (uris.Count > 0 && mode == Mode.TermFrequencies) {
-			Console.WriteLine ("ERROR: --term-frequencies doesn't make sense with files or URIs.");
+		if (uris.Count > 0 && (mode == Mode.TermFrequencies || mode == Mode.Fields)) {
+			Console.WriteLine ("ERROR: --term-frequencies and --fields do not make sense with files or URIs.");
 			Environment.Exit (1);
 		}
 
@@ -398,7 +435,9 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 
 		if (mode == Mode.Uris || mode == Mode.Properties)
 			DumpIndexInformation (indexes, uris, mode == Mode.Properties, show_counts);
-		else
+		else if (mode == Mode.TermFrequencies)
 			DumpIndexTermFreqs (indexes);
+		else if (mode == Mode.Fields)
+			DumpIndexFields (indexes);
 	}
 }
