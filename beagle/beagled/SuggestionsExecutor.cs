@@ -1,7 +1,7 @@
 //
-// IQueryable.cs
+// SuggestionsExecutor.cs
 //
-// Copyright (C) 2004-2007 Novell, Inc.
+// Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 //
@@ -25,19 +25,34 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
+using System.Xml.Serialization;
+
+using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	// QueryResult has a lot of api that is tied to implementation details.
-	// The point of this interface is to only expose the minimum amount
-	// of QueryResult API to IQueryable.DoQuery implementations. 
+	[RequestMessage (typeof (SuggestionsRequest))]
+	public class SuggestionsExecutor : RequestMessageExecutor {
 
-	public interface IQueryResult {
+		public override ResponseMessage Execute (RequestMessage r)
+		{
+			SuggestionsRequest request = (SuggestionsRequest) r;
 
-		void Add (ICollection some_hits);
-		void Add (ICollection some_hits, int total_matches);
+			ArrayList suggestions = new ArrayList ();
 
-		void Subtract (ICollection some_uris);
+			foreach (Queryable queryable in QueryDriver.Queryables) {
+				if (! (queryable.IQueryable is LuceneQueryable))
+					continue;
+				
+				LuceneQueryable driver = (LuceneQueryable) queryable.IQueryable;
+
+				ICollection some_suggestions = driver.Suggest (request.QueryTerms);
+				suggestions.AddRange (some_suggestions);
+			}
+
+			return new SuggestionsResponse (suggestions);
+		}
 	}
 }

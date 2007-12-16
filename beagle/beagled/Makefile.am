@@ -483,6 +483,7 @@ DAEMON_DLL_CSFILES = 						\
 	$(srcdir)/Shutdown.cs					\
 	$(srcdir)/SnippetExecutor.cs				\
 	$(srcdir)/SnippetFu.cs					\
+	$(srcdir)/SuggestionsExecutor.cs			\
 	$(srcdir)/SqliteUtils.cs				\
 	$(srcdir)/StaticQueryable.cs				\
 	$(srcdir)/TextCache.cs					\

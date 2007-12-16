@@ -7,6 +7,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Gtk;
@@ -344,28 +345,19 @@ namespace Search {
 					TotalMatches = -1;
 					current_query.HitsAddedEvent -= OnHitsAdded;
 					current_query.HitsSubtractedEvent -= OnHitsSubtracted;
+					current_query.FinishedEvent -= OnFinished;
 					current_query.Close ();
 				}
 
 				TotalMatches = 0;
 
 				current_query = new Query ();
-				current_query.AddDomain (QueryDomain.Neighborhood);
-
-				// Don't search documentation by default
-				QueryPart_Property part = new QueryPart_Property ();
-				part.Logic = QueryPartLogic.Prohibited;
-				part.Type = PropertyType.Keyword;
-				part.Key = "beagle:Source";
-				part.Value = "documentation";
-				current_query.AddPart (part);
-
 				current_query.AddText (query);
 				current_query.HitsAddedEvent += OnHitsAdded;
 				current_query.HitsSubtractedEvent += OnHitsSubtracted;
 				current_query.FinishedEvent += OnFinished;
-
 				current_query.SendAsync ();
+
 				spinner.Start ();
 			} catch (Beagle.ResponseMessageException) {
 				pages.CurrentPage = pages.PageNum (startdaemon);
@@ -572,6 +564,7 @@ namespace Search {
 		private void CheckNoMatch ()
 		{
 			MatchType matches = view.MatchState;
+
 			if (matches == MatchType.Matched) {
 				pages.CurrentPage = pages.PageNum (panes);
 				return;
@@ -579,8 +572,13 @@ namespace Search {
 
 			if (nomatch != null)
 				nomatch.Destroy ();
-			nomatch = new Pages.NoMatch (query_text, matches == MatchType.NoneInScope);
+
+			SuggestionsRequest suggestions_request = new SuggestionsRequest (current_query);
+			SuggestionsResponse response = (SuggestionsResponse) suggestions_request.Send ();
+
+			nomatch = new Pages.NoMatch (query_text, matches == MatchType.NoneInScope, response.Suggestions);
 			nomatch.Show ();
+
 			pages.Add (nomatch);
 			pages.CurrentPage = pages.PageNum (nomatch);
 		}

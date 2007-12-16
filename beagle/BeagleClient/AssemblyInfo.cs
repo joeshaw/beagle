@@ -37,7 +37,8 @@ using Beagle;
 	 typeof (ShutdownRequest),
 	 typeof (ReloadConfigRequest),
 	 typeof (OptimizeIndexesRequest),
-	 typeof (SnippetRequest)
+	 typeof (SnippetRequest),
+	 typeof (SuggestionsRequest)
 )]
 	 
 [assembly: ResponseMessageTypes (
@@ -49,5 +50,6 @@ using Beagle;
 	 typeof (IndexingStatusResponse),
 	 typeof (SearchTermResponse),
 	 typeof (DaemonInformationResponse),
-	 typeof (SnippetResponse)
+	 typeof (SnippetResponse),
+	 typeof (SuggestionsResponse)
 )]

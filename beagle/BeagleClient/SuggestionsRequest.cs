@@ -1,7 +1,7 @@
 //
-// IQueryable.cs
+// SuggestionsExecutor.cs
 //
-// Copyright (C) 2004-2007 Novell, Inc.
+// Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 //
@@ -25,19 +25,28 @@
 //
 
 using System;
+using System.IO;
 using System.Collections;
+using System.Xml.Serialization;
 
-namespace Beagle.Daemon {
+using Beagle.Util;
 
-	// QueryResult has a lot of api that is tied to implementation details.
-	// The point of this interface is to only expose the minimum amount
-	// of QueryResult API to IQueryable.DoQuery implementations. 
+namespace Beagle {
 
-	public interface IQueryResult {
+	public class SuggestionsRequest : RequestMessage {
 
-		void Add (ICollection some_hits);
-		void Add (ICollection some_hits, int total_matches);
+		public string[] QueryTerms;
 
-		void Subtract (ICollection some_uris);
+		public SuggestionsRequest () : base (false) { }
+
+		public SuggestionsRequest (Query query) : base (false)
+		{
+			this.QueryTerms = new string [query.StemmedText.Count];
+			int i = 0;
+			foreach (string term in query.StemmedText) {
+				this.QueryTerms [i] = term;
+				++i;
+			}
+		}
 	}
 }

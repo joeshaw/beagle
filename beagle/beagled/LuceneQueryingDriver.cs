@@ -938,5 +938,37 @@ namespace Beagle.Daemon {
 
 			return hit;
 		}
+
+		public ICollection Suggest (ICollection stemmed_text)
+		{
+			IndexReader primary_reader;
+			primary_reader = LuceneCommon.GetReader (PrimaryStore);
+
+			ArrayList suggestions = new ArrayList ();
+			
+			foreach (string st in stemmed_text) {
+				Term term = new Term ("Text", st);
+			
+				LNS.FuzzyTermEnum fuzzy = new LNS.FuzzyTermEnum (primary_reader, term, 0.5f, 1);
+				Term sterm = null;
+				
+				while ((sterm = fuzzy.Term ()) != null) {
+					if (term.Text () != sterm.Text ()) {					
+						float difference = fuzzy.Difference ();
+						
+						// 0.5 seems a pretty neat point here
+						if (difference >= 0.5)
+							suggestions.Add (sterm.Text ());
+					}
+					
+					fuzzy.Next ();
+				}
+				
+				fuzzy.Close ();
+			}
+
+			return suggestions;
+
+		}
 	}
 }
