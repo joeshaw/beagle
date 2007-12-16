@@ -14,9 +14,6 @@ Beagle, in some sort of priority-order:
 	required), or break up at ORs and start multiple searches for a single
 	Xesam search (this is ugly).
 
-* <query> content and source: These two attributes of the <query> tag are
-	currently ignored
-
 * Ontologies: We need to establish an exhaustive mapping from Xesam's ontology
 	to the set of fields supported by Beagle. This is being worked on in
 	Beagle.Xesam.Ontologies.ToBeagleField

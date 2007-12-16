@@ -74,6 +74,8 @@ namespace Beagle {
 
 			public static string XesamToBeagleSource (string xesamSource)
 			{
+				// Note: If you change stuff there, you might need to change the set of
+				// supported sources in Searcher.cs
 				switch (xesamSource) {
 				case "xesam:ArchivedFile":
 					return "filetype:archive";
@@ -90,6 +92,8 @@ namespace Beagle {
 
 			public static string XesamToBeagleContent (string xesamContent)
 			{
+				// Note: If you change stuff there, you might need to change the set of
+				// supported contents in Searcher.cs
 				switch (xesamContent) {
 				case "xesam:Archive":
 					return "filetype:archive";

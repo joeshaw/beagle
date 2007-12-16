@@ -37,6 +37,44 @@ namespace Beagle {
 			enum CollectibleType { None, And, Or };
 			enum ComparisonType { None, Equals, Lesser, Greater };
 
+			// This should be usable for both <query> and <category>
+			private static string ParseXesamSourcesAndContents (XPathNavigator nav)
+			{
+				string ret = "", attr;
+				bool has_source = false;
+
+				attr = nav.GetAttribute ("source", String.Empty);
+				if (!String.IsNullOrEmpty (attr) && (attr != "xesam:Source")) {
+					string[] sources = attr.Split (',');
+
+					has_source = true;
+					ret += "( " + Ontologies.XesamToBeagleSource (sources[0]);
+
+					for (int i = 1; i < sources.Length; i++)
+						ret += " OR " + Ontologies.XesamToBeagleSource(sources[i].Trim ());
+
+					ret += " )";
+				}
+
+				attr = nav.GetAttribute ("content", String.Empty);
+				if (!String.IsNullOrEmpty (attr) && (attr != "xesam:Content")) {
+					string[] contents = attr.Split (',');
+
+					if (has_source)
+						ret = "( " + ret + " AND ";
+					ret += "( " + Ontologies.XesamToBeagleContent (contents[0]);
+
+					for (int i = 1; i < contents.Length; i++)
+						ret += " OR " + Ontologies.XesamToBeagleContent(contents[i].Trim ());
+
+					ret += " )";
+					if (has_source)
+						ret += " )";
+				}
+
+				return ret;
+			}
+
 			private static string ParseXesamField (XPathNavigator nav)
 			{
 				string field = nav.GetAttribute ("name", String.Empty);
@@ -173,6 +211,7 @@ namespace Beagle {
 
 			public static string ParseXesamQuery (string xmlQuery)
 			{
+				string ret = "";
 				XmlTextReader tReader = new XmlTextReader (new System.IO.StringReader (xmlQuery));
 
 				XmlReaderSettings settings = new XmlReaderSettings ();
@@ -202,17 +241,20 @@ namespace Beagle {
 				
 				if (nav.Name != "query") {
 					Console.Error.WriteLine ("Didn't find a <query> (found {0})", nav.Name);
-					return null;
+					return String.Empty;
 				}
 
-				// FIXME: Use query's content and source attributes
+				string temp = ParseXesamSourcesAndContents (nav);
+				if (!String.IsNullOrEmpty (temp)) {
+					ret += temp + " AND ";
+				}
 
 				if (!nav.MoveToFirstChild () && !nav.MoveToNext ()) {
 					Console.Error.WriteLine ("<query> element has no children");
-					return null;
+					return String.Empty;
 				}
 
-				string ret = ParseXesamCollectible (nav, CollectibleType.None);
+				ret += ParseXesamCollectible (nav, CollectibleType.None);
 				Console.Error.WriteLine ("Parsed Query: {0}", ret);
 
 				return ret;

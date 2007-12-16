@@ -83,6 +83,16 @@ namespace Beagle {
 				session.VendorVersion = beagleVersion;
 				session.VendorDisplay = "The Beagle desktop search tool";
 				// FIXME: populate fieldnames, extensions
+				session.VendorOntologySources = 
+					new string[] { "xesam:ArchivedFile", "xesam:File", "xesam:MessageboxMessage" };
+				session.VendorOntologyContents = 
+					new string[] { "xesam:Archive", "xesam:Audio", "xesam:Bookmark",
+						       "xesam:Contact", "xesam:Document", "xesam:Documentation",
+						       "xesam:Email", "xesam:IMMessage", "xesam:Image",
+						       "xesam:Media", "xesam:Message", "xesam:RSSMessage",
+						       "xesam:SourceCode", "xesam:TextDocument", "xesam:Video",
+						       "xesam:Visual", "xesam:Alarm", "xesam:Event",
+						       "xesam:FreeBusy", "xesam:Task" };
 				sessions.Add (Convert.ToString (sessionCount), session);
 
 				if (Debug) 
