@@ -75,13 +75,17 @@ namespace Beagle {
 						break;
 
 					case "date":
-						hitValue[i++] = hit.Timestamp.ToString ("s");
+						hitValue [i++] = hit.Timestamp.ToString ("s");
 						break;
 						
 					default:
 						//FIXME: This *will* break since we don't know what the expected
 						//type here is
-						hitValue[i++] = hit.GetFirstProperty(Ontologies.XesamToBeagleField(field)).ToString() + String.Empty;
+						object p = hit.GetFirstProperty (Ontologies.XesamToBeagleField (field));
+						if (p != null)
+							hitValue [i++] = p.ToString();
+						else
+							hitValue [i++] = String.Empty;
 						break;
 					}
 				}

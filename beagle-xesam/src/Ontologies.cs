@@ -25,127 +25,143 @@
 //
 
 using System;
+using System.Collections.Generic;
 
 namespace Beagle {
 	namespace Xesam {
 		class Ontologies {
+			private static Dictionary<string, string> fields_mapping;
+			private static Dictionary<string, string> sources_mapping;
+			private static Dictionary<string, string> contents_mapping;
+
+			static Ontologies ()
+			{
+				InitializeFieldsMapping ();
+				InitializeSourcesMapping ();
+				InitializeContentsMapping ();
+			}
+
+			private static void InitializeFieldsMapping ()
+			{
+				fields_mapping = new Dictionary<string, string> ();
+
+				fields_mapping.Add ("dc:title", "title");
+				fields_mapping.Add ("xesam:title", "title");
+
+				fields_mapping.Add ("dc:author", "author");
+				fields_mapping.Add ("xesam:author", "author");
+
+				fields_mapping.Add ("dc:creator", "creator");
+				fields_mapping.Add ("xesam:creator", "creator");
+
+				fields_mapping.Add ("dc:date", "date");
+
+				fields_mapping.Add ("xesam:width", "fixme:width");
+				fields_mapping.Add ("xesam:height", "fixme:height");
+
+				fields_mapping.Add ("xesam:pageCount", "fixme:page-count");
+
+				fields_mapping.Add ("mime", "mimetype");
+				fields_mapping.Add ("xesam:mimeType", "mimetype");
+
+				fields_mapping.Add ("uri", "uri");
+				fields_mapping.Add ("url", "uri");
+				fields_mapping.Add ("xesam:url", "uri");
+
+				fields_mapping.Add ("xesam:fileExtension", "beagle:FilenameExtension");
+				fields_mapping.Add ("fileExtension", "beagle:FilenameExtension");
+			}
+
+			private static void InitializeSourcesMapping ()
+			{
+				sources_mapping = new Dictionary<string, string> ();
+
+				sources_mapping.Add ("xesam:ArchivedFile", "filetype:archive");
+				sources_mapping.Add ("xesam:File", "type:File");
+				sources_mapping.Add ("xesam:MessageboxMessage","type:MailMessage");
+			}
+
+			private static void InitializeContentsMapping ()
+			{
+				contents_mapping = new Dictionary<string, string> ();
+
+				contents_mapping.Add ("xesam:Archive", "filetype:archive");
+				contents_mapping.Add ("xesam:Audio", "filetype:audio");
+				contents_mapping.Add ("xesam:Bookmark", "type:Bookmark");
+				contents_mapping.Add ("xesam:Contact", "type:Contact");
+				contents_mapping.Add ("xesam:Document", "( filetype:document or filetype:documentation )");
+				contents_mapping.Add ("xesam:Documentation", "filetype:documentation");
+				contents_mapping.Add ("xesam:Email", "type:MailMessage");
+				contents_mapping.Add ("xesam:IMMessage", "type:IMLog");
+				contents_mapping.Add ("xesam:Image", "filetype:image");
+				contents_mapping.Add ("xesam:Media", "( filetype:audio or filetype:video )");
+				contents_mapping.Add ("xesam:Message", "( type:MailMessage or type:IMLog )");
+				contents_mapping.Add ("xesam:RSSMessage", "type:FeedItem");
+				contents_mapping.Add ("xesam:SourceCode", "filetype:source");
+				contents_mapping.Add ("xesam:TextDocument", "filetype:document");
+				contents_mapping.Add ("xesam:Video", "filetype:video");
+				contents_mapping.Add ("xesam:Visual", "( filetype:image or filetype:video )");
+				contents_mapping.Add ("xesam:Alarm", "type:Calendar");
+				contents_mapping.Add ("xesam:Event", "type:Calendar");
+				contents_mapping.Add ("xesam:FreeBusy", "type:Calendar");
+				contents_mapping.Add ("xesam:Task", "type:Task");
+			}
+
+			public static string[] GetSupportedXesamFields ()
+			{
+				List<string> ret = new List<string> ();
+
+				foreach (string field in fields_mapping.Keys)
+					ret.Add (field);
+
+				return ret.ToArray ();
+			}
+
 			public static string XesamToBeagleField (string xesamField) {
-				// Note: If you change stuff there, you might need to change the set of
-				// supported fields in Searcher.cs
-				switch (xesamField) {
-				case "dc:title":
-					goto case "xesam:title";
-				case "xesam:title":
-					return "dc:title";
-
-				case "dc:author":
-					goto case "xesam:author";
-				case "xesam:author":
-					return "dc:author";
-
-				case "dc:creator":
-					goto case "xesam:creator";
-				case "xesam:creator":
-					return "dc:creator";
-
-				case "dc:date":
-					return "date";
-
-				case "xesam:width":
-					return "fixme:width";
-
-				case "xesam:height":
-					return "fixme:height";
-
-				case "xesam:pageCount":
-					return "fixme:page-count";
-
-				case "mime":
-					goto case "xesam:mimeType";
-				case "xesam:mimeType":
-					return "mimetype";
-
-				case "url":
-					goto case "xesam:url";
-				case "uri":
-					goto case "xesam:url";
-				case "xesam:url":
-					return "uri";
-					
-				case "xesam:fileExtension":
-					goto case "fileExtension";
-				case "fileExtension":
-					return "beagle:FilenameExtension";
-
-				default:
+				if (fields_mapping.ContainsKey (xesamField))
+					return fields_mapping [xesamField];
+				else {
 					Console.Error.WriteLine ("Unsupported field: {0}", xesamField);
 					return xesamField.Replace (':', '-');
 				}
 			}
 
+			public static string[] GetSupportedXesamSources ()
+			{
+				List<string> ret = new List<string> ();
+
+				foreach (string field in sources_mapping.Keys)
+					ret.Add (field);
+
+				return ret.ToArray ();
+			}
+
 			public static string XesamToBeagleSource (string xesamSource)
 			{
-				// Note: If you change stuff there, you might need to change the set of
-				// supported sources in Searcher.cs
-				switch (xesamSource) {
-				case "xesam:ArchivedFile":
-					return "filetype:archive";
-				case "xesam:File":
-					return "type:File";
-				case "xesam:MessageboxMessage":
-					return "type:MailMessage";
-
-				default:
+				if (sources_mapping.ContainsKey (xesamSource))
+					return sources_mapping [xesamSource];
+				else {
 					Console.Error.WriteLine ("Unsupported source: {0}", xesamSource);
 					return String.Empty;
 				}
 			}
 
+
+			public static string[] GetSupportedXesamContents ()
+			{
+				List<string> ret = new List<string> ();
+
+				foreach (string field in contents_mapping.Keys)
+					ret.Add (field);
+
+				return ret.ToArray ();
+			}
+
 			public static string XesamToBeagleContent (string xesamContent)
 			{
-				// Note: If you change stuff there, you might need to change the set of
-				// supported contents in Searcher.cs
-				switch (xesamContent) {
-				case "xesam:Archive":
-					return "filetype:archive";
-				case "xesam:Audio":
-					return "filetype:audio";
-				case "xesam:Bookmark":
-					return "type:Bookmark";
-				case "xesam:Contact":
-					return "type:Contact";
-				case "xesam:Document":
-					return "( filetype:document or filetype:documentation )";
-				case "xesam:Documentation":
-					return "filetype:documentation";
-				case "xesam:Email":
-					return "type:MailMessage";
-				case "xesam:IMMessage":
-					return "type:IMLog";
-				case "xesam:Image":
-					return "filetype:image";
-				case "xesam:Media":
-					return "( filetype:audio or filetype:video )";
-				case "xesam:Message":
-					return "( type:MailMessage or type:IMLog )";
-				case "xesam:RSSMessage":
-					return "type:FeedItem";
-				case "xesam:SourceCode":
-					return "filetype:source";
-				case "xesam:TextDocument":
-					return "filetype:document";
-				case "xesam:Video":
-					return "filetype:video";
-				case "xesam:Visual":
-					return "( filetype:image or filetype:video )";
-				case "xesam:Alarm":
-				case "xesam:Event":
-				case "xesam:FreeBusy":
-					return "type:Calendar";
-				case "xesam:Task":
-					return "type:Task";
-
-				default:
+				if (contents_mapping.ContainsKey (xesamContent))
+					return contents_mapping [xesamContent];
+				else {
 					Console.Error.WriteLine ("Unsupported content type: {0}", xesamContent);
 					return String.Empty;
 				}

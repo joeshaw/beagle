@@ -83,25 +83,10 @@ namespace Beagle {
 				session.VendorVersion = beagleVersion;
 				session.VendorDisplay = "The Beagle desktop search tool";
 				session.VendorXesam = 90;
-				session.VendorOntologyFields =
-					new string[] { "dc:title", "xesam:title",
-						       "dc:author", "xesam:author", "dc:creator", "xesam:creator",
-						       "dc:date",
-						       "xesam:width", "xesam:height",
-						       "xesam:pageCount",
-						       "mime", "xesam:mimeType",
-						       "url", "uri", "xesam:url",
-						       "xesam:fileExtension", "fileExtension" };
-				session.VendorOntologySources = 
-					new string[] { "xesam:ArchivedFile", "xesam:File", "xesam:MessageboxMessage" };
-				session.VendorOntologyContents = 
-					new string[] { "xesam:Archive", "xesam:Audio", "xesam:Bookmark",
-						       "xesam:Contact", "xesam:Document", "xesam:Documentation",
-						       "xesam:Email", "xesam:IMMessage", "xesam:Image",
-						       "xesam:Media", "xesam:Message", "xesam:RSSMessage",
-						       "xesam:SourceCode", "xesam:TextDocument", "xesam:Video",
-						       "xesam:Visual", "xesam:Alarm", "xesam:Event",
-						       "xesam:FreeBusy", "xesam:Task" };
+				session.VendorOntologyFields = Ontologies.GetSupportedXesamFields ();
+				session.VendorOntologySources = Ontologies.GetSupportedXesamSources ();
+				session.VendorOntologyContents = Ontologies.GetSupportedXesamContents ();
+
 				sessions.Add (Convert.ToString (sessionCount), session);
 
 				if (Debug) 
