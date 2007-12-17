@@ -36,17 +36,17 @@ namespace Beagle {
 				case "dc:title":
 					goto case "xesam:title";
 				case "xesam:title":
-					return "title";
+					return "dc:title";
 
 				case "dc:author":
 					goto case "xesam:author";
 				case "xesam:author":
-					return "author";
+					return "dc:author";
 
 				case "dc:creator":
 					goto case "xesam:creator";
 				case "xesam:creator":
-					return "creator";
+					return "dc:creator";
 
 				case "dc:date":
 					return "date";

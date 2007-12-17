@@ -74,20 +74,8 @@ namespace Beagle {
 						hitValue [i++] = hit.MimeType + String.Empty;
 						break;
 
-					case "title":
-						hitValue[i++] = hit.GetFirstProperty("dc:title") + String.Empty;
-						break;
-
-					case "author":
-						hitValue[i++] = hit.GetFirstProperty("dc:author") + String.Empty;
-						break;
-						
-					case "creator":
-						hitValue[i++] = hit.GetFirstProperty("dc:creator") + String.Empty;
-						break;
-						
 					case "date":
-						hitValue[i++] = hit.Timestamp.ToString("s");
+						hitValue[i++] = hit.Timestamp.ToString ("s");
 						break;
 						
 					default:
