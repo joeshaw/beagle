@@ -87,6 +87,8 @@ namespace Beagle {
 					new string[] { "dc:title", "xesam:title",
 						       "dc:author", "xesam:author", "dc:creator", "xesam:creator",
 						       "dc:date",
+						       "xesam:width", "xesam:height",
+						       "xesam:pageCount",
 						       "mime", "xesam:mimeType",
 						       "url", "uri", "xesam:url",
 						       "xesam:fileExtension", "fileExtension" };

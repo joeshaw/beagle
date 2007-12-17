@@ -51,6 +51,15 @@ namespace Beagle {
 				case "dc:date":
 					return "date";
 
+				case "xesam:width":
+					return "fixme:width";
+
+				case "xesam:height":
+					return "fixme:height";
+
+				case "xesam:pageCount":
+					return "fixme:page-count";
+
 				case "mime":
 					goto case "xesam:mimeType";
 				case "xesam:mimeType":
