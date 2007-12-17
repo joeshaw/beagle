@@ -137,12 +137,12 @@ namespace Beagle {
 
 			public Session ()
 			{
+				// Note: These are default values. Intialize
+				// server-specific options when instantiating
+				// an object.
+				
 				SearchLive = false;
-				HitFields = new string[] { "xesam:url" ,
-					"xesam:title",
-					"xesam:author", 
-					"dc:date", 
-					"xesam:fileExtension" };
+				HitFields = new string[] { "xesam:url" };
 				HitFieldsExtended = new string[] { };
 				HitSnippetLength = 200;
 				SortPrimary = "xesam:score";
@@ -151,7 +151,7 @@ namespace Beagle {
 				VendorId = "Unknown";
 				VendorVersion = 0;
 				VendorDisplay = "Unknown";
-				VendorXesam = 90;
+				VendorXesam = 1;
 				VendorOntologyFields = new string[] { };
 				VendorOntologyContents = new string[] { };
 				VendorOntologySources = new string[] { };

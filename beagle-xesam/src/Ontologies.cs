@@ -30,6 +30,8 @@ namespace Beagle {
 	namespace Xesam {
 		class Ontologies {
 			public static string XesamToBeagleField (string xesamField) {
+				// Note: If you change stuff there, you might need to change the set of
+				// supported fields in Searcher.cs
 				switch (xesamField) {
 				case "dc:title":
 					goto case "xesam:title";
@@ -61,10 +63,10 @@ namespace Beagle {
 				case "xesam:url":
 					return "uri";
 					
-				    case "xesam:fileExtension":
-					    goto case "fileExtension";
-				    case "fileExtension":
-				        return "beagle:FilenameExtension";
+				case "xesam:fileExtension":
+					goto case "fileExtension";
+				case "fileExtension":
+					return "beagle:FilenameExtension";
 
 				default:
 					Console.Error.WriteLine ("Unsupported field: {0}", xesamField);
