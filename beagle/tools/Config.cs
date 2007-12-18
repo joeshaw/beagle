@@ -64,6 +64,19 @@ public static class ConfigTool {
 			"  --beagled-reload-config\tAsk the beagle daemon to reload\n" +
 			"                         \tthe configuration file.\n" +
 			"  --list-backends\t\tList the available backends.\n" +
+			"\n" +
+			"  Xml based operations:\n" +
+			"  The following two methods can be used by non-C# programs to\n" +
+			"  read and set config options.\n" +
+			"  --write-xml SECTION\t\tPrint the section in xml format.\n" +
+			"                     \t\tSuitable for parsing by other programs.\n" +
+			"  --read-xml SECTION\t\tReads the xml of a section from stdin.\n" +
+			"                    \t\tSuitable for setting options by other programs.\n" +
+			"  In case of any error, the following error codes are returned:\n" +
+			"     1 : Bad section name\n" +
+			"     2 : Invalid xml\n" +
+			"     3 : Xml does not correspond to the section name\n" +
+			"\n" +
 			"  --help\t\t\tPrint this usage message.\n" +
 			"  --version\t\t\tPrint version information.\n\n";
 
@@ -156,7 +169,7 @@ public static class ConfigTool {
 		for (int i = 0; i < args.Length; i ++) {
 			switch (args [i]) {
 			case "--list-sections":
-				ListSectionsAndExit ();
+				ListSections ();
 				return;
 
 			case "--list-backends":
@@ -165,7 +178,19 @@ public static class ConfigTool {
 
 			case "--reload":
 			case "--beagled-reload-config":
-				ReloadConfigAndExit ();
+				ReloadConfig ();
+				return;
+
+			case "--write-xml":
+				if (args.Length == i + 1)
+					PrintUsageAndExit ();
+				PrintSectionXml (args [i + 1]);
+				return;
+
+			case "--read-xml":
+				if (args.Length == i + 1)
+					PrintUsageAndExit ();
+				ReadSectionXml (args [i + 1]);
 				return;
 
 			case "--help":
@@ -182,6 +207,9 @@ public static class ConfigTool {
 				break;
 			}
 		}
+
+		if (args [0].StartsWith ("--"))
+			PrintUsageAndExit ();
 
 		Config config = Conf.Load (args [0]);
 
@@ -205,7 +233,7 @@ public static class ConfigTool {
 			ShowOption (config, option);
 	}
 
-	private static void ListSectionsAndExit ()
+	private static void ListSections ()
 	{
 		string global_dir = Path.Combine (Path.Combine (ExternalStringsHack.SysConfDir, "beagle"), "config-files");
 		string local_dir = Path.Combine (PathFinder.StorageDir, "config");
@@ -234,7 +262,7 @@ public static class ConfigTool {
 
 	}
 
-	private static void ReloadConfigAndExit ()
+	private static void ReloadConfig ()
 	{
 		try {
 			ReloadConfigRequest request = new ReloadConfigRequest ();
@@ -246,7 +274,74 @@ public static class ConfigTool {
 			System.Environment.Exit (-1);
 		}
 	}
-		
+
+	const int ERROR_CONFIG_NO_SECTION = 1; // Bad section name
+	const int ERROR_CONFIG_XML = 2; // Invalid xml
+	const int ERROR_CONFIG_BAD = 3; // Xml does not correspond to the right config
+	const int ERROR_CONFIG_LOAD = 4; // Error in loading config
+	const int ERROR_CONFIG_SAVE = 5; // Error in saving config
+
+	private static void PrintSectionXml (string section)
+	{
+		Log.Level = LogLevel.Always; // shhhh... silence
+
+		Config config = null;
+		try {
+			config = Conf.Load (section);
+		} catch {
+			System.Environment.Exit (ERROR_CONFIG_LOAD);
+		}
+
+		if (config == null) {
+			System.Environment.Exit (ERROR_CONFIG_NO_SECTION);
+		}
+
+		try {
+			Conf.WriteSectionXml (config, Console.Out);
+		} catch {
+			System.Environment.Exit (ERROR_CONFIG_XML);
+		}
+
+		System.Environment.Exit (0);
+	}
+
+	private static void ReadSectionXml (string section)
+	{
+		Log.Level = LogLevel.Always; // shhhh... silence
+
+		Config config = null;
+		try {
+			config = Conf.Load (section);
+		} catch {
+			System.Environment.Exit (ERROR_CONFIG_LOAD);
+		}
+
+		if (config == null) {
+			System.Environment.Exit (ERROR_CONFIG_NO_SECTION);
+		}
+
+		try {
+			if (! Conf.ReadSectionXml (config, Console.In))
+				System.Environment.Exit (ERROR_CONFIG_BAD);
+		} catch (System.Xml.XmlException) {
+			System.Environment.Exit (ERROR_CONFIG_XML);
+		} catch (Exception) {
+			System.Environment.Exit (ERROR_CONFIG_BAD);
+		}
+
+		//Console.WriteLine ("Successfully read config for {0}", section);
+		//Conf.WriteSectionXml (config, Console.Out);
+		//Console.WriteLine ();
+
+		try {
+			Conf.Save (config);
+		} catch {
+			System.Environment.Exit (ERROR_CONFIG_SAVE);
+		}
+
+		System.Environment.Exit (0);
+	}
+
 	private static bool HandleArgs (Config config, string[] args)
 	{
 		Option option = (Option) config.Options [args [1]];

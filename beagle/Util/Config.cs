@@ -378,7 +378,7 @@ namespace Beagle.Util {
 
 			using (StreamWriter writer = new StreamWriter (filename)) {
 				conf_ser.Serialize (writer, config);
-				Console.WriteLine ("Done writing to " + filename);
+				Log.Debug ("Done writing to " + filename);
 			}
 
 			watching_for_updates = watching_for_updates_current;
@@ -401,6 +401,72 @@ namespace Beagle.Util {
 				conf_ser.Serialize (writer, config);
 				Console.WriteLine ("Done writing to " + path);
 			}
+		}
+
+		/* External clients can use the following two xml based methods to read/write xml */
+
+		// Use this method to write the config in its xml format.
+		public static void WriteSectionXml (Config config, TextWriter writer)
+		{
+			if (config == null)
+				return;
+
+			// serialize will not serialize global options,
+			// so temporarily make every option global
+			Dictionary<Option, bool> global_options = new Dictionary<Option, bool> ();
+			foreach (Option option in config.Options.Values) {
+				global_options [option] = option.Global;
+				option.Global = false;
+			}
+
+			conf_ser.Serialize (writer, config);
+
+			foreach (Option option in config.Options.Values)
+				option.Global = global_options [option];
+		}
+
+		// Use this method to send in the xml for a config, and the original config
+		// and the changes from the original to the xml will be added to the original config
+		// Returns false if the read xml does not correspond to the same config as that
+		// was passed, in which case please note that the passed config COULD BE IN A
+		// modified state and should be discarded!
+		public static bool ReadSectionXml (Config config, TextReader reader)
+		{
+			if (config == null)
+				throw new ArgumentException ("config", "config cannot be null");
+
+			Config new_config = (Config) conf_ser.Deserialize (reader);
+
+			foreach (Option new_option in new_config.Options.Values) {
+				Option option = config [new_option.Name] as Option;
+				if (option == null || (option.Type != new_option.Type))
+					return false;
+
+				switch (option.Type) {
+				case OptionType.Bool:
+					BoolOption option_bool = (BoolOption) option;
+					BoolOption new_option_bool = (BoolOption) new_option;
+					option_bool.Value = new_option_bool.Value;
+					break;
+
+				case OptionType.String:
+					StringOption option_str = (StringOption) option;
+					StringOption new_option_str = (StringOption) new_option;
+					option_str.Value = new_option_str.Value;
+					break;
+
+				case OptionType.List:
+					ListOption option_list = (ListOption) option;
+					ListOption new_option_list = (ListOption) new_option;
+					if (option_list.NumParams != new_option_list.NumParams)
+						return false;
+
+					option_list.Values = new_option_list.Values;
+					break;
+				}
+			}
+
+			return true;
 		}
 
 		private static void CheckOldConfig ()
@@ -914,10 +980,10 @@ namespace Beagle.Util {
 		[XmlIgnore]
 		public List<string[]> Values {
 			get {
-				if (Count == 0)
-					return null;
-
 				List<string[]> list = new List<string[]> (Count);
+				if (Count == 0)
+					return list;
+
 				int num_params = NumParams;
 
 				foreach (string value in Values_String) {
