@@ -33,6 +33,9 @@ namespace Beagle {
 			private static Dictionary<string, string> fields_mapping;
 			private static Dictionary<string, string> sources_mapping;
 			private static Dictionary<string, string> contents_mapping;
+			private static string[] fields_supported = null;
+			private static string[] sources_supported = null;
+			private static string[] contents_supported = null;
 
 			static Ontologies ()
 			{
@@ -109,12 +112,16 @@ namespace Beagle {
 
 			public static string[] GetSupportedXesamFields ()
 			{
-				List<string> ret = new List<string> ();
+				if (fields_supported == null) {
+					List<string> ret = new List<string> ();
 
-				foreach (string field in fields_mapping.Keys)
-					ret.Add (field);
+					foreach (string field in fields_mapping.Keys)
+						ret.Add (field);
 
-				return ret.ToArray ();
+					fields_supported = ret.ToArray ();
+				}
+
+				return fields_supported;
 			}
 
 			public static string XesamToBeagleField (string xesamField) {
@@ -128,12 +135,16 @@ namespace Beagle {
 
 			public static string[] GetSupportedXesamSources ()
 			{
-				List<string> ret = new List<string> ();
+				if (sources_supported == null) {
+					List<string> ret = new List<string> ();
 
-				foreach (string field in sources_mapping.Keys)
-					ret.Add (field);
+					foreach (string field in sources_mapping.Keys)
+						ret.Add (field);
 
-				return ret.ToArray ();
+					sources_supported = ret.ToArray ();
+				}
+
+				return sources_supported;
 			}
 
 			public static string XesamToBeagleSource (string xesamSource)
@@ -149,12 +160,16 @@ namespace Beagle {
 
 			public static string[] GetSupportedXesamContents ()
 			{
-				List<string> ret = new List<string> ();
+				if (contents_supported == null) {
+					List<string> ret = new List<string> ();
 
-				foreach (string field in contents_mapping.Keys)
-					ret.Add (field);
+					foreach (string field in contents_mapping.Keys)
+						ret.Add (field);
 
-				return ret.ToArray ();
+					contents_supported = ret.ToArray ();
+				}
+
+				return contents_supported;
 			}
 
 			public static string XesamToBeagleContent (string xesamContent)
