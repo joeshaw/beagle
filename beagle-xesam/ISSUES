@@ -1,26 +1,26 @@
 This is a list of issues we have while implementing the Xesam interface for
 Beagle, in some sort of priority-order:
 
-* Hit Fields: Currently we can only return the "uri" and "mimetype" fields for
+* Hit Fields: Currently we can only return only a limited set of fields for
 	hits. We need to support everything that we can as defined in the
-	Xesam ontology draft
+	Xesam ontology draft. This work in progress (see src/Ontologies.cs for
+	the current set of mappings)
 
-* User Searches: User queries are supported as a hack. We don't parse them
-	at all. Since they're so similar to Beagle's native search language,
-	this works for now.
+	Also, How do we sanely set the default value for 
+	session.vendorOntologies as 
+	["xesam", "1.0", "$XDG_SYSTEM_DATA_DIR/share/ontologies/xesam-1.0"]
+
+* Parsing: The parser should use QueryParts instead of the generating a search
+	string. This should be pretty easy to implement.
 
 	NOTE: Beagle doesn't support grouping of ANDs and ORs, it seems. We
 	either need to make some drastic changes at lower levels (more R&D
 	required), or break up at ORs and start multiple searches for a single
 	Xesam search (this is ugly).
 
-* Ontologies: We need to establish an exhaustive mapping from Xesam's ontology
-	to the set of fields supported by Beagle. This is being worked on in
-	Beagle.Xesam.Ontologies.ToBeagleField
-
-	Also, How do we sanely set the default value for 
-	session.vendorOntologies as 
-	["xesam", "1.0", "$XDG_SYSTEM_DATA_DIR/share/ontologies/xesam-1.0"]
+* User Searches: User queries are supported as a hack. We don't parse them
+	at all. Since they're so similar to Beagle's native search language,
+	this works for now.
 
 * Fields/Sorting: We need the list of fields before we can handle these
 

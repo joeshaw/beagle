@@ -5,8 +5,10 @@ This is a small adaptor that translates between the Xesam search API
 (http://freedesktop.org/wiki/XesamSearchLive) and Beagle's native search
 interface. It is currently not complete.
 
-To test this, you need the DBus service and 'beagled' running. Install the
-adaptor using the standard procedure (./configure && make && make install). The
-adaptor is runusing the command 'beagle-xesam-adaptor'.
+To test this, you need the DBus service and 'beagled' running. You also need
+the 'ndesk-dbus' and 'ndesk-dbus-glib' packages (available in your favourite
+Linux distro and http://www.ndesk.org). Install the adaptor using the standard
+procedure (./configure && make && make install). The adaptor is runusing the
+command 'beagle-xesam-adaptor'.
 
 (See http://freedesktop.org/wiki/XesamSearchLive for an example client)
