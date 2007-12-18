@@ -39,14 +39,13 @@ namespace Beagle.Daemon {
 		public override ResponseMessage Execute (RequestMessage r)
 		{
 			SuggestionsRequest request = (SuggestionsRequest) r;
-
 			ArrayList suggestions = new ArrayList ();
 
 			foreach (Queryable queryable in QueryDriver.Queryables) {
-				if (! (queryable.IQueryable is LuceneQueryable))
-					continue;
+				LuceneQueryable driver = queryable.IQueryable as LuceneQueryable;
 				
-				LuceneQueryable driver = (LuceneQueryable) queryable.IQueryable;
+				if (driver == null)
+					continue;
 
 				ICollection some_suggestions = driver.Suggest (request.QueryTerms);
 				suggestions.AddRange (some_suggestions);
