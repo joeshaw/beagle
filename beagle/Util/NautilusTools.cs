@@ -52,8 +52,21 @@ namespace Beagle.Util {
 				yield break;
 
 			XmlDocument doc = new XmlDocument ();
-			StreamReader reader = new StreamReader (metafile);
-			doc.Load (reader);
+			StreamReader reader = null;
+			
+			try {
+				reader = new StreamReader (metafile);
+				doc.Load (reader);
+			} catch (Exception e) {
+				Log.Error (e, "Error while trying to parse nautilus metadata file {0}", metafile);
+
+				if (reader != null)
+					reader.Close ();
+				reader = null;
+			}
+
+			if (reader == null)
+				yield break;
 
 			foreach (XmlNode node in doc.SelectNodes ("/directory/file[@name]")) {
 				XmlNode timestamp_node = node.Attributes.GetNamedItem ("timestamp");

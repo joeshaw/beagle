@@ -182,6 +182,13 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 		
 		public void PostFlushHook () { }
 
+		static private bool IsXmlFile (string path, string name)
+		{
+			return (Path.GetExtension (name) == ".xml" && File.Exists (Path.Combine (path, name)));
+		}
+
+		private DirectoryWalker.FileFilter is_xml_file = new DirectoryWalker.FileFilter (IsXmlFile);
+
 		public bool HasNextIndexable ()
 		{
 			if (metadata != null) {
@@ -195,7 +202,7 @@ namespace Beagle.Daemon.NautilusMetadataQueryable {
 
 			while (metadata == null) {
 				if (metafiles == null)
-					metafiles = DirectoryWalker.GetFiles (nautilus_dir).GetEnumerator ();
+					metafiles = DirectoryWalker.GetItems (nautilus_dir, is_xml_file).GetEnumerator ();
 
 				if (! metafiles.MoveNext ())
 					return false;
