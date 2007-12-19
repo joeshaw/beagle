@@ -40,7 +40,22 @@ namespace Beagle.Filters {
 
 	public class FilterMan : Beagle.Daemon.Filter {
 
-		private StreamReader reader;
+		// The regular expression for a complete man header line is built to allow a suite of 
+		// non-spaces, or words separated by spaces which are encompassed in quotes
+		// The regexp should be :
+		//
+		// Regex header_re = new Regex (@"^\.TH\s+" +
+		//			     @"(?<title>(\S+|(""(\S+\s*)+"")))\s+" +
+		//			     @"(?<section>\d+)\s+" + 
+		//			     @"(?<date>(\S+|(""(\S+\s*)+"")))\s+" +
+		//			     @"(?<source>(\S+|(""(\S+\s*)+"")))\s+" +
+		//			     @"(?<manual>(\S+|(""(\S+\s*)+"")))\s*" +
+		//			    "$");
+		//
+		// But there seem to be a number of broken man pages, and the current filter can be used 
+		// for general troff pages.
+
+		private static Regex header_regex = new Regex (@"^\.TH\s+(?<title>(\S+|(""(\S+\s*)+"")))\s*", RegexOptions.Compiled);
 
 		public FilterMan ()
 		{
@@ -61,26 +76,9 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
 		}
 
-		protected void ParseManFile (StreamReader reader)
+		protected void ParseManFile (TextReader reader)
 		{
 			string line = null;
-			
-			// The regular expression for a complete man header line is built to allow a suite of 
-			// non-spaces, or words separated by spaces which are encompassed in quotes
-			// The regexp should be :
-			//
-			// Regex header_re = new Regex (@"^\.TH\s+" +
-			//			     @"(?<title>(\S+|(""(\S+\s*)+"")))\s+" +
-			//			     @"(?<section>\d+)\s+" + 
-			//			     @"(?<date>(\S+|(""(\S+\s*)+"")))\s+" +
-			//			     @"(?<source>(\S+|(""(\S+\s*)+"")))\s+" +
-			//			     @"(?<manual>(\S+|(""(\S+\s*)+"")))\s*" +
-			//			    "$");
-			//
-			// But there seem to be a number of broken man pages, and the current filter can be used 
-			// for general troff pages.
-
-			Regex header_regex = new Regex (@"^\.TH\s+(?<title>(\S+|(""(\S+\s*)+"")))\s*");
 						    
 			while ((line = reader.ReadLine ()) != null) {
 
@@ -128,15 +126,9 @@ namespace Beagle.Filters {
 			Finished ();
 		}
 
-		protected override void DoOpen (FileInfo info)
-		{
-			Stream stream = new FileStream (info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
-			this.reader = new StreamReader (stream);
-		}
-		
 		protected override void DoPull ()
 		{
-			ParseManFile (reader);
+			ParseManFile (base.TextReader);
 		}
 	}
 }
