@@ -24,7 +24,6 @@ namespace Search.Tiles {
 		public TileFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			Title = GetTitle (hit);
-			EnableOpenWith = true;
 			
 			if (Hit.FileInfo != null) {
 				Timestamp = Hit.FileInfo.LastWriteTimeUtc;
@@ -35,9 +34,12 @@ namespace Search.Tiles {
 			AddAction (new TileAction (Catalog.GetString ("E-Mail"), Email));
 			// AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 			AddAction (new TileAction (Catalog.GetString ("Move to Trash"), Gtk.Stock.Delete, MoveToTrash));
-			if (Hit.GetFirstProperty("dc:author") != null || Hit.GetFirstProperty("dc:creator") != null ){
-				AddAction( new TileAction("Find Documents From Same Author",Gtk.Stock.Find, FindSameAuthor));
+
+			if (! String.IsNullOrEmpty (Hit.GetFirstProperty("dc:author"))) {
+				AddAction(new TileAction ("Find Documents From Same Author", Gtk.Stock.Find, FindSameAuthor));
 			}
+
+			EnableOpenWith = true;
 		}
 
 		static ThumbnailFactory thumbnailer = new ThumbnailFactory ();

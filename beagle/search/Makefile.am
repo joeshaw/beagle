@@ -61,6 +61,7 @@ TILES = 					\
 	$(srcdir)/Tiles/CApplet.cs		\
 	$(srcdir)/Tiles/Calendar.cs		\
 	$(srcdir)/Tiles/Contact.cs		\
+	$(srcdir)/Tiles/Documentation.cs	\
 	$(srcdir)/Tiles/File.cs			\
 	$(srcdir)/Tiles/Folder.cs		\
 	$(srcdir)/Tiles/HitFlavor.cs		\

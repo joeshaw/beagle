@@ -23,6 +23,7 @@ namespace Search.Tiles {
 				return false;
 
 			string str = hit.GetFirstProperty ("fixme:inside_archive");
+
 			if (hit.ParentUri == null || str == null || str == "false")
 				return false;
 

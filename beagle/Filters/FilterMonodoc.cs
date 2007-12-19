@@ -49,9 +49,12 @@ namespace Beagle.Filters {
 
 		protected override void RegisterSupportedTypes ()
 		{
-			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/monodoc"));
+			// 1: Change to indexable generator
+			SetVersion (1);
+
 			// FIXME: Autoconf to find the monodoc prefix
 			AddSupportedFlavor (new FilterFlavor ("file:///usr/lib/monodoc/sources/*", ".zip", null, 0));
+			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/monodoc"));
 		}
 
 		public override bool HasGeneratedIndexable {
@@ -61,7 +64,7 @@ namespace Beagle.Filters {
 					entry_enumerator = GetNextEntryIndexable ().GetEnumerator ();
 					return true;
 				} catch (Exception e) {
-					Logger.Log.Error ("Error while filtering Monodoc archive: {0}", e);
+					Log.Error ("Error while filtering Monodoc archive: {0}", e);
 					// If we cannot scan archived entries, we take that as a failure
 					Error ();
 					return false;
@@ -69,7 +72,7 @@ namespace Beagle.Filters {
 			}
 		}
 
-		IEnumerator entry_enumerator = null;
+		private IEnumerator entry_enumerator = null;
 
 		public override bool GenerateNextIndexable (out Indexable child)
 		{
@@ -79,6 +82,7 @@ namespace Beagle.Filters {
 				return false;
 
 			child = (Indexable) entry_enumerator.Current;
+			
 			return true;
 		}
 
@@ -123,8 +127,9 @@ namespace Beagle.Filters {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";
 			
-			indexable.AddProperty (Property.NewUnsearched ("fixme:type", "type"));
+			indexable.AddProperty (Property.New ("dc:title", "T:" + node.Attributes["FullName"].Value));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:name", "T:" + node.Attributes["FullName"].Value));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:type", "type"));
 			
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);
@@ -159,8 +164,9 @@ namespace Beagle.Filters {
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";
 
-			indexable.AddProperty (Property.NewUnsearched ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
+			indexable.AddProperty (Property.New ("dc:title",  memberFullName.ToString ()));
 			indexable.AddProperty (Property.New ("fixme:name", memberFullName.ToString ()));
+			indexable.AddProperty (Property.NewUnsearched ("fixme:type", node.SelectSingleNode ("MemberType").InnerText.ToLower ()));
 
 			StringReader reader = new StringReader (node.SelectSingleNode ("Docs").InnerXml); 
                         indexable.SetTextReader (reader);

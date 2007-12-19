@@ -1,13 +1,9 @@
 //
-// Beagle
+// FilterMan.cs
 //
-// FilterMan.cs : Trivial implementation of a man-page filter.
+// Copyright (C) 2004 Michael Levy <mlevy@wardium.homeip.net>
 //
-// Author :
-//      Michael Levy <mlevy@wardium.homeip.net>
-//
-// Copyright (C) 2004 Michael levy
-//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
 // copy of this software and associated documentation files (the "Software"),
@@ -33,15 +29,24 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using Beagle.Util;
 using Beagle.Daemon;
 
 namespace Beagle.Filters {
 
+	// FIXME: Right now we don't handle pages with just one line like:
+	//   .so man3/strcpy.3
+	// Which is in strncpy.3.gz and points to strcpy.3.gz
+
 	public class FilterMan : Beagle.Daemon.Filter {
-		StreamReader reader;
-		
+
+		private StreamReader reader;
+
 		public FilterMan ()
 		{
+			// 1: Fixes and updates
+			SetVersion (1);
+
 			SnippetMode = true;
 			SetFileType ("documentation");
 		}
@@ -55,80 +60,81 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
 		}
- 		/*
- 			FIXME: 
- 			Right now we don't handle pages with just one line like:
- 				.so man3/strcpy.3
-			Which is in strncpy.3.gz and points to strcpy.3.gz
-		*/
+
 		protected void ParseManFile (StreamReader reader)
 		{
-			string str;
-			/*
-			   The regular expression for a complete man header line is built to allow a suite of 
-			   non-spaces, or words separated by spaces which are encompassed in quotes
-			   The regexp should be :
-			   
-			Regex headerRE = new Regex (@"^\.TH\s+" +
-						    @"(?<title>(\S+|(""(\S+\s*)+"")))\s+" +
-						    @"(?<section>\d+)\s+" + 
-						    @"(?<date>(\S+|(""(\S+\s*)+"")))\s+" +
-						    @"(?<source>(\S+|(""(\S+\s*)+"")))\s+" +
-						    @"(?<manual>(\S+|(""(\S+\s*)+"")))\s*" +
-						    "$");
+			string line = null;
+			
+			// The regular expression for a complete man header line is built to allow a suite of 
+			// non-spaces, or words separated by spaces which are encompassed in quotes
+			// The regexp should be :
+			//
+			// Regex header_re = new Regex (@"^\.TH\s+" +
+			//			     @"(?<title>(\S+|(""(\S+\s*)+"")))\s+" +
+			//			     @"(?<section>\d+)\s+" + 
+			//			     @"(?<date>(\S+|(""(\S+\s*)+"")))\s+" +
+			//			     @"(?<source>(\S+|(""(\S+\s*)+"")))\s+" +
+			//			     @"(?<manual>(\S+|(""(\S+\s*)+"")))\s*" +
+			//			    "$");
+			//
+			// But there seem to be a number of broken man pages, and the current filter can be used 
+			// for general troff pages.
+
+			Regex header_regex = new Regex (@"^\.TH\s+(?<title>(\S+|(""(\S+\s*)+"")))\s*");
 						    
-			 But there seem to be a number of broken man pages, and the current filter can be used 
-			 for general troff pages.
-			*/
-			Regex headerRE = new Regex (@"^\.TH\s+" +
-						    @"(?<title>(\S+|(""(\S+\s*)+"")))\s*");
-						    
-			while ((str = reader.ReadLine ()) != null) {
-				if (str.StartsWith (".\"")) { 
-					/* Comment in man page */
+			while ((line = reader.ReadLine ()) != null) {
+
+				// Comment in man page
+				if (line.StartsWith (".\\\""))
 					continue;
-				} else if (str.StartsWith (".TH ")) {
-					MatchCollection matches = headerRE.Matches (str);
+
+				if (line.StartsWith (".TH ")) {
+					MatchCollection matches = header_regex.Matches (line);
+					
 					if (matches.Count != 1) {
-						Console.Error.WriteLine ("In title Expected 1 match but found {0} matches in '{1}'",
-									  matches.Count, str);
+						Log.Error ("In title Expected 1 match but found {0} matches in '{1}'",
+							   matches.Count, line);
 						continue;
 					}
-					foreach (Match theMatch in matches) {
-						AddProperty (Beagle.Property.New ("dc:title",
-										  theMatch.Groups ["title"].ToString ()));
+
+					foreach (Match match in matches) {
+						AddProperty (Beagle.Property.New ("dc:title", match.Groups ["title"].ToString ()));
 					}
                       		} else {
-                      			// A "regular" string
-                      			// Strip out some of the more common
-                      			// troff macros, ideally we should handle more
-								str = str.Replace (".SH","");
-								str = str.Replace (".PP","");
-								str = str.Replace ("\fI","");
-								str = str.Replace ("\fR","");
-								str = str.Replace (".SH","");
-								str = str.Replace (".B","");
-								str = str.Replace (".TP","");
-								str = str.Replace (".BR","");
-								str = str.Replace ("\fB","");
-                      			AppendText (str);
-				
+                      			// This line is a "regular" string so strip out
+					// some of the more common troff macros, ideally
+					// we should handle more.
+
+					line = line.Replace (".B", "");
+					line = line.Replace (".BR", "");
+					line = line.Replace (".HP", "");
+					line = line.Replace (".IP", "");
+					line = line.Replace (".PP", "");
+					line = line.Replace (".SH", "");
+					line = line.Replace (".TP", "");
+					line = line.Replace ("\\-", "-");
+					line = line.Replace ("\\fB", "");
+					line = line.Replace ("\\fI", "");
+					line = line.Replace ("\\fR", "");
+					line = line.Replace ("\\(co", "(C)");
+					
+					if (String.IsNullOrEmpty (line))
+						continue;
+
+                      			AppendLine (line);
                       		}
-                      		
 			}  
+
 			Finished ();
 		}
 
-		override protected void DoOpen (FileInfo info)
+		protected override void DoOpen (FileInfo info)
 		{
-			Stream stream;
-			stream = new FileStream (info.FullName,
-						 FileMode.Open,
-						 FileAccess.Read,
-						 FileShare.Read);
-			reader = new StreamReader (stream);
+			Stream stream = new FileStream (info.FullName, FileMode.Open, FileAccess.Read, FileShare.Read);
+			this.reader = new StreamReader (stream);
 		}
-		override protected void DoPull ()
+		
+		protected override void DoPull ()
 		{
 			ParseManFile (reader);
 		}

@@ -35,6 +35,7 @@ using Search.Tiles;
 	 typeof (CalendarActivator),
 	 typeof (CAppletActivator),
 	 typeof (ContactActivator),
+	 typeof (DocumentationActivator),
 	 typeof (FileActivator),
 	 typeof (FolderActivator),
 	 typeof (ImageActivator),
