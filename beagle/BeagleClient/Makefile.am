@@ -26,8 +26,6 @@ CSFILES = 						\
 	$(srcdir)/QueryableStatus.cs			\
 	$(srcdir)/RemoteControl.cs			\
 	$(srcdir)/Snippet.cs				\
-	$(srcdir)/SuggestionsRequest.cs			\
-	$(srcdir)/SuggestionsResponse.cs		\
 	$(srcdir)/Transport.cs				\
 	$(srcdir)/UnixTransport.cs			\
 	$(srcdir)/Versioned.cs

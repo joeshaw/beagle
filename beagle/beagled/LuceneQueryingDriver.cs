@@ -938,40 +938,5 @@ namespace Beagle.Daemon {
 
 			return hit;
 		}
-
-		public ICollection Suggest (ICollection stemmed_text)
-		{
-			ArrayList suggestions = new ArrayList ();
-
-			IndexReader primary_reader = LuceneCommon.GetReader (PrimaryStore);
-			
-			foreach (string stem in stemmed_text) {
-				Term term = new Term ("Text", stem);
-				LNS.FuzzyTermEnum fuzzy = new LNS.FuzzyTermEnum (primary_reader, term, 0.5f, 1);
-
-				Term suggested_term = null;
-				
-				while ((suggested_term = fuzzy.Term ()) != null) {
-					if (term.Text () != suggested_term.Text ()) {					
-						float difference = fuzzy.Difference ();
-						
-						// The difference is the Levenshtein difference,
-						// where 1.0f is equal and anything lower is worse.
-						// So 0.5f seems a pretty neat point here :-)
-						if (difference >= 0.5) {
-							suggestions.Add (suggested_term.Text ());
-						}
-					}
-					
-					fuzzy.Next ();
-				}
-				
-				fuzzy.Close ();
-			}
-
-			ReleaseReader (primary_reader);
-
-			return suggestions;
-		}
 	}
 }

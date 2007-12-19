@@ -681,7 +681,7 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
-		public static bool IsIndexing {
+		static public bool IsIndexing {
 			get {
 				// If the backends haven't been started yet,
 				// there is at least the initial setup.  Just
@@ -701,10 +701,6 @@ namespace Beagle.Daemon {
 
 				return false;
 			}
-		}
-
-		public static ICollection Queryables {
-			get { return queryables; }
 		}
 	}
 }

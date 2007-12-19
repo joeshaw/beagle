@@ -51,8 +51,7 @@ using Beagle.Daemon;
 	typeof (QueryExecutor),
 	typeof (ReloadConfigExecutor),
 	typeof (ShutdownExecutor),
-	typeof (SnippetExecutor),
-	typeof (SuggestionsExecutor)
+	typeof (SnippetExecutor)
 )]
 
 // All backends in this assembly must be registered here.

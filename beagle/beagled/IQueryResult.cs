@@ -1,7 +1,7 @@
 //
 // IQueryable.cs
 //
-// Copyright (C) 2004-2007 Novell, Inc.
+// Copyright (C) 2004 Novell, Inc.
 //
 
 //
@@ -29,9 +29,13 @@ using System.Collections;
 
 namespace Beagle.Daemon {
 
-	// QueryResult has a lot of api that is tied to implementation details.
-	// The point of this interface is to only expose the minimum amount
-	// of QueryResult API to IQueryable.DoQuery implementations. 
+	/*
+
+	QueryResult has a lot of api that is tied to implementation details.
+	The point of this interface is to only expose the minimum amount
+	of QueryResult api to IQueryable.DoQuery implementations. 
+
+	*/
 
 	public interface IQueryResult {
 

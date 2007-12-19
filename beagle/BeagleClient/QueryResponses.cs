@@ -110,8 +110,8 @@ namespace Beagle {
 
 		public SearchTermResponse ()
 		{
-			this.ExactText = new ArrayList ();
-			this.StemmedText = new ArrayList ();
+			ExactText = new ArrayList ();
+			StemmedText = new ArrayList ();
 		}
 	}
 }

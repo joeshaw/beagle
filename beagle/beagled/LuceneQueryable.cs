@@ -1039,10 +1039,5 @@ namespace Beagle.Daemon {
 		{
 			return new LuceneQueryingDriver (index_name, minor_version, read_only_mode);
 		}
-
-		public ICollection Suggest (ICollection stemmed_text)
-		{
-			return driver.Suggest (stemmed_text);
-		}
 	}
 }
