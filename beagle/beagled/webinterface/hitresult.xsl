@@ -59,6 +59,13 @@
 				</a>
 			</span>
 			<span class="Timestamp" name="Timestamp">
+				<!-- Pushing the filesize information to the right, just before the timestamp -->
+				<xsl:if test="Properties/Property[@Key='fixme:filesize']">
+					<span class="Filesize" name="Filesize">
+						<xsl:variable name="filesize"><xsl:value-of select="Properties/Property[@Key='fixme:filesize']/@Value"/></xsl:variable>
+						<i><xsl:value-of select="ceiling ($filesize div 1024)"/> KB</i>&nbsp;
+					</span>
+				</xsl:if>
 				<xsl:value-of select="@Timestamp"/>
 			</span>
 		</div>

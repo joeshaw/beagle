@@ -182,6 +182,10 @@ body {
 	width: 50%;
 }
 
+.Timestamp .Filesize {
+	color: #808080;
+}
+
 .Timestamp {
 	float: right;
 	text-align: right;
