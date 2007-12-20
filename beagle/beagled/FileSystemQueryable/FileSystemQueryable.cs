@@ -52,7 +52,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		// 5: Keyword properies in the private namespace are no longer lower cased; this is required to
 		//    offset the change in LuceneCommon.cs
 		// 6: Store beagle:FileType property denoting type of file like document, source, music etc.
-		const int MINOR_VERSION = 6;
+		// 7: Store filesize as fixme:filesize
+		const int MINOR_VERSION = 7;
 
 		private object big_lock = new object ();
 
