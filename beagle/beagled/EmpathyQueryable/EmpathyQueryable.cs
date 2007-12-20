@@ -96,6 +96,9 @@ namespace Beagle.Daemon.EmpathyQueryable {
 			crawler.Crawl ();
 			foreach (FileInfo file in crawler.Logs)
 				IndexLog (file.FullName, Scheduler.Priority.Delayed);
+
+			if (Inotify.Enabled)
+				crawler = null; // Free crawler since we do not need it any more
 		}
 
 		private void CrawlHook (Scheduler.Task task)
@@ -107,7 +110,7 @@ namespace Beagle.Daemon.EmpathyQueryable {
 
 		/////////////////////////////////////////////////
 
-		// Sets up an Inotify watch on all subdirectories withing ~/.kopete/logs
+		// Sets up an Inotify watch on all subdirectories
 		private void Watch (string path)
 		{
 			DirectoryInfo root = new DirectoryInfo (path);
