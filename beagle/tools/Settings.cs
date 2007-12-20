@@ -887,14 +887,14 @@ public class SettingsDialog
 			column.Title = Catalog.GetString ("Name");
 			CellRendererText renderer = new CellRendererText ();
 			column.PackStart (renderer, true);
-			column.SetCellDataFunc (renderer, NameCellFunc);
+			column.SetCellDataFunc (renderer, new TreeCellDataFunc (NameCellFunc));
 			AppendColumn (column);
 
                         column = new TreeViewColumn ();
                         column.Title = Catalog.GetString ("Address");
                         renderer = new CellRendererText ();
                         column.PackStart (renderer, true);
-                        column.SetCellDataFunc (renderer, AddressCellFunc);
+                        column.SetCellDataFunc (renderer, new TreeCellDataFunc (AddressCellFunc));
                         AppendColumn (column);
 		
 		}
