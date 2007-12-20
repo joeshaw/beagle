@@ -708,19 +708,27 @@ function bookmark_query ()
 {
 	// Firefox specific !
 	if (! window.sidebar) {
-		alert ("Cannot add bookmark in non Firefox browser!");
+		alert ("Adding bookmarks only supported in Firefox!");
 		return;
 	}
 
-	// Using window.sidebar.addPanel () will create bookmark that will open in sidebar
+	var title = document.queryform.querytext.value;
+	if (title == "")
+		return;
 
-	alert ("Adding bookmark is deferred till the mystery of how to correctly add bookmarks is resolved!");
+	var url = "http://" + document.location.host + "/?search=" + escape (title);
+
+	// Using window.sidebar.addPanel () will create bookmark that will open in sidebar
+	var answer = confirm ("Due to limitations in Firefox the bookmark will open in the sidebar. To open it in the main window, uncheck the option in the Property of this bookmark. Continue ?");
+	if (answer)
+		window.sidebar.addPanel (title, url, "");
 }
 
 /******* Advance search GUI ****************************************/
 
 function show_advanced_search ()
 {
+	alert ("Not implemented.");
 }
 
 /******* Initial fetching and loading of the xsl/xml files *********/
