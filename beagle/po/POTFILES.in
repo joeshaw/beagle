@@ -30,6 +30,7 @@ search/Tiles/Audio.cs
 search/Tiles/Calendar.cs
 search/Tiles/CApplet.cs
 search/Tiles/Contact.cs
+search/Tiles/Documentation.cs
 search/Tiles/File.cs
 search/Tiles/Folder.cs
 search/Tiles/HitFlavor.cs
