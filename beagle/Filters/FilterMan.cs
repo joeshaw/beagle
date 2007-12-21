@@ -32,6 +32,8 @@ using System.Text.RegularExpressions;
 using Beagle.Util;
 using Beagle.Daemon;
 
+using ICSharpCode.SharpZipLib.GZip;
+
 namespace Beagle.Filters {
 
 	// FIXME: Right now we don't handle pages with just one line like:
@@ -59,7 +61,7 @@ namespace Beagle.Filters {
 
 		public FilterMan ()
 		{
-			// 1: Fixes and updates
+			// 1:Separate compressed man page filter
 			SetVersion (1);
 
 			SnippetMode = true;
@@ -103,17 +105,21 @@ namespace Beagle.Filters {
 					// some of the more common troff macros, ideally
 					// we should handle more.
 
-					line = line.Replace (".B", "");
-					line = line.Replace (".BR", "");
-					line = line.Replace (".HP", "");
-					line = line.Replace (".IP", "");
-					line = line.Replace (".PP", "");
-					line = line.Replace (".SH", "");
-					line = line.Replace (".TP", "");
+					// If it is tempting to use a regex to do these replacements, profile it first.
+					// I found multiple Replace()s more efficient that a large Regex. - dBera
+					line = line.Replace (".B", String.Empty);
+					line = line.Replace (".BR", String.Empty);
+					line = line.Replace (".HP", String.Empty);
+					line = line.Replace (".IP", String.Empty);
+					line = line.Replace (".I", String.Empty);
+					line = line.Replace (".PP", String.Empty);
+					line = line.Replace (".SH", String.Empty);
+					line = line.Replace (".TP", String.Empty);
 					line = line.Replace ("\\-", "-");
-					line = line.Replace ("\\fB", "");
-					line = line.Replace ("\\fI", "");
-					line = line.Replace ("\\fR", "");
+					line = line.Replace ("\\fB", String.Empty);
+					line = line.Replace ("\\fI", String.Empty);
+					line = line.Replace ("\\fP", String.Empty);
+					line = line.Replace ("\\fR", String.Empty);
 					line = line.Replace ("\\(co", "(C)");
 					
 					if (String.IsNullOrEmpty (line))
@@ -126,9 +132,48 @@ namespace Beagle.Filters {
 			Finished ();
 		}
 
-		protected override void DoPull ()
+		protected override void DoPullProperties ()
 		{
 			ParseManFile (base.TextReader);
+		}
+	}
+
+	public class FilterCompressedMan : FilterMan {
+
+		public FilterCompressedMan () : base ()
+		{
+		}
+
+		protected override void RegisterSupportedTypes ()
+		{
+			// FIXME: Hardcoded path is ok ?
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".gz", null, 1));
+		}
+
+		StreamReader reader = null;
+
+		protected override void DoOpen (FileInfo info)
+		{
+			try {
+				GZipInputStream stream = new GZipInputStream (Stream);
+				reader = new StreamReader (stream);
+			} catch (Exception e) {
+				Log.Error (e, "Error in opening compressed man page");
+				if (reader != null)
+					reader.Close ();
+				Error ();
+			}
+		}
+
+		protected override void DoPullProperties ()
+		{
+			ParseManFile (reader);
+		}
+
+		protected override void DoClose ()
+		{
+			if (reader != null)
+				reader.Close ();
 		}
 	}
 }

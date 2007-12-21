@@ -40,6 +40,7 @@ using Beagle.Filters;
 #if HAVE_LIBCHM
 	 typeof(FilterChm),
 #endif
+	 typeof(FilterCompressedMan),
 	 typeof(FilterCpp),
 	 typeof(FilterCSharp),
 	 typeof(FilterDeb),
@@ -50,7 +51,7 @@ using Beagle.Filters;
 	 typeof(FilterDocbook),
 	 typeof(FilterEbuild),
 	 typeof(FilterExternal),
-     typeof(FilterEmpathyLog),
+	 typeof(FilterEmpathyLog),
 	 typeof(FilterFortran),
 	 typeof(FilterGif),
 	 typeof(FilterHtml),
