@@ -537,7 +537,6 @@ namespace Beagle.Daemon
 					Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
 
 				reschedule = FlushIndexer (driver);
-				Console.WriteLine (reschedule);
 
 				// Super Lame Hack: gtk-sharp up to 2.10 requires a main loop
 				// to dispose of any managed wrappers around GObjects.  Since
