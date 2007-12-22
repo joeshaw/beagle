@@ -1,6 +1,7 @@
 //
 // FilterMan.cs
 //
+// Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Michael Levy <mlevy@wardium.homeip.net>
 //
 
@@ -33,6 +34,7 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpZipLib.BZip2;
 
 namespace Beagle.Filters {
 
@@ -59,6 +61,8 @@ namespace Beagle.Filters {
 
 		private static Regex header_regex = new Regex (@"^\.TH\s+(?<title>(\S+|(""(\S+\s*)+"")))\s*", RegexOptions.Compiled);
 
+		private StreamReader compressed_reader = null;
+
 		public FilterMan ()
 		{
 			// 1:Separate compressed man page filter
@@ -76,11 +80,19 @@ namespace Beagle.Filters {
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("application/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/x-troff"));
 			AddSupportedFlavor (FilterFlavor.NewFromMimeType ("text/troff"));
+
+			// Compressed man pages
+
+			// FIXME: Hardcoded path is ok ?
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".gz", null, 1));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".bz2", null, 1));
 		}
 
 		protected void ParseManFile (TextReader reader)
 		{
 			string line = null;
+
+			string section_property_name = null;
 						    
 			while ((line = reader.ReadLine ()) != null) {
 
@@ -89,91 +101,165 @@ namespace Beagle.Filters {
 					continue;
 
 				if (line.StartsWith (".TH ")) {
-					MatchCollection matches = header_regex.Matches (line);
-					
-					if (matches.Count != 1) {
-						Log.Error ("In title Expected 1 match but found {0} matches in '{1}'",
-							   matches.Count, line);
-						continue;
-					}
+					HandleTH (line);
+					continue;
+				} else if (line.StartsWith (".SH")) {
+					section_property_name = HandleSH (line);
 
-					foreach (Match match in matches) {
-						AddProperty (Beagle.Property.New ("dc:title", match.Groups ["title"].ToString ()));
-					}
-                      		} else {
-                      			// This line is a "regular" string so strip out
-					// some of the more common troff macros, ideally
-					// we should handle more.
+					// Did not find useful property, so treat this is a section
+					if (section_property_name == null)
+						AppendStructuralBreak ();
 
-					// If it is tempting to use a regex to do these replacements, profile it first.
-					// I found multiple Replace()s more efficient that a large Regex. - dBera
-					line = line.Replace (".B", String.Empty);
-					line = line.Replace (".BR", String.Empty);
-					line = line.Replace (".HP", String.Empty);
-					line = line.Replace (".IP", String.Empty);
-					line = line.Replace (".I", String.Empty);
-					line = line.Replace (".PP", String.Empty);
-					line = line.Replace (".SH", String.Empty);
-					line = line.Replace (".TP", String.Empty);
-					line = line.Replace ("\\-", "-");
-					line = line.Replace ("\\fB", String.Empty);
-					line = line.Replace ("\\fI", String.Empty);
-					line = line.Replace ("\\fP", String.Empty);
-					line = line.Replace ("\\fR", String.Empty);
-					line = line.Replace ("\\(co", "(C)");
-					
-					if (String.IsNullOrEmpty (line))
-						continue;
-
-                      			AppendLine (line);
+					continue;
+				} else if (section_property_name != null) {
+					AddProperty (Beagle.Property.New (section_property_name, ProcessMacros (line)));
+					continue;
                       		}
-			}  
+
+				if (! line.StartsWith (".")) {
+					AppendLine (ProcessMacros (line));
+					continue;
+				}
+
+				// macro line
+				// From http://www.mamiyami.com/document/oreilly/unix3/unixnut/ch16_01.htm
+				int index = line.IndexOf (' ');
+				if (index == -1)
+					continue; // processing macro
+
+				string macro = line.Substring (0, index);
+				switch (macro) {
+				case ".B":
+					goto case ".hottext";
+				case ".BI":
+					goto case ".hottext";
+				case ".BR":
+					goto case ".hottext";
+				case ".DT":
+					break;
+				case ".HP":
+					reader.ReadLine (); // eat next line
+					AppendStructuralBreak (); // new para
+					break;
+				case ".I":
+					goto case ".hottext";
+				case ".IB":
+					goto case ".hottext";
+				case ".IP":
+					AppendStructuralBreak (); // new para
+					break;
+				case ".IR":
+					goto case ".hottext";
+				case ".LP":
+					AppendStructuralBreak ();
+					break;
+				case ".P":
+					AppendStructuralBreak ();
+					break;
+				case ".PD":
+					break;
+				case ".PP":
+					AppendStructuralBreak ();
+					break;
+				case ".RB":
+					goto case ".hottext";
+				case ".RE":
+					break;
+				case ".RI":
+					goto case ".hottext";
+				case ".RS":
+					break;
+				case ".SB":
+					goto case ".hottext";
+				case ".SM":
+					goto case ".hottext";
+				case ".SS":
+					AppendStructuralBreak ();
+					break;
+				case ".TP":
+					AppendStructuralBreak ();
+					break;
+
+				case ".hottext":
+					string text = ProcessMacros (line.Substring (index));
+					AppendText (text, text);
+					AppendWhiteSpace ();
+					break;
+				default:
+					AppendLine (ProcessMacros (line));
+					break;
+				}
+			} 
 
 			Finished ();
 		}
 
+		private void HandleTH (string line)
+		{
+			MatchCollection matches = header_regex.Matches (line);
+			
+			if (matches.Count != 1) {
+				Log.Error ("In title Expected 1 match but found {0} matches in '{1}'",
+					   matches.Count, line);
+				return;
+			}
+
+			foreach (Match match in matches)
+				AddProperty (Beagle.Property.New ("dc:title", match.Groups ["title"].ToString ()));
+		}
+
+		private string HandleSH (string line)
+		{
+			if (line == ".SH NAME")
+				return "dc:subject";
+			if (line == ".SH AUTHOR")
+				return "dc:creator";
+			if (line == ".SH COPYRIGHT")
+				return "dc:rights";
+			return null;
+		}
+
+		private string ProcessMacros (string line)
+		{
+			line = line.Replace (@"\-", "-");
+			line = line.Replace (@"\ ", " ");
+			line = line.Replace (@"\fB", String.Empty);
+			line = line.Replace (@"\fI", String.Empty);
+			line = line.Replace (@"\fP", String.Empty);
+			line = line.Replace (@"\fR", String.Empty);
+			line = line.Replace (@"\(co", "(C)");
+
+			return line;
+		}
+
 		protected override void DoPullProperties ()
-		{
-			ParseManFile (base.TextReader);
-		}
-	}
-
-	public class FilterCompressedMan : FilterMan {
-
-		public FilterCompressedMan () : base ()
-		{
-		}
-
-		protected override void RegisterSupportedTypes ()
-		{
-			// FIXME: Hardcoded path is ok ?
-			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".gz", null, 1));
-		}
-
-		StreamReader reader = null;
-
-		protected override void DoOpen (FileInfo info)
 		{
 			try {
-				GZipInputStream stream = new GZipInputStream (Stream);
-				reader = new StreamReader (stream);
+				Stream stream = null;
+				if (Extension == ".gz")
+					stream = new GZipInputStream (Stream);
+				else if (Extension == ".bz2")
+					stream = new BZip2InputStream (Stream);
+
+				compressed_reader = new StreamReader (stream);
 			} catch (Exception e) {
 				Log.Error (e, "Error in opening compressed man page");
-				if (reader != null)
-					reader.Close ();
+				if (compressed_reader != null)
+					compressed_reader.Close ();
 				Error ();
+				return;
 			}
-		}
 
-		protected override void DoPullProperties ()
-		{
-			ParseManFile (reader);
+			if (compressed_reader != null)
+				ParseManFile (compressed_reader);
+			else
+				ParseManFile (base.TextReader);
 		}
 
 		protected override void DoClose ()
 		{
-			if (reader != null)
-				reader.Close ();
+			if (compressed_reader != null)
+				compressed_reader.Close ();
 		}
 	}
 }
