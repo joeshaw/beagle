@@ -128,6 +128,7 @@ namespace Beagle.Filters {
 					continue; // processing macro
 
 				string macro = line.Substring (0, index);
+				macro = macro.ToUpper ();
 				switch (macro) {
 				case ".B":
 					goto case ".hottext";
@@ -189,7 +190,7 @@ namespace Beagle.Filters {
 					AppendWhiteSpace ();
 					break;
 				default:
-					Log.Error ("Unsupported man-page macro: '{0}'", line);
+					//Log.Error ("Unsupported man-page macro: '{0}'", line);
 					break;
 				}
 			} 
@@ -237,6 +238,14 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
+			if (Extension == ".gz" || Extension == ".bz2")
+				ParseComressedManFile ();
+			else
+				ParseManFile (base.TextReader);
+		}
+
+		private void ParseComressedManFile ()
+		{
 			try {
 				Stream stream = null;
 				if (Extension == ".gz")
@@ -253,10 +262,7 @@ namespace Beagle.Filters {
 				return;
 			}
 
-			if (compressed_reader != null)
-				ParseManFile (compressed_reader);
-			else
-				ParseManFile (base.TextReader);
+			ParseManFile (compressed_reader);
 		}
 
 		protected override void DoClose ()
