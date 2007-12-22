@@ -179,6 +179,9 @@ namespace Beagle.Filters {
 				case ".TP":
 					AppendStructuralBreak ();
 					break;
+				case ".UR":
+					AppendWord (line.Substring (index));
+					break;
 
 				case ".hottext":
 					string text = ProcessMacros (line.Substring (index));
@@ -186,7 +189,7 @@ namespace Beagle.Filters {
 					AppendWhiteSpace ();
 					break;
 				default:
-					AppendLine (ProcessMacros (line));
+					Log.Error ("Unsupported man-page macro: '{0}'", line);
 					break;
 				}
 			} 
