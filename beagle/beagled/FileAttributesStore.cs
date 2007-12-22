@@ -193,25 +193,27 @@ namespace Beagle.Daemon {
 
 			attr = Read (path);
 
-			if (! FilterFactory.DirtyFilterCache) {
+			// If there are no attributes set on the file, there is no
+			// way that we can be up-to-date.
+			if (attr == null)
+				return false;
+
+			if (! FilterFactory.DirtyFilterCache)
 				// If the filters are same as in last run,
-				// if attr is null, then there is no filter for this file even now
-				// if attr is not null, then check the timestamps (bypass HasFilterInfo)
+				// since attr is not null, check the timestamps (bypass HasFilterInfo)
+				return IsUpToDate (path, attr);
 
-				if (attr == null)
-					return true;
-				else
-					return IsUpToDate (path, attr);
-			} else {
-				// If there is a new filter in the mean time
-				// take previous filter information into consideration.
-				// Also, if attr is null, there could be a new filter now.
+			// If there is a new filter in the mean time
+			// take previous filter information into consideration.
+			if (! attr.HasFilterInfo)
+				return false;
 
-				if (attr == null || ! attr.HasFilterInfo)
-					return false;
-				else
-					return IsUpToDate (path, attr);
-			}
+			int current_filter_version;
+			current_filter_version = FilterFactory.GetFilterVersion (attr.FilterName);
+			if (current_filter_version > attr.FilterVersion)
+				return false;
+
+			return IsUpToDate (path, attr);
 		}
 
 		public bool IsUpToDate (string path)
