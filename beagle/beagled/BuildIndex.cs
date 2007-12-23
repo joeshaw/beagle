@@ -225,7 +225,6 @@ namespace Beagle.Daemon
 					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
 					if (path != "/" && path.EndsWith ("/"))
 						path = path.TrimEnd ('/');
-					Console.WriteLine ("adding {0}", path);
 					
 					if (Directory.Exists (path))
 						pending_directories.Enqueue (new DirectoryInfo (path));
