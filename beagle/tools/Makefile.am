@@ -36,9 +36,10 @@ $(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
 crondir = $(sysconfdir)/cron.daily
 
 CRAWL_RULES = \
-	$(srcdir)/crawl-rules/crawl-windows		\
 	$(srcdir)/crawl-rules/crawl-applications	\
-	$(srcdir)/crawl-rules/crawl-documentation
+	$(srcdir)/crawl-rules/crawl-documentation	\
+	$(srcdir)/crawl-rules/crawl-manpages		\
+	$(srcdir)/crawl-rules/crawl-windows
 
 # FIXME: Per-distribution specific crawl rules
 configdir = $(sysconfdir)/beagle

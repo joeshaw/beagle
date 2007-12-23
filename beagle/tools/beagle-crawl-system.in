@@ -46,7 +46,7 @@ MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "$0:
 chown $CRAWL_USER $MONO_SHARED_DIR
 
 for crawl_file in @sysconfdir@/beagle/crawl-*; do
-    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME
+    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME CRAWL_REMOVE_DELETED_FILES
 
     if [ "$DEBUG" = "1" ]; then
 	echo "$0: Processing files in @sysconfdir@/beagle..."
@@ -81,6 +81,9 @@ for crawl_file in @sysconfdir@/beagle/crawl-*; do
 
 	    OPTIONS="$OPTIONS `test -n "$CRAWL_DENY_PATTERNS" && \
                      echo --deny-pattern $CRAWL_DENY_PATTERNS`"
+	    
+	    OPTIONS="$OPTIONS `test -n "$CRAWL_REMOVE_DELETED_FILES" && \
+                     echo --enable-deletion`"
 	    
 	    IONICE=`which ionice 2>/dev/null`
             if [ -n "$IONICE" ]; then
