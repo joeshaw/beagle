@@ -231,6 +231,8 @@ function state_change_search (begin_date)
 			category_count [(category_funcs [f])['name']] = 0;
 		}
 
+		var exact_query_terms_str = '';
+
 		// Process hit xml nodes with xsl and append with javascript
 		for (var i = 0; i < responses.length; ++i) {
 			if (responses [i].length <= 0)  {
@@ -242,7 +244,12 @@ function state_change_search (begin_date)
 			// Read SearchTermResponse message and store the stemmed string for snippet purpose
 			var msg_node = response_dom.getElementsByTagName ('Message') [0];
 			if (msg_node.getAttributeNS ('http://www.w3.org/2001/XMLSchema-instance', 'type') == 'SearchTermResponse') {
-				var query_terms = msg_node.getElementsByTagName ('Stemmed') [0];
+				var query_terms = msg_node.getElementsByTagName ('Exact') [0];
+				query_terms = query_terms.getElementsByTagName ('Text');
+				for (var q_j = 0; q_j < query_terms.length; ++ q_j)
+					exact_query_terms_str += ('<string>' + query_terms [q_j].textContent + '</string>');
+
+				query_terms = msg_node.getElementsByTagName ('Stemmed') [0];
 				query_terms = query_terms.getElementsByTagName ('Text');
 				var stemmed_str = '';
 				for (var q_j = 0; q_j < query_terms.length; ++ q_j)
@@ -313,6 +320,37 @@ function state_change_search (begin_date)
 		document.queryform.querytext.disabled = false;
 		document.queryform.querytext.focus ();
 		document.queryform.querysubmit.disabled = false;
+	}
+}
+
+/************ Suggestions ***********************/
+
+function suggest ()
+{
+	var req_string = '<?xml version="1.0" encoding="utf-8"?><RequestWrapper xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><Message xsi:type="SuggestionsRequest"><QueryTerms><string>valups</string><string>isindever</string></QueryTerms></Message></RequestWrapper>';
+
+	xmlhttp.onreadystatechange = function () {
+		state_change_suggest ();
+	};
+	xmlhttp.open ("POST", "/", true);
+	//XHR binary charset opt by mgran 2006 [http://mgran.blogspot.com]
+	xmlhttp.overrideMimeType ('text/txt; charset=utf-8'); // if charset is changed, need to handle bom
+	//xmlhttp.overrideMimeType('text/txt; charset=x-user-defined');
+	xmlhttp.send (req_string);
+
+	return false;
+}
+
+function state_change_suggest ()
+{
+	if (xmlhttp.readyState == 4) {
+		// FIXME: Should also check for status 200
+
+		// if charset is x-user-defined split by \uF7FF
+		// if charset is utf-8, split by FFFD
+		// And dont ask me why!
+		var response = xmlhttp.responseText.split ('\uFFFD') [0];
+		dump (response);
 	}
 }
 

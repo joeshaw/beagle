@@ -97,7 +97,8 @@
 	</form>
 	<span id="searchoptions">
 		<a href="#" onclick='show_advanced_search (); return false;'>Advance search</a>&nbsp;|&nbsp;
-		<a href="#" onclick='bookmark_query (); return false;'>Bookmark current search</a>
+		<a href="#" onclick='bookmark_query (); return false;'>Bookmark current search</a>&nbsp;|&nbsp;
+		<a href="#" onclick='suggest(); return false;'>Suggest</a>
 	</span>
 </xsl:template>
 

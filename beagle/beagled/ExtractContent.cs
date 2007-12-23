@@ -392,6 +392,7 @@ class ExtractContentTool {
 		if (writer != null)
 			writer.Close ();
 
+		Console.Read ();
 		return 0;
 	}
 
