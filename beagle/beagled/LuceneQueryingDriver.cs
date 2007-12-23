@@ -49,7 +49,7 @@ namespace Beagle.Daemon {
 
 	public class LuceneQueryingDriver : LuceneCommon {
 
-		static private bool Debug = true;
+		static private bool Debug = false;
 
 		public delegate bool UriFilter (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);

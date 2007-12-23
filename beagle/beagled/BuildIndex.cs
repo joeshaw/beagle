@@ -64,9 +64,6 @@ namespace Beagle.Daemon
 
 		/////////////////////////////////////////////////////////
 
-		// 1. Different handling of --disable-directories
-		const int MINOR_VERSION = 1;
-
 		// Files and directories that are allowed to be in the target
 		// directory before we blow it away.  If we encounter any file
 		// or dir not in this list, we'll bail out.
@@ -219,13 +216,9 @@ namespace Beagle.Daemon
 					break;
 
 				default:
-					if (arg.StartsWith ("-") || arg.StartsWith ("--"))
-						PrintUsage ();
-
 					string path = Path.IsPathRooted (arg) ? arg : Path.GetFullPath (arg);
 					if (path != "/" && path.EndsWith ("/"))
 						path = path.TrimEnd ('/');
-					Console.WriteLine ("adding {0}", path);
 					
 					if (Directory.Exists (path))
 						pending_directories.Enqueue (new DirectoryInfo (path));
@@ -338,6 +331,11 @@ namespace Beagle.Daemon
 					denied_regex = StringFu.GetPatternRegex (denied_patterns);
 			}
 
+			if (arg_disable_directories && arg_delete) {
+				Log.Warn ("--enable-deletion is ignored as --disable-directories is used");
+				arg_delete = false;
+			}
+
 			Log.Always ("Starting beagle-build-index (pid {0}) at {1}", Process.GetCurrentProcess ().Id, DateTime.Now);
 
 			// Set system priorities so we don't slow down the system
@@ -345,7 +343,7 @@ namespace Beagle.Daemon
 			SystemPriorities.SetSchedulerPolicyBatch ();
 			SystemPriorities.Renice (19);
 			
-			driver = new LuceneIndexingDriver (arg_output, MINOR_VERSION, false);
+			driver = new LuceneIndexingDriver (arg_output, false);
 			driver.TextCache = (arg_cache_text) ? new TextCache (arg_output) : null;
 			if (driver.TextCache != null)
 				driver.TextCache.WorldReadable = true;
@@ -431,7 +429,8 @@ namespace Beagle.Daemon
 			while (pending_directories.Count > 0) {
 				DirectoryInfo dir = (DirectoryInfo) pending_directories.Dequeue ();
 
-				AddToRequest (DirectoryToIndexable (dir, modified_directories));
+				if (! arg_disable_directories)
+					AddToRequest (DirectoryToIndexable (dir, modified_directories));
 
 				try {
 					if (arg_recursive)
@@ -471,7 +470,7 @@ namespace Beagle.Daemon
 				ICollection all_dirent = GetAllItemsInDirectory (subdir);
 				foreach (Dirent info in all_dirent) {
 					// check if the item exists
-					if ((! info.IsDirectory && File.Exists (info.FullName)) || 
+					if (File.Exists (info.FullName) || 
 					    (info.IsDirectory && Directory.Exists (info.FullName)))
 						continue;
 
@@ -648,7 +647,7 @@ namespace Beagle.Daemon
 
 			// Store directory name in the index
 			string dirname = file.DirectoryName;
-			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+			indexable.AddProperty (Property.NewUnsearched (ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
 
 			return indexable;
 		}
@@ -662,17 +661,11 @@ namespace Beagle.Daemon
 			// And if the mtime of the directory is same as that in the attributes store
 			FileAttributes attr = fa_store.Read (dir.FullName);
 
-			// If the directory exists in the fa store, then it is already indexed.
+			// If the directory exists in the fa store, then it is already indexed
 			if (attr != null) {
-				// If we don't care about deleted content then we are fine.
-				// If the attributes are up-to-date, then we are fine too.
-				if (! arg_delete || FileAttributesStore.IsUpToDate (dir.FullName, attr))
-					return null;
-
-				// But the last write time needs to be uptodate to support enable-deletion,
-				// so we actually index the directories, even if --disable-directories
-				// is set.
-				modified_directories.Enqueue (dir);
+				if (arg_delete && ! FileAttributesStore.IsUpToDate (dir.FullName, attr))
+					modified_directories.Enqueue (dir);
+				return null;
 			}
 
 			// Create the indexable and add the standard properties we
@@ -682,18 +675,13 @@ namespace Beagle.Daemon
 			indexable.MimeType = "inode/directory";
 			indexable.NoContent = true;
 			indexable.Timestamp = dir.LastWriteTimeUtc;
-
-			// Store the directory information in the index anyway, but if --disable-directories
-			// was passed, then do not store the names and other standard properties
-			// used during searching
-			if (! arg_disable_directories)
-				FSQ.AddStandardPropertiesToIndexable (indexable, dir.Name, Guid.Empty, false);
+			FSQ.AddStandardPropertiesToIndexable (indexable, dir.Name, Guid.Empty, false);
 
 			// Add directory name property
 			string dirname = dir.Parent.FullName;
-			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+			indexable.AddProperty (Property.NewUnsearched (ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
 
-			indexable.AddProperty (Property.NewBool (Property.IsDirectoryPropKey, true));
+			indexable.AddProperty (Property.NewBool (IsDirectoryPropKey, true));
 
 			return indexable;
 		}
@@ -736,15 +724,18 @@ namespace Beagle.Daemon
 			}
 		}
 
+		private const string ParentDirUriPropKey = "beagle:ParentDirUri";
+		private const string IsDirectoryPropKey = "beagle:IsDirectory";
+
 		// Returns a list of all files and directories in dir
 		static ICollection GetAllItemsInDirectory (DirectoryInfo dir)
 		{
 			// form the query
 			string parent_uri_str = UriFu.PathToFileUri (dir.FullName).ToString ();
-
 			// Instead of taking the painfull way of using BeagleAnalyzer, lets just add the prefix manually
+			//parent_uri_str = "_:" + parent_uri_str;
 			// LuceneCommon thinks exposing secret property type encoding is bad, I think so too... except for now
-			string key = "prop:k:" + Property.ParentDirUriPropKey;
+			string key = "prop:k:" + ParentDirUriPropKey;
 			//Logger.Log.Debug ("Querying for {0}={1}", parent_uri_str, key);
 			LNS.Query query = new LNS.TermQuery (new Term (key, parent_uri_str));
 
@@ -795,13 +786,12 @@ namespace Beagle.Daemon
 
 			path = doc.Get ("Uri");
 
-			string prop_key = "prop:k:" + Property.IsDirectoryPropKey;
+			string prop_key = "prop:k:" + IsDirectoryPropKey;
 			foreach (Field f in doc.Fields ()) {
 				if (f.Name () != prop_key)
 					continue;
 
-				// Format of fields: from LuceneCommon.cs:AddPropertyToDocument
-				is_dir = (f.StringValue ().Substring (3) == "true");
+				is_dir = (f.StringValue ().Substring (2) == "true");
 				break;
 			}
 
@@ -887,14 +877,17 @@ namespace Beagle.Daemon
 				"  --recursive\t\t\tCrawl source path recursivly.\n" + 
 				"  --enable-deletion\t\tRemove deleted files and directories from index.\n" +
 				"                   \t\tIndex should be created and always updated with this option.\n" +
+				"                   \t\tOption only works if --disable-directories is NOT specified.\n" +
 				"  --enable-text-cache\t\tBuild text-cache of documents used for snippets.\n" +
 				"  --disable-directories\t\tDon't add directories to the index.\n" +
 				"  --disable-filtering\t\tDisable all filtering of files. Only index attributes.\n" + 
 				"  --allow-pattern [pattern]\tOnly allow files that match the pattern to be indexed.\n" + 
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
 				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
-				"  --disable-on-battery\t\tDisable indexer while on battery power.\n";
+				"  --disable-on-battery\t\tDisable indexer while on battery power.\n" +
+				"  --debug\t\t\tEcho verbose debugging information.\n\n";
 
+			
 			Console.WriteLine (usage);
 			Environment.Exit (0);
 		}

@@ -252,7 +252,7 @@ namespace Beagle.Daemon {
 		public static void Analyze (TextReader reader)
 		{
 			Lucene.Net.Analysis.Token lastToken = null;
- 			Analyzer indexing_analyzer = new LuceneCommon.BeagleAnalyzer (true);
+			Analyzer indexing_analyzer = new LuceneCommon.BeagleAnalyzer (true);
 			TokenStream stream = indexing_analyzer.TokenStream ("Text", reader);
 
 			int position = 1;
