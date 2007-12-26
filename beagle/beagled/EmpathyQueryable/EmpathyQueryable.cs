@@ -1,5 +1,5 @@
 //
-// KopeteQueryable.cs
+// EmpathyQueryable.cs
 //
 // Copyright (C) 2007 Kevin Kubasik <kevin@kubasik.net>
 //
