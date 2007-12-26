@@ -39,6 +39,7 @@ CRAWL_RULES = \
 	$(srcdir)/crawl-rules/crawl-applications	\
 	$(srcdir)/crawl-rules/crawl-documentation	\
 	$(srcdir)/crawl-rules/crawl-manpages		\
+	$(srcdir)/crawl-rules/crawl-monodoc		\
 	$(srcdir)/crawl-rules/crawl-windows
 
 # FIXME: Per-distribution specific crawl rules

@@ -16,6 +16,7 @@ namespace Search.Tiles {
 		public DocumentationActivator () : base ()
 		{
 			AddSupportedFlavor (new HitFlavor (null, "File", null));
+			AddSupportedFlavor (new HitFlavor (null, "DocbookEntry", null));
 		}
 
 		public override bool Validate (Beagle.Hit hit)
@@ -39,12 +40,19 @@ namespace Search.Tiles {
 
 	public class Documentation : TileTemplate {
 
+		string path = null;
+
 		public Documentation (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			if (! String.IsNullOrEmpty (hit.GetFirstProperty ("dc:title")))
 				Title = hit.GetFirstProperty ("dc:title");
 			else
 				Title = hit.GetFirstProperty ("beagle:ExactFilename");
+
+			if (hit ["beagle:IsChild"] == "true")
+				path =	hit.ParentUri.LocalPath;
+			else
+				path = hit.Uri.LocalPath;
 
 			Description = Catalog.GetString ("Documentation");
 		}
@@ -57,7 +65,7 @@ namespace Search.Tiles {
 		public override void Open ()
 		{
 			SafeProcess p = new SafeProcess ();
-			p.Arguments = new string [] { "yelp", Hit.Uri.LocalPath };
+			p.Arguments = new string [] { "yelp", path };
 			
 			try {
 				p.Start ();

@@ -56,6 +56,7 @@ namespace Search {
 		private XKeybinder keybinder = new XKeybinder ();
 
 		public static bool IconEnabled = false;
+		private static bool search_docs = false;
 
 		public static void Main (string [] args)
 		{
@@ -97,8 +98,8 @@ namespace Search {
 					IconEnabled = true;
 					break;
 
-				case "--autostarted":
-					// FIXME: This option is deprecated and will be removed in a future release.
+				case "--search-docs":
+					search_docs = true;
 					break;
 
 				// Ignore session management
@@ -133,6 +134,7 @@ namespace Search {
 				"Usage: beagle-search [OPTIONS] [<query string>]\n\n" +
 				"Options:\n" +
 				"  --icon\t\t\tAdd an icon to the notification area rather than opening a search window.\n" +
+				"  --search-docs\t\t\tAlso search the system-wide documentation index.\n" +
 				"  --help\t\t\tPrint this usage message.\n" +
 				"  --version\t\t\tPrint version information.\n";
 
@@ -353,12 +355,14 @@ namespace Search {
 				current_query.AddDomain (QueryDomain.Neighborhood);
 
 				// Don't search documentation by default
-				QueryPart_Property part = new QueryPart_Property ();
-				part.Logic = QueryPartLogic.Prohibited;
-				part.Type = PropertyType.Keyword;
-				part.Key = "beagle:Source";
-				part.Value = "documentation";
-				current_query.AddPart (part);
+				if (! search_docs) {
+					QueryPart_Property part = new QueryPart_Property ();
+					part.Logic = QueryPartLogic.Prohibited;
+					part.Type = PropertyType.Keyword;
+					part.Key = "beagle:Source";
+					part.Value = "documentation";
+					current_query.AddPart (part);
+				}
 
 				current_query.AddText (query);
 				current_query.HitsAddedEvent += OnHitsAdded;
