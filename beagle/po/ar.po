@@ -1,4 +1,4 @@
-# translation of beagle.HEAD.ar.po to Arabic
+# translation of beagle.HEAD.po to Arabic
 # Arabic translations for PACKAGE package.
 # Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
@@ -7,305 +7,51 @@
 # Khaled Hosny <khaledhosny@eglug.org>, 2006, 2007.
 msgid ""
 msgstr ""
-"Project-Id-Version: beagle.HEAD.ar\n"
+"Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-14 18:21+0100\n"
-"PO-Revision-Date: 2007-04-14 18:51+0100\n"
-"Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
+"POT-Creation-Date: 2007-12-26 03:17+0000\n"
+"PO-Revision-Date: 2007-12-26 15:07+0200\n"
+"Last-Translator: Khaled Hosny <khaledhosny@eglug.org>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1 ? 0 : n==2 ? 1 : n>=3 && n<=10 ? 2 : 3\n"
-"X-Poedit-Language: Arabic\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5;\n"
 "X-Generator: KBabel 1.11.4\n"
 
-#: ../glue/eggtrayicon.c:127
-#: ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "الإتّجاه"
+#: ../epiphany-extension/beagle.py.in:157
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "يفهرس بيغل %s"
 
-#: ../glue/eggtrayicon.c:128
-msgid "The orientation of the tray."
-msgstr "إتجاه لوحة النظام."
+#: ../epiphany-extension/beagle.py.in:177
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "يفهرس بيغل الوصلة %s"
 
-#: ../ContactViewer/ContactWindow.cs:74
-msgid "Open..."
-msgstr "افتح..."
+#: ../epiphany-extension/beagle.py.in:217
+msgid "Index This Page"
+msgstr "فهرس هذه الصفحة"
 
-#: ../ContactViewer/ContactWindow.cs:76
-#: ../search/Tray/TrayIcon.cs:98
-msgid "Quit"
-msgstr "اخرج"
+#: ../epiphany-extension/beagle.py.in:224
+msgid "Index Link"
+msgstr "فهرس الوصلة"
 
-#: ../ContactViewer/ContactWindow.cs:79
-msgid "About"
-msgstr "حوْل"
+#: ../epiphany-extension/beagle.py.in:231
+msgid "Reload Config File"
+msgstr "أعِد تحميل ملف الإعدادات"
 
-#: ../ContactViewer/ContactWindow.cs:95
-#: ../search/Tiles/Utils.cs:27
-msgid "Contacts"
-msgstr "المعارِف"
+#: ../epiphany-extension/beagle.py.in:240
+msgid "Auto Index"
+msgstr "فهرسة آلية"
 
-#: ../ContactViewer/ContactWindow.cs:100
-msgid "Display name"
-msgstr "إسم العرض"
+#: ../epiphany-extension/beagle.py.in:247
+msgid "Prompt key words when index on demand"
+msgstr "اسأل عن الكلمات المفتاحية أثناء الفهرسة عند الطلب"
 
-#: ../ContactViewer/ContactWindow.cs:101
-msgid "Primary E-mail"
-msgstr "البريد الالكتروني الأساسي"
-
-#: ../ContactViewer/ContactWindow.cs:102
-msgid "Secondary E-mail"
-msgstr "البريد الالكتروني الثانوي"
-
-#: ../ContactViewer/ContactWindow.cs:103
-msgid "Nickname"
-msgstr "الإسم المستعار"
-
-#: ../ContactViewer/ContactWindow.cs:133
-#, csharp-format
-msgid ""
-"Unable to open mork database:\n"
-"\n"
-" {0}"
-msgstr ""
-"لم أستطع فتح قاعدة بيانات mork:\n"
-"\n"
-" {0}"
-
-#: ../ContactViewer/ContactWindow.cs:153
-msgid "The specified ID does not exist in this database!"
-msgstr "الهوية (ID) المحدّدة غير موجودة بقاعدة البيانات هذه!"
-
-#: ../ContactViewer/ContactWindow.cs:180
-#, csharp-format
-msgid "Added {0} contact"
-msgid_plural "Added {0} contacts"
-msgstr[0] "أضيف معرِفة واحد"
-msgstr[1] "أضيف معرِفتيْن"
-msgstr[2] "أضيف {0} معارِف"
-msgstr[3] "أضيف {0} معرِفة"
-
-#: ../ContactViewer/ContactWindow.cs:204
-#, csharp-format
-msgid "Viewing {0}"
-msgstr "عرض {0}"
-
-#: ../ContactViewer/ContactWindow.cs:244
-msgid "Select a mork database file"
-msgstr "اختر ملف قاعدة بيانات mork"
-
-#: ../ContactViewer/ContactWindow.cs:311
-msgid "Primary E-Mail:"
-msgstr "البريد الالكتروني الأولي"
-
-#: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:37
-msgid "Screen name:"
-msgstr "اسم الشاشة:"
-
-#: ../ContactViewer/ContactWindow.cs:319
-msgid "Home phone:"
-msgstr "هاتف المنزل:"
-
-#: ../ContactViewer/ContactWindow.cs:323
-msgid "Mobile phone:"
-msgstr "الهاتف الجوال:"
-
-#: ../ContactViewer/ContactWindow.cs:327
-msgid "Web page:"
-msgstr "صفحة الويب:"
-
-#: ../ContactViewer/ContactWindow.cs:336
-msgid "Send E-Mail"
-msgstr "ارسل البريد"
-
-#: ../ContactViewer/ContactWindow.cs:340
-msgid "Details..."
-msgstr "التفاصيل..."
-
-#: ../ContactViewer/ContactWindow.cs:368
-msgid "Could not find a valid E-mail address!"
-msgstr "لم أستطع إيجاد عنوان بريد إلكتروني سليم!"
-
-#: ../ContactViewer/contactviewer.glade.h:1
-msgid "<b>Custom fields</b>"
-msgstr "<b>حقول مخصصّة</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:2
-msgid "<b>Home</b>"
-msgstr "<b>المنزل</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:3
-msgid "<b>Internet</b>"
-msgstr "<b>إنترنت</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:4
-msgid "<b>Name</b>"
-msgstr "<b>إسم</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:5
-msgid "<b>Notes</b>"
-msgstr "<b>ملاحظات</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:6
-msgid "<b>Phones</b>"
-msgstr "<b>هواتف</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:7
-msgid "<b>Work</b>"
-msgstr "<b>عمل</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:8
-msgid "Additional E-Mail:"
-msgstr "بريد إلكتروني إضافي:"
-
-#: ../ContactViewer/contactviewer.glade.h:9
-msgid "Address"
-msgstr "العنوان"
-
-#: ../ContactViewer/contactviewer.glade.h:10
-msgid "Address:"
-msgstr "العنوان:"
-
-#: ../ContactViewer/contactviewer.glade.h:11
-msgid "City:"
-msgstr "المدينة:"
-
-#: ../ContactViewer/contactviewer.glade.h:12
-msgid "Contact"
-msgstr "معرِفة"
-
-#: ../ContactViewer/contactviewer.glade.h:13
-msgid "Contact Viewer"
-msgstr "عارض المعارِف"
-
-#: ../ContactViewer/contactviewer.glade.h:14
-msgid "Country:"
-msgstr "الدولة:"
-
-#: ../ContactViewer/contactviewer.glade.h:15
-msgid "Custom 1:"
-msgstr "مخصص 1:"
-
-#: ../ContactViewer/contactviewer.glade.h:16
-msgid "Custom 2:"
-msgstr "مخصص 2:"
-
-#: ../ContactViewer/contactviewer.glade.h:17
-msgid "Custom 3:"
-msgstr "مخصص 3:"
-
-#: ../ContactViewer/contactviewer.glade.h:18
-msgid "Custom 4:"
-msgstr "مخصص 4:"
-
-#: ../ContactViewer/contactviewer.glade.h:19
-msgid "Department:"
-msgstr "القسم:"
-
-#: ../ContactViewer/contactviewer.glade.h:20
-msgid "Detailed view"
-msgstr "العرض المفصّل"
-
-#. This is Display name
-#: ../ContactViewer/contactviewer.glade.h:22
-msgid "Display:"
-msgstr "العرض:"
-
-#: ../ContactViewer/contactviewer.glade.h:23
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "بريد إلكتروني:"
-
-#: ../ContactViewer/contactviewer.glade.h:24
-msgid "Fax:"
-msgstr "فاكس:"
-
-#. This is First name
-#: ../ContactViewer/contactviewer.glade.h:26
-msgid "First:"
-msgstr "الأول:"
-
-#. This is Home phone number
-#: ../ContactViewer/contactviewer.glade.h:28
-msgid "Home:"
-msgstr "المنزل:"
-
-#. This is Last name
-#: ../ContactViewer/contactviewer.glade.h:30
-msgid "Last:"
-msgstr "الأخير:"
-
-#: ../ContactViewer/contactviewer.glade.h:31
-msgid "Mobile:"
-msgstr "الهاتف الجوال:"
-
-#: ../ContactViewer/contactviewer.glade.h:32
-msgid "Nickname:"
-msgstr "الإسم المستعار:"
-
-#: ../ContactViewer/contactviewer.glade.h:33
-msgid "Organization:"
-msgstr "المؤسسة:"
-
-#: ../ContactViewer/contactviewer.glade.h:34
-msgid "Other"
-msgstr "أخرى"
-
-#: ../ContactViewer/contactviewer.glade.h:35
-msgid "Pager:"
-msgstr "جهاز النداء:"
-
-#: ../ContactViewer/contactviewer.glade.h:36
-msgid "Preferred format:"
-msgstr "التنسيق المفضّل:"
-
-#: ../ContactViewer/contactviewer.glade.h:38
-msgid "State/Province"
-msgstr "الولاية/المحافظة:"
-
-#: ../ContactViewer/contactviewer.glade.h:39
-msgid "State/Province:"
-msgstr "الولاية/المحافظة"
-
-#: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76
-#: ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:173
-#: ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48
-#: ../search/Tiles/WebHistory.cs:53
-msgid "Title:"
-msgstr "العنوان:"
-
-#: ../ContactViewer/contactviewer.glade.h:41
-msgid ""
-"Unknown\n"
-"Plain text\n"
-"HTML"
-msgstr ""
-"مجهول\n"
-"نص صِرف\n"
-"HTML"
-
-#: ../ContactViewer/contactviewer.glade.h:44
-msgid "Web Page:"
-msgstr "صفحة الويب:"
-
-#. This is Work phone number
-#: ../ContactViewer/contactviewer.glade.h:46
-msgid "Work:"
-msgstr "العمل:"
-
-#: ../ContactViewer/contactviewer.glade.h:47
-msgid "ZIP/Postal Code"
-msgstr "الرمز البريدي"
-
-#: ../ContactViewer/contactviewer.glade.h:48
-msgid "ZIP/Postal Code:"
-msgstr "الرمز البريدي:"
+#: ../epiphany-extension/beagle.py.in:274
+msgid "Extra keywords to index"
+msgstr "كلمات مفتاحية إضافية لفهرستها"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -315,24 +61,22 @@ msgstr "</b>تاريخ المحادثات</b>"
 msgid "IM Viewer"
 msgstr "عارض التراسل الفوري"
 
-#: ../ImLogViewer/ImLogWindow.cs:106
-#: ../ImLogViewer/ImLogWindow.cs:118
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
 msgid "Conversations in {0}"
-msgstr "المحادثات في {0}"
+msgstr "محادثات في {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
+#: ../ImLogViewer/ImLogWindow.cs:111
 #, csharp-format
 msgid "Conversations in {0} ({1})"
-msgstr "المحادثات في {0} ({1})"
+msgstr "محادثات في {0} ({1})"
 
-#: ../ImLogViewer/ImLogWindow.cs:125
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
-msgstr "المحادثات مع {0}"
+msgstr "محادثات مع {0}"
 
 #: ../search/beagle-search.desktop.in.in.h:1
-#: ../tools/settings.glade.h:23
 msgid "Search"
 msgstr "بحث"
 
@@ -344,32 +88,46 @@ msgstr "ابحث عن البيانات على سطح مكتبك"
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
-msgstr[0] "نتيجة واحدة"
-msgstr[1] "نتيجتين"
-msgstr[2] "{0} نتائج"
-msgstr[3] "{0} نتيجة"
+msgstr[0] "لا نتائج"
+msgstr[1] "نتيجة واحدة"
+msgstr[2] "نتيجتين"
+msgstr[3] "{0} نتائج"
+msgstr[4] "{0} نتيجة"
+msgstr[5] "{0} نتيجة"
 
 #: ../search/Category.cs:134
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} من {2}"
 
+#: ../search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "اخفِ"
+
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "لا توجد أي نتائج."
 
-#: ../search/Pages/NoMatch.cs:20
+#: ../search/Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "بحثك عن  \"{0}\" لم يطابق أي ملفات على حاسوبك."
 
 #: ../search/Pages/NoMatch.cs:24
-msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "يمكنك تغيير هدف بحثك باستخدام قائمة \"ابحث\". هدف بحث أوسع قد يأتي بنتائج أكثر."
+msgid ""
+"You can change the scope of your search using the \"Search\" menu. A broader "
+"search scope might produce more results."
+msgstr ""
+"يمكنك تغيير هدف بحثك باستخدام قائمة \"ابحث\". هدف بحث أوسع قد يأتي بنتائج "
+"أكثر."
 
 #: ../search/Pages/NoMatch.cs:26
-msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
-msgstr "يجدر أن تتأكّد من هجاء كلمات بحثك لترى إذا كنت قد أخطأت في هجاء بعضها بدون قصد."
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"يجدر بك أن تتأكّد من هجاء كلمات البحث لترى إذا كنت قد أخطأت في هجاء بعضها بدون "
+"قصد."
 
 #: ../search/Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -385,120 +143,154 @@ msgstr "لتستبعد مصطلحات بحث، استخدم علامة ناقص 
 
 #: ../search/Pages/QuickTips.cs:13
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "عندما تبحث عن عبارة، أضف علامات تنصيص. مثلا <b>\"كتاب تبصرة أولى الألباب\"</b>"
+msgstr "عندما تبحث عن عبارة، أضف علامات تنصيص. مثلا <b>\"تبصرة أولى الألباب\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:92
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:95
 msgid "Quick Tips"
 msgstr "تلميحات سريعة"
 
 #: ../search/Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
-msgstr "لا يمكن تشغيل بيجل كجذر"
+msgstr "لا يمكن تشغيل بيغل كجذر"
 
-#: ../search/Pages/RootUser.cs:13
-msgid "For security reasons, Beagle cannot be run as root.  You should restart as a regular user."
-msgstr "لأسباب أمنيّة، لا يمكن تشغيل بيجل كجذر. عليك إعادة تشغيله كمستخدم عادي."
+#: ../search/Pages/RootUser.cs:14
+msgid ""
+"For security reasons, Beagle cannot be run as root. You should restart as a "
+"regular user."
+msgstr "لأسباب أمنيّة، لا يمكن تشغيل بيغل كجذر. عليك إعادة تشغيله كمستخدم عادي."
 
-#: ../search/Pages/StartDaemon.cs:19
+#: ../search/Pages/StartDaemon.cs:17
 msgid "Search service not running"
 msgstr "خدمة البحث ليست مشتغلة"
 
-#: ../search/Pages/StartDaemon.cs:21
+#: ../search/Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr "لا يبدو أن خدمة البحث تعمل. يمكنك بدأها بنقر الزر بأسفل."
+
+#: ../search/Pages/StartDaemon.cs:22
 msgid "Start search service"
 msgstr "ابدأ خدمة البحث"
 
-#: ../search/Search.cs:138
-#: ../search/Search.cs:254
+#: ../search/Search.cs:145 ../search/Search.cs:268
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "بحث سطح المكتب"
 
-#: ../search/Search.cs:157
+#: ../search/Search.cs:165
 msgid "_Find:"
-msgstr "_ابحث:"
+msgstr "ا_بحث:"
 
-#: ../search/Search.cs:178
+#: ../search/Search.cs:186
 msgid "Find Now"
 msgstr "ابحث الآن"
 
-#: ../search/Search.cs:237
+#: ../search/Search.cs:245
 msgid "Type in search terms"
 msgstr "اكتب مصطلحات البحث"
 
-#: ../search/Search.cs:238
+#: ../search/Search.cs:246
 msgid "Start searching"
 msgstr "ابدأ البحث"
 
-#: ../search/Search.cs:273
+#: ../search/Search.cs:287
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "بحث سطح المكتب: {0}"
 
-#: ../search/Search.cs:289
+#: ../search/Search.cs:303
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
-msgstr[0] "يعرض مطابقة واحدة"
-msgstr[1] "يعرض مطابقتين"
-msgstr[2] "يعرض {0} مطابقات"
-msgstr[3] "يعرض {0} مطابقة"
+msgstr[0] "لا يعرض أي نتائج"
+msgstr[1] "يعرض نتيجة واحدة"
+msgstr[2] "يعرض نتيجتين"
+msgstr[3] "يعرض {0} نتائج"
+msgstr[4] "يعرض {0} نتيجة"
+msgstr[5] "يعرض {0} نتيجة"
 
-#: ../search/Search.cs:291
+#: ../search/Search.cs:305
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "عرض نتيجة {0} من {1}"
-msgstr[1] "عرض {0} نتائج من {1}"
-msgstr[2] "عرض {0} نتائج من {1}"
-msgstr[3] "عرض {0} نتائج من {1}"
+msgstr[0] "يعرض صفر ({0}) من {1} نتائج"
+msgstr[1] "يعرض أول نتيجة ({0}) من {1} نتائج"
+msgstr[2] "يعرض أول نتيجتين ({0}) من {1} نتائج"
+msgstr[3] "يعرض أول {0} نتائج من {1} نتائج"
+msgstr[4] "يعرض أول {0} نتيجة من {1} نتائج"
+msgstr[5] "يعرض أول {0} نتيجة من {1} نتائج"
 
-#: ../search/Search.cs:565
+#: ../search/Search.cs:551
+msgid "There are computers near you running Beagle"
+msgstr "توجد حواسيب بالقرب منك تشغل بيغل"
+
+#: ../search/Search.cs:552
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "يمكنك اختيار البحث في الحواسيب الأخرى من قائمة \"بحث\""
+
+#: ../search/Search.cs:624
 msgid "Your data is being indexed"
 msgstr "يجري فهرسة بياناتك"
 
-#: ../search/Search.cs:566
-msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
-msgstr "ماتزال خدمة البحث في مرحلة فهرسة بياناتك.لن تظهر كل النتائج قبل أن تنتهي عمليّة الفهرسة."
+#: ../search/Search.cs:625
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr "ما تزال خدمة البحث في مرحلة فهرسة بياناتك.لن تظهر كل النتائج قبل أن تنتهي عمليّة الفهرسة."
 
-#: ../search/Tiles/ArchivedFile.cs:39
+#: ../search/Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "بداخل الأرشيف {0}"
 
-#: ../search/Tiles/ArchivedFile.cs:77
+#: ../search/Tiles/ArchivedFile.cs:77 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:178 ../search/Tiles/Note.cs:73
+#: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
+#: ../search/Tiles/WebHistory.cs:58
+msgid "Title:"
+msgstr "العنوان:"
+
+#: ../search/Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "اسم الملف:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "داخل الملف:"
 
-#: ../search/Tiles/ArchivedFile.cs:81
-#: ../search/Tiles/File.cs:177
+#: ../search/Tiles/ArchivedFile.cs:82 ../search/Tiles/File.cs:182
 msgid "Author:"
 msgstr "المؤلف:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47 ../search/Tiles/Task.cs:44
 msgid "Description:"
 msgstr "الوصف:"
 
 #: ../search/Tiles/Calendar.cs:57
-msgid "Location:"
-msgstr "الموقع:"
+msgid "Time:"
+msgstr "الوقت:"
 
 #: ../search/Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "الموضع:"
+
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "الحضور:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
-msgstr "أرسل البريد"
+msgstr "أرسل بريد"
+
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "بريد إلكتروني:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
-msgstr "الهاتف الجوال:"
+msgstr "هاتف جوال:"
 
 #: ../search/Tiles/Contact.cs:72
 msgid "Work Phone:"
@@ -508,31 +300,32 @@ msgstr "هاتف العمل:"
 msgid "Home Phone:"
 msgstr "هاتف المنزل:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/Documentation.cs:49
+msgid "Documentation"
+msgstr "توثيق"
+
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "احفظ في مجلّد"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "بريد إلكتروني"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37
-#: ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "انقل إلى  المهملات"
 
-#: ../search/Tiles/File.cs:174
-#: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "آخر تحرير:"
 
-#: ../search/Tiles/File.cs:179
-#: ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87
+#: ../search/Tiles/File.cs:184 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "المسار الكلّي:"
 
@@ -544,21 +337,23 @@ msgstr "فارغ"
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
-msgstr[0] "يحوي عنصرا واحدا"
-msgstr[1] "يحوي عنصرين"
-msgstr[2] "يحوي {0} عناصر"
-msgstr[3] "يحوي {0} عنصراً"
+msgstr[0] "لا يحوي أي عناصر"
+msgstr[1] "يحوي عنصرا واحدا"
+msgstr[2] "يحوي عنصرين"
+msgstr[3] "يحوي {0} عناصر"
+msgstr[4] "يحوي {0} عنصرًا"
+msgstr[5] "يحوي {0} عنصر"
 
 #. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Tiles/Image.cs:39
 msgid "Set as Wallpaper"
 msgstr "استخدم كخلفية"
 
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Image.cs:84 ../search/Tiles/Note.cs:78
 msgid "Tags:"
 msgstr "الوسوم:"
 
-#: ../search/Tiles/Image.cs:86
+#: ../search/Tiles/Image.cs:86 ../search/Tiles/Video.cs:44
 msgid "Modified:"
 msgstr "عُدّل:"
 
@@ -570,38 +365,41 @@ msgstr "التعليق:"
 msgid "IM Conversation"
 msgstr "محادثات فوريّة"
 
-#: ../search/Tiles/IMLog.cs:92
+#: ../search/Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "اسم:"
 
-#: ../search/Tiles/IMLog.cs:93
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:100 ../search/Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "تاريخ الاستلام:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:104
 msgid "Status:"
 msgstr "الحالة:"
 
-#: ../search/Tiles/IMLog.cs:112
-msgid "Idle"
-msgstr "عاطل"
-
 #: ../search/Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "ساكن"
+
+#: ../search/Tiles/IMLog.cs:126
 msgid "Away"
 msgstr "بعيد"
 
-#: ../search/Tiles/IMLog.cs:122
+#: ../search/Tiles/IMLog.cs:129
 msgid "Offline"
 msgstr "غير متّصلل"
 
-#: ../search/Tiles/IMLog.cs:125
+#: ../search/Tiles/IMLog.cs:132
 msgid "Available"
 msgstr "متوفّر"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
-msgstr "مُُرف بريدق"
+msgstr "مُُرفقة بريد"
+
+#: ../search/Tiles/MailAttachment.cs:48 ../search/Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "ابحث عن الرسائل من المُرسِل"
 
 #: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
@@ -611,55 +409,63 @@ msgstr "(بدون عنوان)"
 msgid "Send in Mail"
 msgstr "أرسِل في بريد"
 
-#: ../search/Tiles/MailMessage.cs:100
+#: ../search/Tiles/MailMessage.cs:103
 msgid "Subject:"
 msgstr "الموضوع:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Tiles/MailMessage.cs:105
 msgid "To:"
 msgstr "إلى:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "من:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/MailMessage.cs:108
 msgid "Date Sent:"
 msgstr "تاريخ الإرسال:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Folder:"
 msgstr "المجلّد:"
 
 #: ../search/Tiles/OpenWithMenu.cs:47
 msgid "Open With"
-msgstr "افتح بـ"
+msgstr "افتح ب‍"
 
 #: ../search/Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
 msgid_plural "{0} slides"
-msgstr[0] "شريحة واحدة"
-msgstr[1] "شريحتين"
-msgstr[2] "{0} شرائح"
-msgstr[3] "{0} شريحة"
+msgstr[0] "لا شرائح"
+msgstr[1] "شريحة واحدة"
+msgstr[2] "شريحتين"
+msgstr[3] "{0} شرائح"
+msgstr[4] "{0} شريحة"
+msgstr[5] "{0} شريحة"
 
-#: ../search/Tiles/RSSFeed.cs:49
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Site:"
-msgstr "موقع الإنترنت:"
+msgstr "موقع:"
 
-#: ../search/Tiles/RSSFeed.cs:50
+#: ../search/Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "تاريخ العرض:"
 
-#: ../search/Tiles/TextDocument.cs:37
+#: ../search/Tiles/Task.cs:47
+msgid "Date:"
+msgstr "تاريخ:"
+
+#: ../search/Tiles/TextDocument.cs:38
 #, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
-msgstr[0] "صفحة واحدة"
-msgstr[1] "صفحتين"
-msgstr[2] "{0} صفحات"
-msgstr[3] "{0} صفحة"
+msgstr[0] "لا صفحات"
+msgstr[1] "صفحة واحدة"
+msgstr[2] "صفحتين"
+msgstr[3] "{0} صفحات"
+msgstr[4] "{0} صفحة"
+msgstr[5] "{0} صفحة"
 
 #: ../search/Tiles/Tile.cs:179
 msgid "Open"
@@ -668,6 +474,10 @@ msgstr "افتح"
 #: ../search/Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "تطبيقات"
+
+#: ../search/Tiles/Utils.cs:27
+msgid "Contacts"
+msgstr "المعارِف"
 
 #: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
@@ -699,7 +509,7 @@ msgstr "محادثات"
 
 #: ../search/Tiles/Utils.cs:43
 msgid "Websites"
-msgstr "مواقع ويب"
+msgstr "مواقع وِب"
 
 #: ../search/Tiles/Utils.cs:45
 msgid "News Feeds"
@@ -707,91 +517,94 @@ msgstr "تلقيمات أخبار"
 
 #: ../search/Tiles/Utils.cs:47
 msgid "Archives"
-msgstr "محفوظات"
+msgstr "أرشيفات"
 
-#: ../search/Tiles/Utils.cs:122
-#: ../search/Tiles/Utils.cs:204
-#: ../Util/StringFu.cs:117
+#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
+#: ../Util/StringFu.cs:118
 msgid "Yesterday"
 msgstr "أمس"
 
-#: ../search/Tiles/Utils.cs:124
-#: ../search/Tiles/Utils.cs:206
-#: ../Util/StringFu.cs:115
+#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
+#: ../Util/StringFu.cs:116
 msgid "Today"
 msgstr "اليوم"
 
-#: ../search/Tiles/Utils.cs:126
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "غدا"
 
-#: ../search/Tiles/Utils.cs:224
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
-msgstr[0] "منذ أسبوع"
-msgstr[1] "منذ أسبوعين "
-msgstr[2] "منذ {0} أسابيع"
-msgstr[3] "منذ {0} أسبوعا"
+msgstr[0] "منذ {0} أسبوع"
+msgstr[1] "منذ أسبوع"
+msgstr[2] "منذ أسبوعين "
+msgstr[3] "منذ {0} أسابيع"
+msgstr[4] "منذ {0} أسبوعا"
+msgstr[5] "منذ {0} أسبوع"
 
-#: ../search/Tiles/Utils.cs:226
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
-msgstr[0] "خلال أسبوع"
-msgstr[1] "خلال أسبوعين"
-msgstr[2] "خلال {0} أسابيع"
-msgstr[3] "خلال {0} أسبوعاً"
+msgstr[0] "منذ لا أسابيع"
+msgstr[1] "خلال أسبوع"
+msgstr[2] "خلال أسبوعين"
+msgstr[3] "خلال {0} أسابيع"
+msgstr[4] "خلال {0} أسبوعًا"
+msgstr[5] "خلال {0} أسبوع"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
-msgstr[0] "منذ شهر"
-msgstr[1] "منذ شهرين"
-msgstr[2] "منذ {0} شهور"
-msgstr[3] "منذ {0} شهراًُ"
+msgstr[0] "منذ {0} شهر"
+msgstr[1] "منذ شهر"
+msgstr[2] "منذ شهرين"
+msgstr[3] "منذ {0} شهور"
+msgstr[4] "منذ {0} شهرًا"
+msgstr[5] "منذ {0} شهر"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
-msgstr[0] "خلال شهر"
-msgstr[1] "خلال شهرين"
-msgstr[2] "خلال {0} شهور"
-msgstr[3] "خلال {0} شهراً"
+msgstr[0] "خلال {0} شهر"
+msgstr[1] "خلال شهر"
+msgstr[2] "خلال شهرين"
+msgstr[3] "خلال {0} شهور"
+msgstr[4] "خلال {0} شهرًا"
+msgstr[5] "خلال {0} شهر"
 
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
-msgstr[0] "منذ عام"
-msgstr[1] "منذ عامين"
-msgstr[2] "منذ {0} أعوام"
-msgstr[3] "منذ {0} عاماً"
+msgstr[0] "منذ {0} عام"
+msgstr[1] "منذ عام"
+msgstr[2] "منذ عامين"
+msgstr[3] "منذ {0} أعوام"
+msgstr[4] "منذ {0} عامًا"
+msgstr[5] "منذ {0} عام"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
-msgstr[0] "خلال عام"
-msgstr[1] "خلال عامين"
-msgstr[2] "خلال {0} أعوام"
-msgstr[3] "خلال {0} عاماً"
+msgstr[0] "خلال {0} عام"
+msgstr[1] "خلال عام"
+msgstr[2] "خلال عامين"
+msgstr[3] "خلال {0} أعوام"
+msgstr[4] "خلال {0} عامًا"
+msgstr[5] "خلال {0} عام"
 
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "مدة مجهولة"
-
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:59
 msgid "URL:"
-msgstr "العنوان:"
+msgstr "المسار:"
 
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:60
 msgid "Accessed:"
 msgstr "نُفِذ إليه:"
 
@@ -803,9 +616,13 @@ msgstr "لا بحوث حديثة"
 msgid "Recent Searches"
 msgstr "البحوث الحديثة"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "امسح"
+
+#: ../search/Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "اخرج"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -929,7 +746,8 @@ msgid ""
 msgstr ""
 "image\n"
 "images\n"
-"img صورة\n"
+"img\n"
+"صورة\n"
 "صور"
 
 #: ../search/TypeFilter.cs:45
@@ -982,8 +800,8 @@ msgstr ""
 "website\n"
 "websites\n"
 "ويب\n"
-"موقع ويب\n"
-"مواقع ويب"
+"وِب\n"
+"وب"
 
 #: ../search/TypeFilter.cs:51
 msgid ""
@@ -1022,393 +840,553 @@ msgstr ""
 "شخصيات\n"
 "الناس"
 
-#: ../search/UIManager.cs:50
+#: ../search/UIManager.cs:51
 msgid "Close Desktop Search"
 msgstr "أغلق بحث سطح المكتب"
 
-#: ../search/UIManager.cs:55
-#: ../search/UIManager.cs:80
+#: ../search/UIManager.cs:56 ../search/UIManager.cs:83
 msgid "Exit Desktop Search"
 msgstr "اخرج من بحث سطح المكتب"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:63
 msgid "_Search"
 msgstr "ا_بحث"
 
-#: ../search/UIManager.cs:65
+#: ../search/UIManager.cs:66
 msgid "Show _Categories"
-msgstr "اعرض الأ_صناف:"
+msgstr "اعرض ال_فئات:"
 
-#: ../search/UIManager.cs:68
+#: ../search/UIManager.cs:69
+msgid "Search _Domains"
+msgstr "_نطاقات البحث"
+
+#: ../search/UIManager.cs:72
 msgid "_Actions"
-msgstr "أ_حداث"
+msgstr "إ_جراءات"
 
-#: ../search/UIManager.cs:71
+#: ../search/UIManager.cs:75
 msgid "_View"
-msgstr "_اعرض"
+msgstr "_عرض"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:78
 msgid "_Help"
 msgstr "م_ساعدة"
 
-#: ../search/UIManager.cs:83
+#: ../search/UIManager.cs:86
 msgid "_Contents"
-msgstr "_المحتويات"
+msgstr "ال_محتويات"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:88
 msgid "Help - Table of Contents"
 msgstr "المساعدة - جدول المحتويات"
 
-#: ../search/UIManager.cs:89
+#: ../search/UIManager.cs:92
 msgid "About Desktop Search"
-msgstr "حوْل بحث سطح المكتب"
+msgstr "عنْ بحث سطح المكتب"
 
-#: ../search/UIManager.cs:111
+#: ../search/UIManager.cs:114
 msgid "_All"
 msgstr "ال_كل"
 
-#: ../search/UIManager.cs:121
+#: ../search/UIManager.cs:124
 msgid "_None"
 msgstr "_لا شيء"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:138
 msgid "A_pplications"
 msgstr "_تطبيقات"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:140
 msgid "Search applications"
 msgstr "ابحث عن التطبيقات"
 
-#: ../search/UIManager.cs:141
+#: ../search/UIManager.cs:144
 msgid "_Contacts"
 msgstr "ال_معارِف"
 
-#: ../search/UIManager.cs:143
+#: ../search/UIManager.cs:146
 msgid "Search contacts"
 msgstr "ابحث عن المعارِف"
 
-#: ../search/UIManager.cs:147
+#: ../search/UIManager.cs:150
 msgid "Ca_lendar events"
 msgstr "أحداث الت_قويم"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:152
 msgid "Search calendar events"
 msgstr "ابحث عن أحداث التقويم"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:156
 msgid "_Documents"
 msgstr "_مستندات"
 
-#: ../search/UIManager.cs:155
+#: ../search/UIManager.cs:158
 msgid "Search documents"
 msgstr "ابحث عن المستندات"
 
-#: ../search/UIManager.cs:159
+#: ../search/UIManager.cs:162
 msgid "Conve_rsations"
 msgstr "م_حادثات"
 
-#: ../search/UIManager.cs:161
+#: ../search/UIManager.cs:164
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "ابحث في سجلّات البريد والتراسل الفوري"
 
-#: ../search/UIManager.cs:165
+#: ../search/UIManager.cs:168
 msgid "_Images"
 msgstr "_صور"
 
-#: ../search/UIManager.cs:167
+#: ../search/UIManager.cs:170
 msgid "Search images"
 msgstr "ابحث عن الصور"
 
-#: ../search/UIManager.cs:171
+#: ../search/UIManager.cs:174
 msgid "_Media"
 msgstr "_وسائط"
 
-#: ../search/UIManager.cs:173
+#: ../search/UIManager.cs:176
 msgid "Search sound and video files"
 msgstr "ابحث عن ملفات الصوت والصورة"
 
-#: ../search/UIManager.cs:177
+#: ../search/UIManager.cs:180
 msgid "_Folders"
 msgstr "_مجلّدات"
 
-#: ../search/UIManager.cs:179
+#: ../search/UIManager.cs:182
 msgid "Search for folder names"
 msgstr "ابحث عن أسماء المجلّدات"
 
-#: ../search/UIManager.cs:183
+#: ../search/UIManager.cs:186
 msgid "_Websites"
-msgstr "مواقع _ويب"
+msgstr "مواقع _وِب"
 
-#: ../search/UIManager.cs:185
+#: ../search/UIManager.cs:188
 msgid "Search website history"
-msgstr "ابحث عن مواقع الويب"
+msgstr "ابحث عن مواقع الوِب"
 
-#: ../search/UIManager.cs:189
+#: ../search/UIManager.cs:192
 msgid "_News Feeds"
 msgstr "تلقيمات الأ_خبار"
 
-#: ../search/UIManager.cs:191
+#: ../search/UIManager.cs:194
 msgid "Search news feeds"
 msgstr "ابحث في تلقيمات الأخبار"
 
-#: ../search/UIManager.cs:195
+#: ../search/UIManager.cs:198
 msgid "A_rchives"
-msgstr "_محفوظات"
+msgstr "أ_رشيفات"
 
-#: ../search/UIManager.cs:197
+#: ../search/UIManager.cs:200
 msgid "Search files in Archives"
-msgstr "ابحث عن ملفات في المحفوظات"
+msgstr "ابحث عن ملفات في الأرشيفات"
 
-#: ../search/UIManager.cs:205
+#: ../search/UIManager.cs:208
 msgid "Sort by Date _Modified"
 msgstr "رتّب بتاريخ الت_عديل"
 
-#: ../search/UIManager.cs:206
-msgid "Sort the most-recently-modified matches first"
-msgstr "رتب المطابقات الأحدث تعديلاً أولاً"
-
 #: ../search/UIManager.cs:209
-msgid "Sort by _Name"
-msgstr "رتّب بالإ_سم"
+msgid "Sort the most-recently-modified matches first"
+msgstr "رتب النتائج الأحدث تعديلًا أولًا"
 
-#: ../search/UIManager.cs:210
-msgid "Sort matches by name"
-msgstr "رتّب المُطابقات حسب الإسم"
+#: ../search/UIManager.cs:212
+msgid "Sort by _Name"
+msgstr "رتّب بالا_سم"
 
 #: ../search/UIManager.cs:213
+msgid "Sort matches by name"
+msgstr "رتّب النتائج حسب الاسم"
+
+#: ../search/UIManager.cs:216
 msgid "Sort by _Relevance"
 msgstr "رتّب بدرجة ال_صلة"
 
-#: ../search/UIManager.cs:214
+#: ../search/UIManager.cs:217
 msgid "Sort the best matches first"
-msgstr "رتب النتائج الأفضل أولاً"
+msgstr "رتب النتائج الأفضل أولًا"
 
-#: ../search/UIManager.cs:221
+#: ../search/UIManager.cs:224
+msgid "_Local"
+msgstr "_محلي"
+
+#: ../search/UIManager.cs:226
+msgid "Search only on local computer"
+msgstr "ابحث في الحاسوب المحلي فقط"
+
+#: ../search/UIManager.cs:230
+msgid "_Neighborhood"
+msgstr "ال_جوار"
+
+#: ../search/UIManager.cs:232
+msgid "Search on computers near me"
+msgstr "ابحث في الحواسيب القريبة مني"
+
+#: ../search/UIManager.cs:240
 msgid "Show Details"
 msgstr "اظهر التفاصيل"
 
-#: ../search/UIManager.cs:354
+#: ../search/UIManager.cs:380
 msgid "Couldn't launch web browser"
-msgstr "لم أستطع إطلاق متصفّح الويب."
+msgstr "لم أستطع إطلاق متصفّح الوِب."
 
-#: ../tools/Settings.cs:169
+#: ../tools/Settings.cs:346
 msgid "Reload configuration"
 msgstr "أعِد تحميل الإعدادات"
 
-#: ../tools/Settings.cs:170
-msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "لقد عدّل ملف الإعدادات بواسطة تطبيق آخر. أترغب في تجاهل القيم المعروضة حاليا وإعادة تحميل الإعدادات من على القرص؟"
+#: ../tools/Settings.cs:347
+msgid ""
+"The configuration file has been modified by another application. Do you wish "
+"to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+"لقد عدّل ملف الإعدادات بواسطة تطبيق آخر. أترغب في تجاهل القيم المعروضة حاليا "
+"وإعادة تحميل الإعدادات من على القرص؟"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:485
 msgid "Select Path"
-msgstr "اختر مساراً"
+msgstr "اختر مسارًا"
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:504
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "المسار المختار اختير بالفعل للفهرسة ولم يُضف."
 
-#: ../tools/Settings.cs:330
-msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
-msgstr "المسار المختار لم يُضَف. تحوي القائمة عناصر تستبدل هذا المسار كما أن البيانات يتم فهرستها بالفعل."
+#: ../tools/Settings.cs:507
+msgid ""
+"The selected path wasn't added. The list contains items that supersedes it "
+"and the data is already being indexed."
+msgstr ""
+"المسار المختار لم يُضَف. تحوي القائمة عناصر تستبدل هذا المسار كما أن البيانات "
+"يتم فهرستها بالفعل."
 
-#: ../tools/Settings.cs:341
+#: ../tools/Settings.cs:518
 msgid "Path not added"
 msgstr "لم يُضَف المسار"
 
-#: ../tools/Settings.cs:350
+#: ../tools/Settings.cs:527
 msgid "Remove obsolete paths"
 msgstr "أزِل المسارات الملغيّة"
 
-#: ../tools/Settings.cs:351
-msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "إضافة هذا المسار ستُلغي بعضاً من المسارات المضافة بالفعل. سينتج عن هذا إزالة المسار القديم الملغي. أمازلت ترغب في إضافته؟"
+#: ../tools/Settings.cs:528
+msgid ""
+"Adding this path will obsolete some of the existing include paths. This will "
+"result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+"إضافة هذا المسار ستُلغي بعضًا من المسارات المضافة بالفعل. سينتج عن هذا إزالة "
+"المسار القديم الملغي. أمازلت ترغب في إضافته؟"
 
-#: ../tools/Settings.cs:377
+#: ../tools/Settings.cs:554
 msgid "Remove path"
 msgstr "أزِل المسار"
 
-#: ../tools/Settings.cs:378
-msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+#: ../tools/Settings.cs:555
+msgid ""
+"Are you sure you wish to remove this path from the list of directories to be "
+"included for indexing?"
 msgstr "أمتأكّد من رغبتك في حذف هذا المسار من قائمة الأدلّة المضافة لفهرستها؟"
 
-#: ../tools/Settings.cs:407
+#: ../tools/Settings.cs:584
 msgid "Remove item"
 msgstr "احذف العنصر"
 
-#: ../tools/Settings.cs:408
-msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+#: ../tools/Settings.cs:585
+msgid ""
+"Are you sure you wish to remove this item from the list of data to be "
+"excluded from indexing?"
 msgstr "أمتأكّد من رغبتك في حذف هذا العنصر من قائمة الأدلّة المضافة لفهرستها؟"
 
-#: ../tools/Settings.cs:458
-#: ../tools/Settings.cs:547
-#: ../tools/Settings.cs:634
+#: ../tools/Settings.cs:632
+msgid "Remote host already present in the list."
+msgstr "المستضيف البعيد على القائمة بالفعل"
+
+#: ../tools/Settings.cs:642
+msgid "Netbeagle Node not added"
+msgstr "لم تُضف عقدة نت‌بيغل"
+
+#: ../tools/Settings.cs:657
+msgid "Remove host"
+msgstr "أزِل المستضيف"
+
+#: ../tools/Settings.cs:658
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "أمتأكّد من رغبتك في حذف هذا المستضيف من القائمة؟"
+
+#: ../tools/Settings.cs:717 ../tools/Settings.cs:806 ../tools/Settings.cs:887
+#: ../tools/Settings.cs:992 ../tools/Settings.cs:1624
 msgid "Name"
 msgstr "اسم"
 
-#: ../tools/Settings.cs:541
+#: ../tools/Settings.cs:800
 msgid "Type"
 msgstr "نوع"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:853
 msgid "Path:"
 msgstr "مسار:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:856
 msgid "Pattern:"
 msgstr "نمط:"
 
-#: ../tools/Settings.cs:600
+#: ../tools/Settings.cs:859
 msgid "Mail folder:"
 msgstr "مجلّد البريد:"
 
-#: ../tools/Settings.cs:881
-msgid "Select Folder"
-msgstr "انتقي مجلّد"
+#: ../tools/Settings.cs:894
+msgid "Address"
+msgstr "العنوان"
 
-#: ../tools/Settings.cs:907
-#: ../tools/settings.glade.h:20
+#: ../tools/Settings.cs:1239
+msgid "Select Folder"
+msgstr "اختر مجلّدا"
+
+#: ../tools/Settings.cs:1265 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_مسار:"
 
-#: ../tools/Settings.cs:912
+#: ../tools/Settings.cs:1270
 msgid "M_ail folder:"
 msgstr "مجلد ال_بريد:"
 
-#: ../tools/Settings.cs:917
+#: ../tools/Settings.cs:1275
 msgid "P_attern:"
 msgstr "نم_ط:"
 
-#: ../tools/Settings.cs:941
+#: ../tools/Settings.cs:1299
 msgid "Error adding path"
 msgstr "خطأ أثناء إضافة المسار"
 
-#: ../tools/Settings.cs:942
-msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
-msgstr "لا يمكن إيجاد المسار المحدّد ولذلك لا يمكن إضافته لقائمة الموارد المستبعدة من الفهرسة."
+#: ../tools/Settings.cs:1300
+msgid ""
+"The specified path could not be found and therefore it could not be added to "
+"the list of resources excluded for indexing."
+msgstr ""
+"لا يمكن إيجاد المسار المحدّد ولذلك لا يمكن إضافته لقائمة الموارد المستبعدة من "
+"الفهرسة."
+
+#: ../tools/Settings.cs:1341
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "يتصل ب‍ {0}"
+
+#: ../tools/Settings.cs:1625
+msgid "Description"
+msgstr "الوصف"
 
 #: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>إدارة</b>"
 
-#: ../tools/settings.glade.h:2
+#: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>العرض</b>"
 
-#: ../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:4
 msgid "<b>Exclude Resource</b>"
 msgstr "<b>استبعد مورد</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
 msgstr "<b>عام</b>"
 
-#: ../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b>الشبكة</b>"
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Privacy</b>"
 msgstr "<b>الخصوصية</b>"
 
-#: ../tools/settings.glade.h:6
+#: ../tools/settings.glade.h:8
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>اختر مجلّد بريد</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:9
 msgid "<b>User Interface</b>"
 msgstr "<b>واجهة المستخدم</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:10
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>ستصبح التغييرات مأثرة بعد إعادة تشغيل الخادم</i>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>لا يعمل هذا الإعداد عند العمل على البطارية</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">كلمة السر مطلوبة.</span>"
+
+#: ../tools/settings.glade.h:13
+msgid "Add Remote Host"
+msgstr "أضِف مستضيفا بعيدا"
+
+#: ../tools/settings.glade.h:14
+msgid "Add a static host"
+msgstr "أضِف مستضيفا ثابتا"
+
+#: ../tools/settings.glade.h:15
 msgid "Add any additional paths to be included for indexing."
 msgstr "أضِف أي مسارات إضافية ليتم تضمينها في الفهرسة."
 
-#: ../tools/settings.glade.h:9
-msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
-msgstr "اضبط أيا من أنواع النتائج ستظهر، والترتيب الذي ستعرض  فيها عند تجميعها حسب نوعها."
+#: ../tools/settings.glade.h:16
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "أضِف أي مستضيف بعيد مستطيع البحث تريد الشبك معه."
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:17
+msgid ""
+"Adjust which types of results should be visible, and in what order they "
+"should be presented when grouped by type."
+msgstr ""
+"اضبط أيا من أنواع النتائج ستظهر، والترتيب الذي ستعرض  فيها عند تجميعها حسب "
+"نوعها."
+
+#: ../tools/settings.glade.h:18
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "اسمح الوصول الخارجي للخدمات المحلية (تجريبي)"
+
+#: ../tools/settings.glade.h:19
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr "ا_بدأ البحث آليا بعد أن يتوقف المستخدم عن الكتابة"
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:21
+msgid "Backends"
+msgstr "خلفيات"
+
+#: ../tools/settings.glade.h:22
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:23
 msgid "Display the search window by pressing:"
 msgstr "اعرض نافذة البحث بضغط:"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:24
+msgid "Enable web interface for local search service"
+msgstr "فعّل واجهة الوِب لخدمة البحث المحلية"
+
+#: ../tools/settings.glade.h:25
+msgid "Enable/Disable backends from the indexing and searching process."
+msgstr "فعّل/عطّل الخلفيات من عملية البحث والفهرسة."
+
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "استبعد مورِد"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "_نمط اسم ملف"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "فهرِس مجلّدي المنزلي"
 
-#: ../tools/settings.glade.h:17
-msgid "Index data while on _battery power"
-msgstr "فهرٍس البيانات أثناء العمل على _طاقة البطّارية"
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr "لتتمكن من القيام ببحث بيغل على هذا الحاسوب، يجب أن تُدخل كلمة سر."
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "فهرس البيانات أثناء العمل على _طاقة البطّارية"
+
+#: ../tools/settings.glade.h:31
 msgid "Index more aggressively while the s_creensaver is activated"
 msgstr "_قم بالفهرسة أكثر عند اشتغال حافظ الشاشة"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "اسم الفهرس:"
+
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "فهرسة"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:35
+msgid "Networking"
+msgstr "شبكات"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "كلمة سر {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "كلمة السر:"
+
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "رجاء اختر المورد الّذي ترغب في استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "رجاء اختر مجلّد البريد الّذي ترغب في استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "اطلب كلمة سر للبحث في هذا الحاسوب عن بعد"
+
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "تفضيلات البحث"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "يجري البحث"
+
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "اختر مجلّد بريد"
 
-#: ../tools/settings.glade.h:26
-msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
-msgstr "حدّد أي مورد، مثل المسارات، الأنماط، مجلدات البريد أو نوع كائن ترغب في استبعاده من الفهرسة."
+#: ../tools/settings.glade.h:45
+msgid ""
+"Specify any resources, such as paths, patterns, mail folders or type of "
+"objects you wish to exclude from indexing."
+msgstr ""
+"حدّد أي مورد، مثل المسارات، الأنماط، مجلدات البريد أو نوع كائن ترغب في "
+"استبعاده من الفهرسة."
 
-#: ../tools/settings.glade.h:27
-msgid "This setting does not apply while on battery power."
-msgstr "لا يعمل هذا الإعداد عند الإشتغال على البطارية"
-
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "النّوع:"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
-msgstr "_اسمح بتشغيل بيجل كجذر"
+msgstr "_اسمح بتشغيل بيغل كجذر"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:48
 msgid "_Browse..."
 msgstr "_تصفّح..."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "ا_ختر من المستضيفين المتوفرين حاليا"
+
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "مسار ال_مجلّد"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "ا_سم المستضيف:"
+
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "مجلد ال_بريد"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_كلمة السر:"
+
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
-msgstr "إ_بدأ خِدمة البحث والفهرسة آليا"
+msgstr "ا_بدأ خِدمة البحث والفهرسة آليا"
 
 #: ../tools/beagle-settings.desktop.in.in.h:1
 msgid "Configure Desktop Search"
@@ -1418,8 +1396,7 @@ msgstr "اضبط بحث سطح المكتب"
 msgid "Search & Indexing"
 msgstr "بحث و فهرسة"
 
-#: ../Util/Evolution.cs:45
-#: ../Util/Evolution.cs:163
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "على هذا الحاسوب"
 
@@ -1429,7 +1406,7 @@ msgstr "دليل صور"
 
 #: ../Util/F-Spot/Exif.cs:250
 msgid "Thumbnail Directory"
-msgstr "دليل مُسْتَصْغرات"
+msgstr "دليل مُصْغّرات"
 
 #: ../Util/F-Spot/Exif.cs:252
 msgid "Exif Directory"
@@ -1449,7 +1426,7 @@ msgstr "دليل مجهول"
 
 #: ../Util/F-Spot/IptcFile.cs:175
 msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr "رقم اصدار نموذج تبادل المعلومات IPTC "
+msgstr "رقم إصدار نموذج تبادل المعلومات IPTC "
 
 #: ../Util/F-Spot/IptcFile.cs:177
 msgid "OSI Destination routing information"
@@ -1473,15 +1450,15 @@ msgstr "رقم فريد"
 
 #: ../Util/F-Spot/IptcFile.cs:187
 msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr "أولوية معالجة الظرف من 1 (أكثر الحاحا) إلى 9  (أقل الحاحا) "
+msgstr "أولوية معالجة الظرف من 1 (أكثر إلحاحا) إلى 9  (أقل إلحاحا) "
 
 #: ../Util/F-Spot/IptcFile.cs:189
 msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr "سنة وشهر ويوم (CCYYMMDD) ارسال الخدمة للمواد"
+msgstr "سنة وشهر ويوم (CCYYMMDD) إرسال الخدمة للمواد"
 
 #: ../Util/F-Spot/IptcFile.cs:191
 msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr "ساعة ودقيقة وثانية (HHMMSS+HHMM) ارسال الخدمة للمواد"
+msgstr "ساعة ودقيقة وثانية (HHMMSS+HHMM) إرسال الخدمة للمواد"
 
 #: ../Util/F-Spot/IptcFile.cs:193
 msgid "The character set designation"
@@ -1489,7 +1466,7 @@ msgstr "مجموعة المحارف الغاية"
 
 #: ../Util/F-Spot/IptcFile.cs:195
 msgid "External globally unique object identifier"
-msgstr "هوية جسم خارجية فريدة عالميا"
+msgstr "هوية كائن خارجية فريدة عالميا"
 
 #: ../Util/F-Spot/IptcFile.cs:200
 msgid "Abstract Relationship Method (ARM) identifier"
@@ -1497,11 +1474,11 @@ msgstr "هوية وظيفة علاقة مجردة (ARM)."
 
 #: ../Util/F-Spot/IptcFile.cs:202
 msgid "Abstract Relationship Method (ARM) version number."
-msgstr "رقم اصدار وظيفة علاقة مجردة (ARM)."
+msgstr "رقم إصدار وظيفة علاقة مجردة (ARM)."
 
 #: ../Util/F-Spot/IptcFile.cs:205
 msgid "Number identifying the IIM version this application record uses"
-msgstr "عدد يُعرف اصدار الـ IIM المستعمل من طرف سجل التطبيق هذا"
+msgstr "عدد يُعرف إصدار الـ IIM المستعمل من طرف سجل التطبيق هذا"
 
 #: ../Util/F-Spot/IptcFile.cs:207
 msgid "Object type reference"
@@ -1511,8 +1488,7 @@ msgstr "مرجع نوع الكائن"
 msgid "Object attribute reference"
 msgstr "مرجع صفات الكائن"
 
-#: ../Util/F-Spot/IptcFile.cs:218
-#: ../Util/F-Spot/IptcFile.cs:222
+#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
 msgid "Object name"
 msgstr "اسم الكائن"
 
@@ -1522,7 +1498,7 @@ msgstr "حالة بيانات الكائن طبقا للمزود"
 
 #: ../Util/F-Spot/IptcFile.cs:224
 msgid "Location within a city or area where the object originates"
-msgstr "مكان في مدينة أو منطقة من حيث نشأ الجسم"
+msgstr "مكان في مدينة أو منطقة من حيث نشأ الكائن"
 
 #: ../Util/F-Spot/IptcFile.cs:227
 msgid "Name of the city the content is focussing on"
@@ -1530,7 +1506,7 @@ msgstr "اسم المدينة التي يركز عليها المحتوى"
 
 #: ../Util/F-Spot/IptcFile.cs:230
 msgid "Copyright information for"
-msgstr "معلومات حقوق نسخ"
+msgstr "معلومات حقوق نشر"
 
 #: ../Util/F-Spot/IptcFile.cs:233
 msgid "Full name of the country of the focus of the content"
@@ -1542,19 +1518,21 @@ msgstr "رمز ثنائي أو ثلاثي للبلد الذي يركز عليه 
 
 #: ../Util/F-Spot/IptcFile.cs:239
 msgid "Creator of the content"
-msgstr "منشيء المحتوى"
+msgstr "منشئ المحتوى"
 
 #: ../Util/F-Spot/IptcFile.cs:242
 msgid "Provider of the object"
-msgstr "موفّر الجسم"
+msgstr "موفّر الكائن"
 
 #: ../Util/F-Spot/IptcFile.cs:245
 msgid "The title of the author or creator"
-msgstr "لقب المؤلف أو المنشيء"
+msgstr "لقب المؤلف أو المنشئ"
 
 #: ../Util/F-Spot/IptcFile.cs:248
-msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
-msgstr "الشخص الذي يقوم بكتابة، تحرير أو تصحيح بيانات الجسم أو العنوان و الملخص"
+msgid ""
+"The person involved in writing, editing or correcting the object data or "
+"caption/abstract"
+msgstr "الشخص الذي يقوم بكتابة، تحرير أو تصحيح بيانات الكائن أو العنوان و الملخص"
 
 #: ../Util/F-Spot/IptcFile.cs:252
 msgid "Headline of the content"
@@ -1566,15 +1544,15 @@ msgstr "تعاليم من المنشئ إلى المتلقي غير مغطاة �
 
 #: ../Util/F-Spot/IptcFile.cs:258
 msgid "Intellectual genre of the object"
-msgstr "النوع الفكري للجسم"
+msgstr "النوع الفكري للكائن"
 
 #: ../Util/F-Spot/IptcFile.cs:271
 msgid "Unknown IIM DataSet"
-msgstr "مجموعة بيانات مجهول"
+msgstr "مجموعة بيانات مجهولة"
 
 #: ../Util/F-Spot/MetadataStore.cs:46
 msgid "Creator"
-msgstr "المنشيء"
+msgstr "المنشئ"
 
 #: ../Util/F-Spot/MetadataStore.cs:47
 msgid "Title"
@@ -1582,7 +1560,7 @@ msgstr "العنوان"
 
 #: ../Util/F-Spot/MetadataStore.cs:48
 msgid "Copyright"
-msgstr "حقوق النسخ"
+msgstr "حقوق النشر"
 
 #: ../Util/F-Spot/MetadataStore.cs:49
 msgid "Subject and Keywords"
@@ -1596,13 +1574,17 @@ msgstr "الضغط"
 msgid "Planar Configuration"
 msgstr "إعداد مستوي"
 
+#: ../Util/F-Spot/MetadataStore.cs:54
+msgid "Orientation"
+msgstr "الاتّجاه"
+
 #: ../Util/F-Spot/MetadataStore.cs:56
 msgid "Photometric Interpretation"
 msgstr "تأويل القيمة"
 
 #: ../Util/F-Spot/MetadataStore.cs:58
 msgid "Resolution Unit"
-msgstr "وحدة الإستبانة"
+msgstr "وحدة الاستبانة"
 
 #: ../Util/F-Spot/MetadataStore.cs:60
 msgid "Exposure Program"
@@ -1618,7 +1600,7 @@ msgstr "نمط التعرض"
 
 #: ../Util/F-Spot/MetadataStore.cs:66
 msgid "Custom Rendered"
-msgstr " تصيير مخصص"
+msgstr "تصيير مخصص"
 
 #: ../Util/F-Spot/MetadataStore.cs:68
 msgid "Components Configuration"
@@ -1630,7 +1612,7 @@ msgstr "مصدر الضوء"
 
 #: ../Util/F-Spot/MetadataStore.cs:72
 msgid "Sensing Method"
-msgstr "طريقة الإستشعار"
+msgstr "طريقة الاستشعار"
 
 #: ../Util/F-Spot/MetadataStore.cs:74
 msgid "Color Space"
@@ -1673,98 +1655,103 @@ msgid "Scene Type"
 msgstr "نوع المشهد"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:121
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:124
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:127
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:133
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}، {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:150
 #, csharp-format
 msgid "Today, {0}"
 msgstr "اليوم، {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:153
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "أمس، {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:157
+#: ../Util/StringFu.cs:158
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
-msgstr[0] "منذ يوم واحد، {1}"
-msgstr[1] "منذ {0} أيام، {1}"
-msgstr[2] "منذ {0} أيام، {1}"
+msgstr[0] "منذ صفر ({0}) يوم، {1}"
+msgstr[1] "منذ يوم واحد ({0})، {1}"
+msgstr[2] "منذ يومين ({0})، {1}"
 msgstr[3] "منذ {0} أيام، {1}"
+msgstr[4] "منذ {0} يوما، {1}"
+msgstr[5] "منذ {0} يوم، {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:163
+#: ../Util/StringFu.cs:164
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:168
+#: ../Util/StringFu.cs:169
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, h:mm tt"
 
-#: ../Util/StringFu.cs:178
+#: ../Util/StringFu.cs:179
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
-msgstr[0] "ساعة"
-msgstr[1] "ساعتين"
-msgstr[2] "{0} ساعات"
-msgstr[3] "{0} ساعة"
+msgstr[0] "لا ساعات"
+msgstr[1] "ساعة واحدة"
+msgstr[2] "ساعتين"
+msgstr[3] "{0} ساعات"
+msgstr[4] "{0} ساعة"
+msgstr[5] "{0} ساعة"
 
-#: ../Util/StringFu.cs:185
+#: ../Util/StringFu.cs:186
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
-msgstr[0] "دقيقة"
-msgstr[1] "دقيقتين"
-msgstr[2] "{0} دقائق"
-msgstr[3] "{0} دقيقة"
+msgstr[0] "لا دقائق"
+msgstr[1] "دقيقة واحدة"
+msgstr[2] "دقيقتين"
+msgstr[3] "{0} دقائق"
+msgstr[4] "{0} دقيقة"
+msgstr[5] "{0} دقيقة"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:219
+#: ../Util/StringFu.cs:220
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
 msgstr[0] "{0} بايت"
-msgstr[1] "{0} بايتات"
-msgstr[2] "{0} بايتات"
+msgstr[1] "{0} بايت"
+msgstr[2] "{0} بايت"
 msgstr[3] "{0} بايتات"
+msgstr[4] "{0} بايت"
+msgstr[5] "{0} بايت"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:223
+#: ../Util/StringFu.cs:224
 #, csharp-format
 msgid "{0:0.0} KB"
-msgstr "{0:0.0} ك ب"
+msgstr "{0:0.0} ك.بايت"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:226
+#: ../Util/StringFu.cs:227
 #, csharp-format
 msgid "{0:0.0} MB"
-msgstr "{0:0.0} م ب"
-
-#~ msgid "Show"
-#~ msgstr "اعرض"
+msgstr "{0:0.0} م.بايت"
 
