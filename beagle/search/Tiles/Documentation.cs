@@ -24,7 +24,7 @@ namespace Search.Tiles {
 			if (! base.Validate (hit))
 				return false;
 			
-			if (hit ["beagle:FileType"] != "documentation")
+			if (hit.Type != "DocbookEntry" && hit ["beagle:FileType"] != "documentation")
 				return false;
 			
 			Weight += 2;
