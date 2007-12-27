@@ -1,3 +1,53 @@
+Version 0.3.2
+27 December 2007
+
+* Use Hal to monitor battery and AC power. Earlier we monitored a fixed set of files in the /proc filesystem. Now we require NDesk-DBus.
+
+* Fix building with mono 1.2.6 [bgo #503639].
+
+* Add a couple of Avahi specific missing files.
+
+* Fix several bugs in handling exclude directories and patterns in the Filesystem backend.
+
+* Fix a crash in the Nautilus backend when it tries to index temporary files [bgo #504192].
+
+* Fix monodoc and manpages filter. Add support for gzip and bzip2 compressed manpages.
+
+* Fix a bug in beagle-build-index where new files would not be indexed.
+
+* Fix --enable-deletion in beagle-build-index. Set --enable-deletion for system-wide indexes.
+
+* New Empathy backend.
+
+* Store file size for files from the filesystem, in archives and in email attachments.
+
+* Show a larger snippet in the tooltip in beagle-search.
+
+* Allow users to bookmark webinterface searches.
+
+* Also display the time of recently modified results in the webinterface.
+
+* Add --write-xml and --read-xml options to beagle-config to enable non-C# programs to read and set config options.
+
+* Show documentation results in beagle-search when started with --search-docs option.
+
+* Add system-wide crawl rules for manpages and monodoc files. Keep them disabled by default.
+
+* Show the system-wide indexes in the backend chooser of beagle-settings.
+
+* Translations:
+  - Swedish (Daniel Nylander)
+  - Spanish (Jorge Gonzalez)
+  - Brazilian Portuguese (Igor Pires Soares, Leonardo Ferreira Fontenelle)
+  - Arabic (Khaled Hosny)
+
+Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik and  Anders Rune Jensen.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_2/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.1
 10 December 2007
 

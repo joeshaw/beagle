@@ -1,4 +1,489 @@
 ------------------------------------------------------------------------
+r4343 | dbera | 2007-12-27 15:04:07 -0500 (Thu, 27 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Add system-wide indexes to the backend chooser.
+
+------------------------------------------------------------------------
+r4342 | dbera | 2007-12-26 21:22:06 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/wrapper.in
+
+Use the BEAGLE_CONF_DIR environment variable for beagle-settings and beagle-config.
+
+------------------------------------------------------------------------
+r4341 | dbera | 2007-12-26 21:08:13 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/Util/PathFinder.cs
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/beagled.in
+   M /trunk/beagle/beagled/wrapper.in
+
+Use an environment variable BEAGLE_CONF_DIR to point to the location of the global config files. This comes in handy when running beagled uninstalled.
+
+------------------------------------------------------------------------
+r4340 | dbera | 2007-12-26 17:11:58 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Tiles/Documentation.cs
+
+Missed in the last commit.
+
+------------------------------------------------------------------------
+r4339 | dbera | 2007-12-26 17:02:20 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Search.cs
+   M /trunk/beagle/search/Tiles/Documentation.cs
+   M /trunk/beagle/search/beagle-search.1
+   M /trunk/beagle/tools/Makefile.am
+   A /trunk/beagle/tools/crawl-rules/crawl-monodoc
+
+Add a crawl-rule for monodoc files, again leave it disabled by default since beagle-search cannot show monodoc hits (yelp probably cannot too). The docbook filter is unable to figure out the language for the docbook files, so each docbook entry is returned multiple times when searching; one for each language. This just clutters the search results, so ... "documentation" index is left disabled-by-default; however, a --search-docs option is search the documentation index. Beware! There is no way to know from the beagle-search tiles which one is the result in the correct language. Small fixes to the documentation tile to display docbook hits.
+
+------------------------------------------------------------------------
+r4338 | dbera | 2007-12-26 16:02:12 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Typo.
+
+------------------------------------------------------------------------
+r4337 | dbera | 2007-12-26 15:47:34 -0500 (Wed, 26 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EmpathyQueryable/EmpathyQueryable.cs
+   D /trunk/beagle/beagled/SuggestionsExecutor.cs
+
+Cleanup: fix a typo and remove SuggestionsExecutor (it is present in the branch).
+
+------------------------------------------------------------------------
+r4336 | djihed | 2007-12-26 10:25:15 -0500 (Wed, 26 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ar.po
+
+Updated Arabic Translation by Khaled Hosny. 
+------------------------------------------------------------------------
+r4335 | dbera | 2007-12-22 22:31:10 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/beagle-crawl-system.in
+
+Missed the actual commits.
+
+------------------------------------------------------------------------
+r4334 | dbera | 2007-12-22 20:04:54 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/tools/crawl-rules/crawl-applications
+   M /trunk/beagle/tools/crawl-rules/crawl-documentation
+   M /trunk/beagle/tools/crawl-rules/crawl-manpages
+   M /trunk/beagle/tools/crawl-rules/crawl-windows
+
+Run the crawl-scripts with --enable-deletion.
+
+------------------------------------------------------------------------
+r4333 | dbera | 2007-12-22 19:53:16 -0500 (Sat, 22 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+
+The format of field values changed in the past breaking --enable-deletion; fixed that and several related problems. Now --enable-deletion works with --disable-directories by actually indexing the directories but making sure no searchable properties are indexed.
+Bump build-index version since now directories are always indexed.
+
+------------------------------------------------------------------------
+r4332 | dbera | 2007-12-22 19:49:34 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/ExtractContent.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/NoiseFilter.cs
+   M /trunk/beagle/beagled/webinterface/default.js
+   M /trunk/beagle/beagled/webinterface/index.xsl
+
+Revert accidental commit.
+
+------------------------------------------------------------------------
+r4331 | dbera | 2007-12-22 19:47:30 -0500 (Sat, 22 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/ExtractContent.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/NoiseFilter.cs
+   M /trunk/beagle/beagled/webinterface/default.js
+   M /trunk/beagle/beagled/webinterface/index.xsl
+
+The format of field values changed in the past breaking --enable-deletion; fixed that and several related problems. Now --enable-deletion works with --disable-directories by actually indexing the directories but making sure no searchable properties are indexed.
+Bump build-index version since now directories are always indexed.
+
+------------------------------------------------------------------------
+r4330 | leonardof | 2007-12-22 19:04:43 -0500 (Sat, 22 Dec 2007) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2007-12-22  Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+
+	* pt_BR.po: Brazilian Portuguese translation updated by Igor Pires
+	Soares and myself.
+
+------------------------------------------------------------------------
+r4329 | dbera | 2007-12-22 17:51:16 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   A /trunk/beagle/tools/crawl-rules/crawl-manpages
+
+Add a crawl rule for indexing man pages. Keep it disabled by default (also, yelp is broken wrt beagle right now).
+
+------------------------------------------------------------------------
+r4328 | dbera | 2007-12-22 17:39:55 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileAttributesStore.cs
+
+Fix a logic bug in FAStore:IsUpToDateAndFiltered: the idea behind the filterver.dat is useful but the IsUpToDateAndFiltered method was not distinguishing between a new file and a file not filtered before. Note that, a file that was not filtered before will have an attribute but the attribute will not have any filtername or filterversion.
+
+------------------------------------------------------------------------
+r4327 | dbera | 2007-12-22 15:15:58 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterMan.cs
+
+Some more fixes for man filter.
+
+------------------------------------------------------------------------
+r4326 | dbera | 2007-12-22 15:07:23 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+
+Remove debug message.
+
+------------------------------------------------------------------------
+r4325 | dbera | 2007-12-22 14:40:49 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterMan.cs
+
+Report unsupported macros instead of ignoring them and adding support for ".UR" which seems to be a macro for URLs.
+
+------------------------------------------------------------------------
+r4324 | dbera | 2007-12-22 14:34:39 -0500 (Sat, 22 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   M /trunk/beagle/Filters/FilterMan.cs
+
+Remote FilterCompressedMan and merge the functionality to FilterMan. Handle bz2 compressed man pages (Mandriva uses lzma compressed man pages which SharpZiplib does not support). Improve the quality of extracted text including handling of known macros and extracting summary, author info.
+
+------------------------------------------------------------------------
+r4323 | dbera | 2007-12-21 14:39:05 -0500 (Fri, 21 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/po/POTFILES.in
+
+Bump version to 0.3.2 and add Documentation.cs to potfiles.
+
+------------------------------------------------------------------------
+r4322 | dbera | 2007-12-21 14:30:24 -0500 (Fri, 21 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   M /trunk/beagle/Filters/FilterMan.cs
+   M /trunk/beagle/beagled/ExtractContent.cs
+
+Directly index the compressed man files instead of treating them like an archive and using a child-indexable. This makes the filter twice as fast and as a bonus, returns only one hit per compressed man file. Use filetype:documentation to recognize these hits.
+
+------------------------------------------------------------------------
+r4321 | dbera | 2007-12-20 18:33:12 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EmpathyQueryable/EmpathyQueryable.cs
+
+Free crawler once crawling is done and inotify is enabled.
+
+------------------------------------------------------------------------
+r4320 | dbera | 2007-12-20 17:53:25 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.css
+   M /trunk/beagle/beagled/webinterface/hitresult.xsl
+   M /trunk/beagle/beagled/webinterface/propname-table.js
+
+Show filesize information in the webinterface.
+
+------------------------------------------------------------------------
+r4319 | dbera | 2007-12-20 17:53:03 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+
+Filesize is now stored for files, up FSQ version number.
+
+------------------------------------------------------------------------
+r4318 | dbera | 2007-12-20 17:10:11 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.js
+
+Fix the timestamp-to-pretty-string method. The earlier methods were not quite right. Show the time too if the timestamp is in the current week.
+
+------------------------------------------------------------------------
+r4317 | dbera | 2007-12-20 15:55:38 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.js
+
+Simple implementation to bookmark current query in the webinterface.
+
+------------------------------------------------------------------------
+r4316 | dbera | 2007-12-20 15:26:17 -0500 (Thu, 20 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Fix compilation on mono 1.2.6. Fixes #503639.
+
+------------------------------------------------------------------------
+r4315 | llipka | 2007-12-19 17:18:42 -0500 (Wed, 19 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/FilterMan.cs
+
+Bera's optimizing tips. :)
+------------------------------------------------------------------------
+r4314 | llipka | 2007-12-19 16:36:30 -0500 (Wed, 19 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/FilterMan.cs
+   M /trunk/beagle/Filters/FilterMonodoc.cs
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/Tiles/ArchivedFile.cs
+   M /trunk/beagle/search/Tiles/AssemblyInfo.cs
+   D /trunk/beagle/search/Tiles/DocbookEntry.cs
+   A /trunk/beagle/search/Tiles/Documentation.cs (from /trunk/beagle/search/Tiles/DocbookEntry.cs:4292)
+   M /trunk/beagle/search/Tiles/File.cs
+
+Update our documentation filters and up the versions.
+------------------------------------------------------------------------
+r4313 | llipka | 2007-12-19 11:41:24 -0500 (Wed, 19 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/BeagleClient/AssemblyInfo.cs
+   M /trunk/beagle/BeagleClient/Makefile.am
+   M /trunk/beagle/BeagleClient/QueryResponses.cs
+   D /trunk/beagle/BeagleClient/SuggestionsRequest.cs
+   D /trunk/beagle/BeagleClient/SuggestionsResponse.cs
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   M /trunk/beagle/beagled/IQueryResult.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/SuggestionsExecutor.cs
+   M /trunk/beagle/search/Pages/NoMatch.cs
+   M /trunk/beagle/search/Search.cs
+
+Revert suggestions commits since they are now moved into the beagle-suggestions-branch. 0.3.2 release coming, yay. :-)
+------------------------------------------------------------------------
+r4311 | dbera | 2007-12-18 19:10:03 -0500 (Tue, 18 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/NautilusTools.cs
+   M /trunk/beagle/beagled/NautilusMetadataQueryable/NautilusMetadataQueryable.cs
+
+Nautilus backend: only index *.xml files and catch error early if XmlReader fails to load the xml file.
+
+------------------------------------------------------------------------
+r4310 | llipka | 2007-12-18 15:36:02 -0500 (Tue, 18 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/SuggestionsExecutor.cs
+
+Suggestions: Dont forget to release the index reader and other small updates.
+------------------------------------------------------------------------
+r4307 | dbera | 2007-12-17 23:24:59 -0500 (Mon, 17 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Makefile.am
+
+Forgot to add this image to DIST_FILES.
+
+------------------------------------------------------------------------
+r4306 | dbera | 2007-12-17 23:24:15 -0500 (Mon, 17 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/tools/Config.cs
+
+Add --write-xml and --read-xml methods to beagle-config (and corresponding Util.Conf API) to enable non-C# programs to read and write config options. Adding config API in libbeagle would require writing the whole load/merge/save logic in libbeagle itself ... which is pretty painful; instead these two options will do the job in most cases.
+
+------------------------------------------------------------------------
+r4298 | dbera | 2007-12-16 12:19:33 -0500 (Sun, 16 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/DumpIndex.cs
+   M /trunk/beagle/beagled/beagle-dump-index.1
+
+Add --fields option to beagle-dump-index to dump the names of all fields in the index.
+
+------------------------------------------------------------------------
+r4295 | jorgegonz | 2007-12-16 07:30:33 -0500 (Sun, 16 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4293 | llipka | 2007-12-15 19:32:55 -0500 (Sat, 15 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/AssemblyInfo.cs
+   M /trunk/beagle/BeagleClient/Makefile.am
+   M /trunk/beagle/BeagleClient/QueryResponses.cs
+   A /trunk/beagle/BeagleClient/SuggestionsRequest.cs
+   A /trunk/beagle/BeagleClient/SuggestionsResponse.cs
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   M /trunk/beagle/beagled/IQueryResult.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/QueryDriver.cs
+   A /trunk/beagle/beagled/SuggestionsExecutor.cs
+   M /trunk/beagle/search/Pages/NoMatch.cs
+   M /trunk/beagle/search/Search.cs
+
+Implement suggestions in an unobtrusive way using FuzzyTermEnum. Suggestions are only generated upon request.
+Add a first pass of this in beagle-search.
+
+------------------------------------------------------------------------
+r4292 | dbera | 2007-12-15 13:26:51 -0500 (Sat, 15 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterMonodoc.cs
+   M /trunk/beagle/beagled/ExtractContent.cs
+
+Fix monodoc filter. The actual problem was the lack of "StoreStream,CloseStream" but I also replaced the one-time generation of child-indexables with our generator based child-indexable extraction. This allows us to index Mono.zip without any memory blowup.
+ExtractContent.cs: Make use of HasGeneratedIndexable since it is part of the API and some filter might be making innovative use of it.
+
+------------------------------------------------------------------------
+r4291 | dbera | 2007-12-15 13:23:45 -0500 (Sat, 15 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/ManageIndex.cs
+
+"beagle-manage-index info" does not require to open the index read-write. Instead create a read only queryingdriver.
+
+------------------------------------------------------------------------
+r4290 | dbera | 2007-12-15 10:57:36 -0500 (Sat, 15 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.css
+   M /trunk/beagle/beagled/webinterface/default.js
+   M /trunk/beagle/beagled/webinterface/index.xsl
+
+Add links for bookmarks and advanced search gui. Doin nothing yet.
+
+------------------------------------------------------------------------
+r4289 | dbera | 2007-12-14 19:32:19 -0500 (Fri, 14 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/StringFu.cs
+   M /trunk/beagle/search/DetailsPane.cs
+   M /trunk/beagle/search/beagle-search.in
+
+Show the full snippet in a tooltip. Fix the beagle-search script to use the uninstalled Util.dll.
+
+------------------------------------------------------------------------
+r4288 | dbera | 2007-12-14 18:01:55 -0500 (Fri, 14 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+   M /trunk/beagle/Filters/FilterMail.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/webinterface/propname-table.js
+
+Store filesize for files on disk, email attachments and archive contents. Add a suitable property name mapping.
+
+------------------------------------------------------------------------
+r4287 | dbera | 2007-12-14 17:57:58 -0500 (Fri, 14 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/WebServer.cs
+
+Add the system-search.png to the mapping.
+
+------------------------------------------------------------------------
+r4286 | kkubasik | 2007-12-14 03:26:40 -0500 (Fri, 14 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   A /trunk/beagle/Filters/FilterEmpathyLog.cs
+   M /trunk/beagle/Filters/Makefile.am
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   A /trunk/beagle/beagled/EmpathyQueryable
+   A /trunk/beagle/beagled/EmpathyQueryable/EmpathyCrawler.cs
+   A /trunk/beagle/beagled/EmpathyQueryable/EmpathyQueryable.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/search/Tiles/IMLog.cs
+
+Initial Empathy Backend, still needs frontend support
+------------------------------------------------------------------------
+r4285 | dbera | 2007-12-14 00:18:01 -0500 (Fri, 14 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BatteryMonitor.cs
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+
+IndexHelper does not yet monitor battery. Catch DBus Init exception (if DBUS_SESSION_BUS_ADDRESS is unset or some other error); also move DBus init to BatteryMonitor (when transport is moved to DBus, it will probably move to global Init again).
+
+------------------------------------------------------------------------
+r4279 | dbera | 2007-12-12 14:35:15 -0500 (Wed, 12 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/beagled/Makefile.am
+
+Some Avahi specific files were missing from the tarball.
+
+------------------------------------------------------------------------
+r4278 | dbera | 2007-12-12 09:20:16 -0500 (Wed, 12 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+
+Fix compilation for glib svn (which now has GLib.Process). Patch from Anders Rune Jensen
+<anders@iola.dk>.
+
+------------------------------------------------------------------------
+r4277 | dbera | 2007-12-12 00:20:12 -0500 (Wed, 12 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.css
+   M /trunk/beagle/beagled/webinterface/hitresult.xsl
+
+Replace the silly "Search" text in front of every property by the same system-search.png used in the query box.
+
+------------------------------------------------------------------------
+r4276 | dbera | 2007-12-11 23:56:58 -0500 (Tue, 11 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.css
+   A /trunk/beagle/beagled/webinterface/images/system-search.png
+   M /trunk/beagle/beagled/webinterface/index.xsl
+
+Add a nice icon at the far left of the search box. Use a resized version of our images/system-search.png.
+
+------------------------------------------------------------------------
+r4275 | dbera | 2007-12-11 17:30:51 -0500 (Tue, 11 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileSystemQueryable/FileNameFilter.cs
+
+Fix a copy-paste bug *sigh*, drop last '/' from directory names and sanitise the code a bit.
+
+------------------------------------------------------------------------
+r4274 | dnylande | 2007-12-11 09:57:37 -0500 (Tue, 11 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Swedish translation updated
+------------------------------------------------------------------------
+r4273 | llipka | 2007-12-11 00:31:22 -0500 (Tue, 11 Dec 2007) | 1 line
+Changed paths:
+   A /trunk/beagle/Util/Battery.cs (from /branches/beagle-hal-branch/Util/Battery.cs:4272)
+   A /trunk/beagle/Util/Hal (from /branches/beagle-hal-branch/Util/Hal:4272)
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/Scheduler.cs
+   M /trunk/beagle/Util/SystemInformation.cs
+   A /trunk/beagle/beagled/BatteryMonitor.cs (from /branches/beagle-hal-branch/beagled/BatteryMonitor.cs:4272)
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/configure.in
+
+Merge beagle-hal-branch to trunk.
+------------------------------------------------------------------------
+r4270 | dbera | 2007-12-10 15:36:31 -0500 (Mon, 10 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+
+Update changelog for 0.3.1
+
+------------------------------------------------------------------------
 r4269 | dbera | 2007-12-10 15:32:12 -0500 (Mon, 10 Dec 2007) | 2 lines
 Changed paths:
    M /trunk/beagle/NEWS
