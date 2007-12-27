@@ -1584,7 +1584,13 @@ public class SettingsDialog
 			"NetworkServices", // This should be configurable in the network tab
 			"Opera",
 			"Pidgin",
-			"Tomboy"
+			"Tomboy",
+			/* System-wide indexes */
+			"applications",
+			"documentation",
+			"manpages",
+			"monodoc",
+			"windows"
 		};
 
 		private string[] descriptions = new string[] {
@@ -1608,7 +1614,13 @@ public class SettingsDialog
 			"Search other search services in the network (EXPERIMENTAL)",
 			"Opera's bookmarks and browsing history.",
 			"IMs and chats from Pidgin.",
-			"Notes from Tomboy."
+			"Notes from Tomboy.",
+			/* System-wide indexes */
+			"(System) Applications",
+			"(System) Help files",
+			"(System) Manual pages",
+			"(System) Mono documentation",
+			"(System) Files from Windows' partition"
 		};
 
 		public BackendView ()
