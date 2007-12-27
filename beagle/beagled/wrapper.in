@@ -12,6 +12,11 @@ if [ -z $installed ] ; then
     export MONO_PATH="../Util:../BeagleClient${MONO_PATH+:$MONO_PATH}"
     export LD_LIBRARY_PATH="../glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
     export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+
+    if [ -z $BEAGLE_CONF_DIR ]; then
+	    export BEAGLE_CONF_DIR="../tools/config-files"
+    fi
+
 else
     THIS_PATH="@pkglibdir@"
     THIS_EXE="@pkglibdir@/@target@"

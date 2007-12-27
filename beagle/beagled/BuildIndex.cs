@@ -315,7 +315,7 @@ namespace Beagle.Daemon
 				Environment.Exit (0);
 			}
 
-			string global_files_config = Path.Combine (Conf.GlobalDir, Conf.Names.FilesQueryableConfig + ".xml");
+			string global_files_config = Path.Combine (PathFinder.GlobalConfigDir, Conf.Names.FilesQueryableConfig + ".xml");
 			if (! File.Exists (global_files_config)) {
 				Log.Error ("Global configuration file not found {0}", global_files_config);
 				Environment.Exit (0);

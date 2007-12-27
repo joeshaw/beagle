@@ -473,7 +473,7 @@ namespace Beagle.Daemon {
 
 			// Check if global configuration files are installed
 			if (! Conf.CheckGlobalConfig ()) {
-				Console.WriteLine ("Global configuration files not found in '{0}'", Conf.GlobalDir);
+				Console.WriteLine ("Global configuration files not found in '{0}'", PathFinder.GlobalConfigDir);
 				Environment.Exit (-1);
 			}
 

@@ -24,6 +24,10 @@ if [ -z $installed ] ; then
 	    export BEAGLE_WEBSERVER_DIR="./webinterface"
     fi
 
+    if [ -z $BEAGLE_CONF_DIR ]; then
+	    export BEAGLE_CONF_DIR="../tools/config-files"
+    fi
+
 else
 
     # Otherwise default to running in the background
