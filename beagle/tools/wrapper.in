@@ -17,6 +17,11 @@ if [ -z $installed ] ; then
     THIS_EXE="$TOOLDIR/@target@"
     THIS_FILTERS="$TOOLDIR/../Filters"
     THIS_BACKENDS="$TOOLDIR/../beagled"
+
+    if [ -z $BEAGLE_CONF_DIR ]; then
+	    export BEAGLE_CONF_DIR="../tools/config-files"
+    fi
+
 else
     THIS_LIB_DIR="@pkglibdir@:@libdir@"
     THIS_PATH="@pkglibdir@:@libdir@"
