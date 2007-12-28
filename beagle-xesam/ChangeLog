@@ -1,0 +1,170 @@
+2007-12-28 03:53  arunsr
+
+	* configure.in: Bump version to 0.2
+
+2007-12-28 03:52  arunsr
+
+	* AUTHORS, ISSUES: Add a reminder to do verification of XML queries
+	  and schema verification
+
+2007-12-18 13:27  arunsr
+
+	* src/Ontologies.cs: Don't calculate the list of supported
+	  fields/sources/contents on every session creation
+
+2007-12-18 09:46  arunsr
+
+	* ISSUES, README: Update documentation
+
+2007-12-17 18:42  arunsr
+
+	* configure.in, src/Makefile.am, src/dbus-sharp: Remove packaged
+	  ndesk-dbus and use the distro-provided version
+
+2007-12-17 15:46  arunsr
+
+	* src/Ontologies.cs, src/Search.cs, src/Searcher.cs: Use
+	  Dictionaries instead of switch-case statements for ontology
+	  mappings
+
+2007-12-17 14:26  arunsr
+
+	* src/Ontologies.cs, src/Searcher.cs: Map a few more fields (from
+	  Anders Rune Jensen <anders@iola.dk>)
+
+2007-12-17 14:17  arunsr
+
+	* src/Ontologies.cs, src/Search.cs: Fix field return values in
+	  Ontologies.cs
+
+2007-12-17 14:12  arunsr
+
+	* src/Search.cs: Fix field values to not be null
+
+2007-12-17 13:53  arunsr
+
+	* src/Ontologies.cs, src/Searcher.cs, src/Session.cs: Session
+	  customization should be done while instantiating Session objects
+
+2007-12-16 19:51  arunsr
+
+	* ISSUES, src/Ontologies.cs, src/Parser.cs, src/Searcher.cs: Add
+	  support of <query> "source" and "content" attributes
+
+2007-12-13 23:24  kkubasik
+
+	* src/Ontologies.cs, src/Search.cs, src/Session.cs: Initial support
+	  for some basic hit fields
+
+2007-12-13 22:20  arunsr
+
+	* src/Makefile.am, src/Ontologies.cs, src/Parser.cs, src/Search.cs,
+	  src/Searcher.cs, src/Session.cs: Conform to coding guidelines
+	  (except the camelCase clause)
+
+2007-12-13 21:50  arunsr
+
+	* src/Ontologies.cs: Add translation for "source" and "content"
+	  values from Xesam-ese to Beagle. These aren't used yet.
+
+2007-12-13 21:02  arunsr
+
+	* ISSUES: Update ISSUES list
+
+2007-12-13 18:18  arunsr
+
+	* src/Parser.cs: Add support for "inSet" queries.
+	  Based on patch by Anders Rune Jensen <anders@iola.dk> (thanks!)
+
+2007-12-02 08:08  arunsr
+
+	* INSTALL, README: Update documentation to reflect the
+	  autotool-ized installation process.
+
+2007-11-11 07:40  arunsr
+
+	* .: Rename xesam-adaptor as beagle-xesam
+
+2007-11-10 16:43  dbera
+
+	* : Add gnome-autogen.sh from trunk/beagle. Add path to ndesk.snk
+	  to please distcheck.
+
+2007-11-09 20:53  arunsr
+
+	* : * Make the adaptor "make install"able
+	  * Move to NDesk DBusSharp 0.6.0 (we're still using our own copy
+	  for now, though)
+
+2007-11-01 14:23  arunsr
+
+	* : * Implement GetHitData() method
+	  * Convert "int"s in interface to "uint"s
+
+2007-11-01 09:34  arunsr
+
+	* : Update to conform to the Xesam 0.9 RC1 spec. Pending failures
+	  from Mikkel's suite:
+	  
+	  * testGetHitsOnHitsAddedCQ causes beagle to throw an exception --
+	  need to debug
+	  
+	  * GetHitDataTests fail because GetHitData isn't yet implemented
+
+2007-10-01 13:19  arunsr
+
+	* : Handle null Hit.MimeType (thanks to Mikkel Kamstrup Erlandsen
+	  for pointing this out)
+
+2007-09-20 05:24  arunsr
+
+	* : One more fix to conform to the spec -- always emit HitsAdded
+	  (independent of search.live)
+
+2007-09-19 09:48  arunsr
+
+	* : SearchDone should be emitted even if search.live is false
+
+2007-09-19 08:19  arunsr
+
+	* : * UserQueries are just passed through to beagled now (this will
+	  make it work for simple cases, where the beagle search UI and
+	  XesamUserQueryLanguage overlap)
+	  * Add some error checking
+
+2007-09-19 07:52  arunsr
+
+	* : More changes to adhere to the spec, and some work towards
+	  mapping Xesam ontology to Beagle's (grimace)
+
+2007-09-19 06:51  arunsr
+
+	* : Make us conform to the lastest spec (and fix a bug in
+	  GetHitCount (nee CountHits))
+
+2007-07-13 05:27  arunsr
+
+	* : Fix non-live searches to work as intended in the spec.
+
+2007-07-04 09:24  arunsr
+
+	* : * Updated to latest Xesam API
+	  * Passes all tests from current xesam-tools
+	  * First shot at parsing queries
+	  * Partial implementation of blocking and non-live searches
+
+2007-07-04 09:20  arunsr
+
+	* : List of pending issues in the implementation.
+
+2007-06-16 15:55  arunsr
+
+	* : Trivial change in Xesam spec (searcher interface name)
+	  
+	  Will now work with xesam-tools-0.3.0 and above only.
+
+2007-06-12 17:59  arunsr
+
+	* : Skeleton implementation of the Xesam API (minus GetState and
+	  GetHitData).
+
