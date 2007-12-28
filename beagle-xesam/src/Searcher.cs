@@ -35,6 +35,7 @@ namespace Beagle {
 		public delegate void HitsAddedMethod (string searchId, uint count);
 		public delegate void HitsRemovedMethod (string searchId, uint[] hitIds);
 		public delegate void SearchDoneMethod (string searchId);
+		public delegate void StateChangedMethod (string[] stateInfo);
 
 		[Interface ("org.freedesktop.xesam.Search")]
 		public interface ISearcher {
@@ -51,9 +52,9 @@ namespace Beagle {
 			object[][] GetHits (string s, uint num);
 			event HitsAddedMethod HitsAdded;
 			event HitsRemovedMethod HitsRemoved;
-			// FIXME: We don't implement HitsModified and StateChanged because there is no
-			// simple corresponding entity in Beagle
+			// FIXME: We don't implement HitsModified as we would have to track too much state
 			event SearchDoneMethod SearchDone;
+			event StateChangedMethod StateChanged;
 		}
 
 		public class Searcher : ISearcher {
@@ -69,6 +70,14 @@ namespace Beagle {
 			public event HitsAddedMethod HitsAdded;
 			public event HitsRemovedMethod HitsRemoved;
 			public event SearchDoneMethod SearchDone;
+			public event StateChangedMethod StateChanged;
+
+			public Searcher ()
+			{
+				InformationalMessagesRequest infoMsg = new InformationalMessagesRequest ();
+				infoMsg.IndexingStatusEvent += OnStateChanged;
+				infoMsg.SendAsync ();
+			}
 
 			public string NewSession ()
 			{
@@ -345,34 +354,23 @@ namespace Beagle {
 			{
 				// FIXME: Is there any way to find out if we're doing a FULL_INDEX ?
 				string[] ret = new string[] { null, null };
-				if (Debug) 
-					Console.Error.WriteLine ("GetState(): {0} - {1}", ret [0], ret [1]);
 
 				DaemonInformationRequest infoReq = new DaemonInformationRequest (false, false, true, true);
 				DaemonInformationResponse infoResp = (DaemonInformationResponse) infoReq.Send ();
 
-				if (infoResp.IsIndexing) {
+				if (!infoResp.IsIndexing) {
 					ret [0] = "IDLE";
-					return ret;
+					ret [1] = "";
 				} else {
 					ret [0] = "UPDATE";
-
-					// FIXME: We're just building total progress percentage as an average of all
-					// queryables' percentages
-					int qCount = 0;
-					int progress = 0;
-					foreach (QueryableStatus status in infoResp.IndexStatus) {
-						if (status.ProgressPercent != -1) {
-							qCount++;
-							progress += status.ProgressPercent;
-						}
-					}
-
-					ret [1] = (progress/qCount).ToString ();
+					ret [1] = "0";
+					// FIXME: We were building total progress percentage as an average of all
+					// Queryables' percentages and this does not work (the Queryables seem to not
+					// set ProgressPercent)
 				}
 
 				if (Debug) 
-					Console.Error.WriteLine ("GetState(): {0} - {1}", ret [0], ret [1]);
+					Console.Error.WriteLine ("GetState() -- {0} - {1}", ret [0], ret [1]);
 				return ret;
 			}
 
@@ -414,6 +412,23 @@ namespace Beagle {
 				else
 					// Is this really Beagle?
 					return 0;
+			}
+
+			private void OnStateChanged (IndexingStatus status)
+			{
+				if (StateChanged == null)
+					return;
+
+				string[] state_info;
+
+				if (status == IndexingStatus.NotRunning)
+					state_info = new string[] { "IDLE", "" };
+				else
+					state_info = GetState ();
+
+				if (Debug) 
+					Console.Error.WriteLine ("StateChanged -- {0} - {1}", state_info [0], state_info [1]);
+				StateChanged (state_info);
 			}
 		}
 	}

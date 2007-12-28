@@ -40,15 +40,6 @@ Beagle, in some sort of priority-order:
 	modified (or more are added). What does the next GetHits() return? The
 	new set of hits, or the first count hits of _all_ hits added so far?
 
-* StateChanged: Beagle does not have a StateChanged signal. Either we poll for
-	this periodically (with every new search?), or just let the client
-	worry about this.
-
-	In the mean time, xesam-tool will always report [UNKNOWN, 0] for a
-	GetState, because it counts on StateChanged alone for figuring out the
-	status. Are we suppoed to throw a StateChanged on session (dbus session
-	or xesam session?) creation or something?
-
 * Blocking searches: We stop blocking after the first OnFinished event. Maybe
 	we need to wait for a few more before throwing a SearchDone
 
