@@ -1,4 +1,4 @@
-AC_INIT(beagle-xesam, 0.1, arunsr@svn.gnome.org)
+AC_INIT(beagle-xesam, 0.2, arunsr@svn.gnome.org)
 AC_PREREQ(2.50)
 AC_CONFIG_SRCDIR(src/XesamAdaptor.cs)
 AC_COPYRIGHT([Copyright 2005-2007 Arun Raghavan])
