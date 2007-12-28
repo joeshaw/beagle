@@ -1,0 +1,28 @@
+Version 0.2
+28 December 2007
+
+* Remove in-tree NDesk-DBus bindings. NDesk-DBus is now a dependency.
+
+* Support for "inSet" queries
+
+* Support the "content" and "sources" attributes of <query> tags
+
+* Support more hit.fields
+
+* Correctly populate vendor.ontology.{fields,sources,contents}
+
+* Fix GetState() behaviour
+
+* Add support for the StateChanged signal
+
+Contributors to this release: Arun Raghavan, Kevin Kubasik and Anders Rune Jensen.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_XESAM_0_2/ChangeLog?view=markup
+
+-------------------------------------------------------------
+
+Version 0.1
+1 December 2007
+
+* Initial release
