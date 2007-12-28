@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-11 16:00+0100\n"
-"PO-Revision-Date: 2007-12-11 16:01+0100\n"
+"POT-Creation-Date: 2007-12-28 19:57+0100\n"
+"PO-Revision-Date: 2007-12-28 19:57+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -149,71 +149,71 @@ msgstr "Söktjänsten verkar inte vara igång. Du kan starta den genom att klick
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
-#: ../search/Search.cs:145
-#: ../search/Search.cs:268
+#: ../search/Search.cs:147
+#: ../search/Search.cs:270
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Skrivbordssökning"
 
-#: ../search/Search.cs:165
+#: ../search/Search.cs:167
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Search.cs:186
+#: ../search/Search.cs:188
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Search.cs:245
+#: ../search/Search.cs:247
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Search.cs:246
+#: ../search/Search.cs:248
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
-#: ../search/Search.cs:287
+#: ../search/Search.cs:289
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivbordssökning: {0}"
 
-#: ../search/Search.cs:303
+#: ../search/Search.cs:305
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Visar {0} träff"
 msgstr[1] "Visar alla {0} träffar"
 
-#: ../search/Search.cs:305
+#: ../search/Search.cs:307
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Visar den första {0} av totalt {1} träffar"
 msgstr[1] "Visar de första {0} av totalt {1} träffar"
 
-#: ../search/Search.cs:551
+#: ../search/Search.cs:555
 msgid "There are computers near you running Beagle"
 msgstr "Det finns datorer nära dig som kör Beagle"
 
-#: ../search/Search.cs:552
+#: ../search/Search.cs:556
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Du kan välja att söka på andra datorer från \"Sök\"-menyn."
 
-#: ../search/Search.cs:624
+#: ../search/Search.cs:628
 msgid "Your data is being indexed"
 msgstr "Ditt data håller på att indexeras"
 
-#: ../search/Search.cs:625
+#: ../search/Search.cs:629
 msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
 msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
 
-#: ../search/Tiles/ArchivedFile.cs:39
+#: ../search/Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "Inne i arkivet {0}"
 
-#: ../search/Tiles/ArchivedFile.cs:76
+#: ../search/Tiles/ArchivedFile.cs:77
 #: ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:176
+#: ../search/Tiles/File.cs:178
 #: ../search/Tiles/Note.cs:73
 #: ../search/Tiles/RSSFeed.cs:59
 #: ../search/Tiles/Task.cs:41
@@ -221,17 +221,17 @@ msgstr "Inne i arkivet {0}"
 msgid "Title:"
 msgstr "Titel:"
 
-#: ../search/Tiles/ArchivedFile.cs:77
+#: ../search/Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "Filnamn:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "inne i filen:"
 
-#: ../search/Tiles/ArchivedFile.cs:81
-#: ../search/Tiles/File.cs:180
+#: ../search/Tiles/ArchivedFile.cs:82
+#: ../search/Tiles/File.cs:182
 msgid "Author:"
 msgstr "Upphovsman:"
 
@@ -272,29 +272,33 @@ msgstr "Arbetstelefon:"
 msgid "Home Phone:"
 msgstr "Hemtelefon:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/Documentation.cs:57
+msgid "Documentation"
+msgstr "Dokumentation"
+
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Visa i mapp"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "E-post"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37
+#: ../search/Tiles/File.cs:36
 #: ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
-#: ../search/Tiles/File.cs:177
+#: ../search/Tiles/File.cs:179
 #: ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
-#: ../search/Tiles/File.cs:182
+#: ../search/Tiles/File.cs:184
 #: ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:87
 #: ../search/Tiles/Video.cs:45
@@ -335,33 +339,33 @@ msgstr "Kommentar:"
 msgid "IM Conversation"
 msgstr "IM-konversation"
 
-#: ../search/Tiles/IMLog.cs:96
+#: ../search/Tiles/IMLog.cs:99
 #: ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Namn:"
 
-#: ../search/Tiles/IMLog.cs:97
+#: ../search/Tiles/IMLog.cs:100
 #: ../search/Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "Mottagningsdatum:"
 
-#: ../search/Tiles/IMLog.cs:101
+#: ../search/Tiles/IMLog.cs:104
 msgid "Status:"
 msgstr "Status:"
 
-#: ../search/Tiles/IMLog.cs:116
+#: ../search/Tiles/IMLog.cs:119
 msgid "Idle"
 msgstr "Overksam"
 
-#: ../search/Tiles/IMLog.cs:123
+#: ../search/Tiles/IMLog.cs:126
 msgid "Away"
 msgstr "Frånvarande"
 
-#: ../search/Tiles/IMLog.cs:126
+#: ../search/Tiles/IMLog.cs:129
 msgid "Offline"
 msgstr "Frånkopplad"
 
-#: ../search/Tiles/IMLog.cs:129
+#: ../search/Tiles/IMLog.cs:132
 msgid "Available"
 msgstr "Tillgänglig"
 
@@ -1027,7 +1031,7 @@ msgstr "Är du säker på att du vill ta bort denna värd från listan?"
 #: ../tools/Settings.cs:806
 #: ../tools/Settings.cs:887
 #: ../tools/Settings.cs:992
-#: ../tools/Settings.cs:1624
+#: ../tools/Settings.cs:1636
 msgid "Name"
 msgstr "Namn"
 
@@ -1081,7 +1085,7 @@ msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas
 msgid "Connecting to {0}"
 msgstr "Ansluter till {0}"
 
-#: ../tools/Settings.cs:1625
+#: ../tools/Settings.cs:1637
 msgid "Description"
 msgstr "Beskrivning"
 
