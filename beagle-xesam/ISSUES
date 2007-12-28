@@ -18,6 +18,9 @@ Beagle, in some sort of priority-order:
 	required), or break up at ORs and start multiple searches for a single
 	Xesam search (this is ugly).
 
+	NOTE2: The parser does not verify the input XML against the Xesam query
+	schema
+
 * User Searches: User queries are supported as a hack. We don't parse them
 	at all. Since they're so similar to Beagle's native search language,
 	this works for now.
