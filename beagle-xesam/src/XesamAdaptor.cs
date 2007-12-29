@@ -55,7 +55,7 @@ namespace Beagle {
 				string service = "org.freedesktop.xesam.searcher";
 				Searcher search = new Searcher();
 
-				bus.Register(opath, search);
+				bus.Register(service, opath, search);
 				RequestNameReply nameReply = bus.RequestName(service);
 
 				System.Threading.Thread t = new System.Threading.Thread(BusIterate);
