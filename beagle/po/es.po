@@ -1,9 +1,10 @@
-# translation of es.po to
+# translation of beagle.HEAD.po to Español
 # Antonio Ognio <gnrfan@gnrfan.org>, 2005.
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jorge González <jorge.gonzalez.gonzalez@hispalinux.es>, 2007.
 # Jorge González <jorgegonz@svn.gnome.org>, 2007.
+# translation of es.po to
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
 # This file is distributed under the same license as the beagle package.
@@ -11,10 +12,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-16 03:17+0000\n"
-"PO-Revision-Date: 2007-12-16 13:31+0100\n"
+"POT-Creation-Date: 2007-12-29 03:17+0000\n"
+"PO-Revision-Date: 2007-12-30 01:08+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
-"Language-Team: Spanish <gnome-es-list@gnome.org>\n"
+"Language-Team: Español <<gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -102,28 +103,16 @@ msgstr "{0}-{1} de {2}"
 msgid "Hide"
 msgstr "Ocultar"
 
-#: ../search/Pages/NoMatch.cs:28
+#: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "No se encontraron resultados."
 
-#: ../search/Pages/NoMatch.cs:32
-msgid "Did you mean"
-msgstr "¿Quiso decir"
-
-#: ../search/Pages/NoMatch.cs:43
-msgid "or"
-msgstr "o"
-
-#: ../search/Pages/NoMatch.cs:46
-msgid "?"
-msgstr "?"
-
-#: ../search/Pages/NoMatch.cs:51
+#: ../search/Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Su búsqueda de {0} no encontró ningún archivo en su equipo."
 
-#: ../search/Pages/NoMatch.cs:54
+#: ../search/Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
@@ -131,7 +120,7 @@ msgstr ""
 "Puedes cambiar el ámbito de tu búsqueda usando el menú «Buscar». Un ámbito "
 "de búsqueda más ancho quizá produzca más resultados."
 
-#: ../search/Pages/NoMatch.cs:56
+#: ../search/Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
@@ -193,59 +182,59 @@ msgstr ""
 msgid "Start search service"
 msgstr "Iniciar el servicio de búsqueda"
 
-#: ../search/Search.cs:146 ../search/Search.cs:269
+#: ../search/Search.cs:147 ../search/Search.cs:270
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Búsquedas de Escritorio"
 
-#: ../search/Search.cs:166
+#: ../search/Search.cs:167
 msgid "_Find:"
 msgstr "_Buscar:"
 
-#: ../search/Search.cs:187
+#: ../search/Search.cs:188
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Search.cs:246
+#: ../search/Search.cs:247
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Search.cs:247
+#: ../search/Search.cs:248
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Search.cs:288
+#: ../search/Search.cs:289
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Búsquedas de Escritorio: {0}"
 
-#: ../search/Search.cs:304
+#: ../search/Search.cs:305
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
-#: ../search/Search.cs:306
+#: ../search/Search.cs:307
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Mostrando la primera {0} de {1} coincidencias en total"
 msgstr[1] "Mostrando las primeras {0} de {1} coincidencias en total"
 
-#: ../search/Search.cs:543
+#: ../search/Search.cs:555
 msgid "There are computers near you running Beagle"
 msgstr "Existen equipos cerca del suyo que están ejecutando Beagle"
 
-#: ../search/Search.cs:544
+#: ../search/Search.cs:556
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Puede seleccionar buscar en otros equipos en el menú «Buscar»."
 
-#: ../search/Search.cs:622
+#: ../search/Search.cs:628
 msgid "Your data is being indexed"
 msgstr "Se están indexando sus datos"
 
-#: ../search/Search.cs:623
+#: ../search/Search.cs:629
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -253,28 +242,28 @@ msgstr ""
 "El servicio de búsqueda está indexando sus datos. Los resultados de búsqueda "
 "podrían estar incompletos hasta que el indexado haya terminado."
 
-#: ../search/Tiles/ArchivedFile.cs:39
+#: ../search/Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "Dentro del archivo {0}"
 
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:176 ../search/Tiles/Note.cs:73
+#: ../search/Tiles/ArchivedFile.cs:77 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:178 ../search/Tiles/Note.cs:73
 #: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
 #: ../search/Tiles/WebHistory.cs:58
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Tiles/ArchivedFile.cs:77
+#: ../search/Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "Nombre de archivo:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "Dentro del archivo:"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:180
+#: ../search/Tiles/ArchivedFile.cs:82 ../search/Tiles/File.cs:182
 msgid "Author:"
 msgstr "Autor:"
 
@@ -314,27 +303,31 @@ msgstr "Tlf. trabajo:"
 msgid "Home Phone:"
 msgstr "Tlf. casa:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/Documentation.cs:57
+msgid "Documentation"
+msgstr "Documentación"
+
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Revelar en la carpeta"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "Correo-e"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Mover a la papelera"
 
-#: ../search/Tiles/File.cs:177 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:51
 #: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Tiles/File.cs:182 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/File.cs:184 ../search/Tiles/Folder.cs:52
 #: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Ruta completa:"
@@ -1047,7 +1040,7 @@ msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere eliminar este equipo de la lista?"
 
 #: ../tools/Settings.cs:717 ../tools/Settings.cs:806 ../tools/Settings.cs:887
-#: ../tools/Settings.cs:992 ../tools/Settings.cs:1624
+#: ../tools/Settings.cs:992 ../tools/Settings.cs:1636
 msgid "Name"
 msgstr "Nombre"
 
@@ -1104,7 +1097,7 @@ msgstr ""
 msgid "Connecting to {0}"
 msgstr "Conectándose a {0}"
 
-#: ../tools/Settings.cs:1625
+#: ../tools/Settings.cs:1637
 msgid "Description"
 msgstr "Descripción"
 
