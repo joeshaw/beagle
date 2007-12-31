@@ -6,7 +6,7 @@ COPYING, LICENSE, or README file which lists the licensing terms.
 
 Subprojects include:
 	* DotLucene - Apache License v2.0
-	* HAL - MIT License
+	* Hal# - MIT License
 	* HtmlAgilityPack - BSD License
 	* Parts of libegg (eggaccelerators.c and eggtrayicon.c) - GNU LGPL v2
 	* SemWeb - Creative Commons Attribution License
