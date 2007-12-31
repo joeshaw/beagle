@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-12-31 16:49+0100\n"
-"PO-Revision-Date: 2007-12-31 17:21+0100\n"
+"PO-Revision-Date: 2007-12-31 17:27+0100\n"
 "Last-Translator: wadim dziedzic <wdziedzi@aviary.pl>\n"
 "Language-Team: Polish <k.rosinski@91.pl>\n"
 "MIME-Version: 1.0\n"
@@ -974,7 +974,7 @@ msgstr "Przeładuj konfiguracje"
 
 #: ../tools/Settings.cs:347
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "Plik konfiguracyjny został zmieniony przez inny program. Czy chcesz odrzucić obecnie wyświetlane wyniki i przeładować konfiguracje z dysku?"
+msgstr "Plik konfiguracyjny został zmieniony przez inny program. Czy odrzucić obecnie wyświetlane wyniki i przeładować konfiguracje z dysku?"
 
 #: ../tools/Settings.cs:485
 msgid "Select Path"
@@ -998,7 +998,7 @@ msgstr "Usuń stare położenia"
 
 #: ../tools/Settings.cs:528
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Dodanie tego położenia pokryje istniejące. Stare położenia zostaną usunięte. Czy napewno chcesz dodać nowe położenie?"
+msgstr "Dodanie tego położenia pokryje istniejące. Stare położenia zostaną usunięte. Czy na pewno dodać nowe położenie?"
 
 #: ../tools/Settings.cs:554
 msgid "Remove path"
@@ -1006,7 +1006,7 @@ msgstr "Usuń położenie"
 
 #: ../tools/Settings.cs:555
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
-msgstr "Czy napewno chcesz usunąć to położenie z listy katalogów które będą indeksowane?"
+msgstr "Czy na pewno usunąć to położenie z listy katalogów które będą indeksowane?"
 
 #: ../tools/Settings.cs:584
 msgid "Remove item"
@@ -1014,7 +1014,7 @@ msgstr "Usuń element"
 
 #: ../tools/Settings.cs:585
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
-msgstr "Czy napewno chcesz usunąć ten element z listy danych które zostaną wyłączone z indeksowania?"
+msgstr "Czy na pewno usunąć ten element z listy danych, które zostaną wyłączone z indeksowania?"
 
 #: ../tools/Settings.cs:632
 msgid "Remote host already present in the list."
@@ -1030,7 +1030,7 @@ msgstr "Usuń host"
 
 #: ../tools/Settings.cs:658
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "Czy jesteś pewien, że chcesz usunąć ten host z listy?"
+msgstr "Czy na pewno usunąć tego hosta z listy?"
 
 #: ../tools/Settings.cs:717
 #: ../tools/Settings.cs:806
@@ -1156,7 +1156,7 @@ msgstr "Dodaj określone położenia do indeksowania."
 
 #: ../tools/settings.glade.h:16
 msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr "Dodaj dowolny zdalny komputer z włączonym wyszukiwaniem z którym chcesz się połączyć."
+msgstr "Proszę dodać dowolny zdalny komputer z włączonym wyszukiwaniem."
 
 #: ../tools/settings.glade.h:17
 msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
@@ -1240,7 +1240,7 @@ msgstr "Hasło:"
 
 #: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Wybierz zasób który chcesz wykluczyć z indeksowania."
+msgstr "Proszę wybrać zasób do wykluczenia z indeksowania."
 
 #: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
