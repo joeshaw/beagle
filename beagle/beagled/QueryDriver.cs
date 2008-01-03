@@ -640,8 +640,17 @@ namespace Beagle.Daemon {
 			if (! result.WorkerStart (dummy_worker))
 				return;
 			
-			foreach (Queryable queryable in queryables)
+			// Backends might change the query, so store the essential query data
+			ArrayList query_parts = (ArrayList) query.Parts.Clone ();
+
+			foreach (Queryable queryable in queryables) {
+				// Clone the query_parts of the original query and add them
+				query.ClearParts ();
+				foreach (QueryPart part in query_parts)
+					query.AddPart ((QueryPart) part.Clone ());
+
 				DoOneQuery (queryable, query, result, null);
+			}
 			
 			result.WorkerFinished (dummy_worker);
 		}

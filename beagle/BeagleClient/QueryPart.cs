@@ -47,7 +47,7 @@ namespace Beagle {
 	 XmlInclude (typeof (QueryPart_Wildcard)),
 	 XmlInclude (typeof (QueryPart_Or)),
 	 XmlInclude (typeof (QueryPart_Uri))]
-	abstract public class QueryPart {
+	abstract public class QueryPart : ICloneable {
 
 		private QueryPartLogic logic = QueryPartLogic.Required;
 
@@ -62,6 +62,11 @@ namespace Beagle {
 		public override string ToString ()
 		{
 			return String.Format ("{0}:\n  Logic: {1}\n", this.GetType (), Logic);
+		}
+
+		public virtual object Clone ()
+		{
+			return this.MemberwiseClone ();
 		}
 	}
 
@@ -267,6 +272,16 @@ namespace Beagle {
 				sb.Append ("  " + p.ToString () + "\n");
 
 			return sb.ToString ();
+		}
+
+		public override object Clone ()
+		{
+			QueryPart_Or new_part = (QueryPart_Or) this.MemberwiseClone ();
+			new_part.sub_parts.Clear ();
+			foreach (QueryPart part in this.sub_parts)
+				new_part.sub_parts.Add ((QueryPart) part.Clone ());
+
+			return new_part;
 		}
 	}
 
