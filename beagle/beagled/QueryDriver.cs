@@ -368,7 +368,10 @@ namespace Beagle.Daemon {
 			LoadSystemIndexes ();
 			LoadStaticQueryables ();
 
-			if (indexing_delay <= 0 || Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null)
+			if (indexing_delay < 0)
+				return;
+
+			if (indexing_delay == 0 || Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null)
 				StartQueryables ();
 			else {
 				Logger.Log.Debug ("Waiting {0} seconds before starting queryables", indexing_delay);
