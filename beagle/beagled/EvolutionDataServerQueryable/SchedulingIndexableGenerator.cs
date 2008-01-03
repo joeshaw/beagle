@@ -90,8 +90,15 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 				if (indexables.Count > 0)
 					self_task.Reschedule = true;
-				else
+				else {
+					// Instruct the scheduler to not reschedule
+					// this task. Otherwise AddIndexableGenerator
+					// might reschedule this task once more
+					// to figure out there is no more
+					// indexables.
+					self_task.Reschedule = false;
 					self_task = null;
+				}
 			}
 		}
 	}
