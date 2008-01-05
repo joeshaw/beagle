@@ -23,7 +23,7 @@ namespace Search {
 		}
 
 		static TypeFilter () {
-			parser = new Regex ("^(.*\\s)?(?:type:|filetype:|kind:)(\\w+|\"[^\"]+\"|'[^\']+')(\\s.*)?$");
+			parser = new Regex ("^(.*\\s)?(?:type:|kind:)(\\w+|\"[^\"]+\"|'[^\']+')(\\s.*)?$");
 
 			aliases = new Hashtable ();
 
