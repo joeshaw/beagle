@@ -1746,14 +1746,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return true;
 		}
 
-		override public bool AcceptQuery (Query query)
-		{
-			// A bit of a hack to remap URIs requested in QueryPart_Uri
-			RemapQueryParts (query.Parts);
-
-			return true;
-		}
-
 		override public bool HasUri (Uri uri)
 		{
 			Uri internal_uri = ExternalToInternalUri (uri);
@@ -1764,20 +1756,16 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return base.HasUri (internal_uri);
 		}
 
-		// Remap uri in querypart_uri
-		private void RemapQueryParts (ICollection parts)
+		protected override QueryPart QueryPartHook(QueryPart part)
 		{
-			foreach (QueryPart part in parts) {
-				if (part is QueryPart_Or)
-					RemapQueryParts (((QueryPart_Or) part).SubParts);
-				else if (part is QueryPart_Uri) {
-					QueryPart_Uri p =  (QueryPart_Uri) part;
-					RemapUriQueryPart (ref p);
-				}
-			}
+			if (part is QueryPart_Uri)
+				return RemapUriQueryPart ((QueryPart_Uri) part);
+
+			return part;
 		}
 
-		private void RemapUriQueryPart (ref QueryPart_Uri part)
+		// Remap uri in querypart_uri
+		private QueryPart_Uri RemapUriQueryPart (QueryPart_Uri part)
 		{
 			Uri new_uri = ExternalToInternalUri (part.Uri);
 			Log.Debug ("Remapping QueryPart_Uri from {0} to {1}", part.Uri, new_uri);
@@ -1787,7 +1775,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (new_uri == null)
 				new_uri = new Uri ("no-match:///"); // Will never match
 
-			part.Uri = new_uri;
+			QueryPart_Uri new_part = new QueryPart_Uri ();
+			new_part.Uri = new_uri;
+			new_part.Logic = part.Logic;
+
+			return new_part;
 		}
 
 		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)

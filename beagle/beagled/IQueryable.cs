@@ -35,8 +35,10 @@ namespace Beagle.Daemon {
 
 		void Start ();
 
+		// Should not modify query
 		bool AcceptQuery (Query query);
 
+		// Should not modify query
 		void DoQuery (Query query,
 			      IQueryResult result,
 			      IQueryableChangeData data);

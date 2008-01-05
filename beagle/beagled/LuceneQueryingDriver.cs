@@ -141,6 +141,7 @@ namespace Beagle.Daemon {
 		public void DoQuery (Query               query,
 				     IQueryResult        result,
 				     ICollection         search_subset_uris, // should be internal uris
+				     QueryPartHook       query_part_hook,
 				     UriFilter           uri_filter,
 				     HitFilter           hit_filter)
 		{
@@ -182,6 +183,7 @@ namespace Beagle.Daemon {
 				QueryPartToQuery (part,
 						  false, // we want both primary and secondary queries
 						  part.Logic == QueryPartLogic.Required ? term_list : null,
+						  query_part_hook,
 						  out primary_part_query,
 						  out secondary_part_query,
 						  out part_hit_filter);

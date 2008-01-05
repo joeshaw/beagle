@@ -76,6 +76,7 @@ namespace Beagle.Daemon {
 
 		private LuceneQueryingDriver.UriFilter our_uri_filter;
 		private LuceneCommon.HitFilter our_hit_filter;
+		private LuceneCommon.QueryPartHook backend_query_part_hook;
 		private Scheduler.Task our_final_flush_task = null;
 		private Scheduler.Task our_optimize_task = null;
 
@@ -99,6 +100,7 @@ namespace Beagle.Daemon {
 			driver = BuildLuceneQueryingDriver (this.index_name, this.minor_version, this.read_only_mode);
 			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValid);
 			our_hit_filter = new LuceneCommon.HitFilter (this.HitFilter);
+			backend_query_part_hook = new LuceneCommon.QueryPartHook (this.QueryPartHook);
 
 			// If the queryable is in read-only more, don't 
 			// instantiate an indexer for it.
@@ -186,6 +188,12 @@ namespace Beagle.Daemon {
 		virtual protected bool HitFilter (Hit hit)
 		{
 			return true;
+		}
+
+		// Should not change passed query part
+		virtual protected QueryPart QueryPartHook (QueryPart part)
+		{
+			return part;
 		}
 
 		/////////////////////////////////////////
@@ -342,6 +350,7 @@ namespace Beagle.Daemon {
 			Driver.DoQuery (query, 
 					query_result,
 					added_uris,
+					backend_query_part_hook,
 					our_uri_filter,
 					our_hit_filter);
 		}
