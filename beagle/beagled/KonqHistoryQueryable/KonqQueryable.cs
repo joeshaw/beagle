@@ -261,5 +261,22 @@ namespace Beagle.Daemon.KonqQueryable {
 		public void PostFlushHook ()
 		{ }
 
+		protected override QueryPart QueryPartHook (QueryPart part)
+		{
+			if (part is QueryPart_Property) {
+				QueryPart_Property prop_part = (QueryPart_Property) part;
+				if (prop_part.Key == "inuri") { // special case
+					QueryPart_Property new_part = new QueryPart_Property ();
+					new_part.Logic = prop_part.Logic;
+					new_part.Key = "fixme:urltoken";
+					new_part.Type = PropertyType.Text;
+					new_part.Value = prop_part.Value;
+
+					return new_part;
+				}
+			}
+
+			return part;
+		}
 	}
 }

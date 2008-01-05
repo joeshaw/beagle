@@ -224,6 +224,16 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			// Special case
+			if (key == "inuri") {
+				QueryPart_Property inuri_part = new QueryPart_Property ();
+				inuri_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
+				inuri_part.Key = "inuri";
+				inuri_part.Value = text;
+				Log.Debug ("Handing special query 'inuri:{0}'", text);
+				return inuri_part;
+			}
+
 			// Non-keyword queries by directly using property names
 			// Query of form property:namespace:name=value
 			// which is translated to a non-keyword query
