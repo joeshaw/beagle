@@ -230,6 +230,7 @@ namespace Beagle.Daemon {
 				inuri_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 				inuri_part.Key = "inuri";
 				inuri_part.Value = text;
+				inuri_part.Type = PropertyType.Keyword;
 				Log.Debug ("Handing special query 'inuri:{0}'", text);
 				return inuri_part;
 			}

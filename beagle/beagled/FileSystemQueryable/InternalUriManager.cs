@@ -218,15 +218,31 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 		}
 
-		public ICollection GetAllDirectoryNameInfo ()
+		// Return all directories with name
+		public ICollection GetAllDirectoryNameInfo (string name)
 		{
 			// First we assemble a query to find all of the directories.
 			string field_name;
 			field_name = PropertyToFieldName (PropertyType.Keyword,
 							  Property.IsDirectoryPropKey);
-			
-			LNS.Query query;
-			query = new LNS.TermQuery (new Term (field_name, "true"));
+			LNS.Query isdir_query = new LNS.TermQuery (new Term (field_name, "true"));
+
+			LNS.Query query = null;
+
+			if (name == null) {
+				query = isdir_query;
+			} else {
+				string dirname_field;
+				dirname_field = PropertyToFieldName (PropertyType.Text,
+								     Property.TextFilenamePropKey);
+				LNS.Query dirname_query;
+				dirname_query = LuceneCommon.StringToQuery (dirname_field, name, null);
+				LNS.BooleanQuery bool_query = new LNS.BooleanQuery ();
+				bool_query.Add (isdir_query, LNS.BooleanClause.Occur.MUST);
+				bool_query.Add (dirname_query, LNS.BooleanClause.Occur.MUST);
+
+				query = bool_query;
+			}
 
 			// Then we actually run the query
 			LNS.IndexSearcher searcher;
@@ -358,9 +374,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		///////////////////////////////////////////////////////////////////////////////
 
+		internal ICollection GetAllDirectoryNameInfo (string dir_with_name)
+		{
+			return name_resolver.GetAllDirectoryNameInfo (dir_with_name);
+		}
+
 		internal ICollection GetAllDirectoryNameInfo ()
 		{
-			return name_resolver.GetAllDirectoryNameInfo ();
+			return GetAllDirectoryNameInfo (null);
 		}
 
 	}

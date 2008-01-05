@@ -1761,6 +1761,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (part is QueryPart_Uri)
 				return RemapUriQueryPart ((QueryPart_Uri) part);
 
+			if (part is QueryPart_Property) {
+				QueryPart_Property prop_part = (QueryPart_Property) part;
+				if (prop_part.Key == "inuri") // special case
+					return RemapInUriQueryPart (prop_part);
+			}
+
 			return part;
 		}
 
@@ -1780,6 +1786,62 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			new_part.Logic = part.Logic;
 
 			return new_part;
+		}
+
+		private QueryPart RemapInUriQueryPart (QueryPart_Property part)
+		{
+			string query = part.Value;
+
+			if (query.StartsWith ("/"))
+				query = UriFu.PathToFileUriString (query); // Make an URI
+
+			if (query.StartsWith ("file:///")) {
+				QueryPart_Property prop_part = new QueryPart_Property ();
+				prop_part.Logic = part.Logic;
+				prop_part.Key = Property.ParentDirUriPropKey;
+				prop_part.Type = PropertyType.Keyword;
+
+				Uri uri = ExternalToInternalUri (UriFu.EscapedStringToUri (query));
+				if (uri == null)
+					prop_part.Value = "no-match:///"; // FIXME: Returning null should work here
+				else
+					// From LuceneCommon.cs:AddPropertyToDocument since ParentDirUriPropKey is a private property
+					prop_part.Value = UriFu.UriToEscapedString (uri);
+
+				Log.Debug ("Remapped inuri={0} to {1}={2}", query, Property.ParentDirUriPropKey, prop_part.Value);
+				return prop_part;
+			}
+
+			QueryPart_Or parent_dirs = new QueryPart_Or ();
+			parent_dirs.Logic = part.Logic;
+
+			lock (big_lock) {
+				// Absolute path was not given.
+				// Traverse the directories to find directories with _EXACTLY_ this name
+				foreach (LuceneNameResolver.NameInfo info in uid_manager.GetAllDirectoryNameInfo (query)) {
+					QueryPart_Property prop_part = new QueryPart_Property ();
+					prop_part.Logic = QueryPartLogic.Required;
+					prop_part.Type = PropertyType.Keyword;
+					prop_part.Key = Property.ParentDirUriPropKey;
+					prop_part.Value = GuidFu.ToUriString (info.Id);
+
+					parent_dirs.Add (prop_part);
+				}
+			}
+
+			Log.Debug ("Found {0} matching dirs with containing '{1}' in name", parent_dirs.SubParts.Count, query);
+			if (parent_dirs.SubParts.Count == 0) {
+				// Add dummy query to match nothing
+				QueryPart_Property prop_part = new QueryPart_Property ();
+				prop_part.Logic = QueryPartLogic.Required;
+				prop_part.Type = PropertyType.Keyword;
+				prop_part.Key = Property.ParentDirUriPropKey;
+				prop_part.Value = "no-match:///";
+
+				parent_dirs.Add (prop_part);
+			}
+
+			return parent_dirs;
 		}
 
 		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)

@@ -1128,7 +1128,7 @@ namespace Beagle.Daemon {
 		// Queries
 		//
 
-		static private LNS.Query StringToQuery (string field_name,
+		static internal LNS.Query StringToQuery (string field_name,
 							string text,
 							ArrayList term_list)
 		{
@@ -1409,6 +1409,14 @@ namespace Beagle.Daemon {
 			if (abstract_part == null)
 				return;
 
+			// Run the backend hook first.
+			// This gives a chance to modify create new queries based on
+			// backend specific properties
+
+			abstract_part = query_part_hook (abstract_part);
+			if (abstract_part == null)
+				return;
+
 			if (abstract_part is QueryPart_Text) {
 				QueryPart_Text part = (QueryPart_Text) abstract_part;
 
@@ -1595,14 +1603,6 @@ namespace Beagle.Daemon {
 				return;
 			} 
 
-			// For property and uri queries, run the backend hook first.
-			// This gives a chance to modify create new queries based on
-			// backend specific properties
-
-			abstract_part = query_part_hook (abstract_part);
-			if (abstract_part == null)
-				return;
-
 			if (abstract_part is QueryPart_Uri) {
 				QueryPart_Uri part = (QueryPart_Uri) abstract_part;
 
@@ -1633,7 +1633,10 @@ namespace Beagle.Daemon {
 					primary_query = StringToQuery (field_name, part.Value, term_list);
 				else {
 					Term term;
-					term = new Term (field_name, part.Value.ToLower ());
+					if (field_name.StartsWith ("prop:k:" + Property.PrivateNamespace))
+						term = new Term (field_name, part.Value);
+					else
+						term = new Term (field_name, part.Value.ToLower ());
 					if (term_list != null)
 						term_list.Add (term);
 					primary_query = new LNS.TermQuery (term);
