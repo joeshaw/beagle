@@ -38,6 +38,7 @@ namespace Search {
 		private Search.Panes panes;
 		private Search.Tray.TrayIcon tray;
 
+		private Search.Pages.IndexInfo indexinfo;
 		private Search.Pages.QuickTips quicktips;
 		private Search.Pages.RootUser rootuser;
 		private Search.Pages.StartDaemon startdaemon;
@@ -160,6 +161,7 @@ namespace Search {
 			uim.SortChanged += OnSortChanged;
 			uim.ToggleDetails += OnToggleDetails;
 			uim.ShowQuickTips += OnShowQuickTips;
+			uim.ShowIndexInfo += OnShowIndexInfo;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
 
 			HBox hbox = new HBox (false, 6);
@@ -219,6 +221,10 @@ namespace Search {
 			quicktips = new Pages.QuickTips ();
 			quicktips.Show ();
 			pages.Add (quicktips);
+
+			indexinfo = new Pages.IndexInfo ();
+			indexinfo.Show ();
+			pages.Add (indexinfo);
 
 			rootuser = new Pages.RootUser ();
 			rootuser.Show ();
@@ -311,6 +317,16 @@ namespace Search {
 			}
 		}
 
+		private void DetachQuery ()
+		{
+			if (current_query != null) {
+				TotalMatches = -1;
+				current_query.HitsAddedEvent -= OnHitsAdded;
+				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
+				current_query.Close ();
+			}
+		}
+
 		// Whether we should grab focus from the text entry
 		private bool grab_focus;
 
@@ -342,12 +358,8 @@ namespace Search {
 			this.grab_focus = grab_focus;
 
 			try {
-				if (current_query != null) {
-					TotalMatches = -1;
-					current_query.HitsAddedEvent -= OnHitsAdded;
-					current_query.HitsSubtractedEvent -= OnHitsSubtracted;
-					current_query.Close ();
-				}
+				// Clean up our previous query, if any exists.
+				DetachQuery ();
 
 				TotalMatches = 0;
 
@@ -448,7 +460,6 @@ namespace Search {
 			}
 		}
 		
-
 		private void OnSortChanged (Search.SortType newSort)
 		{
 			view.Sort = sort = newSort;
@@ -465,32 +476,35 @@ namespace Search {
 
 		private void OnShowQuickTips ()
 		{
-			if (current_query != null) {
-				TotalMatches = -1;
-				current_query.HitsAddedEvent -= OnHitsAdded;
-				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
-				current_query.Close ();
-				current_query = null;
-			}
-
+			DetachQuery ();
 			pages.CurrentPage = pages.PageNum (quicktips);
 		}
-
+		
+		private void OnShowIndexInfo ()
+		{
+			DetachQuery ();
+			
+			if (! indexinfo.Refresh ())
+				pages.CurrentPage = pages.PageNum (startdaemon);
+			else
+				pages.CurrentPage = pages.PageNum (indexinfo);
+		}
+		
 		private void OnDomainChanged (QueryDomain domain, bool active)
 		{
 			if (current_query == null)
 				return;
-
+			
 			// FIXME: Most likely refire the query.
 			// Also keep the setting, so it can be used for future queries
 			// in this running instance.
-
+			
 			if (active)
 				current_query.AddDomain (domain);
 			else
 				current_query.RemoveDomain (domain);
 		}
-
+		
 		private void ShowInformation (Tiles.Tile tile)
 		{
 			if (tile != null) {

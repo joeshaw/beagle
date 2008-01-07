@@ -94,6 +94,9 @@ namespace Search {
 				new ActionEntry ("QuickTips", null,
 						 Catalog.GetString ("Quick Tips"),
 						 null, null, QuickTips),
+				new ActionEntry ("IndexInfo", null,
+						 Catalog.GetString ("Index information"),
+						 null, null, IndexInfo),
 				new ActionEntry ("FocusSearchEntry", null, "",
 						 "<control>K", null,
 						 OnFocusSearchEntry),
@@ -313,6 +316,7 @@ namespace Search {
 		"    <menu action='Help'>" +
 		"      <menuitem action='Contents'/>" +
 		"      <menuitem action='QuickTips'/>" +
+		"      <menuitem action='IndexInfo'/>" +
 		"      <menuitem action='About'/>" +
 		"    </menu>" +
 		"  </menubar>" +
@@ -333,24 +337,6 @@ namespace Search {
 			} catch (Exception e) {
 				Console.WriteLine ("Could not start beagle-settings: {0}", e);
 			}
-		}
-
-		public delegate void ToggleDetailsDelegate (bool active);
-		public event ToggleDetailsDelegate ToggleDetails;
-
-		private void OnToggleDetails (object obj, EventArgs args)
-		{
-			if (ToggleDetails != null)
-				ToggleDetails (((ToggleAction) obj).Active);
-		}
-
-		public delegate void ShowQuickTipsDelegate ();
-		public event ShowQuickTipsDelegate ShowQuickTips;
-
-		private void QuickTips (object obj, EventArgs args)
-		{
-			if (ShowQuickTips != null)
-				ShowQuickTips ();
 		}
 
 		private void OnHideWindow (object obj, EventArgs args)
@@ -406,14 +392,17 @@ namespace Search {
 #pragma warning restore 612
 		}
 
+		public delegate void FocusSearchEntryDelegate ();
+		public event FocusSearchEntryDelegate FocusSearchEntry;
+
 		private void OnFocusSearchEntry (object obj, EventArgs args)
 		{
 			if (FocusSearchEntry != null)
 				FocusSearchEntry ();
 		}
 
-		public delegate void FocusSearchEntryDelegate ();
-		public event FocusSearchEntryDelegate FocusSearchEntry;
+		public delegate void ScopeChangedDelegate (ScopeType scope, bool active);
+		public event ScopeChangedDelegate ScopeChanged;
 
 		private void OnScopeChanged (object obj, EventArgs args)
 		{
@@ -424,8 +413,8 @@ namespace Search {
 			ScopeChanged (scope, ((ToggleAction) obj).Active);
 		}
 
-		public delegate void ScopeChangedDelegate (ScopeType scope, bool active);
-		public event ScopeChangedDelegate ScopeChanged;
+		public delegate void SortChangedDelegate (SortType scope);
+		public event SortChangedDelegate SortChanged;
 
 		private void OnSortChanged (object obj, Gtk.ChangedArgs args)
 		{
@@ -433,8 +422,8 @@ namespace Search {
 				SortChanged ((SortType)args.Current.CurrentValue);
 		}
 
-		public delegate void SortChangedDelegate (SortType scope);
-		public event SortChangedDelegate SortChanged;
+		public delegate void DomainChangedDelegate (QueryDomain domain, bool active);
+		public event DomainChangedDelegate DomainChanged;
 
 		private void OnDomainChanged (object o, EventArgs args)
 		{
@@ -444,7 +433,31 @@ namespace Search {
 				DomainChanged (domain, ((ToggleAction)o).Active);
 		}
 
-		public delegate void DomainChangedDelegate (QueryDomain domain, bool active);
-		public event DomainChangedDelegate DomainChanged;
+		public delegate void ToggleDetailsDelegate (bool active);
+		public event ToggleDetailsDelegate ToggleDetails;
+
+		private void OnToggleDetails (object obj, EventArgs args)
+		{
+			if (ToggleDetails != null)
+				ToggleDetails (((ToggleAction) obj).Active);
+		}
+
+		public delegate void ShowQuickTipsDelegate ();
+		public event ShowQuickTipsDelegate ShowQuickTips;
+
+		private void QuickTips (object obj, EventArgs args)
+		{
+			if (ShowQuickTips != null)
+				ShowQuickTips ();
+		}
+
+		public delegate void ShowIndexInfoDelegate ();
+		public event ShowIndexInfoDelegate ShowIndexInfo;
+		
+		private void IndexInfo (object obj, EventArgs args)
+		{
+			if (ShowIndexInfo != null)
+				ShowIndexInfo ();
+		}
 	}
 }

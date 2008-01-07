@@ -92,6 +92,7 @@ endif
 
 PAGES =						\
 	$(srcdir)/Pages/Base.cs			\
+	$(srcdir)/Pages/IndexInfo.cs		\
 	$(srcdir)/Pages/NoMatch.cs		\
 	$(srcdir)/Pages/QuickTips.cs		\
 	$(srcdir)/Pages/RootUser.cs		\

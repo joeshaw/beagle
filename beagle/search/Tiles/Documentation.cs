@@ -1,7 +1,7 @@
 //
 // Documentation.cs
 //
-// Copyright (C) Lukas Lipka <lukaslipka@gmail.com>
+// Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;

@@ -54,10 +54,15 @@ namespace Search.Pages {
 			table.Attach (label, 1, 2, row, row + 1, Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill, 0, 0, 0);
 		}
 
-		public void Append (Gtk.Widget widget)
+		public void Append (Gtk.Widget widget, Gtk.AttachOptions x, Gtk.AttachOptions y)
 		{
 			uint row = table.NRows;
-			table.Attach (widget, 0, 2, row, row + 1, 0, 0, 0, 0);
+			table.Attach (widget, 0, 2, row, row + 1, x, y, 0, 0);
+		}
+
+		public void Append (Gtk.Widget widget)
+		{
+			Append (widget, 0, 0);
 		}
 
 		protected override void OnSizeRequested (ref Gtk.Requisition req)
