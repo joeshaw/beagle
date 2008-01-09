@@ -48,6 +48,10 @@ namespace Beagle.Filters {
 			SetFileType ("video");
 		}
 
+		internal static int Priority {
+			get { return 1 + FilterMPlayerVideo.Priority; }
+		}
+
 		protected override void RegisterSupportedTypes ()
 		{
 			// Get the list of mime-types from the totem-video-indexer
@@ -71,7 +75,7 @@ namespace Beagle.Filters {
 
 			while ((str = pout.ReadLine ()) != null) {
 				FilterFlavor flavor = FilterFlavor.NewFromMimeType (str);
-				flavor.Priority = 1; // Prefer Totem filter over MPlayer
+				flavor.Priority = Priority;
 
 				AddSupportedFlavor (flavor);
 

@@ -52,7 +52,7 @@ namespace Beagle.Filters {
 					continue;
 
 				FilterFlavor flavor = FilterFlavor.NewFromMimeType (type);
-				flavor.Priority = 2;// 1 + FilterTotem.Priority;
+				flavor.Priority = 1 + FilterTotem.Priority;
 				AddSupportedFlavor (flavor);
 			}
 		}

@@ -75,12 +75,14 @@ namespace Beagle.Filters {
 
 		public FilterMPlayerVideo ()
 		{
-			// 1: Priority update after FilterVideo was added
+			// 1: Version update after FilterVideo was added
 			SetVersion (1);
 
 			PreLoad = false;
 			SetFileType ("video");
 		}
+
+		internal const int Priority = 0; // default
 
 		protected override void RegisterSupportedTypes ()
 		{
