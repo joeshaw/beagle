@@ -112,6 +112,12 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
+			if (FileInfo == null) {
+				Log.Error ("FilterMPlayerVideo: Unable to extract properties for non-file data");
+				Error ();
+				return;
+			}
+
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "mplayer", "-vo", "null", "-ao", "null", "-frames", "0", "-identify", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;

@@ -89,8 +89,14 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
+			if (FileInfo == null) {
+				Log.Error ("FilterTotem: Unable to extract properties for non-file data");
+				Error ();
+				return;
+			}
+
 			SafeProcess pc = new SafeProcess ();
-			pc.Arguments = new string [] { "totem-video-indexer", UriFu.UriToEscapedString (this.Indexable.Uri) };
+			pc.Arguments = new string [] { "totem-video-indexer", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
 
