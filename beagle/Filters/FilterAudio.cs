@@ -51,7 +51,9 @@ namespace Beagle.Filters {
 				if (! type.StartsWith ("audio/"))
 					continue;
 
-				AddSupportedFlavor (FilterFlavor.NewFromMimeType (type));
+				FilterFlavor flavor = FilterFlavor.NewFromMimeType (type);
+				flavor.Priority = 2;// 1 + FilterTotem.Priority;
+				AddSupportedFlavor (flavor);
 			}
 		}
 
