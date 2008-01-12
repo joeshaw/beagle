@@ -3,7 +3,7 @@
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jorge González <jorge.gonzalez.gonzalez@hispalinux.es>, 2007.
-# Jorge González <jorgegonz@svn.gnome.org>, 2007.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008.
 # translation of es.po to
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-29 03:17+0000\n"
-"PO-Revision-Date: 2007-12-30 01:08+0100\n"
+"POT-Creation-Date: 2008-01-12 06:29+0000\n"
+"PO-Revision-Date: 2008-01-12 21:30+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <<gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -182,59 +182,59 @@ msgstr ""
 msgid "Start search service"
 msgstr "Iniciar el servicio de búsqueda"
 
-#: ../search/Search.cs:147 ../search/Search.cs:270
+#: ../search/Search.cs:148 ../search/Search.cs:276
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Búsquedas de Escritorio"
 
-#: ../search/Search.cs:167
+#: ../search/Search.cs:169
 msgid "_Find:"
 msgstr "_Buscar:"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:190
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Search.cs:247
+#: ../search/Search.cs:253
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Search.cs:248
+#: ../search/Search.cs:254
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Search.cs:289
+#: ../search/Search.cs:295
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Búsquedas de Escritorio: {0}"
 
-#: ../search/Search.cs:305
+#: ../search/Search.cs:311
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
-#: ../search/Search.cs:307
+#: ../search/Search.cs:313
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Mostrando la primera {0} de {1} coincidencias en total"
 msgstr[1] "Mostrando las primeras {0} de {1} coincidencias en total"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:569
 msgid "There are computers near you running Beagle"
 msgstr "Existen equipos cerca del suyo que están ejecutando Beagle"
 
-#: ../search/Search.cs:556
+#: ../search/Search.cs:570
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Puede seleccionar buscar en otros equipos en el menú «Buscar»."
 
-#: ../search/Search.cs:628
+#: ../search/Search.cs:642
 msgid "Your data is being indexed"
 msgstr "Se están indexando sus datos"
 
-#: ../search/Search.cs:629
+#: ../search/Search.cs:643
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -809,147 +809,151 @@ msgstr "Ayuda - Tabla de contenido"
 msgid "About Desktop Search"
 msgstr "Acerca de la búsqueda de Escritorio"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:98
+msgid "Index information"
+msgstr "Información indexada"
+
+#: ../search/UIManager.cs:117
 msgid "_All"
 msgstr "_Todas"
 
-#: ../search/UIManager.cs:124
+#: ../search/UIManager.cs:127
 msgid "_None"
 msgstr "_Ninguna"
 
-#: ../search/UIManager.cs:138
+#: ../search/UIManager.cs:141
 msgid "A_pplications"
 msgstr "A_plicaciones"
 
-#: ../search/UIManager.cs:140
+#: ../search/UIManager.cs:143
 msgid "Search applications"
 msgstr "Buscar aplicaciones"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:147
 msgid "_Contacts"
 msgstr "_Contactos"
 
-#: ../search/UIManager.cs:146
+#: ../search/UIManager.cs:149
 msgid "Search contacts"
 msgstr "Buscar contactos"
 
-#: ../search/UIManager.cs:150
+#: ../search/UIManager.cs:153
 msgid "Ca_lendar events"
 msgstr "Acontecimientos de ca_lendario"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:155
 msgid "Search calendar events"
 msgstr "Buscar acontecimientos de calendario"
 
-#: ../search/UIManager.cs:156
+#: ../search/UIManager.cs:159
 msgid "_Documents"
 msgstr "_Documentos"
 
-#: ../search/UIManager.cs:158
+#: ../search/UIManager.cs:161
 msgid "Search documents"
 msgstr "Buscar documentos"
 
-#: ../search/UIManager.cs:162
+#: ../search/UIManager.cs:165
 msgid "Conve_rsations"
 msgstr "Con_versaciones"
 
-#: ../search/UIManager.cs:164
+#: ../search/UIManager.cs:167
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Buscar registros de MI y correos electrónicos"
 
-#: ../search/UIManager.cs:168
+#: ../search/UIManager.cs:171
 msgid "_Images"
 msgstr "_Imágenes"
 
-#: ../search/UIManager.cs:170
+#: ../search/UIManager.cs:173
 msgid "Search images"
 msgstr "Buscar imágenes"
 
-#: ../search/UIManager.cs:174
+#: ../search/UIManager.cs:177
 msgid "_Media"
 msgstr "_Medios"
 
-#: ../search/UIManager.cs:176
+#: ../search/UIManager.cs:179
 msgid "Search sound and video files"
 msgstr "Buscar archivos de vídeo y sonido"
 
-#: ../search/UIManager.cs:180
+#: ../search/UIManager.cs:183
 msgid "_Folders"
 msgstr "_Carpetas"
 
-#: ../search/UIManager.cs:182
+#: ../search/UIManager.cs:185
 msgid "Search for folder names"
 msgstr "Buscar nombres de carpetas"
 
-#: ../search/UIManager.cs:186
+#: ../search/UIManager.cs:189
 msgid "_Websites"
 msgstr "Sitios _web"
 
-#: ../search/UIManager.cs:188
+#: ../search/UIManager.cs:191
 msgid "Search website history"
 msgstr "Buscar en el histórico de sitios web"
 
-#: ../search/UIManager.cs:192
+#: ../search/UIManager.cs:195
 msgid "_News Feeds"
 msgstr "Proveedores de _noticias"
 
-#: ../search/UIManager.cs:194
+#: ../search/UIManager.cs:197
 msgid "Search news feeds"
 msgstr "Buscar en mis proveedores de noticias"
 
-#: ../search/UIManager.cs:198
+#: ../search/UIManager.cs:201
 msgid "A_rchives"
 msgstr "A_rchivadores"
 
-#: ../search/UIManager.cs:200
+#: ../search/UIManager.cs:203
 msgid "Search files in Archives"
 msgstr "Buscar archivos en mis archivadores"
 
-#: ../search/UIManager.cs:208
+#: ../search/UIManager.cs:211
 msgid "Sort by Date _Modified"
 msgstr "Ordenar por fecha de _modificación"
 
-#: ../search/UIManager.cs:209
+#: ../search/UIManager.cs:212
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenar con el más recientemente modificado primero"
 
-#: ../search/UIManager.cs:212
+#: ../search/UIManager.cs:215
 msgid "Sort by _Name"
 msgstr "Ordenar por _nombre"
 
-#: ../search/UIManager.cs:213
+#: ../search/UIManager.cs:216
 msgid "Sort matches by name"
 msgstr "Ordenar coincidencias por nombre"
 
-#: ../search/UIManager.cs:216
+#: ../search/UIManager.cs:219
 msgid "Sort by _Relevance"
 msgstr "Ordenar por _relevancia"
 
-#: ../search/UIManager.cs:217
+#: ../search/UIManager.cs:220
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
 
-#: ../search/UIManager.cs:224
+#: ../search/UIManager.cs:227
 msgid "_Local"
 msgstr "_Local"
 
-#: ../search/UIManager.cs:226
+#: ../search/UIManager.cs:229
 msgid "Search only on local computer"
 msgstr "Buscar sólo en un equipo local"
 
-#: ../search/UIManager.cs:230
+#: ../search/UIManager.cs:233
 msgid "_Neighborhood"
 msgstr "_Vecindad"
 
-#: ../search/UIManager.cs:232
+#: ../search/UIManager.cs:235
 msgid "Search on computers near me"
 msgstr "Buscar en equipos cerca de mi"
 
-#: ../search/UIManager.cs:240
+#: ../search/UIManager.cs:243
 msgid "Show Details"
 msgstr "Mostrar detalles"
 
-#: ../search/UIManager.cs:380
+#: ../search/UIManager.cs:366
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
