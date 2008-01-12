@@ -252,13 +252,19 @@ public static class ConfigTool {
 			local_configs = new string [0];
 		}
 
+		for (int i = 0; i < global_configs.Length; ++ i)
+			global_configs [i] = Path.GetFileNameWithoutExtension (global_configs [i]);
+
+		for (int i = 0; i < local_configs.Length; ++ i)
+			local_configs [i] = Path.GetFileNameWithoutExtension (local_configs [i]);
+
 		Console.WriteLine ("Available sections:");
 		foreach (string file in global_configs)
-			Console.WriteLine (" - {0}", Path.GetFileNameWithoutExtension (file));
+			Console.WriteLine (" - {0}", file);
 
 		foreach (string file in local_configs)
 			if (Array.IndexOf (global_configs, file) == -1)
-				Console.WriteLine (" - {0}", Path.GetFileNameWithoutExtension (file));
+				Console.WriteLine (" - {0}", file);
 
 	}
 
