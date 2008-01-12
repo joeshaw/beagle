@@ -204,8 +204,8 @@ namespace Beagle.Util {
 			int vm_size = VmSize;
 			int vm_rss = VmRss;
 
-			Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2}",
-					  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false));
+			Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2} ({3} colls)",
+					  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false), GC.CollectionCount (2));
 		}
 
 		///////////////////////////////////////////////////////////////
