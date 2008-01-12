@@ -427,7 +427,10 @@ namespace Beagle.Daemon {
 			if (this.executor != null) {
 				this.executor.Cleanup ();
 				this.executor.AsyncResponseEvent -= OnAsyncResponse;
+				this.executor = null;
 			}
+
+			Server.RunGC ();
 		}
 
 		public void WatchCallback (IAsyncResult ar)
@@ -632,10 +635,19 @@ namespace Beagle.Daemon {
 
 		public static Hashtable item_handlers = new Hashtable ();
 
+		private static System.Timers.Timer gc_timer = null;
+
 		static Server ()
 		{
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies ())
 				ScanAssemblyForExecutors (assembly);
+
+			if (Environment.GetEnvironmentVariable ("BEAGLE_FORCE_GC") != null) {
+				gc_timer = new System.Timers.Timer ();
+				gc_timer.Interval = 60000; // GC Collect to run after xxx msecs of last client closing
+				gc_timer.Elapsed += new ElapsedEventHandler (GCTimerElapsed);
+				gc_timer.AutoReset = false;
+			}
 		}
 
 		public Server (string name, bool indexhelper, bool enable_network_svc)
@@ -675,6 +687,32 @@ namespace Beagle.Daemon {
 					item_handlers.Remove (((HttpConnectionHandler) handler).Guid);
 			}
 		}
+
+		static int gc_count = 0;
+
+		static internal void RunGC ()
+		{
+			if (gc_timer == null)
+				return;
+
+			gc_timer.Stop ();
+			gc_timer.AutoReset = true;
+			gc_count = 5;
+			gc_timer.Start ();
+		}
+
+		private static void GCTimerElapsed (object sender, ElapsedEventArgs e)
+    		{
+			Console.WriteLine("After GC collection: {0} (RSS {1})", GC.GetTotalMemory (false), SystemInformation.VmRss);
+
+			GC.Collect (2); // The argument is a no-op in mono
+			GC.WaitForPendingFinalizers();
+
+			if (--gc_count == 0) {
+				gc_timer.AutoReset = false;
+				gc_timer.Stop ();
+			}
+    		}
 
 		private static void OnShutdown ()
 		{
@@ -729,7 +767,7 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Debug ("Server '{0}' shut down", this.socket_path);
 		}
-		
+
 		private void HttpRun ()
 		{
 			http_listener = new HttpListener ();
@@ -899,6 +937,9 @@ namespace Beagle.Daemon {
 
 		public void Stop ()
 		{
+			if (gc_timer != null)
+				gc_timer.Stop ();
+
 			if (this.running) {
 				this.running = false;
 				this.unix_listener.Stop ();
