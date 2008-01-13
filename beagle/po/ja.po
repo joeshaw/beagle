@@ -1,298 +1,54 @@
 # beagle ja.po.
-# Copyright (C) 2005-2007 Free Software Foundation, Inc.
+# Copyright (C) 2005-2008 Free Software Foundation, Inc.
 # This file is distributed under the same license as the 'beagle' package.
-# Takeshi AIHANA <takeshi.aihana@gmail.com>, 2005-2007.
+# Takeshi AIHANA <takeshi.aihana@gmail.com>, 2005-2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-12 13:19+0900\n"
-"PO-Revision-Date: 2007-05-12 13:19+0900\n"
-"Last-Translator: Novell Language <language@novell.com>\n"
-"Language-Team: Novell Language <language@novell.com>\n"
+"POT-Creation-Date: 2008-01-13 18:03+0900\n"
+"PO-Revision-Date: 2008-01-13 18:03+0900\n"
+"Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
+"Language-Team: Japanese <takeshi.aihana@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../glue/eggtrayicon.c:127 ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "向き"
+#: ../epiphany-extension/beagle.py.in:157
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "%s からインデックスの生成中"
 
-#: ../glue/eggtrayicon.c:128
-msgid "The orientation of the tray."
-msgstr "検索トレイの向きです"
+#: ../epiphany-extension/beagle.py.in:177
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "リンク %s からインデックスの生成中"
 
-#: ../ContactViewer/ContactWindow.cs:74
-msgid "Open..."
-msgstr "開く..."
+#: ../epiphany-extension/beagle.py.in:217
+msgid "Index This Page"
+msgstr "このページのインデックス"
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:98
-msgid "Quit"
-msgstr "終了"
+#: ../epiphany-extension/beagle.py.in:224
+msgid "Index Link"
+msgstr "リンクのインデックス"
 
-#: ../ContactViewer/ContactWindow.cs:79
-msgid "About"
-msgstr "情報"
+#: ../epiphany-extension/beagle.py.in:231
+msgid "Reload Config File"
+msgstr "設定の再読込み"
 
-#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:27
-msgid "Contacts"
-msgstr "連絡先"
+#: ../epiphany-extension/beagle.py.in:240
+msgid "Auto Index"
+msgstr "自動インデックス"
 
-#: ../ContactViewer/ContactWindow.cs:100
-msgid "Display name"
-msgstr "表示名"
+#: ../epiphany-extension/beagle.py.in:247
+msgid "Prompt key words when index on demand"
+msgstr "インデックスを作成する際にキーワードを問い合わせる"
 
-#: ../ContactViewer/ContactWindow.cs:101
-msgid "Primary E-mail"
-msgstr "E-メール１"
-
-#: ../ContactViewer/ContactWindow.cs:102
-msgid "Secondary E-mail"
-msgstr "E-メール２"
-
-#: ../ContactViewer/ContactWindow.cs:103
-msgid "Nickname"
-msgstr "あだ名"
-
-#: ../ContactViewer/ContactWindow.cs:133
-#, csharp-format
-msgid ""
-"Unable to open mork database:\n"
-"\n"
-" {0}"
-msgstr ""
-"作業用のデータベースを開けません:\n"
-"\n"
-" {0}"
-
-#: ../ContactViewer/ContactWindow.cs:153
-msgid "The specified ID does not exist in this database!"
-msgstr "このデータベースには指定した ID はありません！"
-
-#: ../ContactViewer/ContactWindow.cs:180
-#, csharp-format
-msgid "Added {0} contact"
-msgid_plural "Added {0} contacts"
-msgstr[0] "{0}個の連絡先を追加しました"
-msgstr[1] "{0}個の連絡先を追加しました"
-
-#: ../ContactViewer/ContactWindow.cs:204
-#, csharp-format
-msgid "Viewing {0}"
-msgstr "{0} の表示中"
-
-#: ../ContactViewer/ContactWindow.cs:244
-msgid "Select a mork database file"
-msgstr "mork データベース・ファイルの選択"
-
-#: ../ContactViewer/ContactWindow.cs:311
-msgid "Primary E-Mail:"
-msgstr "E-メール１:"
-
-#: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:37
-msgid "Screen name:"
-msgstr "スクリーン名"
-
-#: ../ContactViewer/ContactWindow.cs:319
-msgid "Home phone:"
-msgstr "自宅の電話番号:"
-
-#: ../ContactViewer/ContactWindow.cs:323
-msgid "Mobile phone:"
-msgstr "携帯電話:"
-
-#: ../ContactViewer/ContactWindow.cs:327
-msgid "Web page:"
-msgstr "ウェブ・ページ:"
-
-#: ../ContactViewer/ContactWindow.cs:336
-msgid "Send E-Mail"
-msgstr "E-メールの送信"
-
-#: ../ContactViewer/ContactWindow.cs:340
-msgid "Details..."
-msgstr "詳細..."
-
-#: ../ContactViewer/ContactWindow.cs:368
-msgid "Could not find a valid E-mail address!"
-msgstr "妥当な E-メール・アドレスが見つかりませんでした！"
-
-#: ../ContactViewer/contactviewer.glade.h:1
-msgid "<b>Custom fields</b>"
-msgstr "<b>その他の項目</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:2
-msgid "<b>Home</b>"
-msgstr "<b>自宅</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:3
-msgid "<b>Internet</b>"
-msgstr "<b>インターネット</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:4
-msgid "<b>Name</b>"
-msgstr "<b>名前</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:5
-msgid "<b>Notes</b>"
-msgstr "<b>メモ</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:6
-msgid "<b>Phones</b>"
-msgstr "<b>電話番号</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:7
-msgid "<b>Work</b>"
-msgstr "<b>勤務先</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:8
-msgid "Additional E-Mail:"
-msgstr "別の E-メール:"
-
-#: ../ContactViewer/contactviewer.glade.h:9
-msgid "Address"
-msgstr "アドレス"
-
-#: ../ContactViewer/contactviewer.glade.h:10
-msgid "Address:"
-msgstr "アドレス:"
-
-#: ../ContactViewer/contactviewer.glade.h:11
-msgid "City:"
-msgstr "都市:"
-
-#: ../ContactViewer/contactviewer.glade.h:12
-msgid "Contact"
-msgstr "連絡先"
-
-#: ../ContactViewer/contactviewer.glade.h:13
-msgid "Contact Viewer"
-msgstr "連絡先ビューア"
-
-#: ../ContactViewer/contactviewer.glade.h:14
-msgid "Country:"
-msgstr "国:"
-
-#: ../ContactViewer/contactviewer.glade.h:15
-msgid "Custom 1:"
-msgstr "その他１:"
-
-#: ../ContactViewer/contactviewer.glade.h:16
-msgid "Custom 2:"
-msgstr "その他２:"
-
-#: ../ContactViewer/contactviewer.glade.h:17
-msgid "Custom 3:"
-msgstr "その他３:"
-
-#: ../ContactViewer/contactviewer.glade.h:18
-msgid "Custom 4:"
-msgstr "その他４:"
-
-#: ../ContactViewer/contactviewer.glade.h:19
-msgid "Department:"
-msgstr "部署:"
-
-#: ../ContactViewer/contactviewer.glade.h:20
-msgid "Detailed view"
-msgstr "詳細表示"
-
-#. This is Display name
-#: ../ContactViewer/contactviewer.glade.h:22
-msgid "Display:"
-msgstr "表示:"
-
-#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "E-メール:"
-
-#: ../ContactViewer/contactviewer.glade.h:24
-msgid "Fax:"
-msgstr "FAX:"
-
-#. This is First name
-#: ../ContactViewer/contactviewer.glade.h:26
-msgid "First:"
-msgstr "名:"
-
-#. This is Home phone number
-#: ../ContactViewer/contactviewer.glade.h:28
-msgid "Home:"
-msgstr "自宅:"
-
-#. This is Last name
-#: ../ContactViewer/contactviewer.glade.h:30
-msgid "Last:"
-msgstr "姓:"
-
-#: ../ContactViewer/contactviewer.glade.h:31
-msgid "Mobile:"
-msgstr "携帯電話:"
-
-#: ../ContactViewer/contactviewer.glade.h:32
-msgid "Nickname:"
-msgstr "あだ名:"
-
-#: ../ContactViewer/contactviewer.glade.h:33
-msgid "Organization:"
-msgstr "団体:"
-
-#: ../ContactViewer/contactviewer.glade.h:34
-msgid "Other"
-msgstr "その他"
-
-#: ../ContactViewer/contactviewer.glade.h:35
-msgid "Pager:"
-msgstr "ページャ:"
-
-#: ../ContactViewer/contactviewer.glade.h:36
-msgid "Preferred format:"
-msgstr "形式:"
-
-#: ../ContactViewer/contactviewer.glade.h:38
-msgid "State/Province"
-msgstr "県/州"
-
-#: ../ContactViewer/contactviewer.glade.h:39
-msgid "State/Province:"
-msgstr "県/州:"
-
-#: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:58 ../search/Tiles/WebHistory.cs:53
-msgid "Title:"
-msgstr "タイトル:"
-
-#: ../ContactViewer/contactviewer.glade.h:41
-msgid ""
-"Unknown\n"
-"Plain text\n"
-"HTML"
-msgstr ""
-"不明\n"
-"テキスト\n"
-"HTML"
-
-#: ../ContactViewer/contactviewer.glade.h:44
-msgid "Web Page:"
-msgstr "ウェブ・ページ:"
-
-#. This is Work phone number
-#: ../ContactViewer/contactviewer.glade.h:46
-msgid "Work:"
-msgstr "勤務先:"
-
-#: ../ContactViewer/contactviewer.glade.h:47
-msgid "ZIP/Postal Code"
-msgstr "郵便番号"
-
-#: ../ContactViewer/contactviewer.glade.h:48
-msgid "ZIP/Postal Code:"
-msgstr "郵便番号:"
+#: ../epiphany-extension/beagle.py.in:274
+msgid "Extra keywords to index"
+msgstr "インデックスに追加するキーワード"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -302,22 +58,22 @@ msgstr "<b>会話の履歴</b>"
 msgid "IM Viewer"
 msgstr "IM ビューア"
 
-#: ../ImLogViewer/ImLogWindow.cs:106 ../ImLogViewer/ImLogWindow.cs:118
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "\"{0}\" についての会話記録"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
+#: ../ImLogViewer/ImLogWindow.cs:111
 #, csharp-format
 msgid "Conversations in {0} ({1})"
 msgstr "\"{0}\" ({1}) についての会話記録"
 
-#: ../ImLogViewer/ImLogWindow.cs:125
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "\"{0}\" さんとの会話記録"
 
-#: ../search/beagle-search.desktop.in.in.h:1 ../tools/settings.glade.h:23
+#: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
 msgstr "検索"
 
@@ -337,11 +93,15 @@ msgstr[1] "検索結果: {0}個"
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} / {2}"
 
+#: ../search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "隠す"
+
 #: ../search/Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "該当するものが見つかりませんでした"
 
-#: ../search/Pages/NoMatch.cs:20
+#: ../search/Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "お使いのコンピュータには \"{0}\" に一致するデータはありませんでした。"
@@ -386,7 +146,7 @@ msgstr ""
 "文章を検索する場合は、引用符 \"\" で括って下さい (例: <b>\"我輩は猫である\"</"
 "b>)。"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
+#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:95
 msgid "Quick Tips"
 msgstr "検索する際のヒント"
 
@@ -394,67 +154,83 @@ msgstr "検索する際のヒント"
 msgid "Beagle cannot be run as root"
 msgstr "root 権限では Beagle を実行できません"
 
-#: ../search/Pages/RootUser.cs:13
+#: ../search/Pages/RootUser.cs:14
 msgid ""
-"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"For security reasons, Beagle cannot be run as root. You should restart as a "
 "regular user."
 msgstr ""
-"セキュリティ対策のため、Beagle を root 権限で起動することはできません。一般"
-"ユーザ権限で再起動して下さい。"
+"セキュリティ対策のため、Beagle を root 権限では起動できません。一般ユーザ権限"
+"で再起動して下さい。"
 
-#: ../search/Pages/StartDaemon.cs:19
+#: ../search/Pages/StartDaemon.cs:17
 msgid "Search service not running"
 msgstr "検索サービスが起動されていません"
 
-#: ../search/Pages/StartDaemon.cs:21
+#: ../search/Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+"検索サービスが起動されていないようです。下にあるボタンをクリックするとサービ"
+"スを起動できます。"
+
+#: ../search/Pages/StartDaemon.cs:22
 msgid "Start search service"
 msgstr "検索サービスを起動する"
 
-#: ../search/Search.cs:138 ../search/Search.cs:254
+#: ../search/Search.cs:148 ../search/Search.cs:276
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "デスクトップの検索"
 
-#: ../search/Search.cs:157
+#: ../search/Search.cs:169
 msgid "_Find:"
 msgstr "検索(_F):"
 
-#: ../search/Search.cs:178
+#: ../search/Search.cs:190
 msgid "Find Now"
 msgstr "今すぐ見つける"
 
-#: ../search/Search.cs:237
+#: ../search/Search.cs:253
 msgid "Type in search terms"
 msgstr "検索する語句を入力して下さい"
 
-#: ../search/Search.cs:238
+#: ../search/Search.cs:254
 msgid "Start searching"
 msgstr "検索を始めます"
 
-#: ../search/Search.cs:273
+#: ../search/Search.cs:295
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "デスクトップの検索: {0}"
 
-#: ../search/Search.cs:289
+#: ../search/Search.cs:311
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "{0}個の検索結果を全て表示しています"
 msgstr[1] "全 {0}個の検索結果を全て表示しています"
 
-#: ../search/Search.cs:291
+#: ../search/Search.cs:313
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "{1}個の検索結果のうち上位 {0}個を表示しています"
 msgstr[1] "{1}個の検索結果のうち上位 {0}個を表示しています"
 
-#: ../search/Search.cs:565
-msgid "Your data is being indexed"
-msgstr "データのインデックスを作成中です"
+#: ../search/Search.cs:569
+msgid "There are computers near you running Beagle"
+msgstr "近くに Beagle を起動しているコンピュータが存在します"
 
-#: ../search/Search.cs:566
+#: ../search/Search.cs:570
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "検索メニューから検索に利用する他のコンピュータを選択できます。"
+
+#: ../search/Search.cs:642
+msgid "Your data is being indexed"
+msgstr "データからインデックスの作成中"
+
+#: ../search/Search.cs:643
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -462,39 +238,54 @@ msgstr ""
 "検索サービスでデータのインデックスを作成しています。インデックスの作成が完了"
 "するまで不完全な検索結果になるかもしれません。"
 
-#: ../search/Tiles/ArchivedFile.cs:39
+#: ../search/Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "書庫 {0} の中身"
 
-#: ../search/Tiles/ArchivedFile.cs:77
+#: ../search/Tiles/ArchivedFile.cs:77 ../search/Tiles/Calendar.cs:44
+#: ../search/Tiles/File.cs:178 ../search/Tiles/Note.cs:73
+#: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
+#: ../search/Tiles/WebHistory.cs:58
+msgid "Title:"
+msgstr "タイトル:"
+
+#: ../search/Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "ファイル名:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "書庫の中のファイル:"
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
+#: ../search/Tiles/ArchivedFile.cs:82 ../search/Tiles/File.cs:182
 msgid "Author:"
 msgstr "作者:"
 
-#: ../search/Tiles/Calendar.cs:54
+#: ../search/Tiles/Calendar.cs:47 ../search/Tiles/Task.cs:44
 msgid "Description:"
 msgstr "説明:"
 
 #: ../search/Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "時刻:"
+
+#: ../search/Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "場所:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "出席者:"
 
 #: ../search/Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "メールの送信"
+
+#: ../search/Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "E-メール:"
 
 #: ../search/Tiles/Contact.cs:70
 msgid "Mobile Phone:"
@@ -508,28 +299,32 @@ msgstr "会社の電話番号:"
 msgid "Home Phone:"
 msgstr "自宅の電話番号:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Tiles/Documentation.cs:57
+msgid "Documentation"
+msgstr "ドキュメント"
+
+#: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "フォルダの中を表示する"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "E-メールを送信する"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "ゴミ箱へ移動する"
 
-#: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
+#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:51
+#: ../search/Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "最終変更日時:"
 
-#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87
+#: ../search/Tiles/File.cs:184 ../search/Tiles/Folder.cs:52
+#: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "パス名:"
 
@@ -549,11 +344,11 @@ msgstr[1] "{0}個のアイテムがあります"
 msgid "Set as Wallpaper"
 msgstr "壁紙にセットする"
 
-#: ../search/Tiles/Image.cs:84
+#: ../search/Tiles/Image.cs:84 ../search/Tiles/Note.cs:78
 msgid "Tags:"
 msgstr "タグ:"
 
-#: ../search/Tiles/Image.cs:86
+#: ../search/Tiles/Image.cs:86 ../search/Tiles/Video.cs:44
 msgid "Modified:"
 msgstr "変更日時:"
 
@@ -565,37 +360,41 @@ msgstr "コメント:"
 msgid "IM Conversation"
 msgstr "IM 上での会話"
 
-#: ../search/Tiles/IMLog.cs:94
+#: ../search/Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "名前:"
 
-#: ../search/Tiles/IMLog.cs:95 ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/IMLog.cs:100 ../search/Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "受信した日付:"
 
-#: ../search/Tiles/IMLog.cs:99
+#: ../search/Tiles/IMLog.cs:104
 msgid "Status:"
 msgstr "状態:"
 
-#: ../search/Tiles/IMLog.cs:114
+#: ../search/Tiles/IMLog.cs:119
 msgid "Idle"
 msgstr "待機中"
 
-#: ../search/Tiles/IMLog.cs:121
+#: ../search/Tiles/IMLog.cs:126
 msgid "Away"
 msgstr "離席中"
 
-#: ../search/Tiles/IMLog.cs:124
+#: ../search/Tiles/IMLog.cs:129
 msgid "Offline"
 msgstr "オフライン"
 
-#: ../search/Tiles/IMLog.cs:127
+#: ../search/Tiles/IMLog.cs:132
 msgid "Available"
 msgstr "利用可能"
 
 #: ../search/Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "添付ファイル"
+
+#: ../search/Tiles/MailAttachment.cs:48 ../search/Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "送信者からメッセージを検索する"
 
 #: ../search/Tiles/MailMessage.cs:58
 msgid "(untitled)"
@@ -605,23 +404,23 @@ msgstr "(タイトルなし)"
 msgid "Send in Mail"
 msgstr "メールの送信"
 
-#: ../search/Tiles/MailMessage.cs:100
+#: ../search/Tiles/MailMessage.cs:103
 msgid "Subject:"
 msgstr "件名:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Tiles/MailMessage.cs:105
 msgid "To:"
 msgstr "宛先:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "差出人:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Tiles/MailMessage.cs:108
 msgid "Date Sent:"
 msgstr "送信した日付:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Tiles/MailMessage.cs:114
 msgid "Folder:"
 msgstr "フォルダ:"
 
@@ -636,15 +435,19 @@ msgid_plural "{0} slides"
 msgstr[0] "{0}個のスライド"
 msgstr[1] "{0}個のスライド"
 
-#: ../search/Tiles/RSSFeed.cs:59
+#: ../search/Tiles/RSSFeed.cs:60
 msgid "Site:"
 msgstr "サイト:"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "訪問した日:"
 
-#: ../search/Tiles/TextDocument.cs:37
+#: ../search/Tiles/Task.cs:47
+msgid "Date:"
+msgstr "日付:"
+
+#: ../search/Tiles/TextDocument.cs:38
 #, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
@@ -658,6 +461,10 @@ msgstr "開く"
 #: ../search/Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "アプリケーション"
+
+#: ../search/Tiles/Utils.cs:27
+msgid "Contacts"
+msgstr "連絡先"
 
 #: ../search/Tiles/Utils.cs:29
 msgid "Calendar Events"
@@ -699,28 +506,28 @@ msgstr "ニュース"
 msgid "Archives"
 msgstr "書庫"
 
-#: ../search/Tiles/Utils.cs:122 ../search/Tiles/Utils.cs:204
-#: ../Util/StringFu.cs:117
+#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
+#: ../Util/StringFu.cs:118
 msgid "Yesterday"
 msgstr "昨日"
 
-#: ../search/Tiles/Utils.cs:124 ../search/Tiles/Utils.cs:206
-#: ../Util/StringFu.cs:115
+#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
+#: ../Util/StringFu.cs:116
 msgid "Today"
 msgstr "今日"
 
-#: ../search/Tiles/Utils.cs:126 ../search/Tiles/Utils.cs:208
+#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "明日"
 
-#: ../search/Tiles/Utils.cs:224
+#: ../search/Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0}週間前"
 msgstr[1] "{0}週間前"
 
-#: ../search/Tiles/Utils.cs:226
+#: ../search/Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -728,45 +535,39 @@ msgstr[0] "{0}週間以内"
 msgstr[1] "{0}週間以内"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:228
+#: ../search/Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0}ヶ月前"
 msgstr[1] "{0}ヶ月前"
 
-#: ../search/Tiles/Utils.cs:230
+#: ../search/Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0}ヶ月以内"
 msgstr[1] "{0}ヶ月以内"
 
-#: ../search/Tiles/Utils.cs:232
+#: ../search/Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0}年前"
 msgstr[1] "{0}年前"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "{0}年以内"
 msgstr[1] "{0}年以内"
 
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "不明"
-
-#: ../search/Tiles/WebHistory.cs:54
+#: ../search/Tiles/WebHistory.cs:59
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:55
+#: ../search/Tiles/WebHistory.cs:60
 msgid "Accessed:"
 msgstr "アクセスした日付:"
 
@@ -778,9 +579,13 @@ msgstr "\"最近検索したエントリ\" はありません"
 msgid "Recent Searches"
 msgstr "最近検索したエントリ"
 
-#: ../search/Tray/TrayIcon.cs:90
+#: ../search/Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "エントリをクリアする"
+
+#: ../search/Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "終了"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -956,179 +761,203 @@ msgstr ""
 "person\n"
 "people"
 
-#: ../search/UIManager.cs:50
+#: ../search/UIManager.cs:51
 msgid "Close Desktop Search"
 msgstr "デスクトップ検索を閉じる"
 
-#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
+#: ../search/UIManager.cs:56 ../search/UIManager.cs:83
 msgid "Exit Desktop Search"
 msgstr "デスクトップ検索を終了します"
 
-#: ../search/UIManager.cs:62
+#: ../search/UIManager.cs:63
 msgid "_Search"
 msgstr "検索(_S)"
 
-#: ../search/UIManager.cs:65
+#: ../search/UIManager.cs:66
 msgid "Show _Categories"
 msgstr "カテゴリの表示(_C)"
 
-#: ../search/UIManager.cs:68
+#: ../search/UIManager.cs:69
+msgid "Search _Domains"
+msgstr "検索ドメイン(_D)"
+
+#: ../search/UIManager.cs:72
 msgid "_Actions"
 msgstr "アクション(_A)"
 
-#: ../search/UIManager.cs:71
+#: ../search/UIManager.cs:75
 msgid "_View"
 msgstr "表示(_V)"
 
-#: ../search/UIManager.cs:74
+#: ../search/UIManager.cs:78
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: ../search/UIManager.cs:83
+#: ../search/UIManager.cs:86
 msgid "_Contents"
 msgstr "目次(_C)"
 
-#: ../search/UIManager.cs:85
+#: ../search/UIManager.cs:88
 msgid "Help - Table of Contents"
 msgstr "ヘルプ - 目次"
 
-#: ../search/UIManager.cs:89
+#: ../search/UIManager.cs:92
 msgid "About Desktop Search"
 msgstr "デスクトップ検索について"
 
-#: ../search/UIManager.cs:111
+#: ../search/UIManager.cs:98
+msgid "Index information"
+msgstr "インデックスの情報"
+
+#: ../search/UIManager.cs:117
 msgid "_All"
 msgstr "全て(_A)"
 
-#: ../search/UIManager.cs:121
+#: ../search/UIManager.cs:127
 msgid "_None"
 msgstr "なし(_N)"
 
-#: ../search/UIManager.cs:135
+#: ../search/UIManager.cs:141
 msgid "A_pplications"
 msgstr "アプリケーション(_P)"
 
-#: ../search/UIManager.cs:137
+#: ../search/UIManager.cs:143
 msgid "Search applications"
 msgstr "アプリケーションを検索します"
 
-#: ../search/UIManager.cs:141
+#: ../search/UIManager.cs:147
 msgid "_Contacts"
 msgstr "連絡先(_C)"
 
-#: ../search/UIManager.cs:143
+#: ../search/UIManager.cs:149
 msgid "Search contacts"
 msgstr "連絡先を検索します"
 
-#: ../search/UIManager.cs:147
+#: ../search/UIManager.cs:153
 msgid "Ca_lendar events"
 msgstr "予定(_L)"
 
-#: ../search/UIManager.cs:149
+#: ../search/UIManager.cs:155
 msgid "Search calendar events"
 msgstr "カレンダからイベントを検索します"
 
-#: ../search/UIManager.cs:153
+#: ../search/UIManager.cs:159
 msgid "_Documents"
 msgstr "ドキュメント(_D)"
 
-#: ../search/UIManager.cs:155
+#: ../search/UIManager.cs:161
 msgid "Search documents"
 msgstr "ドキュメントを検索します"
 
-#: ../search/UIManager.cs:159
+#: ../search/UIManager.cs:165
 msgid "Conve_rsations"
 msgstr "メールとIM(_R)"
 
-#: ../search/UIManager.cs:161
+#: ../search/UIManager.cs:167
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "E-メールやインスタント・メッセンジャーのログを検索します"
 
-#: ../search/UIManager.cs:165
+#: ../search/UIManager.cs:171
 msgid "_Images"
 msgstr "画像(_I)"
 
-#: ../search/UIManager.cs:167
+#: ../search/UIManager.cs:173
 msgid "Search images"
 msgstr "画像を検索します"
 
-#: ../search/UIManager.cs:171
+#: ../search/UIManager.cs:177
 msgid "_Media"
 msgstr "メディア(_M)"
 
-#: ../search/UIManager.cs:173
+#: ../search/UIManager.cs:179
 msgid "Search sound and video files"
 msgstr "楽曲やビデオのファイルを検索します"
 
-#: ../search/UIManager.cs:177
+#: ../search/UIManager.cs:183
 msgid "_Folders"
 msgstr "フォルダ(_F)"
 
-#: ../search/UIManager.cs:179
+#: ../search/UIManager.cs:185
 msgid "Search for folder names"
 msgstr "フォルダ名を検索します"
 
-#: ../search/UIManager.cs:183
+#: ../search/UIManager.cs:189
 msgid "_Websites"
 msgstr "ウェブサイト(_W)"
 
-#: ../search/UIManager.cs:185
+#: ../search/UIManager.cs:191
 msgid "Search website history"
 msgstr "ウェブサイトの履歴を検索します"
 
-#: ../search/UIManager.cs:189
+#: ../search/UIManager.cs:195
 msgid "_News Feeds"
 msgstr "ニュース(_N)"
 
-#: ../search/UIManager.cs:191
+#: ../search/UIManager.cs:197
 msgid "Search news feeds"
 msgstr "ニュースの配信を検索します"
 
-#: ../search/UIManager.cs:195
+#: ../search/UIManager.cs:201
 msgid "A_rchives"
 msgstr "書庫(_R)"
 
-#: ../search/UIManager.cs:197
+#: ../search/UIManager.cs:203
 msgid "Search files in Archives"
 msgstr "書庫に格納されているファイルを検索します"
 
-#: ../search/UIManager.cs:205
+#: ../search/UIManager.cs:211
 msgid "Sort by Date _Modified"
 msgstr "変更日時で並び替え(_M)"
 
-#: ../search/UIManager.cs:206
+#: ../search/UIManager.cs:212
 msgid "Sort the most-recently-modified matches first"
 msgstr "検索結果を最近変更した順番で並び替えます"
 
-#: ../search/UIManager.cs:209
+#: ../search/UIManager.cs:215
 msgid "Sort by _Name"
 msgstr "名前順で並び替え(_N)"
 
-#: ../search/UIManager.cs:210
+#: ../search/UIManager.cs:216
 msgid "Sort matches by name"
 msgstr "検索結果を名前の順番で並べ替えます"
 
-#: ../search/UIManager.cs:213
+#: ../search/UIManager.cs:219
 msgid "Sort by _Relevance"
 msgstr "関連性で並び替え(_R)"
 
-#: ../search/UIManager.cs:214
+#: ../search/UIManager.cs:220
 msgid "Sort the best matches first"
 msgstr "検索結果を最も一致する順番で並べ替えます"
 
-#: ../search/UIManager.cs:221
+#: ../search/UIManager.cs:227
+msgid "_Local"
+msgstr "ローカル(_L)"
+
+#: ../search/UIManager.cs:229
+msgid "Search only on local computer"
+msgstr "ローカルのコンピュータからのみ検索します"
+
+#: ../search/UIManager.cs:233
+msgid "_Neighborhood"
+msgstr "近く(_N)"
+
+#: ../search/UIManager.cs:235
+msgid "Search on computers near me"
+msgstr "近くにあるコンピュータで検索します"
+
+#: ../search/UIManager.cs:243
 msgid "Show Details"
 msgstr "詳細を表示する"
 
-#: ../search/UIManager.cs:354
+#: ../search/UIManager.cs:366
 msgid "Couldn't launch web browser"
 msgstr "ウェブ・ブラウザを起動できませんでした"
 
-#: ../tools/Settings.cs:169
+#: ../tools/Settings.cs:346
 msgid "Reload configuration"
 msgstr "設定の再読込み"
 
-#: ../tools/Settings.cs:170
+#: ../tools/Settings.cs:347
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1136,15 +965,15 @@ msgstr ""
 "他のアプリケーションが設定ファイルを変更しました。現在表示している内容を破棄"
 "して、再び設定情報を読み直しますか？"
 
-#: ../tools/Settings.cs:308
+#: ../tools/Settings.cs:485
 msgid "Select Path"
 msgstr "パスの選択"
 
-#: ../tools/Settings.cs:327
+#: ../tools/Settings.cs:504
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "指定したパスは既にインデックス作成の対象になっているので登録しません。"
 
-#: ../tools/Settings.cs:330
+#: ../tools/Settings.cs:507
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1152,15 +981,15 @@ msgstr ""
 "指定したパスを含んだアイテムがが既に登録され、そのインデックスが作成されてい"
 "るので、そのパスは登録しません。"
 
-#: ../tools/Settings.cs:341
+#: ../tools/Settings.cs:518
 msgid "Path not added"
 msgstr "パスを追加しませんでした"
 
-#: ../tools/Settings.cs:350
+#: ../tools/Settings.cs:527
 msgid "Remove obsolete paths"
 msgstr "古いパスの削除"
 
-#: ../tools/Settings.cs:351
+#: ../tools/Settings.cs:528
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1168,69 +997,90 @@ msgstr ""
 "このパスを追加すると既に登録済みの古いパスを破棄することになります。それでも"
 "パスを追加しますか？"
 
-#: ../tools/Settings.cs:377
+#: ../tools/Settings.cs:554
 msgid "Remove path"
 msgstr "パスの削除"
 
-#: ../tools/Settings.cs:378
+#: ../tools/Settings.cs:555
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:407
+#: ../tools/Settings.cs:584
 msgid "Remove item"
 msgstr "アイテムの削除"
 
-#: ../tools/Settings.cs:408
+#: ../tools/Settings.cs:585
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象外一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:458 ../tools/Settings.cs:547 ../tools/Settings.cs:634
+#: ../tools/Settings.cs:632
+msgid "Remote host already present in the list."
+msgstr "既にリモートのホストが一覧の中にあります"
+
+#: ../tools/Settings.cs:642
+msgid "Netbeagle Node not added"
+msgstr "Netbeagle のノードを追加しません"
+
+#: ../tools/Settings.cs:657
+msgid "Remove host"
+msgstr "ホストの削除"
+
+#: ../tools/Settings.cs:658
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "このホストを一覧から削除してもよろしいですか？"
+
+#: ../tools/Settings.cs:717 ../tools/Settings.cs:806 ../tools/Settings.cs:887
+#: ../tools/Settings.cs:992 ../tools/Settings.cs:1636
 msgid "Name"
 msgstr "名前"
 
-#: ../tools/Settings.cs:541
+#: ../tools/Settings.cs:800
 msgid "Type"
 msgstr "種類"
 
-#: ../tools/Settings.cs:594
+#: ../tools/Settings.cs:853
 msgid "Path:"
 msgstr "パス名:"
 
-#: ../tools/Settings.cs:597
+#: ../tools/Settings.cs:856
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../tools/Settings.cs:600
+#: ../tools/Settings.cs:859
 msgid "Mail folder:"
 msgstr "メール・フォルダ:"
 
-#: ../tools/Settings.cs:881
+#: ../tools/Settings.cs:894
+msgid "Address"
+msgstr "アドレス"
+
+#: ../tools/Settings.cs:1239
 msgid "Select Folder"
 msgstr "フォルダの選択"
 
-#: ../tools/Settings.cs:907 ../tools/settings.glade.h:20
+#: ../tools/Settings.cs:1265 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "パス名(_A):"
 
-#: ../tools/Settings.cs:912
+#: ../tools/Settings.cs:1270
 msgid "M_ail folder:"
 msgstr "フォルダ(_A):"
 
-#: ../tools/Settings.cs:917
+#: ../tools/Settings.cs:1275
 msgid "P_attern:"
 msgstr "パターン(_A):"
 
-#: ../tools/Settings.cs:941
+#: ../tools/Settings.cs:1299
 msgid "Error adding path"
 msgstr "パス名を追加する際にエラーが発生しました"
 
-#: ../tools/Settings.cs:942
+#: ../tools/Settings.cs:1300
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1238,39 +1088,82 @@ msgstr ""
 "指定したパスが見つからなかったので、インデックスの作成で除外するリソース一覧"
 "にパスを追加することができませんでした。"
 
+#: ../tools/Settings.cs:1341
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "{0} へ接続中"
+
+#: ../tools/Settings.cs:1637
+msgid "Description"
+msgstr "説明"
+
 #: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
 msgstr "<b>特権</b>"
 
-#: ../tools/settings.glade.h:2
+#: ../tools/settings.glade.h:3
 msgid "<b>Display</b>"
 msgstr "<b>表示</b>"
 
-#: ../tools/settings.glade.h:3
+#: ../tools/settings.glade.h:4
 msgid "<b>Exclude Resource</b>"
 msgstr "<b>対象外のリソース</b>"
 
-#: ../tools/settings.glade.h:4
+#: ../tools/settings.glade.h:5
 msgid "<b>General</b>"
 msgstr "<b>全般</b>"
 
-#: ../tools/settings.glade.h:5
+#: ../tools/settings.glade.h:6
+msgid "<b>Networking</b>"
+msgstr "<b>ネットワーク</b>"
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Privacy</b>"
 msgstr "<b>プライバシー</b>"
 
-#: ../tools/settings.glade.h:6
+#: ../tools/settings.glade.h:8
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>メール・フォルダの選択</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:9
 msgid "<b>User Interface</b>"
 msgstr "<b>ユーザ・インタフェース</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:10
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>これらの変更点は検索サービスを再起動すると適用されます</i>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>この設定はバッテリーを使用している際は利用できません</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">パスワードが必要です</span>"
+
+#: ../tools/settings.glade.h:13
+msgid "Add Remote Host"
+msgstr "リモート・ホストの追加"
+
+#: ../tools/settings.glade.h:14
+msgid "Add a static host"
+msgstr "スタティックなホストを追加する"
+
+#: ../tools/settings.glade.h:15
 msgid "Add any additional paths to be included for indexing."
 msgstr "インデックスに追加するフォルダを指定して下さい:"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:16
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+"ネットワークを利用して検索を可能にする\n"
+"リモート・ホストを追加して下さい:"
+
+#: ../tools/settings.glade.h:17
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1278,64 +1171,112 @@ msgstr ""
 "どの種類の結果を表示するか調整し、その種類でグループ化した時に表示する順番を"
 "指定して下さい:"
 
-#: ../tools/settings.glade.h:10
-msgid "Alt"
-msgstr "[Alt]"
+#: ../tools/settings.glade.h:18
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr ""
+"ローカルの検索サービスに外部からアクセスできるようにする (EXPERIMENTAL)"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:19
+msgid "Alt"
+msgstr "[Alt] ＋"
+
+#: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr "検索する語句の入力を止めたら自動的に検索を開始する(_T)"
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:21
+msgid "Backends"
+msgstr "バックエンド"
+
+#: ../tools/settings.glade.h:22
 msgid "Ctrl"
 msgstr "[Ctrl]"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:23
 msgid "Display the search window by pressing:"
 msgstr "検索ウィンドウを表示するホット・キー:"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:24
+msgid "Enable web interface for local search service"
+msgstr "ローカルの検索サービス用にウェブ・インタフェースを有効にする"
+
+#: ../tools/settings.glade.h:25
+msgid "Enable/Disable backends from the indexing and searching process."
+msgstr "インデックスの作成や検索機能で利用できるバックエンドを管理します:"
+
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "対象外のリソース"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "ファイル名のパターン(_P)"
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "ホーム・フォルダのインデックスを作成する(_I)"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr ""
+"このコンピュータで Beagle による検索を実行できるようにするために、パスワード"
+"を入力して下さい"
+
+#: ../tools/settings.glade.h:30
 msgid "Index data while on _battery power"
 msgstr "バッテリーを使用している時でもインデックスを更新する(_B)"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:31
 msgid "Index more aggressively while the s_creensaver is activated"
-msgstr ""
-"スクリーンセーバーが実行している最中にインデックス更新の頻度を上げる(_C)"
+msgstr "スクリーンセーバの実行中も積極的にインデックスを作成する(_C)"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "インデックスの名前:"
+
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "インデックスの作成"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:35
+msgid "Networking"
+msgstr "ネットワーク"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "{0} のパスワード"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "パスワード:"
+
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "インデックスの作成で対象外にするリソースを選択して下さい:"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "インデックスの作成で対象外にするメール・フォルダを選択して下さい:"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "このコンピュータをリモートから検索するにはパスワードが必要です"
+
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "デスクトップ検索の設定"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "検索"
+
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "メール・フォルダの選択"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:45
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1343,31 +1284,39 @@ msgstr ""
 "インデックスの作成で対象外にするフォルダ、パターン、メール・フォルダ、オブ"
 "ジェクトの種類を指定して下さい:"
 
-#: ../tools/settings.glade.h:27
-msgid "This setting does not apply while on battery power."
-msgstr "バッテリーを使用している間はこの設定を適用しません"
-
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "種類:"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
 msgstr "root 権限で Beagle を実行できるようにする(_A)"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:48
 msgid "_Browse..."
 msgstr "参照(_B)..."
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "現在、利用できるホストから選択する(_C)"
+
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "フォルダ(_F)"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "ホスト名(_H):"
+
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "メール・フォルダ(_M)"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "パスワード(_P):"
+
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "自動的に検索＆インデックス作成サービスを起動する(_S)"
 
@@ -1561,6 +1510,10 @@ msgstr "圧縮"
 msgid "Planar Configuration"
 msgstr "平面設定"
 
+#: ../Util/F-Spot/MetadataStore.cs:54
+msgid "Orientation"
+msgstr "向き"
+
 #: ../Util/F-Spot/MetadataStore.cs:56
 msgid "Photometric Interpretation"
 msgstr "光度計の動作"
@@ -1638,40 +1591,40 @@ msgid "Scene Type"
 msgstr "シーンタイプ"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:120
+#: ../Util/StringFu.cs:121
 msgid "MMM d"
 msgstr "MMM月d日"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:123
+#: ../Util/StringFu.cs:124
 msgid "MMM d, yyyy"
 msgstr "yyyy年MMM月d日"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:126
+#: ../Util/StringFu.cs:127
 msgid "h:mm tt"
 msgstr "h:mm tt"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:133
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0} の {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:149
+#: ../Util/StringFu.cs:150
 #, csharp-format
 msgid "Today, {0}"
 msgstr "今日の {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:153
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "昨日の {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:157
+#: ../Util/StringFu.cs:158
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -1679,23 +1632,23 @@ msgstr[0] "{0}日前の {1}"
 msgstr[1] "{0}日前の {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:163
+#: ../Util/StringFu.cs:164
 msgid "MMMM d, h:mm tt"
 msgstr "MMMM月d日 h:mm tt"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:168
+#: ../Util/StringFu.cs:169
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "yyyy年MMMM月d日 h:mm tt"
 
-#: ../Util/StringFu.cs:178
+#: ../Util/StringFu.cs:179
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0}時間"
 msgstr[1] "{0}時間"
 
-#: ../Util/StringFu.cs:185
+#: ../Util/StringFu.cs:186
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1703,7 +1656,7 @@ msgstr[0] "{0}分"
 msgstr[1] "{0}分"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:219
+#: ../Util/StringFu.cs:220
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -1711,13 +1664,13 @@ msgstr[0] "{0}バイト"
 msgstr[1] "{0}バイト"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:223
+#: ../Util/StringFu.cs:224
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0}Kバイト"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:226
+#: ../Util/StringFu.cs:227
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0}Mバイト"
