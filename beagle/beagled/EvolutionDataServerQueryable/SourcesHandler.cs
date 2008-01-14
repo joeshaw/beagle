@@ -77,6 +77,11 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void IndexSourceGroup (SourceGroup group, bool all_items)
 		{
+			if (group.BaseUri.StartsWith ("webcal://")) {
+				Logger.Log.Warn ("Indexing of webcal items temporarily disabled");
+				return;
+			}
+
 			group.SourceAdded += OnSourceAdded;
 			group.SourceRemoved += OnSourceRemoved;
 
@@ -123,7 +128,13 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void OnSourceAdded (object o, SourceAddedArgs args)
 		{
-			Container cont = (Container) Activator.CreateInstance (this.container_type, new object[] { args.Source, this.queryable, this.fingerprint });
+			object[] new_args = new object [this.ctor_args.Length + 3];
+			new_args [0] = args.Source;
+			new_args [1] = this.queryable;
+			new_args [2] = this.fingerprint;
+			Array.Copy (this.ctor_args, 0, new_args, 3, this.ctor_args.Length);
+
+			Container cont = (Container) Activator.CreateInstance (this.container_type, new_args);
 			if (!cont.OpenClient ())
 				return;
 			cont.IndexAll ();
