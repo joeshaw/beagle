@@ -726,7 +726,6 @@ namespace Beagle.Daemon {
 
 		private void Run ()
 		{
-			this.running = true;
 			this.unix_listener.Start ();
 
 			if (! Shutdown.WorkerStart (this, String.Format ("server '{0}'", socket_path)))
@@ -905,6 +904,8 @@ namespace Beagle.Daemon {
 
 			if (Shutdown.ShutdownRequested)
 				return;
+
+			this.running = true;
 
 			if (! indexhelper) {
 				Config config = Conf.Get (Conf.Names.NetworkingConfig);
