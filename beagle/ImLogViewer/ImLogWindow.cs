@@ -87,7 +87,7 @@ namespace ImLogViewer {
 		
 		private void SetWindowTitle (string speaker)
 		{
-			if (speaker == null || speaker.Length == 0)
+			if (String.IsNullOrEmpty (speaker))
 				return;
 
 			// Find the buddy
@@ -121,7 +121,7 @@ namespace ImLogViewer {
 			} else {
 				string nick = speaker;
 
-				if (buddy != null && buddy.Alias.Length > 0)
+				if (buddy != null && ! String.IsNullOrEmpty (buddy.Alias))
 					nick = buddy.Alias;
 
 				imviewer.Title = String.Format (Catalog.GetString ("Conversations with {0}"), nick);
