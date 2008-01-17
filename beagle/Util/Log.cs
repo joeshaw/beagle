@@ -207,6 +207,31 @@ namespace Beagle.Util {
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 
+		class SimpleQueue {
+			string[] buffer = new string [4]; // Keep a buffer of last 4 big messages
+
+			public bool Add (string msg)
+			{
+				if (buffer [0] == msg ||
+				    buffer [1] == msg ||
+				    buffer [2] == msg ||
+				    buffer [3] == msg)
+					return false;
+
+				buffer [0] = buffer [1];
+				buffer [1] = buffer [2];
+				buffer [2] = buffer [3];
+				buffer [3] = msg;
+
+				return true;
+			}
+
+		}
+
+		static private SimpleQueue msg_buffer = new SimpleQueue ();
+
+		/////////////////////////////////////////////////////////
+
 		static object write_lock = new object ();
 
 		static private void WriteLine (LogLevel level, string format, object [] args, Exception ex) 
@@ -214,10 +239,31 @@ namespace Beagle.Util {
 			if (level != LogLevel.Always && cutoff_level < level)
 				return;
 
-			string ex_str = null;
+			string msg_string = null;
+			if (format != null)
+				msg_string = String.Format (format, args);
 			if (ex != null)
-				ex_str = ex.ToString ();
-			
+				msg_string = String.Concat (msg_string,
+							    (msg_string != null ? "\n" : String.Empty),
+							    ex);
+
+			// Use the buffer only for multiline messages, which will mainly happen with exceptions
+			if (ex != null && ! msg_buffer.Add (msg_string)) {
+				msg_string = "(Repeated)";
+				if (format != null) {
+					msg_string = String.Format (format, args);
+					int newline = msg_string.IndexOf ('\n');
+					if (newline != -1) {
+						msg_string = msg_string.Substring (0, newline);
+						msg_string += " ...";
+					}
+				} else {
+					msg_string = ex.Message;
+				}
+
+				msg_string = "(Repeated) " + msg_string;
+			}
+
 			// This only happens if Log.Initialize was never called.
 			if (running_in_foreground && foreground_echo_writer == null)
 				foreground_echo_writer = Console.Out;
@@ -225,10 +271,9 @@ namespace Beagle.Util {
 			if (foreground_echo_writer != null) {
 				foreground_echo_writer.Write (level);
 				foreground_echo_writer.Write (": ");
-				if (format != null)
-					foreground_echo_writer.WriteLine (format, args);
-				if (ex_str != null)
-					foreground_echo_writer.WriteLine (ex_str);
+
+				if (msg_string != null)
+					foreground_echo_writer.WriteLine (msg_string);
 				foreground_echo_writer.Flush ();
 			}
 
@@ -272,13 +317,8 @@ namespace Beagle.Util {
 			message = new StringBuilder ();
 			message.Append (prefix);
 			message.Remove (0, 1); // remove leading \n
-			if (format != null)
-				message.AppendFormat (format, args);
-			if (ex_str != null) {
-				if (format != null)
-					message.Append ('\n');
-				message.Append (ex_str);
-			}
+			if (msg_string != null)
+				message.Append (msg_string);
 			message.Replace ("\n", prefix);
 
 			string message_str;
