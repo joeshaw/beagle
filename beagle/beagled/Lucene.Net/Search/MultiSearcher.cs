@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -119,11 +120,6 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
-			public override Document Doc(int i, string[] fields)
-			{
-				throw new System.NotSupportedException();
-			}
-			
 			public override Explanation Explain(Weight weight, int doc)
 			{
 				throw new System.NotSupportedException();
@@ -198,21 +194,8 @@ namespace Lucene.Net.Search
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
 		}
 		
-		public override Document Doc(int n, string[] fields)
-		{
-			int i = SubSearcher(n); // find searcher index
-			return searchables[i].Doc(n - starts[i], fields); // dispatch to searcher
-		}
 		
-		/// <summary>Call {@link #subSearcher} instead.</summary>
-		/// <deprecated>
-		/// </deprecated>
-		public virtual int SearcherIndex(int n)
-		{
-			return SubSearcher(n);
-		}
-		
-		/// <summary>Returns index of the searcher for document <code>n</code> in the array
+        /// <summary>Returns index of the searcher for document <code>n</code> in the array
 		/// used to construct this searcher. 
 		/// </summary>
 		public virtual int SubSearcher(int n)

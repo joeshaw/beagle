@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -25,11 +26,21 @@ namespace Lucene.Net.Analysis.Standard
         /// <summary>By default, closes the input Reader. </summary>
         public void Close()
         { 
+            debugStream.Close(); 
             input_stream.Done(); 
         }
 
 		private void  InitBlock()
 		{
+			System.IO.StreamWriter temp_writer;
+			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
+			temp_writer.AutoFlush = true;
+			debugStream = temp_writer;
+		}
+		public System.IO.StreamWriter debugStream;
+		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
+		{
+			debugStream = ds;
 		}
 		private int JjMoveStringLiteralDfa0_0()
 		{
@@ -75,18 +86,17 @@ namespace Lucene.Net.Analysis.Standard
 		internal static readonly ulong[] jjbitVec4 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0x0L, 0x0L};
 		internal static readonly ulong[] jjbitVec5 = new ulong[]{0x3fffffffffffL, 0x0L, 0x0L, 0x0L};
 		internal static readonly ulong[] jjbitVec6 = new ulong[]{0x0L, 0x0L, 0xfffff00000000000L, 0x7fffffL};
-		internal static readonly ulong[] jjbitVec7 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffffffL, 0x3ffffffffffffffL};
-		internal static readonly ulong[] jjbitVec8 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffL, 0x0L};
-		internal static readonly ulong[] jjbitVec9 = new ulong[]{0xfffffffeL, 0x0L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec10 = new ulong[]{0x0L, 0x0L, 0x0L, 0xff7fffffff7fffffL};
-		internal static readonly ulong[] jjbitVec11 = new ulong[]{0x1600L, 0x0L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec12 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xffc000000000L};
-		internal static readonly ulong[] jjbitVec13 = new ulong[]{0x0L, 0x3ff00000000L, 0x0L, 0x3ff000000000000L};
-		internal static readonly ulong[] jjbitVec14 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xff8000000000L};
-		internal static readonly ulong[] jjbitVec15 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec16 = new ulong[]{0x0L, 0x3ff0000L, 0x0L, 0x3ff0000L};
-		internal static readonly ulong[] jjbitVec17 = new ulong[]{0x0L, 0x3ffL, 0x0L, 0x0L};
-		internal static readonly ulong[] jjbitVec18 = new ulong[]{0xfffffffeL, 0x0L, 0xfffff00000000000L, 0x7fffffL};
+		internal static readonly ulong[] jjbitVec7 = new ulong[]{0xffffffffffffffffL, 0xffffffffffffffffL, 0xffffffffffffL, 0x0L};
+		internal static readonly ulong[] jjbitVec8 = new ulong[]{0xfffffffeL, 0x0L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec9 = new ulong[]{0x0L, 0x0L, 0x0L, 0xff7fffffff7fffffL};
+		internal static readonly ulong[] jjbitVec10 = new ulong[]{0x1600L, 0x0L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec11 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xffc000000000L};
+		internal static readonly ulong[] jjbitVec12 = new ulong[]{0x0L, 0x3ff00000000L, 0x0L, 0x3ff000000000000L};
+		internal static readonly ulong[] jjbitVec13 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0xff8000000000L};
+		internal static readonly ulong[] jjbitVec14 = new ulong[]{0x0L, 0xffc000000000L, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec15 = new ulong[]{0x0L, 0x3ff0000L, 0x0L, 0x3ff0000L};
+		internal static readonly ulong[] jjbitVec16 = new ulong[]{0x0L, 0x3ffL, 0x0L, 0x0L};
+		internal static readonly ulong[] jjbitVec17 = new ulong[]{0xfffffffeL, 0x0L, 0xfffff00000000000L, 0x7fffffL};
 		private int JjMoveNfa_0(int startState, int curPos)
 		{
 			int[] nextStates;
@@ -101,7 +111,7 @@ namespace Lucene.Net.Analysis.Standard
 					ReInitRounds();
 				if (curChar < 64)
 				{
-                    ulong l = ((ulong) 1L) << curChar;
+                    ulong l = ((ulong) 1L) << curChar;
 MatchLoop: 
 					do 
 					{
@@ -451,7 +461,7 @@ MatchLoop:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -809,7 +819,7 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -1171,11 +1181,14 @@ MatchLoop1:
 				++curPos;
 				if ((i = jjnewStateCnt) == (startsAt = 75 - (jjnewStateCnt = startsAt)))
 					return curPos;
-				int ret = input_stream.ReadChar();
-				if (ret != -1)
-					curChar = (char) ret;
-				else
+				try
+				{
+					curChar = input_stream.ReadChar();
+				}
+				catch (System.IO.IOException)
+				{
 					return curPos;
+				}
 			}
 		}
 		internal static readonly int[] jjnextStates = new int[]{30, 31, 32, 34, 38, 39, 41, 42, 46, 47, 53, 54, 5, 6, 10, 11, 19, 20, 3, 4, 8, 9, 17, 18, 31, 32, 34, 32, 33, 34, 65, 66, 68, 69, 72, 73, 5, 6, 19, 20, 25, 26, 50, 51, 70, 71, 12, 13, 14, 15, 23, 24, 43, 44, 48, 49, 55, 56, 59, 60, 61, 62};
@@ -1207,12 +1220,9 @@ MatchLoop1:
 		{
 			switch (hiByte)
 			{
-
-				case 17: 
-					return ((jjbitVec7[i2] & l2) != (ulong) 0L);
 				
 				case 215: 
-					return ((jjbitVec8[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec7[i2] & l2) != (ulong) 0L);
 				
 				default: 
 					if ((jjbitVec6[i1] & l1) != (ulong) 0L)
@@ -1227,10 +1237,10 @@ MatchLoop1:
 			{
 				
 				case 0: 
-					return ((jjbitVec10[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec9[i2] & l2) != (ulong) 0L);
 				
 				default: 
-					if ((jjbitVec9[i1] & l1) != (ulong) 0L)
+					if ((jjbitVec8[i1] & l1) != (ulong) 0L)
 						return true;
 					return false;
 				
@@ -1242,23 +1252,23 @@ MatchLoop1:
 			{
 				
 				case 6: 
-					return ((jjbitVec13[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec12[i2] & l2) != (ulong) 0L);
 				
 				case 11: 
-					return ((jjbitVec14[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec13[i2] & l2) != (ulong) 0L);
 				
 				case 13: 
-					return ((jjbitVec15[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec14[i2] & l2) != (ulong) 0L);
 				
 				case 14: 
-					return ((jjbitVec16[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec15[i2] & l2) != (ulong) 0L);
 				
 				case 16: 
-					return ((jjbitVec17[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec16[i2] & l2) != (ulong) 0L);
 				
 				default: 
-					if ((jjbitVec11[i1] & l1) != (ulong) 0L)
-						if ((jjbitVec12[i2] & l2) == (ulong) 0L)
+					if ((jjbitVec10[i1] & l1) != (ulong) 0L)
+						if ((jjbitVec11[i2] & l2) == (ulong) 0L)
 							return false;
 						else
 							return true;
@@ -1272,13 +1282,13 @@ MatchLoop1:
 			{
 				
 				case 0: 
-					return ((jjbitVec10[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec9[i2] & l2) != (ulong) 0L);
 				
 				case 215: 
-					return ((jjbitVec8[i2] & l2) != (ulong) 0L);
+					return ((jjbitVec7[i2] & l2) != (ulong) 0L);
 				
 				default: 
-					if ((jjbitVec18[i1] & l1) != (ulong) 0L)
+					if ((jjbitVec17[i1] & l1) != (ulong) 0L)
 						return true;
 					return false;
 				
@@ -1357,11 +1367,11 @@ MatchLoop1:
 			
 			for (; ; )
 			{
-				
-				int ret = input_stream.BeginToken();
-				if (ret != -1)
-					curChar = (char) ret;
-				else
+				try
+				{
+					curChar = input_stream.BeginToken();
+				}
+				catch (System.IO.IOException)
 				{
 					jjmatchedKind = 0;
 					matchedToken = JjFillToken();
@@ -1393,7 +1403,11 @@ MatchLoop1:
 				int error_column = input_stream.GetEndColumn();
 				System.String error_after = null;
 				bool EOFSeen = false;
-				if (input_stream.ReadChar() == -1)
+				try
+				{
+					input_stream.ReadChar(); input_stream.Backup(1);
+				}
+				catch (System.IO.IOException)
 				{
 					EOFSeen = true;
 					error_after = curPos <= 1?"":input_stream.GetImage();
@@ -1405,9 +1419,6 @@ MatchLoop1:
 					else
 						error_column++;
 				}
-				else
-					input_stream.Backup(1);
-
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,19 +16,20 @@
  */
 
 using System;
-using PrefixQuery = Lucene.Net.Search.PrefixQuery;  // for javadoc
-using RangeQuery = Lucene.Net.Search.RangeQuery;    // for javadoc
+using PrefixQuery = Lucene.Net.Search.PrefixQuery;
+using RangeQuery = Lucene.Net.Search.RangeQuery;
 
 namespace Lucene.Net.Documents
 {
-	
+	// for javadoc
+
 	/// <summary> Provides support for converting dates to strings and vice-versa.
 	/// The strings are structured so that lexicographic sorting orders by date,
 	/// which makes them suitable for use as field values and search terms.
 	/// 
 	/// <P>Note that this class saves dates with millisecond granularity,
 	/// which is bad for {@link RangeQuery} and {@link PrefixQuery}, as those
-	/// queries are expanded to a BooleanQuery with a potentially large number 
+	/// queries are expanded to a BooleanQuery with a potentially large number
 	/// of terms when searching. Thus you might want to use
 	/// {@link DateTools} instead.
 	/// 
@@ -37,9 +39,8 @@ namespace Lucene.Net.Documents
 	/// alternative without such a limitation.
 	/// 
 	/// </summary>
-	/// <deprecated> If you build a new index, use {@link DateTools} instead. For 
-	/// existing indices you can continue using this class, as it will not be 
-	/// removed in the near future despite being deprecated.
+	/// <deprecated> If you build a new index, use {@link DateTools} instead. This class is included for use with existing
+	/// indices and will be removed in a future release.
 	/// </deprecated>
 	public class DateField
 	{
@@ -108,7 +109,7 @@ namespace Lucene.Net.Documents
 		{
 			return SupportClass.Number.Parse(s, SupportClass.Number.MAX_RADIX);
 		}
-
+		
 		/// <summary>Converts a string-encoded date into a Date object. </summary>
 		public static System.DateTime StringToDate(System.String s)
 		{

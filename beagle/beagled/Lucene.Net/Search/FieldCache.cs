@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -29,7 +30,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldCache.cs,v 1.3 2006/10/02 17:09:02 joeshaw Exp $
+	/// <version>  $Id: FieldCache.java 179605 2005-06-02 16:48:40Z cutting $
 	/// </version>
 	/// <summary>Expert: Stores term text values and document ordering data. </summary>
 	public class StringIndex
@@ -63,7 +64,7 @@ namespace Lucene.Net.Search
 	}
 	public interface FieldCache
 	{
-		
+		void Close(IndexReader reader);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <code>field</code> as integers and returns an array

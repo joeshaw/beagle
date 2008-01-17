@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -36,16 +37,19 @@ namespace Lucene.Net.Search.Spans
 		private float queryNorm;
 		private float queryWeight;
 		
-		private System.Collections.ICollection terms;
+		private System.Collections.Hashtable terms;
 		private SpanQuery query;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
 			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-			this.terms = query.GetTerms();
+            terms = new System.Collections.Hashtable();
+            query.ExtractTerms(terms);
 			
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
+            System.Collections.ArrayList tmp = new System.Collections.ArrayList(terms.Values);
+
+			idf = this.query.GetSimilarity(searcher).Idf(tmp, searcher);
 		}
 		
 		public virtual Query GetQuery()
@@ -86,7 +90,8 @@ namespace Lucene.Net.Search.Spans
 			System.Collections.IEnumerator i = terms.GetEnumerator();
 			while (i.MoveNext())
 			{
-				Term term = (Term) i.Current;
+                System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry) i.Current;
+				Term term = (Term) tmp.Key;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
 				docFreqs.Append(reader.DocFreq(term));

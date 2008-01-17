@@ -43,7 +43,18 @@ namespace Lucene.Net.Store
 			}
 			private System.IO.FileInfo lockFile;
 			private FSDirectory enclosingInstance;
-			public FSDirectory Enclosing_Instance
+       /*     override public bool IsLocked()
+            {
+                if (Lucene.Net.Store.FSDirectory.disableLocks)
+                    return false;
+                bool tmpBool;
+                if (System.IO.File.Exists(lockFile.FullName))
+                    tmpBool = true;
+                else
+                    tmpBool = System.IO.Directory.Exists(lockFile.FullName);
+                return tmpBool;
+            }*/
+            public FSDirectory Enclosing_Instance
 			{
 				get
 				{
@@ -53,8 +64,7 @@ namespace Lucene.Net.Store
 			}
 			public override bool Obtain()
 			{
-				Log ("Trying to obtain lock " + lockFile.FullName);
-				if (Lucene.Net.Store.FSDirectory.disableLocks || Enclosing_Instance.InstanceDisableLock)
+				if (Lucene.Net.Store.FSDirectory.disableLocks)
 					return true;
 				
 				bool tmpBool;
@@ -168,7 +178,8 @@ namespace Lucene.Net.Store
 				if (System.IO.File.Exists(lockFile.FullName))
 					tmpBool = true;
 				else
-					tmpBool = System.IO.Directory.Exists(lockFile.FullName);
+					tmpBool = false;
+				bool generatedAux = tmpBool;
 				return tmpBool;
 			}
 			
@@ -189,19 +200,19 @@ namespace Lucene.Net.Store
 		
 		private static bool disableLocks = false;
 		
-		/// <summary> Set whether Lucene's use of lock files is disabled. By default, 
-		/// lock files are enabled. They should only be disabled if the index
-		/// is on a read-only medium like a CD-ROM.
-		/// </summary>
-		public static void  SetDisableLocks(bool doDisableLocks)
+        /// <summary> Set whether Lucene's use of lock files is disabled. By default, 
+        /// lock files are enabled. They should only be disabled if the index
+        /// is on a read-only medium like a CD-ROM.
+        /// </summary>
+        public static void  SetDisableLocks(bool doDisableLocks)
 		{
 			FSDirectory.disableLocks = doDisableLocks;
 		}
 		
-		/// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
-		/// <returns> true if locks are disabled, false if locks are enabled.
-		/// </returns>
-		public static bool GetDisableLocks()
+        /// <summary> Returns whether Lucene's use of lock files is disabled.</summary>
+        /// <returns> true if locks are disabled, false if locks are enabled.
+        /// </returns>
+        public static bool GetDisableLocks()
 		{
 			return FSDirectory.disableLocks;
 		}
@@ -240,7 +251,7 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public static FSDirectory GetDirectory(System.String path, bool create)
 		{
-			return GetDirectory(new System.IO.FileInfo(path), null, create, false);
+			return GetDirectory(new System.IO.FileInfo(path), create);
 		}
 		
 		/// <summary>Returns the directory instance for the named location.
@@ -337,7 +348,7 @@ namespace Lucene.Net.Store
 					{
 						throw new System.SystemException("cannot load FSDirectory class: " + e.ToString());
 					}
-					dir.Init(file, tmpdir, create, disable_locks);
+					dir.Init(file, tmpdir,create,false);
 					DIRECTORIES[file] = dir;
 				}
 				else if (create)
@@ -499,9 +510,13 @@ namespace Lucene.Net.Store
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
 		{
-			string path = System.IO.Path.Combine (directory.FullName, name);
-
-			return System.IO.File.Exists (path) || System.IO.Directory.Exists (path);
+			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+			bool tmpBool;
+			if (System.IO.File.Exists(file.FullName))
+				tmpBool = true;
+			else
+				tmpBool = System.IO.Directory.Exists(file.FullName);
+			return tmpBool;
 		}
 		
 		/// <summary>Returns the time the named file was last modified. </summary>
@@ -603,7 +618,7 @@ namespace Lucene.Net.Store
 					try
 					{
 						in_Renamed = new System.IO.FileStream(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
-						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
 						// see if the buffer needs to be initialized. Initialization is
 						// only done on-demand since many VM's will never run into the renameTo
 						// bug and hence shouldn't waste 1K of mem for no reason.
@@ -611,13 +626,13 @@ namespace Lucene.Net.Store
 						{
 							buffer = new byte[1024];
 						}
-                        int len; 
-                        while ((len = in_Renamed.Read(buffer, 0, buffer.Length)) > 0) 
-                        { 
-                            out_Renamed.Write(buffer, 0, len); 
-                        }
+						int len; 
+						while ((len = in_Renamed.Read(buffer, 0, buffer.Length)) > 0) 
+						{ 
+							out_Renamed.Write(buffer, 0, len); 
+						}
 						
-                        // delete the old file.
+						// delete the old file.
 						bool tmpBool3;
 						if (System.IO.File.Exists(old.FullName))
 						{
@@ -635,8 +650,9 @@ namespace Lucene.Net.Store
 					}
 					catch (System.IO.IOException ioe)
 					{
-						throw new System.IO.IOException("Cannot rename " + old + " to " + nu);
-					}
+                        System.IO.IOException newExc = new System.IO.IOException("Cannot rename " + old + " to " + nu, ioe);
+                        throw newExc;
+                    }
 					finally
 					{
 						if (in_Renamed != null)

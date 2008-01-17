@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,7 +17,6 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Index
 {
@@ -157,11 +157,6 @@ namespace Lucene.Net.Index
 			return in_Renamed.Document(n);
 		}
 		
-		public override Document Document(int n, string[] fields)
-		{
-			return in_Renamed.Document(n, fields);
-		}
-		
 		public override bool IsDeleted(int n)
 		{
 			return in_Renamed.IsDeleted(n);
@@ -219,7 +214,7 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoDelete(int n)
 		{
-			in_Renamed.Delete(n);
+			in_Renamed.DeleteDocument(n);
 		}
 		protected internal override void  DoCommit()
 		{
@@ -230,24 +225,20 @@ namespace Lucene.Net.Index
 			in_Renamed.Close();
 		}
 		
-		public override System.Collections.ICollection GetFieldNames()
-		{
-			return in_Renamed.GetFieldNames();
-		}
 		
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			return in_Renamed.GetFieldNames(indexed);
-		}
+        public override System.Collections.ICollection  GetFieldNames(IndexReader.FieldOption fieldNames)
+        {
+            return in_Renamed.GetFieldNames(fieldNames);
+        }
 		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			return in_Renamed.GetIndexedFieldNames(tvSpec);
-		}
+        public override long GetVersion()
+        {
+                return in_Renamed.GetVersion();
+        }
 		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
-		{
-			return in_Renamed.GetFieldNames(fieldNames);
-		}
-	}
+        public override bool IsCurrent()
+        {
+                return in_Renamed.IsCurrent();
+        }
+    }
 }

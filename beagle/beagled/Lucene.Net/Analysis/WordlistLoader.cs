@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -24,7 +25,7 @@ namespace Lucene.Net.Analysis
 	/// </summary>
 	/// <author>  Gerhard Schwarz
 	/// </author>
-	/// <version>  $Id: WordlistLoader.cs,v 1.2 2006/10/02 17:08:49 joeshaw Exp $
+	/// <version>  $Id: WordlistLoader.java 192989 2005-06-22 19:59:03Z dnaber $
 	/// </version>
 	public class WordlistLoader
 	{
@@ -88,39 +89,6 @@ namespace Lucene.Net.Analysis
 			return result;
 		}
 		
-		/// <param name="path">     Path to the wordlist
-		/// </param>
-		/// <param name="wordfile"> Name of the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.String path, System.String wordfile)
-		{
-			return GetWordtable(new System.IO.FileInfo(System.IO.Path.Combine(path, wordfile)));
-		}
-		
-		/// <param name="wordfile"> Complete path to the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.String wordfile)
-		{
-			return GetWordtable(new System.IO.FileInfo(wordfile));
-		}
-		
-		/// <param name="wordfile"> File object that points to the wordlist
-		/// 
-		/// </param>
-		/// <deprecated> Use {@link #GetWordSet(File)} instead
-		/// </deprecated>
-		public static System.Collections.Hashtable GetWordtable(System.IO.FileInfo wordfile)
-		{
-			System.Collections.Hashtable wordSet = (System.Collections.Hashtable) GetWordSet(wordfile);
-			System.Collections.Hashtable result = MakeWordTable(wordSet);
-			return result;
-		}
 		
 		/// <summary> Builds a wordlist table, using words as both keys and values
 		/// for backward compatibility.

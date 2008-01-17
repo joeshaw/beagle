@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -130,7 +131,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).DoDelete(n);
+				((IndexReader) readers[i]).DeleteDocument(n);
 			}
 			hasDeletions = true;
 		}
@@ -140,7 +141,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).DoUndeleteAll();
+				((IndexReader) readers[i]).UndeleteAll();
 			}
 			hasDeletions = false;
 		}
@@ -152,17 +153,12 @@ namespace Lucene.Net.Index
 			for (int i = 0; i < storedFieldReaders.Count; i++)
 			{
 				IndexReader reader = (IndexReader) storedFieldReaders[i];
-		foreach(Field field in reader.Document(n).Fields())
+                foreach(Field field in reader.Document(n).Fields())
 				{
 					result.Add(field);
 				}
 			}
 			return result;
-		}
-		
-		public override Document Document(int n, string[] fields)
-		{
-			throw new System.NotSupportedException ();
 		}
 		
 		// get all vectors
@@ -173,9 +169,11 @@ namespace Lucene.Net.Index
 			while (i.MoveNext())
 			{
 				System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
-				IndexReader reader = (IndexReader) e.Key;
-				System.String field = (System.String) e.Value;
-				TermFreqVector vector = reader.GetTermFreqVector(n, field);
+				//IndexReader reader = (IndexReader) e.Key;         // {{Aroush}} which is right, those two lines?
+				//System.String field = (System.String) e.Value;
+                System.String field = (System.String) e.Key;        // {{Aroush-2.0}} or those two lines?
+                IndexReader reader = (IndexReader) e.Value;
+                TermFreqVector vector = reader.GetTermFreqVector(n, field);
 				if (vector != null)
 					results.Add(vector);
 			}
@@ -184,28 +182,35 @@ namespace Lucene.Net.Index
 		
 		public override TermFreqVector GetTermFreqVector(int n, System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).GetTermFreqVector(n, field);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[field]);
+            return reader == null ? null : reader.GetTermFreqVector(n, field);
+        }
 		
 		public override bool HasNorms(System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).HasNorms(field);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[field]);
+            return reader == null ? false : reader.HasNorms(field);
+        }
 		
 		public override byte[] Norms(System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).Norms(field);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[field]);
+            return reader == null ? null : reader.Norms(field);
+        }
 		
 		public override void  Norms(System.String field, byte[] result, int offset)
 		{
-			((IndexReader) fieldToReader[field]).Norms(field, result, offset);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[field]);
+            if (reader != null)
+                reader.Norms(field, result, offset);
+        }
 		
 		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
 		{
-			((IndexReader) fieldToReader[field]).DoSetNorm(n, field, value_Renamed);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[field]);
+            if (reader != null)
+                reader.DoSetNorm(n, field, value_Renamed);
+        }
 		
 		public override TermEnum Terms()
 		{
@@ -219,8 +224,9 @@ namespace Lucene.Net.Index
 		
 		public override int DocFreq(Term term)
 		{
-			return ((IndexReader) fieldToReader[term.Field()]).DocFreq(term);
-		}
+            IndexReader reader = ((IndexReader) fieldToReader[term.Field()]);
+            return reader == null ? 0 : reader.DocFreq(term);
+        }
 		
 		public override TermDocs TermDocs(Term term)
 		{
@@ -257,58 +263,8 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public override System.Collections.ICollection GetFieldNames()
-		{
-            System.Collections.Hashtable result = new System.Collections.Hashtable(fieldToReader.Count);
-            System.Collections.ICollection items = fieldToReader.Keys;
-            foreach (object item in items)
-            {
-                result.Add(item, item);
-            }
-            return result;
-		}
 		
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < readers.Count; i++)
-			{
-				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetFieldNames(indexed);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-			}
-			return fieldSet;
-		}
-		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < readers.Count; i++)
-			{
-				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
+        public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
             System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
             for (int i = 0; i < readers.Count; i++)
@@ -358,12 +314,14 @@ namespace Lucene.Net.Index
 			{
 				InitBlock(enclosingInstance);
 				field = term.Field();
-				termEnum = ((IndexReader) Enclosing_Instance.fieldToReader[field]).Terms(term);
-			}
+                IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[field]);
+                if (reader != null)
+                    termEnum = reader.Terms(term);
+            }
 			
 			public override bool Next()
 			{
-				if (field == null)
+				if (termEnum == null)
 					return false;
 				
 				bool next = termEnum.Next();
@@ -387,15 +345,22 @@ namespace Lucene.Net.Index
 			
 			public override Term Term()
 			{
-				return termEnum.Term();
+                if (termEnum == null)
+                    return null;
+				
+                return termEnum.Term();
 			}
 			public override int DocFreq()
 			{
-				return termEnum.DocFreq();
+                if (termEnum == null)
+                    return 0;
+				
+                return termEnum.DocFreq();
 			}
 			public override void  Close()
 			{
-				termEnum.Close();
+                if (termEnum != null)
+                    termEnum.Close();
 			}
 		}
 		
@@ -438,8 +403,9 @@ namespace Lucene.Net.Index
 			
 			public virtual void  Seek(Term term)
 			{
-				termDocs = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]).TermDocs(term);
-			}
+                IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]);
+                termDocs = reader != null ? reader.TermDocs(term) : null;
+            }
 			
 			public virtual void  Seek(TermEnum termEnum)
 			{
@@ -448,22 +414,32 @@ namespace Lucene.Net.Index
 			
 			public virtual bool Next()
 			{
-				return termDocs.Next();
+                if (termDocs == null)
+                    return false;
+				
+                return termDocs.Next();
 			}
 			
 			public virtual int Read(int[] docs, int[] freqs)
 			{
-				return termDocs.Read(docs, freqs);
+                if (termDocs == null)
+                    return 0;
+				
+                return termDocs.Read(docs, freqs);
 			}
 			
 			public virtual bool SkipTo(int target)
 			{
-				return termDocs.SkipTo(target);
+                if (termDocs == null)
+                    return false;
+				
+                return termDocs.SkipTo(target);
 			}
 			
 			public virtual void  Close()
 			{
-				termDocs.Close();
+                if (termDocs != null)
+                    termDocs.Close();
 			}
 		}
 		
@@ -495,11 +471,13 @@ namespace Lucene.Net.Index
 			
 			public override void  Seek(Term term)
 			{
-				termDocs = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]).TermPositions(term);
-			}
+                IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]);
+                termDocs = reader != null ? reader.TermPositions(term) : null;
+            }
 			
 			public virtual int NextPosition()
 			{
+				// It is an error to call this if there is no next position, e.g. if termDocs==null
 				return ((TermPositions) termDocs).NextPosition();
 			}
 		}

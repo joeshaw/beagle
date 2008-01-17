@@ -30,7 +30,7 @@ namespace Lucene.Net.QueryParsers
 	/// </summary>
 	/// <author>  <a href="mailto:kelvin@relevanz.com">Kelvin Tan</a>, Daniel Naber
 	/// </author>
-	/// <version>  $Revision: 1.4 $
+	/// <version>  $Revision: 295117 $
 	/// </version>
 	public class MultiFieldQueryParser : QueryParser
 	{
@@ -277,10 +277,10 @@ namespace Lucene.Net.QueryParsers
 		/// Usage:
 		/// <code>
 		/// String[] fields = {"filename", "contents", "description"};
-		/// int[] flags = {MultiFieldQueryParser.NORMAL_FIELD,
-		/// MultiFieldQueryParser.REQUIRED_FIELD,
-		/// MultiFieldQueryParser.PROHIBITED_FIELD,};
-		/// parse(query, fields, flags, analyzer);
+		/// BooleanClause.Occur[] flags = {BooleanClause.Occur.SHOULD,
+		/// BooleanClause.Occur.MUST,
+		/// BooleanClause.Occur.MUST_NOT};
+		/// MultiFieldQueryParser.parse("query", fields, flags, analyzer);
 		/// </code>
 		/// </pre>
 		/// <p>
@@ -304,39 +304,7 @@ namespace Lucene.Net.QueryParsers
 		/// <throws>  TokenMgrError if query parsing fails </throws>
 		/// <throws>  IllegalArgumentException if the length of the fields array differs </throws>
 		/// <summary>  from the length of the flags array
-		/// </summary>
-		/// <deprecated> use {@link #Parse(String, String[], BooleanClause.Occur[], Analyzer)} instead
-		/// </deprecated>
-		public static Query Parse(System.String query, System.String[] fields, int[] flags, Analyzer analyzer)
-		{
-			if (fields.Length != flags.Length)
-				throw new System.ArgumentException("fields.length != flags.length");
-			BooleanQuery bQuery = new BooleanQuery();
-			for (int i = 0; i < fields.Length; i++)
-			{
-				QueryParser qp = new QueryParser(fields[i], analyzer);
-				Query q = qp.Parse(query);
-				int flag = flags[i];
-				switch (flag)
-				{
-					
-					case REQUIRED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST);
-						break;
-					
-					case PROHIBITED_FIELD: 
-						bQuery.Add(q, BooleanClause.Occur.MUST_NOT);
-						break;
-					
-					default: 
-						bQuery.Add(q, BooleanClause.Occur.SHOULD);
-						break;
-					
-				}
-			}
-			return bQuery;
-		}
-		
+
 		/// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
@@ -452,7 +420,7 @@ namespace Lucene.Net.QueryParsers
 			return bQuery;
 		}
 		
-		/// <summary> Parses a query, searching on the fields specified.
+        /// <summary> Parses a query, searching on the fields specified.
 		/// Use this if you need to specify certain fields as required,
 		/// and others as prohibited.
 		/// <p><pre>

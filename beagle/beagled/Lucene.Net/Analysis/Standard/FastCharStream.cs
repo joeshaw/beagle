@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -41,15 +42,14 @@ namespace Lucene.Net.Analysis.Standard
 			input = r;
 		}
 		
-		public int ReadChar()
+		public char ReadChar()
 		{
 			if (bufferPosition >= bufferLength)
-				if (!Refill())
-					return -1;
+				Refill();
 			return buffer[bufferPosition++];
 		}
 		
-		private bool  Refill()
+		private void  Refill()
 		{
 			int newPosition = bufferLength - tokenStart;
 			
@@ -82,13 +82,12 @@ namespace Lucene.Net.Analysis.Standard
 			
 			int charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
 			if (charsRead <= 0)
-				return false;
-
-			bufferLength += charsRead;
-			return true;
+				throw new System.IO.IOException("read past eof");
+			else
+				bufferLength += charsRead;
 		}
 		
-		public int BeginToken()
+		public char BeginToken()
 		{
 			tokenStart = bufferPosition;
 			return ReadChar();

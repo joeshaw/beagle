@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -149,27 +150,6 @@ namespace Lucene.Net.Index
 			SegmentInfos sis = new SegmentInfos();
 			sis.Read(directory);
 			return sis.GetVersion();
-		}
-
-		public void Optimize(Directory directory)
-		{
-			string[] files = directory.List();
-
-			System.Collections.ArrayList segment_names = new System.Collections.ArrayList();
-			foreach (SegmentInfo si in this)
-				segment_names.Add (si.name);
-
-			foreach (string file in files) {
-				string basename = System.IO.Path.GetFileNameWithoutExtension (file);
-				if (segment_names.Contains (basename))
-					continue;
-
-				if (basename == IndexFileNames.DELETABLE || basename == IndexFileNames.SEGMENTS)
-					continue;
-
-				Console.WriteLine ("WARNING! Deleting stale data {0}", file);
-				directory.DeleteFile (file);
-			}
 		}
 	}
 }

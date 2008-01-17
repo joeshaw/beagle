@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -113,7 +114,7 @@ namespace Lucene.Net.Search.Spans
 			
 			public override System.String ToString()
 			{
-				return "spans(" + Enclosing_Instance.ToString() + ")@" + (doc == - 1?"START":((doc == System.Int32.MaxValue)?"END":doc + "-" + position));
+				return "spans(" + Enclosing_Instance.ToString() + ")@" + (doc == - 1 ? "START" : ((doc == System.Int32.MaxValue) ? "END" : doc + "-" + position));
 			}
 		}
 		private Term term;
@@ -135,12 +136,25 @@ namespace Lucene.Net.Search.Spans
 			return term.Field();
 		}
 		
-		public override System.Collections.ICollection GetTerms()
+        /// <summary>Returns a collection of all terms matched by this query.</summary>
+        /// <deprecated> use extractTerms instead
+        /// </deprecated>
+        /// <seealso cref="#extractTerms(Set)">
+        /// </seealso>
+        public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			terms.Add(term);
 			return terms;
 		}
+
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            if (terms.Contains(term) == false)
+            {
+                terms.Add(term, term);
+            }
+        }
 		
 		public override System.String ToString(System.String field)
 		{
@@ -167,7 +181,7 @@ namespace Lucene.Net.Search.Spans
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode();    // {{Aroush-1.9}} Is this OK?
+            return GetBoost().ToString().GetHashCode() ^ term.GetHashCode() ^ unchecked((int) 0xD23FE494);    // {{Aroush-1.9}} Is this OK?
 		}
 		
 		public override Spans GetSpans(IndexReader reader)

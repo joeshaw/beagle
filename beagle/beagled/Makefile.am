@@ -238,6 +238,8 @@ LUCENE_1_9_CSFILES =							\
 	$(lucenedir)/Search/RangeQuery.cs				\
 	$(lucenedir)/Search/ReqExclScorer.cs				\
 	$(lucenedir)/Search/ReqOptSumScorer.cs				\
+	$(lucenedir)/Search/TopFieldDocCollector.cs \
+	$(lucenedir)/Search/TopDocCollector.cs \
 	$(lucenedir)/Search/ScoreDoc.cs					\
 	$(lucenedir)/Search/ScoreDocComparator.cs			\
 	$(lucenedir)/Search/Scorer.cs					\

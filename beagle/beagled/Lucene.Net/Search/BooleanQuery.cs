@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -53,9 +54,8 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		/// <deprecated> use {@link #SetMaxClauseCount(int)} instead
-		/// </deprecated>
-		public static int maxClauseCount = 1024;
+		
+		private static int maxClauseCount = 1024;
 		
 		/// <summary>Thrown when an attempt is made to add more than {@link
 		/// #GetMaxClauseCount()} clauses. This typically happens if
@@ -180,8 +180,7 @@ namespace Lucene.Net.Search
 		{
 			return minNrShouldMatch;
 		}
-		
-		/// <summary>Adds a clause to a boolean query.  Clauses may be:
+				/// <summary>Adds a clause to a boolean query.  Clauses may be:
 		/// <ul>
 		/// <li><code>required</code> which means that documents which <i>do not</i>
 		/// match this sub-query will <i>not</i> match the boolean query;
@@ -204,9 +203,13 @@ namespace Lucene.Net.Search
 		/// </deprecated>
 		public virtual void  Add(Query query, bool required, bool prohibited)
 		{
-			Add(new BooleanClause(query, required, prohibited));
+			if(required && !prohibited)
+				Add(new BooleanClause(query, BooleanClause.Occur.MUST));
+			else if(!required && !prohibited) 
+				Add(new BooleanClause(query, BooleanClause.Occur.SHOULD));
+			else if(!required && prohibited) 
+				Add(new BooleanClause(query, BooleanClause.Occur.MUST_NOT));
 		}
-		
 		/// <summary>Adds a clause to a boolean query.
 		/// 
 		/// </summary>
@@ -617,7 +620,14 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ clauses.GetHashCode() + GetMinimumNumberShouldMatch();
+            int hashCode = 0;
+
+            for (int i = 0; i < clauses.Count; i++)
+            {
+                hashCode += clauses[i].GetHashCode();
+            }
+
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ hashCode + GetMinimumNumberShouldMatch();
 		}
 	}
 }

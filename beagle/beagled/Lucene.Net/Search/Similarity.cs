@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -276,7 +277,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		public virtual float Idf(Term term, Searcher searcher)
 		{
-			return Ldf(searcher.DocFreq(term), searcher.MaxDoc());
+			return Idf(searcher.DocFreq(term), searcher.MaxDoc());
 		}
 		
 		/// <summary>Computes a score factor for a phrase.
@@ -318,7 +319,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <returns> a score factor based on the term's document frequency
 		/// </returns>
-		public abstract float Ldf(int docFreq, int numDocs);
+		public abstract float Idf(int docFreq, int numDocs);
 		
 		/// <summary>Computes a score factor based on the fraction of all query terms that a
 		/// document contains.  This value is multiplied into scores.

@@ -37,11 +37,7 @@ namespace Lucene.Net.Analysis
 		/// strategy based on document and/or field.  Must be able to handle null
 		/// field name for backward compatibility. 
 		/// </summary>
-		public virtual TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader)
-		{
-			// implemented for backward compatibility
-			return TokenStream(reader);
-		}
+		public abstract TokenStream TokenStream(System.String fieldName, System.IO.TextReader reader);
 		
 		/// <summary>Creates a TokenStream which tokenizes all the text in the provided
 		/// Reader.  Provided for backward compatibility only.

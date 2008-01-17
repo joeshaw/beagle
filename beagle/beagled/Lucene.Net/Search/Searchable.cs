@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -47,24 +48,15 @@ namespace Lucene.Net.Search
         /// non-high-scoring hits.
         /// 
         /// </summary>
-        /// <param name="query">to match documents
+        /// <param name="weight">to match documents
         /// </param>
         /// <param name="filter">if non-null, a bitset used to eliminate some documents
         /// </param>
         /// <param name="results">to receive hits
         /// </param>
         /// <throws>  BooleanQuery.TooManyClauses </throws>
-        /// <summary> 
-        /// </summary>
-        /// <deprecated>
-        /// </deprecated>
-        void  Search(Query query, Filter filter, HitCollector results);
-
-        /// <summary>Expert: Low-level search implementation.
-        /// Identical to {@link #Search(Query, Filter, HitCollector)}, but takes
-        /// a Weight instead of a query.
-        /// </summary>
         void  Search(Weight weight, Filter filter, HitCollector results);
+
 
         /// <summary>Frees resources associated with this Searcher.
         /// Be careful not to call this method while you are still using objects
@@ -101,16 +93,6 @@ namespace Lucene.Net.Search
         /// {@link Searcher#Search(Query,Filter)} instead.
         /// </summary>
         /// <throws>  BooleanQuery.TooManyClauses </throws>
-        /// <summary> 
-        /// </summary>
-        /// <deprecated>
-        /// </deprecated>
-        TopDocs Search(Query query, Filter filter, int n);
-		
-        /// <summary>Expert: Low-level search implementation.
-        /// Identical to {@link #Search(Query, Filter, int)}, but takes
-        /// a Weight instead of a query.
-        /// </summary>
         TopDocs Search(Weight weight, Filter filter, int n);
 		
         /// <summary>Expert: Returns the stored fields of document <code>i</code>.
@@ -119,32 +101,22 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexReader#document(int)">
         /// </seealso>
         Document Doc(int i);
-
-        /// <summary>Expert: Returns the requested <code>fields</code> of document <code>i</code>.
-        /// Called by {@link HitCollector} implementations.
-        /// </summary>
-        /// <seealso cref="IndexReader#document(int,string[])">
-        /// </seealso>
-        Document Doc(int i, string[] fields);
 		
         /// <summary>Expert: called to re-write queries into primitive queries.</summary>
         /// <throws>  BooleanQuery.TooManyClauses </throws>
         Query Rewrite(Query query);
 		
-        /// <summary>Returns an Explanation that describes how <code>doc</code> scored against
-        /// <code>query</code>.
+        /// <summary>Expert: low-level implementation method
+        /// Returns an Explanation that describes how <code>doc</code> scored against
+        /// <code>weight</code>.
         /// 
         /// <p>This is intended to be used in developing Similarity implementations,
         /// and, for good performance, should not be displayed with every hit.
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
+        /// <p>Applications should call {@link Searcher#Explain(Query, int)}.
         /// </summary>
         /// <throws>  BooleanQuery.TooManyClauses </throws>
-        Explanation Explain(Query query, int doc);
-		
-        /// <summary> Identical to {@link #Search(Query, Filter, HitCollector)}, but takes
-        /// a Weight instead of a query.
-        /// </summary>
         Explanation Explain(Weight weight, int doc);
 		
         /// <summary>Expert: Low-level search implementation with arbitrary sorting.  Finds
@@ -153,19 +125,9 @@ namespace Lucene.Net.Search
         /// <code>sort</code>.
         /// 
         /// <p>Applications should usually call {@link
-        /// Searcher#Search(Query,Filter,Sort)} instead.
+        /// Searcher#search(Query,Filter,Sort)} instead.
         /// </summary>
         /// <throws>  BooleanQuery.TooManyClauses </throws>
-        /// <summary> 
-        /// </summary>
-        /// <deprecated>
-        /// </deprecated>
-        TopFieldDocs Search(Query query, Filter filter, int n, Sort sort);
-		
-        /// <summary>Expert: Low-level search implementation.
-        /// Identical to {@link #Search(Query, Filter, int, Sort)}, but takes
-        /// a Weight instead of a query.
-        /// </summary>
         TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
     }
 }

@@ -6,14 +6,17 @@ using System.Runtime.CompilerServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Apache Lucene.Net")]
+[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCompany("The Apache Software Foundation")]
+[assembly: AssemblyProduct("Lucene.Net")]
+[assembly: AssemblyCopyright("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyTrademark("Copyright 2007 The Apache Software Foundation")]
+[assembly: AssemblyDefaultAlias("Lucene.Net")]
+[assembly: AssemblyCulture("")]
+
+[assembly: AssemblyInformationalVersionAttribute("2.0")]
 
 //
 // Version information for an assembly consists of the following four values:
@@ -26,7 +29,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("1.9.1.002")]
+[assembly: AssemblyVersion("2.0.0.004")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

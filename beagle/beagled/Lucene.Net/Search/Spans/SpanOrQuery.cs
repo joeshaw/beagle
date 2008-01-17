@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -197,7 +198,12 @@ namespace Lucene.Net.Search.Spans
 			return field;
 		}
 		
-		public override System.Collections.ICollection GetTerms()
+        /// <summary>Returns a collection of all terms matched by this query.</summary>
+        /// <deprecated> use ExtractTerms instead
+        /// </deprecated>
+        /// <seealso cref="#ExtractTerms(Set)">
+        /// </seealso>
+        public override System.Collections.ICollection GetTerms()
 		{
 			System.Collections.ArrayList terms = new System.Collections.ArrayList();
 			System.Collections.IEnumerator i = clauses.GetEnumerator();
@@ -208,8 +214,19 @@ namespace Lucene.Net.Search.Spans
 			}
 			return terms;
 		}
+
+        public override void  ExtractTerms(System.Collections.Hashtable terms)
+        {
+            System.Collections.IEnumerator i = clauses.GetEnumerator();
+            while (i.MoveNext())
+            {
+                SpanQuery clause = (SpanQuery) i.Current;
+                clause.ExtractTerms(terms);
+            }
+        }
 		
-		public override Query Rewrite(IndexReader reader)
+		
+        public override Query Rewrite(IndexReader reader)
 		{
 			SpanOrQuery clone = null;
 			for (int i = 0; i < clauses.Count; i++)
@@ -272,10 +289,10 @@ namespace Lucene.Net.Search.Spans
 		
 		public override int GetHashCode()
 		{
-			int result;
-			result = clauses.GetHashCode();
-			result = 29 * result + field.GetHashCode();
-			return result;
+            int h = clauses.GetHashCode();
+            h ^= ((h << 10) | (h >> 23));
+            h ^= System.Convert.ToInt32(GetBoost());
+            return h;
 		}
 		
 		private class SpanQueue : PriorityQueue

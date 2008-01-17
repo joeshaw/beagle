@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
 	/// </CODE>
 	/// 
 	/// </summary>
-	/// <version>  $Id: TermVectorsWriter.cs,v 1.3 2006/10/02 17:09:00 joeshaw Exp $
+	/// <version>  $Id: TermVectorsWriter.java 150689 2004-11-29 21:42:02Z bmesser $
 	/// 
 	/// </version>
 	public sealed class TermVectorsWriter
@@ -217,7 +218,7 @@ namespace Lucene.Net.Index
 					bool storePositionWithTermVector = false;
 					bool storeOffsetWithTermVector = false;
 					
-					try
+					if (vectors[i] is TermPositionVector)
 					{
 						
 						TermPositionVector tpVector = (TermPositionVector) vectors[i];
@@ -235,7 +236,7 @@ namespace Lucene.Net.Index
 						
 						CloseField();
 					}
-					catch (System.InvalidCastException ignore)
+					else
 					{
 						
 						TermFreqVector tfVector = vectors[i];
