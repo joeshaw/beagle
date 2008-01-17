@@ -45,10 +45,6 @@ if ENABLE_THUNDERBIRD
 SUBDIRS += thunderbird-extension
 endif
 
-# When the chooser work has been fixed up to use libbeagle, we can
-# reenable this directory.
-# SUBDIRS += chooser-fu
-
 EXTRA_DIST = 			\
 	HACKING			\
 	intltool-extract.in	\
