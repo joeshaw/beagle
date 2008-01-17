@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -121,12 +120,7 @@ namespace Lucene.Net.Search.Spans
 			return match.GetField();
 		}
 		
-        /// <summary>Returns a collection of all terms matched by this query.</summary>
-        /// <deprecated> use ExtractTerms instead
-        /// </deprecated>
-        /// <seealso cref="#ExtractTerms(Set)">
-        /// </seealso>
-        public override System.Collections.ICollection GetTerms()
+		public override System.Collections.ICollection GetTerms()
 		{
 			return match.GetTerms();
 		}
@@ -143,12 +137,7 @@ namespace Lucene.Net.Search.Spans
 			return buffer.ToString();
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            match.ExtractTerms(terms);
-        }
-		
-        public override Spans GetSpans(IndexReader reader)
+		public override Spans GetSpans(IndexReader reader)
 		{
 			return new AnonymousClassSpans(reader, this);
 		}
@@ -173,24 +162,5 @@ namespace Lucene.Net.Search.Spans
 				return this; // no clauses rewrote
 			}
 		}
-		
-        public  override bool Equals(System.Object o)
-        {
-            if (this == o)
-                return true;
-            if (!(o is SpanFirstQuery))
-                return false;
-			
-            SpanFirstQuery other = (SpanFirstQuery) o;
-            return this.end == other.end && this.match.Equals(other.match) && this.GetBoost() == other.GetBoost();
-        }
-		
-        public override int GetHashCode()
-        {
-            int h = match.GetHashCode();
-            h ^= ((h << 8) | ((int) (((uint) h) >> 25))); // reversible
-            h ^= System.Convert.ToInt32(GetBoost()) ^ end;
-            return h;
-        }
-    }
+	}
 }

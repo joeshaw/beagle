@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -23,7 +22,7 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link Directory} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMDirectory.java 351779 2005-12-02 17:37:50Z bmesser $
+	/// <version>  $Id: RAMDirectory.cs,v 1.6 2006/10/02 17:11:11 joeshaw Exp $
 	/// </version>
 	public sealed class RAMDirectory : Directory
 	{
@@ -102,11 +101,11 @@ namespace Lucene.Net.Store
 				// read current file
 				IndexInput is_Renamed = dir.OpenInput(files[i]);
 				// and copy to ram disk
-				long len = (int) is_Renamed.Length();
-				long readCount = 0;
+				int len = (int) is_Renamed.Length();
+				int readCount = 0;
 				while (readCount < len)
 				{
-					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len ? (int) (len - readCount) : BufferedIndexOutput.BUFFER_SIZE;
+					int toRead = readCount + BufferedIndexOutput.BUFFER_SIZE > len?len - readCount : BufferedIndexOutput.BUFFER_SIZE;
 					is_Renamed.ReadBytes(buf, 0, toRead);
 					os.WriteBytes(buf, toRead);
 					readCount += toRead;

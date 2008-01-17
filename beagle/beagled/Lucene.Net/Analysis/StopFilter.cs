@@ -58,15 +58,34 @@ namespace Lucene.Net.Analysis
 		/// <deprecated> Use {@link #StopFilter(TokenStream, Set)} instead
 		/// </deprecated>
 		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopTable, bool ignoreCase) 
-            : this(in_Renamed, new System.Collections.Hashtable(stopTable))
+            : this(in_Renamed, new System.Collections.Hashtable(stopTable), ignoreCase, 0)
 		{
 		}
 		
 		/// <summary> Construct a token stream filtering the given input.</summary>
-	
+		/// <param name="input">
+		/// </param>
+		/// <param name="stopWords">The set of Stop Words, as Strings.  If ignoreCase is true, all strings should be lower cased
+		/// </param>
+		/// <param name="ignoreCase">-Ignore case when stopping.  The stopWords set must be setup to contain only lower case words 
+		/// </param>
+		public StopFilter(TokenStream input, System.Collections.Hashtable stopWords, bool ignoreCase, int as_set_in_java) : base(input)
+		{
+			this.ignoreCase = ignoreCase;
+			this.stopWords = stopWords;
+		}
 		
 		/// <summary> Constructs a filter which removes words from the input
-	
+		/// TokenStream that are named in the Set.
+		/// It is crucial that an efficient Set implementation is used
+		/// for maximum performance.
+		/// 
+		/// </summary>
+		/// <seealso cref="MakeStopSet(java.lang.String[])">
+		/// </seealso>
+		public StopFilter(TokenStream in_Renamed, System.Collections.Hashtable stopWords, int as_set_in_java) : this(in_Renamed, stopWords, false)
+		{
+		}
 		/// <summary> Builds a Hashtable from an array of stop words,
 		/// appropriate for passing into the StopFilter constructor.
 		/// This permits this table construction to be cached once when
@@ -104,7 +123,7 @@ namespace Lucene.Net.Analysis
 		/// an Analyzer is constructed.
 		/// 
 		/// </summary>
-		/// <seealso cref="MakeStopSet(String[], boolean) passing false to ignoreCase">
+		/// <seealso cref="MakeStopSet(java.lang.String[], boolean) passing false to ignoreCase">
 		/// </seealso>
 		public static System.Collections.Hashtable MakeStopSet(System.String[] stopWords)
 		{

@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -32,15 +31,6 @@ namespace Lucene.Net.QueryParsers
 	{
 		private void  InitBlock()
 		{
-			System.IO.StreamWriter temp_writer;
-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
-			temp_writer.AutoFlush = true;
-			debugStream = temp_writer;
-		}
-		public System.IO.StreamWriter debugStream;
-		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
-		{
-			debugStream = ds;
 		}
 		private int JjStopStringLiteralDfa_3(int pos, long active0)
 		{
@@ -160,7 +150,7 @@ namespace Lucene.Net.QueryParsers
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << curChar;
 MatchLoop: 
 					do 
 					{
@@ -304,7 +294,7 @@ MatchLoop:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -480,7 +470,7 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -637,7 +627,7 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
 					do 
 					{
@@ -691,7 +681,7 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -723,7 +713,7 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -787,7 +777,7 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
 					do 
 					{
@@ -823,7 +813,7 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -842,7 +832,7 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -965,7 +955,7 @@ MatchLoop1:
 					ReInitRounds();
 				if (curChar < 64)
 				{
-					ulong l = ((ulong) 1L) << curChar;
+					ulong l = ((ulong) 1L) << curChar;
 MatchLoop1: 
 					do 
 					{
@@ -1019,7 +1009,7 @@ MatchLoop1:
 				}
 				else if (curChar < 128)
 				{
-					ulong l = ((ulong) 1L) << (curChar & 63);
+					ulong l = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -1051,7 +1041,7 @@ MatchLoop1:
 					int i1 = hiByte >> 6;
 					ulong l1 = ((ulong) 1L) << (hiByte & 63);
 					int i2 = (curChar & 0xff) >> 6;
-					ulong l2 = ((ulong) 1L) << (curChar & 63);
+					ulong l2 = ((ulong) 1L) << (curChar & 63);
 MatchLoop1: 
 					do 
 					{
@@ -1254,7 +1244,7 @@ MatchLoop1:
 				catch (System.IO.IOException e1)
 				{
 					EOFSeen = true;
-					error_after = curPos <= 1 ? "" : input_stream.GetImage();
+					error_after = curPos <= 1?"":input_stream.GetImage();
 					if (curChar == '\n' || curChar == '\r')
 					{
 						error_line++;
@@ -1266,7 +1256,7 @@ MatchLoop1:
 				if (!EOFSeen)
 				{
 					input_stream.Backup(1);
-					error_after = curPos <= 1 ? "" : input_stream.GetImage();
+					error_after = curPos <= 1?"":input_stream.GetImage();
 				}
 				throw new TokenMgrError(EOFSeen, curLexState, error_line, error_column, error_after, curChar, TokenMgrError.LEXICAL_ERROR);
 

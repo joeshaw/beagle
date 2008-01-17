@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -23,13 +22,13 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexInput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMInputStream.java 150537 2004-09-28 20:45:26Z cutting $
+	/// <version>  $Id: RAMInputStream.cs,v 1.3 2006/10/02 17:09:10 joeshaw Exp $
 	/// </version>
 	
 	class RAMInputStream : BufferedIndexInput, System.ICloneable
 	{
 		private RAMFile file;
-		private long pointer = 0;
+		private int pointer = 0;
 		private long length;
 		
 		public RAMInputStream(RAMFile f)
@@ -41,11 +40,11 @@ namespace Lucene.Net.Store
 		public override void  ReadInternal(byte[] dest, int destOffset, int len)
 		{
 			int remainder = len;
-			long start = pointer;
+			int start = pointer;
 			while (remainder != 0)
 			{
-				int bufferNumber = (int) (start / BUFFER_SIZE);
-				int bufferOffset = (int) (start % BUFFER_SIZE);
+				int bufferNumber = start / BUFFER_SIZE;
+				int bufferOffset = start % BUFFER_SIZE;
 				int bytesInBuffer = BUFFER_SIZE - bufferOffset;
 				int bytesToCopy = bytesInBuffer >= remainder?remainder:bytesInBuffer;
 				byte[] buffer = (byte[]) file.buffers[bufferNumber];
@@ -63,7 +62,7 @@ namespace Lucene.Net.Store
 		
 		public override void  SeekInternal(long pos)
 		{
-			pointer = pos;
+			pointer = (int) pos;
 		}
 		
 		public override long Length()

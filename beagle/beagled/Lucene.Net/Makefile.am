@@ -169,8 +169,6 @@ CSFILES =								\
 	$(srcdir)/Lucene.Net/Search/SortComparatorSource.cs \
 	$(srcdir)/Lucene.Net/Search/SortField.cs \
 	$(srcdir)/Lucene.Net/Search/TermQuery.cs \
-	$(srcdir)/Lucene.Net/Search/TopFieldDocCollector.cs \
-	$(srcdir)/Lucene.Net/Search/TopDocCollector.cs \
 	$(srcdir)/Lucene.Net/Search/TermScorer.cs \
 	$(srcdir)/Lucene.Net/Search/TopDocs.cs \
 	$(srcdir)/Lucene.Net/Search/TopFieldDocs.cs \

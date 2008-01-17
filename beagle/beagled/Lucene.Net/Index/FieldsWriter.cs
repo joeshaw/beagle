@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -54,14 +53,14 @@ namespace Lucene.Net.Index
 			indexStream.WriteLong(fieldsStream.GetFilePointer());
 			
 			int storedCount = 0;
-            foreach (Field field  in doc.Fields())
-            {
+	foreach(Field field in doc.Fields())
+	{
 				if (field.IsStored())
 					storedCount++;
 			}
 			fieldsStream.WriteVInt(storedCount);
 			
-			foreach (Field field in doc.Fields())
+			foreach(Field field in doc.Fields())
 			{
 				if (field.IsStored())
 				{
@@ -115,7 +114,6 @@ namespace Lucene.Net.Index
 		
 		private byte[] Compress(byte[] input)
 		{
-            // {{Aroush-2.0}} For .NET 2.0, replace this call to use the built-in compression support
             return SupportClass.CompressionSupport.Compress(input);
 		}
 	}

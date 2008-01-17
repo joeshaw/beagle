@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2005 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -244,18 +243,7 @@ namespace Lucene.Net.Search
 			return clone;
 		}
 		
-		
-        // inherit javadoc
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            for (int i = 0; i < disjuncts.Count; i++)
-            {
-                ((Query) disjuncts[i]).ExtractTerms(terms);
-            }
-        }
-		
-		
-        /// <summary>Prettyprint us.</summary>
+		/// <summary>Prettyprint us.</summary>
 		/// <param name="field">the field to which we are applied
 		/// </param>
 		/// <returns> a string that shows what we do, of the form "(disjunct1 | disjunct2 | ... | disjunctn)^boost"

@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -71,8 +70,8 @@ namespace Lucene.Net.Index
 		/// <summary>Adds field info for a Document. </summary>
 		public void  Add(Document doc)
 		{
-            foreach (Field field in doc.Fields())
-            {
+	foreach(Field field in doc.Fields())
+	{
 				Add(field.Name(), field.IsIndexed(), field.IsTermVectorStored(), field.IsStorePositionWithTermVector(), field.IsStoreOffsetWithTermVector(), field.GetOmitNorms());
 			}
 		}
@@ -228,16 +227,9 @@ namespace Lucene.Net.Index
 		
 		public int FieldNumber(System.String fieldName)
 		{
-			try
-			{
-				FieldInfo fi = FieldInfo(fieldName);
-				if (fi != null)
-					return fi.number;
-			}
-			catch (System.IndexOutOfRangeException ioobe)
-			{
-				return - 1;
-			}
+			FieldInfo fi = FieldInfo(fieldName);
+			if (fi != null)
+				return fi.number;
 			return - 1;
 		}
 		
@@ -256,21 +248,11 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public System.String FieldName(int fieldNumber)
 		{
-			FieldInfo fi = FieldInfo(fieldNumber);
-			if (fi != null)
-				return fi.name;
-			return "";
-
-			/*
-			try
-			{
-				return FieldInfo(fieldNumber).name;
-			}
-			catch (System.NullReferenceException)
-			{
+			FieldInfo info = FieldInfo(fieldNumber);
+			if (info == null)
 				return "";
-			}
-			*/
+			else
+				return info.name;
 		}
 		
 		/// <summary> Return the fieldinfo object referenced by the fieldNumber.</summary>
@@ -281,20 +263,11 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public FieldInfo FieldInfo(int fieldNumber)
 		{
-			if (fieldNumber > -1 && fieldNumber < byNumber.Count)
-				return (FieldInfo) byNumber[fieldNumber];
-			return null;
-
-			/*
-            try
+			if (fieldNumber < 0 || fieldNumber >= byNumber.Count)
 			{
-				return (FieldInfo) byNumber[fieldNumber];
+			    return null;
 			}
-			catch (System.ArgumentOutOfRangeException) // (System.IndexOutOfRangeException)
-			{
-				return null;
-			}
-			*/
+	                return (FieldInfo) byNumber[fieldNumber];
 		}
 		
 		public int Size()

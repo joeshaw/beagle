@@ -185,14 +185,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-            int h = BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
-            h ^= (lowerTerm != null ? lowerTerm.GetHashCode() : 0);
-            // reversible mix to make lower and upper position dependent and
-            // to prevent them from cancelling out.
-            h ^= ((h << 25) | (h >> 8));
-            h ^= (upperTerm != null ? upperTerm.GetHashCode() : 0);
-            h ^= (this.inclusive ? 0x2742E74A : 0);
-            return h;
-        }
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ (lowerTerm != null ? lowerTerm.GetHashCode():0) ^ (upperTerm != null?upperTerm.GetHashCode() : 0) ^ (this.inclusive ? 1 : 0);
+		}
 	}
 }

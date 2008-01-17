@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2005 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -288,6 +287,24 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		/// <summary> Deletes all documents containing <code>term</code>.
+		/// This is useful if one uses a document field to hold a unique ID string for
+		/// the document.  Then to delete such a document, one merely constructs a
+		/// term with the appropriate field and the unique ID string as its text and
+		/// passes it to this method.  Returns the number of documents deleted.
+		/// </summary>
+		/// <returns> the number of documents deleted
+		/// </returns>
+		/// <seealso cref="IndexReader.DeleteDocuments(Term)">
+		/// </seealso>
+		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <deprecated> Use {@link #DeleteDocuments(Term)} instead.
+		/// </deprecated>
+		public virtual int Delete(Term term)
+		{
+			return DeleteDocuments(term);
+		}
+		
 		/// <summary> Deletes the document numbered <code>docNum</code>.</summary>
 		/// <seealso cref="IndexReader.DeleteDocument(int)">
 		/// </seealso>
@@ -302,8 +319,18 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		/// <summary> Deletes the document numbered <code>docNum</code>.</summary>
+		/// <seealso cref="IndexReader.DeleteDocument(int)">
+		/// </seealso>
+		/// <throws>  IllegalStateException if the index is closed </throws>
+		/// <deprecated> Use {@link #DeleteDocument(int)} instead.
+		/// </deprecated>
+		public virtual void  Delete(int docNum)
+		{
+			DeleteDocument(docNum);
+		}
 		
-        /// <summary> Returns the number of documents currently in this index.</summary>
+		/// <summary> Returns the number of documents currently in this index.</summary>
 		/// <seealso cref="IndexWriter.DocCount()">
 		/// </seealso>
 		/// <seealso cref="IndexReader.NumDocs()">

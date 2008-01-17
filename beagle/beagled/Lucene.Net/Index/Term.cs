@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -120,30 +119,20 @@ namespace Lucene.Net.Index
 			return field + ":" + text;
 		}
 		
-        private Term(System.Runtime.Serialization.SerializationInfo in_Renamed, System.Runtime.Serialization.StreamingContext context)
+		private void  ReadObject(System.IO.BinaryReader in_Renamed)
+		{
+			// This function is private and is never been called, so this may not be a port issue.          // {{Aroush-1.4.3}}
+            // 'java.io.ObjectInputStream.defaultReadObject' was not converted                              // {{Aroush-1.4.3}}
+			// in_Renamed.defaultReadObject();                                                              // {{Aroush-1.4.3}}
+			field = String.Intern(field);
+		}
+		
+        // {{Aroush-1.4.3: or is this method is what we want (vs. the above)?!!
+        private void GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         {
-            System.Type thisType = this.GetType();
-            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
-            for (int i = 0 ; i < mi.Length; i++) 
-            {
-                System.Reflection.FieldInfo fi = (System.Reflection.FieldInfo) mi[i];
-                fi.SetValue(this, in_Renamed.GetValue(fi.Name, fi.FieldType));
-            }
-            field = String.Intern(field);
+            info.AddValue("field", field);
+            info.AddValue("text", text);
         }
-
-        public Term()
-        {
-        }
-
-        public void  GetObjectData(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        {
-            System.Type thisType = this.GetType();
-            System.Reflection.MemberInfo[] mi = System.Runtime.Serialization.FormatterServices.GetSerializableMembers(thisType, context);
-            for (int i = 0 ; i < mi.Length; i++) 
-            {
-                info.AddValue(mi[i].Name, ((System.Reflection.FieldInfo) mi[i]).GetValue(this));
-            }
-        }
+        // Aroush-1.4.3}}
     }
 }

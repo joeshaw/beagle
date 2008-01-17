@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -65,7 +64,7 @@ namespace Lucene.Net.Documents
 		/// {@link #Round(long, DateTools.Resolution)}
 		/// </param>
 		/// <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-		/// depeding on <code>resolution</code>; using UTC as timezone
+		/// depeding on <code>resolution</code>
 		/// </returns>
 		public static System.String TimeToString(long time, Resolution resolution)
 		{
@@ -310,8 +309,7 @@ namespace Lucene.Net.Documents
             return dt.Ticks;
         }
 		
-        /// <summary>Specifies the time granularity. </summary>
-        public class Resolution
+		public class Resolution
 		{
 			public static readonly Resolution YEAR = new Resolution("year");
 			public static readonly Resolution MONTH = new Resolution("month");

@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -48,12 +47,6 @@ namespace Lucene.Net.Documents
 		{
 		}
 		
-        /// <summary>Returns the number of fields in this document</summary>
-        /// Added as a helper for Lucene.Net
-        public int GetFieldsCount()
-        {
-            return fields.Count;
-        }
 		
 		/// <summary>Sets a boost factor for hits on any field of this document.  This value
 		/// will be multiplied into the score of all hits on this document.
@@ -178,7 +171,7 @@ namespace Lucene.Net.Documents
 		/// <summary>Returns an Enumeration of all the fields in a document. </summary>
 		public System.Collections.IEnumerable Fields()
 		{
-            return fields;
+	return fields;
 		}
 		
 		/// <summary> Returns an array of {@link Field}s with the given name.

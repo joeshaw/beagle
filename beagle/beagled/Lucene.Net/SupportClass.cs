@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -590,28 +589,16 @@ public class SupportClass
         /// <returns></returns>
         public static System.Single Parse(System.String s)
         {
-            System.Double res; 
-
-            if (s.EndsWith("f") || s.EndsWith("F"))
-            {
-                System.Double.TryParse(s.Substring(0, s.Length - 1), 
-                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
-                    null, out res);
-            }
-            else
-            {
-                System.Double.TryParse(s, 
-                    (System.Globalization.NumberStyles.Float | System.Globalization.NumberStyles.AllowThousands),
-                    null, out res);
-            }
-
             try
             {
-                return System.Convert.ToSingle(res);
+                if (s.EndsWith("f") || s.EndsWith("F"))
+                    return System.Single.Parse(s.Substring(0, s.Length - 1));
+                else
+                    return System.Single.Parse(s);
             }
-            catch (System.OverflowException)
+            catch(System.FormatException fex)
             {
-                return 0;
+                throw fex;					
             }
         }
     }

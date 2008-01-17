@@ -472,8 +472,7 @@ namespace Lucene.Net.QueryParsers
 					{
 						// phrase query:
 						MultiPhraseQuery mpq = new MultiPhraseQuery();
-                        mpq.SetSlop(phraseSlop);
-                        System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
+						System.Collections.ArrayList multiTerms = new System.Collections.ArrayList();
 						for (int i = 0; i < v.Count; i++)
 						{
 							t = (Lucene.Net.Analysis.Token) v[i];
@@ -561,42 +560,12 @@ namespace Lucene.Net.QueryParsers
 			}
 			try
 			{
-                System.DateTime d1;
-                System.DateTime d2;
-
-                try
-                {
-                    d1 = System.DateTime.Parse(part1, locale);
-                }
-                catch (System.Exception)
-                {
-                    d1 = System.DateTime.Parse(part1);
-                }
-                try
-                {
-                    d2 = System.DateTime.Parse(part2, locale);
-                }
-                catch (System.Exception)
-                {
-                    d2 = System.DateTime.Parse(part2);
-                }
-
-                if (inclusive)
-                {
-                    // The user can only specify the date, not the time, so make sure
-                    // the time is set to the latest possible time of that date to really
-                    // include all documents:
-                    System.Globalization.Calendar cal = new System.Globalization.GregorianCalendar();
-                    System.DateTime tempDate = d2;
-                    d2 = d2.AddHours(23 - tempDate.Hour);
-                    d2 = d2.AddMinutes(59 - tempDate.Minute);
-                    d2 = d2.AddSeconds(59 - tempDate.Second);
-                    d2 = d2.AddMilliseconds(999 - tempDate.Millisecond);
-                }
+                System.DateTime d1 = System.DateTime.Parse(part1, locale);
+                System.DateTime d2 = System.DateTime.Parse(part2, locale);
                 part1 = DateField.DateToString(d1);
                 part2 = DateField.DateToString(d2);
             }
-			catch (System.Exception)
+			catch (System.Exception e)
 			{
 			}
 			
@@ -1126,8 +1095,7 @@ label_1_brk: ;
 						float fms = fuzzyMinSim;
 						try
 						{
-							fms = (float) System.Single.Parse(fuzzySlop.image.Substring(1).Replace(".", 
-								System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
+							fms = (float) System.Single.Parse(fuzzySlop.image.Substring(1));
 						}
 						catch (System.Exception ignored)
 						{
@@ -1139,11 +1107,14 @@ label_1_brk: ;
 									throw new ParseException("Minimum similarity for a FuzzyQuery has to be between 0.0f and 1.0f !");
 							}
 						}
-						q = GetFuzzyQuery(field, termImage, fms);
+						if (fms == fuzzyMinSim)
+							q = GetFuzzyQuery(field, termImage);
+						else
+							q = GetFuzzyQuery(field, termImage, fms);
 					}
 					else
 					{
-						q = GetFieldQuery(field, termImage);
+						q = GetFieldQuery(field, analyzer, termImage);
 					}
 					break;
 				
@@ -1311,7 +1282,7 @@ label_1_brk: ;
 						goop2.image = DiscardEscapeChar(goop2.image);
 					}
 					
-					q = GetRangeQuery(field, goop1.image, goop2.image, false);
+					q = GetRangeQuery(field, analyzer, goop1.image, goop2.image, false);
 					break;
 				
 				case Lucene.Net.QueryParsers.QueryParserConstants.QUOTED: 

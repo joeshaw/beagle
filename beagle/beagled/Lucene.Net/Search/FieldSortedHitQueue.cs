@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -32,29 +31,14 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldSortedHitQueue.java 354819 2005-12-07 17:48:37Z yonik $
+	/// <version>  $Id: FieldSortedHitQueue.cs,v 1.3 2006/10/02 17:09:04 joeshaw Exp $
 	/// </version>
 	/// <seealso cref="Searcher.Search(Query,Filter,int,Sort)">
 	/// </seealso>
 	/// <seealso cref="FieldCache">
 	/// </seealso>
-	public class FieldSortedHitQueue : PriorityQueue
+	class FieldSortedHitQueue : PriorityQueue
 	{
-		internal static void Close(IndexReader reader) 
-		{ 
-			lock (Comparators.SyncRoot) 
-			{ 
-				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) Comparators[reader]; 
-				if (readerCache != null) 
-				{ 
-					readerCache.Clear(); 
-					readerCache = null;
-				} 
-
-				Comparators.Remove(reader);
-			} 
-		}
-
 		private class AnonymousClassScoreDocComparator : ScoreDocComparator
 		{
 			public AnonymousClassScoreDocComparator(int[] fieldOrder)
@@ -193,7 +177,7 @@ namespace Lucene.Net.Search
 		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
 		/// </param>
 		/// <throws>  IOException </throws>
-		public FieldSortedHitQueue(IndexReader reader, SortField[] fields, int size)
+		internal FieldSortedHitQueue(IndexReader reader, SortField[] fields, int size)
 		{
 			int n = fields.Length;
 			comparators = new ScoreDocComparator[n];
@@ -202,15 +186,7 @@ namespace Lucene.Net.Search
 			{
 				System.String fieldname = fields[i].GetField();
 				comparators[i] = GetCachedComparator(reader, fieldname, fields[i].GetType(), fields[i].GetLocale(), fields[i].GetFactory());
-				
-				if (comparators[i].SortType() == SortField.STRING)
-				{
-					this.fields[i] = new SortField(fieldname, fields[i].GetLocale(), fields[i].GetReverse());
-				}
-				else
-				{
-					this.fields[i] = new SortField(fieldname, comparators[i].SortType(), fields[i].GetReverse());
-				}
+				this.fields[i] = new SortField(fieldname, comparators[i].SortType(), fields[i].GetReverse());
 			}
 			Initialize(size);
 		}
@@ -310,9 +286,9 @@ namespace Lucene.Net.Search
 		internal static readonly System.Collections.IDictionary Comparators = new System.Collections.Hashtable();
 		
 		/// <summary>Returns a comparator if it is in the cache. </summary>
-		internal static ScoreDocComparator Lookup(IndexReader reader, System.String field, int type, System.Globalization.CultureInfo locale, System.Object factory)
+		internal static ScoreDocComparator Lookup(IndexReader reader, System.String field, int type, System.Object factory)
 		{
-			FieldCacheImpl.Entry entry = (factory != null) ? new FieldCacheImpl.Entry(field, factory) : new FieldCacheImpl.Entry(field, type, locale);
+			FieldCacheImpl.Entry entry = (factory != null) ? new FieldCacheImpl.Entry(field, factory) : new FieldCacheImpl.Entry(field, type);
 			lock (Comparators.SyncRoot)
 			{
 				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) Comparators[reader];
@@ -323,9 +299,9 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Stores a comparator into the cache. </summary>
-		internal static System.Object Store(IndexReader reader, System.String field, int type, System.Globalization.CultureInfo locale, System.Object factory, System.Object value_Renamed)
+		internal static System.Object Store(IndexReader reader, System.String field, int type, System.Object factory, System.Object value_Renamed)
 		{
-			FieldCacheImpl.Entry entry = (factory != null) ? new FieldCacheImpl.Entry(field, factory) : new FieldCacheImpl.Entry(field, type, locale);
+			FieldCacheImpl.Entry entry = (factory != null) ? new FieldCacheImpl.Entry(field, factory) : new FieldCacheImpl.Entry(field, type);
 			lock (Comparators.SyncRoot)
 			{
 				System.Collections.Hashtable readerCache = (System.Collections.Hashtable) Comparators[reader];
@@ -347,7 +323,7 @@ namespace Lucene.Net.Search
 				return Lucene.Net.Search.ScoreDocComparator_Fields.INDEXORDER;
 			if (type == SortField.SCORE)
 				return Lucene.Net.Search.ScoreDocComparator_Fields.RELEVANCE;
-			ScoreDocComparator comparator = Lookup(reader, fieldname, type, locale, factory);
+			ScoreDocComparator comparator = Lookup(reader, fieldname, type, factory);
 			if (comparator == null)
 			{
 				switch (type)
@@ -380,7 +356,7 @@ namespace Lucene.Net.Search
 						throw new System.SystemException("unknown field type: " + type);
 					
 				}
-				Store(reader, fieldname, type, locale, factory, comparator);
+				Store(reader, fieldname, type, factory, comparator);
 			}
 			return comparator;
 		}

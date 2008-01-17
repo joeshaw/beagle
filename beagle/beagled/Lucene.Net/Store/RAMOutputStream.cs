@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -23,13 +22,13 @@ namespace Lucene.Net.Store
 	/// <summary> A memory-resident {@link IndexOutput} implementation.
 	/// 
 	/// </summary>
-	/// <version>  $Id: RAMOutputStream.java 150537 2004-09-28 20:45:26Z cutting $
+	/// <version>  $Id: RAMOutputStream.cs,v 1.5 2006/10/02 17:11:11 joeshaw Exp $
 	/// </version>
 	
 	public class RAMOutputStream : BufferedIndexOutput
 	{
 		private RAMFile file;
-		private long pointer = 0;
+		private int pointer = 0;
 		
 		/// <summary>Construct an empty output buffer. </summary>
 		public RAMOutputStream() : this(new RAMFile())
@@ -84,8 +83,8 @@ namespace Lucene.Net.Store
             int bufferPos = 0;
             while (bufferPos != len)
             {
-                int bufferNumber = (int) (pointer / BUFFER_SIZE);
-                int bufferOffset = (int) (pointer % BUFFER_SIZE);
+                int bufferNumber = pointer / BUFFER_SIZE;
+                int bufferOffset = pointer % BUFFER_SIZE;
                 int bytesInBuffer = BUFFER_SIZE - bufferOffset;
                 int remainInSrcBuffer = len - bufferPos;
                 int bytesToCopy = bytesInBuffer >= remainInSrcBuffer ? remainInSrcBuffer : bytesInBuffer;
@@ -108,7 +107,7 @@ namespace Lucene.Net.Store
             if (pointer > file.length)
                 file.length = pointer;
 			
-            file.lastModified = System.DateTime.Now.Ticks;
+            file.lastModified = System.DateTime.UtcNow.Ticks;
 		}
 		
 		public override void  Close()
@@ -119,7 +118,7 @@ namespace Lucene.Net.Store
 		public override void  Seek(long pos)
 		{
 			base.Seek(pos);
-			pointer = pos;
+			pointer = (int) pos;
 		}
 		public override long Length()
 		{

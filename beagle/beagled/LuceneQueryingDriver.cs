@@ -562,7 +562,7 @@ namespace Beagle.Daemon {
 			foreach (Term term in term_list) {
 
 				double idf;
-				idf = similarity.Idf (reader.DocFreq (term), reader.MaxDoc ());
+				idf = similarity.Ldf (reader.DocFreq (term), reader.MaxDoc ());
 
 				int hit_count;
 				hit_count = hits_by_id.Count;
@@ -861,8 +861,8 @@ namespace Beagle.Daemon {
 
 				count++;
 
-				//doc = primary_searcher.Doc (match_index, fields_timestamp_uri);
-				doc = primary_searcher.Doc (match_index);
+				doc = primary_searcher.Doc (match_index, fields_timestamp_uri);
+
 				// Check the timestamp --- if we have already reached our
 				// limit, we might be able to reject it immediately.
 				string timestamp_str;

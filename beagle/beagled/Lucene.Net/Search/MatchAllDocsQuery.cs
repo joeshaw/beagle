@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2005 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -52,35 +51,36 @@ namespace Lucene.Net.Search
 			}
 			
 			internal IndexReader reader;
-            internal int id;
-			internal int maxId;
-			internal float score_Renamed_Field;
+			internal int count;
+			internal int maxDoc;
 			
-			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity, Weight w) : base(similarity)
+			internal MatchAllScorer(MatchAllDocsQuery enclosingInstance, IndexReader reader, Similarity similarity) : base(similarity)
 			{
-                InitBlock(enclosingInstance);
-                this.reader = reader;
-                id = - 1;
-                maxId = reader.MaxDoc() - 1;
-                score_Renamed_Field = w.GetValue();
-            }
-			
-			public override Explanation Explain(int doc)
-			{
-				return null; // not called... see MatchAllDocsWeight.explain()
+				InitBlock(enclosingInstance);
+				this.reader = reader;
+				count = - 1;
+				maxDoc = reader.MaxDoc();
 			}
 			
 			public override int Doc()
 			{
-				return id;
+				return count;
+			}
+			
+			public override Explanation Explain(int doc)
+			{
+				Explanation explanation = new Explanation();
+				explanation.SetValue(1.0f);
+				explanation.SetDescription("MatchAllDocsQuery");
+				return explanation;
 			}
 			
 			public override bool Next()
 			{
-				while (id < maxId)
+				while (count < (maxDoc - 1))
 				{
-					id++;
-					if (!reader.IsDeleted(id))
+					count++;
+					if (!reader.IsDeleted(count))
 					{
 						return true;
 					}
@@ -90,13 +90,13 @@ namespace Lucene.Net.Search
 			
 			public override float Score()
 			{
-				return score_Renamed_Field;
+				return 1.0f;
 			}
 			
 			public override bool SkipTo(int target)
 			{
-                id = target - 1;
-                return Next();
+				count = target - 1;
+				return Next();
 			}
 		}
 		
@@ -117,8 +117,6 @@ namespace Lucene.Net.Search
 				
 			}
 			private Searcher searcher;
-            private float queryWeight;
-            private float queryNorm;
 			
 			public MatchAllDocsWeight(MatchAllDocsQuery enclosingInstance, Searcher searcher)
 			{
@@ -138,37 +136,33 @@ namespace Lucene.Net.Search
 			
 			public virtual float GetValue()
 			{
-				return queryWeight;
+				return 1.0f;
 			}
 			
 			public virtual float SumOfSquaredWeights()
 			{
-                queryWeight = Enclosing_Instance.GetBoost();
-                return queryWeight * queryWeight;
-            }
+				return 1.0f;
+			}
 			
 			public virtual void  Normalize(float queryNorm)
 			{
-                this.queryNorm = queryNorm;
-                queryWeight *= this.queryNorm;
-            }
+			}
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new MatchAllScorer(enclosingInstance, reader, Enclosing_Instance.GetSimilarity(searcher), this);
+				return new MatchAllScorer(enclosingInstance, reader, Enclosing_Instance.GetSimilarity(searcher));
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				// explain query weight
 				Explanation queryExpl = new Explanation();
-				queryExpl.SetDescription("MatchAllDocsQuery, product of:");
-                queryExpl.SetValue(GetValue());
-                if (Enclosing_Instance.GetBoost() != 1.0f)
-                {
-                    queryExpl.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
-                }
-                queryExpl.AddDetail(new Explanation(queryNorm, "queryNorm"));
+				queryExpl.SetDescription("MatchAllDocsQuery:");
+				
+				Explanation boostExpl = new Explanation(Enclosing_Instance.GetBoost(), "boost");
+				if (Enclosing_Instance.GetBoost() != 1.0f)
+					queryExpl.AddDetail(boostExpl);
+				queryExpl.SetValue(boostExpl.GetValue());
 				
 				return queryExpl;
 			}
@@ -179,11 +173,7 @@ namespace Lucene.Net.Search
 			return new MatchAllDocsWeight(this, searcher);
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-        }
-		
-        public override System.String ToString(System.String field)
+		public override System.String ToString(System.String field)
 		{
 			System.Text.StringBuilder buffer = new System.Text.StringBuilder();
 			buffer.Append("MatchAllDocsQuery");

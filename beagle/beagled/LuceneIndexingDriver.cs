@@ -216,15 +216,15 @@ namespace Beagle.Daemon {
 				// For property changes, only secondary index is modified
 				if (indexable.Type != IndexableType.PropertyChange) {
 					term = new Term ("Uri", uri_str);
-					num_delete = primary_reader.DeleteDocuments (term);
-					secondary_reader.DeleteDocuments (term);
+					num_delete = primary_reader.Delete (term);
+					secondary_reader.Delete (term);
 				}
 
 				// When we delete an indexable, also delete any children.
 				// FIXME: Shouldn't we also delete any children of children, etc.?
 				term = new Term ("ParentUri", uri_str);
-				num_delete += primary_reader.DeleteDocuments (term);
-				secondary_reader.DeleteDocuments (term);
+				num_delete += primary_reader.Delete (term);
+				secondary_reader.Delete (term);
 
 				// If this is a strict removal (and not a deletion that
 				// we are doing in anticipation of adding something back),

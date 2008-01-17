@@ -1,10 +1,9 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Copyright 2004 The Apache Software Foundation
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -27,7 +26,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  yonik
 	/// </author>
-	/// <version>  $Id$
+	/// <version>  $Id: ConstantScoreQuery.cs,v 1.2 2006/10/02 17:09:02 joeshaw Exp $
 	/// </version>
 	[Serializable]
 	public class ConstantScoreQuery : Query
@@ -44,13 +43,7 @@ namespace Lucene.Net.Search
 			return this;
 		}
 		
-        public override void  ExtractTerms(System.Collections.Hashtable terms)
-        {
-            // OK to not add any terms when used for MultiSearcher,
-            // but may not be OK for highlighting
-        }
-		
-        [Serializable]
+		[Serializable]
 		protected internal class ConstantWeight : Weight
 		{
 			private void  InitBlock(ConstantScoreQuery enclosingInstance)
@@ -66,14 +59,14 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Similarity similarity;
+			private Searcher searcher;
 			private float queryNorm;
 			private float queryWeight;
 			
 			public ConstantWeight(ConstantScoreQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
+				this.searcher = searcher;
 			}
 			
 			public virtual Query GetQuery()
@@ -100,7 +93,7 @@ namespace Lucene.Net.Search
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new ConstantScorer(enclosingInstance, similarity, reader, this);
+				return new ConstantScorer(enclosingInstance, Enclosing_Instance.GetSimilarity(searcher), reader, this);
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
