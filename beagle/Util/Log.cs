@@ -208,20 +208,36 @@ namespace Beagle.Util {
 		/////////////////////////////////////////////////////////////////////////////////////////
 
 		class SimpleQueue {
-			string[] buffer = new string [4]; // Keep a buffer of last 4 big messages
+			int pos;		// next write position in this queue
+			int size;		// size of this SimpleQueue
+			string[] buffer;	// the actual queue
+			
+			// Keep a buffer of last 4 big messages by default
+			public SimpleQueue () : this (4) { }
+			
+			public SimpleQueue (int size)
+			{
+				this.size = size;
+				this.buffer = new string [size];
+				this.pos = 0;
+			}
 
+			// Return false if message is in the buffer.
+			// Otherwise add the message to the buffer and return true.
 			public bool Add (string msg)
 			{
-				if (buffer [0] == msg ||
-				    buffer [1] == msg ||
-				    buffer [2] == msg ||
-				    buffer [3] == msg)
-					return false;
-
-				buffer [0] = buffer [1];
-				buffer [1] = buffer [2];
-				buffer [2] = buffer [3];
-				buffer [3] = msg;
+				for (int i = 0; i < size; i ++) {
+					// null values are empty buffer positions
+					// which should be no problem to compare with msg
+					if (buffer [i] == msg)
+						return false;
+				}
+				
+				// write the new message to the current write position
+				buffer [pos] = msg;
+				
+				// move the write position to the next position
+				pos = (pos + 1) % size;
 
 				return true;
 			}
