@@ -9,13 +9,13 @@ msgstr ""
 "Project-Id-Version: beagle 0.12\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-19 23:53+0300\n"
-"PO-Revision-Date: 2005-06-20 00:58+0300\n"
+"PO-Revision-Date: 2008-01-18 21:59+0100\n"
 "Last-Translator: Enver ALTIN <ealtin@parkyeri.com>\n"
 "Language-Team: GNOME Türkiye <gnome-turk@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../Best/Best.cs:121
 msgid ""
@@ -151,7 +151,6 @@ msgstr "Boş"
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "{0} öğe içeriyor"
-msgstr[1] "{0} öğe içeriyor"
 
 #: ../Tiles/TileImLog.cs:76
 msgid "Send Mail"
