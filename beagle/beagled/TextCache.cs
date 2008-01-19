@@ -169,10 +169,11 @@ namespace Beagle.Daemon {
 							"  data     BLOB                     " +
 							")");
 			}
-			this.initCommands();
+			this.InitCommands ();
 		}
 
-		private void initCommands(){
+		private void InitCommands ()
+		{
 			InsertCommand = new SqliteCommand (this.connection);
 			InsertCommand.CommandText = "INSERT OR REPLACE INTO textcache_data (uri, filename, data) VALUES (@uri,@filename,@data)";
 			LookupPathCommand = new SqliteCommand (this.connection);
@@ -181,8 +182,6 @@ namespace Beagle.Daemon {
 			LookupDataCommand.CommandText = "SELECT filename, data FROM textcache_data WHERE uri=@uri";
 			DeleteCommand = new SqliteCommand (this.connection);
 			DeleteCommand.CommandText = "DELETE FROM textcache_data WHERE uri=@uri";
-
-			
 		}
 		private SqliteConnection Open (string db_filename)
 		{
