@@ -353,7 +353,7 @@ AC_ARG_ENABLE([internal-taglib],
 if test "x$enable_internal_taglib" != "xyes"; then
 	PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp >= 2.0, internal_taglib=no, internal_taglib=yes)
 	if test "x$enable_internal_taglib" = "xno" -a "x$internal_taglib" = "xyes"; then
-		AC_MSG_ERROR([taglib-sharp => 2.0 not found])
+		AC_MSG_ERROR([taglib-sharp >= 2.0 not found])
 	else
 		enable_internal_taglib=$internal_taglib
 	fi
