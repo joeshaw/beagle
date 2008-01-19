@@ -173,17 +173,15 @@ namespace Beagle.Daemon {
 		}
 
 		private void initCommands(){
-			InsertCommand = new SqliteCommand(this.connection);
+			InsertCommand = new SqliteCommand (this.connection);
 			InsertCommand.CommandText = "INSERT OR REPLACE INTO textcache_data (uri, filename, data) VALUES (@uri,@filename,@data)";
-			LookupPathCommand = new SqliteCommand(this.connection);
+			LookupPathCommand = new SqliteCommand (this.connection);
 			LookupPathCommand.CommandText = "SELECT filename FROM textcache_data WHERE uri=@uri";
-			LookupDataCommand = new SqliteCommand(this.connection);
+			LookupDataCommand = new SqliteCommand (this.connection);
 			LookupDataCommand.CommandText = "SELECT filename, data FROM textcache_data WHERE uri=@uri";
-			DeleteCommand = new SqliteCommand(this.connection);
+			DeleteCommand = new SqliteCommand (this.connection);
 			DeleteCommand.CommandText = "DELETE FROM textcache_data WHERE uri=@uri";
-			//InsertCommand.Parameters.Add("uri");
-			//InsertCommand.Parameters.Add("filename");
-			//InsertCommand.Parameters.Add("data");
+
 			
 		}
 		private SqliteConnection Open (string db_filename)
@@ -212,14 +210,11 @@ namespace Beagle.Daemon {
 		{
 			lock (connection) {
 				MaybeStartTransaction_Unlocked ();
-				InsertCommand.Parameters.AddWithValue("@uri",UriToString (uri));
-				InsertCommand.Parameters.AddWithValue("@filename",filename);
-				InsertCommand.Parameters.AddWithValue("@data", data);
+				InsertCommand.Parameters.AddWithValue ("@uri",UriToString (uri));
+				InsertCommand.Parameters.AddWithValue ("@filename",filename);
+				InsertCommand.Parameters.AddWithValue ("@data", data);
 				SqliteUtils.DoNonQuery (InsertCommand);
-//				SqliteUtils.DoNonQuery (connection,
-//							"INSERT OR REPLACE INTO textcache_data (uri, filename, data) VALUES (@uri,@filename,@data)",
-//							new string [] {"@uri", "@filename", "@data"},
-//							new object [] {UriToString (uri), filename, data});
+
 			}
 		}
 
@@ -235,14 +230,12 @@ namespace Beagle.Daemon {
 			//SqliteCommand command;
 			SqliteDataReader reader = null;
 			string path = null;
-			LookupPathCommand.Parameters.AddWithValue("@uri", UriToString(uri));
-			//command = NewCommand ("SELECT filename FROM textcache_data WHERE uri='{0}'", 
-			//                     UriToString (uri));
+			LookupPathCommand.Parameters.AddWithValue ("@uri", UriToString (uri));
 			reader = SqliteUtils.ExecuteReaderOrWait (LookupPathCommand);
 			if (SqliteUtils.ReadOrWait (reader))
 				path = reader.GetString (0);
 			reader.Close ();
-			//command.Dispose ();
+
 			
 			return path;
 		}
@@ -463,14 +456,12 @@ namespace Beagle.Daemon {
 		// If self_cache is true when called, then self_cache will be set upon return
 		public TextReader GetReader (Uri uri, ref bool self_cache)
 		{
-			//SqliteCommand command;
 			SqliteDataReader reader = null;
 			byte[] blob = null;
 			string filename = null;
 
 			lock (connection) {
-				//command = NewCommand ("SELECT filename, data FROM textcache_data WHERE uri='{0}'", 
-				//                      UriToString (uri));
+				
 				LookupDataCommand.Parameters.AddWithValue("@uri",UriToString (uri));
 				reader = SqliteUtils.ExecuteReaderOrWait (LookupDataCommand);
 				if (! SqliteUtils.ReadOrWait (reader)) {
@@ -483,7 +474,7 @@ namespace Beagle.Daemon {
 				if (! reader.IsDBNull (1))
 					blob = reader.GetValue (1) as byte [];
 				reader.Close ();
-				//command.Dispose ();
+
 			}
 
 			if (filename == SELF_CACHE_TAG) {

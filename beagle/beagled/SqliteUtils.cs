@@ -72,33 +72,23 @@ namespace Beagle.Util {
 			return DoNonQuery (connection, command_text, null, null);
 		}
 
-		public static int DoNonQuery ( SqliteCommand command)
+		public static int DoNonQuery (SqliteCommand command)
 		{
 			int ret = 0;
 			while (true) {
-					try {
-						ret = command.ExecuteNonQuery ();
-						break;
-					} catch (SqliteBusyException ex) {
-						Thread.Sleep (50);
-					} catch (Exception e) {
-						Log.Error (e, "SQL that caused the exception: {0}",command.CommandText);
-						throw;
-					}
+				try {
+					ret = command.ExecuteNonQuery ();
+					break;
+				} catch (SqliteBusyException ex) {
+					Thread.Sleep (50);
+				} catch (Exception e) {
+					Log.Error ( e, "SQL that caused the exception: {0}", command.CommandText);
+					throw;
 				}
+			}
 			return ret;
 		}
-		public static SqliteCommand QueryCommand (SqliteConnection connection, string where_format, params object [] where_args)
-		{
-			SqliteCommand command;
-			command = new SqliteCommand ();
-			command.Connection = connection;
-			command.CommandText =
-				"SELECT unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version " +
-				"FROM file_attributes WHERE " + 
-				String.Format (where_format, where_args);
-			return command;
-		}
+		
 
 		public static SqliteDataReader ExecuteReaderOrWait (SqliteCommand command)
 		{
