@@ -56,7 +56,9 @@ namespace Beagle.Daemon {
 		private SqliteConnection connection;
 		private BitArray path_flags;
 		private int transaction_count = 0;
-
+		public SqliteCommand ReadCommand;
+		public SqliteCommand InsertCommand;
+		public SqliteCommand DeleteCommand;
 		enum TransactionState {
 			None,
 			Requested,
@@ -181,6 +183,15 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
+			ReadCommand = new SqliteCommand(this.connection);
+			ReadCommand.CommandText = "SELECT unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version " +
+				"FROM file_attributes WHERE directory=@dir AND filename=@fname";
+			InsertCommand = new SqliteCommand(this.connection);
+			InsertCommand.CommandText = "INSERT OR REPLACE INTO file_attributes " +
+							" (unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version) " +
+							" VALUES (@unique_id, @directory, @filename, @last_mtime, @last_attrtime, @filter_name, @filter_version)";
+			DeleteCommand = new SqliteCommand(this.connection);
+			DeleteCommand.CommandText = "DELETE FROM file_attributes WHERE directory=@directory AND filename=@filename";
 		}
 
 		///////////////////////////////////////////////////////////////////
@@ -247,7 +258,7 @@ namespace Beagle.Daemon {
 			if (path != null && path != "/" && path.EndsWith ("/"))
 				path = path.TrimEnd ('/');
 
-			SqliteCommand command;
+			//SqliteCommand command;
 			SqliteDataReader reader;
 
 			if (! GetPathFlag (path))
@@ -260,16 +271,18 @@ namespace Beagle.Daemon {
 			string directory = FileSystem.GetDirectoryNameRootOk (path).Replace ("'", "''");
 			string filename = Path.GetFileName (path).Replace ("'", "''");
 			lock (connection) {
-				command = SqliteUtils.QueryCommand (connection,
-								    "directory='{0}' AND filename='{1}'",
-								    directory, filename);
-				reader = SqliteUtils.ExecuteReaderOrWait (command);
+				//command = SqliteUtils.QueryCommand (connection,
+								 //   "directory='{0}' AND filename='{1}'",
+								//    directory, filename);
+				ReadCommand.Parameters.AddWithValue ("@dir",directory);
+				ReadCommand.Parameters.AddWithValue ("@fname",filename);
+				reader = SqliteUtils.ExecuteReaderOrWait (ReadCommand);
 				
 				if (SqliteUtils.ReadOrWait (reader))
 					attr = GetFromReader (reader);
 					
 				reader.Close ();
-				command.Dispose ();
+				//command.Dispose ();
 			}
 
 			return attr;
@@ -292,19 +305,19 @@ namespace Beagle.Daemon {
 				if (filter_name == null)
 					filter_name = "";
 				filter_name = filter_name.Replace ("'", "''");
-
-				ret = SqliteUtils.DoNonQuery (connection,
-							"INSERT OR REPLACE INTO file_attributes " +
-							" (unique_id, directory, filename, last_mtime, last_attrtime, filter_name, filter_version) " +
-							" VALUES (@unique_id, @directory, @filename, @last_mtime, @last_attrtime, @filter_name, @filter_version)",
-							new string [] {"@unique_id", "@directory", "@filename", "@last_mtime", "@last_attrtime", "@filter_name", "@filter_version"},
-							new object [] {
+				string[] param= new string [] {"@unique_id", "@directory", "@filename", "@last_mtime", "@last_attrtime", "@filter_name", "@filter_version"};
+				object[] vals =	new object [] {
 								GuidFu.ToShortString (fa.UniqueId),
 								fa.Directory.Replace ("'", "''"), fa.Filename.Replace ("'", "''"),
 								StringFu.DateTimeToString (fa.LastWriteTime),
 								StringFu.DateTimeToString (fa.LastAttrTime),
 								filter_name,
-								fa.FilterVersion});
+								fa.FilterVersion};
+				for (int i=0; i<param.Length; i++){
+					InsertCommand.Parameters.AddWithValue (param[i], vals[i]);
+				}
+				ret = SqliteUtils.DoNonQuery (InsertCommand);
+				
 			}
 
 			return (ret != 0);
@@ -327,11 +340,9 @@ namespace Beagle.Daemon {
 
 				// If a transaction has been requested, start it now.
 				MaybeStartTransaction ();
-
-				SqliteUtils.DoNonQuery (connection,
-							"DELETE FROM file_attributes WHERE directory=@directory AND filename=@filename",
-							new string [] {"@directory", "@filename"},
-							new object [] {directory, filename});
+				DeleteCommand.Parameters.AddWithValue ("@directory", directory);
+				DeleteCommand.Parameters.AddWithValue ("@filename", filename);
+				SqliteUtils.DoNonQuery (DeleteCommand);
 			}
 		}
 
