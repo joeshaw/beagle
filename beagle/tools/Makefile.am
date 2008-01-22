@@ -129,6 +129,24 @@ $(SETTINGS_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(SETTINGS_WRAPPER)
 
+QT_SETTINGS_TARGET = SettingsQt.exe
+QT_SETTINGS_WRAPPER = beagle-settings-qt
+QT_SETTINGS_CSFILES = $(srcdir)/SettingsQt.cs
+QT_SETTINGS_UIFILE = $(srcdir)/beagle-settings-qt.ui
+QT_SETTINGS_UI_CSFILE = $(srcdir)/beagle-settings-qt.cs
+QT_SETTINGS_ASSEMBLIES = -r:../Util/Util.dll -pkg:qyoto
+QT_SETTINGS_ICON = $(srcdir)/kerry.png
+
+$(QT_SETTINGS_UI_CSFILE): $(QT_SETTINGS_UIFILE)
+	uics $(QT_SETTINGS_UIFILE) -o $@
+
+$(QT_SETTINGS_TARGET): $(QT_SETTINGS_CSFILES) $(QT_SETTINGS_UI_CSFILE) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(QT_SETTINGS_CSFILES) $(QT_SETTINGS_UI_CSFILE) $(ASSEMBLIES) $(QT_SETTINGS_ASSEMBLIES)
+
+$(QT_SETTINGS_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(QT_SETTINGS_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(QT_SETTINGS_WRAPPER)
+
 TARGETS = 				\
 	$(INFO_TARGET)			\
 	$(SHUTDOWN_TARGET)		\
@@ -137,6 +155,10 @@ TARGETS = 				\
 
 if ENABLE_GUI
 TARGETS += $(SETTINGS_TARGET)
+endif
+
+if ENABLE_QT
+TARGETS += $(QT_SETTINGS_TARGET)
 endif
 
 if ENABLE_WV1
@@ -157,6 +179,10 @@ endif
 
 if ENABLE_WV1
 BUILT_WRAPPERS += $(DOC_EXTRACTOR_WRAPPER)
+endif
+
+if ENABLE_QT
+BUILT_WRAPPERS += $(QT_SETTINGS_WRAPPER)
 endif
 
 PREBUILT_WRAPPERS =		\
@@ -237,6 +263,9 @@ EXTRA_DIST =				\
 	$(cron_SCRIPTS)			\
 	$(desktop_in_files)		\
 	$(desktop_DATA) 		\
+	$(QT_SETTINGS_CSFILES)		\
+	$(QT_SETTINGS_UIFILE)		\
+	$(QT_SETTINGS_ICON)		\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
@@ -250,6 +279,7 @@ CLEANFILES = 				\
 	$(CRAWL_WRAPPER)		\
 	$(desktop_DATA)		 	\
 	$(desktop_h_files)		\
+	$(QT_SETTINGS_UI_CSFILE)	\
 	settings.glade.h
 
 
