@@ -33,6 +33,8 @@ namespace Beagle.Util {
 	
 	public static class VersionFu {
 		
+		const string DefaultCopyright = "Copyright (C) 2004-2007 Novell, Inc.";
+
 		public static void PrintHeader (Assembly a)
 		{
 			// Retrieves name and description that are stored as assembly
@@ -44,6 +46,7 @@ namespace Beagle.Util {
 
 			AssemblyTitleAttribute title = (AssemblyTitleAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyTitleAttribute));
 			AssemblyDescriptionAttribute desc = (AssemblyDescriptionAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyDescriptionAttribute));
+			AssemblyCopyrightAttribute copyright = (AssemblyCopyrightAttribute) Attribute.GetCustomAttribute (a, typeof (AssemblyCopyrightAttribute));
 
 			StringBuilder text = new StringBuilder ();
 			
@@ -51,7 +54,7 @@ namespace Beagle.Util {
 				text.AppendFormat ("{0}: {1}.\n", title.Title, desc.Description);
 
 			text.Append ("Web page: http://www.beagle-project.org/\n");
-			text.Append ("Copyright (C) 2004-2007 Novell, Inc.\n");
+			text.Append (copyright == null ? DefaultCopyright : copyright.Copyright);
 
 			Console.WriteLine (text);
 		}
