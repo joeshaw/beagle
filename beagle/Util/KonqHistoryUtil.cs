@@ -43,8 +43,7 @@ namespace Beagle.Util {
 			reader.ReadLine ();
 
 			// line-2: URL
-			string _url = reader.ReadLine ();
-			url = System.Web.HttpUtility.UrlDecode (_url);
+			url = reader.ReadLine ();
 
 			// line-3: creation date
 			creation_date = reader.ReadLine ();

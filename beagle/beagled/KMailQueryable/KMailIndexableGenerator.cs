@@ -85,7 +85,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			if (num_file_in_dir == 0)
 				return;
 			indexer.Progress = (num_dir_crawled + ((double) num_file_in_dir_crawled / num_file_in_dir)) / num_dirs;
-			Log.Debug ("Progress {4} = ({0} + {1}/{2})/{3}", num_dir_crawled, num_file_in_dir_crawled, num_file_in_dir, num_dirs, current_dir.FullName);
+			//Log.Debug ("Progress {4} = ({0} + {1}/{2})/{3}", num_dir_crawled, num_file_in_dir_crawled, num_file_in_dir, num_dirs, current_dir.FullName);
 		}
 
 		private void AddDirectory (string _dir) {
