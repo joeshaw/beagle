@@ -17,6 +17,8 @@ At the time of this writing, we've hit the following three bugs in Beagle,
 all of which are fixed in the GTK+ copy and none of which are fixed in the
 upstream copy: #5241, #6824, #7496, #9544, #9560.
 
+xdgmimecache.c contains a fix for bugs.freedesktop.org #12512 which is not present in the GTK+ copy.
+
 Joe Shaw  <joeshaw@novell.com>
 12 Septermber 2006
 
