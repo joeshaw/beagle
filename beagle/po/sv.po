@@ -1,14 +1,14 @@
 # Swedish messages for beagle.
-# Copyright (C) 2005, 2006, 2007 Free Software Foundation, Inc.
-# Daniel Nylander <po@danielnylander.se>, 2006, 2007.
+# Copyright (C) 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008.
 # Fredrik Hedberg <fredrik@avafan.com>, 2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-28 19:57+0100\n"
-"PO-Revision-Date: 2007-12-28 19:57+0100\n"
+"POT-Creation-Date: 2008-01-25 18:33+0100\n"
+"PO-Revision-Date: 2008-01-25 18:33+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -149,60 +149,60 @@ msgstr "Söktjänsten verkar inte vara igång. Du kan starta den genom att klick
 msgid "Start search service"
 msgstr "Starta söktjänst"
 
-#: ../search/Search.cs:147
-#: ../search/Search.cs:270
+#: ../search/Search.cs:148
+#: ../search/Search.cs:276
 #: ../search/Tray/TrayIcon.cs:33
 msgid "Desktop Search"
 msgstr "Skrivbordssökning"
 
-#: ../search/Search.cs:167
+#: ../search/Search.cs:169
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Search.cs:188
+#: ../search/Search.cs:190
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Search.cs:247
+#: ../search/Search.cs:253
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Search.cs:248
+#: ../search/Search.cs:254
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
-#: ../search/Search.cs:289
+#: ../search/Search.cs:295
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivbordssökning: {0}"
 
-#: ../search/Search.cs:305
+#: ../search/Search.cs:311
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Visar {0} träff"
 msgstr[1] "Visar alla {0} träffar"
 
-#: ../search/Search.cs:307
+#: ../search/Search.cs:313
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Visar den första {0} av totalt {1} träffar"
 msgstr[1] "Visar de första {0} av totalt {1} träffar"
 
-#: ../search/Search.cs:555
+#: ../search/Search.cs:569
 msgid "There are computers near you running Beagle"
 msgstr "Det finns datorer nära dig som kör Beagle"
 
-#: ../search/Search.cs:556
+#: ../search/Search.cs:570
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Du kan välja att söka på andra datorer från \"Sök\"-menyn."
 
-#: ../search/Search.cs:628
+#: ../search/Search.cs:642
 msgid "Your data is being indexed"
 msgstr "Ditt data håller på att indexeras"
 
-#: ../search/Search.cs:629
+#: ../search/Search.cs:643
 msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
 msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
 
@@ -819,147 +819,151 @@ msgstr "Hjälp - Innehållsförteckning"
 msgid "About Desktop Search"
 msgstr "Om skrivbordssökning"
 
-#: ../search/UIManager.cs:114
+#: ../search/UIManager.cs:98
+msgid "Index information"
+msgstr "Information om index"
+
+#: ../search/UIManager.cs:117
 msgid "_All"
 msgstr "_Alla"
 
-#: ../search/UIManager.cs:124
+#: ../search/UIManager.cs:127
 msgid "_None"
 msgstr "_Ingen"
 
-#: ../search/UIManager.cs:138
+#: ../search/UIManager.cs:141
 msgid "A_pplications"
 msgstr "_Program"
 
-#: ../search/UIManager.cs:140
+#: ../search/UIManager.cs:143
 msgid "Search applications"
 msgstr "Sök program"
 
-#: ../search/UIManager.cs:144
+#: ../search/UIManager.cs:147
 msgid "_Contacts"
 msgstr "_Kontakter"
 
-#: ../search/UIManager.cs:146
+#: ../search/UIManager.cs:149
 msgid "Search contacts"
 msgstr "Sök kontakter"
 
-#: ../search/UIManager.cs:150
+#: ../search/UIManager.cs:153
 msgid "Ca_lendar events"
 msgstr "Ka_lenderhändelser"
 
-#: ../search/UIManager.cs:152
+#: ../search/UIManager.cs:155
 msgid "Search calendar events"
 msgstr "Sök kalenderhändelser"
 
-#: ../search/UIManager.cs:156
+#: ../search/UIManager.cs:159
 msgid "_Documents"
 msgstr "_Dokument"
 
-#: ../search/UIManager.cs:158
+#: ../search/UIManager.cs:161
 msgid "Search documents"
 msgstr "Sök dokument"
 
-#: ../search/UIManager.cs:162
+#: ../search/UIManager.cs:165
 msgid "Conve_rsations"
 msgstr "Konve_rsationer"
 
-#: ../search/UIManager.cs:164
+#: ../search/UIManager.cs:167
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Sök e-post- och snabbmeddelandeloggar"
 
-#: ../search/UIManager.cs:168
+#: ../search/UIManager.cs:171
 msgid "_Images"
 msgstr "_Bilder"
 
-#: ../search/UIManager.cs:170
+#: ../search/UIManager.cs:173
 msgid "Search images"
 msgstr "Sök bilder"
 
-#: ../search/UIManager.cs:174
+#: ../search/UIManager.cs:177
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:176
+#: ../search/UIManager.cs:179
 msgid "Search sound and video files"
 msgstr "Sök ljud- och videofiler"
 
-#: ../search/UIManager.cs:180
+#: ../search/UIManager.cs:183
 msgid "_Folders"
 msgstr "_Mappar"
 
-#: ../search/UIManager.cs:182
+#: ../search/UIManager.cs:185
 msgid "Search for folder names"
 msgstr "Sök efter mappnamn"
 
-#: ../search/UIManager.cs:186
+#: ../search/UIManager.cs:189
 msgid "_Websites"
 msgstr "_Webbplatser"
 
-#: ../search/UIManager.cs:188
+#: ../search/UIManager.cs:191
 msgid "Search website history"
 msgstr "Sök i webbplatshistorik"
 
-#: ../search/UIManager.cs:192
+#: ../search/UIManager.cs:195
 msgid "_News Feeds"
 msgstr "_Nyhetskanaler"
 
-#: ../search/UIManager.cs:194
+#: ../search/UIManager.cs:197
 msgid "Search news feeds"
 msgstr "Sök i nyhetskanaler"
 
-#: ../search/UIManager.cs:198
+#: ../search/UIManager.cs:201
 msgid "A_rchives"
 msgstr "A_rkiv"
 
-#: ../search/UIManager.cs:200
+#: ../search/UIManager.cs:203
 msgid "Search files in Archives"
 msgstr "Sök efter filer i arkiv"
 
-#: ../search/UIManager.cs:208
+#: ../search/UIManager.cs:211
 msgid "Sort by Date _Modified"
 msgstr "Sortera efter ändringsdatu_m"
 
-#: ../search/UIManager.cs:209
+#: ../search/UIManager.cs:212
 msgid "Sort the most-recently-modified matches first"
 msgstr "Sortera de senast ändrade träffarna först"
 
-#: ../search/UIManager.cs:212
+#: ../search/UIManager.cs:215
 msgid "Sort by _Name"
 msgstr "Sortera efter _namn"
 
-#: ../search/UIManager.cs:213
+#: ../search/UIManager.cs:216
 msgid "Sort matches by name"
 msgstr "Sortera träffar efter namn"
 
-#: ../search/UIManager.cs:216
+#: ../search/UIManager.cs:219
 msgid "Sort by _Relevance"
 msgstr "Sortera efter _relevans"
 
-#: ../search/UIManager.cs:217
+#: ../search/UIManager.cs:220
 msgid "Sort the best matches first"
 msgstr "Sortera de bästa träffarna först"
 
-#: ../search/UIManager.cs:224
+#: ../search/UIManager.cs:227
 msgid "_Local"
 msgstr "_Lokalt"
 
-#: ../search/UIManager.cs:226
+#: ../search/UIManager.cs:229
 msgid "Search only on local computer"
 msgstr "Sök endast på lokala datorn"
 
-#: ../search/UIManager.cs:230
+#: ../search/UIManager.cs:233
 msgid "_Neighborhood"
 msgstr "_Grannar"
 
-#: ../search/UIManager.cs:232
+#: ../search/UIManager.cs:235
 msgid "Search on computers near me"
 msgstr "Sök på datorer nära mig"
 
-#: ../search/UIManager.cs:240
+#: ../search/UIManager.cs:243
 msgid "Show Details"
 msgstr "Visa detaljer"
 
-#: ../search/UIManager.cs:380
+#: ../search/UIManager.cs:366
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
@@ -1310,259 +1314,6 @@ msgstr "Sökning och indexering"
 msgid "On This Computer"
 msgstr "På den här datorn"
 
-#: ../Util/F-Spot/Exif.cs:248
-msgid "Image Directory"
-msgstr "Bildkatalog"
-
-#: ../Util/F-Spot/Exif.cs:250
-msgid "Thumbnail Directory"
-msgstr "Miniatyrbildskatalog"
-
-#: ../Util/F-Spot/Exif.cs:252
-msgid "Exif Directory"
-msgstr "Exif-katalog"
-
-#: ../Util/F-Spot/Exif.cs:254
-msgid "GPS Directory"
-msgstr "GPS-katalog"
-
-#: ../Util/F-Spot/Exif.cs:256
-msgid "InterOperability Directory"
-msgstr "InterOperability-katalog"
-
-#: ../Util/F-Spot/Exif.cs:258
-msgid "Unknown Directory"
-msgstr "Okänd katalog"
-
-#: ../Util/F-Spot/IptcFile.cs:175
-msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr "IPTC Information Interchange Model (IIM) Versionsnummer"
-
-#: ../Util/F-Spot/IptcFile.cs:177
-msgid "OSI Destination routing information"
-msgstr "OSI Destination routing information"
-
-#: ../Util/F-Spot/IptcFile.cs:179
-msgid "IPTC file format"
-msgstr "IPTC-filformat"
-
-#: ../Util/F-Spot/IptcFile.cs:181
-msgid "Identifies the provider and product"
-msgstr "Identifierar leverantören och produkten"
-
-#: ../Util/F-Spot/IptcFile.cs:183
-msgid "A unique number identifying the envelope"
-msgstr "Ett unikt nummer som identifierar kuvertet"
-
-#: ../Util/F-Spot/IptcFile.cs:185
-msgid "A unique number"
-msgstr "Ett unikt nummer"
-
-#: ../Util/F-Spot/IptcFile.cs:187
-msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr "Kuverthanteringens prioritet, mellan 1 (mest brådskande) och 9 (minst brådskande)"
-
-#: ../Util/F-Spot/IptcFile.cs:189
-msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr "Året, månaden och dagen (ÅÅÅÅMMDD) som tjänsten skickade materialet"
-
-#: ../Util/F-Spot/IptcFile.cs:191
-msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr "Timmen, minuten och sekunden (HHMMSS+HHMM) som tjänsten skickade materialet"
-
-#: ../Util/F-Spot/IptcFile.cs:193
-msgid "The character set designation"
-msgstr "Teckenuppsättningens beteckning"
-
-#: ../Util/F-Spot/IptcFile.cs:195
-msgid "External globally unique object identifier"
-msgstr "Extern global unik objektidentifierare"
-
-#: ../Util/F-Spot/IptcFile.cs:200
-msgid "Abstract Relationship Method (ARM) identifier"
-msgstr "Identifierare för Abstract Relationship Method (ARM)"
-
-#: ../Util/F-Spot/IptcFile.cs:202
-msgid "Abstract Relationship Method (ARM) version number."
-msgstr "Versionsnummer för Abstract Relationship Method (ARM)."
-
-#: ../Util/F-Spot/IptcFile.cs:205
-msgid "Number identifying the IIM version this application record uses"
-msgstr "Nummer som identifierar IIM-versionen som detta objekt använder"
-
-#: ../Util/F-Spot/IptcFile.cs:207
-msgid "Object type reference"
-msgstr "Objekttypreferens"
-
-#: ../Util/F-Spot/IptcFile.cs:212
-msgid "Object attribute reference"
-msgstr "Objektattributreferens"
-
-#: ../Util/F-Spot/IptcFile.cs:218
-#: ../Util/F-Spot/IptcFile.cs:222
-msgid "Object name"
-msgstr "Objektnamn"
-
-#: ../Util/F-Spot/IptcFile.cs:220
-msgid "Status of the objectdata according to the provider"
-msgstr "Status för objektdata enligt leverantören"
-
-#: ../Util/F-Spot/IptcFile.cs:224
-msgid "Location within a city or area where the object originates"
-msgstr "Plats inom en stad eller område där objektet har sitt ursprung"
-
-#: ../Util/F-Spot/IptcFile.cs:227
-msgid "Name of the city the content is focussing on"
-msgstr "Namn på staden som innehållet fokuserar på"
-
-#: ../Util/F-Spot/IptcFile.cs:230
-msgid "Copyright information for"
-msgstr "Copyright-information för"
-
-#: ../Util/F-Spot/IptcFile.cs:233
-msgid "Full name of the country of the focus of the content"
-msgstr "Hela namn på landet som står i fokus för innehållet"
-
-#: ../Util/F-Spot/IptcFile.cs:236
-msgid "Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr "Två eller tre teckens ISO3166-kod för landet som står i fokus för innehållet"
-
-#: ../Util/F-Spot/IptcFile.cs:239
-msgid "Creator of the content"
-msgstr "Skapare av innehållet"
-
-#: ../Util/F-Spot/IptcFile.cs:242
-msgid "Provider of the object"
-msgstr "Leverantör av objektet"
-
-#: ../Util/F-Spot/IptcFile.cs:245
-msgid "The title of the author or creator"
-msgstr "Titel för upphovsman eller skapare"
-
-#: ../Util/F-Spot/IptcFile.cs:248
-msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
-msgstr "Personen involverad i skrivning, redigering eller korrigering av objektdata eller text/utdrag"
-
-#: ../Util/F-Spot/IptcFile.cs:252
-msgid "Headline of the content"
-msgstr "Rubrik för innehållet"
-
-#: ../Util/F-Spot/IptcFile.cs:255
-msgid "Instructions from the creator to the receiver not covered by other fields"
-msgstr "Instruktioner från skaparen till mottagaren som inte täckts av övriga fält"
-
-#: ../Util/F-Spot/IptcFile.cs:258
-msgid "Intellectual genre of the object"
-msgstr "Intellektuell genre för objektet"
-
-#: ../Util/F-Spot/IptcFile.cs:271
-msgid "Unknown IIM DataSet"
-msgstr "Okänd IIM DataSet"
-
-#: ../Util/F-Spot/MetadataStore.cs:46
-msgid "Creator"
-msgstr "Skapare"
-
-#: ../Util/F-Spot/MetadataStore.cs:47
-msgid "Title"
-msgstr "Titel"
-
-#: ../Util/F-Spot/MetadataStore.cs:48
-msgid "Copyright"
-msgstr "Copyright"
-
-#: ../Util/F-Spot/MetadataStore.cs:49
-msgid "Subject and Keywords"
-msgstr "Ämne och nyckelord"
-
-#: ../Util/F-Spot/MetadataStore.cs:50
-msgid "Compression"
-msgstr "Komprimering"
-
-#: ../Util/F-Spot/MetadataStore.cs:52
-msgid "Planar Configuration"
-msgstr "Planär inställning"
-
-#: ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "Orientering"
-
-#: ../Util/F-Spot/MetadataStore.cs:56
-msgid "Photometric Interpretation"
-msgstr "Fotometrisk tolkning"
-
-#: ../Util/F-Spot/MetadataStore.cs:58
-msgid "Resolution Unit"
-msgstr "Upplösningsenhet"
-
-#: ../Util/F-Spot/MetadataStore.cs:60
-msgid "Exposure Program"
-msgstr "Exponeringsprogram"
-
-#: ../Util/F-Spot/MetadataStore.cs:62
-msgid "Metering Mode"
-msgstr "Exponeringsmätningsläge"
-
-#: ../Util/F-Spot/MetadataStore.cs:64
-msgid "Exposure Mode"
-msgstr "Exponeringsläge"
-
-#: ../Util/F-Spot/MetadataStore.cs:66
-msgid "Custom Rendered"
-msgstr "Renderat på anpassat sätt"
-
-#: ../Util/F-Spot/MetadataStore.cs:68
-msgid "Components Configuration"
-msgstr "Komponentinställningar"
-
-#: ../Util/F-Spot/MetadataStore.cs:70
-msgid "Light Source"
-msgstr "Ljuskälla"
-
-#: ../Util/F-Spot/MetadataStore.cs:72
-msgid "Sensing Method"
-msgstr "Avkänningsmetod"
-
-#: ../Util/F-Spot/MetadataStore.cs:74
-msgid "Color Space"
-msgstr "Färgrymd"
-
-#: ../Util/F-Spot/MetadataStore.cs:76
-msgid "White Balance"
-msgstr "Vitbalans"
-
-#: ../Util/F-Spot/MetadataStore.cs:78
-msgid "Focal Plane Resolution Unit"
-msgstr "Fokalplanets upplösningsenhet"
-
-#: ../Util/F-Spot/MetadataStore.cs:80
-msgid "File Source Type"
-msgstr "Filkälltyp"
-
-#: ../Util/F-Spot/MetadataStore.cs:82
-msgid "Scene Capture Type"
-msgstr "Scenfångsttyp"
-
-#: ../Util/F-Spot/MetadataStore.cs:84
-msgid "Gain Control"
-msgstr "Förstärkningskontroll"
-
-#: ../Util/F-Spot/MetadataStore.cs:86
-msgid "Contrast"
-msgstr "Kontrast"
-
-#: ../Util/F-Spot/MetadataStore.cs:88
-msgid "Saturation"
-msgstr "Mättnad"
-
-#: ../Util/F-Spot/MetadataStore.cs:90
-msgid "Sharpness"
-msgstr "Skärpa"
-
-#: ../Util/F-Spot/MetadataStore.cs:92
-msgid "Scene Type"
-msgstr "Scentyp"
-
 #. Translators: Example output: Aug 9
 #: ../Util/StringFu.cs:121
 msgid "MMM d"
@@ -1656,6 +1407,149 @@ msgstr "Sök"
 msgid "Search for data on your desktop"
 msgstr "Sök efter data på ditt skrivbord"
 
+#~ msgid "Image Directory"
+#~ msgstr "Bildkatalog"
+#~ msgid "Thumbnail Directory"
+#~ msgstr "Miniatyrbildskatalog"
+#~ msgid "Exif Directory"
+#~ msgstr "Exif-katalog"
+#~ msgid "GPS Directory"
+#~ msgstr "GPS-katalog"
+#~ msgid "InterOperability Directory"
+#~ msgstr "InterOperability-katalog"
+#~ msgid "Unknown Directory"
+#~ msgstr "Okänd katalog"
+#~ msgid "IPTC Information Interchange Model (IIM) Version number"
+#~ msgstr "IPTC Information Interchange Model (IIM) Versionsnummer"
+#~ msgid "OSI Destination routing information"
+#~ msgstr "OSI Destination routing information"
+#~ msgid "IPTC file format"
+#~ msgstr "IPTC-filformat"
+#~ msgid "Identifies the provider and product"
+#~ msgstr "Identifierar leverantören och produkten"
+#~ msgid "A unique number identifying the envelope"
+#~ msgstr "Ett unikt nummer som identifierar kuvertet"
+#~ msgid "A unique number"
+#~ msgstr "Ett unikt nummer"
+#~ msgid ""
+#~ "The envelope handling priority between 1 (most urgent) and 9 (least "
+#~ "urgent)"
+#~ msgstr ""
+#~ "Kuverthanteringens prioritet, mellan 1 (mest brådskande) och 9 (minst "
+#~ "brådskande)"
+#~ msgid "The year month and day (CCYYMMDD) the service sent the material"
+#~ msgstr "Året, månaden och dagen (ÅÅÅÅMMDD) som tjänsten skickade materialet"
+#~ msgid ""
+#~ "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+#~ msgstr ""
+#~ "Timmen, minuten och sekunden (HHMMSS+HHMM) som tjänsten skickade "
+#~ "materialet"
+#~ msgid "The character set designation"
+#~ msgstr "Teckenuppsättningens beteckning"
+#~ msgid "External globally unique object identifier"
+#~ msgstr "Extern global unik objektidentifierare"
+#~ msgid "Abstract Relationship Method (ARM) identifier"
+#~ msgstr "Identifierare för Abstract Relationship Method (ARM)"
+#~ msgid "Abstract Relationship Method (ARM) version number."
+#~ msgstr "Versionsnummer för Abstract Relationship Method (ARM)."
+#~ msgid "Number identifying the IIM version this application record uses"
+#~ msgstr "Nummer som identifierar IIM-versionen som detta objekt använder"
+#~ msgid "Object type reference"
+#~ msgstr "Objekttypreferens"
+#~ msgid "Object attribute reference"
+#~ msgstr "Objektattributreferens"
+#~ msgid "Object name"
+#~ msgstr "Objektnamn"
+#~ msgid "Status of the objectdata according to the provider"
+#~ msgstr "Status för objektdata enligt leverantören"
+#~ msgid "Location within a city or area where the object originates"
+#~ msgstr "Plats inom en stad eller område där objektet har sitt ursprung"
+#~ msgid "Name of the city the content is focussing on"
+#~ msgstr "Namn på staden som innehållet fokuserar på"
+#~ msgid "Copyright information for"
+#~ msgstr "Copyright-information för"
+#~ msgid "Full name of the country of the focus of the content"
+#~ msgstr "Hela namn på landet som står i fokus för innehållet"
+#~ msgid ""
+#~ "Two or three letter ISO3166 code of the country of the focus of the "
+#~ "content"
+#~ msgstr ""
+#~ "Två eller tre teckens ISO3166-kod för landet som står i fokus för "
+#~ "innehållet"
+#~ msgid "Creator of the content"
+#~ msgstr "Skapare av innehållet"
+#~ msgid "Provider of the object"
+#~ msgstr "Leverantör av objektet"
+#~ msgid "The title of the author or creator"
+#~ msgstr "Titel för upphovsman eller skapare"
+#~ msgid ""
+#~ "The person involved in writing, editing or correcting the object data or "
+#~ "caption/abstract"
+#~ msgstr ""
+#~ "Personen involverad i skrivning, redigering eller korrigering av "
+#~ "objektdata eller text/utdrag"
+#~ msgid "Headline of the content"
+#~ msgstr "Rubrik för innehållet"
+#~ msgid ""
+#~ "Instructions from the creator to the receiver not covered by other fields"
+#~ msgstr ""
+#~ "Instruktioner från skaparen till mottagaren som inte täckts av övriga fält"
+#~ msgid "Intellectual genre of the object"
+#~ msgstr "Intellektuell genre för objektet"
+#~ msgid "Unknown IIM DataSet"
+#~ msgstr "Okänd IIM DataSet"
+#~ msgid "Creator"
+#~ msgstr "Skapare"
+#~ msgid "Title"
+#~ msgstr "Titel"
+#~ msgid "Copyright"
+#~ msgstr "Copyright"
+#~ msgid "Subject and Keywords"
+#~ msgstr "Ämne och nyckelord"
+#~ msgid "Compression"
+#~ msgstr "Komprimering"
+#~ msgid "Planar Configuration"
+#~ msgstr "Planär inställning"
+#~ msgid "Orientation"
+#~ msgstr "Orientering"
+#~ msgid "Photometric Interpretation"
+#~ msgstr "Fotometrisk tolkning"
+#~ msgid "Resolution Unit"
+#~ msgstr "Upplösningsenhet"
+#~ msgid "Exposure Program"
+#~ msgstr "Exponeringsprogram"
+#~ msgid "Metering Mode"
+#~ msgstr "Exponeringsmätningsläge"
+#~ msgid "Exposure Mode"
+#~ msgstr "Exponeringsläge"
+#~ msgid "Custom Rendered"
+#~ msgstr "Renderat på anpassat sätt"
+#~ msgid "Components Configuration"
+#~ msgstr "Komponentinställningar"
+#~ msgid "Light Source"
+#~ msgstr "Ljuskälla"
+#~ msgid "Sensing Method"
+#~ msgstr "Avkänningsmetod"
+#~ msgid "Color Space"
+#~ msgstr "Färgrymd"
+#~ msgid "White Balance"
+#~ msgstr "Vitbalans"
+#~ msgid "Focal Plane Resolution Unit"
+#~ msgstr "Fokalplanets upplösningsenhet"
+#~ msgid "File Source Type"
+#~ msgstr "Filkälltyp"
+#~ msgid "Scene Capture Type"
+#~ msgstr "Scenfångsttyp"
+#~ msgid "Gain Control"
+#~ msgstr "Förstärkningskontroll"
+#~ msgid "Contrast"
+#~ msgstr "Kontrast"
+#~ msgid "Saturation"
+#~ msgstr "Mättnad"
+#~ msgid "Sharpness"
+#~ msgstr "Skärpa"
+#~ msgid "Scene Type"
+#~ msgstr "Scentyp"
 #~ msgid "Unknown duration"
 #~ msgstr "Okänd speltid"
 #~ msgid "Open..."
