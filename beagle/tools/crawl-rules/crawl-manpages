@@ -1,4 +1,4 @@
-CRAWL_ENABLED="no"
+CRAWL_ENABLED="yes"
 
 CRAWL_INDEX_NAME="manpages"
 
