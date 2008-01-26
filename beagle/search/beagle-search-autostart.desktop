@@ -6,4 +6,3 @@ Type=Application
 StartupNotify=false
 X-KDE-autostart-phase=2
 X-KDE-autostart-after=panel
-X-GNOME-Autostart-enabled=false
