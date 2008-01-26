@@ -897,6 +897,17 @@ namespace Beagle.Daemon {
 			http_listener = null;
 		}
 
+		private void RunInThread ()
+		{
+			try {
+				this.Run ();
+			} catch (ThreadAbortException) {
+				Thread.ResetAbort ();
+				Log.Debug ("Breaking out of UnixListener -- shutdown requested");
+				Shutdown.WorkerFinished (this);
+			}
+		}
+
 		public void Start ()
 		{
 			if (!initialized)
@@ -917,15 +928,7 @@ namespace Beagle.Daemon {
 					ExceptionHandlingThread.Start (new ThreadStart (this.HttpRun));
 			}
 
-			ExceptionHandlingThread.Start (new ThreadStart (delegate () {
-							    try {
-								    this.Run ();
-							    } catch (ThreadAbortException) {
-								    Thread.ResetAbort ();
-							    	    Log.Debug ("Breaking out of UnixListener -- shutdown requested");
-							    	    Shutdown.WorkerFinished (this);
-							    }
-						    }));
+			ExceptionHandlingThread.Start (new ThreadStart (this.RunInThread));
 		}
 
 		private void StartWebserver ()
