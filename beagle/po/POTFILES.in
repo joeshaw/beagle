@@ -14,6 +14,7 @@ search/NotificationArea.cs
 search/ListCategory.cs
 search/WidgetFu.cs
 search/Pages/Base.cs
+search/Pages/IndexInfo.cs
 search/Pages/NoMatch.cs
 search/Pages/QuickTips.cs
 search/Pages/RootUser.cs
