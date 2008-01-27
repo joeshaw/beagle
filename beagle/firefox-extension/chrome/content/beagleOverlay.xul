@@ -14,6 +14,9 @@
 
 
 <!-- jslib sources used for executing beagle -->
+<script type="text/javascript">
+    var JS_LIB_DEBUG = false;
+</script>
 <script type="text/javascript" src="jslib/jslib.js"/>
 <script type="text/javascript" src="jslib/io/file.js"/>
 <script type="text/javascript" src="jslib/io/fileUtils.js"/>
