@@ -136,8 +136,10 @@ namespace Beagle.Daemon {
 		// Use introspection to find all classes that implement IQueryable, the construct
 		// associated Queryables objects.
 
-		static ArrayList queryables = new ArrayList ();
 		static Hashtable iqueryable_to_queryable = new Hashtable ();
+		static ICollection Queryables {
+			get { return iqueryable_to_queryable.Values; }
+		}
 
 		// (1) register themselves in AssemblyInfo.cs:IQueryableTypes and
 		// (2) has a QueryableFlavor attribute attached
@@ -171,7 +173,6 @@ namespace Beagle.Daemon {
 
 					if (iq != null) {
 						Queryable q = new Queryable (flavor, iq);
-						queryables.Add (q);
 						iqueryable_to_queryable [iq] = q;
 						++count;
 						type_accepted = true;
@@ -324,8 +325,6 @@ namespace Beagle.Daemon {
 			flavor.Domain = query_domain;
 
 			Queryable queryable = new Queryable (flavor, static_queryable);
-			queryables.Add (queryable);
-
 			iqueryable_to_queryable [static_queryable] = queryable;
 
 			return true;
@@ -386,7 +385,7 @@ namespace Beagle.Daemon {
 			ArrayList started_queryables = new ArrayList ();
 			ArrayList delayed_queryables = new ArrayList ();
 
-			ICollection queryables_to_start = queryables;
+			ICollection queryables_to_start = Queryables;
 			int last_count;
 
 			do {
@@ -420,7 +419,6 @@ namespace Beagle.Daemon {
 
 				foreach (Queryable q in queryables_to_start) {
 					Log.Info ("  - {0}", q.Name);
-					queryables.Remove (q);
 					iqueryable_to_queryable.Remove (q.IQueryable);
 				}
 			}
@@ -462,7 +460,7 @@ namespace Beagle.Daemon {
 
 		static public Queryable GetQueryable (string name)
 		{
-			foreach (Queryable q in queryables) {
+			foreach (Queryable q in Queryables) {
 				if (q.Name == name)
 					return q;
 			}
@@ -643,7 +641,7 @@ namespace Beagle.Daemon {
 			if (! result.WorkerStart (dummy_worker))
 				return;
 			
-			foreach (Queryable queryable in queryables)
+			foreach (Queryable queryable in Queryables)
 				DoOneQuery (queryable, query, result, null);
 			
 			result.WorkerFinished (dummy_worker);
@@ -678,7 +676,7 @@ namespace Beagle.Daemon {
 
 		static public IEnumerable GetIndexInformation ()
 		{
-			foreach (Queryable q in queryables)
+			foreach (Queryable q in Queryables)
 				yield return q.GetQueryableStatus ();
 		}
 
@@ -692,7 +690,7 @@ namespace Beagle.Daemon {
 				if (! queryables_started)
 					return true;
 
-				foreach (Queryable q in queryables) {
+				foreach (Queryable q in Queryables) {
 					QueryableStatus status = q.GetQueryableStatus ();
 
 					if (status == null)

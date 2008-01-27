@@ -39,7 +39,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Battery.cs			\
 	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/camel.cs              	\
-	$(srcdir)/CommandLineFu.cs		\
 	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
 	$(srcdir)/DelayedTextWriter.cs		\

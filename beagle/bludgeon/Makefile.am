@@ -32,7 +32,7 @@ CSFILES = 				\
 	$(srcdir)/Token.cs		\
 	$(srcdir)/EventTracker.cs	\
 	$(srcdir)/Action.cs		\
-					\
+	$(srcdir)/CommandLineFu.cs	\
 	$(srcdir)/FileSystemObject.cs	\
 	$(srcdir)/Bzip2FileObject.cs	\
 	$(srcdir)/DirectoryObject.cs	\
