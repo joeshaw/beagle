@@ -16,7 +16,6 @@ namespace Search.Tiles {
 		public DocumentationActivator () : base ()
 		{
 			AddSupportedFlavor (new HitFlavor (null, "File", null));
-			AddSupportedFlavor (new HitFlavor (null, "DocbookEntry", null));
 		}
 
 		public override bool Validate (Beagle.Hit hit)
@@ -24,7 +23,7 @@ namespace Search.Tiles {
 			if (! base.Validate (hit))
 				return false;
 			
-			if (hit.Type != "DocbookEntry" && hit ["beagle:FileType"] != "documentation")
+			if (hit ["beagle:FileType"] != "documentation")
 				return false;
 			
 			Weight += 2;
@@ -54,7 +53,7 @@ namespace Search.Tiles {
 			else
 				path = hit.Uri.LocalPath;
 
-			Description = Catalog.GetString ("Documentation");
+			Description = hit.GetFirstProperty ("dc:subject") ?? Catalog.GetString ("Documentation");
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)

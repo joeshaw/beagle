@@ -208,8 +208,10 @@ namespace Beagle.Filters {
 				return;
 			}
 
-			foreach (Match match in matches)
-				AddProperty (Beagle.Property.New ("dc:title", match.Groups ["title"].ToString ()));
+			foreach (Match match in matches) {
+				string title = ProcessMacros (match.Groups ["title"].ToString ());
+				AddProperty (Beagle.Property.New ("dc:title", title));
+			}
 		}
 
 		private string HandleSH (string line)
