@@ -36,3 +36,7 @@
 
 <!ENTITY beagle.bookmark.index.modified.label       "Index The Modified Bookmarks">
 
+<!ENTITY beagle.sidebar.title "Beagle Search History Sidebar">
+<!ENTITY beagle.sidebar.commandkey "B">
+<!ENTITY beagle.sidebar.modifierskey "shift accel">
+

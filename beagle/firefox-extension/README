@@ -29,6 +29,9 @@ Debug:
 Localization:
 	Add your localization files to chrome/locale/your-language/ 
 
+Sidebar:
+	Since 0.3.3, included is a sidebar to search in the indexed webpages and bookmarks. The search returns the latest 20 results and marks the bookmarked webpages. Clicking on the results will open the links in a new tab.
+
 Visit http://beagle-project.org/Browser_Extension for details.
 This extension was written as a part of Google Summer of Code project, 2007 by Tao Fei (filia.tao@gmail.com).
 

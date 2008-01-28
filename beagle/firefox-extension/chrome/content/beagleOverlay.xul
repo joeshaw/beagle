@@ -125,4 +125,30 @@
         <menuitem command="ShowPrefsCmd"/> 
    </menupopup>
 </statusbar> 
+
+<!-- Beagle Search History sidebar -->
+<menupopup id="viewSidebarMenu">
+    <menuitem key="key-view-sidebar" observes="ViewSidebar"  />
+</menupopup>
+
+<keyset id="mainKeyset">
+    <key
+	id="key-view-sidebar"
+	command="ViewSidebar"
+	key="&beagle.sidebar.commandkey;" 
+	modifiers="&beagle.sidebar.modifierskey;" />
+</keyset>
+
+<broadcasterset id="mainBroadcasterSet"> 
+    <broadcaster
+	id="ViewSidebar" 
+        label="&beagle.sidebar.title;"
+        autoCheck="false"
+        type="checkbox"
+        group="sidebar"
+        sidebarurl="chrome://beagle/content/sidebar.xul"
+        sidebartitle="&beagle.sidebar.title;"
+        oncommand="toggleSidebar('ViewSidebar');" />
+</broadcasterset>
+
 </overlay>
