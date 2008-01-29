@@ -20,6 +20,8 @@ HAP_CSFILES =						\
 
 include TagLib/TagLib.sources
 
+include 7zip/7zip.sources
+
 # Local copy of http://svn.myrealbox.com/viewcvs/trunk/mcs/class/Managed.Windows.Forms/System.Windows.Forms.RTF/
 SWF_RTF_CSFILES =						\
 	$(srcdir)/System.Windows.Forms.RTF/Charcode.cs		\
@@ -48,6 +50,7 @@ CSFILES = 				\
 	$(srcdir)/AssemblyInfo.cs	\
 	$(HAP_CSFILES)			\
 	$(SWF_RTF_CSFILES)		\
+	$(7ZIP_CSFILES)			\
 	$(srcdir)/FilterAbiword.cs	\
 	$(srcdir)/FilterArchive.cs	\
 	$(srcdir)/FilterAudio.cs	\

@@ -35,6 +35,7 @@ using Beagle.Daemon;
 
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpZipLib.BZip2;
+using Decoder = SevenZip.Compression.LZMA.Decoder;
 
 namespace Beagle.Filters {
 
@@ -86,6 +87,7 @@ namespace Beagle.Filters {
 			// FIXME: Hardcoded path is ok ?
 			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".gz", null, 1));
 			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".bz2", null, 1));
+			AddSupportedFlavor (new FilterFlavor ("file:///usr/share/man/*", ".lzma", null, 1));
 		}
 
 		protected void ParseManFile (TextReader reader)
@@ -240,7 +242,7 @@ namespace Beagle.Filters {
 
 		protected override void DoPullProperties ()
 		{
-			if (Extension == ".gz" || Extension == ".bz2")
+			if (Extension == ".gz" || Extension == ".bz2" || Extension == ".lzma")
 				ParseComressedManFile ();
 			else
 				ParseManFile (base.TextReader);
@@ -254,6 +256,8 @@ namespace Beagle.Filters {
 					stream = new GZipInputStream (Stream);
 				else if (Extension == ".bz2")
 					stream = new BZip2InputStream (Stream);
+				else if (Extension == ".lzma")
+					stream = GetLzmaStream (Stream);
 
 				compressed_reader = new StreamReader (stream);
 			} catch (Exception e) {
@@ -271,6 +275,38 @@ namespace Beagle.Filters {
 		{
 			if (compressed_reader != null)
 				compressed_reader.Close ();
+		}
+
+		private Stream GetLzmaStream (Stream in_stream)
+		{
+			// From LzmaAlone.cs
+			byte[] properties = new byte [5];
+			if (in_stream.Read (properties, 0, 5) != 5)
+				throw new Exception ("input .lzma is too short");
+
+			Decoder decoder = new Decoder ();
+			decoder.SetDecoderProperties (properties);
+
+			long out_size = 0;
+			for (int i = 0; i < 8; i++)
+			{
+				int v = in_stream.ReadByte ();
+				if (v < 0)
+					throw new Exception ("LZMA: Can't Read 1");
+				out_size |= ((long)(byte)v) << (8 * i);
+			}
+			long compressed_size = in_stream.Length - in_stream.Position;
+
+			// FIXME: Man pages are small enough to use a MemoryStream to store the
+			// entire uncompressed file.
+			// Still, a proper stream based approach would be good. Unfortunately,
+			// LZMA does not provide a streaming interface. Current hacks involve
+			// a separate synchronized thread.
+			MemoryStream out_stream = new MemoryStream ((int) out_size); // outsize is long but this constructor is resizable
+			decoder.Code (in_stream, out_stream, compressed_size, out_size, null);
+			//Log.Debug ("Decoded {0} bytes to {1} bytes", compressed_size, out_size);
+			out_stream.Position = 0;
+			return out_stream;
 		}
 	}
 }
