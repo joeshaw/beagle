@@ -229,7 +229,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				}
 
 				this.mbox_stream = new GMime.StreamFs (this.mbox_fd);
-				this.mbox_stream.Seek ((int) this.MboxLastOffset);
+				this.mbox_stream.Seek (this.MboxLastOffset);
 				this.mbox_parser = new GMime.Parser (this.mbox_stream);
 				this.mbox_parser.ScanFrom = true;
 
