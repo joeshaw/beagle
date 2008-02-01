@@ -77,11 +77,6 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void IndexSourceGroup (SourceGroup group, bool all_items)
 		{
-			if (group.BaseUri.StartsWith ("webcal://")) {
-				Logger.Log.Warn ("Indexing of webcal items temporarily disabled");
-				return;
-			}
-
 			group.SourceAdded += OnSourceAdded;
 			group.SourceRemoved += OnSourceRemoved;
 
