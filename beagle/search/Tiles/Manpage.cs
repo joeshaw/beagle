@@ -1,5 +1,5 @@
 //
-// Documentation.cs
+// Manpage.cs
 //
 // Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
 //
@@ -11,9 +11,9 @@ using Beagle.Util;
 
 namespace Search.Tiles {
 
-	public class DocumentationActivator : TileActivator {
+	public class ManpageActivator : TileActivator {
 
-		public DocumentationActivator () : base ()
+		public ManpageActivator () : base ()
 		{
 			AddSupportedFlavor (new HitFlavor (null, "File", null));
 		}
@@ -33,15 +33,15 @@ namespace Search.Tiles {
 
 		public override Tile BuildTile (Beagle.Hit hit, Beagle.Query query)
 		{
-			return new Documentation (hit, query);
+			return new Manpage (hit, query);
 		}
 	}
 
-	public class Documentation : TileTemplate {
+	public class Manpage : TileTemplate {
 
 		string path = null;
 
-		public Documentation (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
+		public Manpage (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
 			if (! String.IsNullOrEmpty (hit.GetFirstProperty ("dc:title")))
 				Title = hit.GetFirstProperty ("dc:title");
@@ -53,7 +53,7 @@ namespace Search.Tiles {
 			else
 				path = hit.Uri.LocalPath;
 
-			Description = hit.GetFirstProperty ("dc:subject") ?? Catalog.GetString ("Documentation");
+			Description = hit.GetFirstProperty ("dc:subject") ?? Catalog.GetString ("Manual page");
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)

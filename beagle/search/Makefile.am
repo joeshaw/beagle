@@ -61,7 +61,7 @@ TILES = 					\
 	$(srcdir)/Tiles/CApplet.cs		\
 	$(srcdir)/Tiles/Calendar.cs		\
 	$(srcdir)/Tiles/Contact.cs		\
-	$(srcdir)/Tiles/Documentation.cs	\
+	$(srcdir)/Tiles/Docbook.cs		\
 	$(srcdir)/Tiles/File.cs			\
 	$(srcdir)/Tiles/Folder.cs		\
 	$(srcdir)/Tiles/HitFlavor.cs		\
@@ -69,6 +69,7 @@ TILES = 					\
 	$(srcdir)/Tiles/Image.cs		\
 	$(srcdir)/Tiles/MailMessage.cs		\
 	$(srcdir)/Tiles/MailAttachment.cs	\
+	$(srcdir)/Tiles/Manpage.cs		\
 	$(srcdir)/Tiles/Note.cs			\
 	$(srcdir)/Tiles/Presentation.cs		\
 	$(srcdir)/Tiles/RSSFeed.cs		\
