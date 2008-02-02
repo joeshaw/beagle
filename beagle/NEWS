@@ -1,3 +1,70 @@
+Version 0.3.3
+2 February 2008
+
+* Prevent few potential crashes in EvolutionDataServer backend.
+
+* Fix a null reference exception in imlogviewer when no buddy alias is set.
+
+* Fix beagle-search to allow filetype: queries.
+
+* Fix filtering of media files by Totem and MPlayer.
+
+* Fix the URIs in Konqueror web history backend to be of the right form. Also prevent it from flooding the buffer cache during initial crawling.
+
+* Fix autostarting of beagle-search in Gnome (fixes #507786).
+
+* Fix a potential crash in EvolutionMail backend due to an incorrect and obsolete type casting (merge patch from Debian).
+
+* Disable building static indexes for all the static indexes (merge patch from Debian).
+
+* xdgmimecache.c contained a fix for bugs.freedesktop.org #12512 which is not present in the GTK+ copy. Revert the change that removed the fix.
+
+* Add a view in beagle-search to show the current index information.
+
+* Add a new tile in beagle-searcj for manpages. Several fixes to the documentation tile as well. Searching documentation is disabled by default but can be enabled by passing --search-docs to beagle-search.
+
+* Add an LZMA (7zip) based filter for lzma compressed man pages.
+
+* Prevent beagle log manager from printing the same exception repeatedly. Instead only print the first line followed by a "(Repeated)". This will make beagle go easy with the log file size.
+
+* Add a Qt UI for beagle-settings using Qyoto.
+
+* Add an advanced query syntax "inuri:" to match data with query word in the uri. The implementation is backend specific and usually relevent for web history and bookmark backends.
+
+* A partial implementation of "inuri:" for the filesystem backend to query for files in a particular directory (not recurive). The option to inuri: could either be a word in the name of the directory or the file:/// uri of the directory. Live queries (where a new directory is created that matches the inuri value) are not supported for inuri queries against the filesystem backend.
+
+* Add a firefox sidebar to the firefox-beagle extension. The sidebar will allow querying in indexed webpages and bookmarks. The sidebar requires the web interface to be enabled (for querying from local machine).
+
+* Use Sqlite prepared statements in textcache and file attribute databases.
+
+* Add configure options to control whether to always use the internal taglib-sharp or an external taglib-sharp. Useful for source based distributions.
+
+* Use "--indexing-delay -1" as an option to start beagled in query only mode.
+
+* Add an environment variable BEAGLE_FORCE_GC to do a forceful collection in beagled (disabled by default).
+
+* Enable system-wide manpage index.
+
+* Port beagle to LINGUAS (fixes #510172).
+
+* Translations:
+  - Swedish (Daniel Nylander)
+  - Spanish (Jorge Gonzalez)
+  - Polish (Wadim Dziedzic)
+  - Occitan (Yannig Marchegay)
+  - Hebrew (Rosseta)
+  - Japanese (Takeshi AIHANA)
+  - Turkish (Gil Forcada)
+  - Arabic (Khaled Hosny)
+  - Italian (Gianvito Cavasoli)
+
+Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin Kubasik, Joe Shaw, Nirbheek Chauhan and Enrico Minack.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_3/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.2
 27 December 2007
 

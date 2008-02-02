@@ -1,4 +1,974 @@
 ------------------------------------------------------------------------
+r4440 | dbera | 2008-02-02 11:25:03 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+   M /trunk/beagle/firefox-extension/install.rdf
+
+Make the firefox extension also store a tokenized form of the URL. Make the IndexingService backend treat any text property with the name beagle:inuri for inuri: queries. Up the firefox extension version.
+
+------------------------------------------------------------------------
+r4439 | dbera | 2008-02-02 10:30:25 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/KonqHistoryQueryable/KonqQueryable.cs
+
+Bump the version of KonqHistory backend since now URIs are stored in the right format.
+
+------------------------------------------------------------------------
+r4438 | llipka | 2008-02-02 10:02:29 -0500 (Sat, 02 Feb 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/Tiles/AssemblyInfo.cs
+   A /trunk/beagle/search/Tiles/Docbook.cs
+   D /trunk/beagle/search/Tiles/Documentation.cs
+   A /trunk/beagle/search/Tiles/Manpage.cs (from /trunk/beagle/search/Tiles/Documentation.cs:4429)
+
+Add a docbook tile and move the manpage tile. Searching documentation is still disabled by default and can be enabled by passing --search-docs option to beagle-search.
+
+
+------------------------------------------------------------------------
+r4437 | dbera | 2008-02-01 18:01:11 -0500 (Fri, 01 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionDataServerQueryable/SourcesHandler.cs
+
+Varadhan informed me that the leak in EDS is about to be fixed and will be available in the next point release. So, re-enable webcal indexing.
+
+------------------------------------------------------------------------
+r4436 | lferrett | 2008-02-01 03:25:23 -0500 (Fri, 01 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/it.po
+
+2008-02-01  Luca Ferretti  <elle.uca@libero.it>
+
+	* it.po: Updated Italian translation by Gianvito Cavasoli.
+
+
+------------------------------------------------------------------------
+r4435 | djihed | 2008-01-29 03:15:26 -0500 (Tue, 29 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ar.po
+
+Updated Arabic Translation by Khaled Hosny. 
+------------------------------------------------------------------------
+r4434 | dbera | 2008-01-29 00:20:51 -0500 (Tue, 29 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/crawl-rules/crawl-manpages
+
+Index lzma manpages in the system wide manpage index.
+
+------------------------------------------------------------------------
+r4433 | dbera | 2008-01-28 23:30:15 -0500 (Mon, 28 Jan 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/Filters/7zip/COPYING
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/LzmaAlone.cs
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/LzmaAlone.csproj
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/LzmaAlone.sln
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/LzmaBench.cs
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/Properties
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/Properties/AssemblyInfo.cs
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/Properties/Resources.cs
+   A /trunk/beagle/Filters/7zip/Compress/LzmaAlone/Properties/Settings.cs
+
+Add these extra files useful for reference. Also add a COPYING file for the special license under which LZMA SDK is used (unmodified).
+
+------------------------------------------------------------------------
+r4432 | dbera | 2008-01-28 23:08:08 -0500 (Mon, 28 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/COPYING
+   A /trunk/beagle/Filters/7zip
+   A /trunk/beagle/Filters/7zip/7zip.sources
+   A /trunk/beagle/Filters/7zip/Common
+   A /trunk/beagle/Filters/7zip/Common/CRC.cs
+   A /trunk/beagle/Filters/7zip/Common/CommandLineParser.cs
+   A /trunk/beagle/Filters/7zip/Common/InBuffer.cs
+   A /trunk/beagle/Filters/7zip/Common/OutBuffer.cs
+   A /trunk/beagle/Filters/7zip/Compress
+   A /trunk/beagle/Filters/7zip/Compress/LZ
+   A /trunk/beagle/Filters/7zip/Compress/LZ/IMatchFinder.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZ/LzBinTree.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZ/LzInWindow.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZ/LzOutWindow.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZMA
+   A /trunk/beagle/Filters/7zip/Compress/LZMA/LzmaBase.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZMA/LzmaDecoder.cs
+   A /trunk/beagle/Filters/7zip/Compress/LZMA/LzmaEncoder.cs
+   A /trunk/beagle/Filters/7zip/Compress/RangeCoder
+   A /trunk/beagle/Filters/7zip/Compress/RangeCoder/RangeCoder.cs
+   A /trunk/beagle/Filters/7zip/Compress/RangeCoder/RangeCoderBit.cs
+   A /trunk/beagle/Filters/7zip/Compress/RangeCoder/RangeCoderBitTree.cs
+   A /trunk/beagle/Filters/7zip/ICoder.cs
+   M /trunk/beagle/Filters/FilterMan.cs
+   M /trunk/beagle/Filters/Makefile.am
+
+Add LZMA (7zip) based lzma-compressed man page indexer. Useful for mandriva users.
+
+------------------------------------------------------------------------
+r4431 | dbera | 2008-01-28 21:17:16 -0500 (Mon, 28 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/crawl-rules/crawl-applications
+   M /trunk/beagle/tools/crawl-rules/crawl-windows
+
+Disable building static indexes when on battery. We already do this for most static indexes.
+
+------------------------------------------------------------------------
+r4430 | dbera | 2008-01-28 21:14:19 -0500 (Mon, 28 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs
+
+Remove an obsolete and incorrect type-casting.
+
+------------------------------------------------------------------------
+r4429 | llipka | 2008-01-28 07:17:40 -0500 (Mon, 28 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/FilterMan.cs
+   M /trunk/beagle/search/Tiles/Documentation.cs
+
+More fixes to the man filter and tile.
+------------------------------------------------------------------------
+r4428 | dbera | 2008-01-27 20:11:53 -0500 (Sun, 27 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/README
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.xul
+   A /trunk/beagle/firefox-extension/chrome/content/beagleSearch.js
+   A /trunk/beagle/firefox-extension/chrome/content/sidebar.xul
+   M /trunk/beagle/firefox-extension/chrome/locale/en-US/beagle.dtd
+   A /trunk/beagle/firefox-extension/chrome/skin/classic/sidebar.css
+
+It does not make sense if apps can only submit data for indexing but cannot search in the submitted data. Add a simple sidebar to search the indexed webpages and bookmarks. libbeagle requires a glib mainloop to run and I am not sure firefox allows another mainloop right now, so instead use the webinterface. As a side-effect, if you enable NetworkService backend then you can search your webhistory and bookmarks from anywhere in the internet (this is kind of scary, I have to remember to disable indexing certain pages from now on).
+
+------------------------------------------------------------------------
+r4427 | dbera | 2008-01-27 18:55:07 -0500 (Sun, 27 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.xul
+   M /trunk/beagle/firefox-extension/chrome/content/beaglePrefs.xul
+
+Silence Jslib.
+
+------------------------------------------------------------------------
+r4426 | dbera | 2008-01-27 11:21:21 -0500 (Sun, 27 Jan 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/Util/CommandLineFu.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/beagled/QueryDriver.cs
+   A /trunk/beagle/bludgeon/CommandLineFu.cs (from /trunk/beagle/Util/CommandLineFu.cs:4412)
+   M /trunk/beagle/bludgeon/Makefile.am
+
+Remove redundant variable from QueryDriver and move CommandLineFu to bludgeon since no one else uses  it. We should start using NDesk.Options or some generic command line parsing library, all our tools   have separate, different and hacked up command line parsing.
+
+------------------------------------------------------------------------
+r4425 | jorgegonz | 2008-01-27 11:19:02 -0500 (Sun, 27 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4424 | dbera | 2008-01-27 10:40:11 -0500 (Sun, 27 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+
+Remove obsolete code.
+
+------------------------------------------------------------------------
+r4420 | dbera | 2008-01-26 17:18:10 -0500 (Sat, 26 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/crawl-rules/crawl-manpages
+
+Enable system wide manpage index.
+
+------------------------------------------------------------------------
+r4419 | dbera | 2008-01-26 17:16:05 -0500 (Sat, 26 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/POTFILES.in
+
+Add IndexInfo page to potfiles.
+
+------------------------------------------------------------------------
+r4418 | joeshaw | 2008-01-26 14:53:42 -0500 (Sat, 26 Jan 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/Server.cs
+
+Move code which handles ThreadAbortException into its own named method
+from an anonymous method, so that you get meaningful names in the
+logs if it needs to join that thread.
+------------------------------------------------------------------------
+r4417 | joeshaw | 2008-01-26 14:28:29 -0500 (Sat, 26 Jan 2008) | 6 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Re-enable setting of Hidden=true in the user's local autostart file,
+since it looks like the gnome-session bug was fixed in 2.19.2.
+However, make a note of it in a comment in the file.  This will fix
+disabling of autostart in KDE, keep it working for GNOME >= 2.19.2,
+and break it for older versions of GNOME.  Sigh.  Discussed a bit in
+bgo #507786
+------------------------------------------------------------------------
+r4416 | joeshaw | 2008-01-26 13:41:44 -0500 (Sat, 26 Jan 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/search/beagle-search-autostart.desktop
+
+Remove erroneous X-GNOME-Autostart-enabled=false line from
+beagle-search-autostart.desktop.  We in fact want it to be autostarted by
+default, like beagled is.  Fixes bgo #507786
+------------------------------------------------------------------------
+r4415 | dbera | 2008-01-25 21:36:25 -0500 (Fri, 25 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/beagle-changes/09-license.diff
+
+Change license as requested by Novell.
+
+------------------------------------------------------------------------
+r4414 | dnylande | 2008-01-25 12:36:25 -0500 (Fri, 25 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Updated Swedish translation
+------------------------------------------------------------------------
+r4413 | dbera | 2008-01-24 18:34:13 -0500 (Thu, 24 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/glue/xdgmime/README
+   M /trunk/beagle/glue/xdgmime/xdgmimecache.c
+
+xdgmimecache.c contains a fix for bugs.freedesktop.org #12512 which is not present in the GTK+ copy. I accidentally removed it while syncing with the GTK+ trunk. Revert the change. Also mention about it in the README.
+
+------------------------------------------------------------------------
+r4412 | dbera | 2008-01-24 18:25:49 -0500 (Thu, 24 Jan 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Util/KonqHistoryUtil.cs
+   M /trunk/beagle/beagled/KMailQueryable/KMailIndexableGenerator.cs
+   M /trunk/beagle/beagled/KonqHistoryQueryable/KonqQueryable.cs
+
+Fix the URIs of konqueror hits. Dont decode them before storing since that will change "&" to " " and change some other characters making it unusable. Also, set the crawlmode to true for files during crawling.
+Remove some debug messages too.
+
+------------------------------------------------------------------------
+r4411 | dbera | 2008-01-24 18:23:32 -0500 (Thu, 24 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/POTFILES.in
+   M /trunk/beagle/po/POTFILES.skip
+
+Remove the F-Spot files from the translatable files since in beagle these files need not be translated.
+
+------------------------------------------------------------------------
+r4410 | dbera | 2008-01-21 19:29:37 -0500 (Mon, 21 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/tools/Makefile.am
+   A /trunk/beagle/tools/SettingsQt.cs
+   A /trunk/beagle/tools/beagle-settings-qt.ui
+   A /trunk/beagle/tools/kerry.png
+
+Add a Qt port of beagle-settings, using Qyoto (Qt C# binding). Its absolutely trivial to create UI using qt-designer and C# makes it zero-effort to write the few lines of code.
+
+------------------------------------------------------------------------
+r4409 | dbera | 2008-01-21 19:22:23 -0500 (Mon, 21 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/VersionFu.cs
+
+Allow assemblies to have a non-Novell copyright information.
+
+------------------------------------------------------------------------
+r4407 | nirbheekc | 2008-01-19 12:46:34 -0500 (Sat, 19 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/configure.in
+
+\'Hoops, innocent typo
+------------------------------------------------------------------------
+r4406 | nirbheekc | 2008-01-19 12:39:30 -0500 (Sat, 19 Jan 2008) | 8 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Add flexibility for enabling/disabling the internal taglib-sharp. The current scenario uses too much magic (use external if possible, else internal with no flags to control it), not letting the maintainer decide which one to use. 
+This is especially problematic on Gentoo, since if the maintainer wishes to use the internal taglib-sharp for Beagle, configure will automagically link with an external taglib-sharp if it is present. This will break Beagle when the taglib-sharp disappears.
+
+- If --enable-internal-taglib is passed, always use the internal taglib
+- If --disable-internal-taglib is passed, use an external taglib, and error out if it isn't installed.
+- If nothing is specified, auto detect in the same way as before.
+
+This does not change "expected behaviour" as in the old way (magical auto-detection), and adds the ability to select which one the maintainer wants to use.
+------------------------------------------------------------------------
+r4405 | kkubasik | 2008-01-19 02:27:34 -0500 (Sat, 19 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/TextCache.cs
+
+Fix method naming, sorry again for this, too many coding styles in my headsvn diff  ./beagled/TextCache.cs 
+------------------------------------------------------------------------
+r4404 | kkubasik | 2008-01-19 02:23:37 -0500 (Sat, 19 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/FileAttributesStore_Sqlite.cs
+   M /trunk/beagle/beagled/SqliteUtils.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+Formatting fixes for last Sqlite commit
+------------------------------------------------------------------------
+r4403 | kkubasik | 2008-01-18 20:28:45 -0500 (Fri, 18 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/FileAttributesStore_Sqlite.cs
+   M /trunk/beagle/beagled/SqliteUtils.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+Do some SqliteCommand caching so that commands will be prepared to increase performance. NEEDS LOTS OF TESTING as this might have some threading issues, or just not handle transactions 100%
+------------------------------------------------------------------------
+r4399 | dbera | 2008-01-18 18:42:41 -0500 (Fri, 18 Jan 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Util/Log.cs
+
+Some improvements to the "repeated" feature of the logger. Patch from  
+Enrico Minack.
+
+------------------------------------------------------------------------
+r4398 | gforcada | 2008-01-18 16:00:11 -0500 (Fri, 18 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/tr.po
+
+Updated Turkish translation to pass msgfmt -cv
+------------------------------------------------------------------------
+r4397 | dbera | 2008-01-17 17:44:04 -0500 (Thu, 17 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Log.cs
+
+Keep a buffer of last 4 messages with exception (effectively all multiline messages) and if the same message is repeated, just print the first line with a "(Repeated)" at the beginning. This will reduce same exceptions showing up repeatedly in the log files and output.
+
+------------------------------------------------------------------------
+r4396 | dbera | 2008-01-17 15:58:21 -0500 (Thu, 17 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Makefile.am
+   M /trunk/beagle/configure.in
+   A /trunk/beagle/po/LINGUAS
+   M /trunk/beagle/po/ca.po
+
+Port beagle to LINGUAS. Fixes #510172.
+
+------------------------------------------------------------------------
+r4394 | kkubasik | 2008-01-17 12:19:02 -0500 (Thu, 17 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Analyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/CharTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/ISOLatin1AccentFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LengthFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LetterTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemmer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/SimpleAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/CharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/FastCharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/ParseException.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.jj
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerConstants.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerTokenManager.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/TokenMgrError.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/StopAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/StopFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/TokenFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/TokenStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Tokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WordlistLoader.cs
+   M /trunk/beagle/beagled/Lucene.Net/AssemblyInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/DateField.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/DateTools.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/Document.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/Field.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/NumberTools.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/DocumentWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldInfos.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldsReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldsWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FilterIndexReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNameFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNames.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexModifier.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/MultiReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/MultipleTermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/ParallelReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfos.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMerger.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositionVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/Term.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermBuffer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermFreqVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfosReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfosWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermPositionVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorOffsetInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/LucenePackage.cs
+   M /trunk/beagle/beagled/Lucene.Net/Makefile.am
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/CharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/FastCharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/MultiFieldQueryParser.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/ParseException.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParser.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserConstants.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserTokenManager.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/TokenMgrError.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanClause.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer2.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/CachingWrapperFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConjunctionScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreRangeQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DefaultSimilarity.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionSumScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ExactPhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Explanation.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldCache.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldCacheImpl.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldDoc.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldDocSortedHitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldSortedHitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Filter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FilteredQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FilteredTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FuzzyQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FuzzyTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Hit.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitCollector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitIterator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Hits.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/IndexSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MatchAllDocsQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiPhraseQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiTermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/NonMatchingScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ParallelMultiSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhrasePositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PrefixQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Query.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/QueryFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/QueryTermVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RangeFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RangeQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RemoteSearchable.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ReqExclScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ReqOptSumScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ScoreDoc.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ScoreDocComparator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Scorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Searchable.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Searcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Similarity.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SimilarityDelegator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SloppyPhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Sort.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortComparator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortComparatorSource.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortField.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/NearSpans.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanFirstQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNearQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNotQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanOrQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanTermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanWeight.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/Spans.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TermScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TopDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TopFieldDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Weight.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/WildcardQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/WildcardTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/SharpZipLibAdapter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexInput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexOutput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/Directory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/FSDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/IndexInput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/IndexOutput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/MMapDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMFile.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMInputStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMOutputStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/SupportClass.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/BitVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/Constants.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/Parameter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/PriorityQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/SmallFloat.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/StringHelper.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/ToStringUtils.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+
+Reverting changes made against trunk
+------------------------------------------------------------------------
+r4392 | kkubasik | 2008-01-17 09:38:34 -0500 (Thu, 17 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Analyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/CharTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/ISOLatin1AccentFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LengthFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LetterTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemmer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/SimpleAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/CharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/FastCharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/ParseException.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.jj
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerConstants.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizerTokenManager.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/TokenMgrError.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/StopAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/StopFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/TokenFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/TokenStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/Tokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceAnalyzer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceTokenizer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Analysis/WordlistLoader.cs
+   M /trunk/beagle/beagled/Lucene.Net/AssemblyInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/DateField.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/DateTools.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/Document.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/Field.cs
+   M /trunk/beagle/beagled/Lucene.Net/Document/NumberTools.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/DocumentWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldInfos.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldsReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FieldsWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/FilterIndexReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNameFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNames.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexModifier.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/IndexWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/MultiReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/MultipleTermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/ParallelReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfos.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentMerger.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositionVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/Term.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermBuffer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermFreqVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfosReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermInfosWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermPositionVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermPositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorOffsetInfo.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsReader.cs
+   M /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsWriter.cs
+   M /trunk/beagle/beagled/Lucene.Net/LucenePackage.cs
+   M /trunk/beagle/beagled/Lucene.Net/Makefile.am
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/CharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/FastCharStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/MultiFieldQueryParser.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/ParseException.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParser.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserConstants.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserTokenManager.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/Token.cs
+   M /trunk/beagle/beagled/Lucene.Net/QueryParser/TokenMgrError.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanClause.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer2.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/CachingWrapperFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConjunctionScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreRangeQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DefaultSimilarity.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionSumScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ExactPhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Explanation.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldCache.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldCacheImpl.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldDoc.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldDocSortedHitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FieldSortedHitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Filter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FilteredQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FilteredTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FuzzyQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/FuzzyTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Hit.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitCollector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitIterator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/HitQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Hits.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/IndexSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MatchAllDocsQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiPhraseQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiTermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/NonMatchingScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ParallelMultiSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhrasePositions.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/PrefixQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Query.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/QueryFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/QueryTermVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RangeFilter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RangeQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/RemoteSearchable.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ReqExclScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ReqOptSumScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ScoreDoc.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/ScoreDocComparator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Scorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Searchable.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Searcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Similarity.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SimilarityDelegator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SloppyPhraseScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Sort.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortComparator.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortComparatorSource.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/SortField.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/NearSpans.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanFirstQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNearQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNotQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanOrQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanScorer.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanTermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanWeight.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Spans/Spans.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TermQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TermScorer.cs
+   A /trunk/beagle/beagled/Lucene.Net/Search/TopDocCollector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TopDocs.cs
+   A /trunk/beagle/beagled/Lucene.Net/Search/TopFieldDocCollector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/TopFieldDocs.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Weight.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/WildcardQuery.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/WildcardTermEnum.cs
+   M /trunk/beagle/beagled/Lucene.Net/SharpZipLibAdapter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexInput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexOutput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/Directory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/FSDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/IndexInput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/IndexOutput.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/MMapDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMDirectory.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMFile.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMInputStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/RAMOutputStream.cs
+   M /trunk/beagle/beagled/Lucene.Net/SupportClass.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/BitVector.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/Constants.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/Parameter.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/PriorityQueue.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/SmallFloat.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/StringHelper.cs
+   M /trunk/beagle/beagled/Lucene.Net/Util/ToStringUtils.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+
+An inital checkin of my work merging the latest release of Lucene.Net. Still needs some heavy testing, but It does compile. I will start merging the upstream java changes later this week.
+------------------------------------------------------------------------
+r4390 | llipka | 2008-01-14 19:04:02 -0500 (Mon, 14 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/ImLogViewer/ImLogWindow.cs
+
+Fix a null ref exception when no buddy alias is set.
+------------------------------------------------------------------------
+r4389 | dbera | 2008-01-13 19:24:53 -0500 (Sun, 13 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Server.cs
+
+Mark Server as running before trying to start the webinterface.
+
+------------------------------------------------------------------------
+r4388 | dbera | 2008-01-13 19:20:16 -0500 (Sun, 13 Jan 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionDataServerQueryable/SourcesHandler.cs
+
+* Fix a potential crash if new group is added when beagle is indexing (CalContainer constructor needs to be called in the right form).
+* Temporarily disable indexing of webcal data, till the mystery behind the leak is resolved.
+
+------------------------------------------------------------------------
+r4387 | aihana | 2008-01-13 04:06:20 -0500 (Sun, 13 Jan 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ja.po
+
+2008-01-13  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+        * ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r4386 | jorgegonz | 2008-01-12 15:39:59 -0500 (Sat, 12 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4385 | dbera | 2008-01-12 01:29:00 -0500 (Sat, 12 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Config.cs
+
+Minor fixes.
+
+------------------------------------------------------------------------
+r4384 | dbera | 2008-01-11 20:37:41 -0500 (Fri, 11 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/SystemInformation.cs
+
+Also display the collection count in the debug-memory message. Helps to read the mind of the GC.
+
+------------------------------------------------------------------------
+r4383 | dbera | 2008-01-11 20:36:21 -0500 (Fri, 11 Jan 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/beagled/Server.cs
+
+Add an environment variable BEAGLE_FORCE_GC to do a forceful collection after any client exits. There are two caveats in allowing GC do the collection on its own:
+- If most of the threads are blocked (as would happen if initial indexing is over), then there is no thread to run the GC.
+- If there is a sudden load and GC is forced to allocate more memory, letting it run on its own will take a long time for that extra memory to be returned.
+Locking horns with the GC is bad, but based on the current allocation pattern of beagled, BEAGLE_FORCE_GC takes a proactive approach and when a client disconnects, wait 1 min and then do a forceful GC. Based on experiments, one collect is not enough, for the time being run 5 collection at 1 min interval. If there are more clients in the interval, then push back the collection appropriately.
+
+------------------------------------------------------------------------
+r4379 | dbera | 2008-01-09 13:29:36 -0500 (Wed, 09 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterIgnore.cs
+   M /trunk/beagle/Filters/FilterMPlayerVideo.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+
+Use FileInfo.FullName instead of Indexable.Uri in Filters, since Indexable.Uri could be internal uri. Add patch files to FilterIgnore. We will never index them.
+
+------------------------------------------------------------------------
+r4378 | dbera | 2008-01-09 11:35:40 -0500 (Wed, 09 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterAudio.cs
+   M /trunk/beagle/Filters/FilterMPlayerVideo.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+
+Directly read the priorities from the corresponding Filters instead of hardcoding them. Reduce chances of error in the future when priorities are changed.
+
+------------------------------------------------------------------------
+r4377 | dbera | 2008-01-09 11:28:13 -0500 (Wed, 09 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterAudio.cs
+
+AudioFilter's priority should have been increased after the priority reshuffling of MPlayerVideoFilter and TotemFilter.
+
+------------------------------------------------------------------------
+r4376 | yairhr | 2008-01-07 08:43:12 -0500 (Mon, 07 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/he.po
+
+updated hebrew translation
+
+------------------------------------------------------------------------
+r4375 | llipka | 2008-01-07 04:48:55 -0500 (Mon, 07 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/Pages/Base.cs
+   A /trunk/beagle/search/Pages/IndexInfo.cs
+   M /trunk/beagle/search/Search.cs
+   M /trunk/beagle/search/Tiles/Documentation.cs
+   M /trunk/beagle/search/UIManager.cs
+
+Add an index information page.
+
+------------------------------------------------------------------------
+r4369 | dbera | 2008-01-05 00:37:01 -0500 (Sat, 05 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/TypeFilter.cs
+
+filetype: is now a reserved word in our query syntax.
+
+------------------------------------------------------------------------
+r4368 | dbera | 2008-01-05 00:25:43 -0500 (Sat, 05 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/InternalUriManager.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/QueryStringParser.cs
+
+A fake implementation of inuri: queries for FSQ. For inuri:/path or inuri:file:///path, find the uri of the path and add a query term parentdiruri=uri_of_path. For inuri:foo, find all directories with foo in its name, then add a boolean query for each of those directories, parentdiruri=uri_of_directory. Essentially will match all items in a directory matching the query. NOTE: the query will _not_ match items recursively, but only in the immediate directory. This implementation is fake since if new directories are added with the name foo, then live query will not return anything from the new directory. This one is a temporary workaround till FSQ is re-written.
+------------------------------------------------------------------------
+r4367 | dbera | 2008-01-04 23:53:11 -0500 (Fri, 04 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/KonqHistoryQueryable/KonqQueryable.cs
+   M /trunk/beagle/beagled/QueryStringParser.cs
+
+Add an inuri:foo query syntax, for matching data with foo in its uri. Really depends on the backend e.g. for webhistory backends this would mean foo occurs in its URL.
+
+------------------------------------------------------------------------
+r4366 | dbera | 2008-01-04 19:50:25 -0500 (Fri, 04 Jan 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/BeagleClient/QueryPart.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/IQueryable.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+
+Revert 4363. Add a comment that AcceptQuery and DoQuery should not change existing query since we send the same query to every backend one by one. Instead, use a per-backend querypart hook to let backends change particular queryparts.
+------------------------------------------------------------------------
+r4365 | dbera | 2008-01-03 16:59:57 -0500 (Thu, 03 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionDataServerQueryable/SchedulingIndexableGenerator.cs
+
+Explicitly instruct the scheduler to not reschedule the SchedulingIndexableGenerator task. Prevents a crash when there are no more indexables left after the previous flush.
+
+------------------------------------------------------------------------
+r4364 | dbera | 2008-01-02 22:25:42 -0500 (Wed, 02 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/QueryDriver.cs
+
+Use "-indexing-delay -1" as an option to never start the backends (i.e. act as query only).
+
+------------------------------------------------------------------------
+r4363 | dbera | 2008-01-02 22:20:37 -0500 (Wed, 02 Jan 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/QueryPart.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+
+Backends can change the query (the queryparts or values in the queryparts) during querying (e.g. in FSQ:AcceptQuery). So, store a copy of the original queryparts of the query and refresh the query with the copied queryparts before sending them off to the backend.
+
+------------------------------------------------------------------------
+r4362 | ymarcheg | 2007-12-31 13:55:47 -0500 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4361 | ymarcheg | 2007-12-31 13:47:43 -0500 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/po/oc.po
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4360 | wadimd | 2007-12-31 11:29:52 -0500 (Mon, 31 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/pl.po
+
+2007-12-31  Wadim Dziedzic  <wadimd@svn.gnome.org>
+
+	* pl.po: Updated polish translation
+------------------------------------------------------------------------
+r4359 | wadimd | 2007-12-31 11:16:37 -0500 (Mon, 31 Dec 2007) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pl.po
+
+2007-12-31  Wadim Dziedzic  <wadimd@svn.gnome.org>
+
+	* pl.po: Updated polish translation
+------------------------------------------------------------------------
+r4358 | llipka | 2007-12-31 04:21:13 -0500 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/COPYING
+
+Change Hal to Hal#
+------------------------------------------------------------------------
+r4357 | llipka | 2007-12-30 14:00:32 -0500 (Sun, 30 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/COPYING
+
+Update COPYING file.
+------------------------------------------------------------------------
+r4356 | jorgegonz | 2007-12-29 19:54:26 -0500 (Sat, 29 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4351 | dnylande | 2007-12-28 13:54:30 -0500 (Fri, 28 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Swedish translation updated
+------------------------------------------------------------------------
+r4345 | dbera | 2007-12-27 15:59:59 -0500 (Thu, 27 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/NEWS
+
+Update NEWS and Changelog for 0.3.2 release.
+
+------------------------------------------------------------------------
 r4343 | dbera | 2007-12-27 15:04:07 -0500 (Thu, 27 Dec 2007) | 2 lines
 Changed paths:
    M /trunk/beagle/tools/Settings.cs
