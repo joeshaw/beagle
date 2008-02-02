@@ -7,13 +7,14 @@
 
     <em:id>{fda00e13-8c62-4f63-9d19-d168115b11ca}</em:id>
     <em:name>Beagle Indexer</em:name>
-    <em:version>1.0.1</em:version>
+    <em:version>1.0.2</em:version>
     <em:description>
       Index webpages you visit using Beagle.
     </em:description>
     <em:creator>Tao Fei (Filia.Tao@gmail.com) </em:creator>
     <em:contributor>Alex Graveley  (Original Code)</em:contributor>
     <em:contributor>Abby Coffin (Icon Design)</em:contributor>
+    <em:contributor>Debajyoti Bera (Sidebar)</em:contributor>
     <em:homepageURL>http://beagle-project.org/Browser_Extension#Firefox_Extension</em:homepageURL>
     <em:iconURL>chrome://beagle/skin/beagle-big.png</em:iconURL>
     <em:optionsURL>chrome://beagle/content/beaglePrefs.xul</em:optionsURL>

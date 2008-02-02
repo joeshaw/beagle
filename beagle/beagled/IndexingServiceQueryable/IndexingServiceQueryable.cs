@@ -41,6 +41,9 @@
 // "type" is either 't' for text or 'k' for keyword.  This method is a lot
 // easier to use, but requires that Beagle have inotify support enabled to
 // work.
+//
+// Any text property with the name beagle:inuri would be used for inuri: queries.
+//
 
 using System;
 using System.Collections;
@@ -390,6 +393,23 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			return new EmptyResponse ();
 		}
 
+		protected override QueryPart QueryPartHook (QueryPart part)
+		{
+			if (part is QueryPart_Property) {
+				QueryPart_Property prop_part = (QueryPart_Property) part;
+				if (prop_part.Key == "inuri") { // special case
+					QueryPart_Property new_part = new QueryPart_Property ();
+					new_part.Logic = prop_part.Logic;
+					new_part.Key = "beagle:inuri";
+					new_part.Type = PropertyType.Text;
+					new_part.Value = prop_part.Value;
+
+					return new_part;
+				}
+			}
+
+			return part;
+		}
 	}
 
 }
