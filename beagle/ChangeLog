@@ -1,4 +1,44 @@
 ------------------------------------------------------------------------
+r4445 | dbera | 2008-02-02 20:46:44 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/configure.in
+
+Require ndesk-dbus >= 0.5.2 (the first thread safe version).
+
+------------------------------------------------------------------------
+r4444 | dbera | 2008-02-02 20:00:55 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileAttributesStore_Sqlite.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+Recent sqlite changes uncovered a bug in our Sqlite code where the reader was not always closed after reading. Make sure all our Sqlite readers are properly closed.
+
+------------------------------------------------------------------------
+r4443 | dbera | 2008-02-02 17:03:11 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/configure.in
+
+Bump version, update NEWS and Changelog.
+
+------------------------------------------------------------------------
+r4442 | dbera | 2008-02-02 16:55:15 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/COPYING
+
+Use the LZMA code under the LGPL license and not the special license which is not exactly in the right spirit of open source.
+
+------------------------------------------------------------------------
+r4441 | dbera | 2008-02-02 16:13:15 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/POTFILES.in
+
+Add new files to translation list.
+
+------------------------------------------------------------------------
 r4440 | dbera | 2008-02-02 11:25:03 -0500 (Sat, 02 Feb 2008) | 2 lines
 Changed paths:
    M /trunk/beagle/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
