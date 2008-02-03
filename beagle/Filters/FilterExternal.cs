@@ -71,6 +71,7 @@ namespace Beagle.Filters {
 
 			try {
 				FileStream fs = File.Open (path, FileMode.Open, FileAccess.Read, FileShare.Read);
+				//FIXME: Use XmlSerializerFactory instead of creating a new serializer everytime
 				XmlSerializer serializer = new XmlSerializer (typeof (ExternalFilterInfoContainer));
 				ExternalFilterInfoContainer container = (ExternalFilterInfoContainer) serializer.Deserialize (fs);
 				fs.Close ();

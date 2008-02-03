@@ -33,7 +33,7 @@ using Beagle.Util;
 namespace Beagle.Filters {
 
 	public class FilterDeb : Beagle.Filters.FilterPackage {
-	
+
 		public FilterDeb ()
 		{
 		}

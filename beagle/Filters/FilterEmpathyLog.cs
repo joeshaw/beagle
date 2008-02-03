@@ -34,7 +34,6 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 namespace Beagle.Filters {
-	
 
 	public class FilterEmpathyLog : Beagle.Daemon.Filter {
 

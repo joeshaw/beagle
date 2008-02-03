@@ -38,7 +38,6 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	
 	public class FilterMail : Beagle.Daemon.Filter, IDisposable {
 
 		private static bool gmime_initialized = false;

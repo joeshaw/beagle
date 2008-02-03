@@ -32,8 +32,7 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 namespace Beagle.Filters {
-	
-	
+
 	public class FilterKopeteLog : Beagle.Daemon.Filter {
 
 		public FilterKopeteLog ()

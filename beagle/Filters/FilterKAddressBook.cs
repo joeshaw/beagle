@@ -35,7 +35,6 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	
 	public class FilterKAddressBook : Beagle.Filters.FilterKCal {
 
 		public FilterKAddressBook ()

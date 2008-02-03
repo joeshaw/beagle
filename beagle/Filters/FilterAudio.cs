@@ -32,11 +32,8 @@ using TagLib;
 
 namespace Beagle.Filters {
 
-	
-	
-	
 	public class FilterAudio : Beagle.Daemon.Filter {
-	
+
 		public FilterAudio ()
 		{
 			// 1: Added duration and bitrate property

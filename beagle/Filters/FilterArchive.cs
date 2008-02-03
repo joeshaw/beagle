@@ -40,7 +40,6 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	
 	public class FilterArchive : Beagle.Daemon.Filter {
 
 		internal delegate ArchiveEntry GetNextEntry ();
