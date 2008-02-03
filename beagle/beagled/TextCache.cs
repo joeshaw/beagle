@@ -227,14 +227,12 @@ namespace Beagle.Daemon {
 		private string LookupPathRawUnlocked (Uri uri)
 		{
 			//SqliteCommand command;
-			SqliteDataReader reader = null;
 			string path = null;
 			LookupPathCommand.Parameters.AddWithValue ("@uri", UriToString (uri));
-			reader = SqliteUtils.ExecuteReaderOrWait (LookupPathCommand);
-			if (SqliteUtils.ReadOrWait (reader))
-				path = reader.GetString (0);
-			reader.Close ();
-
+			using (SqliteDataReader reader = SqliteUtils.ExecuteReaderOrWait (LookupPathCommand)) {
+				if (SqliteUtils.ReadOrWait (reader))
+					path = reader.GetString (0);
+			}
 			
 			return path;
 		}
@@ -455,24 +453,23 @@ namespace Beagle.Daemon {
 		// If self_cache is true when called, then self_cache will be set upon return
 		public TextReader GetReader (Uri uri, ref bool self_cache)
 		{
-			SqliteDataReader reader = null;
 			byte[] blob = null;
 			string filename = null;
 
 			lock (connection) {
 				
 				LookupDataCommand.Parameters.AddWithValue("@uri",UriToString (uri));
-				reader = SqliteUtils.ExecuteReaderOrWait (LookupDataCommand);
-				if (! SqliteUtils.ReadOrWait (reader)) {
-					if (self_cache)
-						self_cache = false;
-					return null;
-				}
+				using (SqliteDataReader reader = SqliteUtils.ExecuteReaderOrWait (LookupDataCommand)) {
+					if (! SqliteUtils.ReadOrWait (reader)) {
+						if (self_cache)
+							self_cache = false;
+						return null;
+					}
 
 				filename = reader.GetString (0);
 				if (! reader.IsDBNull (1))
 					blob = reader.GetValue (1) as byte [];
-				reader.Close ();
+				}
 
 			}
 

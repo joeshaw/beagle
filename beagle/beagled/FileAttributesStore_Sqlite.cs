@@ -258,8 +258,6 @@ namespace Beagle.Daemon {
 			if (path != null && path != "/" && path.EndsWith ("/"))
 				path = path.TrimEnd ('/');
 
-			SqliteDataReader reader;
-
 			if (! GetPathFlag (path))
 				return null;
 
@@ -272,12 +270,10 @@ namespace Beagle.Daemon {
 			lock (connection) {
 				ReadCommand.Parameters.AddWithValue ("@dir",directory);
 				ReadCommand.Parameters.AddWithValue ("@fname",filename);
-				reader = SqliteUtils.ExecuteReaderOrWait (ReadCommand);
-				
-				if (SqliteUtils.ReadOrWait (reader))
-					attr = GetFromReader (reader);
-					
-				reader.Close ();
+				using (SqliteDataReader reader = SqliteUtils.ExecuteReaderOrWait (ReadCommand)) {
+					if (SqliteUtils.ReadOrWait (reader))
+						attr = GetFromReader (reader);
+				}
 			}
 
 			return attr;
