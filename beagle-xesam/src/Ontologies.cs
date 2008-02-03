@@ -73,6 +73,8 @@ namespace Beagle {
 
 				fields_mapping.Add ("xesam:fileExtension", "beagle:FilenameExtension");
 				fields_mapping.Add ("fileExtension", "beagle:FilenameExtension");
+
+				fields_mapping.Add ("snippet", "snippet");
 			}
 
 			private static void InitializeSourcesMapping ()

@@ -53,7 +53,7 @@ namespace Beagle {
 				get { return bHit; }
 			}
 
-			public Hit (uint id, Beagle.Hit hit, string[] fields)
+		        public Hit (uint id, Beagle.Hit hit, string[] fields, Query query)
 			{
 				this.id = id;
 				bHit = hit;
@@ -77,7 +77,13 @@ namespace Beagle {
 					case "date":
 						hitValue [i++] = hit.Timestamp.ToString ("s");
 						break;
-						
+
+					case "snippet":
+						SnippetRequest sreq = new SnippetRequest (query, hit);
+						SnippetResponse sresp = (SnippetResponse) sreq.Send ();
+						hitValue [i++] = sresp.Snippet != null ? sresp.Snippet : String.Empty;
+						break;
+					    
 					default:
 						//FIXME: This *will* break since we don't know what the expected
 						//type here is
@@ -211,7 +217,7 @@ namespace Beagle {
 				mutex.WaitOne ();
 
 				foreach (uint id in ids) {
-					Hit hit = new Hit (id, hits [id].BeagleHit, fields);
+				        Hit hit = new Hit (id, hits [id].BeagleHit, fields, query);
 					ret.Add (hit.Value);
 				}
 
@@ -228,7 +234,7 @@ namespace Beagle {
 				Console.Error.WriteLine ("{0}: Got some hits: {1}", id, response.Hits.Count);
 				foreach (Beagle.Hit bHit in response.Hits) {
 					Console.Error.WriteLine ("+Hit: {0}", bHit.Uri);
-					newHits.Add (hitCount++, new Xesam.Hit (hitCount, bHit, parentSession.HitFields));
+					newHits.Add (hitCount++, new Xesam.Hit (hitCount, bHit, parentSession.HitFields, query));
 				}
 
 				if (newHits.Count > 0 && HitsAddedHandler != null) {
