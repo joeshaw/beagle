@@ -6,11 +6,12 @@ LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
 	../beagled/BeagleDaemonPlugins.dll \
-	../beagled/BeagleDaemonLib.dll
+	../beagled/BeagleDaemonLib.dll	
 
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	-r:Mono.Posix			\
+	-r:System.Data			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 WRAPPER_IN = wrapper.in

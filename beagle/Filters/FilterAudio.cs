@@ -32,9 +32,9 @@ using TagLib;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="album", PropertyName="fixme:album", IsKeyword=false, Description="Album name of the music")]
-	[PropertyKeywordMapping (Keyword="artist", PropertyName="fixme:artist", IsKeyword=false, Description="Artist of the music")]
-	[PropertyKeywordMapping (Keyword="genre", PropertyName="fixme:genre", IsKeyword=true, Description="Genre of the music")]
+	
+	
+	
 	public class FilterAudio : Beagle.Daemon.Filter {
 	
 		public FilterAudio ()

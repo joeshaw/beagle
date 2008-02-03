@@ -56,7 +56,7 @@ using Beagle.Util;
 namespace Beagle.Daemon.IndexingServiceQueryable {
 
 	[QueryableFlavor (Name="IndexingService", Domain=QueryDomain.Local, RequireInotify=false)]
-	[PropertyKeywordMapping (Keyword="host", PropertyName="fixme:host", IsKeyword=false, Description="The host of this entitiy.")]
+
 	public class IndexingServiceQueryable : LuceneQueryable {
 
 		public IndexingServiceQueryable () : base ("IndexingServiceIndex")

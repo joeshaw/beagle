@@ -32,7 +32,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using Beagle.Util;
-
+using System.Xml.Serialization;
+using System.Data;
 namespace Beagle.Daemon {
 	
 	public class QueryDriver {
@@ -204,24 +205,46 @@ namespace Beagle.Daemon {
 
 		public static void ReadKeywordMappings ()
 		{
+			
 			Logger.Log.Debug ("Reading mapping from filters");
-			ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir);
-
-			foreach (Assembly assembly in assemblies) {
-				foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (FilterTypesAttribute))) {
-					object[] attributes = type.GetCustomAttributes (false);
-					foreach (object attribute in attributes) {
-						
-						PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
-						if (mapping == null)
-							continue;
-						//Logger.Log.Debug (mapping.Keyword + " => " 
-						//		+ mapping.PropertyName
-						//		+ " is-keyword=" + mapping.IsKeyword + " (" 
-						//		+ mapping.Description + ") "
-						//		+ "(" + type.FullName + ")");
-						PropertyKeywordFu.RegisterMapping (mapping);
+			Stream s =File.Open (Path.Combine (PathFinder.StorageDir,"keywordmappings.xml") , FileMode.Open);
+			DataTable dt = new DataTable("KeywordMappings");
+			dt.Columns.Add ( new DataColumn ("Keyword", Type.GetType("System.String")));
+			dt.Columns.Add ( new DataColumn ("PropertyName", Type.GetType("System.String")));
+			dt.Columns.Add ( new DataColumn ("IsKeyword", Type.GetType("System.Boolean")));
+			dt.Columns.Add ( new DataColumn ("Description", Type.GetType("System.String")));
+			dt.Columns.Add ( new DataColumn ("Type", typeof(Beagle.PropertyType)));
+			dt.AcceptChanges ();
+			dt.ReadXml (s);
+			s.Flush();
+			s.Close();
+			foreach ( DataRow r in dt.Rows){
+				if (PropertyKeywordFu.property_table.Contains (r.ItemArray[0])) {
+					object o = PropertyKeywordFu.property_table [r.ItemArray[0]];
+					if (o is ArrayList) {
+						((ArrayList)o).Add (  new PropertyDetail ( 
+							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
+							r.ItemArray[1].ToString(), 
+							r.ItemArray[3].ToString())); 
+					} else if (o is PropertyDetail) {
+						ArrayList list = new ArrayList (2);
+						list.Add (o);
+						list.Add (  new PropertyDetail ( 
+							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
+							r.ItemArray[1].ToString(), 
+							r.ItemArray[3].ToString())); 
+						PropertyKeywordFu.property_table [r.ItemArray[0]] = list;
 					}
+					
+				} else {
+					
+				
+					PropertyKeywordFu.property_table.Add (
+					                                      r.ItemArray[0], (
+						   new PropertyDetail ( 
+							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
+							r.ItemArray[1].ToString(), 
+							r.ItemArray[3].ToString()))); 
 				}
 			}
 		}

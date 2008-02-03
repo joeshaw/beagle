@@ -33,6 +33,7 @@ using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using System.Data;
 
 using GLib;
 
@@ -215,23 +216,7 @@ public class QueryTool {
 				Environment.Exit (1);
 			}
 		}
-
-		foreach (Assembly assembly in assemblies) {
-			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
-				object[] attributes = type.GetCustomAttributes (false);
-				foreach (object attribute in attributes) {
-					PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
-					if (mapping == null)
-						continue;
-					//Logger.Log.Debug (mapping.Keyword + " => " 
-					//		+ mapping.PropertyName + 
-					//		+ " is-keyword=" + mapping.IsKeyword + " (" 
-					//		+ mapping.Description + ") "
-					//		+ "(" + type.FullName + ")");
-					PropertyKeywordFu.RegisterMapping (mapping);
-				}
-			}
-		}
+		
 	}
 
 	private static void OnClosed ()

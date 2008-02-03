@@ -35,7 +35,7 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="email", PropertyName="vCard:EMAIL", IsKeyword=false, Description="Email in KAddressbook")]
+	
 	public class FilterKAddressBook : Beagle.Filters.FilterKCal {
 
 		public FilterKAddressBook ()

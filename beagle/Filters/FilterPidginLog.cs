@@ -32,7 +32,7 @@ using Beagle.Daemon;
 
 namespace Beagle.Filters {
 	
-	[PropertyKeywordMapping (Keyword="speakingto", PropertyName="fixme:speakingto", IsKeyword=true, Description="Person engaged in conversation")]
+
 	public class FilterPidginLog : Beagle.Daemon.Filter {
 
 		public FilterPidginLog ()

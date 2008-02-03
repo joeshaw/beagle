@@ -31,12 +31,14 @@ using System.Text;
 
 using Beagle;
 using Beagle.Util;
-
-namespace Beagle.Daemon {
+using System.Xml.Serialization;
 	
+namespace Beagle.Daemon {
+
 	public class PropertyDetail {
 		private PropertyType type;
 		private string property_name;
+		private string alias;
 		// a short description, so that frontends can get the description from here
 		// and they dont need to guess the meaning of a query keyword (being too nice ?!)
 		private string short_desc;
@@ -48,7 +50,7 @@ namespace Beagle.Daemon {
 		public string PropertyName { 
 			get { return property_name;} 
 		}
-		
+
 		public string Description { 
 			get { return short_desc; } 
 		}
@@ -64,11 +66,18 @@ namespace Beagle.Daemon {
 		    this.property_name = property_name;
 		    this.short_desc = desc;
 		}
+		
+		public PropertyDetail (PropertyType type, string property_name, string desc, string alias) {
+		    this.type = type;
+		    this.property_name = property_name;
+		    this.short_desc = desc;
+			this.alias = alias;
+		}
 	}
 	
 	public class PropertyKeywordFu {
 		// mapping
-		private static Hashtable property_table;
+		public static Hashtable property_table;
 
 		// static class
 		private PropertyKeywordFu () { }
@@ -138,14 +147,14 @@ namespace Beagle.Daemon {
 					((ArrayList)o).Add (new PropertyDetail ( 
 						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
 						mapping.PropertyName, 
-						mapping.Description));
+						mapping.Description,mapping.Keyword));
 				} else if (o is PropertyDetail) {
 					ArrayList list = new ArrayList (2);
 					list.Add (o);
 					list.Add (new PropertyDetail ( 
 						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
 						mapping.PropertyName, 
-						mapping.Description));
+						mapping.Description,mapping.Keyword));
 					property_table [mapping.Keyword] = list;
 				}
 				return;

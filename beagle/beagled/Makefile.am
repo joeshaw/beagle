@@ -500,7 +500,8 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(SHARPZIPLIB_LIBS)					\
 	$(NDESK_DBUS_GLIB_LIBS)					\
 	-r:Mono.Data.Sqlite					\
-	-r:Mono.Posix
+	-r:Mono.Posix						\
+	-r:System.Data
 
 if ENABLE_AVAHI
 DAEMON_DLL_CSFLAGS += -define:ENABLE_AVAHI

@@ -40,7 +40,7 @@ using Beagle.Util;
 
 namespace Beagle.Filters {
 
-	[PropertyKeywordMapping (Keyword="inarchive", PropertyName="fixme:inside_archive", IsKeyword=true, Description="Use 'inarchive:true' for files inside an archive.")]
+	
 	public class FilterArchive : Beagle.Daemon.Filter {
 
 		internal delegate ArchiveEntry GetNextEntry ();

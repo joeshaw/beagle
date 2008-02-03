@@ -31,7 +31,7 @@ using Beagle.Daemon;
 using Beagle.Util;
 
 namespace Beagle.Filters {
-	[PropertyKeywordMapping (Keyword="pkggroup", PropertyName="pkg:group", IsKeyword=false, Description="Group to which the package belongs e.g. System/Configuration/Packaging")]
+
 	public class FilterDeb : Beagle.Filters.FilterPackage {
 	
 		public FilterDeb ()
