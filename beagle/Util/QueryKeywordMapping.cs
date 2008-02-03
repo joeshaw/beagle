@@ -1,7 +1,7 @@
 //
-// PropertyKeywordAttribute.cs
+// QueryKeywordMapping.cs
 //
-// Copyright (C) 2006 Debajyoti Bera
+// Copyright (C) 2006,2007 Debajyoti Bera
 //
 
 //
@@ -25,32 +25,42 @@
 //
 
 using System;
+using System.Xml.Serialization;
 
 namespace Beagle.Util {
 
-	[AttributeUsage (AttributeTargets.Class, AllowMultiple=true)]
-	public class PropertyKeywordMapping : Attribute {
+	// FIXME handle i18n issues... user might use an i18n-ised string
+	public class QueryKeywordMapping {
 		private string keyword, propertyname, description = null;
 		private bool is_keyword = false;
 
+		[XmlAttribute ("QueryKeyword")]
 		public string Keyword {
 			get { return keyword; }
 			set { keyword = value; }
 		}
 
+		[XmlAttribute ("BeagleProperty")]
 		public string PropertyName {
 			get { return propertyname; }
 			set { propertyname = value; }
 		}
 
+		[XmlText]
 		public string Description {
 			get { return description; }
 			set { description = value; }
 		}
 
+		[XmlAttribute ("Tokenize")]
+		public bool Tokenize {
+			get { return ! is_keyword; }
+			set { is_keyword = ! value; }
+		}
+
+		[XmlIgnore]
 		public bool IsKeyword {
 			get { return is_keyword; }
-			set { is_keyword = value; }
 		}
 	}
 }

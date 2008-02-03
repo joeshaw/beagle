@@ -157,6 +157,7 @@ namespace Beagle.Util {
 				Directory.CreateDirectory (configs_dir);
 				return;
 			}
+
 			// Else check the directory for old config files
 			CheckOldConfig ();
 		}
@@ -278,6 +279,10 @@ namespace Beagle.Util {
 			get { return Get (Conf.Names.NetworkingConfig); }
 		}
 
+		private static string GlobalConfigDir {
+			get { return Path.Combine (PathFinder.ConfigDataDir, "config-files"); }
+		}
+
 		// Utility method to check if global config files exist for the main config types
 		public static bool CheckGlobalConfig ()
 		{
@@ -286,7 +291,7 @@ namespace Beagle.Util {
 								Names.DaemonConfig,
 								Names.NetworkingConfig}) {
 				string filename = (name + ".xml");
-				string global_file = Path.Combine (PathFinder.GlobalConfigDir, filename);
+				string global_file = Path.Combine (GlobalConfigDir, filename);
 				if (! File.Exists (global_file))
 					return false;
 			}
@@ -302,7 +307,7 @@ namespace Beagle.Util {
 		{
 			string filename = (name + ".xml");
 
-			string global_file = Path.Combine (PathFinder.GlobalConfigDir, filename);
+			string global_file = Path.Combine (GlobalConfigDir, filename);
 			string local_file = Path.Combine (configs_dir, filename);
 
 			Config merge_from = LoadFrom (local_file);
@@ -477,19 +482,19 @@ namespace Beagle.Util {
 			Log.Info ("Old config files found. Moving them to the new format...");
 
 			// Load the global config files
-			Config global_fsq_config = LoadFrom (Path.Combine (PathFinder.GlobalConfigDir, Names.FilesQueryableConfig + ".xml"));
+			Config global_fsq_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.FilesQueryableConfig + ".xml"));
 			foreach (Option option in global_fsq_config.Options.Values)
 				option.Global = true;
 
-			Config global_networking_config = LoadFrom (Path.Combine (PathFinder.GlobalConfigDir, Names.NetworkingConfig + ".xml"));
+			Config global_networking_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.NetworkingConfig + ".xml"));
 			foreach (Option option in global_networking_config.Options.Values)
 				option.Global = true;
 
-			Config global_bs_config = LoadFrom (Path.Combine (PathFinder.GlobalConfigDir, Names.BeagleSearchConfig + ".xml"));
+			Config global_bs_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.BeagleSearchConfig + ".xml"));
 			foreach (Option option in global_bs_config.Options.Values)
 				option.Global = true;
 
-			Config global_daemon_config = LoadFrom (Path.Combine (PathFinder.GlobalConfigDir, Names.DaemonConfig + ".xml"));
+			Config global_daemon_config = LoadFrom (Path.Combine (GlobalConfigDir, Names.DaemonConfig + ".xml"));
 			foreach (Option option in global_daemon_config.Options.Values)
 				option.Global = true;
 

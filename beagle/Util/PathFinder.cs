@@ -208,25 +208,24 @@ namespace Beagle.Util {
 		}
 
 		// Location of the global config files.
-		// Once installted, it is Sysconfdir/beagle/config-files.
+		// Once installted, it is Sysconfdir/beagle
 		// Otherwise it is $BEAGLE_CONF_DIR
-		static string global_config_dir = null;
-		static public string GlobalConfigDir {
+		static string config_data_dir = null;
+		static public string ConfigDataDir {
 			get {
-				if (global_config_dir == null) {
-					global_config_dir = Environment.GetEnvironmentVariable ("BEAGLE_CONF_DIR");
-					if (global_config_dir == null)
-						global_config_dir = Path.Combine (
-							Path.Combine (ExternalStringsHack.SysConfDir, "beagle"),
-							"config-files");
-					if (global_config_dir.EndsWith ("/"))
-						global_config_dir = global_config_dir.Remove (global_config_dir.Length - 1, 1);
-					global_config_dir = Path.GetFullPath (global_config_dir);
-					if (! Directory.Exists (global_config_dir))
-						throw new Exception ("Global config directory '"+global_config_dir+"' doesn't exist");
+				if (config_data_dir == null) {
+					config_data_dir = Environment.GetEnvironmentVariable ("BEAGLE_CONF_DIR");
+					if (config_data_dir == null)
+						config_data_dir = Path.Combine (ExternalStringsHack.SysConfDir, "beagle");
+
+					if (config_data_dir.EndsWith ("/"))
+						config_data_dir = config_data_dir.Remove (config_data_dir.Length - 1, 1);
+					config_data_dir = Path.GetFullPath (config_data_dir);
+					if (! Directory.Exists (config_data_dir))
+						throw new Exception ("Global config directory '"+config_data_dir+"' doesn't exist");
 				}
 
-				return global_config_dir;
+				return config_data_dir;
 			}
 		}
 	}

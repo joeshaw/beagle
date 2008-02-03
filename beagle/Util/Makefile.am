@@ -145,7 +145,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/Algos.cs               \
 	$(srcdir)/SemWeb/Remote.cs              \
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
-	$(srcdir)/PropertyKeywordAttribute.cs
+	$(srcdir)/QueryKeywordMapping.cs
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
