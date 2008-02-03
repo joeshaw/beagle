@@ -36,12 +36,10 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	
-
 	public class StaticQueryable : LuceneQueryable 	{
-		
+
 		protected TextCache text_cache;
-		
+
 		public StaticQueryable (string index_name, string index_path, bool read_only_mode) : base (index_path, read_only_mode)
 		{
 			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);

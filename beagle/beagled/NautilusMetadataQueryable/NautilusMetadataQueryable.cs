@@ -36,9 +36,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon.NautilusMetadataQueryable {
 
-
-	[QueryableFlavor (Name="NautilusMetadata", Domain=QueryDomain.Local, RequireInotify=false,
-			  DependsOn="Files")]
+	[QueryableFlavor (Name="NautilusMetadata", Domain=QueryDomain.Local, RequireInotify=false, DependsOn="Files")]
 	public class NautilusMetadataQueryable : ExternalMetadataQueryable, IIndexableGenerator  {
 
 		private string nautilus_dir;

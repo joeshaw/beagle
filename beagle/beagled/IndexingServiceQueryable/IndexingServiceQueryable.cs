@@ -56,7 +56,6 @@ using Beagle.Util;
 namespace Beagle.Daemon.IndexingServiceQueryable {
 
 	[QueryableFlavor (Name="IndexingService", Domain=QueryDomain.Local, RequireInotify=false)]
-
 	public class IndexingServiceQueryable : LuceneQueryable {
 
 		public IndexingServiceQueryable () : base ("IndexingServiceIndex")

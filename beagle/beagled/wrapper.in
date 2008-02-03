@@ -14,7 +14,7 @@ if [ -z $installed ] ; then
     export BEAGLE_FILTER_PATH="../Filters${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
 
     if [ -z $BEAGLE_CONF_DIR ]; then
-	    export BEAGLE_CONF_DIR="../tools/config-files"
+	    export BEAGLE_CONF_DIR="../conf-data"
     fi
 
 else

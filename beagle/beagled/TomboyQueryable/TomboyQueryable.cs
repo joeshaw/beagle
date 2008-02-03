@@ -36,7 +36,6 @@ using Beagle.Util;
 namespace Beagle.Daemon.TomboyQueryable {
 
 	[QueryableFlavor (Name="Tomboy", Domain=QueryDomain.Local, RequireInotify=false)]
-
 	public class TomboyQueryable : LuceneFileQueryable, IIndexableGenerator  {
 
 		string tomboy_dir;
