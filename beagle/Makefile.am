@@ -31,7 +31,8 @@ endif
 
 SUBDIRS +=			\
 	firefox-extension	\
-	tools
+	tools			\
+	conf-data
 
 if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension

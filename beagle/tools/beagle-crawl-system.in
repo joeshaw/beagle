@@ -45,11 +45,11 @@ export TMPDIR=/tmp
 MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "$0: Can't create wapi directory!" ; exit 1 )
 chown $CRAWL_USER $MONO_SHARED_DIR
 
-for crawl_file in @sysconfdir@/beagle/crawl-*; do
-    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME CRAWL_REMOVE_DELETED_FILES
+for crawl_file in @sysconfdir@/beagle/crawl-rules/crawl-*; do
+    unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_DISABLE_DIRECTORIES CRAWL_DISABLE_ON_BATTERY CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME CRAWL_REMOVE_DELETED_FILES
 
     if [ "$DEBUG" = "1" ]; then
-	echo "$0: Processing files in @sysconfdir@/beagle..."
+	echo "$0: Processing files in @sysconfdir@/beagle/crawl-rules/..."
     fi
 
     if [ -f $crawl_file ] ; then

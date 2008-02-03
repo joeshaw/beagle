@@ -19,7 +19,7 @@ if [ -z $installed ] ; then
     THIS_BACKENDS="$TOOLDIR/../beagled"
 
     if [ -z $BEAGLE_CONF_DIR ]; then
-	    export BEAGLE_CONF_DIR="../tools/config-files"
+	    export BEAGLE_CONF_DIR="../conf-data"
     fi
 
 else

@@ -11,7 +11,6 @@ LOCAL_ASSEMBLIES =			\
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	-r:Mono.Posix			\
-	-r:System.Data			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
 WRAPPER_IN = wrapper.in
@@ -35,26 +34,6 @@ $(CRAWL_WRAPPER): $(CRAWL_WRAPPER_IN)
 	chmod +x $(CRAWL_WRAPPER)
 
 crondir = $(sysconfdir)/cron.daily
-
-CRAWL_RULES = \
-	$(srcdir)/crawl-rules/crawl-applications	\
-	$(srcdir)/crawl-rules/crawl-documentation	\
-	$(srcdir)/crawl-rules/crawl-manpages		\
-	$(srcdir)/crawl-rules/crawl-monodoc		\
-	$(srcdir)/crawl-rules/crawl-windows
-
-# FIXME: Per-distribution specific crawl rules
-configdir = $(sysconfdir)/beagle
-config_DATA = $(CRAWL_RULES)
-
-GLOBAL_CONFIG_FILES = \
-	$(srcdir)/config-files/BeagleSearch.xml		\
-	$(srcdir)/config-files/Daemon.xml		\
-	$(srcdir)/config-files/FilesQueryable.xml	\
-	$(srcdir)/config-files/Networking.xml
-
-global_config_filesdir = $(sysconfdir)/beagle/config-files
-global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
 
 DOC_EXTRACTOR_TARGET  = DocExtractor.exe
 DOC_EXTRACTOR_WRAPPER = beagle-doc-extractor
@@ -259,8 +238,6 @@ EXTRA_DIST =				\
 	$(SETTINGS_CSFILES)		\
 	$(SETTINGS_RESOURCES)		\
 	$(man_MANS)			\
-	$(CRAWL_RULES)			\
-	$(GLOBAL_CONFIG_FILES)		\
 	$(cron_SCRIPTS)			\
 	$(desktop_in_files)		\
 	$(desktop_DATA) 		\
