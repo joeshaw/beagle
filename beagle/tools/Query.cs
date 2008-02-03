@@ -33,7 +33,6 @@ using System.Threading;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
-using System.Data;
 
 using GLib;
 

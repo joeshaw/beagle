@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -38,7 +39,6 @@ namespace Beagle.Daemon {
 	public class PropertyDetail {
 		private PropertyType type;
 		private string property_name;
-		private string alias;
 		// a short description, so that frontends can get the description from here
 		// and they dont need to guess the meaning of a query keyword (being too nice ?!)
 		private string short_desc;
@@ -66,18 +66,12 @@ namespace Beagle.Daemon {
 		    this.property_name = property_name;
 		    this.short_desc = desc;
 		}
-		
-		public PropertyDetail (PropertyType type, string property_name, string desc, string alias) {
-		    this.type = type;
-		    this.property_name = property_name;
-		    this.short_desc = desc;
-			this.alias = alias;
-		}
+
 	}
 	
 	public class PropertyKeywordFu {
 		// mapping
-		public static Hashtable property_table;
+		private static Hashtable property_table;
 
 		// static class
 		private PropertyKeywordFu () { }
@@ -147,14 +141,14 @@ namespace Beagle.Daemon {
 					((ArrayList)o).Add (new PropertyDetail ( 
 						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
 						mapping.PropertyName, 
-						mapping.Description,mapping.Keyword));
+						mapping.Description));
 				} else if (o is PropertyDetail) {
 					ArrayList list = new ArrayList (2);
 					list.Add (o);
 					list.Add (new PropertyDetail ( 
 						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
 						mapping.PropertyName, 
-						mapping.Description,mapping.Keyword));
+						mapping.Description));
 					property_table [mapping.Keyword] = list;
 				}
 				return;
@@ -197,5 +191,103 @@ namespace Beagle.Daemon {
 			}
 			return true;
 		}
+		
+		public static void AddToCache (string keyword, PropertyDetail details) {
+			
+			if (property_table.Contains (keyword)) {
+					object o = PropertyKeywordFu.property_table [keyword];
+					if (o is ArrayList) {
+						((ArrayList)o).Add ( details );
+					} else if (o is PropertyDetail) {
+						ArrayList list = new ArrayList (2);
+						list.Add (o);
+						list.Add ( details );
+						PropertyKeywordFu.property_table [keyword] = list;
+					}
+				} else {
+					
+					property_table.Add (keyword , details);
+					                                      
+				}
+		}
 	}
+	public class KeywordMappingStore
+	{
+		private List<PropertyInfo> property_info = new List<PropertyInfo>();
+		
+		[XmlArray]
+		[XmlArrayItem (ElementName="Properties", Type=typeof(PropertyInfo))]
+		public List<PropertyInfo> PropertyInfo {
+			get {
+				return property_info;
+			}
+			set {
+				property_info = value;
+			}
+		}
+		
+		public KeywordMappingStore (){
+		}
+		
+		
+	}
+	
+	public class PropertyInfo
+	{
+		private string keyword;
+		private string propertyname;
+		private PropertyType prop_type;
+		private string description;
+		
+		public PropertyInfo () {
+			
+		}
+		
+		public PropertyInfo (string k, string prop, PropertyType keyword, string descript) {
+			this.keyword = k;
+			this.propertyname = prop;
+			this.prop_type = keyword;
+			this.description = descript;
+		}
+		
+		[XmlAttribute ("Keyword")]
+		public string Keyword {
+			get {
+				return keyword;
+			}
+			set {
+				keyword = value;
+			}
+		}
+		[XmlAttribute ("PropertyName")]
+		public string Propertyname {
+			get {
+				return propertyname;
+			}
+			set {
+				propertyname = value;
+			}
+		}
+
+		[XmlText]
+		public string Description {
+			get {
+				return description;
+			}
+			set {
+				description = value;
+			}
+		}
+		
+		[XmlAttribute  (AttributeName = "PropType",Type = typeof(PropertyType))]
+		public PropertyType PropType {
+			get {
+				return prop_type;
+			} set {
+				prop_type = value;
+			}
+		}
+		
+	}
+	
 }

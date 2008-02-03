@@ -33,7 +33,7 @@ using System.Text;
 using System.Threading;
 using Beagle.Util;
 using System.Xml.Serialization;
-using System.Data;
+
 namespace Beagle.Daemon {
 	
 	public class QueryDriver {
@@ -205,48 +205,65 @@ namespace Beagle.Daemon {
 
 		public static void ReadKeywordMappings ()
 		{
-			
-			Logger.Log.Debug ("Reading mapping from filters");
-			Stream s =File.Open (Path.Combine (PathFinder.StorageDir,"keywordmappings.xml") , FileMode.Open);
-			DataTable dt = new DataTable("KeywordMappings");
-			dt.Columns.Add ( new DataColumn ("Keyword", Type.GetType("System.String")));
-			dt.Columns.Add ( new DataColumn ("PropertyName", Type.GetType("System.String")));
-			dt.Columns.Add ( new DataColumn ("IsKeyword", Type.GetType("System.Boolean")));
-			dt.Columns.Add ( new DataColumn ("Description", Type.GetType("System.String")));
-			dt.Columns.Add ( new DataColumn ("Type", typeof(Beagle.PropertyType)));
-			dt.AcceptChanges ();
-			dt.ReadXml (s);
-			s.Flush();
-			s.Close();
-			foreach ( DataRow r in dt.Rows){
-				if (PropertyKeywordFu.property_table.Contains (r.ItemArray[0])) {
-					object o = PropertyKeywordFu.property_table [r.ItemArray[0]];
-					if (o is ArrayList) {
-						((ArrayList)o).Add (  new PropertyDetail ( 
-							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
-							r.ItemArray[1].ToString(), 
-							r.ItemArray[3].ToString())); 
-					} else if (o is PropertyDetail) {
-						ArrayList list = new ArrayList (2);
-						list.Add (o);
-						list.Add (  new PropertyDetail ( 
-							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
-							r.ItemArray[1].ToString(), 
-							r.ItemArray[3].ToString())); 
-						PropertyKeywordFu.property_table [r.ItemArray[0]] = list;
-					}
-					
+			XmlSerializerFactory xsf = new XmlSerializerFactory();
+			XmlSerializer xs = xsf.CreateSerializer (typeof(KeywordMappingStore),new Type[] {typeof(PropertyInfo),typeof(Beagle.PropertyType)});
+			Stream s = null;
+			KeywordMappingStore kms = null; 			
+			try {			
+				if (System.Environment.GetEnvironmentVariable ("$BEAGLE_LOAD_KEYWORDS_FROM") != null){
+					s =File.OpenRead (System.Environment.GetEnvironmentVariable ("$BEAGLE_LOAD_KEYWORDS_FROM"));
 				} else {
-					
-				
-					PropertyKeywordFu.property_table.Add (
-					                                      r.ItemArray[0], (
-						   new PropertyDetail ( 
-							(Boolean.Parse( r.ItemArray[2].ToString())) ? PropertyType.Keyword : PropertyType.Text,
-							r.ItemArray[1].ToString(), 
-							r.ItemArray[3].ToString()))); 
+					Logger.Log.Debug ("Reading mapping from filters");
+					s =File.OpenRead (Path.Combine (PathFinder.GlobalConfigDir,"../keyword-mapping.xml"));
 				}
+				kms = (KeywordMappingStore) xs.Deserialize (s);
+				s.Flush();
+				s.Close();
+				foreach (PropertyInfo pi in kms.PropertyInfo){
+					PropertyKeywordFu.AddToCache ( pi.Keyword, (
+							   new PropertyDetail ( 
+								pi.PropType ,
+								pi.Propertyname, 
+								pi.Description))); 
+				}
+			} catch (IOException e) {
+				Logger.Log.Error (e);
 			}
+				
+			try {
+
+			
+				if (File.Exists ( Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml"))){
+					s =File.Open ( Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml") , FileMode.Open);
+					kms = (KeywordMappingStore) xs.Deserialize (s);
+					s.Flush();
+					s.Close();
+					foreach (PropertyInfo pi in kms.PropertyInfo){
+						PropertyKeywordFu.AddToCache ( pi.Keyword, (
+								   new PropertyDetail ( 
+									pi.PropType ,
+									pi.Propertyname, 
+									pi.Description))); 
+					}
+				}
+			} catch (IOException e) {
+				Logger.Log.Error (e);
+			}
+			
+			//To Generate a starting file, the original reflection was used. I've kept the code, should we need to recreate
+			//the initial file.
+//			KeywordMappingStore kms = new KeywordMappingStore();
+//			foreach (String s1  in PropertyKeywordFu.Keys ) {
+//				foreach (PropertyDetail pd  in PropertyKeywordFu.Properties (s1) ) {
+//					kms.PropertyInfo.Add ( new PropertyInfo (s1,pd.PropertyName,pd.Type, pd.Description));
+//					System.Console.WriteLine(new PropertyInfo (s1,pd.PropertyName,pd.Type, pd.Description).Propertyname);
+//				}
+//			}
+//			
+//			XmlSerializerFactory xsf = new XmlSerializerFactory();
+//			XmlSerializer xs = xsf.CreateSerializer (typeof(KeywordMappingStore),new Type[] {typeof(PropertyInfo),typeof(Beagle.PropertyType)});
+//			xs.Serialize (Console.Out,kms);
+			
 		}
 
 		////////////////////////////////////////////////////////

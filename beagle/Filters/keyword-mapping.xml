@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<KeywordMappingStore xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <PropertyInfo>
+    <Properties Keyword="artist" PropertyName="fixme:artist" PropType="Text">Artist of the music</Properties>
+    <Properties Keyword="mailto" PropertyName="parent:fixme:to_name" PropType="Text" />
+    <Properties Keyword="mailto" PropertyName="fixme:to_name" PropType="Text">Name of receipient</Properties>
+    <Properties Keyword="author" PropertyName="dc:author" PropType="Text">Author of the content</Properties>
+    <Properties Keyword="summary" PropertyName="dc:subject" PropType="Text">Brief description of the content</Properties>
+    <Properties Keyword="imagemodel" PropertyName="exif:Model" PropType="Text">Camera model as specified in exif or IPTC tags</Properties>
+    <Properties Keyword="imagecomment" PropertyName="iptc:caption" PropType="Text">IPTC caption</Properties>
+    <Properties Keyword="imagecomment" PropertyName="exif:UserComment" PropType="Text">Exif comments</Properties>
+    <Properties Keyword="imagecomment" PropertyName="jfif:Comment" PropType="Text">JFIF comments</Properties>
+    <Properties Keyword="imagecomment" PropertyName="digikam:caption" PropType="Text">Digikam User comments</Properties>
+    <Properties Keyword="imagecomment" PropertyName="fspot:Description" PropType="Text">F-Spot User comments</Properties>
+    <Properties Keyword="speakingto" PropertyName="fixme:speakingto" PropType="Keyword">Person engaged in conversation</Properties>
+    <Properties Keyword="speakingto" PropertyName="fixme:speakingto" PropType="Keyword">Person engaged in conversation</Properties>
+    <Properties Keyword="speakingto" PropertyName="fixme:speakingto" PropType="Keyword">Person engaged in conversation</Properties>
+    <Properties Keyword="mailtoaddr" PropertyName="parent:fixme:to_address" PropType="Text" />
+    <Properties Keyword="mailtoaddr" PropertyName="fixme:to_address" PropType="Text">Email address of receipient</Properties>
+    <Properties Keyword="inattachment" PropertyName="parent:fixme:hasAttachments" PropType="Keyword">Use 'inattachment:true' for email attachments.</Properties>
+    <Properties Keyword="imagetag" PropertyName="image:tag" PropType="Text">FSpot, Digikam image tags</Properties>
+    <Properties Keyword="source" PropertyName="beagle:Source" PropType="Keyword">Name of the backend</Properties>
+    <Properties Keyword="creator" PropertyName="dc:creator" PropType="Text">Creator of the content</Properties>
+    <Properties Keyword="emblem" PropertyName="nautilus:emblem" PropType="Keyword">Use emblem to identify items tagged with a specific emblem in nautilus.</Properties>
+    <Properties Keyword="mailinglist" PropertyName="parent:fixme:mlist" PropType="Text" />
+    <Properties Keyword="mailinglist" PropertyName="fixme:mlist" PropType="Text">Mailing list id e.g. dashboard-hackers.gnome.org</Properties>
+    <Properties Keyword="mailfrom" PropertyName="parent:fixme:from_name" PropType="Text" />
+    <Properties Keyword="mailfrom" PropertyName="fixme:from_name" PropType="Text">Name of email sender</Properties>
+    <Properties Keyword="genre" PropertyName="fixme:genre" PropType="Keyword">Genre of the music</Properties>
+    <Properties Keyword="ext" PropertyName="beagle:FilenameExtension" PropType="Keyword">File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.</Properties>
+    <Properties Keyword="ext" PropertyName="beagle:FilenameExtension" PropType="Keyword">File extension, e.g. ext:jpeg. Use ext: to search in files with no extension.</Properties>
+    <Properties Keyword="filetype" PropertyName="beagle:FileType" PropType="Keyword">Type of content for HitType File</Properties>
+    <Properties Keyword="email" PropertyName="vCard:EMAIL" PropType="Text">Email in KAddressbook</Properties>
+    <Properties Keyword="host" PropertyName="fixme:host" PropType="Text">The host of this entitiy.</Properties>
+    <Properties Keyword="mimetype" PropertyName="beagle:MimeType" PropType="Keyword">Mimetype of the content</Properties>
+    <Properties Keyword="notetag" PropertyName="note:tag" PropType="Text">Tag associated with a tomboy note.</Properties>
+    <Properties Keyword="type" PropertyName="beagle:HitType" PropType="Keyword">Hittype of the content e.g. File, IMLog, MailMessage</Properties>
+    <Properties Keyword="title" PropertyName="dc:title" PropType="Text">Title</Properties>
+    <Properties Keyword="mailfromaddr" PropertyName="parent:fixme:from_address" PropType="Text" />
+    <Properties Keyword="mailfromaddr" PropertyName="fixme:from_address" PropType="Text">Email address of sender</Properties>
+    <Properties Keyword="pkggroup" PropertyName="pkg:group" PropType="Text">Group to which the package belongs e.g. System/Configuration/Packaging</Properties>
+    <Properties Keyword="inarchive" PropertyName="fixme:inside_archive" PropType="Keyword">Use 'inarchive:true' for files inside an archive.</Properties>
+    <Properties Keyword="album" PropertyName="fixme:album" PropType="Text">Album name of the music</Properties>
+  </PropertyInfo>
+</KeywordMappingStore>

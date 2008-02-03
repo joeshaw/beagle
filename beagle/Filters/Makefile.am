@@ -170,7 +170,8 @@ COND_CS_FILES = \
 	$(srcdir)/FilterChm.cs
 
 confdir = $(sysconfdir)/beagle
-conf_DATA = external-filters.xml.sample
+conf_DATA = external-filters.xml.sample \
+			keyword-mapping.xml
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
