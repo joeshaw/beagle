@@ -194,30 +194,6 @@ public class QueryTool {
 		System.Environment.Exit (0);
 	}
 
-	private static void ReadBackendMappings ()
-	{
-		ArrayList assemblies = ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_BACKEND_PATH", PathFinder.BackendDir);
-
-		// Add BeagleDaemonLib if it hasn't already been added.
-		bool found_daemon_lib = false;
-		foreach (Assembly assembly in assemblies) {
-			if (assembly.GetName ().Name == "BeagleDaemonLib") {
-				found_daemon_lib = true;
-				break;
-			}
-		}
-
-		if (!found_daemon_lib) {
-			try {
-				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
-			} catch (FileNotFoundException) {
-				Console.WriteLine ("WARNING: Could not find backend list.");
-				Environment.Exit (1);
-			}
-		}
-		
-	}
-
 	private static void OnClosed ()
 	{
 		if (flood)
@@ -298,17 +274,16 @@ public class QueryTool {
 				keep_running = true;
 				break;
 			case "--keywords":
-				ReadBackendMappings ();
-				QueryDriver.ReadKeywordMappings ();
+				PropertyKeywordFu.ReadKeywordMappings ();
 
 				Console.WriteLine ("Supported query keywords are:");
 
 				foreach (string key in PropertyKeywordFu.Keys) {
-					foreach (PropertyDetail prop in PropertyKeywordFu.Properties (key)) {
+					foreach (QueryKeywordMapping mapping in PropertyKeywordFu.Properties (key)) {
 						// Dont print properties without description; they confuse people
-						if (string.IsNullOrEmpty (prop.Description))
+						if (string.IsNullOrEmpty (mapping.Description))
 							continue;
-						Console.WriteLine ("  {0,-20} for {1}", key, prop.Description);
+						Console.WriteLine ("  {0,-20} for {1}", key, mapping.Description);
 					}
 				}
 
