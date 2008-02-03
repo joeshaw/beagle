@@ -149,7 +149,7 @@ UTIL_CSFILES = 			        	\
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
-	$(NDESK_DBUS_LIBS)			\
+	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:System.Data				\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
