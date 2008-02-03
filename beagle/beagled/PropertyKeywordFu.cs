@@ -77,7 +77,7 @@ namespace Beagle.Daemon {
 			// <keyword name, can override>
 			Dictionary<string, bool> mapping_override = new Dictionary<string, bool> ();
 
-			using (Stream s = File.OpenRead (Path.Combine (PathFinder.ConfigDataDir, "keyword-mapping.xml"))) {
+			using (Stream s = File.OpenRead (Path.Combine (PathFinder.ConfigDataDir, "query-mapping.xml"))) {
 				try {			
 					query_mapping = (QueryMapping) xs.Deserialize (s);
 					foreach (QueryKeywordMapping mapping in query_mapping.Mappings) {
@@ -85,16 +85,16 @@ namespace Beagle.Daemon {
 						mapping_override [mapping.Keyword] = true;
 					}
 				} catch (XmlException e) {
-					Logger.Log.Error (e, "Unable to parse global keyword-mapping.xml");
+					Logger.Log.Error (e, "Unable to parse global query-mapping.xml");
 				}
 			}
 
 			// Override global mappings by local mappings
 
-			if (! File.Exists (Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml")))
+			if (! File.Exists (Path.Combine (PathFinder.StorageDir, "query-mapping.xml")))
 				return;
 
-			using (Stream s = File.OpenRead (Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml"))) {
+			using (Stream s = File.OpenRead (Path.Combine (PathFinder.StorageDir, "query-mapping.xml"))) {
 				try {			
 					query_mapping = (QueryMapping) xs.Deserialize (s);
 					foreach (QueryKeywordMapping mapping in query_mapping.Mappings) {
@@ -106,7 +106,7 @@ namespace Beagle.Daemon {
 						PropertyKeywordFu.RegisterMapping (mapping);
 					}
 				} catch (XmlException e) {
-					Logger.Log.Error (e, "Unable to parse local keyword-mapping.xml");
+					Logger.Log.Error (e, "Unable to parse local query-mapping.xml");
 				}
 			}
 		}

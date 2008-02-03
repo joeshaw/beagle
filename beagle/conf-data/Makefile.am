@@ -20,7 +20,7 @@ global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
 
 confdir = $(sysconfdir)/beagle
 conf_DATA = external-filters.xml.sample \
-	    keyword-mapping.xml
+	    query-mapping.xml
 
 EXTRA_DIST =				\
 	$(CRAWL_RULES)			\
