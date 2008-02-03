@@ -29,56 +29,20 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 using Beagle;
 using Beagle.Util;
-using System.Xml.Serialization;
-	
+
 namespace Beagle.Daemon {
 
-	public class PropertyDetail {
-		private PropertyType type;
-		private string property_name;
-		// a short description, so that frontends can get the description from here
-		// and they dont need to guess the meaning of a query keyword (being too nice ?!)
-		private string short_desc;
-		
-		public PropertyType Type { 
-			get { return type;} 
-		}
-
-		public string PropertyName { 
-			get { return property_name;} 
-		}
-
-		public string Description { 
-			get { return short_desc; } 
-		}
-
-		public PropertyDetail (PropertyType type, string property_name) {
-		    this.type = type;
-		    this.property_name = property_name;
-		    this.short_desc = "";
-		}
-		
-		public PropertyDetail (PropertyType type, string property_name, string desc) {
-		    this.type = type;
-		    this.property_name = property_name;
-		    this.short_desc = desc;
-		}
-
-	}
-	
 	public class PropertyKeywordFu {
 		// mapping
 		private static Hashtable property_table;
 
 		// static class
 		private PropertyKeywordFu () { }
-
-		static PropertyKeywordFu () {
-			PopulatePropertyTable ();
-		}
 
 		public static IEnumerable Keys {
 			get { return property_table.Keys; }
@@ -89,80 +53,88 @@ namespace Beagle.Daemon {
 				yield break;
 
 			object o = property_table [keyword];
-			if (o is PropertyDetail)
+			if (o is QueryKeywordMapping)
 				yield return o;
 			else if (o is ArrayList) {
-				foreach (PropertyDetail detail in ((ArrayList) o))
-					yield return detail;
+				foreach (QueryKeywordMapping mapping in ((ArrayList) o))
+					yield return mapping;
 			}
 		}
 
-		// FIXME handle i18n issues... user might use a i18n-ised string for "title"
-		private static void PopulatePropertyTable () {
+		////////////////////////////////////////////////////////
+
+		public static void ReadKeywordMappings ()
+		{
 			property_table = new Hashtable ();
-			
-			// Mapping between human query keywords and beagle index property keywords
-			// These are some of the standard mapping which is available to all backends and filters.
-			
-			property_table.Add ("title",
-					    new PropertyDetail (PropertyType.Text, "dc:title", "Title"));
-			
-			property_table.Add ("creator",
-					    new PropertyDetail (PropertyType.Text, "dc:creator", "Creator of the content"));
 
-			property_table.Add ("author",
-					    new PropertyDetail (PropertyType.Text, "dc:author", "Author of the content"));
+			// FIXME: No need for a SerializerFactory here, since we need the serializer
+			// only once
+			XmlSerializerFactory xsf = new XmlSerializerFactory();
+			XmlSerializer xs = xsf.CreateSerializer (typeof (QueryMapping), new Type[] { typeof (QueryKeywordMapping)});
 
-			property_table.Add ("summary",
-					    new PropertyDetail (PropertyType.Text, "dc:subject", "Brief description of the content"));
+			QueryMapping query_mapping = null;
 
-			property_table.Add ("source",
-					    new PropertyDetail (PropertyType.Keyword, "beagle:Source", "Name of the backend"));
+			// <keyword name, can override>
+			Dictionary<string, bool> mapping_override = new Dictionary<string, bool> ();
 
-			property_table.Add ("type",
-					    new PropertyDetail (PropertyType.Keyword, "beagle:HitType", "Hittype of the content e.g. File, IMLog, MailMessage"));
+			using (Stream s = File.OpenRead (Path.Combine (PathFinder.ConfigDataDir, "keyword-mapping.xml"))) {
+				try {			
+					query_mapping = (QueryMapping) xs.Deserialize (s);
+					foreach (QueryKeywordMapping mapping in query_mapping.Mappings) {
+						PropertyKeywordFu.RegisterMapping (mapping);
+						mapping_override [mapping.Keyword] = true;
+					}
+				} catch (XmlException e) {
+					Logger.Log.Error (e, "Unable to parse global keyword-mapping.xml");
+				}
+			}
 
-			property_table.Add ("mimetype",
-					    new PropertyDetail (PropertyType.Keyword, "beagle:MimeType", "Mimetype of the content"));
+			// Override global mappings by local mappings
 
-			property_table.Add ("filetype",
-					    new PropertyDetail (PropertyType.Keyword, "beagle:FileType", "Type of content for HitType File"));
-					    
-			
+			if (! File.Exists (Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml")))
+				return;
+
+			using (Stream s = File.OpenRead (Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml"))) {
+				try {			
+					query_mapping = (QueryMapping) xs.Deserialize (s);
+					foreach (QueryKeywordMapping mapping in query_mapping.Mappings) {
+						if (mapping_override.ContainsKey (mapping.Keyword)) {
+							property_table.Remove (mapping.Keyword);
+							mapping_override [mapping.Keyword] = false;
+						}
+
+						PropertyKeywordFu.RegisterMapping (mapping);
+					}
+				} catch (XmlException e) {
+					Logger.Log.Error (e, "Unable to parse local keyword-mapping.xml");
+				}
+			}
 		}
 
-		public static void RegisterMapping (PropertyKeywordMapping mapping)
+		private static void RegisterMapping (QueryKeywordMapping mapping)
 		{
 			// If multiple mapping as registered, create an OR query for them
 			// Store the multiple matchings in a list
 			if (property_table.Contains (mapping.Keyword)) {
 				object o = property_table [mapping.Keyword];
 				if (o is ArrayList) {
-					((ArrayList)o).Add (new PropertyDetail ( 
-						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
-						mapping.PropertyName, 
-						mapping.Description));
-				} else if (o is PropertyDetail) {
+					((ArrayList)o).Add (mapping);
+				} else if (o is QueryKeywordMapping) {
 					ArrayList list = new ArrayList (2);
 					list.Add (o);
-					list.Add (new PropertyDetail ( 
-						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
-						mapping.PropertyName, 
-						mapping.Description));
+					list.Add (mapping);
 					property_table [mapping.Keyword] = list;
 				}
 				return;
 			}
 
-			property_table.Add (mapping.Keyword,
-					    new PropertyDetail ( 
-						mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text,
-						mapping.PropertyName, 
-						mapping.Description));
+			property_table.Add (mapping.Keyword, mapping);
 		}
 
+		////////////////////////////////////////////////////////
+
 		// return false if property not found!
-		public static bool GetPropertyDetails (string keyword, out int num, out string[] name, out PropertyType[] type) {
+		public static bool GetMapping (string keyword, out int num, out string[] name, out PropertyType[] type) {
 			num = 0;
 			name = null;
 			type = null;
@@ -178,116 +150,32 @@ namespace Beagle.Daemon {
 				type = new PropertyType [num];
 
 				for (int i = 0; i < num; ++i) {
-					PropertyDetail detail = (PropertyDetail) (list [i]);
-					name [i] = detail.PropertyName;
-					type [i] = detail.Type;
+					QueryKeywordMapping mapping = (QueryKeywordMapping) (list [i]);
+					name [i] = mapping.PropertyName;
+					type [i] = (mapping.IsKeyword ? PropertyType.Keyword : PropertyType.Text);
 				}
-			} else if (o is PropertyDetail) {
+			} else if (o is QueryKeywordMapping) {
 				num = 1;
 				name = new string [num];
 				type = new PropertyType [num];
-				name [0] = ((PropertyDetail) o).PropertyName;
-				type [0] = ((PropertyDetail) o).Type;
+				name [0] = ((QueryKeywordMapping) o).PropertyName;
+				type [0] = (((QueryKeywordMapping) o).IsKeyword ? PropertyType.Keyword : PropertyType.Text);
 			}
 			return true;
 		}
-		
-		public static void AddToCache (string keyword, PropertyDetail details) {
-			
-			if (property_table.Contains (keyword)) {
-					object o = PropertyKeywordFu.property_table [keyword];
-					if (o is ArrayList) {
-						((ArrayList)o).Add ( details );
-					} else if (o is PropertyDetail) {
-						ArrayList list = new ArrayList (2);
-						list.Add (o);
-						list.Add ( details );
-						PropertyKeywordFu.property_table [keyword] = list;
-					}
-				} else {
-					
-					property_table.Add (keyword , details);
-					                                      
-				}
-		}
 	}
-	public class KeywordMappingStore
+
+	public class QueryMapping
 	{
-		private List<PropertyInfo> property_info = new List<PropertyInfo>();
-		
+		private List<QueryKeywordMapping> property_mappings = new List<QueryKeywordMapping> ();
+
 		[XmlArray]
-		[XmlArrayItem (ElementName="Properties", Type=typeof(PropertyInfo))]
-		public List<PropertyInfo> PropertyInfo {
-			get {
-				return property_info;
-			}
-			set {
-				property_info = value;
-			}
-		}
-		
-		public KeywordMappingStore (){
-		}
-		
-		
-	}
-	
-	public class PropertyInfo
-	{
-		private string keyword;
-		private string propertyname;
-		private PropertyType prop_type;
-		private string description;
-		
-		public PropertyInfo () {
-			
-		}
-		
-		public PropertyInfo (string k, string prop, PropertyType keyword, string descript) {
-			this.keyword = k;
-			this.propertyname = prop;
-			this.prop_type = keyword;
-			this.description = descript;
-		}
-		
-		[XmlAttribute ("Keyword")]
-		public string Keyword {
-			get {
-				return keyword;
-			}
-			set {
-				keyword = value;
-			}
-		}
-		[XmlAttribute ("PropertyName")]
-		public string Propertyname {
-			get {
-				return propertyname;
-			}
-			set {
-				propertyname = value;
-			}
+		[XmlArrayItem (ElementName="Mapping", Type=typeof (QueryKeywordMapping))]
+		public List<QueryKeywordMapping> Mappings {
+			get { return property_mappings; }
+			set { property_mappings = value; }
 		}
 
-		[XmlText]
-		public string Description {
-			get {
-				return description;
-			}
-			set {
-				description = value;
-			}
-		}
-		
-		[XmlAttribute  (AttributeName = "PropType",Type = typeof(PropertyType))]
-		public PropertyType PropType {
-			get {
-				return prop_type;
-			} set {
-				prop_type = value;
-			}
-		}
-		
+		public QueryMapping () { }
 	}
-	
 }

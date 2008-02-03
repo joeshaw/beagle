@@ -150,7 +150,6 @@ namespace Beagle.Daemon {
 			int count = 0;
 
 			foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
-				bool type_accepted = false;
 				foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor))) {
 					if (! UseQueryable (flavor.Name))
 						continue;
@@ -176,94 +175,11 @@ namespace Beagle.Daemon {
 						Queryable q = new Queryable (flavor, iq);
 						iqueryable_to_queryable [iq] = q;
 						++count;
-						type_accepted = true;
 						break;
 					}
 				}
-
-				if (! type_accepted)
-					continue;
-
-				object[] attributes = type.GetCustomAttributes (false);
-				foreach (object attribute in attributes) {
-					PropertyKeywordMapping mapping = attribute as PropertyKeywordMapping;
-					if (mapping == null)
-						continue;
-					//Logger.Log.Debug (mapping.Keyword + " => " 
-					//		+ mapping.PropertyName + 
-					//		+ " is-keyword=" + mapping.IsKeyword + " (" 
-					//		+ mapping.Description + ") "
-					//		+ "(" + type.FullName + ")");
-					PropertyKeywordFu.RegisterMapping (mapping);
-				}
-					
 			}
 			Logger.Log.Debug ("Found {0} backends in {1}", count, assembly.Location);
-		}
-
-		////////////////////////////////////////////////////////
-
-		public static void ReadKeywordMappings ()
-		{
-			XmlSerializerFactory xsf = new XmlSerializerFactory();
-			XmlSerializer xs = xsf.CreateSerializer (typeof(KeywordMappingStore),new Type[] {typeof(PropertyInfo),typeof(Beagle.PropertyType)});
-			Stream s = null;
-			KeywordMappingStore kms = null; 			
-			try {			
-				if (System.Environment.GetEnvironmentVariable ("$BEAGLE_LOAD_KEYWORDS_FROM") != null){
-					s =File.OpenRead (System.Environment.GetEnvironmentVariable ("$BEAGLE_LOAD_KEYWORDS_FROM"));
-				} else {
-					Logger.Log.Debug ("Reading mapping from filters");
-					s =File.OpenRead (Path.Combine (PathFinder.GlobalConfigDir,"../keyword-mapping.xml"));
-				}
-				kms = (KeywordMappingStore) xs.Deserialize (s);
-				s.Flush();
-				s.Close();
-				foreach (PropertyInfo pi in kms.PropertyInfo){
-					PropertyKeywordFu.AddToCache ( pi.Keyword, (
-							   new PropertyDetail ( 
-								pi.PropType ,
-								pi.Propertyname, 
-								pi.Description))); 
-				}
-			} catch (IOException e) {
-				Logger.Log.Error (e);
-			}
-				
-			try {
-
-			
-				if (File.Exists ( Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml"))){
-					s =File.Open ( Path.Combine (PathFinder.StorageDir, "keyword-mapping.xml") , FileMode.Open);
-					kms = (KeywordMappingStore) xs.Deserialize (s);
-					s.Flush();
-					s.Close();
-					foreach (PropertyInfo pi in kms.PropertyInfo){
-						PropertyKeywordFu.AddToCache ( pi.Keyword, (
-								   new PropertyDetail ( 
-									pi.PropType ,
-									pi.Propertyname, 
-									pi.Description))); 
-					}
-				}
-			} catch (IOException e) {
-				Logger.Log.Error (e);
-			}
-			
-			//To Generate a starting file, the original reflection was used. I've kept the code, should we need to recreate
-			//the initial file.
-//			KeywordMappingStore kms = new KeywordMappingStore();
-//			foreach (String s1  in PropertyKeywordFu.Keys ) {
-//				foreach (PropertyDetail pd  in PropertyKeywordFu.Properties (s1) ) {
-//					kms.PropertyInfo.Add ( new PropertyInfo (s1,pd.PropertyName,pd.Type, pd.Description));
-//					System.Console.WriteLine(new PropertyInfo (s1,pd.PropertyName,pd.Type, pd.Description).Propertyname);
-//				}
-//			}
-//			
-//			XmlSerializerFactory xsf = new XmlSerializerFactory();
-//			XmlSerializer xs = xsf.CreateSerializer (typeof(KeywordMappingStore),new Type[] {typeof(PropertyInfo),typeof(Beagle.PropertyType)});
-//			xs.Serialize (Console.Out,kms);
-			
 		}
 
 		////////////////////////////////////////////////////////
@@ -402,7 +318,7 @@ namespace Beagle.Daemon {
 			
 			assemblies = null;
 
-			ReadKeywordMappings ();
+			PropertyKeywordFu.ReadKeywordMappings ();
 
 			LoadSystemIndexes ();
 			LoadStaticQueryables ();

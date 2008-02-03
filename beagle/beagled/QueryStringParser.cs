@@ -277,7 +277,7 @@ namespace Beagle.Daemon {
 			PropertyType[] prop_type;
 			int num;
 
-			is_present = PropertyKeywordFu.GetPropertyDetails (key, out num, out prop_string, out prop_type);
+			is_present = PropertyKeywordFu.GetMapping (key, out num, out prop_string, out prop_type);
 			// if key is not present in the mapping, assume the query is a text query
 			// i.e. if token is foo:bar and there is no mappable property named foo,
 			// assume "foo:bar" as text query
