@@ -37,6 +37,14 @@ namespace Beagle {
 			enum CollectibleType { None, And, Or };
 			enum ComparisonType { None, Equals, Lesser, Greater };
 
+			private static string GetFieldDelimiter (string field)
+			{
+				if (field.Substring(0, 9) == "property:")
+					return "=";
+
+				return ":";
+			}
+
 			// This should be usable for both <query> and <category>
 			private static string ParseXesamSourcesAndContents (XPathNavigator nav)
 			{
@@ -117,7 +125,7 @@ namespace Beagle {
 				//
 				// FIXME: Assuming only 1 field and 1 data element
 				
-				string q = String.Empty;
+				string q = String.Empty, field;
 				
 				while (true) {
 					if (nav.GetAttribute ("negate", String.Empty) == "true")
@@ -147,7 +155,7 @@ namespace Beagle {
 						break;
 					case "inSet":
 						nav.MoveToFirstChild ();
-						string name = ParseXesamField (nav);
+						field = ParseXesamField (nav);
 						bool first = false;
 
 						q += "( ";
@@ -156,7 +164,8 @@ namespace Beagle {
 								first = true;
 							else
 								q += " or ";
-							q += name + ":" + ParseXesamData (nav, ComparisonType.Equals);
+
+							q += field + GetFieldDelimiter(field) + ParseXesamData (nav, ComparisonType.Equals);
 						}
 						q += " )";
 
@@ -168,9 +177,10 @@ namespace Beagle {
 						goto case "equals";
 					case "equals":
 						nav.MoveToFirstChild ();
-						q += ParseXesamField (nav);
+						field = ParseXesamField (nav);
+						q += field;
+						q += GetFieldDelimiter (field);
 						nav.MoveToNext ();
-						q += ':';
 						q += ParseXesamData (nav, ComparisonType.Equals);
 						nav.MoveToParent ();
 						break;
@@ -178,9 +188,10 @@ namespace Beagle {
 						goto case "greaterThan";
 					case "greaterThan":
 						nav.MoveToFirstChild ();
-						q += ParseXesamField (nav);
+						field = ParseXesamField (nav);
+						q += field;
+						q += GetFieldDelimiter (field);
 						nav.MoveToNext ();
-						q += ':';
 						q += ParseXesamData (nav, ComparisonType.Greater);
 						nav.MoveToParent ();
 						break;
@@ -188,9 +199,10 @@ namespace Beagle {
 						goto case "greaterThan";
 					case "lessThan":
 						nav.MoveToFirstChild ();
-						q += ParseXesamField (nav);
+						field = ParseXesamField (nav);
+						q += field;
+						q += GetFieldDelimiter (field);
 						nav.MoveToNext ();
-						q += ':';
 						q += ParseXesamData (nav, ComparisonType.Greater);
 						nav.MoveToParent ();
 						break;
