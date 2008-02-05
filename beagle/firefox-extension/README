@@ -35,3 +35,6 @@ Sidebar:
 Visit http://beagle-project.org/Browser_Extension for details.
 This extension was written as a part of Google Summer of Code project, 2007 by Tao Fei (filia.tao@gmail.com).
 
+Changelog:
+    1.0.1 - initial version
+    1.0.2 - added sidebar
