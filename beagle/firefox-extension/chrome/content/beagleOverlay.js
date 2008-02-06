@@ -212,7 +212,7 @@ var beagle = {
         if(storage_directory == "")
             storage_directory = this.ENV.get("HOME") + "/.beagle";
         if (!this.FILE_UTILS.exists (storage_directory)) {
-            alert(_("beagle_check_env_error"));
+            alert(_f("beagle_check_env_error",[storage_directory]));
             return false;
         }
         this.dataPath = storage_directory + "/ToIndex";
