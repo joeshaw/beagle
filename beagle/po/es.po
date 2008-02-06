@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-26 22:16+0000\n"
-"PO-Revision-Date: 2008-01-27 17:17+0100\n"
+"POT-Creation-Date: 2008-02-02 21:13+0000\n"
+"PO-Revision-Date: 2008-02-06 22:41+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -315,10 +315,6 @@ msgstr "Tlf. trabajo:"
 msgid "Home Phone:"
 msgstr "Tlf. casa:"
 
-#: ../search/Tiles/Documentation.cs:57
-msgid "Documentation"
-msgstr "Documentación"
-
 #: ../search/Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Revelar en la carpeta"
@@ -439,6 +435,10 @@ msgstr "Fecha de envío:"
 #: ../search/Tiles/MailMessage.cs:114
 msgid "Folder:"
 msgstr "Carpeta:"
+
+#: ../search/Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Página del manual"
 
 #: ../search/Tiles/OpenWithMenu.cs:47
 msgid "Open With"
