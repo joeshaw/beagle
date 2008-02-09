@@ -45,36 +45,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="AddHitType">
-      <MemberSignature Language="C#" Value="public void AddHitType (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddMimeType">
-      <MemberSignature Language="C#" Value="public void AddMimeType (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="AddPart">
       <MemberSignature Language="C#" Value="public void AddPart (Beagle.QueryPart part);" />
       <MemberType>Method</MemberType>
@@ -86,21 +56,6 @@
       </Parameters>
       <Docs>
         <param name="part">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AddSource">
-      <MemberSignature Language="C#" Value="public void AddSource (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
@@ -136,54 +91,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="AllowsHitType">
-      <MemberSignature Language="C#" Value="public bool AllowsHitType (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AllowsMimeType">
-      <MemberSignature Language="C#" Value="public bool AllowsMimeType (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="AllowsSource">
-      <MemberSignature Language="C#" Value="public bool AllowsSource (string str);" />
-      <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Parameters>
-        <Parameter Name="str" Type="System.String" />
-      </Parameters>
-      <Docs>
-        <param name="str">To be added.</param>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="ClearParts">
       <MemberSignature Language="C#" Value="public void ClearParts ();" />
       <MemberType>Method</MemberType>
@@ -207,52 +114,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="HasHitTypes">
-      <MemberSignature Language="C#" Value="public bool HasHitTypes { get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="HasMimeTypes">
-      <MemberSignature Language="C#" Value="public bool HasMimeTypes { get; };" />
-      <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="HasSources">
-      <MemberSignature Language="C#" Value="public bool HasSources { get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="HitsAddedEvent">
       <MemberSignature Language="C#" Value="public event Beagle.Query.HitsAdded HitsAddedEvent;" />
       <MemberType>Event</MemberType>
@@ -272,26 +133,6 @@
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="HitTypes">
-      <MemberSignature Language="C#" Value="public System.Collections.ArrayList HitTypes { get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArray(ElementName="HitTypes")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArrayItem(ElementName="HitType", Type=typeof(System.String))</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Collections.ArrayList</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
@@ -329,26 +170,6 @@
       <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="MimeTypes">
-      <MemberSignature Language="C#" Value="public System.Collections.ArrayList MimeTypes { get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArray(ElementName="MimeTypes")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArrayItem(ElementName="MimeType", Type=typeof(System.String))</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Collections.ArrayList</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -435,26 +256,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="Sources">
-      <MemberSignature Language="C#" Value="public System.Collections.ArrayList Sources { get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArray(ElementName="Sources")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArrayItem(ElementName="Source", Type=typeof(System.String))</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>System.Collections.ArrayList</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="StemmedText">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection StemmedText { get; };" />
       <MemberType>Property</MemberType>
@@ -486,17 +287,6 @@
       <Docs>
         <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
-    <Member MemberName="UnknownHostFoundEvent">
-      <MemberSignature Language="C#" Value="public event Beagle.Util.AvahiEventHandler UnknownHostFoundEvent;" />
-      <MemberType>Event</MemberType>
-      <ReturnValue>
-        <ReturnType>Beagle.Util.AvahiEventHandler</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
     </Member>

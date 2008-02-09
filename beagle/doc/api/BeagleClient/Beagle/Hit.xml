@@ -279,11 +279,11 @@
       </Docs>
     </Member>
     <Member MemberName="MimeType">
-      <MemberSignature Language="C#" Value="public string MimeType { set; get; };" />
+      <MemberSignature Language="C#" Value="public string MimeType { get; };" />
       <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -353,26 +353,6 @@
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
-    <Member MemberName="property_list">
-      <MemberSignature Language="C#" Value="public Beagle.PropertyList property_list { set; get; };" />
-      <MemberType>Property</MemberType>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArrayItem(ElementName="Property", Type=typeof(Beagle.Property))</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlArray(ElementName="Properties")</AttributeName>
-        </Attribute>
-      </Attributes>
-      <ReturnValue>
-        <ReturnType>Beagle.PropertyList</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
-    </Member>
     <Member MemberName="Score">
       <MemberSignature Language="C#" Value="public double Score { set; get; };" />
       <MemberType>Property</MemberType>
@@ -391,11 +371,11 @@
       </Docs>
     </Member>
     <Member MemberName="Source">
-      <MemberSignature Language="C#" Value="public string Source { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Source { get; };" />
       <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -425,11 +405,11 @@
       </Docs>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public string Type { set; get; };" />
+      <MemberSignature Language="C#" Value="public string Type { get; };" />
       <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Xml.Serialization.XmlAttribute</AttributeName>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -451,6 +431,43 @@
       </Attributes>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FileType">
+      <MemberSignature Language="C#" Value="public string FileType { get; };" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlIgnore</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PropertyList">
+      <MemberSignature Language="C#" Value="public Beagle.PropertyList PropertyList { set; get; };" />
+      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlArrayItem(ElementName="Property", Type=typeof(Beagle.Property))</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Xml.Serialization.XmlArray(ElementName="Properties")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>Beagle.PropertyList</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

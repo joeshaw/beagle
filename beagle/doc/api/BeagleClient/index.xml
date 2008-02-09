@@ -83,6 +83,17 @@
       <Type Name="QueryDomain" />
       <Type Name="QueryPartLogic" />
       <!-- Ignore <Type Name="RequestWrapper" /> -->
+      <Type Name="RequestWrapper" />
+      <Type Name="RequestMessageExecutor" />
+      <Type Name="RequestMessageAttribute" />
+      <Type Name="ResponseWrapper" />
+      <Type Name="RequestMessageTypesAttribute" />
+      <Type Name="ResponseMessageTypesAttribute" />
+      <Type Name="RequestMessageExecutorTypesAttribute" />
+      <Type Name="PropertyList" />
+      <Type Name="ISnippetReader" />
+      <Type Name="Versioned" />
+      <Type Name="RequestMessageExecutor+AsyncResponse" />
     </Namespace>
   </Types>
   <Title>BeagleClient</Title>
