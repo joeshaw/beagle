@@ -251,6 +251,7 @@ AC_SUBST(EVO_LIBDIR)
 PKG_CHECK_MODULES(EVO,
                   evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
+		  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
                   gmime-sharp >= $GMIME_SHARP_REQUIRED,
                   have_evo_dependencies=yes, have_evo_dependencies=no)
 AC_SUBST(EVO_LIBS)
