@@ -48,6 +48,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "dpkg-deb", "-I", FileInfo.FullName};
 			pc.RedirectStandardOutput = true;
+			pc.UseLangC = true;
 			
 			try {
 				pc.Start ();

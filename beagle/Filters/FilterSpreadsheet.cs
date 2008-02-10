@@ -83,6 +83,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "ssindex", "-i", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
+			pc.UseLangC = true;
 
 			// Let ssindex run for 10 seconds, max.
 			pc.CpuLimit = 10;

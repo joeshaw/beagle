@@ -122,6 +122,7 @@ namespace Beagle.Filters {
 			pc.Arguments = new string [] { "mplayer", "-vo", "null", "-ao", "null", "-frames", "0", "-identify", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
+			pc.UseLangC = true;
 
 			// Let mplayer run for 10 seconds, max.
 			pc.CpuLimit = 10;

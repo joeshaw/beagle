@@ -63,6 +63,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "rpm", "-qp", "--queryformat", property_queryformat, FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
+			pc.UseLangC = true;
 
 			// Let rpm run for 15 seconds for properties, max.
 			pc.CpuLimit = 15;

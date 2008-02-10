@@ -26,6 +26,7 @@
 
 using System;
 using System.IO;
+using System.Collections;
 using System.Runtime.InteropServices;
 using Mono.Unix;
 using GLib;
@@ -39,6 +40,7 @@ namespace Beagle.Util {
 		private UnixStream stdin_stream, stdout_stream, stderr_stream;
 		private int pid;
 		private int cpu_limit, mem_limit;
+		private bool use_lang_c = false;
 
 		public string[] Arguments {
 			get { return args; }
@@ -86,8 +88,14 @@ namespace Beagle.Util {
 			set { mem_limit = value; }
 		}
 
+		public bool UseLangC {
+			get { return use_lang_c; }
+			set { use_lang_c = value; }
+		}
+
 		[DllImport ("libbeagleglue")]
 		static extern void spawn_async_with_pipes_and_limits (string[] argv,
+								      string[] env,
 								      int cpu_limit,
 								      int mem_limit,
 								      out int pid,
@@ -110,6 +118,23 @@ namespace Beagle.Util {
 				args = tmp_args;
 			}
 
+			// If LANG=C needs to be specified, then
+			// copy the parents environment variable
+			// and appand LANG=C to it.
+			// Make sure to null-terminate the env array.
+			string[] env = null;
+			if (use_lang_c) {
+				IDictionary env_dict = Environment.GetEnvironmentVariables ();
+				env = new string [env_dict.Count + 2];
+				int count = 0;
+				foreach (DictionaryEntry entry in env_dict)
+					if (entry.Key != "LANG")
+						env [count ++] = String.Concat (entry.Key, "=", entry.Value);
+
+				env [count ++] = "LANG=C";
+				env [count] = null;
+			}
+
 			IntPtr in_ptr = IntPtr.Zero, out_ptr = IntPtr.Zero, err_ptr = IntPtr.Zero;
 
 			try {
@@ -123,6 +148,7 @@ namespace Beagle.Util {
 					err_ptr = Marshal.AllocHGlobal (IntPtr.Size);
 
 				spawn_async_with_pipes_and_limits (args,
+								   env,
 								   cpu_limit,
 								   mem_limit,
 								   out pid,

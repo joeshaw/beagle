@@ -101,6 +101,7 @@ namespace Beagle.Filters {
 			pc.Arguments = new string [] { exe, FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
+			pc.UseLangC = true;
 
 			// Let beagle-doc-extractor run for 90 CPU seconds, max.
 			pc.CpuLimit = 90;

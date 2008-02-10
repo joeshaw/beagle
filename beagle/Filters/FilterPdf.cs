@@ -50,6 +50,7 @@ namespace Beagle.Filters {
 			// use more than 100 megs memory.
 			pc.CpuLimit = 90;
 			pc.MemLimit = 100*1024*1024;
+			pc.UseLangC = true;
 
 			try {
 				pc.Start ();

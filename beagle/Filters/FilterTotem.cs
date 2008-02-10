@@ -60,6 +60,7 @@ namespace Beagle.Filters {
 			pc.Arguments = new string [] { "totem-video-indexer", "--mimetype" };
 			pc.RedirectStandardOutput = true;
 			pc.RedirectStandardError = true;
+			pc.UseLangC = true;
 
 			try {
 				pc.Start ();

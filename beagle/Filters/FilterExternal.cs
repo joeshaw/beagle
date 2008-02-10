@@ -181,6 +181,7 @@ namespace Beagle.Filters {
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = argv;
 			pc.RedirectStandardOutput = true;
+			pc.UseLangC = true;
 
 			// Let the external filter run for 2 minutes, max.
 			pc.CpuLimit = 120;

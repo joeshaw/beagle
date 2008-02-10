@@ -54,6 +54,7 @@ static void limit_setup_func (gpointer user_data)
 
 void
 spawn_async_with_pipes_and_limits (char   **argv,
+				   char   **envp,
 				   int      cpu_limit,
 				   int      mem_limit,
 				   GPid    *child_pid,
@@ -77,7 +78,7 @@ spawn_async_with_pipes_and_limits (char   **argv,
 
 	g_spawn_async_with_pipes (NULL,
 				  argv,
-				  NULL,
+				  envp,
 				  flag,
 				  limit_setup_func,
 				  &info,
