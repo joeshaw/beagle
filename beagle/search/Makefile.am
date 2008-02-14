@@ -110,7 +110,7 @@ BIN_WRAPPERS = beagle-search
 $(ASSEMBLY): $(SOURCES) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(SOURCES) $(ASSEMBLIES)
 
-$(ASSEMBLY).mdb: Search.exe
+$(ASSEMBLY).mdb: $(ASSEMBLY)
 
 beagle-search: beagle-search.in
 	sed 					\
