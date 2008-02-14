@@ -3,7 +3,7 @@ using System;
 using Beagle;
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class HitFlavor {
 		

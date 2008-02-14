@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Mono.Unix;
 using Gtk;
 
-namespace Search.Pages {
+namespace Beagle.Search.Pages {
 
 	public delegate void DaemonStarted ();
 

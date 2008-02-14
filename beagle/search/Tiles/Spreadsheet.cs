@@ -1,7 +1,7 @@
 using System;
 using Mono.Posix;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class SpreadsheetActivator : TileActivator {
 

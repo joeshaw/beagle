@@ -2,28 +2,31 @@ using Gtk;
 using Gdk;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace Search {
+using Beagle.Search.Tiles;
+
+namespace Beagle.Search {
 
 	public class TileCategory : Category {
 
-		Gtk.SizeGroup sizeGroup;
+		Gtk.SizeGroup size_group;
 
-		public TileCategory (Tiles.TileGroupInfo info, Gtk.SizeGroup sizeGroup) : base (info, 2)
+		public TileCategory (Tiles.TileGroupInfo info, Gtk.SizeGroup size_group) : base (info, 2)
 		{
-			this.sizeGroup = sizeGroup;
+			this.size_group = size_group;
 		}
 
 		protected override void OnAdded (Gtk.Widget widget)
 		{
-			sizeGroup.AddWidget (widget);
+			size_group.AddWidget (widget);
 			base.OnAdded (widget);
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
 		{
 			base.OnRemoved (widget);
-			sizeGroup.RemoveWidget (widget);
+			size_group.RemoveWidget (widget);
 		}
 
 		protected override void OnSizeRequested (ref Requisition req)
@@ -69,7 +72,7 @@ namespace Search {
 			Requisition headerReq, tileReq;
 			Rectangle childAlloc;
 			int col, i, tilesWidth, maxcols;
-			IList tiles = VisibleTiles;
+			IList<Tile> tiles = VisibleTiles;
 
 			base.OnSizeAllocated (allocation);
 

@@ -3,11 +3,14 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 using Mono.Unix;
-using Search.Tiles;
+
+using Beagle.Search.Tiles;
 
 // FIXME: it would be nicer to create QueryParts to do the filtering beagled-side
 
-namespace Search {
+// FIXME: Whoa! This fucking thing is a complete ghetto. Needs a rewrite.
+
+namespace Beagle.Search {
 
 	public class TypeFilter {
 

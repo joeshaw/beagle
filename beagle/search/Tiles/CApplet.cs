@@ -3,7 +3,7 @@ using System.Collections;
 using System.Diagnostics;
 using Mono.Posix;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class CAppletActivator : TileActivator {
 

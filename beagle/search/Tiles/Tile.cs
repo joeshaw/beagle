@@ -9,7 +9,7 @@ using Gtk;
 using Beagle;
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public abstract class Tile : Gtk.EventBox {
 

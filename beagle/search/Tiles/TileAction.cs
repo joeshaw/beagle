@@ -1,6 +1,6 @@
 using System;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public delegate void TileActionDelegate ();
 

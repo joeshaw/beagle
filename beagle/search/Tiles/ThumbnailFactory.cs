@@ -3,7 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Threading;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class ThumbnailFactory : Gtk.Object {
 

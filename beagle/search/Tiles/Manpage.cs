@@ -1,7 +1,7 @@
 //
 // Manpage.cs
 //
-// Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;
@@ -9,7 +9,7 @@ using Mono.Unix;
 
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class ManpageActivator : TileActivator {
 

@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 using Gtk;
 using Gdk;
 
-namespace Search.Tray {
+namespace Beagle.Search.Tray {
 
 	public class NotificationArea : Plug
 	{

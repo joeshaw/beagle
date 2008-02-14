@@ -1,14 +1,16 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Search {
+namespace Beagle.Search {
 
 	public class Entry : Gtk.Entry {
 
-		public Entry (IntPtr raw) : base (raw) {}
+		// FIXME: How about a managed implementation of this?
+		// Anyone? :-)
 
-		[DllImport("libbeagleuiglue.so")]
-		static extern IntPtr search_entry_new ();
+		public Entry (IntPtr raw) : base (raw)
+		{
+		}
 
 		public Entry () : base (IntPtr.Zero)
 		{
@@ -16,16 +18,18 @@ namespace Search {
 				CreateNativeObject (new string [0], new GLib.Value[0]);
 				return;
 			}
+
 			Raw = search_entry_new ();
 		}
+
+		[DllImport("libbeagleuiglue.so")]
+		static extern IntPtr search_entry_new ();
 
 		[DllImport("libbeagleuiglue.so")]
 		static extern IntPtr search_entry_get_type();
 
 		public static new GLib.GType GType { 
-			get {
-				return new GLib.GType (search_entry_get_type ());
-			}
+			get { return new GLib.GType (search_entry_get_type ());	}
 		}
 	}
 }

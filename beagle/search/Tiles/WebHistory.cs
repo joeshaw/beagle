@@ -3,7 +3,7 @@ using Mono.Unix;
 
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class WebHistoryActivator : TileActivator {
 
@@ -31,7 +31,8 @@ namespace Search.Tiles {
 
 			Title = title;
 			Description = hit.Uri.ToString ();
-			AddAction( new Search.Tiles.TileAction("Find From Same Host",Gtk.Stock.Find,FindFromHost));
+
+			AddAction (new TileAction ("Find more from same host", Gtk.Stock.Find, FindFromHost));
 		}
 
 		// We intentionally use a separate thumbnailer/thread from Tiles.File,

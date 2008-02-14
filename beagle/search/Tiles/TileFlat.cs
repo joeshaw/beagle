@@ -1,7 +1,7 @@
 using System;
 using Gtk;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public abstract class TileFlat : Tile {
 

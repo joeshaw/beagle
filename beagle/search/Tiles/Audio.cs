@@ -1,7 +1,7 @@
 using System;
 using Mono.Unix;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class AudioActivator : TileActivator {
 

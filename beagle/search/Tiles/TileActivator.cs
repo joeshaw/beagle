@@ -5,7 +5,7 @@ using Mono.Posix;
 
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	// FIXME: Should we call this something else?
 	public abstract class TileActivator : IComparable {

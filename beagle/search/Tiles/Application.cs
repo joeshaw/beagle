@@ -5,7 +5,7 @@ using Mono.Unix;
 
 using GConf;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class ApplicationActivator : TileActivator {
 

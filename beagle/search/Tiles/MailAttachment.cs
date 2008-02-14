@@ -3,7 +3,7 @@ using System.Diagnostics;
 using Mono.Unix;
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class MailAttachmentActivator : TileActivator {
 
@@ -68,8 +68,9 @@ namespace Search.Tiles {
 		public void FindAllFromSender()
 		{
 			SafeProcess p = new SafeProcess ();
-			string addr = Search.Tiles.Utils.GetFirstPropertyOfParent(Hit,"fixme:from_address");
+			string addr = Beagle.Search.Tiles.Utils.GetFirstPropertyOfParent(Hit,"fixme:from_address");
 			p.Arguments = new string [] { "beagle-search", String.Format ("mailfromaddr:{0}", addr) };
+
 			try {
 				p.Start () ;
 			} catch (Exception e) {

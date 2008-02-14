@@ -1,7 +1,7 @@
 using System;
 using Gtk;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class ActionMenuItem : ImageMenuItem
 	{

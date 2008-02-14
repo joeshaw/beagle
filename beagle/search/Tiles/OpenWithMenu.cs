@@ -5,7 +5,7 @@ using Gtk;
 using Gdk;
 using Gnome.Vfs;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class OpenWithMenu : Gtk.Menu {
 

@@ -38,9 +38,11 @@ beagle-search: beagle-search.in
 
 CSFILES =					\
 	$(srcdir)/Category.cs			\
+	$(srcdir)/Driver.cs			\
 	$(srcdir)/DetailsPane.cs		\
 	$(srcdir)/Entry.cs			\
 	$(srcdir)/GroupView.cs			\
+	$(srcdir)/ISearch.cs			\
 	$(srcdir)/ListCategory.cs		\
 	$(srcdir)/NotificationArea.cs		\
 	$(srcdir)/Panes.cs			\
@@ -111,6 +113,8 @@ LOCAL_ASSEMBLIES =			\
 ASSEMBLIES =				\
 	$(BEAGLE_UI_LIBS)		\
 	$(LOCAL_ASSEMBLIES:%=-r:%)	\
+	$(NDESK_DBUS_LIBS)		\
+	$(NDESK_DBUS_GLIB_LIBS)		\
 	-r:Mono.Posix
 
 Search.exe: $(CSFILES) $(TILES) $(PAGES) $(TRAY) $(LOCAL_ASSEMBLIES)

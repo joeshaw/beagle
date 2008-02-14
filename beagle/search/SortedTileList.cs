@@ -1,27 +1,45 @@
+//
+// SortedTileList.cs
+//
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
+//
+
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
-namespace Search {
+using Beagle.Search.Tiles;
 
-	public class SortedTileList : IEnumerable, ICloneable {
+namespace Beagle.Search {
 
-		ArrayList tiles;
+	public class SortedTileList : IEnumerable<Tile> {
 
-		public SortedTileList (Search.SortType sort) : this (sort, new ArrayList ()) {}
+		private List<Tile> tiles = null;
 
-		SortedTileList (Search.SortType sort, ArrayList tiles)
+		private SortType sort_type;
+		private TileComparer comparer = null;
+
+		public SortedTileList (SortType sort)
 		{
-			this.tiles = tiles;
-			Sort = sort;
+			this.tiles = new List<Tile> ();
+			this.SortType = sort;
 		}
 
-		public int Add (Tiles.Tile tile)
+		public SortedTileList (SortType sort, Tile[] tiles_array)
+		{
+			this.tiles = new List<Tile> (tiles_array);
+			this.SortType = sort;
+		}
+
+		public int Add (Tile tile)
 		{
 			int index = tiles.BinarySearch (tile, comparer);
+
 			if (index >= 0)
 				throw new ArgumentException ("duplicate");
 
 			tiles.Insert (~index, tile);
+
 			return ~index;
 		}
 
@@ -30,19 +48,20 @@ namespace Search {
 			tiles.Clear ();
 		}
 
-		public bool Contains (Tiles.Tile tile)
+		public bool Contains (Tile tile)
 		{
 			return tiles.Contains (tile);
 		}
 
-		public int IndexOf (Tiles.Tile tile)
+		public int IndexOf (Tile tile)
 		{
 			return tiles.IndexOf (tile);
 		}
 
-		public void Remove (Tiles.Tile tile)
+		public void Remove (Tile tile)
 		{
 			int index = tiles.BinarySearch (tile, comparer);
+			
 			if (index >= 0)
 				tiles.RemoveAt (index);
 		}
@@ -52,95 +71,97 @@ namespace Search {
 			tiles.RemoveAt (index);
 		}
 
-		public Tiles.Tile this[int index] {
-			get {
-				return (Tiles.Tile)tiles[index];
-			}
+		public Tile this [int index] {
+			get { return tiles[index]; }
 		}
 
 		public int Count {
-			get {
-				return tiles.Count;
-			}
+			get { return tiles.Count; }
 		}
 
-		public IEnumerator GetEnumerator ()
+		public IEnumerator<Tile> GetEnumerator ()
 		{
 			return tiles.GetEnumerator ();
 		}
 
+
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
+		
 		public object Clone ()
 		{
-			return new SortedTileList (sort, (ArrayList)tiles.Clone ());
+			return new SortedTileList (sort_type, tiles.ToArray ());
 		}
 
-		public IList GetRange (int index, int count)
+		public IList<Tile> GetRange (int index, int count)
 		{
 			return tiles.GetRange (index, count);
 		}
 
-		Search.SortType sort;
-		IComparer comparer;
-
-		public Search.SortType Sort {
-			get {
-				return sort;
-			}
+		public SortType SortType {
+			get { return sort_type; }
 			set {
-				sort = value;
-				switch (sort) {
-				case SortType.Relevance:
-				default:
-					comparer = new RelevanceComparer ();
+				sort_type = value;
+
+				switch (sort_type) {
+					case SortType.Relevance:
+					default:
+						comparer = new RelevanceComparer ();
 					break;
-				case SortType.Name:
-					comparer = new NameComparer ();
+					case SortType.Name:
+						comparer = new NameComparer ();
 					break;
-				case SortType.Modified:
-					comparer = new DateComparer ();
+					case SortType.Modified:
+						comparer = new DateComparer ();
 					break;
 				}
 
 				tiles.Sort (comparer);
 			}
 		}
-	}
-
-	abstract class TileComparer : IComparer {
-		public int Compare (object x, object y)
-		{
-			Tiles.Tile tx = (Tiles.Tile)x, ty = (Tiles.Tile)y;
-			int ret;
-
-			ret = Compare (tx, ty);
-			if (ret == 0)
-				ret = -tx.Timestamp.CompareTo (ty.Timestamp);
-			if (ret == 0)
-				ret = tx.GetHashCode ().CompareTo (ty.GetHashCode ());
-			return ret;
+	
+		private abstract class TileComparer : IComparer<Tile> {
+			
+			public int Compare (Tile x, Tile y)
+			{
+				int ret = TileCompare (x, y);
+				
+				if (ret == 0)
+					ret = -x.Timestamp.CompareTo (y.Timestamp);
+				
+				if (ret == 0)
+					ret = x.GetHashCode ().CompareTo (y.GetHashCode ());
+				
+				return ret;
+			}
+			
+			public abstract int TileCompare (Tile x, Tile y);
 		}
-
-		public abstract int Compare (Tiles.Tile tx, Tiles.Tile ty);
-	}
-
-	class RelevanceComparer : TileComparer {
-		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
-		{
-			return -tx.Score.CompareTo (ty.Score);
+		
+		private class RelevanceComparer : TileComparer {
+			
+			public override int TileCompare (Tile x, Tile y)
+			{
+				return -x.Score.CompareTo (y.Score);
+			}
 		}
-	}
-
-	class NameComparer : TileComparer {
-		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
-		{
-			return String.Compare (tx.Title, ty.Title, true);
+		
+		private class NameComparer : TileComparer {
+			
+			public override int TileCompare (Tile x, Tile y)
+			{
+				return String.Compare (x.Title, y.Title, true);
+			}
 		}
-	}
-
-	class DateComparer : TileComparer {
-		public override int Compare (Tiles.Tile tx, Tiles.Tile ty)
-		{
-			return -tx.Timestamp.CompareTo (ty.Timestamp);
+		
+		private class DateComparer : TileComparer {
+			
+			public override int TileCompare (Tile x, Tile y)
+			{
+				return -x.Timestamp.CompareTo (y.Timestamp);
+			}
 		}
 	}
 }
+

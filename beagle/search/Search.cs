@@ -2,55 +2,54 @@
 // Search.cs
 //
 // Copyright (c) 2006 Novell, Inc.
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;
-using System.Reflection;
 using System.Collections;
 using System.Diagnostics;
 
 using Gtk;
+using NDesk.DBus;
 using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;
 
-using Search.Tiles;
-using Search.Tray;
+using Beagle.Search.Tiles;
+using Beagle.Search.Tray;
 
-[assembly: AssemblyTitle ("beagle-search")]
-[assembly: AssemblyDescription ("GUI interface to the Beagle search system")]
+namespace Beagle.Search {
 
-namespace Search {
-
-	public class MainWindow : Window {
+	public class Search : Window, ISearch {
 
 		private Gtk.Button button;
 		private Gtk.Tooltips tips;
 		private Gtk.Notebook pages;
 		private Gtk.Statusbar statusbar;
 
-		private Search.UIManager uim;
-		private Search.NotificationArea notification_area;
-		private Search.GroupView view;
-		private Search.Entry entry;
-		private Search.Spinner spinner;
-		private Search.Panes panes;
-		private Search.Tray.TrayIcon tray;
+		private Beagle.Search.UIManager uim;
+		private Beagle.Search.NotificationArea notification_area;
+		private Beagle.Search.GroupView view;
+		private Beagle.Search.Entry entry;
+		private Beagle.Search.Spinner spinner;
+		private Beagle.Search.Panes panes;
+		private Beagle.Search.Tray.TrayIcon tray;
 
-		private Search.Pages.IndexInfo indexinfo;
-		private Search.Pages.QuickTips quicktips;
-		private Search.Pages.RootUser rootuser;
-		private Search.Pages.StartDaemon startdaemon;
-		private Search.Pages.NoMatch nomatch;
+		private Beagle.Search.Pages.IndexInfo indexinfo;
+		private Beagle.Search.Pages.QuickTips quicktips;
+		private Beagle.Search.Pages.RootUser rootuser;
+		private Beagle.Search.Pages.StartDaemon startdaemon;
+		private Beagle.Search.Pages.NoMatch nomatch;
 
-		private uint timeout;
+		private Beagle.Search.ScopeType scope = ScopeType.Everything;
+		private Beagle.Search.SortType sort = SortType.Modified;
+		private Beagle.Search.TypeFilter filter = null;
 
-		private string query_text;
-		private Beagle.Query current_query;
-		private Search.ScopeType scope = ScopeType.Everything;
-		private Search.SortType sort = SortType.Modified;
-		private Search.TypeFilter filter = null;
+		private uint timeout_id = 0;
+
+		private Beagle.Query current_query = null;
+		private string query_text = null;
 		private bool show_details = true;
 		private int total_matches = -1;
 
@@ -59,91 +58,7 @@ namespace Search {
 		public static bool IconEnabled = false;
 		private static bool search_docs = false;
 
-		public static void Main (string [] args)
-		{
-			SystemInformation.SetProcessName ("beagle-search");
-			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
-
-			string query = ParseArgs (args);
-
-			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
-
-			MainWindow window = new MainWindow ();
-
-			if (query != null && query != "" && !IconEnabled) {
-				window.entry.Text = query;
-				window.Search (true);
-			}
-
-			program.Run ();
-		}
-
-		private static string ParseArgs (String[] args)
-		{
-			string query = "";
-			int i = 0;
-
-			while (i < args.Length) {
-				switch (args [i]) {
-				case "--help":
-				case "--usage":
-					PrintUsageAndExit ();
-					return null;
-
-				case "--version":
-					VersionFu.PrintVersion ();
-					Environment.Exit (0);
-					break;
-
-				case "--icon":
-					IconEnabled = true;
-					break;
-
-				case "--search-docs":
-					search_docs = true;
-					break;
-
-				// Ignore session management
-				case "--sm-config-prefix":
-				case "--sm-client-id":
-				case "--screen":
-					// These all take an argument, so
-					// increment i
-					i++;
-					break;
-
-				default:
-					if (args [i].Length < 2 || args [i].Substring (0, 2) != "--") {
-						if (query.Length != 0)
-							query += " ";
-						query += args [i];
-					}
-					break;
-				}
-
-				i++;
-			}
-
-			return query;
-		}
-
-		public static void PrintUsageAndExit ()
-		{
-			VersionFu.PrintHeader ();
-
-			string usage =
-				"Usage: beagle-search [OPTIONS] [<query string>]\n\n" +
-				"Options:\n" +
-				"  --icon\t\t\tAdd an icon to the notification area rather than opening a search window.\n" +
-				"  --search-docs\t\t\tAlso search the system-wide documentation index.\n" +
-				"  --help\t\t\tPrint this usage message.\n" +
-				"  --version\t\t\tPrint version information.\n";
-
-			Console.WriteLine (usage);
-			System.Environment.Exit (0);
-		}
-
-		public MainWindow () : base (WindowType.Toplevel)
+		public Search (string query_text) : base (WindowType.Toplevel)
 		{
 			Title = Catalog.GetString ("Desktop Search");
 			Icon = WidgetFu.LoadThemeIcon ("system-search", 16);
@@ -178,9 +93,10 @@ namespace Search {
 
 			// The auto search after timeout feauture is now optional
 			// and can be disabled.
+
 			if (Conf.BeagleSearch.GetOption (Conf.Names.BeagleSearchAutoSearch, true)) {
-				entry.Changed += OnEntryChanged;
-				entry.MoveCursor += OnEntryMoveCursor;
+				entry.Changed += OnEntryResetTimeout;
+				entry.MoveCursor += OnEntryResetTimeout;
 			}
 
 			button = new Gtk.Button ();
@@ -235,7 +151,7 @@ namespace Search {
 			startdaemon.Show ();
 			pages.Add (startdaemon);
 
-			panes = new Search.Panes ();
+			panes = new Beagle.Search.Panes ();
 			panes.Show ();
 			pages.Add (panes);
 
@@ -263,7 +179,7 @@ namespace Search {
 			}
 
 			if (IconEnabled) {
-				tray = new Search.Tray.TrayIcon ();
+				tray = new Beagle.Search.Tray.TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
 
@@ -330,11 +246,11 @@ namespace Search {
 		// Whether we should grab focus from the text entry
 		private bool grab_focus;
 
-		private void Search (bool grab_focus)
+		private void Query (bool grab_focus)
 		{
-			if (timeout != 0) {
-				GLib.Source.Remove (timeout);
-				timeout = 0;
+			if (timeout_id != 0) {
+				GLib.Source.Remove (timeout_id);
+				timeout_id = 0;
 			}
 
 			string query = query_text = entry.Text;
@@ -352,7 +268,7 @@ namespace Search {
 
 			view.Clear ();
 			view.Scope = scope;
-			view.Sort = sort;
+			view.SortType = sort;
 			pages.CurrentPage = pages.PageNum (panes);
 
 			this.grab_focus = grab_focus;
@@ -392,38 +308,33 @@ namespace Search {
 
 		private void OnEntryActivated (object obj, EventArgs args)
 		{
-			Search (true);
+			Query (true);
 		}
 
 		private void OnDaemonStarted ()
 		{
-			Search (true);
+			Query (true);
 		}
 
-		private void OnEntryChanged (object obj, EventArgs args)
+		private void OnEntryResetTimeout (object o, EventArgs args)
 		{
-			if (timeout != 0)
-				GLib.Source.Remove (timeout);
-			timeout = GLib.Timeout.Add (1000, OnEntryTimeout);
-		}
+			if (timeout_id != 0)
+				GLib.Source.Remove (timeout_id);
 
-		private void OnEntryMoveCursor (object obj, EventArgs args)
-		{
-			if (timeout != 0)
-				GLib.Source.Remove (timeout);
-			timeout = GLib.Timeout.Add (1000, OnEntryTimeout);
+			timeout_id = GLib.Timeout.Add (1000, OnEntryTimeout);
 		}
 
 		private bool OnEntryTimeout ()
 		{
-			timeout = 0;
-			Search (false);
+			timeout_id = 0;
+			Query (false);
+
 			return false;
 		}
 
 		private void OnButtonClicked (object obj, EventArgs args)
 		{
-			Search (true);
+			Query (true);
 		}
 
 		private void OnWindowDelete (object o, Gtk.DeleteEventArgs args)
@@ -436,12 +347,13 @@ namespace Search {
 			}
 		}
 
-		private void OnScopeChanged (Search.ScopeType toggled, bool active)
+		private void OnScopeChanged (ScopeType toggled, bool active)
 		{
-			if (active)
+			if (active) {
 				view.Scope = scope = scope | toggled;
-			else
+			} else {
 				view.Scope = scope = scope ^ toggled;
+			}
 			
 			CheckNoMatch ();
 		}
@@ -449,20 +361,19 @@ namespace Search {
 		private void OnCategoryToggled (ScopeType toggled)
 		{
 			string name =  ScopeType.GetName (typeof (ScopeType), toggled);
+
 			try {
 				ToggleAction act = (ToggleAction) uim.GetAction ("/ui/MenuBar/Search/Scope/" +  name);
-				act.Active = ! act.Active;
-			}
-			catch (Exception ex) {
-				Console.WriteLine("Exception caught when trying to deactivate menu entry {0}:",name);
-				Console.WriteLine(ex);
-				return;
+				act.Active = !act.Active;
+			} catch (Exception e) {
+				Console.WriteLine ("Exception caught when trying to deactivate menu entry {0}:",name);
+				Console.WriteLine (e);
 			}
 		}
 		
-		private void OnSortChanged (Search.SortType newSort)
+		private void OnSortChanged (SortType value)
 		{
-			view.Sort = sort = newSort;
+			view.SortType = sort = value;
 		}
 
 		private void OnToggleDetails (bool active)
@@ -622,7 +533,7 @@ namespace Search {
 				ShowAll ();
 
 			entry.Text = query;
-			Search (true);
+			Query (true);
 		}
 
 		//////////////////////////////////////

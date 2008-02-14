@@ -1,14 +1,15 @@
 using System;
 using System.Collections;
 
-using Mono.Posix;
 using Gtk;
+using Mono.Posix;
+
 using Beagle;
-using Search.Tiles;
+using Beagle.Search.Tiles;
 
-namespace Search {
+namespace Beagle.Search {
 
-	public delegate void TileHandler (Tiles.Tile tile);
+	public delegate void TileHandler (Tile tile);
 
 	public enum MatchType {
 		None,
@@ -32,10 +33,10 @@ namespace Search {
 			categories = new Hashtable ();
 			tileSizeGroup = new Gtk.SizeGroup (Gtk.SizeGroupMode.Both);			
 
-			foreach (Tiles.TileGroupInfo info in Tiles.Utils.GroupInfo) {
+			foreach (TileGroupInfo info in Utils.GroupInfo) {
 				Category box = null;
 								
-				if (info.Group == Tiles.TileGroup.Conversations)
+				if (info.Group == TileGroup.Conversations)
 					box = new ListCategory (info);
 				else
 					box = new TileCategory (info, tileSizeGroup);
@@ -48,7 +49,7 @@ namespace Search {
 			}
 		}
 		
-		public void AddHit (Tiles.Tile tile)
+		public void AddHit (Tile tile)
 		{
 			tile.Show ();
 			tile.Selected += OnTileSelected;
@@ -132,7 +133,7 @@ namespace Search {
 				return;
 
 			if (TileSelected != null)
-				TileSelected ((Tiles.Tile)tile);
+				TileSelected ((Tile)tile);
 
 			if (selection != null)
 				selection.State = StateType.Normal;
@@ -163,10 +164,10 @@ namespace Search {
 			return (scope & scopetype) == scopetype;
 		}
 
-		public SortType Sort {
+		public SortType SortType {
 			set {
 				foreach (Category category in categories.Values)
-					category.Sort = value;
+					category.SortType = value;
 			}
 		}
 

@@ -1,24 +1,34 @@
+//
+// Category.cs
+//
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
+//
+
+using System;
+using System.Collections.Generic;
+
 using Gtk;
 using Gdk;
-using System;
-using System.Collections;
+
 using Mono.Unix;
 
-namespace Search {
+using Beagle.Search.Tiles;
+
+namespace Beagle.Search {
 
 	public abstract class Category : Container {
 
-		SortedTileList tiles;
-		int page;
+		private SortedTileList tiles = null;
+		private int page = 0;
 
 		protected Gtk.HBox header;
-		Gtk.Label position;
-		Gtk.Button prev, next;
-		Gtk.Expander headerExpander;
-		int fewRows, manyRows, columns;
-		int few, many;
-		bool extended, expanded;
-		ScopeType scope;
+		private Gtk.Label position;
+		private Gtk.Button prev, next;
+		private Gtk.Expander headerExpander;
+		private int fewRows, manyRows, columns;
+		private int few, many;
+		private bool extended, expanded;
+		private ScopeType scope;
 
 		public Category (Tiles.TileGroupInfo info, int columns)
 		{
@@ -49,7 +59,7 @@ namespace Search {
 			header.Parent = this;
 			header.SizeRequested += HeaderSizeRequested;
 
-			tiles = new SortedTileList (SortType.Relevance);
+			tiles = new SortedTileList (Beagle.Search.SortType.Relevance);
 			page = 0;
 
 			fewRows = info.Rows;
@@ -76,33 +86,33 @@ namespace Search {
 		}
 
 		public bool Expanded {
-			get {
-				return expanded;
-			}
+			get { return expanded; }
 			set {
 				expanded = value;
+
 				if (expanded)
 					ShowTiles (false);
 				else
 					HideTiles ();
+
 				headerExpander.Expanded = expanded;
 			}
 		}
 
 		protected int Columns {
-			get {
-				return columns;
-			}
+			get { return columns; }
 			set {
 				HideTiles ();
+
 				columns = value;
 				few = fewRows * columns;
 				many = manyRows * columns;
+
 				ShowTiles (true);
 			}
 		}
 
-		void HeaderSizeRequested (object obj, Gtk.SizeRequestedArgs args)
+		private void HeaderSizeRequested (object obj, Gtk.SizeRequestedArgs args)
 		{
 			Gtk.Requisition req = args.Requisition;
 			Gtk.Requisition labelReq = headerExpander.ChildRequisition;
@@ -262,13 +272,13 @@ namespace Search {
 			}
 		}
 
-		protected IList VisibleTiles {
+		protected IList<Tile> VisibleTiles {
 			get {
 				return tiles.GetRange (FirstVisible, LastVisible - FirstVisible + 1);
 			}
 		}
 
-		public IEnumerable AllTiles {
+		public IEnumerable<Tile> AllTiles {
 			get {
 				return tiles;
 			}
@@ -316,21 +326,17 @@ namespace Search {
 		}
 
 		public bool Empty {
-			get {
-				return tiles.Count == 0;
-			}
+			get { return tiles.Count == 0; }
 		}
 
 		public int Count {
-			get {
-				return tiles.Count;
-			}
+			get { return tiles.Count; }
 		}
 
-		public Search.SortType Sort {
+		public SortType SortType {
 			set {
 				HideTiles ();
-				tiles.Sort = value;
+				tiles.SortType = value;
 				ShowTiles (true);
 			}
 		}

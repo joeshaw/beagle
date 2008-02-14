@@ -14,7 +14,7 @@ using Mono.Unix;
 
 using Beagle;
 
-namespace Search.Pages {
+namespace Beagle.Search.Pages {
 
 	public class IndexInfo : Base {
 

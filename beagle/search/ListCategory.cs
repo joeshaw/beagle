@@ -3,7 +3,7 @@ using Gdk;
 using System;
 using System.Collections;
 
-namespace Search {
+namespace Beagle.Search {
 
 	public class ListCategory : Category {
 

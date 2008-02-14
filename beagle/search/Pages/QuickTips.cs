@@ -2,7 +2,7 @@ using Gtk;
 using System;
 using Mono.Unix;
 
-namespace Search.Pages {
+namespace Beagle.Search.Pages {
 
 	public class QuickTips : Base {
 

@@ -26,7 +26,7 @@
 
 using System;
 
-using Search.Tiles;
+using Beagle.Search.Tiles;
 
 [assembly: TileActivatorTypes (
 	 typeof (ApplicationActivator),

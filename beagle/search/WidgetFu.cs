@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Search {
+namespace Beagle.Search {
 
 	public static class WidgetFu {
 		

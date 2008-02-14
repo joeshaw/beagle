@@ -12,7 +12,7 @@ using Mono.Unix;
 using Gtk;
 using Gdk;
 
-namespace Search.Tray
+namespace Beagle.Search.Tray
 {
 	public delegate void SearchDelegate (string query);
 

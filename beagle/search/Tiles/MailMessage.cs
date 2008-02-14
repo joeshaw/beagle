@@ -4,7 +4,7 @@ using System.IO;
 using Mono.Unix;
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class MailMessageActivator : TileActivator {
 

@@ -6,7 +6,8 @@ using System.Diagnostics;
 using Beagle;
 using Beagle.Util;
 
-namespace Search {
+namespace Beagle.Search {
+
 	[Flags]
 	public enum ScopeType : ushort {
 		Nothing       = 0,
@@ -32,20 +33,20 @@ namespace Search {
 
 	public class UIManager : Gtk.UIManager {
 
-		private MainWindow main_window;
+		private Search search = null;
 		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] sort_entries;
 		private Gtk.ToggleActionEntry[] scope_entries, view_entries, domain_entries;
 
-		public UIManager (MainWindow main_window)
+		public UIManager (Search search)
 		{
-			this.main_window = main_window;
-			
-			actions = new ActionGroup ("Actions");
+			this.search = search;
+			this.actions = new ActionGroup ("Actions");
 
 			ActionEntry quit_action_entry;
-			if (MainWindow.IconEnabled) {
+
+			if (Search.IconEnabled) {
 				quit_action_entry = new ActionEntry ("Quit", Gtk.Stock.Close,
 								     null, "<control>Q",
 						 		     Catalog.GetString ("Close Desktop Search"),
@@ -246,14 +247,12 @@ namespace Search {
 			actions.Add (view_entries);
 
 			InsertActionGroup (actions, 0);
-			main_window.AddAccelGroup (AccelGroup);
+			search.AddAccelGroup (AccelGroup);
 			AddUiFromString (ui_def);
 		}
 
 		public Gtk.MenuBar MenuBar {
-			get {
-				return (Gtk.MenuBar)GetWidget ("/MenuBar");
-			}
+			get { return (Gtk.MenuBar)GetWidget ("/MenuBar"); }
 		}
 
 		private bool sensitive = true;
@@ -341,17 +340,18 @@ namespace Search {
 
 		private void OnHideWindow (object obj, EventArgs args)
 		{
-			if (MainWindow.IconEnabled)
-				main_window.Hide ();
+			if (Search.IconEnabled)
+				search.Hide ();
 		}
 
 		private void Quit (object obj, EventArgs args)
 		{
-			if (MainWindow.IconEnabled) {
-				main_window.Hide ();
-			} else {
-				Gtk.Application.Quit ();
-			}
+			if (Search.IconEnabled) {
+				search.Hide ();
+				return;
+			} 
+
+			Gtk.Application.Quit ();
 		}
 
 		private void Help (object obj, EventArgs args)
@@ -361,7 +361,7 @@ namespace Search {
 			try {
 				Gnome.Url.Show (address);
 			} catch {
-				HigMessageDialog md = new HigMessageDialog (main_window, Gtk.DialogFlags.DestroyWithParent,
+				HigMessageDialog md = new HigMessageDialog (search, Gtk.DialogFlags.DestroyWithParent,
 									    Gtk.MessageType.Error, Gtk.ButtonsType.Close,
 									    Catalog.GetString ("Couldn't launch web browser"),
 									    Catalog.GetString (String.Format ("Please point your web browser to '{0}' manually", address)));

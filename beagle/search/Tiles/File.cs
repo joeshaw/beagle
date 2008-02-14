@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 using Mono.Unix;
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class FileActivator : TileActivator {
 

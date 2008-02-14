@@ -1,7 +1,7 @@
 //
 // Docbook.cs
 //
-// Copyright (C) 2007 Lukas Lipka <lukaslipka@gmail.com>
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
 //
 
 using System;
@@ -9,7 +9,7 @@ using Mono.Unix;
 
 using Beagle.Util;
 
-namespace Search.Tiles {
+namespace Beagle.Search.Tiles {
 
 	public class DocbookActivator : TileActivator {
 
@@ -44,8 +44,6 @@ namespace Search.Tiles {
 	}
 
 	public class Docbook : TileTemplate {
-
-		string path = null;
 
 		public Docbook (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{

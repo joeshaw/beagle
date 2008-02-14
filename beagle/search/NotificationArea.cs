@@ -10,7 +10,7 @@ using System.Collections;
 using Gtk;
 using Mono.Unix;
 
-namespace Search {
+namespace Beagle.Search {
 
 	public class NotificationMessage : HBox {
 

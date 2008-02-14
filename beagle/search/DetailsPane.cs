@@ -1,8 +1,16 @@
 using System;
 
-namespace Search.Tiles {
+using Beagle.Util;
+
+namespace Beagle.Search {
 
 	public class DetailsPane : Gtk.Table {
+
+		private Gtk.Image icon;
+		private Gtk.Label snippet;
+		private Gtk.Tooltips snippet_tip;
+
+		private bool maximized = false;
 
 		public DetailsPane () : base (1, 2, false)
 		{
@@ -14,20 +22,8 @@ namespace Search.Tiles {
 			icon.Show ();
 			Attach (icon, 0, 1, 0, 1, fill, fill, 6, 0);
 
-			SizeRequested += DetailsSizeRequested;
+			base.SizeRequested += DetailsSizeRequested;
 		}
-
-		private Gtk.Image icon;
-		public Gtk.Image Icon {
-			get { return icon; }
-		}
-
-		private Gtk.Label snippet;
-		public Gtk.Label Snippet {
-			get { return snippet; }
-		}
-
-		bool maximized = false;
 
 		// FIXME: overriding OnSizeRequested directly results in a 0x0 req
 		[GLib.ConnectBefore]
@@ -87,7 +83,6 @@ namespace Search.Tiles {
 
 		private const Gtk.AttachOptions expand = Gtk.AttachOptions.Expand | Gtk.AttachOptions.Fill;
 		private const Gtk.AttachOptions fill = Gtk.AttachOptions.Fill;
-
 		private uint current_row = 0;
 
 		private Gtk.Label AddGrayLabel (string text, uint row, uint column)
@@ -160,8 +155,6 @@ namespace Search.Tiles {
 			return snippet;
 		}
 
-		Gtk.Tooltips snippet_tip;
-
 		public Gtk.Label AddNewLine ()
 		{
 			Gtk.Label label = WidgetFu.NewLabel ("");
@@ -173,10 +166,17 @@ namespace Search.Tiles {
 		public void GotSnippet (string text)
 		{
 			snippet.Markup = text;
-			snippet_tip.SetTip (snippet,
-					    Beagle.Util.StringFu.ConvertSpecialEntities (text.Replace ("<b>", String.Empty).
-											 Replace ("</b>", String.Empty)),
-					    null);
+			
+			string tip = text.Replace ("<b>", String.Empty).Replace ("</b>", String.Empty);
+			snippet_tip.SetTip (snippet, StringFu.ConvertSpecialEntities (tip), null);
+		}
+
+		public Gtk.Image Icon {
+			get { return icon; }
+		}
+
+		public Gtk.Label Snippet {
+			get { return snippet; }
 		}
 	}
 }
