@@ -33,6 +33,10 @@ elif [ -n "$_HEY_LETS_DO_A_HEAP_SHOT" ]; then
 
 fi
 
+if [ -z "$BEAGLE_MONO_RUNTIME" ]; then
+   export BEAGLE_MONO_RUNTIME="mono"
+fi
+
 if [ -n "$BEAGLE_MONO_DEBUG_FLAG_IS_SET" ]; then
    MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
