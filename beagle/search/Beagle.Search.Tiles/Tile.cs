@@ -146,8 +146,18 @@ namespace Beagle.Search.Tiles {
 			gr.Color = CairoFu.GdkColorToCairoColor (fill);
 			gr.Fill ();
 
-			if (State == StateType.Selected || HasFocus) {
+			if (State == StateType.Selected) {
 				CairoFu.RoundedSelection (gr, this, 0, 0, Allocation.Width, Allocation.Height);
+			}
+
+			if (HasFocus) {
+				int focus_padding = (int)StyleGetProperty ("focus-padding");
+				int x = focus_padding + Style.Xthickness;
+				int y = focus_padding + Style.Ythickness;
+				int width = Allocation.Width - 2 * (focus_padding + Style.Xthickness);
+				int height = Allocation.Height - 2 * (focus_padding + Style.Ythickness);
+				Style.PaintFocus (Style, GdkWindow, State, evt.Area, this,
+						  null, x, y, width, height);
 			}
 			
 			CairoFu.DisposeContext (gr);
