@@ -16,38 +16,6 @@ namespace Beagle.Search {
 
 	public class Driver {
 
-		public static void Main (string[] args)
-		{
-			// Set our process name
-
-			SystemInformation.SetProcessName ("beagle-search");
-
-			// Initialize our translations catalog
-			
-			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
-
-			// Set up DBus for our GLib main loop
-			
-			BusG.Init ();
-
-			// Parse arguments
-
-			string query = ParseArgs (args);
-
-			// Init Gnome program
-
-			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
-
-			Search window = new Search (query);
-
-			//if (query != null && query != "" && !IconEnabled) {
-			//	window.entry.Text = query;
-			//	window.Search (true);
-			//}
-
-			program.Run ();
-		}
-
 		private static string ParseArgs (String[] args)
 		{
 			string query = String.Empty;
@@ -111,6 +79,38 @@ namespace Beagle.Search {
 
 			Console.WriteLine (usage);
 			System.Environment.Exit (0);
+		}
+
+		public static void Main (string[] args)
+		{
+			// Set our process name
+
+			SystemInformation.SetProcessName ("beagle-search");
+
+			// Initialize our translations catalog
+			
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
+
+			// Set up DBus for our GLib main loop
+			
+			BusG.Init ();
+
+			// Parse arguments
+
+			string query = ParseArgs (args);
+
+			// Init Gnome program
+
+			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
+
+			Search window = new Search (query);
+
+			//if (query != null && query != "" && !IconEnabled) {
+			//	window.entry.Text = query;
+			//	window.Search (true);
+			//}
+
+			program.Run ();
 		}
 	}
 }

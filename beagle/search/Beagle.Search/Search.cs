@@ -60,12 +60,12 @@ namespace Beagle.Search {
 
 		public Search (string query_text) : base (WindowType.Toplevel)
 		{
-			Title = Catalog.GetString ("Desktop Search");
-			Icon = WidgetFu.LoadThemeIcon ("system-search", 16);
+			base.Title = Catalog.GetString ("Desktop Search");
+			base.Icon = WidgetFu.LoadThemeIcon ("system-search", 16);
 
-			DefaultWidth = 700;
-			DefaultHeight = 550;
-			DeleteEvent += OnWindowDelete;
+			base.DefaultWidth = 700;
+			base.DefaultHeight = 550;
+			base.DeleteEvent += OnWindowDelete;
 			
 			VBox vbox = new VBox ();
 			vbox.Spacing = 3;

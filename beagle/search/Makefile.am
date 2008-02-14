@@ -1,6 +1,9 @@
 CSC = $(MCS) -debug
 CSFLAGS = -target:exe
 
+ASSEMBLY_NAME = Beagle.Search
+ASSEMBLY = $(ASSEMBLY_NAME).exe
+
 if ENABLE_DESKTOP_LAUNCH
 CSFLAGS += -define:ENABLE_DESKTOP_LAUNCH
 endif
@@ -25,28 +28,14 @@ if ENABLE_AVAHI
 CSFLAGS += -define:ENABLE_AVAHI
 endif
 
-pkglib_DATA = Search.exe Search.exe.mdb
-
-BIN_WRAPPERS = beagle-search
-
-CSFILES =							\
+SOURCES =							\
 	$(srcdir)/AssemblyInfo.cs				\
-	$(srcdir)/Beagle.Search/Category.cs			\
-	$(srcdir)/Beagle.Search/Driver.cs			\
-	$(srcdir)/Beagle.Search/DetailsPane.cs			\
-	$(srcdir)/Beagle.Search/Entry.cs			\
-	$(srcdir)/Beagle.Search/GroupView.cs			\
-	$(srcdir)/Beagle.Search/ISearch.cs			\
-	$(srcdir)/Beagle.Search/ListCategory.cs			\
-	$(srcdir)/Beagle.Search/NotificationArea.cs		\
-	$(srcdir)/Beagle.Search/Panes.cs			\
-	$(srcdir)/Beagle.Search/Search.cs			\
-	$(srcdir)/Beagle.Search/SortedTileList.cs		\
-	$(srcdir)/Beagle.Search/Spinner.cs			\
-	$(srcdir)/Beagle.Search/TileCategory.cs			\
-	$(srcdir)/Beagle.Search/TypeFilter.cs			\
-	$(srcdir)/Beagle.Search/UIManager.cs			\
-	$(srcdir)/Beagle.Search/WidgetFu.cs			\
+	$(srcdir)/Beagle.Search.Pages/Base.cs			\
+	$(srcdir)/Beagle.Search.Pages/IndexInfo.cs		\
+	$(srcdir)/Beagle.Search.Pages/NoMatch.cs		\
+	$(srcdir)/Beagle.Search.Pages/QuickTips.cs		\
+	$(srcdir)/Beagle.Search.Pages/RootUser.cs		\
+	$(srcdir)/Beagle.Search.Pages/StartDaemon.cs		\
 	$(srcdir)/Beagle.Search.Tiles/ActionMenuItem.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Application.cs		\
 	$(srcdir)/Beagle.Search.Tiles/ArchivedFile.cs		\
@@ -60,8 +49,8 @@ CSFILES =							\
 	$(srcdir)/Beagle.Search.Tiles/HitFlavor.cs		\
 	$(srcdir)/Beagle.Search.Tiles/IMLog.cs			\
 	$(srcdir)/Beagle.Search.Tiles/Image.cs			\
-	$(srcdir)/Beagle.Search.Tiles/MailMessage.cs		\
 	$(srcdir)/Beagle.Search.Tiles/MailAttachment.cs		\
+	$(srcdir)/Beagle.Search.Tiles/MailMessage.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Manpage.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Note.cs			\
 	$(srcdir)/Beagle.Search.Tiles/Presentation.cs		\
@@ -79,19 +68,28 @@ CSFILES =							\
 	$(srcdir)/Beagle.Search.Tiles/Utils.cs			\
 	$(srcdir)/Beagle.Search.Tiles/Video.cs			\
 	$(srcdir)/Beagle.Search.Tiles/WebHistory.cs		\
-	$(srcdir)/Beagle.Search.Pages/Base.cs			\
-	$(srcdir)/Beagle.Search.Pages/IndexInfo.cs		\
-	$(srcdir)/Beagle.Search.Pages/NoMatch.cs		\
-	$(srcdir)/Beagle.Search.Pages/QuickTips.cs		\
-	$(srcdir)/Beagle.Search.Pages/RootUser.cs		\
-	$(srcdir)/Beagle.Search.Pages/StartDaemon.cs		\
 	$(srcdir)/Beagle.Search.Tray/NotificationArea.cs	\
-	$(srcdir)/Beagle.Search.Tray/TrayIcon.cs
+	$(srcdir)/Beagle.Search.Tray/TrayIcon.cs		\
+	$(srcdir)/Beagle.Search/Category.cs			\
+	$(srcdir)/Beagle.Search/DetailsPane.cs			\
+	$(srcdir)/Beagle.Search/Driver.cs			\
+	$(srcdir)/Beagle.Search/Entry.cs			\
+	$(srcdir)/Beagle.Search/GroupView.cs			\
+	$(srcdir)/Beagle.Search/ISearch.cs			\
+	$(srcdir)/Beagle.Search/ListCategory.cs			\
+	$(srcdir)/Beagle.Search/NotificationArea.cs		\
+	$(srcdir)/Beagle.Search/Panes.cs			\
+	$(srcdir)/Beagle.Search/Search.cs			\
+	$(srcdir)/Beagle.Search/SortedTileList.cs		\
+	$(srcdir)/Beagle.Search/Spinner.cs			\
+	$(srcdir)/Beagle.Search/TileCategory.cs			\
+	$(srcdir)/Beagle.Search/TypeFilter.cs			\
+	$(srcdir)/Beagle.Search/UIManager.cs			\
+	$(srcdir)/Beagle.Search/WidgetFu.cs
 
 if ENABLE_OPEN_WITH
-CSFILES += $(srcdir)/Beagle.Search.Tiles/OpenWithMenu.cs
+SOURCES += $(srcdir)/Beagle.Search.Tiles/OpenWithMenu.cs
 endif
-
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
@@ -105,10 +103,14 @@ ASSEMBLIES =				\
 	$(NDESK_DBUS_GLIB_LIBS)		\
 	-r:Mono.Posix
 
-Search.exe: $(CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES)
+pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb
 
-Search.exe.mdb: Search.exe
+BIN_WRAPPERS = beagle-search
+
+$(ASSEMBLY): $(SOURCES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(SOURCES) $(ASSEMBLIES)
+
+$(ASSEMBLY).mdb: Search.exe
 
 beagle-search: beagle-search.in
 	sed 					\
@@ -144,10 +146,7 @@ uninstall-local:
 	rm -f $(DESTDIR)$(bindir)/beagle-search
 
 EXTRA_DIST =			\
-	$(CSFILES)		\
-	$(TILES)		\
-	$(PAGES)		\
-	$(TRAY)			\
+	$(SOURCES)		\
 	$(man_MANS)		\
 	$(desktop_DATA).in	\
 	$(autostart_DATA)	\
@@ -155,8 +154,8 @@ EXTRA_DIST =			\
 	beagle-search.desktop.in.in
 
 CLEANFILES =			\
-	Search.exe		\
-	Search.exe.mdb		\
+	$(ASSEMBLY)		\
+	$(ASSEMBLY).mdb		\
 	beagle-search		\
 	$(desktop_DATA)		\
 	$(desktop_h_files)
