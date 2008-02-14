@@ -136,40 +136,23 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
-		// Returns the lowest matching score before the results are
-		// truncated.
-		public void DoQuery (Query               query,
-				     IQueryResult        result,
-				     ICollection         search_subset_uris, // should be internal uris
-				     QueryPartHook       query_part_hook,
-				     UriFilter           uri_filter,
-				     HitFilter           hit_filter)
+		// Returns the lists of terms in the query
+		private ArrayList AssembleQuery (Query			query,
+						 QueryPartHook		query_part_hook,
+					    	 HitFilter		hit_filter,
+					    	 out ArrayList		primary_required_part_queries,
+					    	 out ArrayList		secondary_required_part_queries,
+					    	 out LNS.BooleanQuery	primary_prohibited_part_query,
+					    	 out LNS.BooleanQuery	secondary_prohibited_part_query,
+						 out AndHitFilter	all_hit_filters)
 		{
-			if (Debug)
-				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
-
-			Stopwatch total, a, b, c, d, e, f;
-
-			total = new Stopwatch ();
-			a = new Stopwatch ();
-			b = new Stopwatch ();
-			c = new Stopwatch ();
-			d = new Stopwatch ();
-			e = new Stopwatch ();
-			f = new Stopwatch ();
-
-			total.Start ();
-			a.Start ();
-
 			// Assemble all of the parts into a bunch of Lucene queries
 
-			ArrayList primary_required_part_queries = null;
-			ArrayList secondary_required_part_queries = null;
+			primary_required_part_queries = null;
+			secondary_required_part_queries = null;
+			primary_prohibited_part_query = null;
+			secondary_prohibited_part_query = null;
 
-			LNS.BooleanQuery primary_prohibited_part_query = null;
-			LNS.BooleanQuery secondary_prohibited_part_query = null;
-
-			AndHitFilter all_hit_filters;
 			all_hit_filters = new AndHitFilter ();
 			if (hit_filter != null)
 				all_hit_filters.Add (hit_filter);
@@ -226,6 +209,52 @@ namespace Beagle.Daemon {
 					break;
 				}
 			}
+
+			return term_list;
+		}
+
+		////////////////////////////////////////////////////////////////
+
+		public void DoQuery (Query               query,
+				     IQueryResult        result,
+				     ICollection         search_subset_uris, // should be internal uris
+				     QueryPartHook       query_part_hook,
+				     UriFilter           uri_filter,
+				     HitFilter           hit_filter)
+		{
+			if (Debug)
+				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+
+			Stopwatch total, a, b, c, d, e, f;
+
+			total = new Stopwatch ();
+			a = new Stopwatch ();
+			b = new Stopwatch ();
+			c = new Stopwatch ();
+			d = new Stopwatch ();
+			e = new Stopwatch ();
+			f = new Stopwatch ();
+
+			total.Start ();
+			a.Start ();
+
+			ArrayList primary_required_part_queries;
+			ArrayList secondary_required_part_queries;
+
+			LNS.BooleanQuery primary_prohibited_part_query;
+			LNS.BooleanQuery secondary_prohibited_part_query;
+
+			AndHitFilter all_hit_filters;
+
+			ArrayList term_list;
+			term_list = AssembleQuery ( query,
+						    query_part_hook,
+						    hit_filter,
+						    out primary_required_part_queries,
+						    out secondary_required_part_queries,
+						    out primary_prohibited_part_query,
+						    out secondary_prohibited_part_query,
+						    out all_hit_filters);
 
 			a.Stop ();
 			if (Debug)
