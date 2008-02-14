@@ -204,6 +204,11 @@ namespace Beagle.Search {
 			}
 
 			StartCheckingIndexingStatus ();
+
+			if (! String.IsNullOrEmpty (query_text)) {
+				entry.Text = query_text;
+				Query (true);
+			}
 		}
 
 		private void SetWindowTitle (string query)
