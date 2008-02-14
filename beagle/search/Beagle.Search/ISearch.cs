@@ -10,7 +10,10 @@ using NDesk.DBus;
 using org.freedesktop.DBus;
 
 namespace Beagle.Search {
-
+	
+	[Interface ("org.gnome.Beagle.Search")]
 	public interface ISearch {
+		void Show ();
+		void Hide ();
 	}
 }

@@ -7,6 +7,7 @@
 using System;
 
 using NDesk.DBus;
+using org.freedesktop.DBus;
 using Mono.Unix;
 
 using Beagle;
@@ -15,6 +16,9 @@ using Beagle.Util;
 namespace Beagle.Search {
 
 	public class Driver {
+
+		private const string INTERFACE_NAME = "org.gnome.Beagle.Search";
+		private const string PATH_NAME = "/org/gnome/Beagle/Search";
 
 		private static string ParseArgs (String[] args)
 		{
@@ -99,11 +103,18 @@ namespace Beagle.Search {
 
 			string query = ParseArgs (args);
 
+			if (Bus.Session.RequestName (INTERFACE_NAME) != RequestNameReply.PrimaryOwner) {
+				Console.WriteLine ("There is already an instance of beagle-search running!");
+				return;
+			}
+			
 			// Init Gnome program
 
 			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
 
 			Search window = new Search (query);
+
+			Bus.Session.Register (INTERFACE_NAME, new ObjectPath (PATH_NAME), window);
 
 			//if (query != null && query != "" && !IconEnabled) {
 			//	window.entry.Text = query;
