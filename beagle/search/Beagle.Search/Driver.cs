@@ -5,16 +5,12 @@
 //
 
 using System;
-using System.Reflection;
 
 using NDesk.DBus;
 using Mono.Unix;
 
 using Beagle;
 using Beagle.Util;
-
-[assembly: AssemblyTitle ("beagle-search")]
-[assembly: AssemblyDescription ("GUI interface to the Beagle search system")]
 
 namespace Beagle.Search {
 

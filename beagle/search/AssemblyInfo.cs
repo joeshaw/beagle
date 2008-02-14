@@ -25,8 +25,12 @@
 //
 
 using System;
+using System.Reflection;
 
 using Beagle.Search.Tiles;
+
+[assembly: AssemblyTitle ("beagle-search")]
+[assembly: AssemblyDescription ("GUI interface to the Beagle search system")]
 
 [assembly: TileActivatorTypes (
 	 typeof (ApplicationActivator),
