@@ -138,24 +138,22 @@ namespace Beagle.Search.Tiles {
 			if (!IsDrawable)
 				return false;
 
-			GdkWindow.DrawRectangle (Style.BaseGC (State), true,
-						 evt.Area.X, evt.Area.Y,
-						 evt.Area.Width, evt.Area.Height);
+			Cairo.Context gr = Gdk.CairoHelper.Create (evt.Window);
+
+			Gdk.Color fill = Style.BaseColors [(int)StateType.Normal];
+
+			gr.Rectangle (evt.Area.X, evt.Area.Y, evt.Area.Width, evt.Area.Height);
+			gr.Color = CairoFu.GdkColorToCairoColor (fill);
+			gr.Fill ();
+
+			if (State == StateType.Selected || HasFocus) {
+				CairoFu.RoundedSelection (gr, this, 0, 0, Allocation.Width, Allocation.Height);
+			}
+			
+			CairoFu.DisposeContext (gr);
 
 			if (base.OnExposeEvent (evt))
 				return true;
-
-			if (HasFocus) {
-				Gdk.Rectangle alloc = Allocation;
-				int focusPad = (int)StyleGetProperty ("focus-padding");
-
-				int x = focusPad + Style.Xthickness;
-				int y = focusPad + Style.Ythickness;
-				int width = alloc.Width - 2 * (focusPad + Style.Xthickness);
-				int height = alloc.Height - 2 * (focusPad + Style.Ythickness);
-				Style.PaintFocus (Style, GdkWindow, State, evt.Area, this,
-						  null, x, y, width, height);
-			}
 
 			return false;
 		}

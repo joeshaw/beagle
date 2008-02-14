@@ -70,6 +70,7 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search.Tiles/WebHistory.cs		\
 	$(srcdir)/Beagle.Search.Tray/NotificationArea.cs	\
 	$(srcdir)/Beagle.Search.Tray/TrayIcon.cs		\
+	$(srcdir)/Beagle.Search/CairoFu.cs			\
 	$(srcdir)/Beagle.Search/Category.cs			\
 	$(srcdir)/Beagle.Search/DetailsPane.cs			\
 	$(srcdir)/Beagle.Search/Driver.cs			\
@@ -101,7 +102,8 @@ ASSEMBLIES =				\
 	$(LOCAL_ASSEMBLIES:%=-r:%)	\
 	$(NDESK_DBUS_LIBS)		\
 	$(NDESK_DBUS_GLIB_LIBS)		\
-	-r:Mono.Posix
+	-r:Mono.Posix			\
+	-r:Mono.Cairo
 
 pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb
 
