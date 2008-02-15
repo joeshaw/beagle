@@ -43,6 +43,9 @@ namespace Beagle.Daemon {
 			      IQueryResult result,
 			      IQueryableChangeData data);
 
+		// Just return the number of matches
+		int DoCountMatchQuery (Query query);
+
 		ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text);
 
 		QueryableStatus GetQueryableStatus ();

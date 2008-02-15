@@ -315,6 +315,88 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////////
 
+		public int DoCountMatchQuery (Query query, QueryPartHook query_part_hook)
+		{
+			if (Debug)
+				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+
+			Stopwatch total;
+			total = new Stopwatch ();
+			total.Start ();
+
+			ArrayList primary_required_part_queries;
+			ArrayList secondary_required_part_queries;
+
+			LNS.BooleanQuery primary_prohibited_part_query;
+			LNS.BooleanQuery secondary_prohibited_part_query;
+
+			AndHitFilter all_hit_filters;
+
+			ArrayList term_list;
+			term_list = AssembleQuery ( query,
+						    query_part_hook,
+						    null,
+						    out primary_required_part_queries,
+						    out secondary_required_part_queries,
+						    out primary_prohibited_part_query,
+						    out secondary_prohibited_part_query,
+						    out all_hit_filters);
+
+			// If we have no required parts, give up.
+			if (primary_required_part_queries == null)
+				return 0;
+
+			IndexReader primary_reader;
+			LNS.IndexSearcher primary_searcher;
+			IndexReader secondary_reader;
+			LNS.IndexSearcher secondary_searcher;
+
+			BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher);
+
+			// Build whitelists and blacklists for search subsets.
+			LuceneBitArray primary_whitelist, secondary_whitelist;
+			CreateQueryWhitelists (null,
+				primary_searcher,
+				secondary_searcher,
+				primary_prohibited_part_query,
+				secondary_prohibited_part_query,
+				out primary_whitelist,
+				out secondary_whitelist);
+
+			// Now run the low level queries against our indexes.
+			BetterBitArray primary_matches = null;
+			if (primary_required_part_queries != null) {
+
+				if (secondary_searcher != null)
+					primary_matches = DoRequiredQueries_TwoIndex (primary_searcher,
+										      secondary_searcher,
+										      primary_required_part_queries,
+										      secondary_required_part_queries,
+										      primary_whitelist,
+										      secondary_whitelist);
+				else
+					primary_matches = DoRequiredQueries (primary_searcher,
+									     primary_required_part_queries,
+									     primary_whitelist);
+
+			} 
+
+			int result = 0;
+			// FIXME: Pass the count through uri-filter and other validation checks
+			if (primary_matches != null)
+				result = primary_matches.TrueCount;
+
+			CloseSearchers (primary_reader, primary_searcher, secondary_reader, secondary_searcher);
+
+			total.Stop ();
+			if (Debug)
+				Logger.Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
+
+			return result;
+		}
+
+		////////////////////////////////////////////////////////////////
+
 		public void DoQuery (Query               query,
 				     IQueryResult        result,
 				     ICollection         search_subset_uris, // should be internal uris

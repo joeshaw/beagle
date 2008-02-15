@@ -630,6 +630,24 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////
 
+		static public int DoCountMatchQuery (CountMatchQuery query)
+		{
+			DehumanizeQuery (query);
+
+			int num_matches = 0;
+
+			foreach (Queryable q in Queryables) {
+				if (! q.AcceptQuery (query))
+					continue;
+
+				num_matches += q.DoCountMatchQuery (query);
+			}
+
+			return num_matches;
+		}
+
+		////////////////////////////////////////////////////////
+
 		static public IEnumerable GetIndexInformation ()
 		{
 			foreach (Queryable q in Queryables)

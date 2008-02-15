@@ -83,6 +83,16 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		public int DoCountMatchQuery (Query query)
+		{
+			try {
+				return iqueryable.DoCountMatchQuery (query);
+			} catch (Exception ex) {
+				Logger.Log.Warn (ex, "Caught exception calling DoCountMatchQuery on '{0}'", Name);
+				return 0;
+			}
+		}
+
 		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text)
 		{
 			if (hit == null)

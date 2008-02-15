@@ -114,4 +114,8 @@ namespace Beagle {
 			StemmedText = new ArrayList ();
 		}
 	}
+
+	public class CountMatchQueryResponse : ResponseMessage {
+		public int NumMatches = 0;
+	}
 }

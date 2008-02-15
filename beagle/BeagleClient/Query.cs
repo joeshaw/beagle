@@ -244,4 +244,25 @@ namespace Beagle {
 			return sb.ToString ();
 		}
 	}
+
+	// Synchronous query to return the number of matches
+	public class CountMatchQuery : Query {
+
+		public CountMatchQuery (string str) : this ()
+		{
+			AddText (str);
+		}
+
+		public CountMatchQuery ()
+		{
+			// RDFQuery is a sync message
+			this.UnregisterAsyncResponseHandler (typeof (HitsAddedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (HitsSubtractedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (FinishedResponse));
+			this.UnregisterAsyncResponseHandler (typeof (ErrorResponse));
+			this.UnregisterAsyncResponseHandler (typeof (SearchTermResponse));
+
+			Keepalive = false;
+		}
+	}
 }

@@ -355,6 +355,12 @@ namespace Beagle.Daemon {
 					our_hit_filter);
 		}
 
+		public int DoCountMatchQuery (Query query)
+		{
+			return Driver.DoCountMatchQuery (query, backend_query_part_hook);
+		}
+
+
 		/////////////////////////////////////////
 
 		protected SnippetReader GetSnippetFromTextCache (string [] query_terms, Uri uri, bool full_text)
