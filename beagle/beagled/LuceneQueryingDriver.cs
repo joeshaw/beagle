@@ -146,8 +146,6 @@ namespace Beagle.Daemon {
 					    	 out LNS.BooleanQuery	secondary_prohibited_part_query,
 						 out AndHitFilter	all_hit_filters)
 		{
-			// Assemble all of the parts into a bunch of Lucene queries
-
 			primary_required_part_queries = null;
 			secondary_required_part_queries = null;
 			primary_prohibited_part_query = null;
@@ -213,69 +211,13 @@ namespace Beagle.Daemon {
 			return term_list;
 		}
 
-		////////////////////////////////////////////////////////////////
-
-		public void DoQuery (Query               query,
-				     IQueryResult        result,
-				     ICollection         search_subset_uris, // should be internal uris
-				     QueryPartHook       query_part_hook,
-				     UriFilter           uri_filter,
-				     HitFilter           hit_filter)
+		private void BuildSearchers (out IndexReader primary_reader,
+					    out LNS.IndexSearcher primary_searcher,
+					    out IndexReader secondary_reader,
+					    out LNS.IndexSearcher secondary_searcher)
 		{
-			if (Debug)
-				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
-
-			Stopwatch total, a, b, c, d, e, f;
-
-			total = new Stopwatch ();
-			a = new Stopwatch ();
-			b = new Stopwatch ();
-			c = new Stopwatch ();
-			d = new Stopwatch ();
-			e = new Stopwatch ();
-			f = new Stopwatch ();
-
-			total.Start ();
-			a.Start ();
-
-			ArrayList primary_required_part_queries;
-			ArrayList secondary_required_part_queries;
-
-			LNS.BooleanQuery primary_prohibited_part_query;
-			LNS.BooleanQuery secondary_prohibited_part_query;
-
-			AndHitFilter all_hit_filters;
-
-			ArrayList term_list;
-			term_list = AssembleQuery ( query,
-						    query_part_hook,
-						    hit_filter,
-						    out primary_required_part_queries,
-						    out secondary_required_part_queries,
-						    out primary_prohibited_part_query,
-						    out secondary_prohibited_part_query,
-						    out all_hit_filters);
-
-			a.Stop ();
-			if (Debug)
-				Log.Debug ("###### {0}: Building queries took {1}", IndexName, a);
-
-			// If we have no required parts, give up.
-			if (primary_required_part_queries == null)
-				return;
-
-			b.Start ();
-			
-			//
-			// Now that we have all of these nice queries, let's execute them!
-			//
-
-			// Create the searchers that we will need.
-
-			IndexReader primary_reader;
-			LNS.IndexSearcher primary_searcher;
-			IndexReader secondary_reader = null;
-			LNS.IndexSearcher secondary_searcher = null;
+			secondary_reader = null;
+			secondary_searcher = null;
 
 			primary_reader = LuceneCommon.GetReader (PrimaryStore);
 			primary_searcher = new LNS.IndexSearcher (primary_reader);
@@ -290,18 +232,31 @@ namespace Beagle.Daemon {
 
 			if (secondary_reader != null)
 				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
+		}
 
-			b.Stop ();
-			if (Debug)
-				Log.Debug ("###### {0}: Readers/searchers built in {1}", IndexName, b);
+		private void CloseSearchers (IndexReader primary_reader,
+					    LNS.IndexSearcher primary_searcher,
+					    IndexReader secondary_reader,
+					    LNS.IndexSearcher secondary_searcher)
+		{
+			primary_searcher.Close ();
+			if (secondary_searcher != null)
+				secondary_searcher.Close ();
+			ReleaseReader (primary_reader);
+			if (secondary_reader != null)
+				ReleaseReader (secondary_reader);
+		}
 
-			// Build whitelists and blacklists for search subsets.
-			c.Start ();
-			
-			// Possibly create our whitelists from the search subset.
-
-			LuceneBitArray primary_whitelist = null;
-			LuceneBitArray secondary_whitelist = null;
+		private void CreateQueryWhitelists (ICollection		search_subset_uris,
+						    LNS.IndexSearcher	primary_searcher,
+						    LNS.IndexSearcher	secondary_searcher,
+						    LNS.BooleanQuery	primary_prohibited_part_query,
+						    LNS.BooleanQuery	secondary_prohibited_part_query,
+						    out LuceneBitArray	primary_whitelist,
+						    out LuceneBitArray	secondary_whitelist)
+		{
+			primary_whitelist = null;
+			secondary_whitelist = null;
 			
 			if (search_subset_uris != null && search_subset_uris.Count > 0) {
 				primary_whitelist = new LuceneBitArray (primary_searcher);
@@ -356,6 +311,93 @@ namespace Beagle.Daemon {
 					secondary_whitelist.AndNot (secondary_blacklist);
 				}
 			}
+		}
+
+		////////////////////////////////////////////////////////////////
+
+		public void DoQuery (Query               query,
+				     IQueryResult        result,
+				     ICollection         search_subset_uris, // should be internal uris
+				     QueryPartHook       query_part_hook,
+				     UriFilter           uri_filter,
+				     HitFilter           hit_filter)
+		{
+			if (Debug)
+				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+
+			Stopwatch total, a, b, c, d, e, f;
+
+			total = new Stopwatch ();
+			a = new Stopwatch ();
+			b = new Stopwatch ();
+			c = new Stopwatch ();
+			d = new Stopwatch ();
+			e = new Stopwatch ();
+			f = new Stopwatch ();
+
+			total.Start ();
+			a.Start ();
+
+			ArrayList primary_required_part_queries;
+			ArrayList secondary_required_part_queries;
+
+			LNS.BooleanQuery primary_prohibited_part_query;
+			LNS.BooleanQuery secondary_prohibited_part_query;
+
+			AndHitFilter all_hit_filters;
+
+			ArrayList term_list;
+
+			// Assemble all of the parts into a bunch of Lucene queries
+
+			term_list = AssembleQuery (query,
+				query_part_hook,
+				hit_filter,
+				out primary_required_part_queries,
+				out secondary_required_part_queries,
+				out primary_prohibited_part_query,
+				out secondary_prohibited_part_query,
+				out all_hit_filters);
+
+			a.Stop ();
+			if (Debug)
+				Log.Debug ("###### {0}: Building queries took {1}", IndexName, a);
+
+			// If we have no required parts, give up.
+			if (primary_required_part_queries == null)
+				return;
+
+			b.Start ();
+			
+			//
+			// Now that we have all of these nice queries, let's execute them!
+			//
+
+			IndexReader primary_reader;
+			LNS.IndexSearcher primary_searcher;
+			IndexReader secondary_reader;
+			LNS.IndexSearcher secondary_searcher;
+
+			// Create the searchers that we will need.
+
+			BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher);
+
+			b.Stop ();
+			if (Debug)
+				Log.Debug ("###### {0}: Readers/searchers built in {1}", IndexName, b);
+
+			// Build whitelists and blacklists for search subsets.
+			c.Start ();
+
+			// Possibly create our whitelists from the search subset.
+			LuceneBitArray primary_whitelist, secondary_whitelist;
+			CreateQueryWhitelists (search_subset_uris,
+				primary_searcher,
+				secondary_searcher,
+				primary_prohibited_part_query,
+				secondary_prohibited_part_query,
+				out primary_whitelist,
+				out secondary_whitelist);
 
 			c.Stop ();
 			if (Debug)
@@ -411,14 +453,7 @@ namespace Beagle.Daemon {
 			//
 
 			f.Start ();
-			
-			primary_searcher.Close ();
-			if (secondary_searcher != null)
-				secondary_searcher.Close ();
-			ReleaseReader (primary_reader);
-			if (secondary_reader != null)
-				ReleaseReader (secondary_reader);
-
+			CloseSearchers (primary_reader, primary_searcher, secondary_reader, secondary_searcher);
 			f.Stop ();
 			
 			if (Debug)
