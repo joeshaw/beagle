@@ -1,5 +1,11 @@
+//
+// Tile.cs
+//
+// Copyright (C) 2008 Lukas Lipka <lukaslipka@gmail.com>
+//
+
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
@@ -13,20 +19,51 @@ namespace Beagle.Search.Tiles {
 
 	public abstract class Tile : Gtk.EventBox {
 
+		private Beagle.Hit hit = null;
+		private Beagle.Query query = null;
+
+		private Gtk.HBox hbox = null;
+		private Gtk.Image icon = null;
+		private DetailsPane details = null;
+
+		private string title = null;
+		private string snippet = null;
+		private DateTime timestamp;
+		private double score = 0.0f;
+
+		// Default the tile group to documents, it is up
+		// to the each tile to set a specific group.
+
+		private TileGroup group = TileGroup.Documents;
+
+		// DND targets
+
+		static Gtk.TargetEntry[] targets = new Gtk.TargetEntry[] {
+			new Gtk.TargetEntry ("text/uri-list", 0, 0)
+		};
+
+		private List<TileAction> actions = new List<TileAction> ();
+
+		protected bool EnableOpenWith = false;
+
+		public event EventHandler Selected;
+
+		public delegate void GotSnippetHandler (string snippet);
+		public event GotSnippetHandler GotSnippet;
+
 		public Tile (Hit hit, Query query) : base ()
 		{
-			AboveChild = true;
-			AppPaintable = true;
-			CanFocus = true;
+			base.AboveChild = true;
+			base.AppPaintable = true;
+			base.CanFocus = true;
 
 			this.hit = hit;
 			this.timestamp = hit.Timestamp;
 			this.score = hit.Score;
 			this.query = query;
-			this.group = TileGroup.Documents;
 
-			Gtk.Drag.SourceSet (this, Gdk.ModifierType.Button1Mask,
-					    targets, Gdk.DragAction.Copy | Gdk.DragAction.Move);
+			Gtk.Drag.SourceSet (this, Gdk.ModifierType.Button1Mask, targets,
+					    Gdk.DragAction.Copy | Gdk.DragAction.Move);
 
 			hbox = new Gtk.HBox (false, 5);
 			hbox.BorderWidth = 2;
@@ -34,63 +71,57 @@ namespace Beagle.Search.Tiles {
 
 			icon = new Gtk.Image ();
 			icon.Show ();
-			HBox.PackStart (icon, false, false, 0);
+			hbox.PackStart (icon, false, false, 0);
 
 			Add (hbox);
 		}
 
-		private Beagle.Hit hit;
-		public Beagle.Hit Hit {
-			get { return hit; }
+		protected void AddAction (TileAction action)
+		{
+			actions.Add (action);
 		}
 
-		private Beagle.Query query;
-		public Beagle.Query Query {
-			get { return query; }
+		protected void RemoveAction (TileAction action)
+		{
+			actions.Remove (action);
 		}
 
-		private TileGroup group;
-		public TileGroup Group {
-			get { return group; }
-			set { group = value; }
+		private void ShowPopupMenu ()
+		{
+			Gtk.Menu menu = new Gtk.Menu ();
+			
+			// Add the default 'Open' menu item
+
+			TileAction open = new TileAction (Catalog.GetString ("Open"), Stock.Open, Open);
+
+			ActionMenuItem open_menu_item = new ActionMenuItem (open);
+			menu.Append (open_menu_item);
+
+#if ENABLE_OPEN_WITH
+			if (EnableOpenWith) {
+				// FIXME: Not sure if going with the parent is
+				// the right thing to do in all cases.
+				string mimetype = Utils.GetFirstPropertyOfParent (hit, "beagle:MimeType");
+
+				OpenWithMenu owm = new OpenWithMenu (mimetype);
+				owm.ApplicationActivated += OpenWith;
+				owm.AppendToMenu (menu);
+			}
+#endif
+
+			if (Actions.Count > 0) {
+				SeparatorMenuItem separator = new SeparatorMenuItem ();
+				menu.Append (separator);
+
+				foreach (TileAction action in Actions) {
+					ActionMenuItem item = new ActionMenuItem (action);
+					menu.Append (item);
+				}
+			}
+
+			menu.ShowAll ();
+			menu.Popup ();
 		}
-
-		private Gtk.HBox hbox;
-		protected Gtk.HBox HBox { 
-			get { return hbox; }
-		}
-
-		private Gtk.Image icon;
-		public Gtk.Image Icon {
-			get { return icon; }
-			set { icon = value; }
-		}
-
-		private string title;
-		public virtual string Title {
-			get { return title; }
-			set { title = value; }
-		}
-
-		private DateTime timestamp;
-		public virtual DateTime Timestamp {
-			get { return timestamp; }
-			set { timestamp = value; }
-		}
-
-		private double score;
-		public virtual double Score {
-			get { return score; }
-			set { score = value; }
-		}
-
-		protected bool EnableOpenWith = false;
-
-		static Gtk.TargetEntry[] targets = new Gtk.TargetEntry[] {
-			new Gtk.TargetEntry ("text/uri-list", 0, 0)
-		};
-
-		public event EventHandler Selected;
 
 		protected override void OnDragBegin (Gdk.DragContext context)
 		{
@@ -100,34 +131,31 @@ namespace Beagle.Search.Tiles {
 			WidgetFu.SetDragImage (context, icon);
 		}
 
-		protected override void OnDragDataGet (Gdk.DragContext dragContext,
-						       Gtk.SelectionData selectionData,
-						       uint info, uint time)
+		protected override void OnDragDataGet (Gdk.DragContext ctx, Gtk.SelectionData data, uint info, uint time)
 		{
-			byte[] data = System.Text.Encoding.UTF8.GetBytes (Hit.EscapedUri + "\r\n");
-			selectionData.Set (selectionData.Target, 8, data);
+			byte[] uri = System.Text.Encoding.UTF8.GetBytes (Hit.EscapedUri + "\r\n");
+			data.Set (data.Target, 8, uri);
 		}
 
 		protected override void OnSizeRequested (ref Gtk.Requisition req)
 		{
-			// FIXME: "base.OnSizeRequested (ref req)" should work,
+			// base.OnSizeRequested (ref req) should work,
 			// but it doesn't
 			req = hbox.SizeRequest ();
 
-			int pad = (int)StyleGetProperty ("focus-line-width") +
-				(int)StyleGetProperty ("focus-padding") + 1;
+			int pad = (int)StyleGetProperty ("focus-line-width") + (int)StyleGetProperty ("focus-padding") + 1;
+
 			req.Width += 2 * (pad + Style.Xthickness);
 			req.Height += 2 * (pad + Style.Ythickness);
 		}
 
 		protected override void OnSizeAllocated (Gdk.Rectangle alloc)
 		{
-			int pad = (int)StyleGetProperty ("focus-line-width") +
-				(int)StyleGetProperty ("focus-padding") + 1;
+			int pad = (int)StyleGetProperty ("focus-line-width") + (int)StyleGetProperty ("focus-padding") + 1;
 
 			alloc.X += pad + Style.Xthickness;
-			alloc.Width -= pad + Style.Xthickness;
 			alloc.Y += pad + Style.Ythickness;
+			alloc.Width -= pad + Style.Xthickness;
 			alloc.Height -= pad + Style.Ythickness;
 
 			base.OnSizeAllocated (alloc);
@@ -156,8 +184,7 @@ namespace Beagle.Search.Tiles {
 				int y = focus_padding + Style.Ythickness;
 				int width = Allocation.Width - 2 * (focus_padding + Style.Xthickness);
 				int height = Allocation.Height - 2 * (focus_padding + Style.Ythickness);
-				Style.PaintFocus (Style, GdkWindow, State, evt.Area, this,
-						  null, x, y, width, height);
+				Style.PaintFocus (Style, GdkWindow, State, evt.Area, this, null, x, y, width, height);
 			}
 			
 			CairoFu.DisposeContext (gr);
@@ -168,62 +195,20 @@ namespace Beagle.Search.Tiles {
 			return false;
 		}
 
-		///////////////////////////////////////////////////
-
-		public ArrayList actions = new ArrayList ();
-		public ICollection Actions {
-			get { return actions; }
-		}
-
-		protected void AddAction (TileAction action)
-		{
-			actions.Add (action);
-		}
-
-		private void ShowPopupMenu ()
-		{
-			Gtk.Menu menu = new Gtk.Menu ();
-
-			ActionMenuItem mi = new ActionMenuItem (new TileAction (Catalog.GetString ("Open"), Stock.Open, Open));
-			menu.Append (mi);
-
-#if ENABLE_OPEN_WITH
-			if (EnableOpenWith) {
-				// FIXME: Not sure if going with the parent is
-				// the right thing to do in all cases.
-				OpenWithMenu owm = new OpenWithMenu (Utils.GetFirstPropertyOfParent (hit, "beagle:MimeType"));
-				owm.ApplicationActivated += OpenWith;
-				owm.AppendToMenu (menu);
-			}
-#endif
-
-			if (Actions.Count > 0) {
-				SeparatorMenuItem si = new SeparatorMenuItem ();
-				menu.Append (si);
-
-				foreach (TileAction action in Actions) {
-					mi = new ActionMenuItem (action);
-					menu.Append (mi);
-				}
-			}
-
-			menu.ShowAll ();
-			menu.Popup ();
-		}
-
-		///////////////////////////////////////////////////
-
 		protected override bool OnButtonPressEvent (Gdk.EventButton b)
 		{
 			GrabFocus ();
 
 			if (b.Button == 3) {
 				ShowPopupMenu ();
+
 				return true;
 			} else if (b.Type == Gdk.EventType.TwoButtonPress) {
 				Open ();
+
 				if (b.Button == 2 || ((b.State & Gdk.ModifierType.ShiftMask) != 0))
 					Gtk.Application.Quit ();
+
 				return true;
 			}
 
@@ -234,6 +219,7 @@ namespace Beagle.Search.Tiles {
 		{
 			if (Selected != null)
 				Selected (this, EventArgs.Empty);
+
 			return base.OnFocusInEvent (f);
 		}
 
@@ -241,8 +227,10 @@ namespace Beagle.Search.Tiles {
 		{
 			if (k.Key == Gdk.Key.Return || k.Key == Gdk.Key.KP_Enter) {
 				Open ();
+
 				if ((k.State & Gdk.ModifierType.ShiftMask) != 0)
 					Gtk.Application.Quit ();
+
 				return true;
 			}
 
@@ -259,13 +247,11 @@ namespace Beagle.Search.Tiles {
 			image.Pixbuf = WidgetFu.LoadMimeIcon (hit.MimeType, size);
 		}
 
-		string snippet;
-
 		protected void RequestSnippet ()
 		{
-			if (snippet != null)
+			if (snippet != null) {
 				EmitGotSnippet ();
-			else {
+			} else {
 				SnippetRequest sreq = new SnippetRequest (query, hit);
 				sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse), SnippetResponseReceived);
 				sreq.SendAsync ();
@@ -274,36 +260,31 @@ namespace Beagle.Search.Tiles {
 
 		private void SnippetResponseReceived (ResponseMessage response)
 		{
-			// The returned snippet uses
-			// <font color="..."><b>blah</b></font>
+			// The returned snippet uses <font color="..."><b>blah</b></font>
 			// to mark matches. The rest of the snippet might be HTML, or
 			// it might be plain text, including unescaped '<'s and '&'s.
 			// So we escape it, fix the match highlighting, and leave any
 			// other tags escaped.
 
-			// FIXME: hacky, fix the snippeting in the daemon
+			// FIXME: Use the new snippeting framework
 			
 			snippet = GLib.Markup.EscapeText (((SnippetResponse)response).Snippet);
 			snippet = Regex.Replace (snippet, "&lt;font color=&quot;.*?&quot;&gt;&lt;b&gt;(.*?)&lt;/b&gt;&lt;/font&gt;", "<b>$1</b>");
-			if(snippet.Trim().Length > 0)
+			if (snippet.Trim ().Length > 0)
 				EmitGotSnippet ();
 		}
 
 		private void EmitGotSnippet ()
 		{
-			if (!String.IsNullOrEmpty (snippet) && GotSnippet != null)
+			if (! String.IsNullOrEmpty (snippet) && GotSnippet != null)
 				GotSnippet (snippet);
 		}
-
-		public delegate void GotSnippetHandler (string snippet);
-		public event GotSnippetHandler GotSnippet;
 
 		protected virtual DetailsPane GetDetails ()
 		{
 			return null;
 		}
 
-		DetailsPane details;
 		public Gtk.Widget Details {
 			get {
 				if (details == null) {
@@ -326,7 +307,7 @@ namespace Beagle.Search.Tiles {
 
 		public virtual void Open ()
 		{
-			System.Console.WriteLine ("Warning: Open method not implemented for this tile type");
+			System.Console.WriteLine ("Warning: Open method not implemented for '{0}'", this.GetType ());
 		}
 
 #if ENABLE_OPEN_WITH
@@ -453,6 +434,49 @@ namespace Beagle.Search.Tiles {
 				Console.WriteLine ("Could not load handler for {0}: {1}", uri, e);
 			}
 #endif
+		}
+
+		///////////////////////////////////////////////////////
+
+		public Beagle.Hit Hit {
+			get { return hit; }
+		}
+
+		public Beagle.Query Query {
+			get { return query; }
+		}
+
+		public TileGroup Group {
+			get { return group; }
+			protected set { group = value; }
+		}
+
+		protected Gtk.HBox HBox { 
+			get { return hbox; }
+		}
+
+		public Gtk.Image Icon {
+			get { return icon; }
+			set { icon = value; }
+		}
+
+		public virtual string Title {
+			get { return title; }
+			set { title = value; }
+		}
+
+		public virtual DateTime Timestamp {
+			get { return timestamp; }
+			set { timestamp = value; }
+		}
+
+		public virtual double Score {
+			get { return score; }
+			set { score = value; }
+		}
+
+		public IList<TileAction> Actions {
+			get { return actions; }
 		}
 	}
 }

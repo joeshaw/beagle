@@ -33,13 +33,13 @@ namespace Beagle.Search {
 
 	public class UIManager : Gtk.UIManager {
 
-		private Search search = null;
+		private SearchWindow search = null;
 		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] sort_entries;
 		private Gtk.ToggleActionEntry[] scope_entries, view_entries, domain_entries;
 
-		public UIManager (Search search)
+		public UIManager (SearchWindow search)
 		{
 			this.search = search;
 			this.actions = new ActionGroup ("Actions");

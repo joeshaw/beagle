@@ -81,6 +81,7 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search/NotificationArea.cs		\
 	$(srcdir)/Beagle.Search/Panes.cs			\
 	$(srcdir)/Beagle.Search/Search.cs			\
+	$(srcdir)/Beagle.Search/SearchWindow.cs			\
 	$(srcdir)/Beagle.Search/SortedTileList.cs		\
 	$(srcdir)/Beagle.Search/Spinner.cs			\
 	$(srcdir)/Beagle.Search/TileCategory.cs			\
