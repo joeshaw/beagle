@@ -1,3 +1,8 @@
+2008-02-18  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* POTFILES.in: Add missing file.
+	* nb.po: Updated Norwegian bokmål translation.
+
 2008-02-08  Luca Ferretti  <elle.uca@libero.it>
 
 	* it.po: Updated Italian translation by Gianvito Cavasoli.

@@ -56,6 +56,7 @@ search/Beagle.Search/ListCategory.cs
 search/Beagle.Search/NotificationArea.cs
 search/Beagle.Search/Panes.cs
 search/Beagle.Search/Search.cs
+search/Beagle.Search/SearchWindow.cs
 search/Beagle.Search/SortedTileList.cs
 search/Beagle.Search/Spinner.cs
 search/Beagle.Search/TileCategory.cs
