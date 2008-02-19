@@ -59,7 +59,6 @@ namespace Beagle.Daemon {
 
 			mappings.Add ("/", new PageMapping ("index.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/mappings.xml", new PageMapping ("mappings.xml", "text/xml; charset=utf-8"));
-			mappings.Add ("/help.xml", new PageMapping ("help.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/opensearch.xml", new PageMapping ("opensearch.xml", "text/xml; charset=utf-8"));
 			mappings.Add ("/index.xsl", new PageMapping ("index.xsl", "text/xml; charset=utf-8"));
 			mappings.Add ("/statusresult.xsl", new PageMapping ("statusresult.xsl", "text/xml; charset=utf-8"));
