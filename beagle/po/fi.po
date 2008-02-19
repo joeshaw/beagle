@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-07 20:26+0300\n"
+"POT-Creation-Date: 2008-02-19 08:17+0300\n"
 "PO-Revision-Date: 2007-03-31 17:18+0300\n"
 "Last-Translator: Joonas Niilola <juippis@opensuse.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -16,276 +16,127 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../ContactViewer/ContactWindow.cs:74
-msgid "Open..."
-msgstr "Avaa..."
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Keskustelujen historia</b>"
 
-#: ../ContactViewer/ContactWindow.cs:76 ../search/Tray/TrayIcon.cs:102
-msgid "Quit"
-msgstr "Lopeta"
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "Pikaviestiohjelma"
 
-#: ../ContactViewer/ContactWindow.cs:79
-msgid "About"
-msgstr "Tietoja"
-
-#: ../ContactViewer/ContactWindow.cs:95 ../search/Tiles/Utils.cs:27
-msgid "Contacts"
-msgstr "Yhteystiedot"
-
-#: ../ContactViewer/ContactWindow.cs:100
-msgid "Display name"
-msgstr "Näytettävä nimi"
-
-#: ../ContactViewer/ContactWindow.cs:101
-msgid "Primary E-mail"
-msgstr "Ensisijainen sähköposti"
-
-#: ../ContactViewer/ContactWindow.cs:102
-msgid "Secondary E-mail"
-msgstr "Toissijainen sähköposti"
-
-#: ../ContactViewer/ContactWindow.cs:103
-msgid "Nickname"
-msgstr "Lempinimi"
-
-#: ../ContactViewer/ContactWindow.cs:133
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
-msgid ""
-"Unable to open mork database:\n"
-"\n"
-" {0}"
-msgstr ""
-"Mork-tietokantaa ei voi avata:\n"
-"\n"
-"{0}"
+msgid "Conversations in {0}"
+msgstr "Keskustelut ohjelmassa <{0}"
 
-#: ../ContactViewer/ContactWindow.cs:153
-msgid "The specified ID does not exist in this database!"
-msgstr "Annettua tunnistetta ei ole tässä tietokannassa!"
-
-#: ../ContactViewer/ContactWindow.cs:180
+#: ../ImLogViewer/ImLogWindow.cs:111
 #, csharp-format
-msgid "Added {0} contact"
-msgid_plural "Added {0} contacts"
-msgstr[0] "Lisättiin {0} yhteystieto"
-msgstr[1] "Lisättiin {0} yhteystietoa"
+msgid "Conversations in {0} ({1})"
+msgstr "Keskustelut ohjelmassa {0} ({1})"
 
-#: ../ContactViewer/ContactWindow.cs:204
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
-msgid "Viewing {0}"
-msgstr "Näytetään {0}"
+msgid "Conversations with {0}"
+msgstr "Keskustelut {0} kanssa"
 
-#: ../ContactViewer/ContactWindow.cs:244
-msgid "Select a mork database file"
-msgstr "Valitse mork-tietokannan tiedosto"
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Tällä tietokoneella"
 
-#: ../ContactViewer/ContactWindow.cs:311
-msgid "Primary E-Mail:"
-msgstr "Ensisijainen sähköposti:"
+#: ../Util/StringFu.cs:116 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Tänään"
 
-#: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:37
-msgid "Screen name:"
-msgstr "Näyttönimi:"
+#: ../Util/StringFu.cs:118 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Eilen"
 
-#: ../ContactViewer/ContactWindow.cs:319
-msgid "Home phone:"
-msgstr "Kotipuhelin:"
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:121
+msgid "MMM d"
+msgstr "Kuu pv"
 
-#: ../ContactViewer/ContactWindow.cs:323
-msgid "Mobile phone:"
-msgstr "Matkapuhelin:"
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:124
+msgid "MMM d, yyyy"
+msgstr "Kuu pv, vuosi"
 
-#: ../ContactViewer/ContactWindow.cs:327
-msgid "Web page:"
-msgstr "WWW-sivu:"
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:127
+msgid "h:mm tt"
+msgstr "hh:mm tt"
 
-#: ../ContactViewer/ContactWindow.cs:336
-msgid "Send E-Mail"
-msgstr "Lähetä sähköpostia"
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:133
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}m {1}"
 
-#: ../ContactViewer/ContactWindow.cs:340
-msgid "Details..."
-msgstr "Yksityiskohdat..."
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:150
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Tänäänm {0}"
 
-#: ../ContactViewer/ContactWindow.cs:368
-msgid "Could not find a valid E-mail address!"
-msgstr "Kelvollista sähköpostiosoitetta ei löydy!"
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:153
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Eilen, {0}"
 
-#: ../ContactViewer/contactviewer.glade.h:1
-msgid "<b>Custom fields</b>"
-msgstr "<b>Omat kentät</b>"
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:158
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} päivä sitten, klo {1}"
+msgstr[1] "{0} päivää sitten, klo {1}"
 
-#: ../ContactViewer/contactviewer.glade.h:2
-msgid "<b>Home</b>"
-msgstr "<b>Koti</b>"
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:164
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM pv, hh:mm tt"
 
-#: ../ContactViewer/contactviewer.glade.h:3
-msgid "<b>Internet</b>"
-msgstr "<b>Internet</b>"
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:169
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM pv vuosi, hh:mm tt"
 
-#: ../ContactViewer/contactviewer.glade.h:4
-msgid "<b>Name</b>"
-msgstr "<b>Nimi</b>"
+#: ../Util/StringFu.cs:179
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} tunti"
+msgstr[1] "{0} tuntia"
 
-#: ../ContactViewer/contactviewer.glade.h:5
-msgid "<b>Notes</b>"
-msgstr "<b>Muistiinpanot</b>"
+#: ../Util/StringFu.cs:186
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} minuutti"
+msgstr[1] "{0} minuuttia"
 
-#: ../ContactViewer/contactviewer.glade.h:6
-msgid "<b>Phones</b>"
-msgstr "<b>Puhelinnumerot</b>"
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:220
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} tavua"
+msgstr[1] "{0} tavua"
 
-#: ../ContactViewer/contactviewer.glade.h:7
-msgid "<b>Work</b>"
-msgstr "<b>Työ</b>"
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:224
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} kt"
 
-#: ../ContactViewer/contactviewer.glade.h:8
-msgid "Additional E-Mail:"
-msgstr "Muu sähköpostiosoite:"
-
-#: ../ContactViewer/contactviewer.glade.h:9 ../tools/Settings.cs:804
-msgid "Address"
-msgstr "Osoite"
-
-#: ../ContactViewer/contactviewer.glade.h:10
-msgid "Address:"
-msgstr "Osoite:"
-
-#: ../ContactViewer/contactviewer.glade.h:11
-msgid "City:"
-msgstr "Kaupunki:"
-
-#: ../ContactViewer/contactviewer.glade.h:12
-msgid "Contact"
-msgstr "Yhteystieto"
-
-#: ../ContactViewer/contactviewer.glade.h:13
-msgid "Contact Viewer"
-msgstr "Yhteystiedon katselin"
-
-#: ../ContactViewer/contactviewer.glade.h:14
-msgid "Country:"
-msgstr "Maa:"
-
-#: ../ContactViewer/contactviewer.glade.h:15
-msgid "Custom 1:"
-msgstr "Oma 1:"
-
-#: ../ContactViewer/contactviewer.glade.h:16
-msgid "Custom 2:"
-msgstr "Oma 2:"
-
-#: ../ContactViewer/contactviewer.glade.h:17
-msgid "Custom 3:"
-msgstr "Oma 3:"
-
-#: ../ContactViewer/contactviewer.glade.h:18
-msgid "Custom 4:"
-msgstr "Oma 4:"
-
-#: ../ContactViewer/contactviewer.glade.h:19
-msgid "Department:"
-msgstr "Osasto:"
-
-#: ../ContactViewer/contactviewer.glade.h:20
-msgid "Detailed view"
-msgstr "Yksityiskohtainen näkymä"
-
-#. This is Display name
-#: ../ContactViewer/contactviewer.glade.h:22
-msgid "Display:"
-msgstr "Näyttö:"
-
-#: ../ContactViewer/contactviewer.glade.h:23 ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "Sähköposti:"
-
-#: ../ContactViewer/contactviewer.glade.h:24
-msgid "Fax:"
-msgstr "Faksi:"
-
-#. This is First name
-#: ../ContactViewer/contactviewer.glade.h:26
-msgid "First:"
-msgstr "Ensimmäinen:"
-
-#. This is Home phone number
-#: ../ContactViewer/contactviewer.glade.h:28
-msgid "Home:"
-msgstr "Koti:"
-
-#. This is Last name
-#: ../ContactViewer/contactviewer.glade.h:30
-msgid "Last:"
-msgstr "Viimeinen:"
-
-#: ../ContactViewer/contactviewer.glade.h:31
-msgid "Mobile:"
-msgstr "Matkapuhelin:"
-
-#: ../ContactViewer/contactviewer.glade.h:32
-msgid "Nickname:"
-msgstr "Lempinimi:"
-
-#: ../ContactViewer/contactviewer.glade.h:33
-msgid "Organization:"
-msgstr "Organisaatio:"
-
-#: ../ContactViewer/contactviewer.glade.h:34
-msgid "Other"
-msgstr "Muu"
-
-#: ../ContactViewer/contactviewer.glade.h:35
-msgid "Pager:"
-msgstr "Piippari:"
-
-#: ../ContactViewer/contactviewer.glade.h:36
-msgid "Preferred format:"
-msgstr "Haluttu muoto:"
-
-#: ../ContactViewer/contactviewer.glade.h:38
-msgid "State/Province"
-msgstr "Osavaltio tai lääni"
-
-#: ../ContactViewer/contactviewer.glade.h:39
-msgid "State/Province:"
-msgstr "Osavaltio tai lääni:"
-
-#: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76 ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:173 ../search/Tiles/Note.cs:69
-#: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
-#: ../search/Tiles/WebHistory.cs:57
-msgid "Title:"
-msgstr "Otsikko:"
-
-#: ../ContactViewer/contactviewer.glade.h:41
-msgid ""
-"Unknown\n"
-"Plain text\n"
-"HTML"
-msgstr ""
-"Tuntematon\n"
-"Pelkkä teksti\n"
-"HTML"
-
-#: ../ContactViewer/contactviewer.glade.h:44
-msgid "Web Page:"
-msgstr "WWW-sivu:"
-
-#. This is Work phone number
-#: ../ContactViewer/contactviewer.glade.h:46
-msgid "Work:"
-msgstr "Työ:"
-
-#: ../ContactViewer/contactviewer.glade.h:47
-msgid "ZIP/Postal Code"
-msgstr "Postinumero"
-
-#: ../ContactViewer/contactviewer.glade.h:48
-msgid "ZIP/Postal Code:"
-msgstr "Postinumero:"
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:227
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} Mt"
 
 #: ../epiphany-extension/beagle.py.in:157
 #, python-format
@@ -321,59 +172,28 @@ msgstr "Kysy avainsanoja indeksoitaessa tarvittaessa"
 msgid "Extra keywords to index"
 msgstr "Ylimääräiset indeksoitavat avainsanat"
 
-#: ../ImLogViewer/ImLogViewer.glade.h:1
-msgid "<b>Conversations History</b>"
-msgstr "<b>Keskustelujen historia</b>"
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "Tietoja indeksistä"
 
-#: ../ImLogViewer/ImLogViewer.glade.h:2
-msgid "IM Viewer"
-msgstr "Pikaviestiohjelma"
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "Indeksoitujen kohtien lukumäärä:"
 
-#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
-#, csharp-format
-msgid "Conversations in {0}"
-msgstr "Keskustelut ohjelmassa <{0}"
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr "<b>Huomautus: hakupalvelu ei ole vielä indeksoinut kaikkea.</i>"
 
-#: ../ImLogViewer/ImLogWindow.cs:111
-#, csharp-format
-msgid "Conversations in {0} ({1})"
-msgstr "Keskustelut ohjelmassa {0} ({1})"
-
-#: ../ImLogViewer/ImLogWindow.cs:127
-#, csharp-format
-msgid "Conversations with {0}"
-msgstr "Keskustelut {0} kanssa"
-
-#: ../search/beagle-search.desktop.in.in.h:1
-msgid "Search"
-msgstr "Haku"
-
-#: ../search/beagle-search.desktop.in.in.h:2
-msgid "Search for data on your desktop"
-msgstr "Etsi tietoja työpöydältäsi"
-
-#: ../search/Category.cs:132
-#, csharp-format
-msgid "{0} result"
-msgid_plural "{0} results"
-msgstr[0] "{0} tulos"
-msgstr[1] "{0} tulosta"
-
-#: ../search/Category.cs:134
-#, csharp-format
-msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} / {2}"
-
-#: ../search/Pages/NoMatch.cs:19
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Tuloksia ei löytynyt."
 
-#: ../search/Pages/NoMatch.cs:20
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Haku \"{0}\" ei täsmännyt tiedostoihin tietokoneellasi."
 
-#: ../search/Pages/NoMatch.cs:24
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
@@ -381,7 +201,7 @@ msgstr ""
 "Voit muuttaa haun kattavuutta \"Haku\"-valikosta. Laajempi haun kattavuus "
 "voi antaa enemmän tuloksia."
 
-#: ../search/Pages/NoMatch.cs:26
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
@@ -389,381 +209,358 @@ msgstr ""
 "Tarkista haussa käyttämiesi sanojen oikeinkirjoitus siltä varalta että "
 "kirjoitit jonkun sanan vahingossa väärin."
 
-#: ../search/Pages/QuickTips.cs:10
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr "Voit käyttää pieniä ja suuria kirjaimia, haku ei erottele niitä."
 
-#: ../search/Pages/QuickTips.cs:11
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr ""
 "Voit tehdä vaihtoehtoisia hakuja lisäämällä termin OR, esimerkiksi <b>George "
 "OR Ringo</b>"
 
-#: ../search/Pages/QuickTips.cs:12
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Jos haluat kieltää tiettyjä hakutermejä, käytä miinusmerkkiä edessä, "
 "esimerkiksi <b>-kissa</b>"
 
-#: ../search/Pages/QuickTips.cs:13
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Hae lauseita lisäämällä lainausmerkit, esimerkiksi <b>\"ollako  vai eikö olla"
 "\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:92
+#: ../search/Beagle.Search.Pages/QuickTips.cs:19
+#: ../search/Beagle.Search/UIManager.cs:96
 msgid "Quick Tips"
 msgstr "Pikavinkit"
 
-#: ../search/Pages/RootUser.cs:12
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
 msgstr "Beaglea ei voi suorittaa käyttäjänä root"
 
-#: ../search/Pages/RootUser.cs:13
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
 msgid ""
-"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"For security reasons, Beagle cannot be run as root. You should restart as a "
 "regular user."
 msgstr ""
 "Turvallisuussyistä beaglea ei voi suorittaa käyttäjänä root. Käynnistä "
 "ohjelma uudestaan tavallisena käyttäjänä."
 
-#: ../search/Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
 msgid "Search service not running"
 msgstr "Hakupalvelu ei ole käynnissä"
 
-#: ../search/Pages/StartDaemon.cs:21
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+"Hakupalvelu ei voi näytä olevan käynnissä. Voit käynnistää sen alla "
+"olevasta napista."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
 msgid "Start search service"
 msgstr "Käynnistä hakupalvelu"
 
-#: ../search/Search.cs:145 ../search/Search.cs:261
-#: ../search/Tray/TrayIcon.cs:33
-msgid "Desktop Search"
-msgstr "Työpöytähaku"
-
-#: ../search/Search.cs:164
-msgid "_Find:"
-msgstr "_Etsi:"
-
-#: ../search/Search.cs:185
-msgid "Find Now"
-msgstr "Etsi heti"
-
-#: ../search/Search.cs:244
-msgid "Type in search terms"
-msgstr "Syötä hakuehdot"
-
-#: ../search/Search.cs:245
-msgid "Start searching"
-msgstr "Aloita haku"
-
-#: ../search/Search.cs:280
-#, csharp-format
-msgid "Desktop Search: {0}"
-msgstr "Työpöytähaku: {0}"
-
-#: ../search/Search.cs:296
-#, csharp-format
-msgid "Showing {0} match"
-msgid_plural "Showing all {0} matches"
-msgstr[0] "Näytetään {0} osuma"
-msgstr[1] "Näytetään kaikki {0} osumaa"
-
-#: ../search/Search.cs:298
-#, csharp-format
-msgid "Showing the top {0} of {1} total matches"
-msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Näytetään hakutulokset: {0} / {1}"
-msgstr[1] "Näytetään hakutulokset: {0} / {1}"
-
-#: ../search/Search.cs:539
-msgid "There are computers near you running Beagle"
-msgstr "Lähiverkossa on muita beaglea käyttäviä tietokoneita"
-
-#: ../search/Search.cs:540
-msgid "You can select to search other computers from the \"Search\" menu."
-msgstr "Voit hakea muilta tietokoneilta \"Haku\"-valikosta"
-
-#: ../search/Search.cs:612
-msgid "Your data is being indexed"
-msgstr "Tiedostojasi indeksoidaan"
-
-#: ../search/Search.cs:613
-msgid ""
-"The search service is in the process of indexing your data.  Search results "
-"may be incomplete until indexing has finished."
-msgstr ""
-"Hakupalvelu indeksoi tiedostojasi juuri nyt. Hakutulokset voivat olla "
-"vajavaisia kunnes indeksointi on valmis."
-
-#: ../search/Tiles/ArchivedFile.cs:39
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "Arkiston {0} sisällä"
 
-#: ../search/Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:178
+#: ../search/Beagle.Search.Tiles/Note.cs:73
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "Otsikko:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "Tiedoston nimi:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "Tiedostossa: "
 
-#: ../search/Tiles/ArchivedFile.cs:81 ../search/Tiles/File.cs:177
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:82
+#: ../search/Beagle.Search.Tiles/File.cs:182
 msgid "Author:"
 msgstr "Kirjoittanut:"
 
-#: ../search/Tiles/Calendar.cs:47 ../search/Tiles/Task.cs:44
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
 msgid "Description:"
 msgstr "Kuvaus:"
 
-#: ../search/Tiles/Calendar.cs:57
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
 msgid "Time:"
 msgstr "Aika:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "Sijainti:"
 
-#: ../search/Tiles/Calendar.cs:65
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "Läsnäolijat:"
 
-#: ../search/Tiles/Contact.cs:30
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Lähetä sähköpostia"
 
-#: ../search/Tiles/Contact.cs:70
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "Sähköposti:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Matkapuhelin:"
 
-#: ../search/Tiles/Contact.cs:72
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Työpuhelin:"
 
-#: ../search/Tiles/Contact.cs:74
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Kotipuhelin:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Beagle.Search.Tiles/File.cs:33
 msgid "Reveal in Folder"
 msgstr "Paljasta kansiossa"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Beagle.Search.Tiles/File.cs:34
 msgid "E-Mail"
 msgstr "Sähköposti"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/File.cs:36
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Siirrä roskakoriin"
 
-#: ../search/Tiles/File.cs:174 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/File.cs:179
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Viimeksi muokattu:"
 
-#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/File.cs:184
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Koko polku:"
 
-#: ../search/Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Tyhjä"
 
-#: ../search/Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Sisältää {0} kohdan"
 msgstr[1] "Sisältää {0} kohtaa"
 
-#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#: ../search/Tiles/Image.cs:39
-msgid "Set as Wallpaper"
-msgstr "Aseta taustakuvaksi"
-
-#: ../search/Tiles/Image.cs:84
-msgid "Tags:"
-msgstr "Sisältökuvaukset: "
-
-#: ../search/Tiles/Image.cs:86
-msgid "Modified:"
-msgstr "Muokattu:"
-
-#: ../search/Tiles/Image.cs:96
-msgid "Comment:"
-msgstr "Kommentti:"
-
-#: ../search/Tiles/IMLog.cs:30
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "IM-keskustelut"
 
-#: ../search/Tiles/IMLog.cs:96 ../tools/settings.glade.h:29
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Nimi:"
 
-#: ../search/Tiles/IMLog.cs:97 ../search/Tiles/MailMessage.cs:105
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "Vastaanottopäivä:"
 
-#: ../search/Tiles/IMLog.cs:101
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
 msgid "Status:"
 msgstr "Tila:"
 
-#: ../search/Tiles/IMLog.cs:116
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
 msgid "Idle"
 msgstr "Ei tavoitettavissa"
 
-#: ../search/Tiles/IMLog.cs:123
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
 msgid "Away"
 msgstr "Poissa"
 
-#: ../search/Tiles/IMLog.cs:126
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
 msgid "Offline"
 msgstr "Ei linjoilla"
 
-#: ../search/Tiles/IMLog.cs:129
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
 msgid "Available"
 msgstr "Tavoitettavissa"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Aseta taustakuvaksi"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:78
+msgid "Tags:"
+msgstr "Sisältökuvaukset: "
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Muokattu:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Kommentti:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Sähköpostiliite"
 
-#: ../search/Tiles/MailMessage.cs:58
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Etsi viestejä lähettäjältä"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
 msgid "(untitled)"
 msgstr "(nimeämätön)"
 
-#: ../search/Tiles/MailMessage.cs:68
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "Lähetä sähköpostissa"
 
-#: ../search/Tiles/MailMessage.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
 msgid "Subject:"
 msgstr "Aihe:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "To:"
 msgstr "Vastaanottaja:"
 
-#: ../search/Tiles/MailMessage.cs:102
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "Lähettäjä:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Sent:"
 msgstr "Lähetyspäivä:"
 
-#: ../search/Tiles/MailMessage.cs:111
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
 msgid "Folder:"
 msgstr "Kansio:"
 
-#: ../search/Tiles/OpenWithMenu.cs:47
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Manuaalisivu"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
 msgid "Open With"
 msgstr "Avaa ohjelmalla"
 
-#: ../search/Tiles/Presentation.cs:33
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0} kalvo"
 msgstr[1] "{0} kalvoa"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
 msgid "Site:"
 msgstr "Sivusto:"
 
-#: ../search/Tiles/RSSFeed.cs:61
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "Viimeksi katsottu:"
 
-#: ../search/Tiles/Task.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:47
 msgid "Date:"
 msgstr "Päivämäärä:"
 
-#: ../search/Tiles/TextDocument.cs:37
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
 #, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "{0} sivu"
 msgstr[1] "{0} sivua"
 
-#: ../search/Tiles/Tile.cs:179
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:95
 msgid "Open"
 msgstr "Avaa"
 
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "Sovellukset"
 
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+msgid "Contacts"
+msgstr "Yhteystiedot"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "Kalenteritapahtumat"
 
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "Kansiot"
 
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
 msgid "Images"
 msgstr "Kuvat"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "Ääni"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
 msgid "Video"
 msgstr "Video"
 
-#: ../search/Tiles/Utils.cs:39
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "Asiakirjat"
 
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "Keskustelut"
 
-#: ../search/Tiles/Utils.cs:43
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
 msgid "Websites"
 msgstr "WWW-sivut"
 
-#: ../search/Tiles/Utils.cs:45
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
 msgid "News Feeds"
 msgstr "Uutisvirrat"
 
-#: ../search/Tiles/Utils.cs:47
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
 msgid "Archives"
 msgstr "Arkistot"
 
-#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
-#: ../Util/StringFu.cs:117
-msgid "Yesterday"
-msgstr "Eilen"
-
-#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
-#: ../Util/StringFu.cs:115
-msgid "Today"
-msgstr "Tänään"
-
-#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Huomenna"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} viikko sitten"
 msgstr[1] "{0} viikkoa sitten"
 
-#: ../search/Tiles/Utils.cs:236
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -771,59 +568,133 @@ msgstr[0] "{0} viikon aikana"
 msgstr[1] "{0} viikon aikana"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:238
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} kuukausi sitten"
 msgstr[1] "{0} kuukautta sitten"
 
-#: ../search/Tiles/Utils.cs:240
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "{0} kuukauden aikana"
 msgstr[1] "{0} kuukauden aikana"
 
-#: ../search/Tiles/Utils.cs:242
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} vuosi sitten"
 msgstr[1] "{0} vuotta sitten"
 
-#: ../search/Tiles/Utils.cs:244
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "{0} vuoden aikana"
 msgstr[1] "{0} vuoden aikana"
 
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "Tuntematon kesto"
-
-#: ../search/Tiles/WebHistory.cs:58
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:59
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
 msgid "Accessed:"
 msgstr "Avattu:"
 
-#: ../search/Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
+#: ../search/Beagle.Search/SearchWindow.cs:57
+msgid "Desktop Search"
+msgstr "Työpöytähaku"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "Ei viimeaikaisia hakuja"
 
-#: ../search/Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Viimeaikaiset haut"
 
-#: ../search/Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Tyhjennä"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "Lopeta"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} tulos"
+msgstr[1] "{0} tulosta"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} / {2}"
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Piilota"
+
+#: ../search/Beagle.Search/SearchWindow.cs:78
+msgid "_Find:"
+msgstr "_Etsi:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:100
+msgid "Find Now"
+msgstr "Etsi heti"
+
+#: ../search/Beagle.Search/SearchWindow.cs:163
+msgid "Type in search terms"
+msgstr "Syötä hakuehdot"
+
+#: ../search/Beagle.Search/SearchWindow.cs:164
+msgid "Start searching"
+msgstr "Aloita haku"
+
+#: ../search/Beagle.Search/SearchWindow.cs:187
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Työpöytähaku: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:203
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Näytetään {0} osuma"
+msgstr[1] "Näytetään kaikki {0} osumaa"
+
+#: ../search/Beagle.Search/SearchWindow.cs:205
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "Näytetään hakutulokset: {0} / {1}"
+msgstr[1] "Näytetään hakutulokset: {0} / {1}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:452
+msgid "There are computers near you running Beagle"
+msgstr "Lähiverkossa on muita beaglea käyttäviä tietokoneita"
+
+#: ../search/Beagle.Search/SearchWindow.cs:453
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Voit hakea muilta tietokoneilta \"Haku\"-valikosta"
+
+#: ../search/Beagle.Search/SearchWindow.cs:503
+msgid "Your data is being indexed"
+msgstr "Tiedostojasi indeksoidaan"
+
+#: ../search/Beagle.Search/SearchWindow.cs:504
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr ""
+"Hakupalvelu indeksoi tiedostojasi juuri nyt. Hakutulokset voivat olla "
+"vajavaisia kunnes indeksointi on valmis."
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -831,7 +702,7 @@ msgstr "Tyhjennä"
 #. * words. Just provide a list of likely words the user might use
 #. * after the "type:" keyword to refer to each type of match.
 #.
-#: ../search/TypeFilter.cs:36
+#: ../search/Beagle.Search/TypeFilter.cs:39
 msgid ""
 "file\n"
 "files"
@@ -839,7 +710,7 @@ msgstr ""
 "tiedosto\n"
 "tiedostot"
 
-#: ../search/TypeFilter.cs:37
+#: ../search/Beagle.Search/TypeFilter.cs:40
 msgid ""
 "mail\n"
 "email\n"
@@ -849,7 +720,7 @@ msgstr ""
 "sähköposti\n"
 "e-mail"
 
-#: ../search/TypeFilter.cs:38
+#: ../search/Beagle.Search/TypeFilter.cs:41
 msgid ""
 "im\n"
 "ims\n"
@@ -866,7 +737,7 @@ msgstr ""
 "chat\n"
 "chatit"
 
-#: ../search/TypeFilter.cs:39
+#: ../search/Beagle.Search/TypeFilter.cs:42
 msgid ""
 "presentation\n"
 "presentations\n"
@@ -882,7 +753,7 @@ msgstr ""
 "kalvo\n"
 "kalvot"
 
-#: ../search/TypeFilter.cs:41
+#: ../search/Beagle.Search/TypeFilter.cs:44
 msgid ""
 "application\n"
 "applications\n"
@@ -894,7 +765,7 @@ msgstr ""
 "ohjelma\n"
 "ohjelmat"
 
-#: ../search/TypeFilter.cs:42
+#: ../search/Beagle.Search/TypeFilter.cs:45
 msgid ""
 "contact\n"
 "contacts\n"
@@ -906,7 +777,7 @@ msgstr ""
 "käyntikortti\n"
 "käyntikortit"
 
-#: ../search/TypeFilter.cs:43
+#: ../search/Beagle.Search/TypeFilter.cs:46
 msgid ""
 "folder\n"
 "folders"
@@ -914,7 +785,7 @@ msgstr ""
 "kansio\n"
 "kansiot"
 
-#: ../search/TypeFilter.cs:44
+#: ../search/Beagle.Search/TypeFilter.cs:47
 msgid ""
 "image\n"
 "images\n"
@@ -924,19 +795,19 @@ msgstr ""
 "kuvat\n"
 "kv"
 
-#: ../search/TypeFilter.cs:45
+#: ../search/Beagle.Search/TypeFilter.cs:48
 msgid "audio"
 msgstr "ääni"
 
-#: ../search/TypeFilter.cs:46
+#: ../search/Beagle.Search/TypeFilter.cs:49
 msgid "video"
 msgstr "video"
 
-#: ../search/TypeFilter.cs:47
+#: ../search/Beagle.Search/TypeFilter.cs:50
 msgid "media"
 msgstr "media"
 
-#: ../search/TypeFilter.cs:48
+#: ../search/Beagle.Search/TypeFilter.cs:51
 msgid ""
 "document\n"
 "documents\n"
@@ -947,7 +818,7 @@ msgstr ""
 "asiakirjat\n"
 "tekstinkäsittely"
 
-#: ../search/TypeFilter.cs:49
+#: ../search/Beagle.Search/TypeFilter.cs:52
 msgid ""
 "conversation\n"
 "conversations"
@@ -955,7 +826,7 @@ msgstr ""
 "keskustelu\n"
 "keskustelut"
 
-#: ../search/TypeFilter.cs:50
+#: ../search/Beagle.Search/TypeFilter.cs:53
 msgid ""
 "web\n"
 "www\n"
@@ -967,7 +838,7 @@ msgstr ""
 "www-sivu\n"
 "www"
 
-#: ../search/TypeFilter.cs:51
+#: ../search/Beagle.Search/TypeFilter.cs:54
 msgid ""
 "feed\n"
 "news\n"
@@ -982,7 +853,7 @@ msgstr ""
 "virta\n"
 "virrat"
 
-#: ../search/TypeFilter.cs:52
+#: ../search/Beagle.Search/TypeFilter.cs:55
 msgid ""
 "archive\n"
 "archives"
@@ -990,7 +861,7 @@ msgstr ""
 "arkisto\n"
 "arkistot"
 
-#: ../search/TypeFilter.cs:53
+#: ../search/Beagle.Search/TypeFilter.cs:56
 msgid ""
 "person\n"
 "people"
@@ -998,179 +869,212 @@ msgstr ""
 "henkilö\n"
 "henkilöt"
 
-#: ../search/UIManager.cs:50
+#: ../search/Beagle.Search/UIManager.cs:52
 msgid "Close Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:55 ../search/UIManager.cs:80
+#: ../search/Beagle.Search/UIManager.cs:57
+#: ../search/Beagle.Search/UIManager.cs:84
 msgid "Exit Desktop Search"
 msgstr "Sulje työpöytähaku"
 
-#: ../search/UIManager.cs:62
+#: ../search/Beagle.Search/UIManager.cs:64
 msgid "_Search"
 msgstr "_Haku"
 
-#: ../search/UIManager.cs:65
+#: ../search/Beagle.Search/UIManager.cs:67
 msgid "Show _Categories"
 msgstr "Näytä _luokat"
 
-#: ../search/UIManager.cs:68
+#: ../search/Beagle.Search/UIManager.cs:70
+msgid "Search _Domains"
+msgstr "Haku_alueet"
+
+#: ../search/Beagle.Search/UIManager.cs:73
 msgid "_Actions"
 msgstr "_Toiminnot"
 
-#: ../search/UIManager.cs:71
+#: ../search/Beagle.Search/UIManager.cs:76
 msgid "_View"
 msgstr "_Näytä"
 
-#: ../search/UIManager.cs:74
+#: ../search/Beagle.Search/UIManager.cs:79
 msgid "_Help"
 msgstr "O_hje"
 
-#: ../search/UIManager.cs:83
+#: ../search/Beagle.Search/UIManager.cs:87
 msgid "_Contents"
 msgstr "_Sisältö"
 
-#: ../search/UIManager.cs:85
+#: ../search/Beagle.Search/UIManager.cs:89
 msgid "Help - Table of Contents"
 msgstr "Ohje - sisällysluettelo"
 
-#: ../search/UIManager.cs:89
+#: ../search/Beagle.Search/UIManager.cs:93
 msgid "About Desktop Search"
 msgstr "Tietoja työpöytähausta"
 
-#: ../search/UIManager.cs:111
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Index information"
+msgstr "Tietoja indeksistä"
+
+#: ../search/Beagle.Search/UIManager.cs:118
 msgid "_All"
 msgstr "K_aikki"
 
-#: ../search/UIManager.cs:121
+#: ../search/Beagle.Search/UIManager.cs:128
 msgid "_None"
 msgstr "_Ei mitään"
 
-#: ../search/UIManager.cs:135
+#: ../search/Beagle.Search/UIManager.cs:142
 msgid "A_pplications"
 msgstr "_Sovellukset"
 
-#: ../search/UIManager.cs:137
+#: ../search/Beagle.Search/UIManager.cs:144
 msgid "Search applications"
 msgstr "Etsi sovelluksia"
 
-#: ../search/UIManager.cs:141
+#: ../search/Beagle.Search/UIManager.cs:148
 msgid "_Contacts"
 msgstr "_Yhteystiedot"
 
-#: ../search/UIManager.cs:143
+#: ../search/Beagle.Search/UIManager.cs:150
 msgid "Search contacts"
 msgstr "Etsi yhteystietoja"
 
-#: ../search/UIManager.cs:147
+#: ../search/Beagle.Search/UIManager.cs:154
 msgid "Ca_lendar events"
 msgstr "Ka_lenteritapahtumat"
 
-#: ../search/UIManager.cs:149
+#: ../search/Beagle.Search/UIManager.cs:156
 msgid "Search calendar events"
 msgstr "Etsi kalenteritapahtumia"
 
-#: ../search/UIManager.cs:153
+#: ../search/Beagle.Search/UIManager.cs:160
 msgid "_Documents"
 msgstr "_Asiakirjat"
 
-#: ../search/UIManager.cs:155
+#: ../search/Beagle.Search/UIManager.cs:162
 msgid "Search documents"
 msgstr "Etsi asiakirjoja"
 
-#: ../search/UIManager.cs:159
+#: ../search/Beagle.Search/UIManager.cs:166
 msgid "Conve_rsations"
 msgstr "Kes_kustelut"
 
-#: ../search/UIManager.cs:161
+#: ../search/Beagle.Search/UIManager.cs:168
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Etsi sähköposti- ja pikaviestinlokeja"
 
-#: ../search/UIManager.cs:165
+#: ../search/Beagle.Search/UIManager.cs:172
 msgid "_Images"
 msgstr "_Kuvat"
 
-#: ../search/UIManager.cs:167
+#: ../search/Beagle.Search/UIManager.cs:174
 msgid "Search images"
 msgstr "Etsi kuvia"
 
-#: ../search/UIManager.cs:171
+#: ../search/Beagle.Search/UIManager.cs:178
 msgid "_Media"
 msgstr "_Media"
 
-#: ../search/UIManager.cs:173
+#: ../search/Beagle.Search/UIManager.cs:180
 msgid "Search sound and video files"
 msgstr "Etsi ääni- ja videotiedostoja"
 
-#: ../search/UIManager.cs:177
+#: ../search/Beagle.Search/UIManager.cs:184
 msgid "_Folders"
 msgstr "_Kansiot"
 
-#: ../search/UIManager.cs:179
+#: ../search/Beagle.Search/UIManager.cs:186
 msgid "Search for folder names"
 msgstr "Etsi kansioiden nimiä"
 
-#: ../search/UIManager.cs:183
+#: ../search/Beagle.Search/UIManager.cs:190
 msgid "_Websites"
 msgstr "_WWW-sivut"
 
-#: ../search/UIManager.cs:185
+#: ../search/Beagle.Search/UIManager.cs:192
 msgid "Search website history"
 msgstr "Etsi selaimen historiasta"
 
-#: ../search/UIManager.cs:189
+#: ../search/Beagle.Search/UIManager.cs:196
 msgid "_News Feeds"
 msgstr "_Uutisvirrat"
 
-#: ../search/UIManager.cs:191
+#: ../search/Beagle.Search/UIManager.cs:198
 msgid "Search news feeds"
 msgstr "Etsi uutisvirtoja"
 
-#: ../search/UIManager.cs:195
+#: ../search/Beagle.Search/UIManager.cs:202
 msgid "A_rchives"
 msgstr "A_rkistot"
 
-#: ../search/UIManager.cs:197
+#: ../search/Beagle.Search/UIManager.cs:204
 msgid "Search files in Archives"
 msgstr "Etsi tiedostoja arkistoista"
 
-#: ../search/UIManager.cs:205
+#: ../search/Beagle.Search/UIManager.cs:212
 msgid "Sort by Date _Modified"
 msgstr "Järjestä _muokkauspäivän mukaan"
 
-#: ../search/UIManager.cs:206
+#: ../search/Beagle.Search/UIManager.cs:213
 msgid "Sort the most-recently-modified matches first"
 msgstr "Järjestä äskettäin muokatut ensimmäiseksi"
 
-#: ../search/UIManager.cs:209
+#: ../search/Beagle.Search/UIManager.cs:216
 msgid "Sort by _Name"
 msgstr "Järjestä _nimen mukaan"
 
-#: ../search/UIManager.cs:210
+#: ../search/Beagle.Search/UIManager.cs:217
 msgid "Sort matches by name"
 msgstr "Järjestä nimen mukaan"
 
-#: ../search/UIManager.cs:213
+#: ../search/Beagle.Search/UIManager.cs:220
 msgid "Sort by _Relevance"
 msgstr "Järjestä _asiaankuuluvuuden mukaan"
 
-#: ../search/UIManager.cs:214
+#: ../search/Beagle.Search/UIManager.cs:221
 msgid "Sort the best matches first"
 msgstr "Järjestä parhaat tulokset ensin"
 
-#: ../search/UIManager.cs:221
+#: ../search/Beagle.Search/UIManager.cs:228
+msgid "_Local"
+msgstr "_Paikallinen"
+
+#: ../search/Beagle.Search/UIManager.cs:230
+msgid "Search only on local computer"
+msgstr "Etsi vain paikalliselta tietokoneelta"
+
+#: ../search/Beagle.Search/UIManager.cs:234
+msgid "_Neighborhood"
+msgstr "_Naapurusto"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search on computers near me"
+msgstr "Etsi lähellä olevista tietokoneista"
+
+#: ../search/Beagle.Search/UIManager.cs:244
 msgid "Show Details"
 msgstr "Näytä yksityiskohdat"
 
-#: ../search/UIManager.cs:354
+#: ../search/Beagle.Search/UIManager.cs:366
 msgid "Couldn't launch web browser"
 msgstr "WWW-selainta ei voitu käynnistää"
 
-#: ../tools/Settings.cs:248
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Haku"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Etsi tietoja työpöydältäsi"
+
+#: ../tools/Settings.cs:346
 msgid "Reload configuration"
 msgstr "Lataa asetukset uudestaan"
 
-#: ../tools/Settings.cs:249
+#: ../tools/Settings.cs:347
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1178,15 +1082,15 @@ msgstr ""
 "Asetustiedostoa on muokatto toisesta ohjelmasta. Haluatko unohtaa nyt "
 "näkyvät asetukset ja ladata asetustiedoston uudestan levyltä?"
 
-#: ../tools/Settings.cs:387
+#: ../tools/Settings.cs:481
 msgid "Select Path"
 msgstr "Valitse polku"
 
-#: ../tools/Settings.cs:406
+#: ../tools/Settings.cs:500
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Valittu polku on jo indeksoitavien listalla eikä sitä lisätty."
 
-#: ../tools/Settings.cs:409
+#: ../tools/Settings.cs:503
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1194,15 +1098,15 @@ msgstr ""
 "Valittua polkua ei lisätty. Olemassaolevassa listassa on kohteita, jotka jo "
 "määrittelevät myös tämän polun ja tieto on jo indeksoitu."
 
-#: ../tools/Settings.cs:420
+#: ../tools/Settings.cs:514
 msgid "Path not added"
 msgstr "Polkua ei lisätty"
 
-#: ../tools/Settings.cs:429
+#: ../tools/Settings.cs:523
 msgid "Remove obsolete paths"
 msgstr "Poista turhat polut"
 
-#: ../tools/Settings.cs:430
+#: ../tools/Settings.cs:524
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1211,11 +1115,11 @@ msgstr ""
 "Tämän takia aiemmin määritellyt, nyt turhiksi muuttuvat polut, poistetaan. "
 "Haluatko todella lisätä tämän polun?"
 
-#: ../tools/Settings.cs:456
+#: ../tools/Settings.cs:550
 msgid "Remove path"
 msgstr "Poista hakupolku"
 
-#: ../tools/Settings.cs:457
+#: ../tools/Settings.cs:551
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1223,11 +1127,11 @@ msgstr ""
 "Oletko varma että haluat poistaa tämän hakupolun indeksoitavien kansioiden "
 "listalta?"
 
-#: ../tools/Settings.cs:486
+#: ../tools/Settings.cs:580
 msgid "Remove item"
 msgstr "Poista kohta"
 
-#: ../tools/Settings.cs:487
+#: ../tools/Settings.cs:581
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1235,64 +1139,68 @@ msgstr ""
 "Haluatko poistaa tämän kohdan listalta, joka sisältää ne tiedot, joiden "
 "indeksointi on estetty?"
 
-#: ../tools/Settings.cs:535
+#: ../tools/Settings.cs:628
 msgid "Remote host already present in the list."
 msgstr "Poista jo listalla oleva isäntänimi."
 
-#: ../tools/Settings.cs:545
+#: ../tools/Settings.cs:638
 msgid "Netbeagle Node not added"
 msgstr "Verkkobeagle solmua ei lisätty"
 
-#: ../tools/Settings.cs:562
+#: ../tools/Settings.cs:653
 msgid "Remove host"
 msgstr "Poista isäntä"
 
-#: ../tools/Settings.cs:563
+#: ../tools/Settings.cs:654
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Haluatko varmasti poistaa tämän isännän listalta?"
 
-#: ../tools/Settings.cs:625 ../tools/Settings.cs:714 ../tools/Settings.cs:797
-#: ../tools/Settings.cs:903
+#: ../tools/Settings.cs:713 ../tools/Settings.cs:802 ../tools/Settings.cs:883
+#: ../tools/Settings.cs:988 ../tools/Settings.cs:1632
 msgid "Name"
 msgstr "Nimi"
 
-#: ../tools/Settings.cs:708
+#: ../tools/Settings.cs:796
 msgid "Type"
 msgstr "Tyyppi"
 
-#: ../tools/Settings.cs:761
+#: ../tools/Settings.cs:849
 msgid "Path:"
 msgstr "Polku:"
 
-#: ../tools/Settings.cs:764
+#: ../tools/Settings.cs:852
 msgid "Pattern:"
 msgstr "Malli:"
 
-#: ../tools/Settings.cs:767
+#: ../tools/Settings.cs:855
 msgid "Mail folder:"
 msgstr "Sähköpostikansio:"
 
-#: ../tools/Settings.cs:1150
+#: ../tools/Settings.cs:890
+msgid "Address"
+msgstr "Osoite"
+
+#: ../tools/Settings.cs:1235
 msgid "Select Folder"
 msgstr "Valitse kansio"
 
-#: ../tools/Settings.cs:1176 ../tools/settings.glade.h:31
+#: ../tools/Settings.cs:1261 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "P_olku_"
 
-#: ../tools/Settings.cs:1181
+#: ../tools/Settings.cs:1266
 msgid "M_ail folder:"
 msgstr "Sähköposti_kansio:"
 
-#: ../tools/Settings.cs:1186
+#: ../tools/Settings.cs:1271
 msgid "P_attern:"
 msgstr "M_alli:"
 
-#: ../tools/Settings.cs:1210
+#: ../tools/Settings.cs:1295
 msgid "Error adding path"
 msgstr "Virhe lisättäessä polkua"
 
-#: ../tools/Settings.cs:1211
+#: ../tools/Settings.cs:1296
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1300,10 +1208,22 @@ msgstr ""
 "Annettua polkua ei löytynyt eikä sitä voida lisätä indeksoitavien "
 "hakupolkujen listalle."
 
-#: ../tools/Settings.cs:1252
+#: ../tools/Settings.cs:1337
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Otetaan yhteyttä kohteeseen {0}"
+
+#: ../tools/Settings.cs:1633
+msgid "Description"
+msgstr "Kuvaus"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Määritä työpöytähaku"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Haku ja indeksointi"
 
 #: ../tools/settings.glade.h:1
 msgid ":"
@@ -1342,26 +1262,34 @@ msgid "<b>User Interface</b>"
 msgstr "<b>Käyttöliittymä</b>"
 
 #: ../tools/settings.glade.h:10
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>Muutokset tulevat voimaan palvelinprosessin käynnistyksen jälkeen.</i>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>Tämä asetus ei ole käytössä käytettäessä akkuvirtaa.</i>"
+
+#: ../tools/settings.glade.h:12
 msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Vaatii salasanan.</span>"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:13
 msgid "Add Remote Host"
 msgstr "Lisää etäpalvelin"
 
-#: ../tools/settings.glade.h:12
-msgid "Add a static host with a known address"
-msgstr "Lisää pysyvä tietokone, jolla on tunnettu osoite"
+#: ../tools/settings.glade.h:14
+msgid "Add a static host"
+msgstr "Lisää pysyvä verkkonimi"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:15
 msgid "Add any additional paths to be included for indexing."
 msgstr "Lisää hakupolkuja indeksoitavien listaan."
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:16
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr "Lisää etähakuja tukevat tietokoneet, joilta haluat hakea."
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:17
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1369,40 +1297,52 @@ msgstr ""
 "Valitse minkä tyyppisiä tuloksia näytetään ja missä järjestyksessä ne "
 "näytetään, kun tulokset ryhmitellään tyypin mukaan."
 
-#: ../tools/settings.glade.h:16
-msgid "Allow external access to local search services"
-msgstr "Salli pääsy verkosta paikallisiin hakupalveluihin"
+#: ../tools/settings.glade.h:18
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "Salli pääsy verkosta paikallisiin hakupalveluihin (KOKEELLINEN)"
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:19
 msgid "Alt"
 msgstr "Alt"
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr ""
 "Aloita automaattisesti etsiminen kun käyttäjä on lopettanut kirjoittamisen"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:21
+msgid "Backends"
+msgstr "Taustajärjestelmät"
+
+#: ../tools/settings.glade.h:22
 msgid "Ctrl"
 msgstr "Ctrl"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:23
 msgid "Display the search window by pressing:"
 msgstr "Näytä hakuikkuna painettaessa näppäintä:"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:24
+msgid "Enable web interface for local search service"
+msgstr "Ota käyttöön selainliittymä paikalliselle hakupalvelulle"
+
+#: ../tools/settings.glade.h:25
+msgid "Enable/Disable backends from the indexing and searching process."
+msgstr "Valitse taustajärjestelmät indeksointi-ja hakuprosesseista."
+
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "Poissulje resurssi"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "Tiedostonimien _malli"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "I_ndeksoi kotihakemistoni"
 
-#: ../tools/settings.glade.h:24
+#: ../tools/settings.glade.h:29
 msgid ""
 "In order for you to perform Beagle searches on this computer, you must enter "
 "a password."
@@ -1410,59 +1350,59 @@ msgstr ""
 "Jotta voisit suorittaa beagle-hakuja tällä tietokoneella, täytyy sinun antaa "
 "salasana."
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:30
 msgid "Index data while on _battery power"
 msgstr "Indeksoi tietoja käytettäessä akkuvirtaa"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:31
 msgid "Index more aggressively while the s_creensaver is activated"
 msgstr "Indeksoi tehokkaammin, kun _näytönsäästäjä on käytössä"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:32
 msgid "Index name:"
 msgstr "Indeksin nimi:"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "Indeksointi"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:35
 msgid "Networking"
 msgstr "Verkkohaut"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:37
 msgid "Password for {0}"
 msgstr "Salasana kohteelle {0}"
 
-#: ../tools/settings.glade.h:33
+#: ../tools/settings.glade.h:38
 msgid "Password:"
 msgstr "Salasana:"
 
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Valitse kohde, jonka indeksoinnin haluat estää."
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Valitse sähköpostikansio, jonka indeksoinnin haluat estää."
 
-#: ../tools/settings.glade.h:36
-msgid "Require a password to search this computer remotely."
-msgstr "Vaadi salasana haettaessa tältä tietokoneelta etäyhteydellä."
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "Vaadi salasana etsittäessä tältä tietokoneelta verkon kautta"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "Haun asetukset"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:43
 msgid "Searching"
 msgstr "Etsitään"
 
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "Valitse sähköpostikansio"
 
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:45
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1470,403 +1410,425 @@ msgstr ""
 "Anna kaikki resurssit, esimerkiksi polut, tiedostonimen malli, "
 "sähköpostikansiot tai tiedostotyypi, joita et halua indeksoida."
 
-#: ../tools/settings.glade.h:41
-msgid "This setting does not apply while on battery power."
-msgstr "Tämä asetus ei ole käytössä käytettäessä akkuvirtaa."
-
-#: ../tools/settings.glade.h:42
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "Tyyppi:"
 
-#: ../tools/settings.glade.h:43
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
 msgstr "S_alli Beaglen suoritus pääkäyttäjänä"
 
-#: ../tools/settings.glade.h:44
+#: ../tools/settings.glade.h:48
 msgid "_Browse..."
 msgstr "Selaa..."
 
-#: ../tools/settings.glade.h:45
-msgid "_Choose from a currently available hosts"
-msgstr "_Valitse saatavilla olevista tietokoneista"
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "_Valitse saatavilla olevista verkkonimistä"
 
-#: ../tools/settings.glade.h:46
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "_Kansion polku"
 
-#: ../tools/settings.glade.h:47
+#: ../tools/settings.glade.h:51
 msgid "_Hostname:"
 msgstr "_Verkkonimi:"
 
-#: ../tools/settings.glade.h:48
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "_Sähköpostikansio"
 
-#: ../tools/settings.glade.h:49
+#: ../tools/settings.glade.h:53
 msgid "_Password:"
 msgstr "_Salasana:"
 
-#: ../tools/settings.glade.h:50
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "_Käynnistä haku- ja indeksointipalvelu automaattisesti "
 
-#: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search"
-msgstr "Määritä työpöytähaku"
-
-#: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Search & Indexing"
-msgstr "Haku ja indeksointi"
-
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
-msgid "On This Computer"
-msgstr "Tällä tietokoneella"
-
-#: ../Util/F-Spot/Exif.cs:248
-msgid "Image Directory"
-msgstr "Kuvahakemisto"
-
-#: ../Util/F-Spot/Exif.cs:250
-msgid "Thumbnail Directory"
-msgstr "Pienoiskuvien hakemisto"
-
-#: ../Util/F-Spot/Exif.cs:252
-msgid "Exif Directory"
-msgstr "Exif-hakemisto"
-
-#: ../Util/F-Spot/Exif.cs:254
-msgid "GPS Directory"
-msgstr "GPS-hakemisto"
-
-#: ../Util/F-Spot/Exif.cs:256
-msgid "InterOperability Directory"
-msgstr "Yhteensopivuushakemisto"
-
-#: ../Util/F-Spot/Exif.cs:258
-msgid "Unknown Directory"
-msgstr "Tuntematon hakemisto"
-
-#: ../Util/F-Spot/IptcFile.cs:175
-msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr "IPTC Information Interchange Model (IIM) versionumero"
-
-#: ../Util/F-Spot/IptcFile.cs:177
-msgid "OSI Destination routing information"
-msgstr "OSI Destination routing -tiedot"
-
-#: ../Util/F-Spot/IptcFile.cs:179
-msgid "IPTC file format"
-msgstr "IPTC-tiedostomuoto"
-
-#: ../Util/F-Spot/IptcFile.cs:181
-msgid "Identifies the provider and product"
-msgstr "Määrittelee tarjoajan ja tuotteen"
-
-#: ../Util/F-Spot/IptcFile.cs:183
-msgid "A unique number identifying the envelope"
-msgstr "Kuoren määrittelevä yksilöllinen numero"
-
-#: ../Util/F-Spot/IptcFile.cs:185
-msgid "A unique number"
-msgstr "Yksilöllinen numero"
-
-#: ../Util/F-Spot/IptcFile.cs:187
-msgid ""
-"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
-"Kuoren käsittelyn kiirellisyys väliltä 1 (kiirellisin) ja 9 (vähiten "
-"kiirellinen)"
-
-#: ../Util/F-Spot/IptcFile.cs:189
-msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr "Vuosi, kuukausi ja päivä (CCYYMMDD), jolloin palvelu lähetti aineiston"
-
-#: ../Util/F-Spot/IptcFile.cs:191
-msgid ""
-"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
-"Tunti, minuutti ja sekunti (HHMMSS+HHMM), jolloin palvelu lähetti aineiston"
-
-#: ../Util/F-Spot/IptcFile.cs:193
-msgid "The character set designation"
-msgstr "Merkistökoodaus"
-
-#: ../Util/F-Spot/IptcFile.cs:195
-msgid "External globally unique object identifier"
-msgstr "Ulkoinen yksilöllinen oliotunniste"
-
-#: ../Util/F-Spot/IptcFile.cs:200
-msgid "Abstract Relationship Method (ARM) identifier"
-msgstr "Abstract Relationship Method (ARM) -tunniste"
-
-#: ../Util/F-Spot/IptcFile.cs:202
-msgid "Abstract Relationship Method (ARM) version number."
-msgstr "Abstract Relationship Method (ARM) -versionumero."
-
-#: ../Util/F-Spot/IptcFile.cs:205
-msgid "Number identifying the IIM version this application record uses"
-msgstr "Sovellustietueen käyttämän IIM-version tunnistava numero"
-
-#: ../Util/F-Spot/IptcFile.cs:207
-msgid "Object type reference"
-msgstr "Olion tyyppiviite"
-
-#: ../Util/F-Spot/IptcFile.cs:212
-msgid "Object attribute reference"
-msgstr "Olion määreviite"
-
-#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
-msgid "Object name"
-msgstr "Kohteen nimi"
-
-#: ../Util/F-Spot/IptcFile.cs:220
-msgid "Status of the objectdata according to the provider"
-msgstr "Oliotiedon tila tarjoajan mukaan"
-
-#: ../Util/F-Spot/IptcFile.cs:224
-msgid "Location within a city or area where the object originates"
-msgstr "Kohteen lähteen sijainti kaupungissa tai alueella"
-
-#: ../Util/F-Spot/IptcFile.cs:227
-msgid "Name of the city the content is focussing on"
-msgstr "Sisällön ensisijaisesti kuvaaman kaupungin nimi"
-
-#: ../Util/F-Spot/IptcFile.cs:230
-msgid "Copyright information for"
-msgstr "Tekijänoikeustiedot tiedostolle"
-
-#: ../Util/F-Spot/IptcFile.cs:233
-msgid "Full name of the country of the focus of the content"
-msgstr "Sisällön aiheen lähdemaan koko nimi"
-
-#: ../Util/F-Spot/IptcFile.cs:236
-msgid ""
-"Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr "Sisällön aiheen lähdemaan kaksi- tai kolmikirjaiminen ISO3166-koodi"
-
-#: ../Util/F-Spot/IptcFile.cs:239
-msgid "Creator of the content"
-msgstr "Sisällön luoja"
-
-#: ../Util/F-Spot/IptcFile.cs:242
-msgid "Provider of the object"
-msgstr "Kohteen tarjoaja"
-
-#: ../Util/F-Spot/IptcFile.cs:245
-msgid "The title of the author or creator"
-msgstr "Kirjoittajan tai tekijän nimi"
-
-#: ../Util/F-Spot/IptcFile.cs:248
-msgid ""
-"The person involved in writing, editing or correcting the object data or "
-"caption/abstract"
-msgstr "Kohteen sisällön tai esittelyn kirjoittamiseen osallistunut henkilö"
-
-#: ../Util/F-Spot/IptcFile.cs:252
-msgid "Headline of the content"
-msgstr "Sisällön otsikko"
-
-#: ../Util/F-Spot/IptcFile.cs:255
-msgid ""
-"Instructions from the creator to the receiver not covered by other fields"
-msgstr "Muut ohjeet sisällöntuottajalta käyttäjälle"
-
-#: ../Util/F-Spot/IptcFile.cs:258
-msgid "Intellectual genre of the object"
-msgstr "Kohteen aihealue"
-
-#: ../Util/F-Spot/IptcFile.cs:271
-msgid "Unknown IIM DataSet"
-msgstr "Tuntematon IIM-tietojoukko"
-
-#: ../Util/F-Spot/MetadataStore.cs:46
-msgid "Creator"
-msgstr "Luoja"
-
-#: ../Util/F-Spot/MetadataStore.cs:47
-msgid "Title"
-msgstr "Otsikko"
-
-#: ../Util/F-Spot/MetadataStore.cs:48
-msgid "Copyright"
-msgstr "Tekijänoikeus"
-
-#: ../Util/F-Spot/MetadataStore.cs:49
-msgid "Subject and Keywords"
-msgstr "Aihe ja avainsanat"
-
-#: ../Util/F-Spot/MetadataStore.cs:50
-msgid "Compression"
-msgstr "Pakkaus"
-
-#: ../Util/F-Spot/MetadataStore.cs:52
-msgid "Planar Configuration"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "Suunta"
-
-#: ../Util/F-Spot/MetadataStore.cs:56
-msgid "Photometric Interpretation"
-msgstr "Fotometrinen tulkinta"
-
-#: ../Util/F-Spot/MetadataStore.cs:58
-msgid "Resolution Unit"
-msgstr "Tarkkuusyksikkö"
-
-#: ../Util/F-Spot/MetadataStore.cs:60
-msgid "Exposure Program"
-msgstr "Valotusohjelma"
-
-#: ../Util/F-Spot/MetadataStore.cs:62
-msgid "Metering Mode"
-msgstr "Mittaustapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:64
-msgid "Exposure Mode"
-msgstr "Valotustapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:66
-msgid "Custom Rendered"
-msgstr "Itse määritelty piirtotapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:68
-msgid "Components Configuration"
-msgstr "Osien määrittely"
-
-#: ../Util/F-Spot/MetadataStore.cs:70
-msgid "Light Source"
-msgstr "Valolähde"
-
-#: ../Util/F-Spot/MetadataStore.cs:72
-msgid "Sensing Method"
-msgstr "Tunnistustapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:74
-msgid "Color Space"
-msgstr "Väriavaruus"
-
-#: ../Util/F-Spot/MetadataStore.cs:76
-msgid "White Balance"
-msgstr "Valkotasapaino"
-
-#: ../Util/F-Spot/MetadataStore.cs:78
-msgid "Focal Plane Resolution Unit"
-msgstr "Tarkennustason tarkkuusyksikkö"
-
-#: ../Util/F-Spot/MetadataStore.cs:80
-msgid "File Source Type"
-msgstr "Tiedoston lähdetyyppi"
-
-#: ../Util/F-Spot/MetadataStore.cs:82
-msgid "Scene Capture Type"
-msgstr "Tilanteen kuvaustapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:84
-msgid "Gain Control"
-msgstr "Tasonsäätö"
-
-#: ../Util/F-Spot/MetadataStore.cs:86
-msgid "Contrast"
-msgstr "Kontrasti"
-
-#: ../Util/F-Spot/MetadataStore.cs:88
-msgid "Saturation"
-msgstr "Värikylläisyys"
-
-#: ../Util/F-Spot/MetadataStore.cs:90
-msgid "Sharpness"
-msgstr "Terävyys"
-
-#: ../Util/F-Spot/MetadataStore.cs:92
-msgid "Scene Type"
-msgstr "Maiseman tyyppi"
-
-#. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:120
-msgid "MMM d"
-msgstr "Kuu pv"
-
-#. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:123
-msgid "MMM d, yyyy"
-msgstr "Kuu pv, vuosi"
-
-#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:126
-msgid "h:mm tt"
-msgstr "hh:mm tt"
-
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:132
-#, csharp-format
-msgid "{0}, {1}"
-msgstr "{0}m {1}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:149
-#, csharp-format
-msgid "Today, {0}"
-msgstr "Tänäänm {0}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:152
-#, csharp-format
-msgid "Yesterday, {0}"
-msgstr "Eilen, {0}"
-
-#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:157
-#, csharp-format
-msgid "{0} day ago, {1}"
-msgid_plural "{0} days ago, {1}"
-msgstr[0] "{0} päivä sitten, klo {1}"
-msgstr[1] "{0} päivää sitten, klo {1}"
-
-#. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:163
-msgid "MMMM d, h:mm tt"
-msgstr "MMMM pv, hh:mm tt"
-
-#. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:168
-msgid "MMMM d yyyy, h:mm tt"
-msgstr "MMMM pv vuosi, hh:mm tt"
-
-#: ../Util/StringFu.cs:178
-#, csharp-format
-msgid "{0} hour"
-msgid_plural "{0} hours"
-msgstr[0] "{0} tunti"
-msgstr[1] "{0} tuntia"
-
-#: ../Util/StringFu.cs:185
-#, csharp-format
-msgid "{0} minute"
-msgid_plural "{0} minutes"
-msgstr[0] "{0} minuutti"
-msgstr[1] "{0} minuuttia"
-
-#. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:219
-#, csharp-format
-msgid "{0} byte"
-msgid_plural "{0} bytes"
-msgstr[0] "{0} tavua"
-msgstr[1] "{0} tavua"
-
-#. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:223
-#, csharp-format
-msgid "{0:0.0} KB"
-msgstr "{0:0.0} kt"
-
-#. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:226
-#, csharp-format
-msgid "{0:0.0} MB"
-msgstr "{0:0.0} Mt"
+#~ msgid "Open..."
+#~ msgstr "Avaa..."
+
+#~ msgid "About"
+#~ msgstr "Tietoja"
+
+#~ msgid "Display name"
+#~ msgstr "Näytettävä nimi"
+
+#~ msgid "Primary E-mail"
+#~ msgstr "Ensisijainen sähköposti"
+
+#~ msgid "Secondary E-mail"
+#~ msgstr "Toissijainen sähköposti"
+
+#~ msgid "Nickname"
+#~ msgstr "Lempinimi"
+
+#~ msgid ""
+#~ "Unable to open mork database:\n"
+#~ "\n"
+#~ " {0}"
+#~ msgstr ""
+#~ "Mork-tietokantaa ei voi avata:\n"
+#~ "\n"
+#~ "{0}"
+
+#~ msgid "The specified ID does not exist in this database!"
+#~ msgstr "Annettua tunnistetta ei ole tässä tietokannassa!"
+
+#~ msgid "Added {0} contact"
+#~ msgid_plural "Added {0} contacts"
+#~ msgstr[0] "Lisättiin {0} yhteystieto"
+#~ msgstr[1] "Lisättiin {0} yhteystietoa"
+
+#~ msgid "Viewing {0}"
+#~ msgstr "Näytetään {0}"
+
+#~ msgid "Select a mork database file"
+#~ msgstr "Valitse mork-tietokannan tiedosto"
+
+#~ msgid "Primary E-Mail:"
+#~ msgstr "Ensisijainen sähköposti:"
+
+#~ msgid "Screen name:"
+#~ msgstr "Näyttönimi:"
+
+#~ msgid "Home phone:"
+#~ msgstr "Kotipuhelin:"
+
+#~ msgid "Mobile phone:"
+#~ msgstr "Matkapuhelin:"
+
+#~ msgid "Web page:"
+#~ msgstr "WWW-sivu:"
+
+#~ msgid "Send E-Mail"
+#~ msgstr "Lähetä sähköpostia"
+
+#~ msgid "Details..."
+#~ msgstr "Yksityiskohdat..."
+
+#~ msgid "Could not find a valid E-mail address!"
+#~ msgstr "Kelvollista sähköpostiosoitetta ei löydy!"
+
+#~ msgid "<b>Custom fields</b>"
+#~ msgstr "<b>Omat kentät</b>"
+
+#~ msgid "<b>Home</b>"
+#~ msgstr "<b>Koti</b>"
+
+#~ msgid "<b>Internet</b>"
+#~ msgstr "<b>Internet</b>"
+
+#~ msgid "<b>Name</b>"
+#~ msgstr "<b>Nimi</b>"
+
+#~ msgid "<b>Notes</b>"
+#~ msgstr "<b>Muistiinpanot</b>"
+
+#~ msgid "<b>Phones</b>"
+#~ msgstr "<b>Puhelinnumerot</b>"
+
+#~ msgid "<b>Work</b>"
+#~ msgstr "<b>Työ</b>"
+
+#~ msgid "Additional E-Mail:"
+#~ msgstr "Muu sähköpostiosoite:"
+
+#~ msgid "Address:"
+#~ msgstr "Osoite:"
+
+#~ msgid "City:"
+#~ msgstr "Kaupunki:"
+
+#~ msgid "Contact"
+#~ msgstr "Yhteystieto"
+
+#~ msgid "Contact Viewer"
+#~ msgstr "Yhteystiedon katselin"
+
+#~ msgid "Country:"
+#~ msgstr "Maa:"
+
+#~ msgid "Custom 1:"
+#~ msgstr "Oma 1:"
+
+#~ msgid "Custom 2:"
+#~ msgstr "Oma 2:"
+
+#~ msgid "Custom 3:"
+#~ msgstr "Oma 3:"
+
+#~ msgid "Custom 4:"
+#~ msgstr "Oma 4:"
+
+#~ msgid "Department:"
+#~ msgstr "Osasto:"
+
+#~ msgid "Detailed view"
+#~ msgstr "Yksityiskohtainen näkymä"
+
+#~ msgid "Display:"
+#~ msgstr "Näyttö:"
+
+#~ msgid "Fax:"
+#~ msgstr "Faksi:"
+
+#~ msgid "First:"
+#~ msgstr "Ensimmäinen:"
+
+#~ msgid "Home:"
+#~ msgstr "Koti:"
+
+#~ msgid "Last:"
+#~ msgstr "Viimeinen:"
+
+#~ msgid "Mobile:"
+#~ msgstr "Matkapuhelin:"
+
+#~ msgid "Nickname:"
+#~ msgstr "Lempinimi:"
+
+#~ msgid "Organization:"
+#~ msgstr "Organisaatio:"
+
+#~ msgid "Other"
+#~ msgstr "Muu"
+
+#~ msgid "Pager:"
+#~ msgstr "Piippari:"
+
+#~ msgid "Preferred format:"
+#~ msgstr "Haluttu muoto:"
+
+#~ msgid "State/Province"
+#~ msgstr "Osavaltio tai lääni"
+
+#~ msgid "State/Province:"
+#~ msgstr "Osavaltio tai lääni:"
+
+#~ msgid ""
+#~ "Unknown\n"
+#~ "Plain text\n"
+#~ "HTML"
+#~ msgstr ""
+#~ "Tuntematon\n"
+#~ "Pelkkä teksti\n"
+#~ "HTML"
+
+#~ msgid "Web Page:"
+#~ msgstr "WWW-sivu:"
+
+#~ msgid "Work:"
+#~ msgstr "Työ:"
+
+#~ msgid "ZIP/Postal Code"
+#~ msgstr "Postinumero"
+
+#~ msgid "ZIP/Postal Code:"
+#~ msgstr "Postinumero:"
+
+#~ msgid "Unknown duration"
+#~ msgstr "Tuntematon kesto"
+
+#~ msgid "Image Directory"
+#~ msgstr "Kuvahakemisto"
+
+#~ msgid "Thumbnail Directory"
+#~ msgstr "Pienoiskuvien hakemisto"
+
+#~ msgid "Exif Directory"
+#~ msgstr "Exif-hakemisto"
+
+#~ msgid "GPS Directory"
+#~ msgstr "GPS-hakemisto"
+
+#~ msgid "InterOperability Directory"
+#~ msgstr "Yhteensopivuushakemisto"
+
+#~ msgid "Unknown Directory"
+#~ msgstr "Tuntematon hakemisto"
+
+#~ msgid "IPTC Information Interchange Model (IIM) Version number"
+#~ msgstr "IPTC Information Interchange Model (IIM) versionumero"
+
+#~ msgid "OSI Destination routing information"
+#~ msgstr "OSI Destination routing -tiedot"
+
+#~ msgid "IPTC file format"
+#~ msgstr "IPTC-tiedostomuoto"
+
+#~ msgid "Identifies the provider and product"
+#~ msgstr "Määrittelee tarjoajan ja tuotteen"
+
+#~ msgid "A unique number identifying the envelope"
+#~ msgstr "Kuoren määrittelevä yksilöllinen numero"
+
+#~ msgid "A unique number"
+#~ msgstr "Yksilöllinen numero"
+
+#~ msgid ""
+#~ "The envelope handling priority between 1 (most urgent) and 9 (least "
+#~ "urgent)"
+#~ msgstr ""
+#~ "Kuoren käsittelyn kiirellisyys väliltä 1 (kiirellisin) ja 9 (vähiten "
+#~ "kiirellinen)"
+
+#~ msgid "The year month and day (CCYYMMDD) the service sent the material"
+#~ msgstr ""
+#~ "Vuosi, kuukausi ja päivä (CCYYMMDD), jolloin palvelu lähetti aineiston"
+
+#~ msgid ""
+#~ "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
+#~ msgstr ""
+#~ "Tunti, minuutti ja sekunti (HHMMSS+HHMM), jolloin palvelu lähetti "
+#~ "aineiston"
+
+#~ msgid "The character set designation"
+#~ msgstr "Merkistökoodaus"
+
+#~ msgid "External globally unique object identifier"
+#~ msgstr "Ulkoinen yksilöllinen oliotunniste"
+
+#~ msgid "Abstract Relationship Method (ARM) identifier"
+#~ msgstr "Abstract Relationship Method (ARM) -tunniste"
+
+#~ msgid "Abstract Relationship Method (ARM) version number."
+#~ msgstr "Abstract Relationship Method (ARM) -versionumero."
+
+#~ msgid "Number identifying the IIM version this application record uses"
+#~ msgstr "Sovellustietueen käyttämän IIM-version tunnistava numero"
+
+#~ msgid "Object type reference"
+#~ msgstr "Olion tyyppiviite"
+
+#~ msgid "Object attribute reference"
+#~ msgstr "Olion määreviite"
+
+#~ msgid "Object name"
+#~ msgstr "Kohteen nimi"
+
+#~ msgid "Status of the objectdata according to the provider"
+#~ msgstr "Oliotiedon tila tarjoajan mukaan"
+
+#~ msgid "Location within a city or area where the object originates"
+#~ msgstr "Kohteen lähteen sijainti kaupungissa tai alueella"
+
+#~ msgid "Name of the city the content is focussing on"
+#~ msgstr "Sisällön ensisijaisesti kuvaaman kaupungin nimi"
+
+#~ msgid "Copyright information for"
+#~ msgstr "Tekijänoikeustiedot tiedostolle"
+
+#~ msgid "Full name of the country of the focus of the content"
+#~ msgstr "Sisällön aiheen lähdemaan koko nimi"
+
+#~ msgid ""
+#~ "Two or three letter ISO3166 code of the country of the focus of the "
+#~ "content"
+#~ msgstr "Sisällön aiheen lähdemaan kaksi- tai kolmikirjaiminen ISO3166-koodi"
+
+#~ msgid "Creator of the content"
+#~ msgstr "Sisällön luoja"
+
+#~ msgid "Provider of the object"
+#~ msgstr "Kohteen tarjoaja"
+
+#~ msgid "The title of the author or creator"
+#~ msgstr "Kirjoittajan tai tekijän nimi"
+
+#~ msgid ""
+#~ "The person involved in writing, editing or correcting the object data or "
+#~ "caption/abstract"
+#~ msgstr "Kohteen sisällön tai esittelyn kirjoittamiseen osallistunut henkilö"
+
+#~ msgid "Headline of the content"
+#~ msgstr "Sisällön otsikko"
+
+#~ msgid ""
+#~ "Instructions from the creator to the receiver not covered by other fields"
+#~ msgstr "Muut ohjeet sisällöntuottajalta käyttäjälle"
+
+#~ msgid "Intellectual genre of the object"
+#~ msgstr "Kohteen aihealue"
+
+#~ msgid "Unknown IIM DataSet"
+#~ msgstr "Tuntematon IIM-tietojoukko"
+
+#~ msgid "Creator"
+#~ msgstr "Luoja"
+
+#~ msgid "Title"
+#~ msgstr "Otsikko"
+
+#~ msgid "Copyright"
+#~ msgstr "Tekijänoikeus"
+
+#~ msgid "Subject and Keywords"
+#~ msgstr "Aihe ja avainsanat"
+
+#~ msgid "Compression"
+#~ msgstr "Pakkaus"
+
+#~ msgid "Orientation"
+#~ msgstr "Suunta"
+
+#~ msgid "Photometric Interpretation"
+#~ msgstr "Fotometrinen tulkinta"
+
+#~ msgid "Resolution Unit"
+#~ msgstr "Tarkkuusyksikkö"
+
+#~ msgid "Exposure Program"
+#~ msgstr "Valotusohjelma"
+
+#~ msgid "Metering Mode"
+#~ msgstr "Mittaustapa"
+
+#~ msgid "Exposure Mode"
+#~ msgstr "Valotustapa"
+
+#~ msgid "Custom Rendered"
+#~ msgstr "Itse määritelty piirtotapa"
+
+#~ msgid "Components Configuration"
+#~ msgstr "Osien määrittely"
+
+#~ msgid "Light Source"
+#~ msgstr "Valolähde"
+
+#~ msgid "Sensing Method"
+#~ msgstr "Tunnistustapa"
+
+#~ msgid "Color Space"
+#~ msgstr "Väriavaruus"
+
+#~ msgid "White Balance"
+#~ msgstr "Valkotasapaino"
+
+#~ msgid "Focal Plane Resolution Unit"
+#~ msgstr "Tarkennustason tarkkuusyksikkö"
+
+#~ msgid "File Source Type"
+#~ msgstr "Tiedoston lähdetyyppi"
+
+#~ msgid "Scene Capture Type"
+#~ msgstr "Tilanteen kuvaustapa"
+
+#~ msgid "Gain Control"
+#~ msgstr "Tasonsäätö"
+
+#~ msgid "Contrast"
+#~ msgstr "Kontrasti"
+
+#~ msgid "Saturation"
+#~ msgstr "Värikylläisyys"
+
+#~ msgid "Sharpness"
+#~ msgstr "Terävyys"
+
+#~ msgid "Scene Type"
+#~ msgstr "Maiseman tyyppi"
 
 #~ msgid "The orientation of the tray."
 #~ msgstr "Ilmoitusalueen suunta."
@@ -2018,9 +1980,6 @@ msgstr "{0:0.0} Mt"
 
 #~ msgid "More archive results..."
 #~ msgstr "Lisää arkistoja..."
-
-#~ msgid "Show Information"
-#~ msgstr "Näytä tiedot"
 
 #~ msgid ""
 #~ "If you're wondering whether Best is working check your notification area "
