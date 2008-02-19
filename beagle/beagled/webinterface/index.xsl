@@ -46,6 +46,7 @@
 		<script src="propname-table.js" type="text/javascript"/>
 		<script src="default.js" type="text/javascript"/>
 		<link rel="icon" href="images/favicon.png" type="image/png"/>
+		<link rel="search" type="application/opensearchdescription+xml" title="Beagle" href="opensearch.xml"/>
 	</head>
 </xsl:template>
 

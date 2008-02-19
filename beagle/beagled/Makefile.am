@@ -8,6 +8,7 @@ WEBINTERFACE_FILES =				\
 	$(srcdir)/webinterface/propname-table.js\
 	$(srcdir)/webinterface/help.html	\
 	$(srcdir)/webinterface/mappings.xml	\
+	$(srcdir)/webinterface/opensearch.xml	\
 	$(srcdir)/webinterface/index.xsl	\
 	$(srcdir)/webinterface/hitresult.xsl	\
 	$(srcdir)/webinterface/statusresult.xsl	\
