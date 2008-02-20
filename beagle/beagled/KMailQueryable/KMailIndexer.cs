@@ -375,7 +375,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = true;
-			indexable.Crawled = crawl;
+			indexable.FlushBufferCache = crawl;
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:account", account_name));
@@ -401,7 +401,6 @@ namespace Beagle.Daemon.KMailQueryable {
 			indexable.HitType = "MailMessage";
 			indexable.MimeType = "message/rfc822";
 			indexable.CacheContent = true;
-			indexable.Crawled = true; // mbox files will be stored in temp files, so flush them when done
 
 			indexable.AddProperty (Property.NewUnsearched ("fixme:client", "kmail"));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:account", account_name));

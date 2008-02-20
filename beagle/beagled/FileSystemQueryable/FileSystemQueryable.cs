@@ -219,7 +219,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public Indexable FileToIndexable (string         path,
 						  Guid           id,
 						  DirectoryModel parent,
-						  bool           crawl_mode)
+						  bool           crawling)
 		{
 			Indexable indexable;
 
@@ -244,7 +244,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			indexable.ContentUri = UriFu.PathToFileUri (path);
 			indexable.DisplayUri = UriFu.PathToFileUri (path);
-			indexable.Crawled = crawl_mode;
+			indexable.FlushBufferCache = crawling;
 			indexable.Filtering = Beagle.IndexableFiltering.Always;
 
 			FileInfo fi = new FileInfo (path);
@@ -257,7 +257,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			indexable.LocalState ["Path"] = path;
 
 			MergeExternalPendingIndexable (indexable);
-			Indexable xmp_indexable = xmp_handler.MergeXmpData (ref indexable, path, id, parent, crawl_mode);
+			Indexable xmp_indexable = xmp_handler.MergeXmpData (ref indexable, path, id, parent, crawling);
 
 			// In full generality, the xmp_handler can request an entirely new indexable to be scheduled.
 			// So, we should do something with the returned xmp_indexable if it is not null.

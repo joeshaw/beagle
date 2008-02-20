@@ -163,7 +163,7 @@ namespace Beagle.Daemon.KonqQueryable {
 
 		/////////////////////////////////////////////////
 		
-		private Indexable FileToIndexable (string path, bool crawl_mode) {
+		private Indexable FileToIndexable (string path, bool crawling) {
 			//Logger.Log.Debug ("KonqQ: Trying to index " + path);
 
 			FileStream stream;
@@ -207,7 +207,7 @@ namespace Beagle.Daemon.KonqQueryable {
 				indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
 				// hint for the filter about the charset
 				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
-				indexable.Crawled = crawl_mode;
+				indexable.FlushBufferCache = crawling;
 			
 				DateTime date = DateTimeUtil.UnixToDateTimeUtc (0);
 				date = date.AddSeconds (Int64.Parse (creation_date));

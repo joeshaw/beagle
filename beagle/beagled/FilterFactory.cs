@@ -309,9 +309,6 @@ namespace Beagle.Daemon {
 					}
 				}
 
-				if (indexable.Crawled)
-					candidate_filter.EnableCrawlMode ();
-
 				// Set the indexable on the filter.
 				candidate_filter.Indexable = indexable;
 

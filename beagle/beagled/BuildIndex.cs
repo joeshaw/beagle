@@ -642,7 +642,7 @@ namespace Beagle.Daemon
 			Uri uri = UriFu.PathToFileUri (file.FullName);
 			Indexable indexable = new Indexable (uri);
 			indexable.Timestamp = file.LastWriteTimeUtc;
-			indexable.Crawled = true;
+			indexable.FlushBufferCache = true;
 			indexable.AddProperty (Property.NewUnsearched ("fixme:filesize", file.Length));
 			FSQ.AddStandardPropertiesToIndexable (indexable, file.Name, Guid.Empty, false);
 

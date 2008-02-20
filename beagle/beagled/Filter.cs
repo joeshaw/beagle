@@ -144,21 +144,6 @@ namespace Beagle.Daemon {
 			set { indexable = value; }
 		}
 		
-		//////////////////////////
-		
-		private bool crawl_mode = false;
-
-		public void EnableCrawlMode ()
-		{
-			crawl_mode = true;
-		}
-		
-		protected bool CrawlMode {
-			get { return crawl_mode; }
-		}
-
-		//////////////////////////
-
 		// Filters which deal with big files, and that don't need
 		// to read in whole files may want to set this to false
 		// to avoid wasting cycles in disk wait.
@@ -763,7 +748,7 @@ namespace Beagle.Daemon {
 			if (currentStream != null) {
 				// When crawling, give the OS a hint that we don't
 				// need to keep this file around in the page cache.
-				if (CrawlMode && currentStream is FileStream)
+				if (indexable.FlushBufferCache && currentStream is FileStream)
 					FileAdvise.FlushCache ((FileStream) currentStream);
 
 				currentStream.Close ();

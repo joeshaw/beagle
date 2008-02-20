@@ -91,9 +91,12 @@ namespace Beagle {
 
 		// Is this being indexed because of crawling or other
 		// background activity?
-		// If crawl is set, then the underlying file will be flushed
+		// If set, then the underlying file will be flushed
 		// from buffer cache as soon as it is indexed.
-		private bool crawled = true;
+		// Set it to true when the buffer cache should not
+		// be disturbed due to this indexable (e.g. during
+		// crawling).
+		private bool flush_buffer_cache = false;
 
 		// Is this object inherently contentless?
 		private bool no_content = false;
@@ -277,10 +280,10 @@ namespace Beagle {
 			get { return ! DeleteContent && ContentUri.IsFile && ParentUri == null; }
 		}
 
-		[XmlAttribute]
-		public bool Crawled {
-			get { return crawled; }
-			set { crawled = value; }
+		[XmlAttribute ("Crawled")]
+		public bool FlushBufferCache {
+			get { return flush_buffer_cache; }
+			set { flush_buffer_cache = value; }
 		}
 
 		[XmlAttribute]
