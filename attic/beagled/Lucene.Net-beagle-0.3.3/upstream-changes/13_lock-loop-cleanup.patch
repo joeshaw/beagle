@@ -1,0 +1,30 @@
+From: Daniel Drake <dsd@gentoo.org>
+
+There's no need to try and catch ThreadInterruptedException since it is never
+thrown from Sleep().
+
+Also simplify the sleep call - no need to allocate a TimeSpan here...
+
+Index: Store/Lock.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/Lock.cs,v
+retrieving revision 1.6.4.10
+diff -u -3 -p -r1.6.4.10 Lock.cs
+--- Store/Lock.cs	30 Sep 2006 02:22:49 -0000	1.6.4.10
++++ Store/Lock.cs	30 Sep 2006 02:40:28 -0000
+@@ -69,14 +69,7 @@ namespace Lucene.Net.Store
+ 				{
+ 					throw new System.IO.IOException("Lock obtain timed out: " + this.ToString());
+ 				}
+-				try
+-				{
+-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+-				}
+-				catch (System.Threading.ThreadInterruptedException e)
+-				{
+-					throw new System.IO.IOException(e.ToString());
+-				}
++				System.Threading.Thread.Sleep((int) LOCK_POLL_INTERVAL);
+ 				locked = Obtain();
+ 			}
+ 			return locked;

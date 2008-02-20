@@ -1,0 +1,473 @@
+From D Bera <dbera.web@gmail.com>
+
+Creating Document() is expensive because it copies all the fields to the Document object. If some of the fields are not going to be used later, then quite some allocations and time could be saved by only copying the necessary fields when creating a Document object. Idea from:
+http://mail-archives.apache.org/mod_mbox/lucene-java-user/200405.mbox/<200405221922.i4MJMfU9017218%40outmail.freedom2surf.net>
+
+This patch is not required with Lucene.Net >= 2.1 (which will have FieldSelector and lazy Field loading).
+
+Index: Index/FieldsReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/FieldsReader.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 FieldsReader.cs
+--- Index/FieldsReader.cs	2 Oct 2006 17:08:52 -0000	1.4
++++ Index/FieldsReader.cs	15 Dec 2006 03:11:43 -0000
+@@ -15,6 +15,7 @@
+  */
+ 
+ using System;
++using System.Collections;
+ using Document = Lucene.Net.Documents.Document;
+ using Field = Lucene.Net.Documents.Field;
+ using Directory = Lucene.Net.Store.Directory;
+@@ -146,9 +147,149 @@ namespace Lucene.Net.Index
+ 			return doc;
+ 		}
+ 		
++		public /*internal*/ Document Doc(int n, string[] fields)
++		{
++			if (fields.Length == 0)
++				return Doc (n);
++
++			// FIXME: use Hashset
++			ArrayList field_list = new ArrayList (fields);
++			int num_required_fields = field_list.Count;
++
++			indexStream.Seek(n * 8L);
++			long position = indexStream.ReadLong();
++			fieldsStream.Seek(position);
++			
++			Document doc = new Document();
++			int numFields = fieldsStream.ReadVInt();
++			for (int i = 0; i < numFields && num_required_fields > 0; i++)
++			{
++				int fieldNumber = fieldsStream.ReadVInt();
++				FieldInfo fi = fieldInfos.FieldInfo(fieldNumber);
++				if (field_list.Contains (fi.name)) {
++					num_required_fields --;	
++
++					byte bits = fieldsStream.ReadByte();
++					
++					bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
++					bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
++					
++					if ((bits & FieldsWriter.FIELD_IS_BINARY) != 0)
++					{
++						byte[] b = new byte[fieldsStream.ReadVInt()];
++						fieldsStream.ReadBytes(b, 0, b.Length);
++						if (compressed)
++							doc.Add(new Field(fi.name, Uncompress(b), Field.Store.COMPRESS));
++						else
++							doc.Add(new Field(fi.name, b, Field.Store.YES));
++					}
++					else
++					{
++						Field.Index index;
++						Field.Store store = Field.Store.YES;
++						
++						if (fi.isIndexed && tokenize)
++							index = Field.Index.TOKENIZED;
++						else if (fi.isIndexed && !tokenize)
++							index = Field.Index.UN_TOKENIZED;
++						else
++							index = Field.Index.NO;
++						
++						Field.TermVector termVector = null;
++						if (fi.storeTermVector)
++						{
++							if (fi.storeOffsetWithTermVector)
++							{
++								if (fi.storePositionWithTermVector)
++								{
++									termVector = Field.TermVector.WITH_POSITIONS_OFFSETS;
++								}
++								else
++								{
++									termVector = Field.TermVector.WITH_OFFSETS;
++								}
++							}
++							else if (fi.storePositionWithTermVector)
++							{
++								termVector = Field.TermVector.WITH_POSITIONS;
++							}
++							else
++							{
++								termVector = Field.TermVector.YES;
++							}
++						}
++						else
++						{
++							termVector = Field.TermVector.NO;
++						}
++						
++						if (compressed)
++						{
++							store = Field.Store.COMPRESS;
++							byte[] b = new byte[fieldsStream.ReadVInt()];
++							fieldsStream.ReadBytes(b, 0, b.Length);
++							Field f = new Field(fi.name, System.Text.Encoding.GetEncoding("UTF-8").GetString(Uncompress(b)), store, index, termVector);
++							f.SetOmitNorms(fi.omitNorms);
++							doc.Add(f);
++						}
++						else
++						{
++							Field f = new Field(fi.name, fieldsStream.ReadString(), store, index, termVector);
++							f.SetOmitNorms(fi.omitNorms);
++							doc.Add(f);
++						}
++					}
++				} else {
++					byte bits = fieldsStream.ReadByte();
++					
++					bool compressed = (bits & FieldsWriter.FIELD_IS_COMPRESSED) != 0;
++					bool tokenize = (bits & FieldsWriter.FIELD_IS_TOKENIZED) != 0;
++					
++					if ((bits & FieldsWriter.FIELD_IS_BINARY) != 0)
++					{
++						//byte[] b = new byte[fieldsStream.ReadVInt()];
++						//fieldsStream.ReadBytes(b, 0, b.Length);
++						int length = fieldsStream.ReadVInt();
++						for (int j = 0; j < length; j++)
++							fieldsStream.ReadByte ();
++					}
++					else
++					{
++						if (compressed)
++						{
++							//byte[] b = new byte[fieldsStream.ReadVInt()];
++							//fieldsStream.ReadBytes(b, 0, b.Length);
++							int length = fieldsStream.ReadVInt();
++							for (int j = 0; j < length; j++)
++								fieldsStream.ReadByte ();
++						}
++						else
++						{
++							//fieldsStream.ReadString ();
++							int length = fieldsStream.ReadVInt();
++							for (int j = 0; j < length; j++)
++							{
++								byte b = fieldsStream.ReadByte ();
++								if ((b & 0x80) == 0)
++									continue;
++								else if ((b & 0xE0) != 0xE0) {
++									fieldsStream.ReadByte ();
++								} else {
++									fieldsStream.ReadByte ();
++									fieldsStream.ReadByte ();
++								}
++							}
++						}
++					}
++				}
++			}
++			
++			return doc;
++		}
++		
+ 		private byte[] Uncompress(byte[] input)
+ 		{
+             return SupportClass.CompressionSupport.Uncompress(input);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/FilterIndexReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/FilterIndexReader.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 FilterIndexReader.cs
+--- Index/FilterIndexReader.cs	2 Oct 2006 17:08:52 -0000	1.4
++++ Index/FilterIndexReader.cs	15 Dec 2006 03:11:43 -0000
+@@ -157,6 +157,11 @@ namespace Lucene.Net.Index
+ 			return in_Renamed.Document(n);
+ 		}
+ 		
++		public override Document Document(int n, string[] fields)
++		{
++			return in_Renamed.Document(n, fields);
++		}
++		
+ 		public override bool IsDeleted(int n)
+ 		{
+ 			return in_Renamed.IsDeleted(n);
+@@ -245,4 +250,4 @@ namespace Lucene.Net.Index
+ 			return in_Renamed.GetFieldNames(fieldNames);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/IndexReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/IndexReader.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 IndexReader.cs
+--- Index/IndexReader.cs	2 Oct 2006 17:08:52 -0000	1.4
++++ Index/IndexReader.cs	15 Dec 2006 03:11:44 -0000
+@@ -411,6 +411,11 @@ namespace Lucene.Net.Index
+ 		/// <code>Document</code> in this index. 
+ 		/// </summary>
+ 		public abstract Document Document(int n);
++
++		/// <summary>Returns the specified fields of the <code>n</code><sup>th</sup>
++		/// <code>Document</code> in this index. 
++		/// </summary>
++		public abstract Document Document(int n, string[] fields);
+ 		
+ 		/// <summary>Returns true if document <i>n</i> has been deleted </summary>
+ 		public abstract bool IsDeleted(int n);
+@@ -978,4 +983,4 @@ namespace Lucene.Net.Index
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/MultiReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/MultiReader.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 MultiReader.cs
+--- Index/MultiReader.cs	16 Oct 2006 19:36:57 -0000	1.4
++++ Index/MultiReader.cs	15 Dec 2006 03:11:45 -0000
+@@ -116,6 +116,12 @@ namespace Lucene.Net.Index
+ 			return subReaders[i].Document(n - starts[i]); // dispatch to segment reader
+ 		}
+ 		
++		public override Document Document(int n, string[] fields)
++		{
++			int i = ReaderIndex(n); // find segment num
++			return subReaders[i].Document(n - starts[i], fields); // dispatch to segment reader
++		}
++		
+ 		public override bool IsDeleted(int n)
+ 		{
+ 			int i = ReaderIndex(n); // find segment num
+@@ -589,4 +595,4 @@ namespace Lucene.Net.Index
+ 			return ((TermPositions) current).NextPosition();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/ParallelReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/ParallelReader.cs,v
+retrieving revision 1.3
+diff -u -3 -p -r1.3 ParallelReader.cs
+--- Index/ParallelReader.cs	2 Oct 2006 17:11:10 -0000	1.3
++++ Index/ParallelReader.cs	15 Dec 2006 03:11:45 -0000
+@@ -160,6 +160,11 @@ namespace Lucene.Net.Index
+ 			return result;
+ 		}
+ 		
++		public override Document Document(int n, string[] fields)
++		{
++			throw new System.NotSupportedException ();
++		}
++		
+ 		// get all vectors
+ 		public override TermFreqVector[] GetTermFreqVectors(int n)
+ 		{
+Index: Index/SegmentReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/SegmentReader.cs,v
+retrieving revision 1.8
+diff -u -3 -p -r1.8 SegmentReader.cs
+--- Index/SegmentReader.cs	29 Nov 2006 19:25:43 -0000	1.8
++++ Index/SegmentReader.cs	15 Dec 2006 03:11:46 -0000
+@@ -327,6 +327,16 @@ namespace Lucene.Net.Index
+ 			}
+ 		}
+ 		
++		public override Document Document(int n, string[] fields)
++		{
++			lock (this)
++			{
++				if (IsDeleted(n))
++					throw new System.ArgumentException("attempt to access a deleted document");
++				return fieldsReader.Doc(n, fields);
++			}
++		}
++		
+ 		public override bool IsDeleted(int n)
+ 		{
+ 			lock (this)
+@@ -725,4 +735,4 @@ namespace Lucene.Net.Index
+             }
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/Hits.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/Hits.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 Hits.cs
+--- Search/Hits.cs	2 Oct 2006 17:09:04 -0000	1.4
++++ Search/Hits.cs	15 Dec 2006 03:11:46 -0000
+@@ -115,6 +115,16 @@ namespace Lucene.Net.Search
+ 			return hitDoc.doc;
+ 		}
+ 		
++		/// <summary>Returns the requested fields of the n<sup>th</sup> document in this set.
++		/// <p>Documents are not cached since they could be fetched using different set of fields.
++		/// </summary>
++		public Document Doc(int n, string[] fields)
++		{
++			HitDoc hitDoc = HitDoc(n);
++			
++			return searcher.Doc(hitDoc.id, fields);
++		}
++		
+ 		/// <summary>Returns the score for the nth document in this set. </summary>
+ 		public float Score(int n)
+ 		{
+@@ -220,4 +230,4 @@ namespace Lucene.Net.Search
+ 			id = i;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/IndexSearcher.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/IndexSearcher.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 IndexSearcher.cs
+--- Search/IndexSearcher.cs	2 Oct 2006 17:09:05 -0000	1.4
++++ Search/IndexSearcher.cs	15 Dec 2006 03:11:46 -0000
+@@ -201,6 +201,11 @@ namespace Lucene.Net.Search
+ 			return reader.Document(i);
+ 		}
+ 		
++		public override Document Doc(int i, string[] fields)
++		{
++			return reader.Document(i, fields);
++		}
++		
+ 		// inherit javadoc
+ 		public override int MaxDoc()
+ 		{
+@@ -285,4 +290,4 @@ namespace Lucene.Net.Search
+ 			return weight.Explain(reader, doc);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/MultiSearcher.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/MultiSearcher.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 MultiSearcher.cs
+--- Search/MultiSearcher.cs	2 Oct 2006 17:09:05 -0000	1.4
++++ Search/MultiSearcher.cs	15 Dec 2006 03:11:46 -0000
+@@ -119,6 +119,11 @@ namespace Lucene.Net.Search
+ 				throw new System.NotSupportedException();
+ 			}
+ 			
++			public override Document Doc(int i, string[] fields)
++			{
++				throw new System.NotSupportedException();
++			}
++			
+ 			public override Explanation Explain(Weight weight, int doc)
+ 			{
+ 				throw new System.NotSupportedException();
+@@ -193,6 +198,12 @@ namespace Lucene.Net.Search
+ 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
+ 		}
+ 		
++		public override Document Doc(int n, string[] fields)
++		{
++			int i = SubSearcher(n); // find searcher index
++			return searchables[i].Doc(n - starts[i], fields); // dispatch to searcher
++		}
++		
+ 		/// <summary>Call {@link #subSearcher} instead.</summary>
+ 		/// <deprecated>
+ 		/// </deprecated>
+@@ -394,4 +405,4 @@ namespace Lucene.Net.Search
+ 			return rewrittenQuery.Weight(cacheSim);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/RemoteSearchable.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/RemoteSearchable.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 RemoteSearchable.cs
+--- Search/RemoteSearchable.cs	2 Oct 2006 17:09:06 -0000	1.4
++++ Search/RemoteSearchable.cs	15 Dec 2006 03:11:46 -0000
+@@ -100,6 +100,11 @@ namespace Lucene.Net.Search
+ 			return local.Doc(i);
+ 		}
+ 		
++		public virtual Document Doc(int i, string[] fields)
++		{
++			return local.Doc(i, fields);
++		}
++		
+ 		public virtual Query Rewrite(Query original)
+ 		{
+ 			return local.Rewrite(original);
+@@ -176,4 +181,4 @@ namespace Lucene.Net.Search
+ 			System.Console.ReadLine();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/Searchable.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/Searchable.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 Searchable.cs
+--- Search/Searchable.cs	2 Oct 2006 17:09:07 -0000	1.4
++++ Search/Searchable.cs	15 Dec 2006 03:11:47 -0000
+@@ -119,6 +119,13 @@ namespace Lucene.Net.Search
+         /// <seealso cref="IndexReader#document(int)">
+         /// </seealso>
+         Document Doc(int i);
++
++        /// <summary>Expert: Returns the requested <code>fields</code> of document <code>i</code>.
++        /// Called by {@link HitCollector} implementations.
++        /// </summary>
++        /// <seealso cref="IndexReader#document(int,string[])">
++        /// </seealso>
++        Document Doc(int i, string[] fields);
+ 		
+         /// <summary>Expert: called to re-write queries into primitive queries.</summary>
+         /// <throws>  BooleanQuery.TooManyClauses </throws>
+@@ -161,4 +168,4 @@ namespace Lucene.Net.Search
+         /// </summary>
+         TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
+     }
+-}
+\ No newline at end of file
++}
+Index: Search/Searcher.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Search/Searcher.cs,v
+retrieving revision 1.4
+diff -u -3 -p -r1.4 Searcher.cs
+--- Search/Searcher.cs	2 Oct 2006 17:09:07 -0000	1.4
++++ Search/Searcher.cs	15 Dec 2006 03:11:47 -0000
+@@ -206,9 +206,10 @@ namespace Lucene.Net.Search
+ 		abstract public int MaxDoc();
+ 		abstract public TopDocs Search(Weight weight, Filter filter, int n);
+ 		abstract public Document Doc(int i);
++		abstract public Document Doc(int i, string[] fields);
+ 		abstract public Query Rewrite(Query query);
+ 		abstract public Explanation Explain(Weight weight, int doc);
+ 		abstract public TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
+ 		/* End patch for GCJ bug #15411. */
+ 	}
+-}
+\ No newline at end of file
++}

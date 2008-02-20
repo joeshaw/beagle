@@ -1,0 +1,20 @@
+From: Jon Trowbridge <trow@novell.com>
+
+Open the FileStream with FileShare.ReadWrite.
+
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.19.2.16
+diff -u -3 -p -r1.19.2.16 FSDirectory.cs
+--- Store/FSDirectory.cs	30 Sep 2006 01:52:23 -0000	1.19.2.16
++++ Store/FSDirectory.cs	30 Sep 2006 01:53:32 -0000
+@@ -601,7 +601,7 @@ namespace Lucene.Net.Store
+ 					try
+ 					{
+ 						in_Renamed = new System.IO.FileStream(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+-						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
++						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+ 						// see if the buffer needs to be initialized. Initialization is
+ 						// only done on-demand since many VM's will never run into the renameTo
+ 						// bug and hence shouldn't waste 1K of mem for no reason.

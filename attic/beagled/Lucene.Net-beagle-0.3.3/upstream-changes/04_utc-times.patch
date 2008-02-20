@@ -1,0 +1,108 @@
+From: Joe Shaw <joeshaw@novell.com>
+
+Use UTC times
+
+Index: Store/FSDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/FSDirectory.cs,v
+retrieving revision 1.19.2.15
+diff -u -3 -p -r1.19.2.15 FSDirectory.cs
+--- Store/FSDirectory.cs	25 Sep 2006 23:02:03 -0000	1.19.2.15
++++ Store/FSDirectory.cs	30 Sep 2006 01:51:20 -0000
+@@ -506,21 +506,21 @@ namespace Lucene.Net.Store
+ 		public override long FileModified(System.String name)
+ 		{
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return (file.LastWriteTime.Ticks);
++			return (file.LastWriteTimeUtc.Ticks);
+ 		}
+ 		
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+ 		public static long FileModified(System.IO.FileInfo directory, System.String name)
+ 		{
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return (file.LastWriteTime.Ticks);
++			return (file.LastWriteTimeUtc.Ticks);
+ 		}
+ 		
+ 		/// <summary>Set the modified time of an existing file to now. </summary>
+ 		public override void  TouchFile(System.String name)
+ 		{
+ 			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-            file.LastWriteTime = System.DateTime.Now;
++            file.LastWriteTime = System.DateTime.UtcNow;
+ 		}
+ 		
+ 		/// <summary>Returns the length in bytes of a file in the directory. </summary>
+Index: Store/RAMDirectory.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMDirectory.cs,v
+retrieving revision 1.4.4.6
+diff -u -3 -p -r1.4.4.6 RAMDirectory.cs
+--- Store/RAMDirectory.cs	25 Sep 2006 22:54:07 -0000	1.4.4.6
++++ Store/RAMDirectory.cs	30 Sep 2006 01:51:20 -0000
+@@ -170,7 +170,7 @@ namespace Lucene.Net.Store
+ 			//     final boolean MONITOR = false;
+ 			
+ 			RAMFile file = (RAMFile) files[name];
+-			long ts2, ts1 = System.DateTime.Now.Ticks;
++			long ts2, ts1 = System.DateTime.UtcNow.Ticks;
+ 			do 
+ 			{
+ 				try
+@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
+ 				catch (System.Threading.ThreadInterruptedException)
+ 				{
+ 				}
+-				ts2 = System.DateTime.Now.Ticks;
++				ts2 = System.DateTime.UtcNow.Ticks;
+ 				//       if (MONITOR) {
+ 				//         count++;
+ 				//       }
+@@ -244,4 +244,4 @@ namespace Lucene.Net.Store
+ 		{
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Store/RAMFile.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMFile.cs,v
+retrieving revision 1.3.4.5
+diff -u -3 -p -r1.3.4.5 RAMFile.cs
+--- Store/RAMFile.cs	25 Sep 2006 22:36:32 -0000	1.3.4.5
++++ Store/RAMFile.cs	30 Sep 2006 01:51:20 -0000
+@@ -23,6 +23,6 @@ namespace Lucene.Net.Store
+ 	{
+ 		internal System.Collections.ArrayList buffers = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
+ 		internal long length;
+-		internal long lastModified = System.DateTime.Now.Ticks;
++		internal long lastModified = System.DateTime.UtcNow.Ticks;
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Store/RAMOutputStream.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/RAMOutputStream.cs,v
+retrieving revision 1.3.4.6
+diff -u -3 -p -r1.3.4.6 RAMOutputStream.cs
+--- Store/RAMOutputStream.cs	25 Sep 2006 22:54:07 -0000	1.3.4.6
++++ Store/RAMOutputStream.cs	30 Sep 2006 01:51:20 -0000
+@@ -107,7 +107,7 @@ namespace Lucene.Net.Store
+             if (pointer > file.length)
+                 file.length = pointer;
+ 			
+-            file.lastModified = System.DateTime.Now.Ticks;
++            file.lastModified = System.DateTime.UtcNow.Ticks;
+ 		}
+ 		
+ 		public override void  Close()
+@@ -125,4 +125,4 @@ namespace Lucene.Net.Store
+ 			return file.length;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

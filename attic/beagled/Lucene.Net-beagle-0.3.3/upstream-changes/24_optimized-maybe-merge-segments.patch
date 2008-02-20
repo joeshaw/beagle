@@ -1,0 +1,57 @@
+From: Joe Shaw <joeshaw@novell.com>
+
+Optimize IndexWriter.MaybeMergeSegments() by caching the number of buffered
+documents rather than counting the number after each document addition.  This
+is a a backport from the Lucene devel 2.1 branch.
+
+See https://issues.apache.org/jira/browse/LUCENE-388
+
+Index: Index/IndexWriter.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/IndexWriter.cs,v
+retrieving revision 1.4
+diff -u -p -u -r1.4 IndexWriter.cs
+--- Index/IndexWriter.cs	2 Oct 2006 17:08:56 -0000	1.4
++++ Index/IndexWriter.cs	16 Oct 2006 20:41:55 -0000
+@@ -241,6 +241,8 @@ namespace Lucene.Net.Index
+ 		
+ 		private SegmentInfos segmentInfos = new SegmentInfos(); // the segments
+ 		private Directory ramDirectory = new RAMDirectory(); // for temp segs
++
++		private int singleDocSegmentsCount = 0; // for speeding decision on merge candidates
+ 		
+ 		private Lock writeLock;
+ 		
+@@ -618,6 +620,7 @@ namespace Lucene.Net.Index
+ 			lock (this)
+ 			{
+ 				segmentInfos.Add(new SegmentInfo(segmentName, 1, ramDirectory));
++				singleDocSegmentsCount++;
+ 				MaybeMergeSegments();
+ 			}
+ 		}
+@@ -815,8 +818,8 @@ namespace Lucene.Net.Index
+ 			while (targetMergeDocs <= maxMergeDocs)
+ 			{
+ 				// find segments smaller than current target size
+-				int minSegment = segmentInfos.Count;
+-				int mergeDocs = 0;
++				int minSegment = segmentInfos.Count - singleDocSegmentsCount; // top 1-doc segments are taken for sure
++				int mergeDocs = singleDocSegmentsCount;
+ 				while (--minSegment >= 0)
+ 				{
+ 					SegmentInfo si = segmentInfos.Info(minSegment);
+@@ -825,10 +828,11 @@ namespace Lucene.Net.Index
+ 					mergeDocs += si.docCount;
+ 				}
+ 				
+-				if (mergeDocs >= targetMergeDocs)
++				if (mergeDocs >= targetMergeDocs) {
+ 				// found a merge to do
+ 					MergeSegments(minSegment + 1);
+-				else
++					singleDocSegmentsCount = 0;
++				} else
+ 					break;
+ 				
+ 				targetMergeDocs *= mergeFactor; // increase target size

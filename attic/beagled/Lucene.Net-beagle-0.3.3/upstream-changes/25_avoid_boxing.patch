@@ -1,0 +1,22 @@
+From: Joe Shaw  <joeshaw@novell.com>
+
+Array.SetValue() boxes value types because the parameter is of type
+object.  Using an indexer on a typed array, however, doesn't.  This
+reduces a large number of unnecessary allocations.
+
+Index: Index/SegmentReader.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Index/SegmentReader.cs,v
+retrieving revision 1.7
+diff -u -p -u -r1.7 SegmentReader.cs
+--- Index/SegmentReader.cs	2 Oct 2006 17:09:00 -0000	1.7
++++ Index/SegmentReader.cs	29 Nov 2006 19:22:29 -0000
+@@ -520,7 +520,7 @@ namespace Lucene.Net.Index
+             byte[] ones = new byte[size];
+             byte val = DefaultSimilarity.EncodeNorm(1.0f);
+             for (int index = 0; index < size; index++)
+-                ones.SetValue(val, index);
++                ones [index] = val;
+ 
+             return ones;
+ 		}

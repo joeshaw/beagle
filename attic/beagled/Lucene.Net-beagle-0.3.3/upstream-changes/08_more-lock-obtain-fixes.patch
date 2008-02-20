@@ -1,0 +1,28 @@
+From: Jon Trowbridge <trow@novell.com>
+
+Enforce minimum maxSleepCount 1, we shouldn't just fail right away if
+lockWaitTimeout < LOCK_POLL_INTERVAL.
+
+Index: Store/Lock.cs
+===================================================================
+RCS file: /cvs/gnome/beagle/beagled/Lucene.Net/Store/Lock.cs,v
+retrieving revision 1.6.4.9
+diff -u -3 -p -r1.6.4.9 Lock.cs
+--- Store/Lock.cs	25 Sep 2006 22:54:07 -0000	1.6.4.9
++++ Store/Lock.cs	30 Sep 2006 02:00:45 -0000
+@@ -61,6 +61,8 @@ namespace Lucene.Net.Store
+ 			bool locked = Obtain();
+ 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
+ 			int sleepCount = 0;
++			maxSleepCount = System.Math.Max (maxSleepCount, 1);
++
+ 			while (!locked)
+ 			{
+ 				if (sleepCount++ == maxSleepCount)
+@@ -135,4 +137,4 @@ namespace Lucene.Net.Store
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
