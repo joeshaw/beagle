@@ -404,13 +404,13 @@ namespace Beagle.Search {
 		public delegate void ScopeChangedDelegate (ScopeType scope, bool active);
 		public event ScopeChangedDelegate ScopeChanged;
 
-		private void OnScopeChanged (object obj, EventArgs args)
+		private void OnScopeChanged (object o, EventArgs args)
 		{
 			if (ScopeChanged == null)
 				return;
 
-			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Action) obj).Name);			
-			ScopeChanged (scope, ((ToggleAction) obj).Active);
+			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Gtk.Action) o).Name);
+			ScopeChanged (scope, ((ToggleAction) o).Active);
 		}
 
 		public delegate void SortChangedDelegate (SortType scope);
@@ -427,7 +427,7 @@ namespace Beagle.Search {
 
 		private void OnDomainChanged (object o, EventArgs args)
 		{
-			QueryDomain domain = (QueryDomain)Enum.Parse (typeof (QueryDomain), ((Action)o).Name);
+			QueryDomain domain = (QueryDomain)Enum.Parse (typeof (QueryDomain), ((Gtk.Action) o).Name);
 
 			if (DomainChanged != null)
 				DomainChanged (domain, ((ToggleAction)o).Active);
