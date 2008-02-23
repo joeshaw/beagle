@@ -103,16 +103,22 @@ namespace Beagle {
 	[System.Xml.Serialization.XmlRoot("SnippetLine", Namespace="", IsNullable=false)]
 	[System.Xml.Serialization.XmlType("SnippetLine", Namespace="")]
 	public class SnippetLine {
-		// Line number of the snippet
+		/// <value>
+		/// Line number of the snippet
+		/// </value>
 		[XmlAttribute]
 		public ulong Line;
 
-		// List of fragments
+		/// <value>
+		/// List of fragments
+		/// </value>
 		[XmlElement (ElementName="Fragment", Type=typeof(Fragment))]
 		[XmlArrayItem (ElementName="Fragment", Type=typeof (Fragment))]
 		public ArrayList Fragments;
 
-		// Number of fragments
+		/// <value>
+		/// Number of fragments
+		/// </value>
 		[XmlIgnore]
 		public int Count {
 			get {

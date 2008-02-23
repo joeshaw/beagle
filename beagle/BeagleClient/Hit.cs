@@ -93,6 +93,7 @@ namespace Beagle {
 			set { parent_uri = value; }
 		}
 
+		
 		[XmlAttribute ("ParentUri")]
 		public string EscapedParentUri {
 			get {
@@ -110,25 +111,34 @@ namespace Beagle {
 			}
 		}
 
-		// File, WebHistory, MailMessage, IMLog, etc.
+		/// <value>
+		/// File, WebHistory, MailMessage, IMLog, etc.
+		/// </value>
 		[XmlIgnore]
 		public string Type {
 			get { return GetFirstProperty ("beagle:HitType"); }
 		}
 
-		// If applicable otherwise can be null.
+		/// <value>
+		/// If applicable otherwise can be null.
+		/// </value>
 		[XmlIgnore]
 		public string MimeType {
 			get { return GetFirstProperty ("beagle:MimeType"); }
 		}
 	
-		// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
+		
+		/// <value>
+		/// IndexUser, IndexSystem, Google, Addressbook, iFolder, etc.
+		/// </value>
 		[XmlIgnore]
 		public string Source {
 			get { return GetFirstProperty ("beagle:Source"); }
 		}
 
-		// document, archive, image etc.
+		/// <summary>
+		/// document, archive, image etc.
+		/// </summary>
 		[XmlIgnore]
 		public string FileType {
 			get { return GetFirstProperty ("beagle:FileType"); }

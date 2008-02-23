@@ -151,8 +151,13 @@ namespace Beagle {
 				parts.Add (part);
 		}
 
-		// This is a human-entered query string that will be parsed in
-		// the daemon.
+		/// <summary>
+		/// This is a human-entered query string that will be parsed in
+		/// the daemon.
+		/// </summary>
+		/// <param name="str">
+		/// A <see cref="System.String"/>
+		/// </param>
 		public void AddText (string str)
 		{
 			QueryPart_Human part = new QueryPart_Human ();

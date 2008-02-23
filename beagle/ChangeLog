@@ -1,3 +1,11 @@
+2008-02-23  Kevin Kubasik <kevin@kubasik.net> 
+
+	* Util/SystemInformation.cs, Util/StringFu.cs, beagled/Filter.cs,
+	  BeagleClient/Snippet.cs, BeagleClient/Property.cs, BeagleClient/Hit.cs,
+	  BeagleClient/Query.cs: Taking existing desciptive comments, cleaning
+	  them up, and putting them in the proper monodoc tags. This allows
+	  Monodevelop to display some useful inline documentation. 
+
 ------------------------------------------------------------------------
 r4445 | dbera | 2008-02-02 20:46:44 -0500 (Sat, 02 Feb 2008) | 2 lines
 Changed paths:

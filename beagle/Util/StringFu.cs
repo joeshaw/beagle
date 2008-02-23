@@ -47,8 +47,16 @@ namespace Beagle.Util {
 		public static DateTime MinValueUtc = new DateTime (0, DateTimeKind.Utc);
 		public static DateTime MaxValueUtc = new DateTime (DateTime.MaxValue.Ticks, DateTimeKind.Utc);
 
-		// We use this instead of DateTime.ToUniversalTime() because
-		// we want to assume DateTimeKind.Unspecified dates are UTC
+		/// <summary>
+		/// We use this instead of DateTime.ToUniversalTime() because
+		/// we want to assume DateTimeKind.Unspecified dates are UTC
+		/// </summary>
+		/// <param name="dt">
+		/// A <see cref="DateTime"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="DateTime"/>
+		/// </returns>
 		static private DateTime ToUniversalTime (DateTime dt)
 		{
 			switch (dt.Kind) {
@@ -227,12 +235,20 @@ namespace Beagle.Util {
 			return String.Format (Catalog.GetString ("{0:0.0} MB"), len/(double)oneMb);
 		}
 
-		// Here we:
-		// (1) Replace non-alphanumeric characters with spaces
-		// (2) Inject whitespace between lowercase-to-uppercase
-		//     transitions (so "FooBar" becomes "Foo Bar")
-		//     and transitions between letters and numbers
-		//     (so "cvs2svn" becomes "cvs 2 svn")
+		/// <summary>
+		///  Here we:
+		/// (1) Replace non-alphanumeric characters with spaces
+		/// (2) Inject whitespace between lowercase-to-uppercase
+		///     transitions (so "FooBar" becomes "Foo Bar")
+		///     and transitions between letters and numbers
+		///     (so "cvs2svn" becomes "cvs 2 svn")
+		/// </summary>
+		/// <param name="line">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
 		static public string FuzzyDivide (string line)
 		{
 			// Allocate a space slightly bigger than the
@@ -282,8 +298,19 @@ namespace Beagle.Util {
 			return FuzzyDivide (url.Substring (protocol_index + 3));
 		}
 		
-		// Match strings against patterns that are allowed to contain
-		// glob-style * and ? wildcards.
+		/// <summary>
+		/// 	 Match strings against patterns that are allowed to contain
+		///	 glob-style * and ? wildcards.
+		/// </summary>
+		/// <param name="pattern">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="str">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		static public bool GlobMatch (string pattern, string str)
 		{
 			if (pattern == null || str == null)
@@ -300,9 +327,26 @@ namespace Beagle.Util {
 		
 		private const char WILDCARD_STRING = '*';
 		
-		// Copied from beagled/Lucene.Net/Search/WildcardTermEnum.cs
-		// Simple string matching algorithm with wildcards
-		// '*' matches 0 or more characters
+		/// <summary>
+		/// Copied from beagled/Lucene.Net/Search/WildcardTermEnum.cs
+		/// Simple string matching algorithm with wildcards
+		/// '*' matches 0 or more characters
+		/// </summary>
+		/// <param name="pattern">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="patternIdx">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="text">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="stringIdx">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		private static bool WildcardEquals(System.String pattern, int patternIdx, System.String text, int stringIdx)
 		{
 			int p = patternIdx;
@@ -436,7 +480,15 @@ namespace Beagle.Util {
 			return builder.ToString ();
 		}
 
-		// Translate all %xx codes into real characters
+		/// <summary>
+		/// Translate all %xx codes into real characters
+		/// </summary>
+		/// <param name="str">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
 		static public string HexUnescape (string str)
 		{
 			ArrayList bytes = new ArrayList ();
@@ -605,7 +657,21 @@ namespace Beagle.Util {
 			return new string (char_array);
 		}
 		
-		// Words of less than min_word_length characters are not counted
+		/// <summary>
+		/// Words of less than min_word_length characters are not counted
+		/// </summary>
+		/// <param name="str">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="max_words">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="min_word_length">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Int32"/>
+		/// </returns>
 		static public int CountWords (string str, int max_words, int min_word_length)
 		{
 			if (str == null)
@@ -645,7 +711,15 @@ namespace Beagle.Util {
 			return CountWords (str, -1);
 		}
 
-		// Strip trailing slashes and make sure we only have 1 leading slash
+		/// <summary>
+		/// Strip trailing slashes and make sure we only have 1 leading slash
+		/// </summary>
+		/// <param name="path">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
 		static public string SanitizePath (string path)
 		{
 			if (path.StartsWith ("//")) {
@@ -662,12 +736,20 @@ namespace Beagle.Util {
 			return path;
 		}
 
-		// This method will translate an email address like
-		// "john.doe+spamtrap@foo.com" to "john doe spamtrap foo"
-		//
-		// FIXME: Maybe we should only do the username part?  Ie,
-		// "john doe spamtrap"?  That way searching for "foo" won't
-		// turn up *everything*
+		/// <summary>
+		/// This method will translate an email address like
+		/// "john.doe+spamtrap@foo.com" to "john doe spamtrap foo"
+		///
+		/// FIXME: Maybe we should only do the username part?  Ie,
+		/// "john doe spamtrap"?  That way searching for "foo" won't
+		/// turn up *everything*
+		/// </summary>
+		/// <param name="email">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
 		static public string SanitizeEmail (string email)
 		{
 			char[] replace_array = { '@', '.', '-', '_', '+' };
@@ -691,10 +773,17 @@ namespace Beagle.Util {
 			return email;
 		}
 
-		/**
-		 * expands environment variables in a string e.g.
-		 * folders=$HOME/.kde/share/...
-		 */
+		
+		/// <summary>
+		/// expands environment variables in a string e.g.
+		/// folders=$HOME/.kde/share/...
+		/// </summary>
+		/// <param name="path">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.String"/>
+		/// </returns>
 		public static string ExpandEnvVariables (string path)
 		{
 			int dollar_pos = path.IndexOf ('$');

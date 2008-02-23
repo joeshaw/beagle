@@ -128,8 +128,13 @@ namespace Beagle.Daemon {
 			set { this_extension = value; }
 		}
 
-		// Filter may set the filetype to document, source, music etc.
-		// Use lower case for file_type
+		/// <summary>
+		///  Filter may set the filetype to document, source, music etc.
+		/// Use lower case for file_type
+		/// </summary>
+		/// <param name="file_type">
+		/// A <see cref="System.String"/>
+		/// </param>
 		protected void SetFileType (string file_type)
 		{
 			this_file_type = file_type;
@@ -144,12 +149,14 @@ namespace Beagle.Daemon {
 			set { indexable = value; }
 		}
 		
-		// Filters which deal with big files, and that don't need
-		// to read in whole files may want to set this to false
-		// to avoid wasting cycles in disk wait.
+		
 
 		private bool preload = true;
-
+		/// <value>
+		///  Filters which deal with big files, and that don't need
+		/// to read in whole files may want to set this to false
+		/// to avoid wasting cycles in disk wait.
+		/// </value>
 		protected bool PreLoad {
 			get { return preload; }
 			set { preload = value; }
@@ -227,9 +234,11 @@ namespace Beagle.Daemon {
 		const string WHITESPACE = " ";
 		const string NEWLINE = "\n";
 
-		/* Append text to the textpool. If IsHot is true, then also add to the hottext pool.
-		 * Handles null str.
-		 */
+		
+		/// <summary>
+		///  Append text to the textpool. If IsHot is true, then also add to the hottext pool.
+		///  Handles null str.
+		/// </summary>
 		public bool AppendText (string str)
 		{
 			if (Debug)
@@ -293,7 +302,15 @@ namespace Beagle.Daemon {
 			*/
 		}
 
-		// Add a word followed by a whitespace. word may not be whitespace or newline.
+		/// <summary>
+		/// Add a word followed by a whitespace. word may not be whitespace or newline.
+		/// </summary>
+		/// <param name="word">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool AppendWord (string word)
 		{
 			if (Debug)
@@ -302,7 +319,15 @@ namespace Beagle.Daemon {
 			return AppendWords (word, false);
 		}
 
-		// Add a line followed by a newline.
+		/// <summary>
+		/// Add a line followed by a newline.
+		/// </summary>
+		/// <param name="line">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool AppendLine (string line)
 		{
 			if (Debug)
@@ -343,7 +368,21 @@ namespace Beagle.Daemon {
 			return UpdateCharsAdded (words.Length + 1);
 		}
 
-		// Does not check for structural breaks
+		/// <summary>
+		/// Does not check for structural breaks
+		/// </summary>
+		/// <param name="buffer">
+		/// A <see cref="System.Char"/>
+		/// </param>
+		/// <param name="index">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <param name="count">
+		/// A <see cref="System.Int32"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool AppendChars (char[] buffer, int index, int count)
 		{
 			if (Debug)
@@ -357,9 +396,14 @@ namespace Beagle.Daemon {
 			return UpdateCharsAdded (count);
 		}
 
-		/*
-		 * Adds whitespace to the textpool.
-		 */
+		
+		 
+		/// <summary>
+		/// Adds whitespace to the textpool.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool AppendWhiteSpace ()
 		{
 			if (Debug)
@@ -378,9 +422,14 @@ namespace Beagle.Daemon {
 			return UpdateCharsAdded (1);
 		}
 
-		/*
-		 * Creates a new paragraph. Mainly useful for storing cached contents.
-		 */
+		
+		
+		/// <summary>
+		/// Creates a new paragraph. Mainly useful for storing cached contents.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool AppendStructuralBreak ()
 		{
 			if (Debug)
@@ -602,8 +651,19 @@ namespace Beagle.Daemon {
 			return Open (new FileInfo (tempFile));
 		}
 
-		// This will throw an exception; callers should catch it and appropriately
-		// display the error message showing the filename etc.
+		/// <summary>
+		/// This will throw an exception; callers should catch it and appropriately
+		/// display the error message showing the filename etc.
+		/// </summary>
+		/// <param name="stream">
+		/// A <see cref="Stream"/>
+		/// </param>
+		/// <param name="store_tempfile">
+		/// A <see cref="System.Boolean"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public bool Open (Stream stream, bool store_tempfile)
 		{
 			if (store_tempfile)
@@ -842,8 +902,16 @@ namespace Beagle.Daemon {
 			get { return generated_indexables.Count > 0; }
 		}
 
-		// Good filters should replace this by an IEnumerable that does not require generating
-		// all the indexables beforehand
+		/// <summary>
+		/// Good filters should replace this by an IEnumerable that does not require generating
+		/// all the indexables beforehand
+		/// </summary>
+		/// <param name="indexable">
+		/// A <see cref="Indexable"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="System.Boolean"/>
+		/// </returns>
 		public virtual bool GenerateNextIndexable (out Indexable indexable)
 		{
 			indexable = null;

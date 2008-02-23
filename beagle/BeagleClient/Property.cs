@@ -40,7 +40,9 @@ namespace Beagle {
 		Date     = 3
 	}
 
-	/* IEnumerable class to serialize properties with non-private namespace. */
+	/// <summary>
+	///  IEnumerable class to serialize properties with non-private namespace.
+	/// </summary>
 	public class PropertyList : IEnumerable {
 		private ArrayList property_list;
 		
@@ -143,34 +145,45 @@ namespace Beagle {
 			set { this.value = StringFu.CleanupInvalidXmlCharacters (value); }
 		}
 
-		// If IsSearched is true, this property will can be matched by a
-		// general match-any-propety query.
-		// You can always query against the specific property, even if
-		// IsSearched is false.
+		
+		/// <value>
+		/// If IsSearched is true, this property will can be matched by a
+		/// general match-any-propety query.
+		/// You can always query against the specific property, even if
+		/// IsSearched is false.
+		/// </value>
 		[XmlAttribute]
 		public bool IsSearched {
 			get { return is_searched; }
 			set { is_searched = value; }
 		}
 
-		// When IsMutable is true, the property is stored in the secondary
-		// index so that it can more efficiently be changed later on.
+		
+		/// <value>
+		///  When IsMutable is true, the property is stored in the secondary
+		/// index so that it can more efficiently be changed later on.
+		/// </value>
 		[XmlAttribute]
 		public bool IsMutable {
 			get { return is_mutable; }
 			set { is_mutable = value; }
 		}
 
-		// When IsStored is false, the property will be stored as an
-		// "unstored lucene field".
+		/// <value>
+		///  When IsStored is false, the property will be stored as an
+		///  "unstored lucene field".
+		/// </value>
 		[XmlAttribute]
 		public bool IsStored {
 			get { return is_stored; }
 			set { is_stored = value; }
 		}
 
-		// When true, this property is persisted across documents being
-		// readded, for instance if a file is touched on disk.
+		
+		/// <value>
+		/// When true, this property is persisted across documents being
+		/// readded, for instance if a file is touched on disk.
+		/// </value>
 		[XmlAttribute]
 		public bool IsPersistent {
 			get { return is_persistent; }
@@ -305,8 +318,19 @@ namespace Beagle {
 			return String.Format ("{0}={1}", Key, Value);
 		}
 
-		// Standard properties for files
-		// Used by FileSystem backend and filters which produce file child-indexables
+		/// <summary>
+		/// Standard properties for files
+		/// Used by FileSystem backend and filters which produce file child-indexables
+		/// </summary>
+		/// <param name="name">
+		/// A <see cref="System.String"/>
+		/// </param>
+		/// <param name="mutable">
+		/// A <see cref="System.Boolean"/>
+		/// </param>
+		/// <returns>
+		/// A <see cref="IEnumerable"/>
+		/// </returns>
 		public static IEnumerable StandardFileProperties (string name, bool mutable)
 		{
 			StringBuilder sb;
