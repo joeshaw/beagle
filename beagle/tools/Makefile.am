@@ -5,7 +5,6 @@ CSC = $(MCS) -debug
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../BeagleClient/Beagle.dll	\
-	../beagled/BeagleDaemonPlugins.dll \
 	../beagled/BeagleDaemonLib.dll	
 
 ASSEMBLIES =				\
@@ -49,9 +48,10 @@ $(DOC_EXTRACTOR_WRAPPER): $(WRAPPER_IN)
 INFO_TARGET  = Info.exe
 INFO_WRAPPER = beagle-info
 INFO_CSFILES = $(srcdir)/Info.cs
+INFO_ASSEMBLIES = ../beagled/BeagleDaemonPlugins.dll
 
-$(INFO_TARGET): $(INFO_CSFILES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(INFO_CSFILES) $(ASSEMBLIES)
+$(INFO_TARGET): $(INFO_CSFILES) $(LOCAL_ASSEMBLIES) $(INFO_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(INFO_CSFILES) $(ASSEMBLIES) $(INFO_ASSEMBLIES:%=-r:%)
 
 $(INFO_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(INFO_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
@@ -78,6 +78,17 @@ $(QUERY_TARGET): $(QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
 $(QUERY_WRAPPER): $(WRAPPER_IN)
 	$(WRAPPER_SED) -e "s|\@target\@|$(QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
 	chmod +x $(QUERY_WRAPPER)
+
+STATIC_QUERY_TARGET  = StaticQuery.exe
+STATIC_QUERY_WRAPPER = beagle-static-query
+STATIC_QUERY_CSFILES = $(srcdir)/StaticQuery.cs
+
+$(STATIC_QUERY_TARGET): $(STATIC_QUERY_CSFILES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(CSFLAGS) $(STATIC_QUERY_CSFILES) $(ASSEMBLIES)
+
+$(STATIC_QUERY_WRAPPER): $(WRAPPER_IN)
+	$(WRAPPER_SED) -e "s|\@target\@|$(STATIC_QUERY_TARGET)|g" < $(srcdir)/$(WRAPPER_IN) > $@
+	chmod +x $(STATIC_QUERY_WRAPPER)
 
 CONFIG_TARGET = Config.exe
 CONFIG_WRAPPER = beagle-config
@@ -131,6 +142,7 @@ TARGETS = 				\
 	$(INFO_TARGET)			\
 	$(SHUTDOWN_TARGET)		\
 	$(QUERY_TARGET)			\
+	$(STATIC_QUERY_TARGET)		\
 	$(CONFIG_TARGET)
 
 if ENABLE_GUI
@@ -151,6 +163,7 @@ BUILT_WRAPPERS = 			\
 	$(INFO_WRAPPER)			\
 	$(SHUTDOWN_WRAPPER)		\
 	$(QUERY_WRAPPER)		\
+	$(STATIC_QUERY_WRAPPER)		\
 	$(CONFIG_WRAPPER)
 
 if ENABLE_GUI
@@ -234,6 +247,7 @@ EXTRA_DIST =				\
 	$(INFO_CSFILES)			\
 	$(SHUTDOWN_CSFILES)		\
 	$(QUERY_CSFILES)		\
+	$(STATIC_QUERY_CSFILES)		\
 	$(CONFIG_CSFILES)		\
 	$(SETTINGS_CSFILES)		\
 	$(SETTINGS_RESOURCES)		\

@@ -1,6 +1,7 @@
 //
-// Query.cs
+// StaticQuery.cs
 //
+// Copyright (C) 2008 D Bera <dbera.web@gmail.com>
 // Copyright (C) 2004-2006 Novell, Inc.
 //
 
@@ -27,9 +28,7 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Globalization;
 using System.Reflection;
-using System.Threading;
 using System.Text;
 using System.Runtime.InteropServices;
 
@@ -40,8 +39,8 @@ using Beagle.Util;
 using Beagle.Daemon;
 
 // Assembly information
-[assembly: AssemblyTitle ("beagle-query")]
-[assembly: AssemblyDescription ("Command-line interface to the Beagle search system")]
+[assembly: AssemblyTitle ("beagle-static-query")]
+[assembly: AssemblyDescription ("Command-line interface to query the Beagle index")]
 
 public class QueryTool {
 
@@ -50,17 +49,12 @@ public class QueryTool {
 	private static DateTime queryStartTime;
 	private static DateTime lastQueryTime = DateTime.Now;
 
-	private static MainLoop main_loop = null;
-
 	// CLI args
-	private static bool keep_running = false;
 	private static bool verbose = false;
 	private static bool display_hits = true;
-	private static bool flood = false;
-	private static bool listener = false;
 	private static bool display_cached_text = false;
 
-	private static void OnHitsAdded (HitsAddedResponse response)
+	private static void OnHitsAdded (QueryResult result, ICollection hits, int num_hits)
 	{
 		lastQueryTime = DateTime.Now;
 
@@ -69,15 +63,15 @@ public class QueryTool {
 					   (lastQueryTime - queryStartTime).TotalSeconds);
 		}
 
-		if (verbose && response.NumMatches >= 0)
-			Console.WriteLine ("Returned latest {0} results out of total {1} matches", response.Hits.Count, response.NumMatches);
+		if (verbose && num_hits >= 0)
+			Console.WriteLine ("Returned latest {0} results out of total {1} matches", hits.Count, num_hits);
 
 		if (! display_hits) {
-			count += response.Hits.Count;
+			count += hits.Count;
 			return;
 		}
 
-		foreach (Hit hit in response.Hits) {
+		foreach (Hit hit in hits) {
 			if (verbose)
 				Console.WriteLine ("  Uri: {0}", hit.Uri);
 			else
@@ -88,7 +82,7 @@ public class QueryTool {
 				if (display_cached_text)
 					sreq.FullText = true;
 
-				SnippetResponse sresp = (SnippetResponse) sreq.Send ();
+				SnippetResponse sresp = GetSnippet (sreq);
 				Console.WriteLine ("PaUri: {0}", hit.ParentUri != null ? hit.ParentUri.ToString () : "(null)");
 				if (! display_cached_text)
 					Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
@@ -126,33 +120,29 @@ public class QueryTool {
 		}
 	}
 
-	private static void OnHitsSubtracted (HitsSubtractedResponse response)
-	{
-		lastQueryTime = DateTime.Now;
-
-		if (! display_hits)
-			return;
-
-		foreach (Uri uri in response.Uris) {
-			Console.WriteLine ("Subtracted Uri '{0}'", uri);
-			Console.WriteLine ();
-
-			--count;
-		}
-	}
-
-	private static void OnFinished (FinishedResponse response)
+	private static void OnFinished (QueryResult result)
 	{
 		if (verbose) {
 			Console.WriteLine ("Elapsed time: {0:0.000}s",
 					   (DateTime.Now - queryStartTime).TotalSeconds);
 			Console.WriteLine ("Total hits: {0}", count);
 		}
+	}
 
-		if (flood)
-			SendQuery ();
-		else
-			main_loop.Quit ();
+	private static SnippetResponse GetSnippet (SnippetRequest request)
+	{
+		Queryable queryable = QueryDriver.GetQueryable (request.Hit.Source);
+		ISnippetReader snippet_reader;
+		bool full_text = request.FullText;
+
+		if (queryable == null) {
+			Console.WriteLine ("SnippetExecutor: No queryable object matches '{0}'", request.Hit.Source);
+			snippet_reader = new SnippetReader (null, null, false);
+			full_text = false;
+		} else
+			snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
+
+		return new SnippetResponse (new SnippetList (full_text, snippet_reader));
 	}
 
 	public static void PrintUsageAndExit () 
@@ -170,17 +160,12 @@ public class QueryTool {
 			"         \t\tNot recommended for live-queries or stats-only queries.\n" +
 			"  --keywords\t\tLists the keywords allowed in 'query string'.\n" +
 			"            \t\tKeyword queries can be specified as keywordname:value e.g. ext:jpg\n" +
-			"  --live-query\t\tRun continuously, printing notifications if a\n" +
-			"              \t\tquery changes.\n" +
 			"  --stats-only\t\tOnly display statistics about the query, not\n" +
 			"              \t\tthe actual results.\n" +
 			"  --max-hits\t\tLimit number of search results per backend\n" +
 			"            \t\t(default 100)\n" +
 			"\n" +
-			"  --network <yes|no>\tQuery other beagle systems in the network specified in config (default no)\n" +
 			"\n" +
-			"  --flood\t\tExecute the query over and over again.  Don't do that.\n" +
-			"  --listener\t\tExecute an index listener query.  Don't do that either.\n" +
 			"  --help\t\tPrint this usage message.\n" +
 			"  --version\t\tPrint version information.\n" +
 			"\n" +
@@ -193,34 +178,6 @@ public class QueryTool {
 		System.Environment.Exit (0);
 	}
 
-	private static void OnClosed ()
-	{
-		if (flood)
-			SendQuery ();
-		else
-			main_loop.Quit ();
-	}
-
-	private static int query_counter = 0;
-	private static void SendQuery ()
-	{
-		++query_counter;
-		if (flood) {
-			if (query_counter > 1)
-				Console.WriteLine ();
-			Console.WriteLine ("Sending query #{0}", query_counter);
-		}
-
-		queryStartTime = DateTime.Now;
-		try {
-			query.SendAsync ();
-		} catch (Exception ex) {
-			Console.WriteLine ("Could not connect to the Beagle daemon.  The daemon probably isn't running.");
-			Console.WriteLine (ex);
-			System.Environment.Exit (-1);
-		}
-	}
-	
 	[DllImport("libgobject-2.0.so.0")]
 	static extern void g_type_init ();
 
@@ -229,7 +186,7 @@ public class QueryTool {
 		// Initialize GObject type system
 		g_type_init ();
 
-		main_loop = new MainLoop ();
+		Beagle.Util.Log.Level = LogLevel.Always; // shhhh... silence
 
 		if (args.Length == 0 || Array.IndexOf (args, "--help") > -1 || Array.IndexOf (args, "--usage") > -1)
 			PrintUsageAndExit ();
@@ -245,12 +202,10 @@ public class QueryTool {
 
 		// Parse args
 		int i = 0;
+		string next_arg;
 		while (i < args.Length) {
 			switch (args [i]) {
 
-			case "--live-query":
-				keep_running = true;
-				break;
 			case "--verbose":
 				verbose = true;
 				break;
@@ -262,16 +217,45 @@ public class QueryTool {
 				display_hits = false;
 				break;
 			case "--max-hits":
-			    if (++i >= args.Length) PrintUsageAndExit ();
+				if (++i >= args.Length) PrintUsageAndExit ();
 				query.MaxHits = Int32.Parse (args[i]);
 				break;
-			case "--flood":
-				flood = true;
+
+			case "--list-backends":
+				Console.WriteLine ("Current available backends:");
+				Console.Write (QueryDriver.ListBackends ());
+				Environment.Exit (0);
 				break;
-			case "--listener":
-				listener = true;
-				keep_running = true;
+
+			case "--backend":
+				if (++i >= args.Length) PrintUsageAndExit ();
+
+				next_arg = args [i];
+				if (next_arg.StartsWith ("--")) {
+					Console.WriteLine ("--backend requires a backend name. Invalid name '{0}'", next_arg);
+					Environment.Exit (1);
+					break;
+				}
+
+				if (next_arg [0] != '+' && next_arg [0] != '-')
+					QueryDriver.OnlyAllow (next_arg);
+				else {
+					if (next_arg [0] == '+')
+						QueryDriver.Allow (next_arg.Substring (1));
+					else
+						QueryDriver.Deny (next_arg.Substring (1));
+				}
+
 				break;
+
+			case "--add-static-backend": 
+				if (++i >= args.Length) PrintUsageAndExit ();
+
+				next_arg = args [i];
+				if (! next_arg.StartsWith ("--"))
+					QueryDriver.AddStaticQueryable (next_arg);
+				break;
+
 			case "--keywords":
 				PropertyKeywordFu.ReadKeywordMappings ();
 
@@ -289,12 +273,6 @@ public class QueryTool {
 				System.Environment.Exit (0);
 				break;
 
-			case "--network":
-				if (++i >= args.Length) PrintUsageAndExit ();
-				if (args [i].ToLower () == "yes")
-					query.AddDomain (QueryDomain.Neighborhood);
-				break;
-
 			default:
 				if (args [i].StartsWith ("--"))
 					PrintUsageAndExit ();
@@ -308,23 +286,53 @@ public class QueryTool {
 			++i;
 		}
 
-		if (listener) {
-			query.IsIndexListener = true;
-		} else {
-			if (query_str.Length > 0)
-				query.AddText (query_str.ToString ());
+		if (verbose)
+			Beagle.Util.Log.Level = LogLevel.Debug;
+
+		if (query_str.Length > 0)
+			query.AddText (query_str.ToString ());
+
+		Stopwatch watch = new Stopwatch ();
+		watch.Start ();
+		StartQueryDriver ();
+		watch.Stop ();
+		if (verbose)
+			Console.WriteLine ("QueryDriver started in {0}", watch);
+
+		QueryResult result = new QueryResult ();
+		result.HitsAddedEvent += OnHitsAdded;
+		result.FinishedEvent += OnFinished;
+
+		queryStartTime = DateTime.Now;
+		QueryDriver.DoQueryLocal (query, result);
+
+	}
+
+	private static void StartQueryDriver ()
+	{
+		try {
+			string tmp = PathFinder.StorageDir;
+			if (! Directory.Exists (tmp))
+				throw new IOException ("Beagle directory not found");
+		} catch (Exception e) {
+			Console.WriteLine ("Unable to start the daemon: {0}", e.Message);
+			Environment.Exit (-1);
 		}
 
-		query.HitsAddedEvent += OnHitsAdded;
-		query.HitsSubtractedEvent += OnHitsSubtracted;
+		QueryDriver.IndexingDelay = -1;
 
-		if (! keep_running)
-			query.FinishedEvent += OnFinished;
-		else
-			query.ClosedEvent += OnClosed;
+		if (verbose) {
+			Console.WriteLine ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
+			Console.WriteLine ("Running on {0}", SystemInformation.MonoRuntimeVersion);
+		}
 
-		SendQuery ();
+		// Check if global configuration files are installed
+		if (! Conf.CheckGlobalConfig ()) {
+			Console.WriteLine ("Global configuration files not found in '{0}'", PathFinder.ConfigDataDir);
+			Environment.Exit (-1);
+		}
 
-		main_loop.Run ();
+		QueryDriver.Init ();
+		QueryDriver.Start ();
 	}
 }
