@@ -28,6 +28,7 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Runtime.InteropServices;
@@ -82,10 +83,22 @@ public class QueryTool {
 				if (display_cached_text)
 					sreq.FullText = true;
 
-				SnippetResponse sresp = GetSnippet (sreq);
+				List<SnippetLine> snippets = GetSnippet (sreq);
 				Console.WriteLine ("PaUri: {0}", hit.ParentUri != null ? hit.ParentUri.ToString () : "(null)");
-				if (! display_cached_text)
-					Console.WriteLine (" Snip: {0}", sresp.Snippet != null ? sresp.Snippet : "(null)");
+				if (! display_cached_text) {
+					Console.Write (" Snip: ");
+					if (snippets.Count == 0)
+						Console.WriteLine ("(null)");
+					else {
+						foreach (SnippetLine snippet_line in snippets) {
+							Console.Write (snippet_line);
+							Console.Write (" ... ");
+						}
+
+						Console.WriteLine ();
+					}
+				}
+
 				Console.WriteLine (" Type: {0}", hit.Type);
 				Console.WriteLine ("MimeT: {0}", hit.MimeType == null ? "(null)" : hit.MimeType);
 				Console.WriteLine ("  Src: {0}", hit.Source);
@@ -101,10 +114,10 @@ public class QueryTool {
 
 				if (display_cached_text) {
 					Console.WriteLine ("-- Cache -------------------------------------");
-					if (sresp.SnippetList.Snippets == null)
+					if (snippets.Count == 0)
 						Console.WriteLine ("(empty)");
 					else {
-						foreach (SnippetLine snippet_line in sresp.SnippetList.Snippets) {
+						foreach (SnippetLine snippet_line in snippets) {
 							if (snippet_line == null || snippet_line.Fragments == null)
 								Console.WriteLine ("(empty)");
 							else
@@ -129,7 +142,7 @@ public class QueryTool {
 		}
 	}
 
-	private static SnippetResponse GetSnippet (SnippetRequest request)
+	private static List<SnippetLine> GetSnippet (SnippetRequest request)
 	{
 		Queryable queryable = QueryDriver.GetQueryable (request.Hit.Source);
 		ISnippetReader snippet_reader;
@@ -142,7 +155,35 @@ public class QueryTool {
 		} else
 			snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
 
-		return new SnippetResponse (new SnippetList (full_text, snippet_reader));
+		List<SnippetLine> snippetlines = new List<SnippetLine> ();
+
+		if (! full_text) {
+ 			foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ())
+				snippetlines.Add (snippet_line);
+		} else {
+			SnippetLine snippet_line = new SnippetLine ();
+			snippet_line.Line = 1;
+
+			Fragment fragment = new Fragment ();
+			fragment.QueryTermIndex = -1;
+			StringBuilder sb = new StringBuilder ();
+
+			string line;
+			// Read data from snippet_reader and write
+			while ((line = snippet_reader.ReadLine ()) != null) {
+				sb.Append (StringFu.CleanupInvalidXmlCharacters (line));
+				sb.Append ("\n");
+			}
+
+			fragment.Text = sb.ToString ();
+			snippet_line.Fragments = new ArrayList ();
+			snippet_line.Fragments.Add (fragment);
+			snippetlines.Add (snippet_line);
+		}
+
+		snippet_reader.Close ();
+
+		return snippetlines;
 	}
 
 	public static void PrintUsageAndExit () 
