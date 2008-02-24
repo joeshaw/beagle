@@ -156,6 +156,8 @@ public class QueryTool {
 			snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
 
 		List<SnippetLine> snippetlines = new List<SnippetLine> ();
+		if (snippet_reader == null)
+			return snippetlines;
 
 		if (! full_text) {
  			foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ())
