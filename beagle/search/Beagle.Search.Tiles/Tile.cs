@@ -58,15 +58,17 @@ namespace Beagle.Search.Tiles {
 			base.CanFocus = true;
 
 			this.hit = hit;
+			this.query = query;
 			this.timestamp = hit.Timestamp;
 			this.score = hit.Score;
-			this.query = query;
 
 			Gtk.Drag.SourceSet (this, Gdk.ModifierType.Button1Mask, targets,
 					    Gdk.DragAction.Copy | Gdk.DragAction.Move);
 
+			int pad = (int)StyleGetProperty ("focus-line-width") + (int)StyleGetProperty ("focus-padding") + 1;
+
 			hbox = new Gtk.HBox (false, 5);
-			hbox.BorderWidth = 2;
+			hbox.BorderWidth = (uint)(pad + Style.Xthickness);
 			hbox.Show ();
 
 			icon = new Gtk.Image ();
@@ -137,7 +139,7 @@ namespace Beagle.Search.Tiles {
 			data.Set (data.Target, 8, uri);
 		}
 
-		protected override void OnSizeRequested (ref Gtk.Requisition req)
+		/*protected override void OnSizeRequested (ref Gtk.Requisition req)
 		{
 			// base.OnSizeRequested (ref req) should work,
 			// but it doesn't
@@ -159,7 +161,7 @@ namespace Beagle.Search.Tiles {
 			alloc.Height -= pad + Style.Ythickness;
 
 			base.OnSizeAllocated (alloc);
-		}
+			}*/
 
 		protected override bool OnExposeEvent (Gdk.EventExpose evt)
 		{
