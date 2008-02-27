@@ -13,6 +13,10 @@ namespace Beagle.Search {
 	
 	[Interface ("org.gnome.Beagle")]
 	public interface ISearch {
+
+		bool IconEnabled { get; }
+		bool DocsEnabled { get; }
+
 		void Query (string query);
 	}
 }

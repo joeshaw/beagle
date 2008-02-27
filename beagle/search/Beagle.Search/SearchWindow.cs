@@ -16,11 +16,14 @@ using Beagle;
 using Beagle.Util;
 
 using Beagle.Search.Tiles;
-using Beagle.Search.Tray;
 
 namespace Beagle.Search {
 
+	public delegate void QueryEventDelegate (string query);
+
 	public class SearchWindow : Window {
+
+		private ISearch search = null;
 
 		private Gtk.Button button;
 		private Gtk.Tooltips tips;
@@ -33,7 +36,6 @@ namespace Beagle.Search {
 		private Beagle.Search.Entry entry;
 		private Beagle.Search.Spinner spinner;
 		private Beagle.Search.Panes panes;
-		private Beagle.Search.Tray.TrayIcon tray;
 
 		private Beagle.Search.Pages.IndexInfo indexinfo;
 		private Beagle.Search.Pages.QuickTips quicktips;
@@ -45,6 +47,8 @@ namespace Beagle.Search {
 		private Beagle.Search.SortType sort = SortType.Modified;
 		private Beagle.Search.TypeFilter filter = null;
 
+		// Whether we should grab focus from the text entry
+		private bool grab_focus = false;
 		private uint timeout_id = 0;
 
 		private Beagle.Query current_query = null;
@@ -52,11 +56,14 @@ namespace Beagle.Search {
 		private bool show_details = true;
 		private int total_matches = -1;
 
-		public SearchWindow (string query_text) : base (WindowType.Toplevel)
+		public event QueryEventDelegate QueryEvent;
+
+		public SearchWindow (ISearch search) : base (WindowType.Toplevel)
 		{
+			this.search = search;
+
 			base.Title = Catalog.GetString ("Desktop Search");
 			base.Icon = WidgetFu.LoadThemeIcon ("system-search", 16);
-
 			base.DefaultWidth = 700;
 			base.DefaultHeight = 550;
 			base.DeleteEvent += OnWindowDelete;
@@ -164,63 +171,42 @@ namespace Beagle.Search {
 			tips.SetTip (button, Catalog.GetString ("Start searching"), "");
 			tips.Enable ();
 
-			if (Environment.UserName == "root" &&
-			    ! Conf.Daemon.GetOption (Conf.Names.AllowRoot, false)) {
+			if (Environment.UserName == "root" && !Conf.Daemon.GetOption (Conf.Names.AllowRoot, false)) {
 				pages.CurrentPage = pages.PageNum (rootuser);
 				entry.Sensitive = button.Sensitive = uim.Sensitive = false;
 			} else {
 				pages.CurrentPage = pages.PageNum (quicktips);
 			}
 
-			ShowAll ();
-
 			StartCheckingIndexingStatus ();
-
-			if (! String.IsNullOrEmpty (query_text)) {
-				entry.Text = query_text;
-				Query (true);
-			}
 		}
 
 		private void SetWindowTitle (string query)
 		{
-			Title = String.Format ( Catalog.GetString ("Desktop Search: {0}"), query);
+			Title = String.Format (Catalog.GetString ("Desktop Search: {0}"), query);
 		}
 
-		private int TotalMatches {
-			get { return this.total_matches; }
-			set {
-				if (this.total_matches != -1)
-					this.statusbar.Pop (0);
+		public void GrabEntryFocus ()
+		{
+			entry.GrabFocus ();
+		}
 
-				this.total_matches = value;
-				
-				if (this.total_matches > -1) {
-					string message;
-					int tile_count = view.TileCount;
-
-					if (tile_count == this.total_matches)
-						message = String.Format (Catalog.GetPluralString ("Showing {0} match", "Showing all {0} matches", this.total_matches), this.total_matches);
-					else
-						message = String.Format (Catalog.GetPluralString ("Showing the top {0} of {1} total matches", "Showing the top {0} of {1} total matches", this.total_matches), view.TileCount, this.total_matches);
-
-					this.statusbar.Push (0, message);
-				}
-			}
+		public void Search (string query)
+		{
+			entry.Text = query;
+			Query (true);
 		}
 
 		private void DetachQuery ()
 		{
-			if (current_query != null) {
-				TotalMatches = -1;
-				current_query.HitsAddedEvent -= OnHitsAdded;
-				current_query.HitsSubtractedEvent -= OnHitsSubtracted;
-				current_query.Close ();
-			}
-		}
+			if (current_query == null)
+				return;
 
-		// Whether we should grab focus from the text entry
-		private bool grab_focus;
+			current_query.HitsAddedEvent -= OnHitsAdded;
+			current_query.HitsSubtractedEvent -= OnHitsSubtracted;
+			current_query.Close ();
+			TotalMatches = -1;
+		}
 
 		private void Query (bool grab_focus)
 		{
@@ -230,15 +216,15 @@ namespace Beagle.Search {
 			}
 
 			string query = query_text = entry.Text;
-			if (query == null || query == "")
+
+			if (String.IsNullOrEmpty (query))
 				return;
 
 			SetWindowTitle (query);
 			ShowInformation (null);
 
-			if (tray != null) {
-				tray.AddSearch (query);
-			}
+			if (QueryEvent != null)
+				QueryEvent (query);
 
 			filter = TypeFilter.MakeFilter (ref query);
 
@@ -257,9 +243,13 @@ namespace Beagle.Search {
 
 				current_query = new Query ();
 				current_query.AddDomain (QueryDomain.Neighborhood);
+				current_query.AddText (query);
+				current_query.HitsAddedEvent += OnHitsAdded;
+				current_query.HitsSubtractedEvent += OnHitsSubtracted;
+				current_query.FinishedEvent += OnFinished;
 
 				// Don't search documentation by default
-				if (! Search.SearchDocs) {
+				if (!search.DocsEnabled) {
 					QueryPart_Property part = new QueryPart_Property ();
 					part.Logic = QueryPartLogic.Prohibited;
 					part.Type = PropertyType.Keyword;
@@ -268,12 +258,8 @@ namespace Beagle.Search {
 					current_query.AddPart (part);
 				}
 
-				current_query.AddText (query);
-				current_query.HitsAddedEvent += OnHitsAdded;
-				current_query.HitsSubtractedEvent += OnHitsSubtracted;
-				current_query.FinishedEvent += OnFinished;
-
 				current_query.SendAsync ();
+
 				spinner.Start ();
 			} catch (Beagle.ResponseMessageException) {
 				pages.CurrentPage = pages.PageNum (startdaemon);
@@ -367,10 +353,11 @@ namespace Beagle.Search {
 		{
 			DetachQuery ();
 			
-			if (! indexinfo.Refresh ())
+			if (! indexinfo.Refresh ()) {
 				pages.CurrentPage = pages.PageNum (startdaemon);
-			else
+			} else {
 				pages.CurrentPage = pages.PageNum (indexinfo);
+			}
 		}
 		
 		private void OnDomainChanged (QueryDomain domain, bool active)
@@ -452,20 +439,19 @@ namespace Beagle.Search {
 			m.Title = Catalog.GetString ("There are computers near you running Beagle");
 			m.Message = Catalog.GetString ("You can select to search other computers from the \"Search\" menu.");
 			m.AddAction ("Configure", OnNetworkConfigure);
+
 			notification_area.Display (m);
 		}
 
 		private void OnNetworkConfigure (object o, EventArgs args)
 		{
-			Process p = new Process ();
-			p.StartInfo.UseShellExecute = false;
-			p.StartInfo.FileName = "beagle-settings";
-			p.StartInfo.Arguments = "--networking";
+			SafeProcess p = new SafeProcess ();
+			p.Arguments = new string[] { "beagle-settings", "--networking" };
 
 			try {
 				p.Start ();
 			} catch (Exception e) {
-				Console.WriteLine ("Could not start beagle-settings: {0}", e);
+				Console.WriteLine ("Could not start beagle-settings:\n{0}", e);
 			}
                 }
 #endif
@@ -473,6 +459,7 @@ namespace Beagle.Search {
 		private void CheckNoMatch ()
 		{
 			MatchType matches = view.MatchState;
+
 			if (matches == MatchType.Matched) {
 				pages.CurrentPage = pages.PageNum (panes);
 				return;
@@ -480,8 +467,10 @@ namespace Beagle.Search {
 
 			if (nomatch != null)
 				nomatch.Destroy ();
+
 			nomatch = new Pages.NoMatch (query_text, matches == MatchType.NoneInScope);
 			nomatch.Show ();
+
 			pages.Add (nomatch);
 			pages.CurrentPage = pages.PageNum (nomatch);
 		}
@@ -505,6 +494,34 @@ namespace Beagle.Search {
 				notification_area.Display (m);
 			} else {
 				notification_area.Hide ();
+			}
+		}
+
+		/////////////////////////////////////
+
+		public bool IconEnabled {
+			get { return search.IconEnabled; }
+		}
+
+		private int TotalMatches {
+			get { return this.total_matches; }
+			set {
+				if (this.total_matches != -1)
+					this.statusbar.Pop (0);
+
+				this.total_matches = value;
+				
+				if (this.total_matches > -1) {
+					string message;
+					int tile_count = view.TileCount;
+
+					if (tile_count == this.total_matches)
+						message = String.Format (Catalog.GetPluralString ("Showing {0} match", "Showing all {0} matches", this.total_matches), this.total_matches);
+					else
+						message = String.Format (Catalog.GetPluralString ("Showing the top {0} of {1} total matches", "Showing the top {0} of {1} total matches", this.total_matches), view.TileCount, this.total_matches);
+
+					this.statusbar.Push (0, message);
+				}
 			}
 		}
 	}

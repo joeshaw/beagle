@@ -46,7 +46,7 @@ namespace Beagle.Search {
 
 			ActionEntry quit_action_entry;
 
-			if (Search.IconEnabled) {
+			if (search.IconEnabled) {
 				quit_action_entry = new ActionEntry ("Quit", Gtk.Stock.Close,
 								     null, "<control>Q",
 						 		     Catalog.GetString ("Close Desktop Search"),
@@ -340,13 +340,13 @@ namespace Beagle.Search {
 
 		private void OnHideWindow (object obj, EventArgs args)
 		{
-			if (Search.IconEnabled)
+			if (search.IconEnabled)
 				search.Hide ();
 		}
 
 		private void Quit (object obj, EventArgs args)
 		{
-			if (Search.IconEnabled) {
+			if (search.IconEnabled) {
 				search.Hide ();
 				return;
 			} 

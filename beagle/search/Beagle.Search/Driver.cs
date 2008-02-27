@@ -20,6 +20,9 @@ namespace Beagle.Search {
 		private const string BUS_NAME = "org.gnome.Beagle";
 		private const string PATH_NAME = "/org/gnome/Beagle/Search";
 
+		private static bool icon_enabled = false;
+		private static bool docs_enabled = false;
+
 		public static void PrintUsageAndExit ()
 		{
 			VersionFu.PrintHeader ();
@@ -33,13 +36,14 @@ namespace Beagle.Search {
 				"  --version\t\t\tPrint version information.\n";
 
 			Console.WriteLine (usage);
+
 			System.Environment.Exit (0);
 		}
 
 		private static string ParseArgs (String[] args)
 		{
-			string query = String.Empty;
 			int i = 0;
+			string query = String.Empty;
 
 			while (i < args.Length) {
 				switch (args [i]) {
@@ -53,13 +57,13 @@ namespace Beagle.Search {
 					Environment.Exit (0);
 					break;
 
-					//case "--icon":
-					//IconEnabled = true;
-					//break;
+				case "--icon":
+					icon_enabled = true;
+					break;
 
-					//case "--search-docs":
-					//search_docs = true;
-					//break;
+				case "--search-docs":
+					docs_enabled = true;
+					break;
 
 				// Ignore session management
 				case "--sm-config-prefix":
@@ -87,9 +91,6 @@ namespace Beagle.Search {
 
 		public static void Main (string[] args)
 		{
-			SystemInformation.SetProcessName ("beagle-search");
-			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
-
 			BusG.Init ();
 
 			string query = ParseArgs (args);
@@ -99,15 +100,29 @@ namespace Beagle.Search {
 			// that instance.
 
 			if (Bus.Session.RequestName (BUS_NAME) != RequestNameReply.PrimaryOwner) {
+				if (icon_enabled == true) {
+					Console.WriteLine ("There is already an instance of beagle-search running.");
+					Console.WriteLine ("Cannot run in --icon mode! Exiting...");
+					Environment.Exit (1);
+				}
+
 				ISearch s = Bus.Session.GetObject<ISearch> (BUS_NAME, new ObjectPath (PATH_NAME));
 				s.Query (query);
+
 				return;
 			}
+
+			SystemInformation.SetProcessName ("beagle-search");
+			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
 			
 			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
 
-			Search search = new Search (query);
-			search.Query (query);
+			// FIXME: Passing these icon and docs enabled properties
+			// sucks. We really need to do something about them.
+			Search search = new Search (icon_enabled, docs_enabled);
+			
+			if (!String.IsNullOrEmpty (query) || !icon_enabled)
+				search.Query (query);
 
 			Bus.Session.Register (new ObjectPath (PATH_NAME), search);
 
