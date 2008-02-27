@@ -351,19 +351,25 @@ namespace Beagle.Util {
 
 		///////////////////////////////////////////////////////////////
 
-		[DllImport("libc")]
-		private static extern int prctl (int option, byte [] arg2, ulong arg3, ulong arg4, ulong arg5);
-
 		// From /usr/include/linux/prctl.h
 		private const int PR_SET_NAME = 15;
+
+		[DllImport("libc")] // Linux
+		private static extern int prctl (int option, byte [] arg2, IntPtr arg3, IntPtr arg4, IntPtr arg5);
+
+		[DllImport ("libc")] // BSD
+		private static extern void setproctitle (byte [] fmt, byte [] str_arg);
 
 		public static void SetProcessName(string name)
 		{
 #if OS_LINUX
-			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name + '\0'), 0, 0, 0) < 0) {
+			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name + '\0'), 
+				   IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) < 0) {
 				Logger.Log.Warn ("Couldn't set process name to '{0}': {1}", name,
 						 Mono.Unix.Native.Stdlib.GetLastError ());
 			}
+#elif OS_FREEBSD
+			setproctitle (Encoding.ASCII.GetBytes ("%s\0"), Encoding.ASCII.GetBytes (name + "\0"));
 #endif
 		}
 
