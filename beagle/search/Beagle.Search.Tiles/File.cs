@@ -63,24 +63,24 @@ namespace Beagle.Search.Tiles {
 			if (emblem_pixbuf == null)
 				return;
 
-			Gdk.Pixbuf icon_pixbuf = image.Pixbuf.Copy ();
+			Gdk.Pixbuf icon = image.Pixbuf.Copy ();
 
 			// If the icon itself is smaller than our requested
-			// emblem, just display the emblem.
+			// emblem, just display the icon.
 
-			if (icon_pixbuf.Height < emblem_pixbuf.Height || icon_pixbuf.Width < emblem_pixbuf.Width) {
-				icon_pixbuf.Dispose ();
-				image.Pixbuf.Dispose ();
-				image.Pixbuf = emblem_pixbuf;
+			if ((icon.Height < emblem_pixbuf.Height || icon.Width < emblem_pixbuf.Width) ||
+			    (icon.Height < (emblem_pixbuf.Height * 2) && icon.Width < (emblem_pixbuf.Width * 2))) {
+				icon.Dispose ();
+				emblem_pixbuf.Dispose ();
 				return;
 			}
 
-			emblem_pixbuf.Composite (icon_pixbuf, 0, 0, emblem_pixbuf.Width, emblem_pixbuf.Height,
+			emblem_pixbuf.Composite (icon, 0, 0, emblem_pixbuf.Width, emblem_pixbuf.Height,
 						 0, 0, 1, 1, Gdk.InterpType.Bilinear, 255);
 			emblem_pixbuf.Dispose ();
 
 			image.Pixbuf.Dispose ();
-			image.Pixbuf = icon_pixbuf;
+			image.Pixbuf = icon;
 		}
 
 		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
