@@ -342,7 +342,7 @@ namespace Beagle {
 					return null;
 
 				if (top - first != 1) {
-					Logger.Log.Warn ("Accessed multi-property key '(0}' with Hit's indexer.");
+					Logger.Log.Warn ("Accessed multi-property key '{0}' with Hit's indexer.", key);
 					return null;
 				}
 
