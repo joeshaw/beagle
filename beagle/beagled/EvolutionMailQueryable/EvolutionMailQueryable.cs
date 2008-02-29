@@ -170,7 +170,8 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 		internal void AddGenerator (EvolutionMailIndexableGenerator generator, bool inotify_event)
 		{
-			running_generators.Add (generator);
+			lock (running_generators)
+				running_generators.Add (generator);
 
 			if (! inotify_event)
 				IsIndexing = true;
@@ -178,28 +179,32 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 		internal void RemoveGenerator (EvolutionMailIndexableGenerator generator)
 		{
-			running_generators.Remove (generator);
+			lock (running_generators) {
+				running_generators.Remove (generator);
 
-			if (running_generators.Count == 0)
-				IsIndexing = false;
+				if (running_generators.Count == 0)
+					IsIndexing = false;
+			}
 		}
 
 		protected override int ProgressPercent {
 			get {
-				if (running_generators.Count == 0)
-					return -1;
+				lock (running_generators) {
+					if (running_generators.Count == 0)
+						return -1;
 
-				// An embarrassingly unscientific attempt at getting progress
-				// information from the mail backend as a whole.  Unfortunately
-				// the IMAP and mbox backends don't have a common unit of
-				// measurement (IMAP has number of messages, mbox number of
-				// bytes), so we can't get anything really accurate.
-				double total_percent = 0;
+					// An embarrassingly unscientific attempt at getting progress
+					// information from the mail backend as a whole.  Unfortunately
+					// the IMAP and mbox backends don't have a common unit of
+					// measurement (IMAP has number of messages, mbox number of
+					// bytes), so we can't get anything really accurate.
+					double total_percent = 0;
 
-				foreach (EvolutionMailIndexableGenerator generator in running_generators)
-					total_percent += generator.ProgressPercent;
+					foreach (EvolutionMailIndexableGenerator generator in running_generators)
+						total_percent += generator.ProgressPercent;
 
-				return (int) (total_percent / running_generators.Count);
+					return (int) (total_percent / running_generators.Count);
+				}
 			}
 		}
 

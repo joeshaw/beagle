@@ -128,7 +128,7 @@ namespace Beagle.Util {
 				env = new string [env_dict.Count + 2];
 				int count = 0;
 				foreach (DictionaryEntry entry in env_dict)
-					if (entry.Key != "LANG")
+					if ((string) entry.Key != "LANG")
 						env [count ++] = String.Concat (entry.Key, "=", entry.Value);
 
 				env [count ++] = "LANG=C";
