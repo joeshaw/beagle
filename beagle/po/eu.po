@@ -1,4 +1,4 @@
-# translation of beagle.HEAD.po to Basque
+# translation of eu.po to Basque
 # Basque translation for beagle
 # Copyright (c) 2006 Rosetta Contributors and Canonical Ltd 2006
 # This file is distributed under the same license as the beagle package.
@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-08 17:13+0100\n"
-"PO-Revision-Date: 2008-02-08 17:14+0100\n"
+"POT-Creation-Date: 2008-02-29 13:07+0100\n"
+"PO-Revision-Date: 2008-02-29 13:07+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
@@ -19,6 +19,128 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+msgid "<b>Conversations History</b>"
+msgstr "<b>Berriketen historia</b>"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+msgid "IM Viewer"
+msgstr "BM ikustailea"
+
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
+#, csharp-format
+msgid "Conversations in {0}"
+msgstr "{0}(e)ko berriketak"
+
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "{0}(e)ko ({1}) berriketak"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
+#, csharp-format
+msgid "Conversations with {0}"
+msgstr "Berriketak {0}(r)ekin"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Ordenagailu honetan"
+
+#: ../Util/StringFu.cs:124 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Gaur"
+
+#: ../Util/StringFu.cs:126 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Atzo"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:129
+msgid "MMM d"
+msgstr "MMM. d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:132
+msgid "MMM d, yyyy"
+msgstr "yyyy MMM. d"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:135
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:141
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:158
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Gaur, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:161
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Atzo, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:166
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "Orain dela egun {0}, {1}"
+msgstr[1] "Orain dela {0} egun, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:172
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:177
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "yyyy MMMM d, h:mm tt"
+
+#: ../Util/StringFu.cs:187
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "Ordu {0}"
+msgstr[1] "{0} ordu"
+
+#: ../Util/StringFu.cs:194
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "Minutu {0}"
+msgstr[1] "{0} minutu"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:228
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} byte"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:232
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:235
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
 
 #: ../epiphany-extension/beagle.py.in:157
 #, python-format
@@ -54,75 +176,28 @@ msgstr "Gako-hitzak galdetu indexatzeko eskatzean"
 msgid "Extra keywords to index"
 msgstr "Gako-hitz gehigarriak indexatzeko"
 
-#: ../ImLogViewer/ImLogViewer.glade.h:1
-msgid "<b>Conversations History</b>"
-msgstr "<b>Berriketen historia</b>"
-
-#: ../ImLogViewer/ImLogViewer.glade.h:2
-msgid "IM Viewer"
-msgstr "BM ikustailea"
-
-#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
-#, csharp-format
-msgid "Conversations in {0}"
-msgstr "{0}(e)ko berriketak"
-
-#: ../ImLogViewer/ImLogWindow.cs:111
-#, csharp-format
-msgid "Conversations in {0} ({1})"
-msgstr "{0}(e)ko ({1}) berriketak"
-
-#: ../ImLogViewer/ImLogWindow.cs:127
-#, csharp-format
-msgid "Conversations with {0}"
-msgstr "Berriketak {0}(r)ekin"
-
-#: ../search/beagle-search.desktop.in.in.h:1
-msgid "Search"
-msgstr "Bilatu"
-
-#: ../search/beagle-search.desktop.in.in.h:2
-msgid "Search for data on your desktop"
-msgstr "Bilatu datuak mahaigainean"
-
-#: ../search/Category.cs:132
-#, csharp-format
-msgid "{0} result"
-msgid_plural "{0} results"
-msgstr[0] "Emaitz {0}"
-msgstr[1] "{0} emaitz"
-
-#: ../search/Category.cs:134
-#, csharp-format
-msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} / {2}"
-
-#: ../search/NotificationArea.cs:63
-msgid "Hide"
-msgstr "Ezkutatu"
-
-#: ../search/Pages/IndexInfo.cs:27
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
 msgid "Index Information"
 msgstr "Indexatu informazioa"
 
-#: ../search/Pages/IndexInfo.cs:30
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
 msgid "Number of items currently indexed:"
 msgstr "Unean indexatutako elementu-kopurua:"
 
-#: ../search/Pages/IndexInfo.cs:45
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
 msgid "<i>NOTE: The search service is still indexing new data.</i>"
 msgstr "<i>Oharra: bilaketa-zerbitzua oraindik datu berriak indexatzen ari da.</i>"
 
-#: ../search/Pages/NoMatch.cs:19
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Ez da emaitzik aurkitu."
 
-#: ../search/Pages/NoMatch.cs:21
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr "Ez da \"{0}\"(r)ekin bat datorrenik aurkitu ordenagailuko fitxategietan."
 
-#: ../search/Pages/NoMatch.cs:24
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
@@ -130,7 +205,7 @@ msgstr ""
 "Bilaketaren esparrua aldatu dezakezu \"Bilatu\" menua erabiliz. Bilaketaren "
 "esparru handiago batekin emaitza gehiago lortzen dira."
 
-#: ../search/Pages/NoMatch.cs:26
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
@@ -138,39 +213,40 @@ msgstr ""
 "Bilaketako hitzen idazkera egiaztatu beharko zenuke, agian hitzen bat gaizki "
 "idatzi duzu eta."
 
-#: ../search/Pages/QuickTips.cs:10
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
 msgstr ""
 "Maiuskula eta minuskulak erabil ditzakezu. Bilaketak ez ditu maiuskulak eta "
 "minuskulak bereizten."
 
-#: ../search/Pages/QuickTips.cs:11
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr ""
 "Erabili 'OR' (ingelerazko \"edo\") aukerazko terminoak bilatzeko. Adib.: "
 "<b>Pantxoa OR Peio</b>"
 
-#: ../search/Pages/QuickTips.cs:12
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
 msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Termino bat bilaketatik kanpo uzteko, jarri minus ikurra aurrean. Adib.: <b>-"
 "lantegia</b>"
 
-#: ../search/Pages/QuickTips.cs:13
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
 msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Esaldi zehatz bat bilatzeko, komatxoak erabili. Adib.: <b>\"txanpon baten "
 "truke\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:95
+#: ../search/Beagle.Search.Pages/QuickTips.cs:19
+#: ../search/Beagle.Search/UIManager.cs:96
 msgid "Quick Tips"
 msgstr "Iradokizun bizkorrak"
 
-#: ../search/Pages/RootUser.cs:12
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
 msgstr "Beagle ezin da supererabiltzaile (root) gisa exekutatu"
 
-#: ../search/Pages/RootUser.cs:14
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
 msgid ""
 "For security reasons, Beagle cannot be run as root. You should restart as a "
 "regular user."
@@ -178,11 +254,11 @@ msgstr ""
 "Beagle ezin da supererabiltzaile gisa exekutatu, segurtasun arrazoiak direla "
 "eta. Saioa erabiltzaile arrunt gisa hasi beharko zenuke."
 
-#: ../search/Pages/StartDaemon.cs:17
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
 msgid "Search service not running"
 msgstr "Bilaketa-zerbitzua ez da exekutatzen ari"
 
-#: ../search/Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
@@ -190,360 +266,309 @@ msgstr ""
 "Bilaketa-zerbitzua ez dirudi exekutatzen ari denik. Abiarazi dezakezu azpiko "
 "botoian klik eginez."
 
-#: ../search/Pages/StartDaemon.cs:22
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
 msgid "Start search service"
 msgstr "Abiarazi bilaketa-zerbitzua"
 
-#: ../search/Search.cs:148 ../search/Search.cs:276
-#: ../search/Tray/TrayIcon.cs:33
-msgid "Desktop Search"
-msgstr "Mahaigaineko bilaketa"
-
-#: ../search/Search.cs:169
-msgid "_Find:"
-msgstr "_Bilatu:"
-
-#: ../search/Search.cs:190
-msgid "Find Now"
-msgstr "Bilatu orain"
-
-#: ../search/Search.cs:253
-msgid "Type in search terms"
-msgstr "Bilaketarako terminoak"
-
-#: ../search/Search.cs:254
-msgid "Start searching"
-msgstr "Hasi bilaketa"
-
-#: ../search/Search.cs:295
-#, csharp-format
-msgid "Desktop Search: {0}"
-msgstr "Mahaigaineko bilaketa: {0}"
-
-#: ../search/Search.cs:311
-#, csharp-format
-msgid "Showing {0} match"
-msgid_plural "Showing all {0} matches"
-msgstr[0] "Emaitz {0} erakusten"
-msgstr[1] "{0} emaitz erakusten"
-
-#: ../search/Search.cs:313
-#, csharp-format
-msgid "Showing the top {0} of {1} total matches"
-msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Aurreneko emaitza erakusten: {0} / {1} "
-msgstr[1] "Aurreneko emaitzak erakusten: {0} / {1}"
-
-#: ../search/Search.cs:569
-msgid "There are computers near you running Beagle"
-msgstr "Beagle exekutatzen ari diren ordenagailuak daude inguruan"
-
-#: ../search/Search.cs:570
-msgid "You can select to search other computers from the \"Search\" menu."
-msgstr "Beste ordenagailuetan bila dezakezu \"Bilatu\" menua erabiliz."
-
-#: ../search/Search.cs:642
-msgid "Your data is being indexed"
-msgstr "Datuak indexatzen ari da"
-
-#: ../search/Search.cs:643
-msgid ""
-"The search service is in the process of indexing your data.  Search results "
-"may be incomplete until indexing has finished."
-msgstr ""
-"Bilaketa-zerbitzua datuak indexatzen ari da. Bilaketen emaitzak osatu "
-"gabekoak izango dira indexazioa amaitu arte."
-
-#: ../search/Tiles/ArchivedFile.cs:40
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
 msgid "Inside archive {0}"
 msgstr "{0} artxiboaren barruan"
 
-#: ../search/Tiles/ArchivedFile.cs:77 ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:178 ../search/Tiles/Note.cs:73
-#: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
-#: ../search/Tiles/WebHistory.cs:58
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:176
+#: ../search/Beagle.Search.Tiles/Note.cs:73
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
 msgid "Title:"
 msgstr "Titulua:"
 
-#: ../search/Tiles/ArchivedFile.cs:78
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:78
 msgid "File Name:"
 msgstr "Fitxategi-izena:"
 
 #. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:79
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:79
 msgid "Inside File:"
 msgstr "Fitxategi honetan:"
 
-#: ../search/Tiles/ArchivedFile.cs:82 ../search/Tiles/File.cs:182
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:82
+#: ../search/Beagle.Search.Tiles/File.cs:180
 msgid "Author:"
 msgstr "Egilea:"
 
-#: ../search/Tiles/Calendar.cs:47 ../search/Tiles/Task.cs:44
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
 msgid "Description:"
 msgstr "Azalpena:"
 
-#: ../search/Tiles/Calendar.cs:57
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
 msgid "Time:"
 msgstr "Ordua:"
 
-#: ../search/Tiles/Calendar.cs:61
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
 msgid "Location:"
 msgstr "Kokalekua:"
 
-#: ../search/Tiles/Calendar.cs:65
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
 msgid "Attendees:"
 msgstr "Partaideak:"
 
-#: ../search/Tiles/Contact.cs:30
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
 msgid "Send Mail"
 msgstr "Bidali mezua"
 
-#: ../search/Tiles/Contact.cs:68
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "Helb. elek.:"
 
-#: ../search/Tiles/Contact.cs:70
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Telefono mugikorra:"
 
-#: ../search/Tiles/Contact.cs:72
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Laneko telefonoa:"
 
-#: ../search/Tiles/Contact.cs:74
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Etxeko telefonoa:"
 
-#: ../search/Tiles/File.cs:33
+#: ../search/Beagle.Search.Tiles/File.cs:35
 msgid "Reveal in Folder"
 msgstr "Bistaratu karpetan"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Beagle.Search.Tiles/File.cs:36
 msgid "E-Mail"
 msgstr "Helb.elek."
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Bota zakarrontzira"
 
-#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:74
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Bilatu egile berdinaren dokumentuak"
+
+#: ../search/Beagle.Search.Tiles/File.cs:177
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:74
 msgid "Last Edited:"
 msgstr "Editatutako azkena:"
 
-#: ../search/Tiles/File.cs:184 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
+#: ../search/Beagle.Search.Tiles/File.cs:182
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Bide-izen osoa:"
 
-#: ../search/Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
 msgid "Empty"
 msgstr "Hutsik"
 
-#: ../search/Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Elementu {0} dauka"
 msgstr[1] "{0} elementu dauzka"
 
-#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#: ../search/Tiles/Image.cs:39
-msgid "Set as Wallpaper"
-msgstr "Ezarri horma-paper gisa"
-
-#: ../search/Tiles/Image.cs:84 ../search/Tiles/Note.cs:78
-msgid "Tags:"
-msgstr "Etiketak:"
-
-#: ../search/Tiles/Image.cs:86 ../search/Tiles/Video.cs:44
-msgid "Modified:"
-msgstr "Aldatuta:"
-
-#: ../search/Tiles/Image.cs:96
-msgid "Comment:"
-msgstr "Iruzkina:"
-
-#: ../search/Tiles/IMLog.cs:30
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "BM berriketak"
 
-#: ../search/Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Izena:"
 
-#: ../search/Tiles/IMLog.cs:100 ../search/Tiles/MailMessage.cs:108
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "Jasotze-data:"
 
-#: ../search/Tiles/IMLog.cs:104
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
 msgid "Status:"
 msgstr "Egoera:"
 
-#: ../search/Tiles/IMLog.cs:119
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
 msgid "Idle"
 msgstr "Inaktibo"
 
-#: ../search/Tiles/IMLog.cs:126
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
 msgid "Away"
 msgstr "Kanpoan"
 
-#: ../search/Tiles/IMLog.cs:129
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
 msgid "Offline"
 msgstr "Lineaz kanpo"
 
-#: ../search/Tiles/IMLog.cs:132
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
 msgid "Available"
 msgstr "Eskuragarri"
 
-#: ../search/Tiles/MailAttachment.cs:45
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Ezarri horma-paper gisa"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:78
+msgid "Tags:"
+msgstr "Etiketak:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Aldatuta:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Iruzkina:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Postaren eranskina"
 
-#: ../search/Tiles/MailAttachment.cs:48 ../search/Tiles/MailMessage.cs:70
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
 msgid "Find Messages From Sender"
 msgstr "Bilatu bildaltzailearen mezuak"
 
-#: ../search/Tiles/MailMessage.cs:58
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
 msgid "(untitled)"
 msgstr "(izengabea)"
 
-#: ../search/Tiles/MailMessage.cs:68
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
 msgid "Send in Mail"
 msgstr "Bidali mezuan"
 
-#: ../search/Tiles/MailMessage.cs:103
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
 msgid "Subject:"
 msgstr "Gaia:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "To:"
 msgstr "Nori:"
 
-#: ../search/Tiles/MailMessage.cs:105
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "Nork:"
 
-#: ../search/Tiles/MailMessage.cs:108
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Sent:"
 msgstr "Bidaltze-data:"
 
-#: ../search/Tiles/MailMessage.cs:114
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
 msgid "Folder:"
 msgstr "Karpeta:"
 
-#: ../search/Tiles/Manpage.cs:56
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
 msgid "Manual page"
 msgstr "Eskuliburuko orrialdea"
 
-#: ../search/Tiles/OpenWithMenu.cs:47
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
 msgid "Open With"
 msgstr "Ireki honekin"
 
-#: ../search/Tiles/Presentation.cs:33
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "Diapositiba {0}"
 msgstr[1] "{0} diapositiba"
 
-#: ../search/Tiles/RSSFeed.cs:60
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
 msgid "Site:"
 msgstr "Gunea:"
 
-#: ../search/Tiles/RSSFeed.cs:61
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "Ikuste-data:"
 
-#: ../search/Tiles/Task.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:47
 msgid "Date:"
 msgstr "Data:"
 
-#: ../search/Tiles/TextDocument.cs:38
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
 #, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "Orri {0}"
 msgstr[1] "{0} orri"
 
-#: ../search/Tiles/Tile.cs:179
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:97
 msgid "Open"
 msgstr "Ireki"
 
-#: ../search/Tiles/Utils.cs:25
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
 msgid "Applications"
 msgstr "Aplikazioak"
 
-#: ../search/Tiles/Utils.cs:27
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
 msgid "Contacts"
 msgstr "Kontaktuak"
 
-#: ../search/Tiles/Utils.cs:29
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
 msgid "Calendar Events"
 msgstr "Egutegi-gertaerak"
 
-#: ../search/Tiles/Utils.cs:31
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "Karpetak"
 
-#: ../search/Tiles/Utils.cs:33
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
 msgid "Images"
 msgstr "Irudiak"
 
-#: ../search/Tiles/Utils.cs:35
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "Audioa"
 
-#: ../search/Tiles/Utils.cs:37
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
 msgid "Video"
 msgstr "Bideoa"
 
-#: ../search/Tiles/Utils.cs:39
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
 msgid "Documents"
 msgstr "Dokumentuak"
 
-#: ../search/Tiles/Utils.cs:41
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "Berriketak"
 
-#: ../search/Tiles/Utils.cs:43
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
 msgid "Websites"
 msgstr "Web guneak"
 
-#: ../search/Tiles/Utils.cs:45
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
 msgid "News Feeds"
 msgstr "Berri-iturriak"
 
-#: ../search/Tiles/Utils.cs:47
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
 msgid "Archives"
 msgstr "Artxiboak"
 
-#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
-#: ../Util/StringFu.cs:118
-msgid "Yesterday"
-msgstr "Atzo"
-
-#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
-#: ../Util/StringFu.cs:116
-msgid "Today"
-msgstr "Gaur"
-
-#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Bihar"
 
-#: ../search/Tiles/Utils.cs:234
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "Orain dela aste {0}"
 msgstr[1] "Orain dela {0} aste"
 
-#: ../search/Tiles/Utils.cs:236
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -551,57 +576,134 @@ msgstr[0] "Aste {0} barru"
 msgstr[1] "{0} aste barru"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:238
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "Orain dela hilabete {0}"
 msgstr[1] "Orain dela {0} hilabete"
 
-#: ../search/Tiles/Utils.cs:240
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Hilabete {0} barru"
 msgstr[1] "{0} hilabete barru"
 
-#: ../search/Tiles/Utils.cs:242
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "Orain dela urte {0}"
 msgstr[1] "Orain dela {0} urte"
 
-#: ../search/Tiles/Utils.cs:244
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "Urte {0} barru"
 msgstr[1] "{0} urte barru"
 
-#: ../search/Tiles/WebHistory.cs:59
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
 msgid "URL:"
 msgstr "URLa:"
 
-#: ../search/Tiles/WebHistory.cs:60
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
 msgid "Accessed:"
 msgstr "Sarbidetuta:"
 
-#: ../search/Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
+#: ../search/Beagle.Search/Search.cs:51
+#: ../search/Beagle.Search/SearchWindow.cs:65
+msgid "Desktop Search"
+msgstr "Mahaigaineko bilaketa"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
 msgid "No Recent Searches"
 msgstr "Azken bilaketarik ez"
 
-#: ../search/Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
 msgid "Recent Searches"
 msgstr "Azken bilaketak"
 
-#: ../search/Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
 msgid "Clear"
 msgstr "Garbitu"
 
-#: ../search/Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
 msgid "Quit"
 msgstr "Irten"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "Emaitz {0}"
+msgstr[1] "{0} emaitz"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} / {2}"
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Ezkutatu"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "_Find:"
+msgstr "_Bilatu:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:107
+msgid "Find Now"
+msgstr "Bilatu orain"
+
+#: ../search/Beagle.Search/SearchWindow.cs:170
+msgid "Type in search terms"
+msgstr "Bilaketarako terminoak"
+
+#: ../search/Beagle.Search/SearchWindow.cs:171
+msgid "Start searching"
+msgstr "Hasi bilaketa"
+
+#: ../search/Beagle.Search/SearchWindow.cs:186
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Mahaigaineko bilaketa: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:439
+msgid "There are computers near you running Beagle"
+msgstr "Beagle exekutatzen ari diren ordenagailuak daude inguruan"
+
+#: ../search/Beagle.Search/SearchWindow.cs:440
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Beste ordenagailuetan bila dezakezu \"Bilatu\" menua erabiliz."
+
+#: ../search/Beagle.Search/SearchWindow.cs:492
+msgid "Your data is being indexed"
+msgstr "Datuak indexatzen ari da"
+
+#: ../search/Beagle.Search/SearchWindow.cs:493
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr ""
+"Bilaketa-zerbitzua datuak indexatzen ari da. Bilaketen emaitzak osatu "
+"gabekoak izango dira indexazioa amaitu arte."
+
+#: ../search/Beagle.Search/SearchWindow.cs:519
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Emaitz {0} erakusten"
+msgstr[1] "{0} emaitz erakusten"
+
+#: ../search/Beagle.Search/SearchWindow.cs:521
+#, csharp-format
+msgid "Showing the top {0} of {1} total matches"
+msgid_plural "Showing the top {0} of {1} total matches"
+msgstr[0] "Aurreneko emaitza erakusten: {0} / {1} "
+msgstr[1] "Aurreneko emaitzak erakusten: {0} / {1}"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -609,7 +711,7 @@ msgstr "Irten"
 #. * words. Just provide a list of likely words the user might use
 #. * after the "type:" keyword to refer to each type of match.
 #.
-#: ../search/TypeFilter.cs:36
+#: ../search/Beagle.Search/TypeFilter.cs:39
 msgid ""
 "file\n"
 "files"
@@ -617,7 +719,7 @@ msgstr ""
 "fitxategia\n"
 "fitxategiak"
 
-#: ../search/TypeFilter.cs:37
+#: ../search/Beagle.Search/TypeFilter.cs:40
 msgid ""
 "mail\n"
 "email\n"
@@ -627,7 +729,7 @@ msgstr ""
 "helb.elek.\n"
 "helb.el."
 
-#: ../search/TypeFilter.cs:38
+#: ../search/Beagle.Search/TypeFilter.cs:41
 msgid ""
 "im\n"
 "ims\n"
@@ -647,7 +749,7 @@ msgstr ""
 "berriketa\n"
 "berriketak"
 
-#: ../search/TypeFilter.cs:39
+#: ../search/Beagle.Search/TypeFilter.cs:42
 msgid ""
 "presentation\n"
 "presentations\n"
@@ -663,7 +765,7 @@ msgstr ""
 "diapositiba\n"
 "diapositibak"
 
-#: ../search/TypeFilter.cs:41
+#: ../search/Beagle.Search/TypeFilter.cs:44
 msgid ""
 "application\n"
 "applications\n"
@@ -675,7 +777,7 @@ msgstr ""
 "apli.\n"
 "aplik."
 
-#: ../search/TypeFilter.cs:42
+#: ../search/Beagle.Search/TypeFilter.cs:45
 msgid ""
 "contact\n"
 "contacts\n"
@@ -687,7 +789,7 @@ msgstr ""
 "vcard\n"
 "vcard-ak"
 
-#: ../search/TypeFilter.cs:43
+#: ../search/Beagle.Search/TypeFilter.cs:46
 msgid ""
 "folder\n"
 "folders"
@@ -695,7 +797,7 @@ msgstr ""
 "karpeta\n"
 "karpetak"
 
-#: ../search/TypeFilter.cs:44
+#: ../search/Beagle.Search/TypeFilter.cs:47
 msgid ""
 "image\n"
 "images\n"
@@ -705,19 +807,19 @@ msgstr ""
 "irudiak\n"
 "irud."
 
-#: ../search/TypeFilter.cs:45
+#: ../search/Beagle.Search/TypeFilter.cs:48
 msgid "audio"
 msgstr "audioa"
 
-#: ../search/TypeFilter.cs:46
+#: ../search/Beagle.Search/TypeFilter.cs:49
 msgid "video"
 msgstr "bideoa"
 
-#: ../search/TypeFilter.cs:47
+#: ../search/Beagle.Search/TypeFilter.cs:50
 msgid "media"
 msgstr "multimedia"
 
-#: ../search/TypeFilter.cs:48
+#: ../search/Beagle.Search/TypeFilter.cs:51
 msgid ""
 "document\n"
 "documents\n"
@@ -729,7 +831,7 @@ msgstr ""
 "bulegoko dokumentua\n"
 "bulegoko dokumentuak"
 
-#: ../search/TypeFilter.cs:49
+#: ../search/Beagle.Search/TypeFilter.cs:52
 msgid ""
 "conversation\n"
 "conversations"
@@ -737,7 +839,7 @@ msgstr ""
 "berriketa\n"
 "berriketak"
 
-#: ../search/TypeFilter.cs:50
+#: ../search/Beagle.Search/TypeFilter.cs:53
 msgid ""
 "web\n"
 "www\n"
@@ -749,7 +851,7 @@ msgstr ""
 "web gunea\n"
 "web guneak"
 
-#: ../search/TypeFilter.cs:51
+#: ../search/Beagle.Search/TypeFilter.cs:54
 msgid ""
 "feed\n"
 "news\n"
@@ -761,7 +863,7 @@ msgstr ""
 "blog-a\n"
 "rss-a"
 
-#: ../search/TypeFilter.cs:52
+#: ../search/Beagle.Search/TypeFilter.cs:55
 msgid ""
 "archive\n"
 "archives"
@@ -769,7 +871,7 @@ msgstr ""
 "artxiboa\n"
 "artxiboak"
 
-#: ../search/TypeFilter.cs:53
+#: ../search/Beagle.Search/TypeFilter.cs:56
 msgid ""
 "person\n"
 "people"
@@ -777,197 +879,206 @@ msgstr ""
 "pertsona\n"
 "pertsonak"
 
-#: ../search/UIManager.cs:51
+#: ../search/Beagle.Search/UIManager.cs:52
 msgid "Close Desktop Search"
 msgstr "Itxi mahaigaineko bilaketa"
 
-#: ../search/UIManager.cs:56 ../search/UIManager.cs:83
+#: ../search/Beagle.Search/UIManager.cs:57
+#: ../search/Beagle.Search/UIManager.cs:84
 msgid "Exit Desktop Search"
 msgstr "Irten mahaigaineko bilaketatik"
 
-#: ../search/UIManager.cs:63
+#: ../search/Beagle.Search/UIManager.cs:64
 msgid "_Search"
 msgstr "_Bilatu"
 
-#: ../search/UIManager.cs:66
+#: ../search/Beagle.Search/UIManager.cs:67
 msgid "Show _Categories"
 msgstr "Erakutsi _kategoriak"
 
-#: ../search/UIManager.cs:69
+#: ../search/Beagle.Search/UIManager.cs:70
 msgid "Search _Domains"
 msgstr "Bilatu _domeinuak"
 
-#: ../search/UIManager.cs:72
+#: ../search/Beagle.Search/UIManager.cs:73
 msgid "_Actions"
 msgstr "_Ekintzak"
 
-#: ../search/UIManager.cs:75
+#: ../search/Beagle.Search/UIManager.cs:76
 msgid "_View"
 msgstr "_Ikusi"
 
-#: ../search/UIManager.cs:78
+#: ../search/Beagle.Search/UIManager.cs:79
 msgid "_Help"
 msgstr "_Laguntza"
 
-#: ../search/UIManager.cs:86
+#: ../search/Beagle.Search/UIManager.cs:87
 msgid "_Contents"
 msgstr "_Edukia"
 
-#: ../search/UIManager.cs:88
+#: ../search/Beagle.Search/UIManager.cs:89
 msgid "Help - Table of Contents"
 msgstr "Laguntza - Gaien aurkibidea"
 
-#: ../search/UIManager.cs:92
+#: ../search/Beagle.Search/UIManager.cs:93
 msgid "About Desktop Search"
 msgstr "Mahaigaineko bilaketari buruz"
 
-#: ../search/UIManager.cs:98
+#: ../search/Beagle.Search/UIManager.cs:99
 msgid "Index information"
 msgstr "Indexatu informazioa"
 
-#: ../search/UIManager.cs:117
+#: ../search/Beagle.Search/UIManager.cs:118
 msgid "_All"
 msgstr "_Denak"
 
-#: ../search/UIManager.cs:127
+#: ../search/Beagle.Search/UIManager.cs:128
 msgid "_None"
 msgstr "_Bat ere ez"
 
-#: ../search/UIManager.cs:141
+#: ../search/Beagle.Search/UIManager.cs:142
 msgid "A_pplications"
 msgstr "A_plikazioak"
 
-#: ../search/UIManager.cs:143
+#: ../search/Beagle.Search/UIManager.cs:144
 msgid "Search applications"
 msgstr "Bilatu aplikazioak"
 
-#: ../search/UIManager.cs:147
+#: ../search/Beagle.Search/UIManager.cs:148
 msgid "_Contacts"
 msgstr "_Kontaktuak"
 
-#: ../search/UIManager.cs:149
+#: ../search/Beagle.Search/UIManager.cs:150
 msgid "Search contacts"
 msgstr "Bilatu kontaktuak"
 
-#: ../search/UIManager.cs:153
+#: ../search/Beagle.Search/UIManager.cs:154
 msgid "Ca_lendar events"
 msgstr "E_gutegi-gertaerak"
 
-#: ../search/UIManager.cs:155
+#: ../search/Beagle.Search/UIManager.cs:156
 msgid "Search calendar events"
 msgstr "Bilatu egutegi-gertaerak"
 
-#: ../search/UIManager.cs:159
+#: ../search/Beagle.Search/UIManager.cs:160
 msgid "_Documents"
 msgstr "_Dokumentuak"
 
-#: ../search/UIManager.cs:161
+#: ../search/Beagle.Search/UIManager.cs:162
 msgid "Search documents"
 msgstr "Bilatu dokumentuak"
 
-#: ../search/UIManager.cs:165
+#: ../search/Beagle.Search/UIManager.cs:166
 msgid "Conve_rsations"
 msgstr "Be_rriketak"
 
-#: ../search/UIManager.cs:167
+#: ../search/Beagle.Search/UIManager.cs:168
 msgid "Search E-Mail and Instant Messaging logs"
 msgstr "Bilatu postak eta berehalako mezuak"
 
-#: ../search/UIManager.cs:171
+#: ../search/Beagle.Search/UIManager.cs:172
 msgid "_Images"
 msgstr "_Irudiak"
 
-#: ../search/UIManager.cs:173
+#: ../search/Beagle.Search/UIManager.cs:174
 msgid "Search images"
 msgstr "Bilatu irudiak"
 
-#: ../search/UIManager.cs:177
+#: ../search/Beagle.Search/UIManager.cs:178
 msgid "_Media"
 msgstr "_Multimedia"
 
-#: ../search/UIManager.cs:179
+#: ../search/Beagle.Search/UIManager.cs:180
 msgid "Search sound and video files"
 msgstr "Bilatu soinu eta bideo fitxategiak"
 
-#: ../search/UIManager.cs:183
+#: ../search/Beagle.Search/UIManager.cs:184
 msgid "_Folders"
 msgstr "_Karpetak"
 
-#: ../search/UIManager.cs:185
+#: ../search/Beagle.Search/UIManager.cs:186
 msgid "Search for folder names"
 msgstr "Bilatu karpeten izenak"
 
-#: ../search/UIManager.cs:189
+#: ../search/Beagle.Search/UIManager.cs:190
 msgid "_Websites"
 msgstr "_Web guneak"
 
-#: ../search/UIManager.cs:191
+#: ../search/Beagle.Search/UIManager.cs:192
 msgid "Search website history"
 msgstr "Bilatu web guneen historian"
 
-#: ../search/UIManager.cs:195
+#: ../search/Beagle.Search/UIManager.cs:196
 msgid "_News Feeds"
 msgstr "_Berri-iturriak"
 
-#: ../search/UIManager.cs:197
+#: ../search/Beagle.Search/UIManager.cs:198
 msgid "Search news feeds"
 msgstr "Bilatu berri-iturriak"
 
-#: ../search/UIManager.cs:201
+#: ../search/Beagle.Search/UIManager.cs:202
 msgid "A_rchives"
 msgstr "Art_xiboak"
 
-#: ../search/UIManager.cs:203
+#: ../search/Beagle.Search/UIManager.cs:204
 msgid "Search files in Archives"
 msgstr "Bilatu fitxategiak artxiboetan"
 
-#: ../search/UIManager.cs:211
+#: ../search/Beagle.Search/UIManager.cs:212
 msgid "Sort by Date _Modified"
 msgstr "Ordenatu _aldatze-dataren arabera"
 
-#: ../search/UIManager.cs:212
+#: ../search/Beagle.Search/UIManager.cs:213
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenatu emaitzak (azken aldatutakoak lehenengo)"
 
-#: ../search/UIManager.cs:215
+#: ../search/Beagle.Search/UIManager.cs:216
 msgid "Sort by _Name"
 msgstr "Ordenatu _izenaren arabera"
 
-#: ../search/UIManager.cs:216
+#: ../search/Beagle.Search/UIManager.cs:217
 msgid "Sort matches by name"
 msgstr "Ordenatu emaitzak izenaren arabera"
 
-#: ../search/UIManager.cs:219
+#: ../search/Beagle.Search/UIManager.cs:220
 msgid "Sort by _Relevance"
 msgstr "Ordenatu _garrantziaren arabera"
 
-#: ../search/UIManager.cs:220
+#: ../search/Beagle.Search/UIManager.cs:221
 msgid "Sort the best matches first"
 msgstr "Ordenatu emaitza egokienetik hasiz"
 
-#: ../search/UIManager.cs:227
+#: ../search/Beagle.Search/UIManager.cs:228
 msgid "_Local"
 msgstr "_Lokala"
 
-#: ../search/UIManager.cs:229
+#: ../search/Beagle.Search/UIManager.cs:230
 msgid "Search only on local computer"
 msgstr "Bilatu ordenagailu lokalean soilik"
 
-#: ../search/UIManager.cs:233
+#: ../search/Beagle.Search/UIManager.cs:234
 msgid "_Neighborhood"
 msgstr "_Auzokoa"
 
-#: ../search/UIManager.cs:235
+#: ../search/Beagle.Search/UIManager.cs:236
 msgid "Search on computers near me"
 msgstr "Bilatu nire inguruko ordenagailuetan"
 
-#: ../search/UIManager.cs:243
+#: ../search/Beagle.Search/UIManager.cs:244
 msgid "Show Details"
 msgstr "Erakutsi xehetasunak"
 
-#: ../search/UIManager.cs:366
+#: ../search/Beagle.Search/UIManager.cs:366
 msgid "Couldn't launch web browser"
 msgstr "Ezin izan da web arakatzailea abiarazi"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Bilatu"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Bilatu datuak mahaigainean"
 
 #: ../tools/Settings.cs:346
 msgid "Reload configuration"
@@ -1115,6 +1226,14 @@ msgstr "{0}(r)ekin konektatzen"
 #: ../tools/Settings.cs:1633
 msgid "Description"
 msgstr "Azalpena"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Konfiguratu mahaigaineko bilaketa"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Bilaketa eta indexazioa"
 
 #: ../tools/settings.glade.h:1
 msgid ":"
@@ -1333,101 +1452,4 @@ msgstr "_Pasahitza:"
 #: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "_Abiarazi bilaketa eta indexazio zerbitzuak automatikoki"
-
-#: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search"
-msgstr "Konfiguratu mahaigaineko bilaketa"
-
-#: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Search & Indexing"
-msgstr "Bilaketa eta indexazioa"
-
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
-msgid "On This Computer"
-msgstr "Ordenagailu honetan"
-
-#. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:121
-msgid "MMM d"
-msgstr "MMM. d"
-
-#. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:124
-msgid "MMM d, yyyy"
-msgstr "yyyy MMM. d"
-
-#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:127
-msgid "h:mm tt"
-msgstr "h:mm tt"
-
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:133
-#, csharp-format
-msgid "{0}, {1}"
-msgstr "{0}, {1}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:150
-#, csharp-format
-msgid "Today, {0}"
-msgstr "Gaur, {0}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:153
-#, csharp-format
-msgid "Yesterday, {0}"
-msgstr "Atzo, {0}"
-
-#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:158
-#, csharp-format
-msgid "{0} day ago, {1}"
-msgid_plural "{0} days ago, {1}"
-msgstr[0] "Orain dela egun {0}, {1}"
-msgstr[1] "Orain dela {0} egun, {1}"
-
-#. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:164
-msgid "MMMM d, h:mm tt"
-msgstr "MMMM d, h:mm tt"
-
-#. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:169
-msgid "MMMM d yyyy, h:mm tt"
-msgstr "yyyy MMMM d, h:mm tt"
-
-#: ../Util/StringFu.cs:179
-#, csharp-format
-msgid "{0} hour"
-msgid_plural "{0} hours"
-msgstr[0] "Ordu {0}"
-msgstr[1] "{0} ordu"
-
-#: ../Util/StringFu.cs:186
-#, csharp-format
-msgid "{0} minute"
-msgid_plural "{0} minutes"
-msgstr[0] "Minutu {0}"
-msgstr[1] "{0} minutu"
-
-#. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:220
-#, csharp-format
-msgid "{0} byte"
-msgid_plural "{0} bytes"
-msgstr[0] "{0} byte"
-msgstr[1] "{0} byte"
-
-#. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:224
-#, csharp-format
-msgid "{0:0.0} KB"
-msgstr "{0:0.0} KB"
-
-#. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:227
-#, csharp-format
-msgid "{0:0.0} MB"
-msgstr "{0:0.0} MB"
 
