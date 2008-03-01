@@ -96,10 +96,14 @@ namespace Beagle.Daemon {
 			get {
 				int weight = priority;
 
+				/* Uri matches are very important, next are extensions and then mimetype.
+				 * This allows filters to override everything else by specifying matching Uris,
+				 * and override mimetype by matching extensions.
+				 */
 				if (Uri != null)
-					weight += 1;				
+					weight += 3;
 				if (Extension != null)
-					weight += 1;
+					weight += 2;
 				if (MimeType != null)
 					weight += 1;
 
@@ -128,12 +132,17 @@ namespace Beagle.Daemon {
 		public class FlavorComparer : IComparer 
 		{
 			// flav [larger wt] < flav [smaller wt]
+			// for same wt, use hashcode (never return obj1 == obj2 unless they are actually same)
 			public int Compare (object obj1, object obj2) 
 			{
 				FilterFlavor flav1 = (FilterFlavor) obj1;
 				FilterFlavor flav2 = (FilterFlavor) obj2;
 
-				return flav2.Weight.CompareTo (flav1.Weight);
+				int ret = flav2.Weight.CompareTo (flav1.Weight);
+				if (ret != 0)
+					return ret;
+				else
+					return obj1.GetHashCode () - obj2.GetHashCode ();
 			} 
 		}
 
