@@ -32,9 +32,9 @@ using Beagle.Daemon;
 namespace Beagle.Filters {
 
 	public class FilterEbuild : FilterPackage {
-		static Regex metadata_pattern = new Regex ("\\s*(?<key>([A-Z_]+))\\s*=\\s*\"(?<value>(.*))\"\\s*");
-		static Regex einfo_pattern = new Regex ("\\s*(einfo|ewarn)\\s+\"(?<message>(.*))\"\\s*");
-		static Regex package_pattern = new Regex ("(?<name>([^0-9]+))-(?<version>(.+)).ebuild");
+		static Regex metadata_pattern = new Regex ("\\s*(?<key>([A-Z_]+))\\s*=\\s*\"(?<value>(.*))\"\\s*", RegexOptions.Compiled);
+		static Regex einfo_pattern = new Regex ("\\s*(einfo|ewarn)\\s+\"(?<message>(.*))\"\\s*", RegexOptions.Compiled);
+		static Regex package_pattern = new Regex ("(?<name>([^0-9]+))-(?<version>(.+)).ebuild", RegexOptions.Compiled);
 
 		public FilterEbuild () 
 		{
@@ -113,20 +113,23 @@ namespace Beagle.Filters {
 				if (desktop_file == null)
 					continue;
 				// verify this is a desktop file
-				StreamReader desktop_reader = new StreamReader (new FileStream (desktop_file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read));
-				string desktop_line = null;
-				bool desktop_valid = false;
-				while ((desktop_line = desktop_reader.ReadLine ()) != null) {
-					if (desktop_line.Trim ().Length > 0) {
-						desktop_valid = desktop_line.Equals ("[Desktop Entry]");
-						break;
+				using (StreamReader desktop_reader = new StreamReader (new FileStream (desktop_file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))) {
+					string desktop_line = null;
+					bool desktop_valid = false;
+					while ((desktop_line = desktop_reader.ReadLine ()) != null) {
+						if (desktop_line.Trim ().Length > 0) {
+							desktop_valid = desktop_line.Equals ("[Desktop Entry]");
+							break;
+						}
 					}
-				}
 				
-				// add property
-				if (desktop_valid)
-					AddProperty (Beagle.Property.NewUnsearched ("fixme:desktop_file", desktop_file.FullName));
+					// add property
+					if (desktop_valid)
+						AddProperty (Beagle.Property.NewUnsearched ("fixme:desktop_file", desktop_file.FullName));
+				}
 			}
+
+			contents_reader.Close ();
 
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_byte_count", byte_count));
 			AddProperty (Beagle.Property.NewUnsearched ("fixme:contents_file_count", file_count));

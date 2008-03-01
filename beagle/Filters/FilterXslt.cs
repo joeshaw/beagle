@@ -37,8 +37,8 @@ namespace Beagle.Filters
 {
 	public class FilterXslt : Filter 
 	{
-		Regex xpath_variables_regex = new Regex ("\\$(?<name>[\\wS][\\wS\\d-:]*)");
-		Regex xpath_functions_regex = new Regex ("(?<name>[\\wS][\\wS\\d-:]*)\\(");
+		static Regex xpath_variables_regex = new Regex ("\\$(?<name>[\\wS][\\wS\\d-:]*)", RegexOptions.Compiled);
+		static Regex xpath_functions_regex = new Regex ("(?<name>[\\wS][\\wS\\d-:]*)\\(", RegexOptions.Compiled);
 
 		public FilterXslt ()
 		{
