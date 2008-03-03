@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -22,7 +23,7 @@ namespace Lucene.Net.QueryParsers
 	/// <summary>An efficient implementation of JavaCC's CharStream interface.  <p>Note that
 	/// this does not do line-number counting, but instead keeps track of the
 	/// character position of the token in the input, as required by Lucene's {@link
-	/// Lucene.Net.analysis.Token} API. 
+	/// Lucene.Net.Analysis.Token} API. 
 	/// </summary>
 	public sealed class FastCharStream : CharStream
 	{
@@ -79,17 +80,17 @@ namespace Lucene.Net.QueryParsers
 			bufferPosition = newPosition;
 			bufferStart += tokenStart;
 			tokenStart = 0;
-			
-			int charsRead = 0;
-            
-            try
-            {
-                charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
-            }
-            catch
-            {
-            }
 
+			int charsRead = 0;
+			
+			try
+			{
+				charsRead = input.Read(buffer, newPosition, buffer.Length - newPosition);
+			}
+			catch
+			{
+			}
+			
 			if (charsRead <= 0)
 				throw new System.IO.IOException("read past eof");
 			else

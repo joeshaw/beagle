@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
@@ -28,7 +30,7 @@ namespace Lucene.Net.Search
 	/// 
 	/// <p>
 	/// This code borrows heavily from {@link RangeQuery}, but is implemented as a Filter
-	/// (much like {@link DateFilter}).
+	/// 
 	/// </p>
 	/// </summary>
 	[Serializable]
@@ -112,7 +114,7 @@ namespace Lucene.Net.Search
 				
 				bool checkLower = false;
 				if (!includeLower)
-				    // make adjustments to set to exclusive
+					// make adjustments to set to exclusive
 					checkLower = true;
 				
 				TermDocs termDocs = reader.TermDocs();

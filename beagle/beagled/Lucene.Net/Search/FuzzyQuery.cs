@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
@@ -27,7 +29,7 @@ namespace Lucene.Net.Search
 	/// is based on the Levenshtein (edit distance) algorithm.
 	/// </summary>
 	[Serializable]
-	public sealed class FuzzyQuery : MultiTermQuery
+	public class FuzzyQuery : MultiTermQuery
 	{
 		
 		public const float defaultMinSimilarity = 0.5f;
@@ -82,7 +84,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns the minimum similarity that is required for this query to match.</summary>
 		/// <returns> float value between 0.0 and 1.0
 		/// </returns>
-		public float GetMinSimilarity()
+		public virtual float GetMinSimilarity()
 		{
 			return minimumSimilarity;
 		}
@@ -91,7 +93,7 @@ namespace Lucene.Net.Search
 		/// of a term that must be identical (not fuzzy) to the query term if the query
 		/// is to match that term. 
 		/// </summary>
-		public int GetPrefixLength()
+		public virtual int GetPrefixLength()
 		{
 			return prefixLength;
 		}
@@ -157,12 +159,12 @@ namespace Lucene.Net.Search
 			}
 			buffer.Append(term.Text());
 			buffer.Append('~');
-			buffer.Append(minimumSimilarity.ToString());
+			buffer.Append(SupportClass.Single.ToString(minimumSimilarity));
 			buffer.Append(ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
-		private class ScoreTerm
+		protected internal class ScoreTerm
 		{
 			public Term term;
 			public float score;
@@ -174,7 +176,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		private class ScoreTermQueue : PriorityQueue
+		protected internal class ScoreTermQueue:PriorityQueue
 		{
 			
 			public ScoreTermQueue(int size)
@@ -183,7 +185,7 @@ namespace Lucene.Net.Search
 			}
 			
 			/* (non-Javadoc)
-			* @see Lucene.Net.util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
+			* @see Lucene.Net.Util.PriorityQueue#lessThan(java.lang.Object, java.lang.Object)
 			*/
 			public override bool LessThan(System.Object a, System.Object b)
 			{
@@ -218,7 +220,7 @@ namespace Lucene.Net.Search
 		public override int GetHashCode()
 		{
 			int result = base.GetHashCode();
-            result = 29 * result + minimumSimilarity != + 0.0f ? BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0) : 0;
+			result = 29 * result + minimumSimilarity != + 0.0f ? BitConverter.ToInt32(BitConverter.GetBytes(minimumSimilarity), 0) : 0;
 			result = 29 * result + prefixLength;
 			return result;
 		}

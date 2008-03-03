@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
 
@@ -25,7 +27,7 @@ namespace Lucene.Net.Search
 	/// <p>Term enumerations are always ordered by Term.compareTo().  Each term in
 	/// the enumeration is greater than all that precede it.  
 	/// </summary>
-	public abstract class FilteredTermEnum:TermEnum
+	public abstract class FilteredTermEnum : TermEnum
 	{
 		private Term currentTerm = null;
 		private TermEnum actualEnum = null;
@@ -40,7 +42,7 @@ namespace Lucene.Net.Search
 		/// <summary>Equality measure on the term </summary>
 		public abstract float Difference();
 		
-		/// <summary>Indiciates the end of the enumeration has been reached </summary>
+		/// <summary>Indicates the end of the enumeration has been reached </summary>
 		public abstract bool EndEnum();
 		
 		protected internal virtual void  SetEnum(TermEnum actualEnum)

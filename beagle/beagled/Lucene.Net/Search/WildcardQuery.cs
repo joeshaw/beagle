@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -34,8 +36,11 @@ namespace Lucene.Net.Search
 	[Serializable]
 	public class WildcardQuery : MultiTermQuery
 	{
+		private bool termContainsWildcard;
+		
 		public WildcardQuery(Term term) : base(term)
 		{
+			this.termContainsWildcard = (term.Text().IndexOf((System.Char) '*') != - 1) || (term.Text().IndexOf((System.Char) '?') != - 1);
 		}
 		
 		protected internal override FilteredTermEnum GetEnum(IndexReader reader)
@@ -50,6 +55,17 @@ namespace Lucene.Net.Search
 			
 			return false;
 		}
+		
+		public override Query Rewrite(IndexReader reader)
+		{
+			if (this.termContainsWildcard)
+			{
+				return base.Rewrite(reader);
+			}
+			
+			return new TermQuery(GetTerm());
+		}
+		
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();

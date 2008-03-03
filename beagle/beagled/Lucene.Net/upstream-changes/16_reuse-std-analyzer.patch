@@ -1,0 +1,86 @@
+Reuse StandardTokenizerImpl. There is one StandardAnalyzer creater per field of every document; also, each StandardTokenizerImpl creates a 16K char array. It is pretty expensive in general to create them.
+
+From: D Bera <dbera.web@gmail.com>
+
+Index: Analysis/Standard/StandardTokenizer.cs
+===================================================================
+--- Analysis/Standard/StandardTokenizer.cs	(revision 4526)
++++ Analysis/Standard/StandardTokenizer.cs	(working copy)
+@@ -55,7 +55,7 @@
+         /// <summary>Constructs a tokenizer for this Reader. </summary>
+         public StandardTokenizer(System.IO.TextReader reader) : base(reader)
+         {
+-            this.scanner = new StandardTokenizerImpl(reader);
++	    this.scanner = StandardTokenizerImpl.GetStandardTokenizerImpl(reader);
+         }
+ 		
+         /// <summary>Returns the next token in the stream, or null at EOS.
+Index: Analysis/Standard/StandardTokenizerImpl.cs
+===================================================================
+--- Analysis/Standard/StandardTokenizerImpl.cs	(revision 4526)
++++ Analysis/Standard/StandardTokenizerImpl.cs	(working copy)
+@@ -366,7 +366,6 @@
+ 		}
+ 		
+ 		/// <summary>the input device </summary>
+-		//UPGRADE_ISSUE: Class hierarchy differences between 'java.io.Reader' and 'System.IO.StreamReader' may cause compilation errors. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1186'"
+ 		private System.IO.TextReader zzReader;
+ 		
+ 		/// <summary>the current state of the DFA </summary>
+@@ -454,7 +453,6 @@
+ 		/// </summary>
+ 		/// <param name="in"> the java.io.Reader to read input from.
+ 		/// </param>
+-		//UPGRADE_ISSUE: Class hierarchy differences between 'java.io.Reader' and 'System.IO.StreamReader' may cause compilation errors. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1186'"
+ 		internal StandardTokenizerImpl(System.IO.TextReader in_Renamed)
+ 		{
+ 			this.zzReader = in_Renamed;
+@@ -470,6 +468,22 @@
+ 		{
+ 		}
+ 		
++		internal static StandardTokenizerImpl GetStandardTokenizerImpl(System.IO.TextReader reader)
++		{
++			if (impl==null)
++			{
++				impl = new StandardTokenizerImpl(reader);
++			}
++			else
++			{
++				impl.yyreset(reader);
++			}
++
++			return impl;
++		}
++
++		private static StandardTokenizerImpl impl = null;
++		
+ 		/// <summary> Unpacks the compressed character translation table.
+ 		/// 
+ 		/// </summary>
+@@ -528,7 +542,6 @@
+ 			}
+ 			
+ 			/* finally: fill the buffer with new input */
+-			//UPGRADE_TODO: Method 'java.io.Reader.read' was converted to 'System.IO.StreamReader.Read' which has a different behavior. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1073_javaioReaderread_char[]_int_int'"
+ 			int lengthToRead = zzBuffer.Length - zzEndRead;
+ 			int numRead = zzReader.Read(zzBuffer, zzEndRead, lengthToRead);
+ 			
+@@ -557,7 +570,6 @@
+ 				zzReader.Close();
+ 		}
+ 		
+-		
+ 		/// <summary> Resets the scanner to read from a new input stream.
+ 		/// Does not close the old reader.
+ 		/// 
+@@ -568,8 +580,7 @@
+ 		/// </summary>
+ 		/// <param name="reader">  the new input stream 
+ 		/// </param>
+-		//UPGRADE_ISSUE: Class hierarchy differences between 'java.io.Reader' and 'System.IO.StreamReader' may cause compilation errors. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1186'"
+-		public void  yyreset(System.IO.StreamReader reader)
++		public void  yyreset(System.IO.TextReader reader)
+ 		{
+ 			zzReader = reader;
+ 			zzAtBOL = true;

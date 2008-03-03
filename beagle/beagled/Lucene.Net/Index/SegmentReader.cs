@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,7 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using DefaultSimilarity = Lucene.Net.Search.DefaultSimilarity;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
@@ -26,11 +27,12 @@ using BitVector = Lucene.Net.Util.BitVector;
 namespace Lucene.Net.Index
 {
 	
-	/// <version>  $Id: SegmentReader.cs,v 1.8 2006/11/29 19:25:43 joeshaw Exp $
+	/// <version>  $Id: SegmentReader.java 496851 2007-01-16 20:24:52Z mikemccand $
 	/// </version>
 	public class SegmentReader : IndexReader
 	{
 		private System.String segment;
+		private SegmentInfo si;
 		
 		internal FieldInfos fieldInfos;
 		private FieldsReader fieldsReader;
@@ -44,15 +46,25 @@ namespace Lucene.Net.Index
 		private bool normsDirty = false;
 		private bool undeleteAll = false;
 		
+		private bool rollbackDeletedDocsDirty = false;
+		private bool rollbackNormsDirty = false;
+		private bool rollbackUndeleteAll = false;
+		
 		internal IndexInput freqStream;
 		internal IndexInput proxStream;
 		
 		// Compound File Reader when based on a compound file segment
 		internal CompoundFileReader cfsReader = null;
 		
-        public FieldInfos FieldInfos
+		public FieldInfos FieldInfos
+		{
+			get {   return fieldInfos;  }
+		}
+
+        public IndexInput ProxStream
         {
-            get {   return fieldInfos;  }
+            get {   return proxStream;  }
+            set {   proxStream = value; }
         }
 
 		private class Norm
@@ -70,22 +82,36 @@ namespace Lucene.Net.Index
 				}
 				
 			}
-			public Norm(SegmentReader enclosingInstance, IndexInput in_Renamed, int number)
+			public Norm(SegmentReader enclosingInstance, IndexInput in_Renamed, int number, long normSeek)
 			{
 				InitBlock(enclosingInstance);
 				this.in_Renamed = in_Renamed;
 				this.number = number;
+				this.normSeek = normSeek;
 			}
 			
-			public IndexInput in_Renamed;
-			public byte[] bytes;
-			public bool dirty;
-			public int number;
+			internal IndexInput in_Renamed;
+			internal byte[] bytes;
+			internal bool dirty;
+			internal int number;
+			internal long normSeek;
+			internal bool rollbackDirty;
 			
-			public void  ReWrite()
+			internal void  ReWrite(SegmentInfo si)
 			{
 				// NOTE: norms are re-written in regular directory, not cfs
-				IndexOutput out_Renamed = Enclosing_Instance.Directory().CreateOutput(Enclosing_Instance.segment + ".tmp");
+				
+				System.String oldFileName = si.GetNormFileName(this.number);
+				if (oldFileName != null && !oldFileName.EndsWith("." + IndexFileNames.NORMS_EXTENSION))
+				{
+					// Mark this file for deletion.  Note that we don't
+					// actually try to delete it until the new segments files is
+					// successfully written:
+					Enclosing_Instance.deleter.AddPendingFile(oldFileName);
+				}
+				
+				si.AdvanceNormGen(this.number);
+				IndexOutput out_Renamed = Enclosing_Instance.Directory().CreateOutput(si.GetNormFileName(this.number));
 				try
 				{
 					out_Renamed.WriteBytes(bytes, Enclosing_Instance.MaxDoc());
@@ -94,15 +120,6 @@ namespace Lucene.Net.Index
 				{
 					out_Renamed.Close();
 				}
-				System.String fileName;
-				if (Enclosing_Instance.cfsReader == null)
-					fileName = Enclosing_Instance.segment + ".f" + number;
-				else
-				{
-					// use a different file name if we have compound format
-					fileName = Enclosing_Instance.segment + ".s" + number;
-				}
-				Enclosing_Instance.Directory().RenameFile(Enclosing_Instance.segment + ".tmp", fileName);
 				this.dirty = false;
 			}
 		}
@@ -135,7 +152,7 @@ namespace Lucene.Net.Index
 			}
 			catch (System.Exception e)
 			{
-				throw new System.SystemException("cannot load SegmentReader class: " + e);
+				throw new System.SystemException("cannot load SegmentReader class: " + e, e);
 			}
 			instance.Init(dir, sis, closeDir, ownDir);
 			instance.Initialize(si);
@@ -145,68 +162,116 @@ namespace Lucene.Net.Index
 		private void  Initialize(SegmentInfo si)
 		{
 			segment = si.name;
+			this.si = si;
 			
-			// Use compound file directory for some files, if it exists
-			Directory cfsDir = Directory();
-			if (Directory().FileExists(segment + ".cfs"))
+			bool success = false;
+			
+			try
 			{
-				cfsReader = new CompoundFileReader(Directory(), segment + ".cfs");
-				cfsDir = cfsReader;
+				// Use compound file directory for some files, if it exists
+				Directory cfsDir = Directory();
+				if (si.GetUseCompoundFile())
+				{
+					cfsReader = new CompoundFileReader(Directory(), segment + ".cfs");
+					cfsDir = cfsReader;
+				}
+				
+				// No compound file exists - use the multi-file format
+				fieldInfos = new FieldInfos(cfsDir, segment + ".fnm");
+				fieldsReader = new FieldsReader(cfsDir, segment, fieldInfos);
+				
+				// Verify two sources of "maxDoc" agree:
+				if (fieldsReader.Size() != si.docCount)
+				{
+					throw new System.SystemException("doc counts differ for segment " + si.name + ": fieldsReader shows " + fieldsReader.Size() + " but segmentInfo shows " + si.docCount);
+				}
+				
+				tis = new TermInfosReader(cfsDir, segment, fieldInfos);
+				
+				// NOTE: the bitvector is stored using the regular directory, not cfs
+				if (HasDeletions(si))
+				{
+					deletedDocs = new BitVector(Directory(), si.GetDelFileName());
+					
+					// Verify # deletes does not exceed maxDoc for this segment:
+					if (deletedDocs.Count() > MaxDoc())
+					{
+						throw new System.SystemException("number of deletes (" + deletedDocs.Count() + ") exceeds max doc (" + MaxDoc() + ") for segment " + si.name);
+					}
+				}
+				
+				// make sure that all index files have been read or are kept open
+				// so that if an index update removes them we'll still have them
+				freqStream = cfsDir.OpenInput(segment + ".frq");
+				proxStream = cfsDir.OpenInput(segment + ".prx");
+				OpenNorms(cfsDir);
+				
+				if (fieldInfos.HasVectors())
+				{
+					// open term vector files only as needed
+					termVectorsReaderOrig = new TermVectorsReader(cfsDir, segment, fieldInfos);
+				}
+				success = true;
 			}
-			
-			// No compound file exists - use the multi-file format
-			fieldInfos = new FieldInfos(cfsDir, segment + ".fnm");
-			fieldsReader = new FieldsReader(cfsDir, segment, fieldInfos);
-			
-			tis = new TermInfosReader(cfsDir, segment, fieldInfos);
-			
-			// NOTE: the bitvector is stored using the regular directory, not cfs
-			if (HasDeletions(si))
-				deletedDocs = new BitVector(Directory(), segment + ".del");
-			
-			// make sure that all index files have been read or are kept open
-			// so that if an index update removes them we'll still have them
-			freqStream = cfsDir.OpenInput(segment + ".frq");
-			proxStream = cfsDir.OpenInput(segment + ".prx");
-			OpenNorms(cfsDir);
-			
-			if (fieldInfos.HasVectors())
+			finally
 			{
-				// open term vector files only as needed
-				termVectorsReaderOrig = new TermVectorsReader(cfsDir, segment, fieldInfos);
+				
+				// With lock-less commits, it's entirely possible (and
+				// fine) to hit a FileNotFound exception above.  In
+				// this case, we want to explicitly close any subset
+				// of things that were opened so that we don't have to
+				// wait for a GC to do so.
+				if (!success)
+				{
+					DoClose();
+				}
 			}
 		}
-		
-        /*  Leaving this here will cause a memory leak under .NET 1.1
-        ~SegmentReader()
-		{
-			// patch for pre-1.4.2 JVMs, whose ThreadLocals leak
-			//System.Threading.Thread.SetData(termVectorsLocal, null);
-		}
-		*/
 		
 		protected internal override void  DoCommit()
 		{
 			if (deletedDocsDirty)
 			{
 				// re-write deleted
-				deletedDocs.Write(Directory(), segment + ".tmp");
-				Directory().RenameFile(segment + ".tmp", segment + ".del");
+				System.String oldDelFileName = si.GetDelFileName();
+				if (oldDelFileName != null)
+				{
+					// Mark this file for deletion.  Note that we don't
+					// actually try to delete it until the new segments files is
+					// successfully written:
+					deleter.AddPendingFile(oldDelFileName);
+				}
+				
+				si.AdvanceDelGen();
+				
+				// We can write directly to the actual name (vs to a
+				// .tmp & renaming it) because the file is not live
+				// until segments file is written:
+				deletedDocs.Write(Directory(), si.GetDelFileName());
 			}
-			if (undeleteAll && Directory().FileExists(segment + ".del"))
+			if (undeleteAll && si.HasDeletions())
 			{
-				Directory().DeleteFile(segment + ".del");
+				System.String oldDelFileName = si.GetDelFileName();
+				if (oldDelFileName != null)
+				{
+					// Mark this file for deletion.  Note that we don't
+					// actually try to delete it until the new segments files is
+					// successfully written:
+					deleter.AddPendingFile(oldDelFileName);
+				}
+				si.ClearDelGen();
 			}
 			if (normsDirty)
 			{
 				// re-write norms
+				si.SetNumFields(fieldInfos.Size());
 				System.Collections.IEnumerator values = norms.Values.GetEnumerator();
 				while (values.MoveNext())
 				{
 					Norm norm = (Norm) values.Current;
 					if (norm.dirty)
 					{
-						norm.ReWrite();
+						norm.ReWrite(si);
 					}
 				}
 			}
@@ -217,8 +282,14 @@ namespace Lucene.Net.Index
 		
 		protected internal override void  DoClose()
 		{
-			fieldsReader.Close();
-			tis.Close();
+			if (fieldsReader != null)
+			{
+				fieldsReader.Close();
+			}
+			if (tis != null)
+			{
+				tis.Close();
+			}
 			
 			if (freqStream != null)
 				freqStream.Close();
@@ -236,7 +307,7 @@ namespace Lucene.Net.Index
 		
 		internal static bool HasDeletions(SegmentInfo si)
 		{
-			return si.dir.FileExists(si.name + ".del");
+			return si.HasDeletions();
 		}
 		
 		public override bool HasDeletions()
@@ -244,23 +315,14 @@ namespace Lucene.Net.Index
 			return deletedDocs != null;
 		}
 		
-		
 		internal static bool UsesCompoundFile(SegmentInfo si)
 		{
-			return si.dir.FileExists(si.name + ".cfs");
+			return si.GetUseCompoundFile();
 		}
 		
 		internal static bool HasSeparateNorms(SegmentInfo si)
 		{
-			System.String[] result = si.dir.List();
-			System.String pattern = si.name + ".s";
-			int patternLength = pattern.Length;
-			for (int i = 0; i < result.Length; i++)
-			{
-				if (result[i].StartsWith(pattern) && System.Char.IsDigit(result[i][patternLength]))
-					return true;
-			}
-			return false;
+			return si.HasSeparateNorms();
 		}
 		
 		protected internal override void  DoDelete(int docNum)
@@ -283,25 +345,42 @@ namespace Lucene.Net.Index
 		{
 			System.Collections.ArrayList files = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(16));
 			
-			for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
+			if (si.GetUseCompoundFile())
 			{
-				System.String name = segment + "." + IndexFileNames.INDEX_EXTENSIONS[i];
+				System.String name = segment + ".cfs";
 				if (Directory().FileExists(name))
-					files.Add(name);
-			}
-			
-			for (int i = 0; i < fieldInfos.Size(); i++)
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed && !fi.omitNorms)
 				{
-					System.String name;
-					if (cfsReader == null)
-						name = segment + ".f" + i;
-					else
-						name = segment + ".s" + i;
+					files.Add(name);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < IndexFileNames.INDEX_EXTENSIONS.Length; i++)
+				{
+					System.String name = segment + "." + IndexFileNames.INDEX_EXTENSIONS[i];
 					if (Directory().FileExists(name))
 						files.Add(name);
+				}
+			}
+			
+			if (si.HasDeletions())
+			{
+				files.Add(si.GetDelFileName());
+			}
+			
+			bool addedNrm = false;
+			for (int i = 0; i < fieldInfos.Size(); i++)
+			{
+				System.String name = si.GetNormFileName(i);
+				if (name != null && Directory().FileExists(name))
+				{
+					if (name.EndsWith("." + IndexFileNames.NORMS_EXTENSION))
+					{
+						if (addedNrm)
+							continue; // add .nrm just once
+						addedNrm = true;
+					}
+					files.Add(name);
 				}
 			}
 			return files;
@@ -317,23 +396,13 @@ namespace Lucene.Net.Index
 			return tis.Terms(t);
 		}
 		
-		public override Document Document(int n)
+		public override Document Document(int n, FieldSelector fieldSelector)
 		{
 			lock (this)
 			{
 				if (IsDeleted(n))
 					throw new System.ArgumentException("attempt to access a deleted document");
-				return fieldsReader.Doc(n);
-			}
-		}
-		
-		public override Document Document(int n, string[] fields)
-		{
-			lock (this)
-			{
-				if (IsDeleted(n))
-					throw new System.ArgumentException("attempt to access a deleted document");
-				return fieldsReader.Doc(n, fields);
+				return fieldsReader.Doc(n, fieldSelector);
 			}
 		}
 		
@@ -374,104 +443,14 @@ namespace Lucene.Net.Index
 		
 		public override int MaxDoc()
 		{
-			return fieldsReader.Size();
+			return si.docCount;
 		}
 		
-		/// <seealso cref="IndexReader.GetFieldNames()">
-		/// </seealso>
-		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-		/// </deprecated>
-		public override System.Collections.ICollection GetFieldNames()
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < fieldInfos.Size(); i++)
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				fieldSet.Add(fi.name, fi.name);
-			}
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(boolean)">
-		/// </seealso>
-		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-		/// </deprecated>
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < fieldInfos.Size(); i++)
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed == indexed)
-					fieldSet.Add(fi.name, fi.name);
-			}
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetIndexedFieldNames(Field.TermVector tvSpec)">
-		/// </seealso>
-		/// <deprecated>  Replaced by {@link #GetFieldNames (IndexReader.FieldOption fldOption)}
-		/// </deprecated>
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			bool storedTermVector;
-			bool storePositionWithTermVector;
-			bool storeOffsetWithTermVector;
-			
-			if (tvSpec == Field.TermVector.NO)
-			{
-				storedTermVector = false;
-				storePositionWithTermVector = false;
-				storeOffsetWithTermVector = false;
-			}
-			else if (tvSpec == Field.TermVector.YES)
-			{
-				storedTermVector = true;
-				storePositionWithTermVector = false;
-				storeOffsetWithTermVector = false;
-			}
-			else if (tvSpec == Field.TermVector.WITH_POSITIONS)
-			{
-				storedTermVector = true;
-				storePositionWithTermVector = true;
-				storeOffsetWithTermVector = false;
-			}
-			else if (tvSpec == Field.TermVector.WITH_OFFSETS)
-			{                                                                           
-				storedTermVector = true;
-				storePositionWithTermVector = false;
-				storeOffsetWithTermVector = true;
-			}
-			else if (tvSpec == Field.TermVector.WITH_POSITIONS_OFFSETS)
-			{
-				storedTermVector = true;
-				storePositionWithTermVector = true;
-				storeOffsetWithTermVector = true;
-			}
-			else
-			{
-				throw new System.ArgumentException("unknown termVector parameter " + tvSpec);
-			}
-			
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < fieldInfos.Size(); i++)
-			{
-				FieldInfo fi = fieldInfos.FieldInfo(i);
-				if (fi.isIndexed && fi.storeTermVector == storedTermVector && fi.storePositionWithTermVector == storePositionWithTermVector && fi.storeOffsetWithTermVector == storeOffsetWithTermVector)
-				{
-					fieldSet.Add(fi.name, fi.name);
-				}
-			}
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption fldOption)">
+		/// <seealso cref="fldOption)">
 		/// </seealso>
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldOption)
 		{
+			
 			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
@@ -527,12 +506,11 @@ namespace Lucene.Net.Index
 		
 		internal static byte[] CreateFakeNorms(int size)
 		{
-            byte[] ones = new byte[size];
-            byte val = DefaultSimilarity.EncodeNorm(1.0f);
-            for (int index = 0; index < size; index++)
-                ones [index] = val;
-
-            return ones;
+			byte[] ones = new byte[size];
+			byte val = DefaultSimilarity.EncodeNorm(1.0f);
+			for (int index = 0; index < size; index++)
+				ones[index] = val;
+			return ones;
 		}
 		
 		private byte[] ones;
@@ -551,7 +529,6 @@ namespace Lucene.Net.Index
 				Norm norm = (Norm) norms[field];
 				if (norm == null)
 					return null; // not indexed, or norms not stored
-				
 				if (norm.bytes == null)
 				{
 					// value not yet read
@@ -579,7 +556,7 @@ namespace Lucene.Net.Index
 		{
 			Norm norm = (Norm) norms[field];
 			if (norm == null)
-			// not an indexed field
+				// not an indexed field
 				return ;
 			norm.dirty = true; // mark it dirty
 			normsDirty = true;
@@ -611,7 +588,7 @@ namespace Lucene.Net.Index
 				try
 				{
 					// read from disk
-					normStream.Seek(0);
+					normStream.Seek(norm.normSeek);
 					normStream.ReadBytes(bytes, offset, MaxDoc());
 				}
 				finally
@@ -624,20 +601,22 @@ namespace Lucene.Net.Index
 		
 		private void  OpenNorms(Directory cfsDir)
 		{
+			long nextNormSeek = SegmentMerger.NORMS_HEADER.Length; //skip header (header unused for now)
+			int maxDoc = MaxDoc();
 			for (int i = 0; i < fieldInfos.Size(); i++)
 			{
 				FieldInfo fi = fieldInfos.FieldInfo(i);
 				if (fi.isIndexed && !fi.omitNorms)
 				{
-					// look first if there are separate norms in compound format
-					System.String fileName = segment + ".s" + fi.number;
 					Directory d = Directory();
-					if (!d.FileExists(fileName))
+					System.String fileName = si.GetNormFileName(fi.number);
+					if (!si.HasSeparateNorms(fi.number))
 					{
-						fileName = segment + ".f" + fi.number;
 						d = cfsDir;
 					}
-					norms[fi.name] = new Norm(this, d.OpenInput(fileName), fi.number);
+					long normSeek = (fileName.EndsWith("." + IndexFileNames.NORMS_EXTENSION)?nextNormSeek:0);
+					norms[fi.name] = new Norm(this, d.OpenInput(fileName), fi.number, normSeek);
+					nextNormSeek += maxDoc; // increment also if some norms are separate
 				}
 			}
 		}
@@ -708,31 +687,69 @@ namespace Lucene.Net.Index
 			
 			return termVectorsReader.Get(docNumber);
 		}
-
-        static SegmentReader()
+		
+		/// <summary> Return the name of the segment this reader is reading.</summary>
+		internal virtual System.String GetSegmentName()
+		{
+			return segment;
+		}
+		
+		internal virtual void  SetSegmentInfo(SegmentInfo info)
+		{
+			si = info;
+		}
+		
+		internal override void  StartCommit()
+		{
+			base.StartCommit();
+			rollbackDeletedDocsDirty = deletedDocsDirty;
+			rollbackNormsDirty = normsDirty;
+			rollbackUndeleteAll = undeleteAll;
+			System.Collections.IEnumerator values = norms.Values.GetEnumerator();
+			while (values.MoveNext())
+			{
+				Norm norm = (Norm) values.Current;
+				norm.rollbackDirty = norm.dirty;
+			}
+		}
+		
+		internal override void  RollbackCommit()
+		{
+			base.RollbackCommit();
+			deletedDocsDirty = rollbackDeletedDocsDirty;
+			normsDirty = rollbackNormsDirty;
+			undeleteAll = rollbackUndeleteAll;
+			System.Collections.IEnumerator values = norms.Values.GetEnumerator();
+			while (values.MoveNext())
+			{
+				Norm norm = (Norm) values.Current;
+				norm.dirty = norm.rollbackDirty;
+			}
+		}
+		static SegmentReader()
 		{
 			{
 				try
 				{
-                    System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
+					System.String name = typeof(SegmentReader).FullName;
 					IMPL = System.Type.GetType(name);
 				}
-				catch (System.Security.SecurityException)
-				{
-					try
-					{
-						IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
-					}
-					catch (System.Exception e)
-					{
-						throw new System.SystemException("cannot load default SegmentReader class: " + e);
-					}
-				}
-                catch (System.Exception e)
+                catch (System.Security.SecurityException se)
                 {
-                    throw new System.SystemException("cannot load SegmentReader class: " + e);
+                    try
+                    {
+                        IMPL = System.Type.GetType(typeof(SegmentReader).FullName);
+                    }
+                    catch (System.Exception e)
+                    {
+                        throw new System.SystemException("cannot load default SegmentReader class: " + e, e);
+                    }
                 }
-            }
+                catch (System.Exception e)
+				{
+					throw new System.SystemException("cannot load SegmentReader class: " + e, e);
+				}
+			}
 		}
 	}
 }

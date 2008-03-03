@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,9 +16,10 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
+
 using Term = Lucene.Net.Index.Term;
 using TermEnum = Lucene.Net.Index.TermEnum;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -54,8 +56,12 @@ namespace Lucene.Net.Search
 				do 
 				{
 					Term term = enumerator.Term();
-					if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
-					{
+#if !FRAMEWORK_1_1
+                    if (term != null && term.Text().StartsWith(prefixText, StringComparison.Ordinal) && term.Field() == prefixField)
+#else
+                    if (term != null && term.Text().StartsWith(prefixText) && term.Field() == prefixField)
+#endif
+                    {
 						TermQuery tq = new TermQuery(term); // found a match
 						tq.SetBoost(GetBoost()); // set the boost
 						query.Add(tq, BooleanClause.Occur.SHOULD); // add to query
@@ -102,7 +108,7 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object.</summary>
 		public override int GetHashCode()
 		{
-			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode();
+			return BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0) ^ prefix.GetHashCode() ^ 0x6634D93C;
 		}
 	}
 }

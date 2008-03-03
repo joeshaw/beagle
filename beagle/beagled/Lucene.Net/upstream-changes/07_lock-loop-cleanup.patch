@@ -1,0 +1,27 @@
+From: Daniel Drake <dsd@gentoo.org>
+
+There's no need to try and catch ThreadInterruptedException since it is never
+thrown from Sleep().
+
+Also simplify the sleep call - no need to allocate a TimeSpan here...
+
+Index: Store/Lock.cs
+===================================================================
+--- Store/Lock.cs	(revision 4513)
++++ Store/Lock.cs	(working copy)
+@@ -85,14 +85,7 @@
+ 					}
+ 					throw e;
+ 				}
+-				try
+-				{
+-					System.Threading.Thread.Sleep(new System.TimeSpan((System.Int64) 10000 * LOCK_POLL_INTERVAL));
+-				}
+-				catch (System.Threading.ThreadInterruptedException e)
+-				{
+-					throw new System.IO.IOException(e.ToString());
+-				}
++				System.Threading.Thread.Sleep((int) LOCK_POLL_INTERVAL);
+ 				locked = Obtain();
+ 			}
+ 			return locked;

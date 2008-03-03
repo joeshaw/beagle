@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -29,7 +30,7 @@ namespace Lucene.Net.Search
 	/// and does not need to be stored (unless you happen to want it back with the
 	/// rest of your document data).  In other words:
 	/// 
-	/// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.UN_TOKENIZED));</code></p>
+	/// <p><code>document.add (new Fieldable ("byNumber", Integer.toString(x), Fieldable.Store.NO, Fieldable.Index.UN_TOKENIZED));</code></p>
 	/// 
 	/// 
 	/// <p><h3>Valid Types of Values</h3>
@@ -85,12 +86,6 @@ namespace Lucene.Net.Search
 	/// fields are in the index and <i>might</i> be used to sort - only by
 	/// the ones actually used to sort a result set.
 	/// 
-	/// <p>The cache is cleared each time a new <code>IndexReader</code> is
-	/// passed in, or if the value returned by <code>maxDoc()</code>
-	/// changes for the current IndexReader.  This class is not set up to
-	/// be able to efficiently sort hits from more than one index
-	/// simultaneously.
-	/// 
 	/// <p>Created: Feb 12, 2004 10:53:57 AM
 	/// 
 	/// </summary>
@@ -98,7 +93,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: Sort.cs,v 1.3 2006/10/02 17:09:07 joeshaw Exp $
+	/// <version>  $Id: Sort.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	[Serializable]
 	public class Sort
@@ -130,7 +125,7 @@ namespace Lucene.Net.Search
 		/// automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField.AUTO">
+		/// <seealso cref="SortField#AUTO">
 		/// </seealso>
 		public Sort(System.String field)
 		{
@@ -142,7 +137,7 @@ namespace Lucene.Net.Search
 		/// determined automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField.AUTO">
+		/// <seealso cref="SortField#AUTO">
 		/// </seealso>
 		public Sort(System.String field, bool reverse)
 		{
@@ -153,7 +148,7 @@ namespace Lucene.Net.Search
 		/// <code>field</code> is determined automatically.
 		/// 
 		/// </summary>
-		/// <seealso cref="SortField.AUTO">
+		/// <seealso cref="SortField#AUTO">
 		/// </seealso>
 		public Sort(System.String[] fields)
 		{

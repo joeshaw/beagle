@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,10 +17,13 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using Fieldable = Lucene.Net.Documents.Fieldable;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
+using FieldSelectorResult = Lucene.Net.Documents.FieldSelectorResult;
 
 namespace Lucene.Net.Index
 {
+	
 	
 	/// <summary>An IndexReader which reads multiple, parallel indexes.  Each index added
 	/// must have the same number of documents, but typically each contains
@@ -42,6 +46,7 @@ namespace Lucene.Net.Index
 	{
 		private System.Collections.ArrayList readers = new System.Collections.ArrayList();
 		private System.Collections.SortedList fieldToReader = new System.Collections.SortedList();
+		private System.Collections.IDictionary readerToFields = new System.Collections.Hashtable();
 		private System.Collections.ArrayList storedFieldReaders = new System.Collections.ArrayList();
 		
 		private int maxDoc;
@@ -64,10 +69,10 @@ namespace Lucene.Net.Index
 		/// the IndexReaders.
 		/// 
 		/// </summary>
-		/// <throws>  IllegalArgumentException if not all indexes contain the same number  </throws>
+		/// <throws>  IllegalArgumentException if not all indexes contain the same number </throws>
 		/// <summary>     of documents
 		/// </summary>
-		/// <throws>  IllegalArgumentException if not all indexes have the same value  </throws>
+		/// <throws>  IllegalArgumentException if not all indexes have the same value </throws>
 		/// <summary>     of {@link IndexReader#MaxDoc()}
 		/// </summary>
 		public virtual void  Add(IndexReader reader, bool ignoreStoredFields)
@@ -86,10 +91,12 @@ namespace Lucene.Net.Index
 			if (reader.NumDocs() != numDocs)
 				throw new System.ArgumentException("All readers must have same numDocs: " + numDocs + "!=" + reader.NumDocs());
 			
-			System.Collections.IEnumerator i = reader.GetFieldNames(IndexReader.FieldOption.ALL).GetEnumerator();
+			System.Collections.ICollection fields = reader.GetFieldNames(IndexReader.FieldOption.ALL);
+			readerToFields[reader] = fields;
+			System.Collections.IEnumerator i = fields.GetEnumerator();
 			while (i.MoveNext())
 			{
-                System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) i.Current;
+				System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) i.Current;
 
 				// update fieldToReader map
 				System.String field = fi.Key.ToString();
@@ -130,7 +137,7 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).DoDelete(n);
+				((IndexReader) readers[i]).DeleteDocument(n);
 			}
 			hasDeletions = true;
 		}
@@ -140,29 +147,42 @@ namespace Lucene.Net.Index
 		{
 			for (int i = 0; i < readers.Count; i++)
 			{
-				((IndexReader) readers[i]).DoUndeleteAll();
+				((IndexReader) readers[i]).UndeleteAll();
 			}
 			hasDeletions = false;
 		}
 		
 		// append fields from storedFieldReaders
-		public override Document Document(int n)
+		public override Document Document(int n, FieldSelector fieldSelector)
 		{
 			Document result = new Document();
 			for (int i = 0; i < storedFieldReaders.Count; i++)
 			{
 				IndexReader reader = (IndexReader) storedFieldReaders[i];
-		foreach(Field field in reader.Document(n).Fields())
+				
+				bool include = (fieldSelector == null);
+				if (!include)
 				{
-					result.Add(field);
+					System.Collections.IEnumerator it = ((System.Collections.ICollection) readerToFields[reader]).GetEnumerator();
+					while (it.MoveNext())
+					{
+						if (fieldSelector.Accept((System.String)((System.Collections.DictionaryEntry)it.Current).Value) != FieldSelectorResult.NO_LOAD)
+						{
+							include = true;
+							break;
+						}
+					}
+				}
+				if (include)
+				{
+					System.Collections.IEnumerator fieldIterator = reader.Document(n, fieldSelector).GetFields().GetEnumerator();
+					while (fieldIterator.MoveNext())
+					{
+						result.Add((Fieldable) fieldIterator.Current);
+					}
 				}
 			}
 			return result;
-		}
-		
-		public override Document Document(int n, string[] fields)
-		{
-			throw new System.NotSupportedException ();
 		}
 		
 		// get all vectors
@@ -173,8 +193,8 @@ namespace Lucene.Net.Index
 			while (i.MoveNext())
 			{
 				System.Collections.DictionaryEntry e = (System.Collections.DictionaryEntry) i.Current;
-				IndexReader reader = (IndexReader) e.Key;
-				System.String field = (System.String) e.Value;
+				System.String field = (System.String) e.Key;
+				IndexReader reader = (IndexReader) e.Value;
 				TermFreqVector vector = reader.GetTermFreqVector(n, field);
 				if (vector != null)
 					results.Add(vector);
@@ -184,27 +204,34 @@ namespace Lucene.Net.Index
 		
 		public override TermFreqVector GetTermFreqVector(int n, System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).GetTermFreqVector(n, field);
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			return reader == null ? null : reader.GetTermFreqVector(n, field);
 		}
 		
 		public override bool HasNorms(System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).HasNorms(field);
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			return reader == null ? false : reader.HasNorms(field);
 		}
 		
 		public override byte[] Norms(System.String field)
 		{
-			return ((IndexReader) fieldToReader[field]).Norms(field);
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			return reader == null ? null : reader.Norms(field);
 		}
 		
 		public override void  Norms(System.String field, byte[] result, int offset)
 		{
-			((IndexReader) fieldToReader[field]).Norms(field, result, offset);
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			if (reader != null)
+				reader.Norms(field, result, offset);
 		}
 		
 		protected internal override void  DoSetNorm(int n, System.String field, byte value_Renamed)
 		{
-			((IndexReader) fieldToReader[field]).DoSetNorm(n, field, value_Renamed);
+			IndexReader reader = ((IndexReader) fieldToReader[field]);
+			if (reader != null)
+				reader.DoSetNorm(n, field, value_Renamed);
 		}
 		
 		public override TermEnum Terms()
@@ -219,7 +246,8 @@ namespace Lucene.Net.Index
 		
 		public override int DocFreq(Term term)
 		{
-			return ((IndexReader) fieldToReader[term.Field()]).DocFreq(term);
+			IndexReader reader = ((IndexReader) fieldToReader[term.Field()]);
+			return reader == null ? 0 : reader.DocFreq(term);
 		}
 		
 		public override TermDocs TermDocs(Term term)
@@ -257,75 +285,25 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		public override System.Collections.ICollection GetFieldNames()
-		{
-            System.Collections.Hashtable result = new System.Collections.Hashtable(fieldToReader.Count);
-            System.Collections.ICollection items = fieldToReader.Keys;
-            foreach (object item in items)
-            {
-                result.Add(item, item);
-            }
-            return result;
-		}
-		
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < readers.Count; i++)
-			{
-				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetFieldNames(indexed);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-			}
-			return fieldSet;
-		}
-		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < readers.Count; i++)
-			{
-				IndexReader reader = ((IndexReader) readers[i]);
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
 		
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
-            System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-            for (int i = 0; i < readers.Count; i++)
-            {
-                IndexReader reader = ((IndexReader) readers[i]);
-                System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-            return fieldSet;
+			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
+			for (int i = 0; i < readers.Count; i++)
+			{
+				IndexReader reader = ((IndexReader) readers[i]);
+				System.Collections.ICollection names = reader.GetFieldNames(fieldNames);
+				for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
+				{
+					System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
+					System.String s = fi.Key.ToString();
+					if (fieldSet.ContainsKey(s) == false)
+					{
+						fieldSet.Add(s, s);
+					}
+				}
+			}
+			return fieldSet;
 		}
 		
 		private class ParallelTermEnum : TermEnum
@@ -344,6 +322,7 @@ namespace Lucene.Net.Index
 				
 			}
 			private System.String field;
+			private System.Collections.IEnumerator fieldIterator;
 			private TermEnum termEnum;
 			
 			public ParallelTermEnum(ParallelReader enclosingInstance)
@@ -358,28 +337,37 @@ namespace Lucene.Net.Index
 			{
 				InitBlock(enclosingInstance);
 				field = term.Field();
-				termEnum = ((IndexReader) Enclosing_Instance.fieldToReader[field]).Terms(term);
+				IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[field]);
+				if (reader != null)
+					termEnum = reader.Terms(term);
 			}
 			
 			public override bool Next()
 			{
-				if (field == null)
+				if (termEnum == null)
 					return false;
 				
-				bool next = termEnum.Next();
-				
-				// still within field?
-				if (next && (System.Object) termEnum.Term().Field() == (System.Object) field)
+				// another term in this field?
+				if (termEnum.Next() && (System.Object) termEnum.Term().Field() == (System.Object) field)
 					return true; // yes, keep going
 				
 				termEnum.Close(); // close old termEnum
 				
-				// find the next field, if any
-				field = ((System.String) SupportClass.TailMap(Enclosing_Instance.fieldToReader, field).GetKey(0));
-				if (field != null)
+				// find the next field with terms, if any
+				if (fieldIterator == null)
 				{
-					termEnum = ((IndexReader) Enclosing_Instance.fieldToReader[field]).Terms();
-					return true;
+					fieldIterator = SupportClass.TailMap(Enclosing_Instance.fieldToReader, field).Keys.GetEnumerator();
+                    fieldIterator.MoveNext();                     // Skip field to get next one
+				}
+				while (fieldIterator.MoveNext())
+				{
+					field = ((System.String) fieldIterator.Current);
+					termEnum = ((IndexReader) Enclosing_Instance.fieldToReader[field]).Terms(new Term(field, ""));
+					Term term = termEnum.Term();
+					if (term != null && (System.Object) term.Field() == (System.Object) field)
+						return true;
+					else
+						termEnum.Close();
 				}
 				
 				return false; // no more fields
@@ -387,15 +375,24 @@ namespace Lucene.Net.Index
 			
 			public override Term Term()
 			{
+				if (termEnum == null)
+					return null;
+				
 				return termEnum.Term();
 			}
+			
 			public override int DocFreq()
 			{
+				if (termEnum == null)
+					return 0;
+				
 				return termEnum.DocFreq();
 			}
+			
 			public override void  Close()
 			{
-				termEnum.Close();
+				if (termEnum != null)
+					termEnum.Close();
 			}
 		}
 		
@@ -438,7 +435,8 @@ namespace Lucene.Net.Index
 			
 			public virtual void  Seek(Term term)
 			{
-				termDocs = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]).TermDocs(term);
+				IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]);
+				termDocs = reader != null ? reader.TermDocs(term) : null;
 			}
 			
 			public virtual void  Seek(TermEnum termEnum)
@@ -448,22 +446,32 @@ namespace Lucene.Net.Index
 			
 			public virtual bool Next()
 			{
+				if (termDocs == null)
+					return false;
+				
 				return termDocs.Next();
 			}
 			
 			public virtual int Read(int[] docs, int[] freqs)
 			{
+				if (termDocs == null)
+					return 0;
+				
 				return termDocs.Read(docs, freqs);
 			}
 			
 			public virtual bool SkipTo(int target)
 			{
+				if (termDocs == null)
+					return false;
+				
 				return termDocs.SkipTo(target);
 			}
 			
 			public virtual void  Close()
 			{
-				termDocs.Close();
+				if (termDocs != null)
+					termDocs.Close();
 			}
 		}
 		
@@ -495,11 +503,13 @@ namespace Lucene.Net.Index
 			
 			public override void  Seek(Term term)
 			{
-				termDocs = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]).TermPositions(term);
+				IndexReader reader = ((IndexReader) Enclosing_Instance.fieldToReader[term.Field()]);
+				termDocs = reader != null ? reader.TermPositions(term) : null;
 			}
 			
 			public virtual int NextPosition()
 			{
+				// It is an error to call this if there is no next position, e.g. if termDocs==null
 				return ((TermPositions) termDocs).NextPosition();
 			}
 		}

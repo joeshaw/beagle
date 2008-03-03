@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -90,7 +91,7 @@ namespace Lucene.Net.Store
 			while ((i & ~ 0x7F) != 0)
 			{
 				WriteByte((byte) ((i & 0x7f) | 0x80));
-				i = (int) (((uint) i) >> 7);    // {{Aroush-1.9}} Is this OK?!  long to uint, to int conversion.
+				i = SupportClass.Number.URShift(i, 7);
 			}
 			WriteByte((byte) i);
 		}

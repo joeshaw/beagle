@@ -1,0 +1,55 @@
+Fix an incorrect change made by 'patch'. Update the list of allowed files in the index directories. Make sure the names match that in IndexFileNames.
+
+From: D Bera <dbera.web@gmail.com>
+
+Index: Index/SegmentInfos.cs
+===================================================================
+--- Index/SegmentInfos.cs	(revision 4520)
++++ Index/SegmentInfos.cs	(working copy)
+@@ -740,6 +740,7 @@
+ 			string[] files = directory.List();
+ 
+ 			System.Collections.ArrayList segment_names = new System.Collections.ArrayList();
++
+ 			foreach (SegmentInfo si in this)
+ 				segment_names.Add (si.name);
+ 
+@@ -748,11 +749,14 @@
+ 				if (segment_names.Contains (basename))
+ 					continue;
+ 
+-				if (basename == IndexFileNames.DELETABLE || basename == IndexFileNames.SEGMENTS)
++				// Allowed files deletable, segments, segments.gen, segments_N
++				if (basename == IndexFileNames.DELETABLE || basename.StartsWith (IndexFileNames.SEGMENTS))
+ 					continue;
+ 
+ 				Console.WriteLine ("WARNING! Deleting stale data {0}", file);
+-				directory.DeleteFile (file);
++				try {
++					directory.DeleteFile (file);
++				} catch { /* Could be already deleted. */ }
+ 			}
+ 		}
+ 	}
+Index: Index/IndexWriter.cs
+===================================================================
+--- Index/IndexWriter.cs	(revision 4520)
++++ Index/IndexWriter.cs	(working copy)
+@@ -711,8 +711,6 @@
+ 					writeLock.Release(); // release write lock
+ 					writeLock = null;
+ 				}
+-
+-				segmentInfos.Optimize (directory);
+ 			}
+ 			finally
+ 			{
+@@ -1070,6 +1068,8 @@
+ 					int minSegment = segmentInfos.Count - mergeFactor;
+ 					MergeSegments(segmentInfos, minSegment < 0?0:minSegment, segmentInfos.Count);
+ 				}
++
++				segmentInfos.Optimize (directory);
+ 			}
+ 		}
+ 		

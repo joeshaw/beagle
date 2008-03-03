@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,13 +16,14 @@
  */
 
 using System;
+
 using TermDocs = Lucene.Net.Index.TermDocs;
 
 namespace Lucene.Net.Search
 {
 	
 	/// <summary>Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.</summary>
-	sealed class TermScorer : Scorer
+	sealed public class TermScorer : Scorer
 	{
 		private Weight weight;
 		private TermDocs termDocs;
@@ -46,7 +48,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		/// <param name="norms">The field norms of the document fields for the <code>Term</code>.
 		/// </param>
-		internal TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms) : base(similarity)
+		public TermScorer(Weight weight, TermDocs td, Similarity similarity, byte[] norms) : base(similarity)
 		{
 			this.weight = weight;
 			this.termDocs = td;
@@ -97,7 +99,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns the current document number matching the query.
-		/// Initially invalid, until {@link #Next()} is called the first time.
+		/// Initially invalid, until {@link #next()} is called the first time.
 		/// </summary>
 		public override int Doc()
 		{
@@ -176,12 +178,11 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary>Returns an explanation of the score for a document.
-		/// <br>When this method is used, the {@link #Next()} method
+		/// <br>When this method is used, the {@link #next()} method
 		/// and the {@link #Score(HitCollector)} method should not be used.
 		/// </summary>
 		/// <param name="doc">The document number for the explanation.
 		/// </param>
-		/// <todo>  Modify to make use of {@link TermDocs#SkipTo(int)}. </todo>
 		public override Explanation Explain(int doc)
 		{
 			TermQuery query = (TermQuery) weight.GetQuery();
@@ -195,7 +196,7 @@ namespace Lucene.Net.Search
 			}
 			if (tf == 0)
 			{
-				while (termDocs.Next())
+				if (termDocs.SkipTo(doc))
 				{
 					if (termDocs.Doc() == doc)
 					{

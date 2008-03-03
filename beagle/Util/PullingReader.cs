@@ -56,6 +56,7 @@ namespace Beagle.Util {
 					done = ! pull (pullBuffer, neededSize - pullBuffer.Length);
 				} catch (Exception e) {
 					Logger.Log.Debug (e, "Caught exception pulling text from {0}", pull);
+					done = true;
 				}
 			}
 		}
@@ -88,8 +89,7 @@ namespace Beagle.Util {
 			if (done && pullBuffer.Length < count)
 				count = pullBuffer.Length;
 
-			for (int i = 0; i < count; ++i)
-				buffer [index + i] = pullBuffer [i];
+			pullBuffer.CopyTo (0, buffer, index, count);
 			pullBuffer.Remove (0, count);
 
 			return count;

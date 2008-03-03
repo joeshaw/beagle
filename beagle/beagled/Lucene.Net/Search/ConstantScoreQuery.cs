@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -26,7 +28,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  yonik
 	/// </author>
-	/// <version>  $Id: ConstantScoreQuery.cs,v 1.2 2006/10/02 17:09:02 joeshaw Exp $
+	/// <version>  $Id: ConstantScoreQuery.java 507374 2007-02-14 03:12:50Z yonik $
 	/// </version>
 	[Serializable]
 	public class ConstantScoreQuery : Query
@@ -38,9 +40,21 @@ namespace Lucene.Net.Search
 			this.filter = filter;
 		}
 		
+		/// <summary>Returns the encapsulated filter </summary>
+		public virtual Filter GetFilter()
+		{
+			return filter;
+		}
+		
 		public override Query Rewrite(IndexReader reader)
 		{
 			return this;
+		}
+		
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			// OK to not add any terms when used for MultiSearcher,
+			// but may not be OK for highlighting
 		}
 		
 		[Serializable]
@@ -59,14 +73,14 @@ namespace Lucene.Net.Search
 				}
 				
 			}
-			private Searcher searcher;
+			private Similarity similarity;
 			private float queryNorm;
 			private float queryWeight;
 			
 			public ConstantWeight(ConstantScoreQuery enclosingInstance, Searcher searcher)
 			{
 				InitBlock(enclosingInstance);
-				this.searcher = searcher;
+				this.similarity = Enclosing_Instance.GetSimilarity(searcher);
 			}
 			
 			public virtual Query GetQuery()
@@ -93,7 +107,7 @@ namespace Lucene.Net.Search
 			
 			public virtual Scorer Scorer(IndexReader reader)
 			{
-				return new ConstantScorer(enclosingInstance, Enclosing_Instance.GetSimilarity(searcher), reader, this);
+				return new ConstantScorer(enclosingInstance, similarity, reader, this);
 			}
 			
 			public virtual Explanation Explain(IndexReader reader, int doc)
@@ -102,12 +116,14 @@ namespace Lucene.Net.Search
 				ConstantScorer cs = (ConstantScorer) Scorer(reader);
 				bool exists = cs.bits.Get(doc);
 				
-				Explanation result = new Explanation();
+				ComplexExplanation result = new ComplexExplanation();
 				
 				if (exists)
 				{
 					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + "), product of:");
 					result.SetValue(queryWeight);
+					System.Boolean tempAux = true;
+					result.SetMatch(tempAux);
 					result.AddDetail(new Explanation(Enclosing_Instance.GetBoost(), "boost"));
 					result.AddDetail(new Explanation(queryNorm, "queryNorm"));
 				}
@@ -115,6 +131,8 @@ namespace Lucene.Net.Search
 				{
 					result.SetDescription("ConstantScoreQuery(" + Enclosing_Instance.filter + ") doesn't match id " + doc);
 					result.SetValue(0);
+					System.Boolean tempAux2 = false;
+					result.SetMatch(tempAux2);
 				}
 				return result;
 			}
@@ -139,7 +157,7 @@ namespace Lucene.Net.Search
 			internal float theScore;
 			internal int doc = - 1;
 			
-			public ConstantScorer(ConstantScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, Weight w) : base(similarity)
+			public ConstantScorer(ConstantScoreQuery enclosingInstance, Similarity similarity, IndexReader reader, Weight w):base(similarity)
 			{
 				InitBlock(enclosingInstance);
 				theScore = w.GetValue();
@@ -205,7 +223,7 @@ namespace Lucene.Net.Search
 			return filter.GetHashCode() + BitConverter.ToInt32(BitConverter.GetBytes(GetBoost()), 0);
 		}
 
-        override public System.Object Clone()
+		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
             ConstantScoreQuery clone = (ConstantScoreQuery) base.Clone();

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -295,6 +296,29 @@ public class SupportClass
             else
                 return null;
         }
+
+        /// <summary>
+        /// Returns a list of files in a give directory.
+        /// </summary>
+        /// <param name="fullName">The full path name to the directory.</param>
+        /// <param name="indexFileNameFilter"></param>
+        /// <returns>An array containing the files.</returns>
+        public static System.String[] GetLuceneIndexFiles(System.String fullName, 
+                                                          Lucene.Net.Index.IndexFileNameFilter indexFileNameFilter)
+        {
+            System.IO.DirectoryInfo dInfo = new System.IO.DirectoryInfo(fullName);
+            System.Collections.ArrayList list = new System.Collections.ArrayList();
+            foreach (System.IO.FileInfo fInfo in dInfo.GetFiles())
+            {
+                if (indexFileNameFilter.Accept(fInfo, fInfo.Name) == true)
+                {
+                    list.Add(fInfo.Name);
+                }
+            }
+            System.String[] retFiles = new System.String[list.Count];
+            list.CopyTo(retFiles);
+            return retFiles;
+        }
     }
 
     /// <summary>
@@ -416,6 +440,22 @@ public class SupportClass
                 return (number >> bits) + (2 << ~bits);
         }
 
+
+        /// <summary>
+        /// Performs an unsigned bitwise right shift with the specified number
+        /// </summary>
+        /// <param name="number">Number to operate on</param>
+        /// <param name="bits">Ammount of bits to shift</param>
+        /// <returns>The resulting number from the shift operation</returns>
+        public static long URShift(long number, int bits)
+        {
+            if (number >= 0)
+                return number >> bits;
+            else
+                return (number >> bits) + (2 << ~bits);
+        }
+
+
         /// <summary>
         /// Returns the index of the first bit that is set to true that occurs 
         /// on or after the specified starting index. If no such bit exists 
@@ -434,6 +474,23 @@ public class SupportClass
                 }
             }
             return -1;
+        }
+
+
+        /// <summary>
+        /// Returns the number of bits set to true in this BitSet.
+        /// </summary>
+        /// <param name="bits">The BitArray object.</param>
+        /// <returns>The number of bits set to true in this BitSet.</returns>
+        public static int Cardinality(System.Collections.BitArray bits)
+        {
+            int count = 0;
+            for (int i = 0; i < bits.Count; i++)
+            {
+                if (bits[i] == true)
+                    count++;
+            }
+            return count;
         }
     }
 
@@ -592,68 +649,35 @@ public class SupportClass
             try
             {
                 if (s.EndsWith("f") || s.EndsWith("F"))
-                    return System.Single.Parse(s.Substring(0, s.Length - 1));
+                    return System.Single.Parse(s.Substring(0, s.Length - 1).Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
                 else
-                    return System.Single.Parse(s);
+                    return System.Single.Parse(s.Replace(".", System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator));
             }
             catch(System.FormatException fex)
             {
                 throw fex;					
             }
         }
-    }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public class AppSettings
-    {
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defValue"></param>
+        /// <param name="f"></param>
         /// <returns></returns>
-        public static int Get(System.String key, int defValue)
+        public static string ToString(float f)
         {
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
-            if (theValue == null)
-            {
-                return defValue;
-            }
-            return System.Convert.ToInt16(theValue.Trim());
+            return f.ToString().Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defValue"></param>
+        /// <param name="f"></param>
+        /// <param name="format"></param>
         /// <returns></returns>
-        public static long Get(System.String key, long defValue)
+        public static string ToString(float f, string format)
         {
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
-            if (theValue == null)
-            {
-                return defValue;
-            }
-            return System.Convert.ToInt32(theValue.Trim());
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defValue"></param>
-        /// <returns></returns>
-        public static System.String Get(System.String key, System.String defValue)
-        {
-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
-            if (theValue == null)
-            {
-                return defValue;
-            }
-            return theValue;
+            return f.ToString(format).Replace(System.Globalization.CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator, ".");
         }
     }
 
@@ -679,6 +703,50 @@ public class SupportClass
     }
 
     /// <summary>
+    /// Summary description for TestSupportClass.
+    /// </summary>
+    public class Compare
+    {
+        /// <summary>
+        /// Compares two Term arrays for equality.
+        /// </summary>
+        /// <param name="t1">First Term array to compare</param>
+        /// <param name="t2">Second Term array to compare</param>
+        /// <returns>true if the Terms are equal in both arrays, false otherwise</returns>
+        public static bool CompareTermArrays(Lucene.Net.Index.Term[] t1, Lucene.Net.Index.Term[] t2)
+        {
+            if (t1.Length != t2.Length)
+                return false;
+            for (int i = 0; i < t1.Length; i++)
+            {
+                if (t1[i].CompareTo(t2[i]) == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Compares two string arrays for equality.
+        /// </summary>
+        /// <param name="l1">First string array list to compare</param>
+        /// <param name="l2">Second string array list to compare</param>
+        /// <returns>true if the strings are equal in both arrays, false otherwise</returns>
+        public static bool CompareStringArrays(System.String[] l1, System.String[] l2)
+        {
+            if (l1.Length != l2.Length)
+                return false;
+            for (int i = 0; i < l1.Length; i++)
+            {
+                if (l1[i] != l2[i])
+                    return false;
+            }
+            return true;
+        }
+    }
+
+    /// <summary>
     /// Use for .NET 1.1 Framework only.
     /// </summary>
     public class CompressionSupport
@@ -689,7 +757,11 @@ public class SupportClass
             byte[] Uncompress(byte[] input);
         }
 
+#if SHARP_ZIP_LIB
+        private static ICompressionAdapter compressionAdapter = new Lucene.Net.Index.Compression.SharpZipLibAdapter();
+#else
         private static ICompressionAdapter compressionAdapter;
+#endif
 
         public static byte[] Uncompress(byte[] input)
         {
@@ -707,7 +779,7 @@ public class SupportClass
         {
             if (compressionAdapter == null)
             {
-                System.String compressionLibClassName = SupportClass.AppSettings.Get("Lucene.Net.CompressionLib.class", null);
+                System.String compressionLibClassName = null;
                 if (compressionLibClassName == null)
                     throw new System.SystemException("Compression support not configured"); 
 

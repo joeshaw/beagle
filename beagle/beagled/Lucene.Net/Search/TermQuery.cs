@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,9 +16,10 @@
  */
 
 using System;
-using IndexReader = Lucene.Net.Index.IndexReader;
+
 using Term = Lucene.Net.Index.Term;
 using TermDocs = Lucene.Net.Index.TermDocs;
+using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
 namespace Lucene.Net.Search
@@ -100,7 +102,7 @@ namespace Lucene.Net.Search
 			public virtual Explanation Explain(IndexReader reader, int doc)
 			{
 				
-				Explanation result = new Explanation();
+				ComplexExplanation result = new ComplexExplanation();
 				result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 				
 				Explanation idfExpl = new Explanation(idf, "idf(docFreq=" + reader.DocFreq(Enclosing_Instance.term) + ")");
@@ -123,7 +125,7 @@ namespace Lucene.Net.Search
 				
 				// explain field weight
 				System.String field = Enclosing_Instance.term.Field();
-				Explanation fieldExpl = new Explanation();
+				ComplexExplanation fieldExpl = new ComplexExplanation();
 				fieldExpl.SetDescription("fieldWeight(" + Enclosing_Instance.term + " in " + doc + "), product of:");
 				
 				Explanation tfExpl = Scorer(reader).Explain(doc);
@@ -137,9 +139,12 @@ namespace Lucene.Net.Search
 				fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 				fieldExpl.AddDetail(fieldNormExpl);
 				
+				fieldExpl.SetMatch(tfExpl.IsMatch());
 				fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
 				
 				result.AddDetail(fieldExpl);
+				System.Boolean tempAux = fieldExpl.GetMatch();
+				result.SetMatch(tempAux);
 				
 				// combine them
 				result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());
@@ -171,8 +176,11 @@ namespace Lucene.Net.Search
 		public override void  ExtractTerms(System.Collections.Hashtable terms)
 		{
             Term term = GetTerm();
-			terms.Add(term, term);
-		}
+            if (terms.Contains(term) == false)
+            {
+                terms.Add(term, term);
+            }
+        }
 		
 		/// <summary>Prints a user-readable version of this query. </summary>
 		public override System.String ToString(System.String field)

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Search
@@ -115,16 +117,6 @@ namespace Lucene.Net.Search
 			return hitDoc.doc;
 		}
 		
-		/// <summary>Returns the requested fields of the n<sup>th</sup> document in this set.
-		/// <p>Documents are not cached since they could be fetched using different set of fields.
-		/// </summary>
-		public Document Doc(int n, string[] fields)
-		{
-			HitDoc hitDoc = HitDoc(n);
-			
-			return searcher.Doc(hitDoc.id, fields);
-		}
-		
 		/// <summary>Returns the score for the nth document in this set. </summary>
 		public float Score(int n)
 		{
@@ -138,7 +130,7 @@ namespace Lucene.Net.Search
 		}
 		
 		/// <summary> Returns a {@link HitIterator} to navigate the Hits.  Each item returned
-		/// from {@link Iterator#next()} is a {@link Hit}.
+		/// from {@link Iterator#Next()} is a {@link Hit}.
 		/// <p>
 		/// <b>Caution:</b> Iterate only over the hits needed.  Iterating over all
 		/// hits is generally not desirable and may be the source of

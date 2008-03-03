@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -29,7 +31,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldCache.cs,v 1.3 2006/10/02 17:09:02 joeshaw Exp $
+	/// <version>  $Id: FieldCache.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <summary>Expert: Stores term text values and document ordering data. </summary>
 	public class StringIndex
@@ -49,7 +51,7 @@ namespace Lucene.Net.Search
 		}
 	}
 	public struct FieldCache_Fields
-	{
+    {
 		/// <summary>Indicator for StringIndex values in the cache. </summary>
 		// NOTE: the value assigned to this constant must not be
 		// the same as any of those in SortField!!
@@ -63,7 +65,7 @@ namespace Lucene.Net.Search
 	}
 	public interface FieldCache
 	{
-		
+		void Close(IndexReader reader);
 		
 		/// <summary>Checks the internal cache for an appropriate entry, and if none is
 		/// found, reads the terms in <code>field</code> as integers and returns an array
@@ -186,18 +188,18 @@ namespace Lucene.Net.Search
 		/// <throws>  IOException  If any error occurs. </throws>
 		System.IComparable[] GetCustom(IndexReader reader, System.String field, SortComparator comparator);
 	}
-
-    /// <summary>Interface to parse ints from document fields.</summary>
-	/// <seealso cref="GetInts(IndexReader, String, IntParser)">
+	
+	/// <summary>Interface to parse ints from document fields.</summary>
+	/// <seealso cref="String, IntParser)">
 	/// </seealso>
 	public interface IntParser
 	{
 		/// <summary>Return an integer representation of this field's value. </summary>
 		int ParseInt(System.String string_Renamed);
 	}
-
-    /// <summary>Interface to parse floats from document fields.</summary>
-	/// <seealso cref="GetFloats(IndexReader, String, FloatParser)">
+	
+	/// <summary>Interface to parse floats from document fields.</summary>
+	/// <seealso cref="String, FloatParser)">
 	/// </seealso>
 	public interface FloatParser
 	{

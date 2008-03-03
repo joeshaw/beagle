@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,8 +17,8 @@
 
 using System;
 using Directory = Lucene.Net.Store.Directory;
-using IndexInput = Lucene.Net.Store.IndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
+using IndexInput = Lucene.Net.Store.IndexInput;
 
 namespace Lucene.Net.Index
 {
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
 	/// </author>
-	/// <version>  $Id: CompoundFileWriter.cs,v 1.4 2006/10/02 17:08:52 joeshaw Exp $
+	/// <version>  $Id: CompoundFileWriter.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public sealed class CompoundFileWriter
 	{
@@ -116,14 +117,14 @@ namespace Lucene.Net.Index
 			if (file == null)
 				throw new System.NullReferenceException("file cannot be null");
 			
-            try
-            {
-                ids.Add(file, file);
-            }
-            catch (Exception)
-            {
-                throw new System.ArgumentException("File " + file + " already added");
-            }
+			try
+			{
+				ids.Add(file, file);
+			}
+			catch (Exception)
+			{
+				throw new System.ArgumentException("File " + file + " already added");
+			}
 			
 			FileEntry entry = new FileEntry();
 			entry.file = file;

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 using Term = Lucene.Net.Index.Term;
 
@@ -24,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary>Implements search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// or {@link #search(Query,Filter)} methods.
 	/// </summary>
 	public class MultiSearcher : Searcher
 	{
@@ -119,11 +121,6 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
-			public override Document Doc(int i, string[] fields)
-			{
-				throw new System.NotSupportedException();
-			}
-			
 			public override Explanation Explain(Weight weight, int doc)
 			{
 				throw new System.NotSupportedException();
@@ -198,19 +195,6 @@ namespace Lucene.Net.Search
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
 		}
 		
-		public override Document Doc(int n, string[] fields)
-		{
-			int i = SubSearcher(n); // find searcher index
-			return searchables[i].Doc(n - starts[i], fields); // dispatch to searcher
-		}
-		
-		/// <summary>Call {@link #subSearcher} instead.</summary>
-		/// <deprecated>
-		/// </deprecated>
-		public virtual int SearcherIndex(int n)
-		{
-			return SubSearcher(n);
-		}
 		
 		/// <summary>Returns index of the searcher for document <code>n</code> in the array
 		/// used to construct this searcher. 
@@ -280,7 +264,7 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-			    // put docs in array
+				// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
 			float maxScore = (totalHits == 0) ? System.Single.NegativeInfinity : scoreDocs2[0].score;
@@ -317,7 +301,7 @@ namespace Lucene.Net.Search
 			
 			ScoreDoc[] scoreDocs2 = new ScoreDoc[hq.Size()];
 			for (int i = hq.Size() - 1; i >= 0; i--)
-			    // put docs in array
+				// put docs in array
 				scoreDocs2[i] = (ScoreDoc) hq.Pop();
 			
 			return new TopFieldDocs(totalHits, scoreDocs2, hq.GetFields(), maxScore);
@@ -382,7 +366,7 @@ namespace Lucene.Net.Search
             System.Collections.IEnumerator e = terms.Keys.GetEnumerator();
             while (e.MoveNext())
                 allTermsArray[index++] = e.Current as Term;
-			int[] aggregatedDfs = new int[terms.Count];
+            int[] aggregatedDfs = new int[terms.Count];
 			for (int i = 0; i < searchables.Length; i++)
 			{
 				int[] dfs = searchables[i].DocFreqs(allTermsArray);

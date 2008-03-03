@@ -1,0 +1,165 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Lucene uses lockfiles for sharing index files across multiple processes.  Stock
+lucene.net implementation creates the lockfile incorrectly. 
+01_obtain-lock-fix.patch fixes that but leaves a small race window. This 
+patch removes the race window. It uses native open() syscall instead of 
+System.IO File operations as the mono implementations for File.Open() turned 
+out to be buggy (giving wrong sharing violation errors).
+
+Updated by: Joe Shaw <joeshaw@novell.com>
+
+My update to this patch redoes the way the locking PID was being written out
+to disk.  We were doing it previously using a UnixStream and StreamWriter,
+but that turned out to be very slow and put a noticable dent in indexing
+performance.  This new version uses POSIX I/O calls directly to write out
+the PID and it resolves the performance issue.
+
+Index: Store/SimpleFSLockFactory.cs
+===================================================================
+--- Store/SimpleFSLockFactory.cs	(revision 4506)
++++ Store/SimpleFSLockFactory.cs	(working copy)
+@@ -16,6 +16,7 @@
+  */
+ 
+ using System;
++using Mono.Unix.Native;
+ 
+ namespace Lucene.Net.Store
+ {
+@@ -155,34 +156,89 @@
+                     throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
+                 }
+ 			}
+-            try
+-            {
+-                System.IO.FileStream createdFile = lockFile.Create();
+-                createdFile.Close();
+-                return true;
+-            }
+-            catch
+-            {
+-                return false;
+-            }
++
++                try
++                {
++		    int fd = Mono.Unix.Native.Syscall.open (
++				lockFile.FullName,
++				Mono.Unix.Native.OpenFlags.O_RDWR | 
++				Mono.Unix.Native.OpenFlags.O_CREAT |
++				Mono.Unix.Native.OpenFlags.O_EXCL,
++				Mono.Unix.Native.FilePermissions.S_IRUSR);
++		    if (fd == -1) {
++			    Mono.Unix.Native.Errno error = Mono.Unix.Native.Stdlib.GetLastError ();
++			    if (error == Mono.Unix.Native.Errno.ENOSPC)
++				    throw new Beagle.Util.NoSpaceException ();
++			    else
++				    throw new System.IO.IOException ("Could not create lock file: "
++					    + Mono.Unix.Native.Stdlib.strerror (error));
++		    }
++
++		    // This code replaces the commented-out code below because
++		    // it ends up being much faster.  The reason for this is
++		    // that closing a UnixStream causes Syscall.fsync() to be
++		    // called, and that apparently is extremely slow!
++		    //
++		    // Time(ms) Count   P/call(ms) Method name
++		    // 1563.926      68   22.999   Mono.Unix.Native.Syscall::fsync(int)
++		    //
++		    // Since the lock file is written out very often, this time
++		    // adds up and noticably slows down indexing.
++		    IntPtr ptr = IntPtr.Zero;
++		    long ret;
++
++		    try {
++			    string s = System.Diagnostics.Process.GetCurrentProcess ().Id.ToString () + "\n";
++			    ptr = Mono.Unix.UnixMarshal.StringToHeap (s);
++
++			    do {
++				    ret = Mono.Unix.Native.Syscall.write (fd, ptr, (ulong) s.Length);
++			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
++			    if ((int)ret == -1) {
++				    Mono.Unix.Native.Errno error = Mono.Unix.Native.Stdlib.GetLastError ();
++				    if (error == Mono.Unix.Native.Errno.ENOSPC)
++					    throw new Beagle.Util.NoSpaceException ();
++				    else
++					    Mono.Unix.UnixMarshal.ThrowExceptionForError (error);
++			    }
++		    } finally {
++			    Mono.Unix.UnixMarshal.FreeHeap (ptr);
++
++			    do {
++				    ret = Mono.Unix.Native.Syscall.close (fd);
++			    } while (Mono.Unix.UnixMarshal.ShouldRetrySyscall ((int) ret));
++			    Mono.Unix.UnixMarshal.ThrowExceptionForLastErrorIf ((int) ret);
++		    }
++
++		    //System.IO.StreamWriter w = new System.IO.StreamWriter (new Mono.Unix.UnixStream (fd, true));
++		    //w.WriteLine (System.Diagnostics.Process.GetCurrentProcess ().Id);
++		    //w.Close ();
++                    return true;
++                }
++		catch (Beagle.Util.NoSpaceException e)
++		{
++			throw e;
++		}
++                catch (Exception e)
++                {
++		    Log ("Exception in CreateNew for file:" + lockFile.FullName + ":" + e);
++                    return false;
++                }
+ 		}
+ 		
+ 		public override void  Release()
+ 		{
+-			bool tmpBool;
+-			if (System.IO.File.Exists(lockFile.FullName))
+-			{
+-				System.IO.File.Delete(lockFile.FullName);
+-				tmpBool = true;
+-			}
+-			else if (System.IO.Directory.Exists(lockFile.FullName))
+-			{
+-				System.IO.Directory.Delete(lockFile.FullName);
+-				tmpBool = true;
++			int fd = Mono.Unix.Native.Syscall.unlink (
++		    	    	lockFile.FullName);
++		    	if (fd == -1)
++				throw new System.IO.IOException (
++					"Could not release lock file: "
++					+ Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()
++				));
++
++			if (System.IO.File.Exists(lockFile.FullName)) {
++				Beagle.Util.Logger.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
+ 			}
+-			else
+-				tmpBool = false;
+-			bool generatedAux = tmpBool;
+ 		}
+ 		
+ 		public override bool IsLocked()
+@@ -199,5 +255,20 @@
+ 		{
+ 			return "SimpleFSLock@" + lockFile;
+ 		}
++		
++		static public Beagle.Util.Logger Logger = null;
++		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
++		static public void Log (string format, params object[] args)
++		{
++			if (Logger != null)
++				Logger.Debug (format, args);
++		}
++
++		static public void Log (Exception e)
++		{
++			if (Logger != null)
++				Logger.Debug (e);
++		}
++		
+ 	}
+-}
+\ No newline at end of file
++}

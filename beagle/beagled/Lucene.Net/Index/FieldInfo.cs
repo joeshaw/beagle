@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -26,16 +27,16 @@ namespace Lucene.Net.Index
 		internal int number;
 		
 		// true if term vector for this field should be stored
-		public /*internal*/ bool storeTermVector;
-		public /*internal*/ bool storeOffsetWithTermVector;
-		public /*internal*/ bool storePositionWithTermVector;
+		public bool storeTermVector;
+		public bool storeOffsetWithTermVector;
+		public bool storePositionWithTermVector;
 		
-		public /*internal*/ bool omitNorms; // omit norms associated with indexed fields
+		public bool omitNorms; // omit norms associated with indexed fields
 		
-        public bool IsIndexed
-        {
-            get {   return isIndexed;   }
-        }
+		public bool IsIndexed()
+		{
+			return isIndexed;
+		}
 
 		internal FieldInfo(System.String na, bool tk, int nu, bool storeTermVector, bool storePositionWithTermVector, bool storeOffsetWithTermVector, bool omitNorms)
 		{
@@ -47,5 +48,11 @@ namespace Lucene.Net.Index
 			this.storePositionWithTermVector = storePositionWithTermVector;
 			this.omitNorms = omitNorms;
 		}
+
+        // For testing only
+        public System.String Name
+        {
+            get { return name; }
+        }
 	}
 }

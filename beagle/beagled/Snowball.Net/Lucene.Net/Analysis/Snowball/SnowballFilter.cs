@@ -60,7 +60,13 @@ namespace Lucene.Net.Analysis.Snowball
 				throw new System.SystemException(e.ToString());
 			}
 		}
-		
+
+		public SnowballFilter(TokenStream in_Renamed, SnowballProgram stemmer, System.Reflection.MethodInfo stemMethod) : base(in_Renamed)
+		{
+			this.stemmer = stemmer;
+			this.stemMethod = stemMethod;
+		}
+
 		/// <summary>Returns the next input Token, after being stemmed </summary>
         public override Token Next()
 		{
@@ -80,6 +86,13 @@ namespace Lucene.Net.Analysis.Snowball
 			Token newToken = new Token(stemmer.GetCurrent(), token.StartOffset(), token.EndOffset(), token.Type());
 			newToken.SetPositionIncrement(token.GetPositionIncrement());
 			return newToken;
+		}
+
+		public override void Close()
+		{
+			// In case stemmer was shared
+			stemmer.SetCurrent(String.Empty);
+			base.Close();
 		}
 	}
 }

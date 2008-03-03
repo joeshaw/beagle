@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -20,267 +21,68 @@ using System;
 namespace Lucene.Net.Analysis.Standard
 {
 	
-	/// <summary>A grammar-based tokenizer constructed with JavaCC.
-	/// 
-	/// <p> This should be a good tokenizer for most European-language documents:
-	/// 
-	/// <ul>
-	/// <li>Splits words at punctuation characters, removing punctuation. However, a 
-	/// dot that's not followed by whitespace is considered part of a token.
-	/// <li>Splits words at hyphens, unless there's a number in the token, in which case
-	/// the whole token is interpreted as a product number and is not split.
-	/// <li>Recognizes email addresses and internet hostnames as one token.
-	/// </ul>
-	/// 
-	/// <p>Many applications have specific tokenizer needs.  If this tokenizer does
-	/// not suit your application, please consider copying this source code
-	/// directory to your project and maintaining your own grammar-based tokenizer.
-	/// </summary>
-	public class StandardTokenizer : Lucene.Net.Analysis.Tokenizer
-	{
+    /// <summary>A grammar-based tokenizer constructed with JavaCC.
+    /// 
+    /// <p> This should be a good tokenizer for most European-language documents:
+    /// 
+    /// <ul>
+    /// <li>Splits words at punctuation characters, removing punctuation. However, a 
+    /// dot that's not followed by whitespace is considered part of a token.
+    /// <li>Splits words at hyphens, unless there's a number in the token, in which case
+    /// the whole token is interpreted as a product number and is not split.
+    /// <li>Recognizes email addresses and internet hostnames as one token.
+    /// </ul>
+    /// 
+    /// <p>Many applications have specific tokenizer needs.  If this tokenizer does
+    /// not suit your application, please consider copying this source code
+    /// directory to your project and maintaining your own grammar-based tokenizer.
+    /// </summary>
+    public class StandardTokenizer : Lucene.Net.Analysis.Tokenizer
+    {
 		
-		/// <summary>Constructs a tokenizer for this Reader. </summary>
-		public StandardTokenizer(System.IO.TextReader reader) : this(new FastCharStream(reader))
-		{
-			this.input = reader;
-		}
+        private StandardTokenizerImpl scanner;
+
+	public const int ALPHANUM          = 0;
+	public const int APOSTROPHE        = 1;
+	public const int ACRONYM           = 2;
+	public const int COMPANY           = 3;
+	public const int EMAIL             = 4;
+	public const int HOST              = 5;
+	public const int NUM               = 6;
+	public const int CJ                = 7;
+	public const int ACRONYM_DEP       = 8; /* deprecated */
+
+        /// <summary>Constructs a tokenizer for this Reader. </summary>
+        public StandardTokenizer(System.IO.TextReader reader) : base(reader)
+        {
+	    this.scanner = StandardTokenizerImpl.GetStandardTokenizerImpl(reader);
+        }
 		
-		/// <summary>Returns the next token in the stream, or null at EOS.
-		/// <p>The returned token's type is set to an element of {@link
-		/// StandardTokenizerConstants#tokenImage}.
-		/// </summary>
-		public override Lucene.Net.Analysis.Token Next()
-		{
-			Token token = null;
-			switch ((jj_ntk == - 1) ? Jj_ntk() : jj_ntk)
-			{
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.ALPHANUM: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.ALPHANUM);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.APOSTROPHE: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.APOSTROPHE);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.ACRONYM: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.ACRONYM);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.COMPANY: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.COMPANY);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.EMAIL: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.EMAIL);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.HOST: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.HOST);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.NUM: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.NUM);
-					break;
-				
-				case Lucene.Net.Analysis.Standard.StandardTokenizerConstants.CJ: 
-					token = Jj_consume_token(Lucene.Net.Analysis.Standard.StandardTokenizerConstants.CJ);
-					break;
-				
-				case 0: 
-					token = Jj_consume_token(0);
-					break;
-				
-				default: 
-					jj_la1[0] = jj_gen;
-					Jj_consume_token(- 1);
-					throw new ParseException();
-				
-			}
-			if (token.kind == Lucene.Net.Analysis.Standard.StandardTokenizerConstants.EOF)
-			{
-				{
-					if (true)
-						return null;
-				}
-			}
-			else
-			{
-				{
-					if (true)
-						return new Lucene.Net.Analysis.Token(token.image, token.beginColumn, token.endColumn, Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage[token.kind]);
-				}
-			}
-			throw new System.ApplicationException("Missing return statement in function");
-		}
+        /// <summary>Returns the next token in the stream, or null at EOS.
+        /// <p>The returned token's type is set to an element of {@link
+        /// StandardTokenizerConstants#tokenImage}.
+        /// </summary>
+        public override Lucene.Net.Analysis.Token Next()
+        {
+	    int tokenType = scanner.GetNextToken();
+
+	    if (tokenType == StandardTokenizerImpl.YYEOF) {
+	        return null;
+	    }
+
+	    int startPosition = scanner.yychar();
+
+	    string tokenImage = scanner.yytext();
+	    return new Token(tokenImage, startPosition, startPosition
+	    	+ tokenImage.Length,
+	    	StandardTokenizerImpl.TOKEN_TYPES[tokenType]);
+        }
 
         /// <summary>By default, closes the input Reader. </summary>
         public override void Close() 
         { 
-            token_source.Close(); 
+            scanner.yyclose(); 
             base.Close(); 
         }
-
-        public StandardTokenizerTokenManager token_source;
-		public Token token, jj_nt;
-		private int jj_ntk;
-		private int jj_gen;
-		private int[] jj_la1 = new int[1];
-		private static int[] jj_la1_0_Renamed_Field;
-		private static void  jj_la1_0()
-		{
-			jj_la1_0_Renamed_Field = new int[]{0x10ff};
-		}
-		
-		public StandardTokenizer(CharStream stream)
-		{
-			token_source = new StandardTokenizerTokenManager(stream);
-			token = new Token();
-			jj_ntk = - 1;
-			jj_gen = 0;
-			for (int i = 0; i < 1; i++)
-				jj_la1[i] = - 1;
-		}
-		
-		public virtual void  ReInit(CharStream stream)
-		{
-			token_source.ReInit(stream);
-			token = new Token();
-			jj_ntk = - 1;
-			jj_gen = 0;
-			for (int i = 0; i < 1; i++)
-				jj_la1[i] = - 1;
-		}
-		
-		public StandardTokenizer(StandardTokenizerTokenManager tm)
-		{
-			token_source = tm;
-			token = new Token();
-			jj_ntk = - 1;
-			jj_gen = 0;
-			for (int i = 0; i < 1; i++)
-				jj_la1[i] = - 1;
-		}
-		
-		public virtual void  ReInit(StandardTokenizerTokenManager tm)
-		{
-			token_source = tm;
-			token = new Token();
-			jj_ntk = - 1;
-			jj_gen = 0;
-			for (int i = 0; i < 1; i++)
-				jj_la1[i] = - 1;
-		}
-		
-		private Token Jj_consume_token(int kind)
-		{
-			Token oldToken;
-			if ((oldToken = token).next != null)
-				token = token.next;
-			else
-				token = token.next = token_source.GetNextToken();
-			jj_ntk = - 1;
-			if (token.kind == kind)
-			{
-				jj_gen++;
-				return token;
-			}
-			token = oldToken;
-			jj_kind = kind;
-			throw GenerateParseException();
-		}
-		
-		public Token GetNextToken()
-		{
-			if (token.next != null)
-				token = token.next;
-			else
-				token = token.next = token_source.GetNextToken();
-			jj_ntk = - 1;
-			jj_gen++;
-			return token;
-		}
-		
-		public Token GetToken(int index)
-		{
-			Token t = token;
-			for (int i = 0; i < index; i++)
-			{
-				if (t.next != null)
-					t = t.next;
-				else
-					t = t.next = token_source.GetNextToken();
-			}
-			return t;
-		}
-		
-		private int Jj_ntk()
-		{
-			if ((jj_nt = token.next) == null)
-				return (jj_ntk = (token.next = token_source.GetNextToken()).kind);
-			else
-				return (jj_ntk = jj_nt.kind);
-		}
-		
-		private System.Collections.ArrayList jj_expentries = System.Collections.ArrayList.Synchronized(new System.Collections.ArrayList(10));
-		private int[] jj_expentry;
-		private int jj_kind = - 1;
-		
-		public virtual ParseException GenerateParseException()
-		{
-			jj_expentries.Clear();
-			bool[] la1tokens = new bool[16];
-			for (int i = 0; i < 16; i++)
-			{
-				la1tokens[i] = false;
-			}
-			if (jj_kind >= 0)
-			{
-				la1tokens[jj_kind] = true;
-				jj_kind = - 1;
-			}
-			for (int i = 0; i < 1; i++)
-			{
-				if (jj_la1[i] == jj_gen)
-				{
-					for (int j = 0; j < 32; j++)
-					{
-						if ((jj_la1_0_Renamed_Field[i] & (1 << j)) != 0)
-						{
-							la1tokens[j] = true;
-						}
-					}
-				}
-			}
-			for (int i = 0; i < 16; i++)
-			{
-				if (la1tokens[i])
-				{
-					jj_expentry = new int[1];
-					jj_expentry[0] = i;
-					jj_expentries.Add(jj_expentry);
-				}
-			}
-			int[][] exptokseq = new int[jj_expentries.Count][];
-			for (int i = 0; i < jj_expentries.Count; i++)
-			{
-				exptokseq[i] = (int[]) jj_expentries[i];
-			}
-			return new ParseException(token, exptokseq, Lucene.Net.Analysis.Standard.StandardTokenizerConstants.tokenImage);
-		}
-		
-		public void  Enable_tracing()
-		{
-		}
-		
-		public void  Disable_tracing()
-		{
-		}
-		static StandardTokenizer()
-		{
-			{
-				jj_la1_0();
-			}
-		}
-	}
+    }
 }

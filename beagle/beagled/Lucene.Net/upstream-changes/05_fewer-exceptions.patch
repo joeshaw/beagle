@@ -1,0 +1,35 @@
+From: Daniel Drake <dsd@gentoo.org>
+
+Exception handling is expensive, lets avoid it where possible.
+
+Index: Index/FieldInfos.cs
+===================================================================
+--- Index/FieldInfos.cs	(revision 4506)
++++ Index/FieldInfos.cs	(working copy)
+@@ -231,16 +231,9 @@
+ 		
+ 		public int FieldNumber(System.String fieldName)
+ 		{
+-			try
+-			{
+-				FieldInfo fi = FieldInfo(fieldName);
+-				if (fi != null)
+-					return fi.number;
+-			}
+-			catch (System.IndexOutOfRangeException ioobe)
+-			{
+-				return - 1;
+-			}
++			FieldInfo fi = FieldInfo(fieldName);
++			if (fi != null)
++				return fi.number;
+ 			return - 1;
+ 		}
+ 		
+@@ -349,4 +342,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

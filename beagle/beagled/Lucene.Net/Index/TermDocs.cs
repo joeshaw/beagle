@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -25,7 +26,7 @@ namespace Lucene.Net.Index
 	/// the number of times the term occurred in each document.  <p> The pairs are
 	/// ordered by document number.
 	/// </summary>
-	/// <seealso cref="IndexReader.TermDocs()">
+	/// <seealso cref="IndexReader#TermDocs()">
 	/// </seealso>
 	
 	public interface TermDocs
@@ -41,12 +42,12 @@ namespace Lucene.Net.Index
 		void  Seek(TermEnum termEnum);
 		
 		/// <summary>Returns the current document number.  <p> This is invalid until {@link
-		/// #Next()} is called for the first time.
+		/// #next()} is called for the first time.
 		/// </summary>
 		int Doc();
 		
 		/// <summary>Returns the frequency of the term within the current document.  <p> This
-		/// is invalid until {@link #Next()} is called for the first time.
+		/// is invalid until {@link #next()} is called for the first time.
 		/// </summary>
 		int Freq();
 		

@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 	// 1. Removes words which are potential noise like dhyhy8ju7q9
 	// 2. Splits email addresses into meaningful tokens
 	// 3. Splits hostnames into subparts
-	class NoiseEmailHostFilter : TokenFilter {
+	public class NoiseEmailHostFilter : TokenFilter {
 			
 		private bool tokenize_email_hostname;
 
@@ -131,13 +131,13 @@ namespace Beagle.Daemon {
 		// Someone might like to search for emails, hostnames and
 		// phone numbers (which fall under type NUM)
 		private static readonly string tokentype_email
-			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.EMAIL];
+			= LNSA.StandardTokenizerImpl.TOKEN_TYPES [LNSA.StandardTokenizerImpl.EMAIL];
 		private static readonly string tokentype_host 
-			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.HOST];
+			= LNSA.StandardTokenizerImpl.TOKEN_TYPES [LNSA.StandardTokenizerImpl.HOST];
 		private static readonly string tokentype_number 
-			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.NUM];
+			= LNSA.StandardTokenizerImpl.TOKEN_TYPES [LNSA.StandardTokenizerImpl.NUM];
 		private static readonly string tokentype_alphanum
-			= LNSA.StandardTokenizerConstants.tokenImage [LNSA.StandardTokenizerConstants.ALPHANUM];
+			= LNSA.StandardTokenizerImpl.TOKEN_TYPES [LNSA.StandardTokenizerImpl.ALPHANUM];
 
 		private bool ProcessToken (ref Lucene.Net.Analysis.Token token)
 		{
@@ -166,10 +166,10 @@ namespace Beagle.Daemon {
 				if (begin == 0)
 					return ! IsNoise (text);
 				token = new Lucene.Net.Analysis.Token (
-					token.TermText ().Remove (0, begin),
-					token.StartOffset (),
+					text.Remove (0, begin),
+					begin,
 					token.EndOffset (),
-					token.Type ());
+					type);
 				return true;
 			} else if (type == tokentype_email) {
 				if (tokenize_email_hostname)
@@ -184,27 +184,46 @@ namespace Beagle.Daemon {
 				return ! IsNoise (token.TermText ());
 		}
 
-		private Queue parts = new Queue ();
-		private Lucene.Net.Analysis.Token token;
+		// State for creating smaller tokens from larger email/hostname tokens
+		private string[] parts = null;
+		private int parts_index = -1;
+		private int last_end_offset = -1;
+		private string token_type = null;
 
 		public override Lucene.Net.Analysis.Token Next ()
 		{
-			if (parts.Count != 0) {
-				string part = (string) parts.Dequeue ();
-				Lucene.Net.Analysis.Token part_token;
-				// FIXME: Searching for google.com will not match www.google.com.
-				// If we decide to allow google-style "abcd.1234" which means
-				// "abcd 1234" as a consequtive phrase, then adjusting
-				// the startOffset and endOffset would enable matching
-				// google.com to www.google.com
-				part_token = new Lucene.Net.Analysis.Token (part,
-								       token.StartOffset (),
-								       token.EndOffset (),
-								       token.Type ());
-				part_token.SetPositionIncrement (0);
-				return part_token;
+			if (parts != null) {
+				if (++parts_index < parts.Length) {
+					string part = parts [parts_index];
+					Lucene.Net.Analysis.Token part_token;
+					// FIXME: Searching for google.com will not match www.google.com.
+					// If we decide to allow google-style "abcd.1234" which means
+					// "abcd 1234" as a consequtive phrase, then adjusting
+					// the startOffset and endOffset would enable matching
+					// google.com to www.google.com
+					int start_offset = (parts_index == 0 && token_type == tokentype_email ?
+						0 :
+						last_end_offset + 1); // assuming only one separator
+					int end_offset = start_offset + part.Length;
+					part_token = new Lucene.Net.Analysis.Token (part,
+									       start_offset,
+									       end_offset,
+									       token_type);
+					part_token.SetPositionIncrement (0);
+					last_end_offset = (parts_index == 0 && token_type == tokentype_email ?
+						-1 :
+						end_offset); // assuming only one separator
+					return part_token;
+				} else {
+					// clear the array
+					parts = null;
+					parts_index = -1;
+					last_end_offset = -1;
+					token_type = null;
+				}
 			}
 
+			Token token;
 			while ( (token = token_stream.Next ()) != null) {
 				//Console.WriteLine ("Found token: [{0}]", token.TermText ());
 				if (ProcessToken (ref token))
@@ -213,42 +232,52 @@ namespace Beagle.Daemon {
 			return null;
 		}
 
-		char[] replace_array = { '@', '.', '-', '_', '+' };
+		private static readonly char[] replace_array = { '@', '.', '-', '_', '+' };
+
 		private void ProcessEmailToken (Lucene.Net.Analysis.Token token)
 		{
+			token_type = tokentype_email;
+
 			string email = token.TermText ();
-			string[] tmp = email.Split (replace_array);
-			int l = tmp.Length;
+			parts = email.Split (replace_array);
+			if (parts.Length == 1) // safety check
+				return;
 
-			// store username part as a large token
 			int index_at = email.IndexOf ('@');
-			tmp [l-1] = email.Substring (0, index_at);
-
-			foreach (string s in tmp)
-				parts.Enqueue (s);
-			
+			// store username part as a large token
+			// and also remove the final tld part
+			Array.Copy (parts, 0, parts, 1, parts.Length - 1);
+			parts [0] = email.Substring (0, index_at);
 		}
 
 		private void ProcessURLToken (Lucene.Net.Analysis.Token token)
 		{
+			token_type = tokentype_host;
+
 			string hostname = token.TermText ();
-			string[] host_parts = hostname.Split ('.');
+			parts = hostname.Split ('.');
+
+			if (parts [0] != "www")
+				return;
 
 			// remove initial www
-			int begin_index = (host_parts [0] == "www" ? 1 : 0);
+			Array.Copy (parts, 1, parts, 0, parts.Length - 1);
+			Array.Resize (ref parts, parts.Length - 1);
 			// FIXME: Remove final tld
 			// Any string of form "<alnum> '.')+<alnum>" has type HOST
 			// Removing last token might remove important words from non-host
 			// string of that form. To fix that, we need to match against the
 			// huge list of TLDs.
-			for (int i = begin_index; i < host_parts.Length; ++i)
-				parts.Enqueue (host_parts [i]);
-
 		}
 	}
 
-#if false
+#if Noisefilter
 	public class AnalyzerTest {
+		public static void Main ()
+		{
+			Analyze (Console.In);
+		}
+
 		public static void Analyze (TextReader reader)
 		{
 			Lucene.Net.Analysis.Token lastToken = null;

@@ -215,19 +215,19 @@ namespace Beagle.Daemon {
 
 				term = new Term ("Uri", uri_str);
 				// For property changes, only secondary index is modified
-				secondary_reader.Delete (term);
+				secondary_reader.DeleteDocuments (term);
 
 				// Now remove from everywhere else (if asked to remove or if asked to add, in which case
 				// we first remove and then add)
 				// So we also need to remove child documents
 				if (indexable.Type != IndexableType.PropertyChange) {
-					num_delete = primary_reader.Delete (term);
+					num_delete = primary_reader.DeleteDocuments (term);
 
 					// When we delete an indexable, also delete any children.
 					// FIXME: Shouldn't we also delete any children of children, etc.?
 					term = new Term ("ParentUri", uri_str);
-					num_delete += primary_reader.Delete (term);
-					secondary_reader.Delete (term);
+					num_delete += primary_reader.DeleteDocuments (term);
+					secondary_reader.DeleteDocuments (term);
 				}
 
 				// If this is a strict removal (and not a deletion that
@@ -270,6 +270,10 @@ namespace Beagle.Daemon {
 				text_cache.BeginTransaction ();
 				
 			IndexWriter primary_writer, secondary_writer;
+			// FIXME: Lock obtain time-out can happen here; if that happens,
+			// an exception will be thrown and this method will break in the middle
+			// leaving IndexWriters unclosed! Same for any Lucene.Net-index modification
+			// methods.
 			primary_writer = new IndexWriter (PrimaryStore, IndexingAnalyzer, false);
 			secondary_writer = null;
 

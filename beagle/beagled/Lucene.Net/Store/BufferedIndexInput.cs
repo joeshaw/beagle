@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -29,6 +30,11 @@ namespace Lucene.Net.Store
 		private long bufferStart = 0; // position in file of buffer
 		private int bufferLength = 0; // end of valid bytes
 		private int bufferPosition = 0; // next byte to read
+
+        public static int BUFFER_SIZE_ForNUnitTest
+        {
+            get { return BUFFER_SIZE; }
+        }
 		
 		public override byte ReadByte()
 		{
@@ -39,22 +45,57 @@ namespace Lucene.Net.Store
 		
 		public override void  ReadBytes(byte[] b, int offset, int len)
 		{
-			if (len < BUFFER_SIZE)
+			if (len <= (bufferLength - bufferPosition))
 			{
-				for (int i = 0; i < len; i++)
-				    // read byte-by-byte
-					b[i + offset] = (byte) ReadByte();
+				// the buffer contains enough data to satistfy this request
+				if (len > 0)
+				// to allow b to be null if len is 0...
+					Array.Copy(buffer, bufferPosition, b, offset, len);
+				bufferPosition += len;
 			}
 			else
 			{
-				// read all-at-once
-				long start = GetFilePointer();
-				SeekInternal(start);
-				ReadInternal(b, offset, len);
-				
-				bufferStart = start + len; // adjust stream variables
-				bufferPosition = 0;
-				bufferLength = 0; // trigger refill() on read
+				// the buffer does not have enough data. First serve all we've got.
+				int available = bufferLength - bufferPosition;
+				if (available > 0)
+				{
+					Array.Copy(buffer, bufferPosition, b, offset, available);
+					offset += available;
+					len -= available;
+					bufferPosition += available;
+				}
+				// and now, read the remaining 'len' bytes:
+				if (len < BUFFER_SIZE)
+				{
+					// If the amount left to read is small enough, do it in the usual
+					// buffered way: fill the buffer and copy from it:
+					Refill();
+					if (bufferLength < len)
+					{
+						// Throw an exception when refill() could not read len bytes:
+						Array.Copy(buffer, 0, b, offset, bufferLength);
+						throw new System.IO.IOException("read past EOF");
+					}
+					else
+					{
+						Array.Copy(buffer, 0, b, offset, len);
+						bufferPosition = len;
+					}
+				}
+				else
+				{
+					// The amount left to read is larger than the buffer - there's no
+					// performance reason not to read it all at once. Note that unlike
+					// the previous code of this function, there is no need to do a seek
+					// here, because there's no need to reread what we had in the buffer.
+					long after = bufferStart + bufferPosition + len;
+					if (after > Length())
+						throw new System.IO.IOException("read past EOF");
+					ReadInternal(b, offset, len);
+					bufferStart = after;
+					bufferPosition = 0;
+					bufferLength = 0; // trigger refill() on read
+				}
 			}
 		}
 		
@@ -63,7 +104,7 @@ namespace Lucene.Net.Store
 			long start = bufferStart + bufferPosition;
 			long end = start + BUFFER_SIZE;
 			if (end > Length())
-			    // don't read past EOF
+				// don't read past EOF
 				end = Length();
 			bufferLength = (int) (end - start);
 			if (bufferLength <= 0)
@@ -97,7 +138,7 @@ namespace Lucene.Net.Store
 		{
 			if (pos >= bufferStart && pos < (bufferStart + bufferLength))
 				bufferPosition = (int) (pos - bufferStart);
-			    // seek within buffer
+				// seek within buffer
 			else
 			{
 				bufferStart = pos;
@@ -110,7 +151,7 @@ namespace Lucene.Net.Store
 		/// <summary>Expert: implements seek.  Sets current position in this file, where the
 		/// next {@link #ReadInternal(byte[],int,int)} will occur.
 		/// </summary>
-		/// <seealso cref="ReadInternal(byte[],int,int)">
+		/// <seealso cref="#ReadInternal(byte[],int,int)">
 		/// </seealso>
 		public abstract void  SeekInternal(long pos);
 		
@@ -127,7 +168,7 @@ namespace Lucene.Net.Store
 			return clone;
 		}
 
-        static BufferedIndexInput()
+		static BufferedIndexInput()
 		{
 			BUFFER_SIZE = BufferedIndexOutput.BUFFER_SIZE;
 		}

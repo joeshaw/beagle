@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,14 +16,16 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
-using Explanation = Lucene.Net.Search.Explanation;
 using Query = Lucene.Net.Search.Query;
-using Scorer = Lucene.Net.Search.Scorer;
-using Searcher = Lucene.Net.Search.Searcher;
-using Similarity = Lucene.Net.Search.Similarity;
 using Weight = Lucene.Net.Search.Weight;
+using Searcher = Lucene.Net.Search.Searcher;
+using Scorer = Lucene.Net.Search.Scorer;
+using Explanation = Lucene.Net.Search.Explanation;
+using ComplexExplanation = Lucene.Net.Search.ComplexExplanation;
+using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -36,16 +39,19 @@ namespace Lucene.Net.Search.Spans
 		private float queryNorm;
 		private float queryWeight;
 		
-		private System.Collections.ICollection terms;
+		private System.Collections.Hashtable terms;
 		private SpanQuery query;
 		
 		public SpanWeight(SpanQuery query, Searcher searcher)
 		{
 			this.similarity = query.GetSimilarity(searcher);
 			this.query = query;
-			this.terms = query.GetTerms();
+			terms = new System.Collections.Hashtable();
+			query.ExtractTerms(terms);
 			
-			idf = this.query.GetSimilarity(searcher).Idf(terms, searcher);
+			System.Collections.ArrayList tmp = new System.Collections.ArrayList(terms.Values);
+			
+			idf = this.query.GetSimilarity(searcher).Idf(tmp, searcher);
 		}
 		
 		public virtual Query GetQuery()
@@ -78,7 +84,7 @@ namespace Lucene.Net.Search.Spans
 		public virtual Explanation Explain(IndexReader reader, int doc)
 		{
 			
-			Explanation result = new Explanation();
+			ComplexExplanation result = new ComplexExplanation();
 			result.SetDescription("weight(" + GetQuery() + " in " + doc + "), product of:");
 			System.String field = ((SpanQuery) GetQuery()).GetField();
 			
@@ -86,7 +92,8 @@ namespace Lucene.Net.Search.Spans
 			System.Collections.IEnumerator i = terms.GetEnumerator();
 			while (i.MoveNext())
 			{
-				Term term = (Term) i.Current;
+				System.Collections.DictionaryEntry tmp = (System.Collections.DictionaryEntry) i.Current;
+				Term term = (Term) tmp.Key;
 				docFreqs.Append(term.Text());
 				docFreqs.Append("=");
 				docFreqs.Append(reader.DocFreq(term));
@@ -116,7 +123,7 @@ namespace Lucene.Net.Search.Spans
 			result.AddDetail(queryExpl);
 			
 			// explain field weight
-			Explanation fieldExpl = new Explanation();
+			ComplexExplanation fieldExpl = new ComplexExplanation();
 			fieldExpl.SetDescription("fieldWeight(" + field + ":" + query.ToString(field) + " in " + doc + "), product of:");
 			
 			Explanation tfExpl = Scorer(reader).Explain(doc);
@@ -130,9 +137,12 @@ namespace Lucene.Net.Search.Spans
 			fieldNormExpl.SetDescription("fieldNorm(field=" + field + ", doc=" + doc + ")");
 			fieldExpl.AddDetail(fieldNormExpl);
 			
+			fieldExpl.SetMatch(tfExpl.IsMatch());
 			fieldExpl.SetValue(tfExpl.GetValue() * idfExpl.GetValue() * fieldNormExpl.GetValue());
 			
 			result.AddDetail(fieldExpl);
+			System.Boolean tempAux = fieldExpl.GetMatch();
+			result.SetMatch(tempAux);
 			
 			// combine them
 			result.SetValue(queryExpl.GetValue() * fieldExpl.GetValue());

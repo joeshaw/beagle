@@ -1,9 +1,10 @@
 /*
- * Copyright 2005 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -47,25 +48,26 @@ namespace Lucene.Net.Search
 			private int lastScoredDoc = - 1;
 			public override float Score()
 			{
-				if (Doc() > lastScoredDoc)
+				if (this.Doc() > lastScoredDoc)
 				{
-					lastScoredDoc = Doc();
+					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers += base.nrMatchers;
 				}
 				return base.Score();
 			}
 		}
-
-        private class AnonymousClassConjunctionScorer : ConjunctionScorer
+		
+		private class AnonymousClassConjunctionScorer : ConjunctionScorer
 		{
 			private void  InitBlock(int requiredNrMatchers, BooleanScorer2 enclosingInstance)
 			{
 				this.requiredNrMatchers = requiredNrMatchers;
 				this.enclosingInstance = enclosingInstance;
 			}
+			
 			private int requiredNrMatchers;
 			private BooleanScorer2 enclosingInstance;
-
+			
 			public BooleanScorer2 Enclosing_Instance
 			{
 				get
@@ -82,9 +84,9 @@ namespace Lucene.Net.Search
 			
 			public override float Score()
 			{
-				if (Doc() > lastScoredDoc)
+				if (this.Doc() > lastScoredDoc)
 				{
-					lastScoredDoc = Doc();
+					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers += requiredNrMatchers;
 				}
 				// All scorers match, so defaultSimilarity super.score() always has 1 as
@@ -165,7 +167,7 @@ namespace Lucene.Net.Search
 		/// at least one of the optional scorers will have to
 		/// match during the search.
 		/// </param>
-		public BooleanScorer2(Similarity similarity, int minNrShouldMatch):base(similarity)
+		public BooleanScorer2(Similarity similarity, int minNrShouldMatch) : base(similarity)
 		{
 			if (minNrShouldMatch < 0)
 			{
@@ -249,9 +251,9 @@ namespace Lucene.Net.Search
 			}
 			public override float Score()
 			{
-				if (Doc() > lastScoredDoc)
+				if (this.Doc() > lastScoredDoc)
 				{
-					lastScoredDoc = Doc();
+					lastScoredDoc = this.Doc();
 					Enclosing_Instance.coordinator.nrMatchers++;
 				}
 				return scorer.Score();
@@ -274,7 +276,7 @@ namespace Lucene.Net.Search
 			}
 		}
 		
-		private Scorer CountingDisjunctionSumScorer(System.Collections.IList scorers, int minMrShouldMatch)
+		private Scorer countingDisjunctionSumScorer(System.Collections.IList scorers, int minMrShouldMatch)
 		// each scorer from the list counted as a single matcher
 		{
 			return new AnonymousClassDisjunctionSumScorer(this, scorers, minMrShouldMatch);
@@ -282,7 +284,7 @@ namespace Lucene.Net.Search
 		
 		private static Similarity defaultSimilarity = new DefaultSimilarity();
 		
-		private Scorer CountingConjunctionSumScorer(System.Collections.IList requiredScorers)
+		private Scorer countingConjunctionSumScorer(System.Collections.IList requiredScorers)
 		{
 			// each scorer from the list counted as a single matcher
 			int requiredNrMatchers = requiredScorers.Count;
@@ -298,7 +300,6 @@ namespace Lucene.Net.Search
 		private Scorer DualConjunctionSumScorer(Scorer req1, Scorer req2)
 		{
 			// non counting. 
-			//UPGRADE_NOTE: Final was removed from the declaration of 'requiredNrMatchers '. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1003'"
 			int requiredNrMatchers = requiredScorers.Count;
 			ConjunctionScorer cs = new ConjunctionScorer(defaultSimilarity);
 			// All scorers match, so defaultSimilarity super.score() always has 1 as
@@ -338,7 +339,7 @@ namespace Lucene.Net.Search
 				else
 				{
 					// optionalScorers.size() >= nrOptRequired, no required scorers
-					Scorer requiredCountingSumScorer = (optionalScorers.Count > nrOptRequired)?CountingDisjunctionSumScorer(optionalScorers, nrOptRequired):((optionalScorers.Count == 1)?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):CountingConjunctionSumScorer(optionalScorers));
+					Scorer requiredCountingSumScorer = (optionalScorers.Count > nrOptRequired)?countingDisjunctionSumScorer(optionalScorers, nrOptRequired):((optionalScorers.Count == 1)?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):countingConjunctionSumScorer(optionalScorers));
 					return AddProhibitedScorers(requiredCountingSumScorer);
 				}
 			}
@@ -356,21 +357,21 @@ namespace Lucene.Net.Search
 				// all optional scorers also required.
 				System.Collections.ArrayList allReq = new System.Collections.ArrayList(requiredScorers);
 				allReq.AddRange(optionalScorers);
-				return AddProhibitedScorers(CountingConjunctionSumScorer(allReq));
+				return AddProhibitedScorers(countingConjunctionSumScorer(allReq));
 			}
 			else
 			{
 				// optionalScorers.size() > minNrShouldMatch, and at least one required scorer
-				Scorer requiredCountingSumScorer = (requiredScorers.Count == 1)?new SingleMatchScorer(this, (Scorer) requiredScorers[0]):CountingConjunctionSumScorer(requiredScorers);
+				Scorer requiredCountingSumScorer = (requiredScorers.Count == 1) ? new SingleMatchScorer(this, (Scorer) requiredScorers[0]) : countingConjunctionSumScorer(requiredScorers);
 				if (minNrShouldMatch > 0)
 				{
 					// use a required disjunction scorer over the optional scorers
-					return AddProhibitedScorers(DualConjunctionSumScorer(requiredCountingSumScorer, CountingDisjunctionSumScorer(optionalScorers, minNrShouldMatch)));
+					return AddProhibitedScorers(DualConjunctionSumScorer(requiredCountingSumScorer, countingDisjunctionSumScorer(optionalScorers, minNrShouldMatch)));
 				}
 				else
 				{
 					// minNrShouldMatch == 0
-					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), ((optionalScorers.Count == 1)?new SingleMatchScorer(this, (Scorer) optionalScorers[0]):CountingDisjunctionSumScorer(optionalScorers, 1))); // require 1 in combined, optional scorer.
+					return new ReqOptSumScorer(AddProhibitedScorers(requiredCountingSumScorer), ((optionalScorers.Count == 1) ? new SingleMatchScorer(this, (Scorer) optionalScorers[0]):countingDisjunctionSumScorer(optionalScorers, 1))); // require 1 in combined, optional scorer.
 				}
 			}
 		}
@@ -382,7 +383,7 @@ namespace Lucene.Net.Search
 		/// </param>
 		private Scorer AddProhibitedScorers(Scorer requiredCountingSumScorer)
 		{
-			return (prohibitedScorers.Count == 0)?requiredCountingSumScorer:new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1)?(Scorer) prohibitedScorers[0]:new DisjunctionSumScorer(prohibitedScorers)));
+			return (prohibitedScorers.Count == 0) ? requiredCountingSumScorer : new ReqExclScorer(requiredCountingSumScorer, ((prohibitedScorers.Count == 1) ? (Scorer) prohibitedScorers[0] : new DisjunctionSumScorer(prohibitedScorers)));
 		}
 		
 		/// <summary>Scores and collects all matching documents.</summary>
@@ -415,7 +416,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		protected internal override bool Score(HitCollector hc, int max)
 		{
-			// null pointer exception when Next() was not called before:
+			// null pointer exception when next() was not called before:
 			int docNr = countingSumScorer.Doc();
 			while (docNr < max)
 			{

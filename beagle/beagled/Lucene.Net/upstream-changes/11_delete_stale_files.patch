@@ -1,0 +1,57 @@
+From: D Bera <dbera.web@gmail.com>
+
+Sometimes (e.g. due to lack of space) stale segment and fi files are left behind. This is a way to remove them. When the index is optimize, remove the stale files.
+
+Index: Index/SegmentInfos.cs
+===================================================================
+--- Index/SegmentInfos.cs	(revision 4506)
++++ Index/SegmentInfos.cs	(working copy)
+@@ -734,5 +734,26 @@
+ 			/// </summary>
+ 			public abstract System.Object DoBody(System.String segmentFileName);
+ 		}
++
++		public void Optimize(Directory directory)
++		{
++			string[] files = directory.List();
++
++			System.Collections.ArrayList segment_names = new System.Collections.ArrayList();
++			foreach (SegmentInfo si in this)
++				segment_names.Add (si.name);
++
++			foreach (string file in files) {
++				string basename = System.IO.Path.GetFileNameWithoutExtension (file);
++				if (segment_names.Contains (basename))
++					continue;
++
++				if (basename == IndexFileNames.DELETABLE || basename == IndexFileNames.SEGMENTS)
++					continue;
++
++				Console.WriteLine ("WARNING! Deleting stale data {0}", file);
++				directory.DeleteFile (file);
++			}
++		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/IndexWriter.cs
+===================================================================
+--- Index/IndexWriter.cs	(revision 4506)
++++ Index/IndexWriter.cs	(working copy)
+@@ -711,6 +711,8 @@
+ 					writeLock.Release(); // release write lock
+ 					writeLock = null;
+ 				}
++
++				segmentInfos.Optimize (directory);
+ 			}
+ 			finally
+ 			{
+@@ -2165,4 +2167,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

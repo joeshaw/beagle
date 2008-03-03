@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,9 +16,9 @@
  */
 
 using System;
-using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using Directory = Lucene.Net.Store.Directory;
 using IndexInput = Lucene.Net.Store.IndexInput;
+using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
 using IndexOutput = Lucene.Net.Store.IndexOutput;
 using Lock = Lucene.Net.Store.Lock;
 
@@ -32,7 +33,7 @@ namespace Lucene.Net.Index
 	/// </summary>
 	/// <author>  Dmitry Serebrennikov
 	/// </author>
-	/// <version>  $Id: CompoundFileReader.cs,v 1.4 2006/10/02 17:08:52 joeshaw Exp $
+	/// <version>  $Id: CompoundFileReader.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public class CompoundFileReader : Directory
 	{
@@ -147,9 +148,9 @@ namespace Lucene.Net.Index
 		public override System.String[] List()
 		{
 			System.String[] res = new System.String[entries.Count];
-            entries.Keys.CopyTo(res, 0);
+			entries.Keys.CopyTo(res, 0);
 			return res;
-		}
+        }
 		
 		/// <summary>Returns true iff a file with the given name exists. </summary>
 		public override bool FileExists(System.String name)
@@ -250,7 +251,7 @@ namespace Lucene.Net.Index
 			/// <summary>Expert: implements seek.  Sets current position in this file, where
 			/// the next {@link #ReadInternal(byte[],int,int)} will occur.
 			/// </summary>
-			/// <seealso cref="ReadInternal(byte[],int,int)">
+			/// <seealso cref="#ReadInternal(byte[],int,int)">
 			/// </seealso>
 			public override void  SeekInternal(long pos)
 			{

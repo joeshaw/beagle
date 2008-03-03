@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,12 +16,13 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A range query that returns a constant score equal to it's boost for
+	/// <summary> A range query that returns a constant score equal to its boost for
 	/// all documents in the range.
 	/// <p>
 	/// It does not have an upper bound on the number of clauses covered in the range.
@@ -32,7 +34,7 @@ namespace Lucene.Net.Search
 	/// </summary>
 	/// <author>  yonik
 	/// </author>
-	/// <version>  $Id: ConstantScoreRangeQuery.cs,v 1.2 2006/10/02 17:09:02 joeshaw Exp $
+	/// <version>  $Id: ConstantScoreRangeQuery.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	
 	[Serializable]
@@ -99,7 +101,7 @@ namespace Lucene.Net.Search
 		public override Query Rewrite(IndexReader reader)
 		{
 			// Map to RangeFilter semantics which are slightly different...
-			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal, (System.Object) lowerVal == (System.Object) ""?false:includeLower, upperVal == null?false:includeUpper);
+			RangeFilter rangeFilt = new RangeFilter(fieldName, lowerVal != null ? lowerVal : "", upperVal, (System.Object) lowerVal == (System.Object) "" ? false : includeLower, upperVal == null ? false : includeUpper);
 			Query q = new ConstantScoreQuery(rangeFilt);
 			q.SetBoost(GetBoost());
 			return q;
@@ -119,11 +121,7 @@ namespace Lucene.Net.Search
 			buffer.Append(" TO ");
 			buffer.Append(upperVal != null ? upperVal : "*");
 			buffer.Append(includeUpper ? ']' : '}');
-			if (GetBoost() != 1.0f)
-			{
-				buffer.Append("^");
-				buffer.Append(GetBoost().ToString());
-			}
+            buffer.Append(Lucene.Net.Util.ToStringUtils.Boost(GetBoost()));
 			return buffer.ToString();
 		}
 		
@@ -160,17 +158,17 @@ namespace Lucene.Net.Search
 			h ^= (includeLower ? 0x665599aa : 0) ^ (includeUpper ? unchecked((int) 0x99aa5566) : 0);    // {{Aroush-1.9}} Is this OK?!
 			return h;
 		}
-
-        override public System.Object Clone()
+		
+		override public System.Object Clone()
 		{
             // {{Aroush-1.9}} is this all that we need to clone?!
-			ConstantScoreRangeQuery clone = (ConstantScoreRangeQuery) base.Clone();
-			clone.fieldName = (System.String) this.fieldName.Clone();
-			clone.lowerVal = (System.String) this.lowerVal.Clone();
-			clone.upperVal = (System.String) this.upperVal.Clone();
-			clone.includeLower = this.includeLower;
-			clone.includeUpper = this.includeUpper;
-			return clone;
+            ConstantScoreRangeQuery clone = (ConstantScoreRangeQuery) base.Clone();
+            clone.fieldName = (System.String) this.fieldName.Clone();
+            clone.lowerVal = (System.String) this.lowerVal.Clone();
+            clone.upperVal = (System.String) this.upperVal.Clone();
+            clone.includeLower = this.includeLower;
+            clone.includeUpper = this.includeUpper;
+            return clone;
         }
 	}
 }

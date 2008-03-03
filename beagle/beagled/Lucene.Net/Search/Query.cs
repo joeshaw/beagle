@@ -1,9 +1,10 @@
 /*
- * Copyright 2002-2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
@@ -32,11 +34,11 @@ namespace Lucene.Net.Search
 	/// <li> {@link MultiPhraseQuery}
 	/// <li> {@link FuzzyQuery}
 	/// <li> {@link RangeQuery}
-	/// <li> {@link Lucene.Net.search.spans.SpanQuery}
+	/// <li> {@link Lucene.Net.Search.Spans.SpanQuery}
 	/// </ul>
 	/// <p>A parser for queries is contained in:
 	/// <ul>
-	/// <li>{@link Lucene.Net.queryParser.QueryParser QueryParser}
+	/// <li>{@link Lucene.Net.QueryParsers.QueryParser QueryParser}
 	/// </ul>
 	/// </summary>
 	[Serializable]
@@ -62,9 +64,10 @@ namespace Lucene.Net.Search
 			return boost;
 		}
 		
-		/// <summary>Prints a query to a string, with <code>field</code> as the default field
-		/// for terms.  <p>The representation used is one that is supposed to be readable
-		/// by {@link Lucene.Net.queryParser.QueryParser QueryParser}. However,
+		/// <summary>Prints a query to a string, with <code>field</code> assumed to be the 
+		/// default field and omitted.
+		/// <p>The representation used is one that is supposed to be readable
+		/// by {@link Lucene.Net.QueryParsers.QueryParser QueryParser}. However,
 		/// there are the following limitations:
 		/// <ul>
 		/// <li>If the query was created by the parser, the printed
@@ -151,7 +154,7 @@ namespace Lucene.Net.Search
                         {
                             uniques.Add(tmp, tmp);
                         }
-                    }
+					}
 				}
 				else
 				{

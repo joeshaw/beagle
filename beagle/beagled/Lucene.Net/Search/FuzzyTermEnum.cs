@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
 
@@ -59,12 +61,12 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="reader">
+		/// <param name="">reader
 		/// </param>
-		/// <param name="term">
+		/// <param name="">term
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
+		/// <seealso cref="Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term) : this(reader, term, FuzzyQuery.defaultMinSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -76,14 +78,14 @@ namespace Lucene.Net.Search
 		/// valid term if such a term exists. 
 		/// 
 		/// </summary>
-		/// <param name="reader">
+		/// <param name="">reader
 		/// </param>
-		/// <param name="term">
+		/// <param name="">term
 		/// </param>
-		/// <param name="minSimilarity">
+		/// <param name="">minSimilarity
 		/// </param>
 		/// <throws>  IOException </throws>
-		/// <seealso cref="FuzzyTermEnum(IndexReader, Term, float, int)">
+		/// <seealso cref="Term, float, int)">
 		/// </seealso>
 		public FuzzyTermEnum(IndexReader reader, Term term, float minSimilarity) : this(reader, term, minSimilarity, FuzzyQuery.defaultPrefixLength)
 		{
@@ -324,7 +326,7 @@ namespace Lucene.Net.Search
 		/// </returns>
 		private int GetMaxDistance(int m)
 		{
-			return (m < maxDistances.Length)?maxDistances[m]:CalculateMaxDistance(m);
+			return (m < maxDistances.Length) ? maxDistances[m] : CalculateMaxDistance(m);
 		}
 		
 		private void  InitializeMaxDistances()

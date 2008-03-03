@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,10 +16,11 @@
  */
 
 using System;
-using Explanation = Lucene.Net.Search.Explanation;
-using Scorer = Lucene.Net.Search.Scorer;
-using Similarity = Lucene.Net.Search.Similarity;
+
 using Weight = Lucene.Net.Search.Weight;
+using Scorer = Lucene.Net.Search.Scorer;
+using Explanation = Lucene.Net.Search.Explanation;
+using Similarity = Lucene.Net.Search.Similarity;
 
 namespace Lucene.Net.Search.Spans
 {
@@ -43,6 +45,7 @@ namespace Lucene.Net.Search.Spans
 			this.norms = norms;
 			this.weight = weight;
 			this.value_Renamed = weight.GetValue();
+			doc = - 1;
 		}
 		
 		public override bool Next()
@@ -52,21 +55,43 @@ namespace Lucene.Net.Search.Spans
 				more = spans.Next();
 				firstTime = false;
 			}
-			
+			return SetFreqCurrentDoc();
+		}
+		
+		public override bool SkipTo(int target)
+		{
+			if (firstTime)
+			{
+				more = spans.SkipTo(target);
+				firstTime = false;
+			}
 			if (!more)
+			{
 				return false;
-			
-			freq = 0.0f;
+			}
+			if (spans.Doc() < target)
+			{
+				// setFreqCurrentDoc() leaves spans.doc() ahead
+				more = spans.SkipTo(target);
+			}
+			return SetFreqCurrentDoc();
+		}
+		
+		private bool SetFreqCurrentDoc()
+		{
+			if (!more)
+			{
+				return false;
+			}
 			doc = spans.Doc();
-			
+			freq = 0.0f;
 			while (more && doc == spans.Doc())
 			{
 				int matchLength = spans.End() - spans.Start();
 				freq += GetSimilarity().SloppyFreq(matchLength);
 				more = spans.Next();
 			}
-			
-			return more || freq != 0.0f;
+			return more || (freq != 0);
 		}
 		
 		public override int Doc()
@@ -80,32 +105,13 @@ namespace Lucene.Net.Search.Spans
 			return raw * Similarity.DecodeNorm(norms[doc]); // normalize
 		}
 		
-		public override bool SkipTo(int target)
-		{
-			more = spans.SkipTo(target);
-			
-			if (!more)
-				return false;
-			
-			freq = 0.0f;
-			doc = spans.Doc();
-			
-			while (more && spans.Doc() == target)
-			{
-				freq += GetSimilarity().SloppyFreq(spans.End() - spans.Start());
-				more = spans.Next();
-			}
-			
-			return more || freq != 0.0f;
-		}
-		
 		public override Explanation Explain(int doc)
 		{
 			Explanation tfExplanation = new Explanation();
 			
 			SkipTo(doc);
 			
-			float phraseFreq = (Doc() == doc)?freq:0.0f;
+			float phraseFreq = (Doc() == doc) ? freq : 0.0f;
 			tfExplanation.SetValue(GetSimilarity().Tf(phraseFreq));
 			tfExplanation.SetDescription("tf(phraseFreq=" + phraseFreq + ")");
 			

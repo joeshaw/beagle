@@ -1,0 +1,19 @@
+From: D Bera <dbera.web@gmail.com>
+
+For some reason, the pid is sometimes empty but it is figure out in the log file.
+
+Index: Store/Lock.cs
+===================================================================
+--- Store/Lock.cs	(revision 4517)
++++ Store/Lock.cs	(working copy)
+@@ -87,7 +87,9 @@
+ 						fs.Close ();
+ 						ex.Append (" -- pid ").Append (pid);
+ 
+-						if (System.IO.Directory.Exists ("/proc/" + pid))
++						if (pid == String.Empty)
++							ex.Append ("(empty)");
++						else if (System.IO.Directory.Exists ("/proc/" + pid))
+ 							ex.Append (" -- process exists");
+ 						else
+ 							ex.Append (" -- process does not exist, stale lockfile?");

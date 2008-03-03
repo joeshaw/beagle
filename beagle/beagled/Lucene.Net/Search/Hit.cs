@@ -1,9 +1,10 @@
 /*
- * Copyright 2005 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Search
@@ -51,7 +53,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns document for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits.Doc(int)">
+		/// <seealso cref="Hits#Doc(int)">
 		/// </seealso>
 		public virtual Document GetDocument()
 		{
@@ -63,7 +65,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns score for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits.Score(int)">
+		/// <seealso cref="Hits#Score(int)">
 		/// </seealso>
 		public virtual float GetScore()
 		{
@@ -73,7 +75,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns id for this hit.
 		/// 
 		/// </summary>
-		/// <seealso cref="Hits.Id(int)">
+		/// <seealso cref="Hits#Id(int)">
 		/// </seealso>
 		public virtual int GetId()
 		{
@@ -91,7 +93,7 @@ namespace Lucene.Net.Search
 		/// <summary> Returns the boost factor for this hit on any field of the underlying document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Document.GetBoost()">
+		/// <seealso cref="Document#GetBoost()">
 		/// </seealso>
 		public virtual float GetBoost()
 		{
@@ -104,7 +106,7 @@ namespace Lucene.Net.Search
 		/// exist, returns null.
 		/// 
 		/// </summary>
-		/// <seealso cref="Document.Get(String)">
+		/// <seealso cref="Document#Get(String)">
 		/// </seealso>
 		public virtual System.String Get(System.String name)
 		{

@@ -26,6 +26,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -459,9 +460,14 @@ namespace Beagle.Util {
 
 		static public string HexEscape (string str)
 		{
-			StringBuilder builder = new StringBuilder ();
+			int index = -1;
+			if ((index = str.IndexOfAny (CharsToQuote)) == -1)
+				return str;
 
-			foreach (char c in str) {
+			StringBuilder builder = new StringBuilder (str, 0, index, str.Length << 1);
+
+			for (; index < str.Length; ++ index) {
+				char c = str [index];
 
 				if (ArrayFu.IndexOfChar (CharsToQuote, c) != -1)
 					builder.Append (Uri.HexEscape (c));
@@ -491,23 +497,26 @@ namespace Beagle.Util {
 		/// </returns>
 		static public string HexUnescape (string str)
 		{
-			ArrayList bytes = new ArrayList ();
-                        byte[] sub_bytes;
                         int i, pos = 0;
+			if ((i = str.IndexOf ('%')) == -1)
+				return str;
 
-                        while ((i = str.IndexOf ('%', pos)) != -1) {
+			List<byte> bytes = new List<byte> (str.Length);
+                        byte[] sub_bytes;
+
+			do {
                                 sub_bytes = Encoding.UTF8.GetBytes (str.Substring (pos, i - pos));
                                 bytes.AddRange (sub_bytes);
 				
 				pos = i;
                                 char unescaped = Uri.HexUnescape (str, ref pos);
-				bytes.Add ((byte) unescaped);
-                        }
+				bytes.Add (Convert.ToByte (unescaped));
+                        } while ((i = str.IndexOf ('%', pos)) != -1);
 
                         sub_bytes = Encoding.UTF8.GetBytes (str.Substring (pos, str.Length - pos));
                         bytes.AddRange (sub_bytes);
 
-                        return Encoding.UTF8.GetString ((byte[]) bytes.ToArray (typeof (byte)));
+                        return Encoding.UTF8.GetString (bytes.ToArray ());
 		}
 
 		// These strings should never be exposed to the user.

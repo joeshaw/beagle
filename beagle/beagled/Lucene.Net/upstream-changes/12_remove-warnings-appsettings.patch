@@ -1,0 +1,545 @@
+Remove a bunch of warnings. Also remove SupportClass.AppSettings entirely and replace System.Configuration.ConfigurationSettings.AppSettings with fixed values since we do not use any AppSettings.
+
+From: D Bera <dbera.web@gmail.com>
+
+Index: QueryParser/ParseException.cs
+===================================================================
+--- QueryParser/ParseException.cs	(revision 4529)
++++ QueryParser/ParseException.cs	(working copy)
+@@ -161,7 +161,7 @@
+ 		public System.String[] tokenImage;
+ 		
+ 		/// <summary> The end of line string for this machine.</summary>
+-		protected internal System.String eol = SupportClass.AppSettings.Get("line.separator", "\n");
+++		protected internal System.String eol = System.Environment.NewLine;
+ 		
+ 		/// <summary> Used to convert raw characters to their escaped version
+ 		/// when these raw version cannot be used as part of an ASCII
+@@ -228,4 +228,4 @@
+ 			return retval.ToString();
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Store/FSDirectory.cs
+===================================================================
+--- Store/FSDirectory.cs	(revision 4529)
++++ Store/FSDirectory.cs	(working copy)
+@@ -89,7 +89,7 @@
+ 		/// the <code>getDirectory</code> methods that take a
+ 		/// <code>lockFactory</code> (for example, {@link #GetDirectory(String, LockFactory)}).
+ 		/// </deprecated>
+-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
+++		/// REMOVED - D Bera
+ 		
+ 		/// <summary>The default class which implements filesystem-based directories. </summary>
+ 		private static System.Type IMPL;
+@@ -315,54 +315,11 @@
+ 				}
+ 				else
+ 				{
++					// Our default lock is SimpleFSLockFactory;
++					// default lockDir is our index directory:
++					lockFactory = new SimpleFSLockFactory(path);
++					doClearLockID = true;
+ 					System.String lockClassName = SupportClass.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
+-					
+-					if (lockClassName != null && !lockClassName.Equals(""))
+-					{
+-						System.Type c;
+-						
+-						try
+-						{
+-							c = System.Type.GetType(lockClassName);
+-						}
+-						catch (System.Exception)
+-						{
+-							throw new System.IO.IOException("unable to find LockClass " + lockClassName);
+-						}
+-						
+-						try
+-						{
+-							lockFactory = (LockFactory) System.Activator.CreateInstance(c, true);
+-						}
+-						catch (System.UnauthorizedAccessException e)
+-						{
+-							throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockClassName);
+-						}
+-						catch (System.InvalidCastException)
+-						{
+-							throw new System.IO.IOException("unable to cast LockClass " + lockClassName + " instance to a LockFactory");
+-						}
+-                        catch (System.Exception ex)
+-                        {
+-                            throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockClassName + "\nDetails:" + ex.Message);
+-                        }
+-
+-                        if (lockFactory is NativeFSLockFactory)
+-                        {
+-                            ((NativeFSLockFactory) lockFactory).SetLockDir(path);
+-                        }
+-                        else if (lockFactory is SimpleFSLockFactory)
+-                        {
+-                            ((SimpleFSLockFactory) lockFactory).SetLockDir(path);
+-                        }
+-                    }
+-					else
+-					{
+-						// Our default lock is SimpleFSLockFactory;
+-						// default lockDir is our index directory:
+-						lockFactory = new SimpleFSLockFactory(path);
+-						doClearLockID = true;
+-					}
+ 				}
+ 			}
+ 			
+@@ -675,7 +632,7 @@
+ 			{
+ 				try
+ 				{
+-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(FSDirectory).FullName);
++					System.String name = typeof(FSDirectory).FullName;
+ 					IMPL = System.Type.GetType(name);
+ 				}
+ 				catch (System.Security.SecurityException)
+Index: SupportClass.cs
+===================================================================
+--- SupportClass.cs	(revision 4529)
++++ SupportClass.cs	(working copy)
+@@ -681,107 +681,6 @@
+         }
+     }
+ 
+-    /// <summary>
+-    /// 
+-    /// </summary>
+-    public class AppSettings
+-    {
+-        static System.Collections.Specialized.ListDictionary settings = new System.Collections.Specialized.ListDictionary();
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="key"></param>
+-        /// <param name="defValue"></param>
+-        public static void Set(System.String key, int defValue)
+-        {
+-            settings[key] = defValue;
+-        }
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="key"></param>
+-        /// <param name="defValue"></param>
+-        public static void Set(System.String key, long defValue)
+-        {
+-            settings[key] = defValue;
+-        }
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="Key"></param>
+-        /// <param name="Value"></param>
+-        public static void Set(System.String key, System.String defValue)
+-        {
+-            settings[key] = defValue;
+-        }
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="key"></param>
+-        /// <param name="defValue"></param>
+-        /// <returns></returns>
+-        public static int Get(System.String key, int defValue)
+-        {
+-            if (settings[key] != null)
+-            {
+-                return (int) settings[key];
+-            }
+-
+-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+-            if (theValue == null)
+-            {
+-                return defValue;
+-            }
+-            return System.Convert.ToInt16(theValue.Trim());
+-        }
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="key"></param>
+-        /// <param name="defValue"></param>
+-        /// <returns></returns>
+-        public static long Get(System.String key, long defValue)
+-        {
+-            if (settings[key] != null)
+-            {
+-                return (long) settings[key];
+-            }
+-
+-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+-            if (theValue == null)
+-            {
+-                return defValue;
+-            }
+-            return System.Convert.ToInt32(theValue.Trim());
+-        }
+-
+-        /// <summary>
+-        /// 
+-        /// </summary>
+-        /// <param name="key"></param>
+-        /// <param name="defValue"></param>
+-        /// <returns></returns>
+-        public static System.String Get(System.String key, System.String defValue)
+-        {
+-            if (settings[key] != null)
+-            {
+-                return (System.String) settings[key];
+-            }
+-
+-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
+-            if (theValue == null)
+-            {
+-                return defValue;
+-            }
+-            return theValue;
+-        }
+-    }
+-
+     public static System.Collections.SortedList TailMap(System.Collections.SortedList list, System.Object limit)
+     {
+         System.Collections.Comparer comparer = System.Collections.Comparer.Default;
+@@ -880,7 +779,7 @@
+         {
+             if (compressionAdapter == null)
+             {
+-                System.String compressionLibClassName = SupportClass.AppSettings.Get("Lucene.Net.CompressionLib.class", null);
++                System.String compressionLibClassName = null;
+                 if (compressionLibClassName == null)
+                     throw new System.SystemException("Compression support not configured"); 
+ 
+@@ -892,4 +791,4 @@
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+Index: upstream-changes/12_remove-warnings-appsettings.patch
+===================================================================
+--- upstream-changes/12_remove-warnings-appsettings.patch	(revision 4521)
++++ upstream-changes/12_remove-warnings-appsettings.patch	(working copy)
+@@ -290,3 +290,235 @@
+ -}
+ \ No newline at end of file
+ +}
++***********************************
++Index: QueryParser/ParseException.cs
++===================================================================
++--- QueryParser/ParseException.cs	(revision 4529)
+++++ QueryParser/ParseException.cs	(working copy)
++@@ -161,7 +161,7 @@
++ 		public System.String[] tokenImage;
++ 		
++ 		/// <summary> The end of line string for this machine.</summary>
++-		protected internal System.String eol = SupportClass.AppSettings.Get("line.separator", "\n");
++++		protected internal System.String eol = System.Environment.NewLine;
++ 		
++ 		/// <summary> Used to convert raw characters to their escaped version
++ 		/// when these raw version cannot be used as part of an ASCII
++@@ -228,4 +228,4 @@
++ 			return retval.ToString();
++ 		}
++ 	}
++-}
++\ No newline at end of file
+++}
++Index: Store/FSDirectory.cs
++===================================================================
++--- Store/FSDirectory.cs	(revision 4529)
+++++ Store/FSDirectory.cs	(working copy)
++@@ -89,7 +89,7 @@
++ 		/// the <code>getDirectory</code> methods that take a
++ 		/// <code>lockFactory</code> (for example, {@link #GetDirectory(String, LockFactory)}).
++ 		/// </deprecated>
++-		public static readonly System.String LOCK_DIR = SupportClass.AppSettings.Get("Lucene.Net.lockDir", System.IO.Path.GetTempPath());
++++		/// REMOVED - D Bera
++ 		
++ 		/// <summary>The default class which implements filesystem-based directories. </summary>
++ 		private static System.Type IMPL;
++@@ -315,54 +315,11 @@
++ 				}
++ 				else
++ 				{
+++					// Our default lock is SimpleFSLockFactory;
+++					// default lockDir is our index directory:
+++					lockFactory = new SimpleFSLockFactory(path);
+++					doClearLockID = true;
++ 					System.String lockClassName = SupportClass.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
++-					
++-					if (lockClassName != null && !lockClassName.Equals(""))
++-					{
++-						System.Type c;
++-						
++-						try
++-						{
++-							c = System.Type.GetType(lockClassName);
++-						}
++-						catch (System.Exception)
++-						{
++-							throw new System.IO.IOException("unable to find LockClass " + lockClassName);
++-						}
++-						
++-						try
++-						{
++-							lockFactory = (LockFactory) System.Activator.CreateInstance(c, true);
++-						}
++-						catch (System.UnauthorizedAccessException e)
++-						{
++-							throw new System.IO.IOException("IllegalAccessException when instantiating LockClass " + lockClassName);
++-						}
++-						catch (System.InvalidCastException)
++-						{
++-							throw new System.IO.IOException("unable to cast LockClass " + lockClassName + " instance to a LockFactory");
++-						}
++-                        catch (System.Exception ex)
++-                        {
++-                            throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockClassName + "\nDetails:" + ex.Message);
++-                        }
++-
++-                        if (lockFactory is NativeFSLockFactory)
++-                        {
++-                            ((NativeFSLockFactory) lockFactory).SetLockDir(path);
++-                        }
++-                        else if (lockFactory is SimpleFSLockFactory)
++-                        {
++-                            ((SimpleFSLockFactory) lockFactory).SetLockDir(path);
++-                        }
++-                    }
++-					else
++-					{
++-						// Our default lock is SimpleFSLockFactory;
++-						// default lockDir is our index directory:
++-						lockFactory = new SimpleFSLockFactory(path);
++-						doClearLockID = true;
++-					}
++ 				}
++ 			}
++ 			
++@@ -675,7 +632,7 @@
++ 			{
++ 				try
++ 				{
++-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.FSDirectory.class", typeof(FSDirectory).FullName);
+++					System.String name = typeof(FSDirectory).FullName;
++ 					IMPL = System.Type.GetType(name);
++ 				}
++ 				catch (System.Security.SecurityException)
++Index: SupportClass.cs
++===================================================================
++--- SupportClass.cs	(revision 4529)
+++++ SupportClass.cs	(working copy)
++@@ -681,107 +681,6 @@
++         }
++     }
++ 
++-    /// <summary>
++-    /// 
++-    /// </summary>
++-    public class AppSettings
++-    {
++-        static System.Collections.Specialized.ListDictionary settings = new System.Collections.Specialized.ListDictionary();
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="key"></param>
++-        /// <param name="defValue"></param>
++-        public static void Set(System.String key, int defValue)
++-        {
++-            settings[key] = defValue;
++-        }
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="key"></param>
++-        /// <param name="defValue"></param>
++-        public static void Set(System.String key, long defValue)
++-        {
++-            settings[key] = defValue;
++-        }
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="Key"></param>
++-        /// <param name="Value"></param>
++-        public static void Set(System.String key, System.String defValue)
++-        {
++-            settings[key] = defValue;
++-        }
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="key"></param>
++-        /// <param name="defValue"></param>
++-        /// <returns></returns>
++-        public static int Get(System.String key, int defValue)
++-        {
++-            if (settings[key] != null)
++-            {
++-                return (int) settings[key];
++-            }
++-
++-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
++-            if (theValue == null)
++-            {
++-                return defValue;
++-            }
++-            return System.Convert.ToInt16(theValue.Trim());
++-        }
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="key"></param>
++-        /// <param name="defValue"></param>
++-        /// <returns></returns>
++-        public static long Get(System.String key, long defValue)
++-        {
++-            if (settings[key] != null)
++-            {
++-                return (long) settings[key];
++-            }
++-
++-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
++-            if (theValue == null)
++-            {
++-                return defValue;
++-            }
++-            return System.Convert.ToInt32(theValue.Trim());
++-        }
++-
++-        /// <summary>
++-        /// 
++-        /// </summary>
++-        /// <param name="key"></param>
++-        /// <param name="defValue"></param>
++-        /// <returns></returns>
++-        public static System.String Get(System.String key, System.String defValue)
++-        {
++-            if (settings[key] != null)
++-            {
++-                return (System.String) settings[key];
++-            }
++-
++-            System.String theValue = System.Configuration.ConfigurationSettings.AppSettings.Get(key);
++-            if (theValue == null)
++-            {
++-                return defValue;
++-            }
++-            return theValue;
++-        }
++-    }
++-
++     public static System.Collections.SortedList TailMap(System.Collections.SortedList list, System.Object limit)
++     {
++         System.Collections.Comparer comparer = System.Collections.Comparer.Default;
++@@ -880,7 +779,7 @@
++         {
++             if (compressionAdapter == null)
++             {
++-                System.String compressionLibClassName = SupportClass.AppSettings.Get("Lucene.Net.CompressionLib.class", null);
+++                System.String compressionLibClassName = null;
++                 if (compressionLibClassName == null)
++                     throw new System.SystemException("Compression support not configured"); 
++ 
++@@ -892,4 +791,4 @@
++             }
++         }
++     }
++-}
++\ No newline at end of file
+++}
++Index: upstream-changes/12_remove-warnings-appsettings.patch
++===================================================================
+Index: Index/SegmentReader.cs
+===================================================================
+--- Index/SegmentReader.cs	(revision 4529)
++++ Index/SegmentReader.cs	(working copy)
+@@ -731,7 +731,7 @@
+ 			{
+ 				try
+ 				{
+-					System.String name = SupportClass.AppSettings.Get("Lucene.Net.SegmentReader.class", typeof(SegmentReader).FullName);
++					System.String name = typeof(SegmentReader).FullName;
+ 					IMPL = System.Type.GetType(name);
+ 				}
+                 catch (System.Security.SecurityException se)
+@@ -752,4 +752,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Document/DateTools.cs
+===================================================================
+--- Document/DateTools.cs	(revision 4529)
++++ Document/DateTools.cs	(working copy)
+@@ -106,35 +106,35 @@
+ 			{
+ 				lock (DAY_FORMAT)
+ 				{
+-					result = result = dt.ToString(DAY_FORMAT);
++					result = dt.ToString(DAY_FORMAT);
+ 				}
+ 			}
+ 			else if (resolution == Resolution.HOUR)
+ 			{
+ 				lock (HOUR_FORMAT)
+ 				{
+-					result = result = dt.ToString(HOUR_FORMAT);
++					result = dt.ToString(HOUR_FORMAT);
+ 				}
+ 			}
+ 			else if (resolution == Resolution.MINUTE)
+ 			{
+ 				lock (MINUTE_FORMAT)
+ 				{
+-					result = result = dt.ToString(MINUTE_FORMAT);
++					result = dt.ToString(MINUTE_FORMAT);
+ 				}
+ 			}
+ 			else if (resolution == Resolution.SECOND)
+ 			{
+ 				lock (SECOND_FORMAT)
+ 				{
+-					result = result = dt.ToString(SECOND_FORMAT);
++					result = dt.ToString(SECOND_FORMAT);
+ 				}
+ 			}
+ 			else if (resolution == Resolution.MILLISECOND)
+ 			{
+ 				lock (MILLISECOND_FORMAT)
+ 				{
+-					result = result = dt.ToString(MILLISECOND_FORMAT);
++					result = dt.ToString(MILLISECOND_FORMAT);
+ 				}
+ 			}
+ 			else
+@@ -390,4 +390,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

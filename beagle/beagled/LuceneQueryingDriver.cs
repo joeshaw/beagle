@@ -190,12 +190,12 @@ namespace Beagle.Daemon {
 				case QueryPartLogic.Prohibited:
 					if (primary_prohibited_part_query == null)
 						primary_prohibited_part_query = new LNS.BooleanQuery ();
-					primary_prohibited_part_query.Add (primary_part_query, false, false);
+					primary_prohibited_part_query.Add (primary_part_query, LNS.BooleanClause.Occur.SHOULD);
 
 					if (secondary_part_query != null) {
 						if (secondary_prohibited_part_query == null)
 							secondary_prohibited_part_query = new LNS.BooleanQuery ();
-						secondary_prohibited_part_query.Add (secondary_part_query, false, false);
+						secondary_prohibited_part_query.Add (secondary_part_query, LNS.BooleanClause.Occur.SHOULD);
 					}
 
 					if (part_hit_filter != null) {
@@ -514,8 +514,7 @@ namespace Beagle.Daemon {
 			// Only generate results if we got some matches
 			if (primary_matches != null && primary_matches.ContainsTrue ()) {
 				GenerateQueryResults (primary_reader,
-						      primary_searcher,
-						      secondary_searcher,
+						      secondary_reader,
 						      primary_matches,
 						      result,
 						      term_list,
@@ -572,7 +571,7 @@ namespace Beagle.Daemon {
 			LNS.BooleanQuery combined_query;
 			combined_query = new LNS.BooleanQuery ();
 			foreach (LNS.Query query in primary_queries)
-				combined_query.Add (query, true, false);
+				combined_query.Add (query, LNS.BooleanClause.Occur.MUST);
 
 			LuceneBitArray matches;
 			matches = new LuceneBitArray (primary_searcher, combined_query);
@@ -708,7 +707,7 @@ namespace Beagle.Daemon {
 			foreach (Term term in term_list) {
 
 				double idf;
-				idf = similarity.Ldf (reader.DocFreq (term), reader.MaxDoc ());
+				idf = similarity.Idf (reader.DocFreq (term), reader.MaxDoc ());
 
 				int hit_count;
 				hit_count = hits_by_id.Count;
@@ -744,12 +743,11 @@ namespace Beagle.Daemon {
 		//
 
 		// Two arrays we need for quickly creating lucene documents and check if they are valid
-		static string[] fields_timestamp_uri = { "Timestamp", "Uri" };
-		static string[] fields_uri = {"Uri"};
+		static FieldSelector fields_timestamp_uri = new MapFieldSelector (new string[] {"Uri", "Timestamp"});
+		static FieldSelector fields_uri = new MapFieldSelector (new string[] {"Uri"});
 
 		private static void GenerateQueryResults (IndexReader       primary_reader,
-							  LNS.IndexSearcher primary_searcher,
-							  LNS.IndexSearcher secondary_searcher,
+							  IndexReader       secondary_reader,
 							  BetterBitArray    primary_matches,
 							  IQueryResult      result,
 							  ICollection       query_term_list,
@@ -787,8 +785,7 @@ namespace Beagle.Daemon {
 
 			if (primary_matches.TrueCount > max_results)
 				final_list_of_hits = ScanRecentDocs (primary_reader,
-					primary_searcher,
-					secondary_searcher,
+					secondary_reader,
 					primary_matches,
 					hits_by_id,
 					max_results,
@@ -797,8 +794,7 @@ namespace Beagle.Daemon {
 
 			if (final_list_of_hits == null)
 				final_list_of_hits = FindRecentResults (primary_reader,
-					primary_searcher,
-					secondary_searcher,
+					secondary_reader,
 					primary_matches,
 					hits_by_id,
 					max_results,
@@ -889,8 +885,7 @@ namespace Beagle.Daemon {
 		// for all of them.
 
 		private static ArrayList ScanRecentDocs (IndexReader	    primary_reader,
-						    LNS.IndexSearcher	    primary_searcher,
-						    LNS.IndexSearcher	    secondary_searcher,
+						    IndexReader		    secondary_reader,
 						    BetterBitArray	    primary_matches,
 						    Dictionary<int, Hit>    hits_by_id,
 						    int			    max_results,
@@ -909,8 +904,8 @@ namespace Beagle.Daemon {
 
 			Term term;
 			TermDocs secondary_term_docs = null;
-			if (secondary_searcher != null)
-				secondary_term_docs = secondary_searcher.Reader.TermDocs ();
+			if (secondary_reader != null)
+				secondary_term_docs = secondary_reader.TermDocs ();
 
 			do {
 				term = enumerator.Term ();
@@ -926,13 +921,13 @@ namespace Beagle.Daemon {
 					int doc_id = docs.Doc ();
 
 					if (primary_matches.Get (doc_id)) {
-						Document doc = primary_searcher.Doc (doc_id);
+						Document doc = primary_reader.Document (doc_id);
 						// If we have a UriFilter, apply it.
 						if (uri_filter != null) {
 							Uri uri;
 							uri = GetUriFromDocument (doc);
 							if (uri_filter (uri)) {
-								Hit hit = CreateHit (doc, secondary_searcher, secondary_term_docs);
+								Hit hit = CreateHit (doc, secondary_reader, secondary_term_docs);
 								hits_by_id [doc_id] = hit;
 								// Add the result, last modified first
 								results.Add (hit);
@@ -971,8 +966,7 @@ namespace Beagle.Daemon {
 		}
 
 		private static ArrayList   FindRecentResults (IndexReader	    primary_reader,
-							      LNS.IndexSearcher primary_searcher,
-							      LNS.IndexSearcher	    secondary_searcher,
+							      IndexReader	    secondary_reader,
 							      BetterBitArray	    primary_matches,
 							      Dictionary<int, Hit>  hits_by_id,
 							      int		    max_results,
@@ -994,8 +988,8 @@ namespace Beagle.Daemon {
 			else
 				all_docs = new ArrayList (primary_matches.TrueCount);
 
-			if (secondary_searcher != null)
-				term_docs = secondary_searcher.Reader.TermDocs ();
+			if (secondary_reader != null)
+				term_docs = secondary_reader.TermDocs ();
 
 			for (int match_index = primary_matches.Count; ; match_index --) {
 				// Walk across the matches backwards, since newer
@@ -1007,7 +1001,7 @@ namespace Beagle.Daemon {
 
 				count++;
 
-				doc = primary_searcher.Doc (match_index, fields_timestamp_uri);
+				doc = primary_reader.Document (match_index, fields_timestamp_uri);
 
 				// Check the timestamp --- if we have already reached our
 				// limit, we might be able to reject it immediately.
@@ -1033,7 +1027,7 @@ namespace Beagle.Daemon {
 
 				// Get the actual hit now
 				// doc was created with only 2 fields, so first get the complete lucene document for primary document
-				Hit hit = CreateHit (primary_searcher.Doc (match_index), secondary_searcher, term_docs);
+				Hit hit = CreateHit (primary_reader.Document (match_index), secondary_reader, term_docs);
 				hits_by_id [match_index] = hit;
 
 				// Add the document to the appropriate data structure.
@@ -1063,12 +1057,12 @@ namespace Beagle.Daemon {
 		}
 
 		private static Hit CreateHit ( Document primary_doc,
-					LNS.IndexSearcher secondary_searcher,
+					IndexReader secondary_reader,
 					TermDocs term_docs)
 		{
 			Hit hit = DocumentToHit (primary_doc);
 
-			if (secondary_searcher == null)
+			if (secondary_reader == null)
 				return hit;
 
 			// Get the stringified version of the URI
@@ -1078,7 +1072,7 @@ namespace Beagle.Daemon {
 
 			// Move to the first (and only) matching term doc
 			term_docs.Next ();
-			Document secondary_doc = secondary_searcher.Doc (term_docs.Doc ());
+			Document secondary_doc = secondary_reader.Document (term_docs.Doc ());
 
 			// If we are using the secondary index, now we need to
 			// merge the properties from the secondary index

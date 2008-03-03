@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using Term = Lucene.Net.Index.Term;
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
@@ -24,7 +26,7 @@ namespace Lucene.Net.Search
 	/// <summary>Implements parallel search over a set of <code>Searchables</code>.
 	/// 
 	/// <p>Applications usually need only call the inherited {@link #Search(Query)}
-	/// or {@link #Search(Query,Filter)} methods.
+	/// or {@link #search(Query,Filter)} methods.
 	/// </summary>
 	public class ParallelMultiSearcher : MultiSearcher
 	{
@@ -96,7 +98,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -148,7 +150,7 @@ namespace Lucene.Net.Search
 				{
 					msta[i].Join();
 				}
-				catch (System.Threading.ThreadInterruptedException)
+				catch (System.Threading.ThreadInterruptedException ie)
 				{
 					; // TODO: what should we do with this???
 				}
@@ -205,7 +207,7 @@ namespace Lucene.Net.Search
 		
 		/*
 		* TODO: this one could be parallelized too
-		* @see Lucene.Net.search.Searchable#rewrite(Lucene.Net.search.Query)
+		* @see Lucene.Net.Search.Searchable#rewrite(Lucene.Net.Search.Query)
 		*/
 		public override Query Rewrite(Query original)
 		{

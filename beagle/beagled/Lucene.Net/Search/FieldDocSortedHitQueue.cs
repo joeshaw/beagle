@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using PriorityQueue = Lucene.Net.Util.PriorityQueue;
 
 namespace Lucene.Net.Search
@@ -30,7 +32,7 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   lucene 1.4
 	/// </since>
-	/// <version>  $Id: FieldDocSortedHitQueue.cs,v 1.3 2006/10/02 17:09:04 joeshaw Exp $
+	/// <version>  $Id: FieldDocSortedHitQueue.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	class FieldDocSortedHitQueue : PriorityQueue
 	{
@@ -45,7 +47,7 @@ namespace Lucene.Net.Search
 		
 		
 		/// <summary> Creates a hit queue sorted by the given list of fields.</summary>
-		/// <param name="fields">Field names, in priority order (highest priority first).
+		/// <param name="fields">Fieldable names, in priority order (highest priority first).
 		/// </param>
 		/// <param name="size"> The number of hits to retain.  Must be greater than zero.
 		/// </param>
@@ -63,7 +65,7 @@ namespace Lucene.Net.Search
 		/// type until the values come back.  The fields can only be set once.
 		/// This method is thread safe.
 		/// </summary>
-		/// <param name="fields">
+		/// <param name="">fields
 		/// </param>
 		internal virtual void  SetFields(SortField[] fields)
 		{
@@ -162,15 +164,12 @@ namespace Lucene.Net.Search
 						}
 						else
 						{
-							//UPGRADE_TODO: The equivalent in .NET for method 'java.text.Collator.compare' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
 							c = collators[i].Compare(s1.ToString(), s2.ToString());
 						}
 						break;
 					
 					case SortField.FLOAT: 
-						//UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Float.floatValue' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
 						float f1 = (float) ((System.Single) docA.fields[i]);
-						//UPGRADE_TODO: The equivalent in .NET for method 'java.lang.Float.floatValue' may return a different value. "ms-help://MS.VSCC.v80/dv_commoner/local/redirect.htm?index='!DefaultContextWindowIndex'&keyword='jlca1043'"
 						float f2 = (float) ((System.Single) docB.fields[i]);
 						if (f1 < f2)
 							c = - 1;

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -19,26 +20,26 @@ using System;
 namespace Lucene.Net.Analysis
 {
 	
-	/// <summary>A TokenStream enumerates the sequence of tokens, either from
-	/// fields of a document or from query text.
-	/// <p>
-	/// This is an abstract class.  Concrete subclasses are:
-	/// <ul>
-	/// <li>{@link Tokenizer}, a TokenStream
-	/// whose input is a Reader; and
-	/// <li>{@link TokenFilter}, a TokenStream
-	/// whose input is another TokenStream.
-	/// </ul>
-	/// </summary>
+    /// <summary>A TokenStream enumerates the sequence of tokens, either from
+    /// fields of a document or from query text.
+    /// <p>
+    /// This is an abstract class.  Concrete subclasses are:
+    /// <ul>
+    /// <li>{@link Tokenizer}, a TokenStream
+    /// whose input is a Reader; and
+    /// <li>{@link TokenFilter}, a TokenStream
+    /// whose input is another TokenStream.
+    /// </ul>
+    /// </summary>
 	
-	public abstract class TokenStream
-	{
-		/// <summary>Returns the next token in the stream, or null at EOS. </summary>
-		public abstract Token Next();
+    public abstract class TokenStream
+    {
+        /// <summary>Returns the next token in the stream, or null at EOS. </summary>
+        public abstract Token Next();
 		
-		/// <summary>Releases resources associated with this stream. </summary>
-		public virtual void  Close()
-		{
-		}
-	}
+        /// <summary>Releases resources associated with this stream. </summary>
+        public virtual void  Close()
+        {
+        }
+    }
 }

@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
 	/// </CODE>
 	/// 
 	/// </summary>
-	/// <version>  $Id: TermVectorsWriter.cs,v 1.3 2006/10/02 17:09:00 joeshaw Exp $
+	/// <version>  $Id: TermVectorsWriter.java 472959 2006-11-09 16:21:50Z yonik $
 	/// 
 	/// </version>
 	public sealed class TermVectorsWriter
@@ -68,19 +69,20 @@ namespace Lucene.Net.Index
 		
 		private TVField currentField = null;
 		private long currentDocPointer = - 1;
-		
-        public static System.String TvxExtension
-        {
-            get {   return TVX_EXTENSION;   }
-        }
-        public static System.String TvdExtension
-        {
-            get {   return TVD_EXTENSION;   }
-        }
-        public static System.String TvfExtension
-        {
-            get {   return TVF_EXTENSION;   }
-        }
+
+		// Those three get'ers are helper for Lucene.Net only
+		public static System.String TvxExtension
+		{
+			get {   return TVX_EXTENSION;   }
+		}
+		public static System.String TvdExtension
+		{
+			get {   return TVD_EXTENSION;   }
+		}
+		public static System.String TvfExtension
+		{
+			get {   return TVF_EXTENSION;   }
+		}
 
 		public TermVectorsWriter(Directory directory, System.String segment, FieldInfos fieldInfos)
 		{
@@ -167,7 +169,7 @@ namespace Lucene.Net.Index
 			return currentField != null;
 		}
 		
-		/// <summary>Add term to the field's term vector. Field must already be open.
+		/// <summary>Add term to the field's term vector. Fieldable must already be open.
 		/// Terms should be added in
 		/// increasing order of terms, one call per unique termNum. ProxPointer
 		/// is a pointer into the TermPosition file (prx). Freq is the number of
@@ -203,7 +205,7 @@ namespace Lucene.Net.Index
 		/// term vectors, add value for tvx.
 		/// 
 		/// </summary>
-		/// <param name="vectors">
+		/// <param name="">vectors
 		/// </param>
 		/// <throws>  IOException </throws>
 		public void  AddAllDocVectors(TermFreqVector[] vectors)
@@ -217,7 +219,7 @@ namespace Lucene.Net.Index
 					bool storePositionWithTermVector = false;
 					bool storeOffsetWithTermVector = false;
 					
-					try
+					if (vectors[i] is TermPositionVector)
 					{
 						
 						TermPositionVector tpVector = (TermPositionVector) vectors[i];
@@ -235,7 +237,7 @@ namespace Lucene.Net.Index
 						
 						CloseField();
 					}
-					catch (System.InvalidCastException ignore)
+					else
 					{
 						
 						TermFreqVector tfVector = vectors[i];
@@ -255,7 +257,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Close all streams. </summary>
-		public /*internal*/ void  Close()
+		public void  Close()
 		{
 			try
 			{
@@ -309,7 +311,7 @@ namespace Lucene.Net.Index
 		{
 			// remember where this field is written
 			currentField.tvfPointer = tvf.GetFilePointer();
-			//System.out.println("Field Pointer: " + currentField.tvfPointer);
+			//System.out.println("Fieldable Pointer: " + currentField.tvfPointer);
 			
 			int size = terms.Count;
 			tvf.WriteVInt(size);

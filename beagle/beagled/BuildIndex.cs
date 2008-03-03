@@ -102,7 +102,7 @@ namespace Beagle.Daemon
 		static Queue pending_directories = new Queue ();
 		static IndexerRequest pending_request;
 		
-		const int BATCH_SIZE = 30;
+		const int BATCH_SIZE = Lucene.Net.Index.IndexWriter.DEFAULT_MAX_BUFFERED_DOCS;
 		
 		/////////////////////////////////////////////////////////
 		

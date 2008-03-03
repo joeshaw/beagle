@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
@@ -35,12 +37,12 @@ namespace Lucene.Net.Search
 	/// </author>
 	/// <since>   1.4
 	/// </since>
-	/// <version>  $Id: FilteredQuery.cs,v 1.3 2006/10/02 17:09:04 joeshaw Exp $
+	/// <version>  $Id: FilteredQuery.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	/// <seealso cref="CachingWrapperFilter">
 	/// </seealso>
 	[Serializable]
-	public class FilteredQuery:Query
+	public class FilteredQuery : Query
 	{
 		[Serializable]
 		private class AnonymousClassWeight : Weight
@@ -51,14 +53,14 @@ namespace Lucene.Net.Search
 			}
 			private class AnonymousClassScorer : Scorer
 			{
-				private void  InitBlock(Lucene.Net.Search.Scorer scorer, System.Collections.BitArray bitset, AnonymousClassWeight enclosingInstance)
+				private void  InitBlock(System.Collections.BitArray bitset, Lucene.Net.Search.Scorer scorer, AnonymousClassWeight enclosingInstance)
 				{
-					this.scorer = scorer;
 					this.bitset = bitset;
+					this.scorer = scorer;
 					this.enclosingInstance = enclosingInstance;
 				}
-				private Lucene.Net.Search.Scorer scorer;
 				private System.Collections.BitArray bitset;
+				private Lucene.Net.Search.Scorer scorer;
 				private AnonymousClassWeight enclosingInstance;
 				public AnonymousClassWeight Enclosing_Instance
 				{
@@ -68,29 +70,56 @@ namespace Lucene.Net.Search
 					}
 					
 				}
-				internal AnonymousClassScorer(Lucene.Net.Search.Scorer scorer, System.Collections.BitArray bitset, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1):base(Param1)
+				internal AnonymousClassScorer(System.Collections.BitArray bitset, Lucene.Net.Search.Scorer scorer, AnonymousClassWeight enclosingInstance, Lucene.Net.Search.Similarity Param1):base(Param1)
 				{
-					InitBlock(scorer, bitset, enclosingInstance);
+					InitBlock(bitset, scorer, enclosingInstance);
 				}
 				
-				// pass these methods through to the enclosed scorer
 				public override bool Next()
 				{
-					return scorer.Next();
+					do 
+					{
+						if (!scorer.Next())
+						{
+							return false;
+						}
+					}
+					while (!bitset.Get(scorer.Doc()));
+					/* When skipTo() is allowed on scorer it should be used here
+					* in combination with bitset.nextSetBit(...)
+					* See the while loop in skipTo() below.
+					*/
+					return true;
 				}
 				public override int Doc()
 				{
 					return scorer.Doc();
 				}
+				
 				public override bool SkipTo(int i)
 				{
-					return scorer.SkipTo(i);
+					if (!scorer.SkipTo(i))
+					{
+						return false;
+					}
+					while (!bitset.Get(scorer.Doc()))
+					{
+						int nextFiltered = SupportClass.Number.NextSetBit(bitset, scorer.Doc() + 1);
+						if (nextFiltered == - 1)
+						{
+							return false;
+						}
+						else if (!scorer.SkipTo(nextFiltered))
+						{
+							return false;
+						}
+					}
+					return true;
 				}
 				
-				// if the document has been filtered out, set score to 0.0
 				public override float Score()
 				{
-					return (bitset.Get(scorer.Doc()))?scorer.Score():0.0f;
+					return scorer.Score();
 				}
 				
 				// add an explanation about whether the document was filtered
@@ -137,7 +166,14 @@ namespace Lucene.Net.Search
 			}
 			public virtual Explanation Explain(IndexReader ir, int i)
 			{
-				return weight.Explain(ir, i);
+				Explanation inner = weight.Explain(ir, i);
+				Filter f = Enclosing_Instance.filter;
+				System.Collections.BitArray matches = f.Bits(ir);
+				if (matches.Get(i))
+					return inner;
+				Explanation result = new Explanation(0.0f, "failure to match filter: " + f.ToString());
+				result.AddDetail(inner);
+				return result;
 			}
 			
 			// return this query
@@ -146,13 +182,12 @@ namespace Lucene.Net.Search
 				return Enclosing_Instance;
 			}
 			
-			// return a scorer that overrides the enclosed query's score if
-			// the given hit has been filtered out.
+			// return a filtering scorer
 			public virtual Scorer Scorer(IndexReader indexReader)
 			{
 				Scorer scorer = weight.Scorer(indexReader);
 				System.Collections.BitArray bitset = Enclosing_Instance.filter.Bits(indexReader);
-				return new AnonymousClassScorer(scorer, bitset, this, similarity);
+				return new AnonymousClassScorer(bitset, scorer, this, similarity);
 			}
 		}
 		
@@ -234,7 +269,7 @@ namespace Lucene.Net.Search
 			if (o is FilteredQuery)
 			{
 				FilteredQuery fq = (FilteredQuery) o;
-				return (query.Equals(fq.query) && filter.Equals(fq.filter));
+				return (query.Equals(fq.query) && filter.Equals(fq.filter) && GetBoost() == fq.GetBoost());
 			}
 			return false;
 		}
@@ -242,7 +277,16 @@ namespace Lucene.Net.Search
 		/// <summary>Returns a hash code value for this object. </summary>
 		public override int GetHashCode()
 		{
-			return query.GetHashCode() ^ filter.GetHashCode();
+			return query.GetHashCode() ^ filter.GetHashCode() + System.Convert.ToInt32(GetBoost());
 		}
+
+		override public System.Object Clone()
+		{
+            // {{Aroush-2.0}} is this Clone() OK?
+            FilteredQuery clone = (FilteredQuery) base.Clone();
+            clone.filter = this.filter;
+            clone.query = this.query;
+            return clone;
+        }
 	}
 }

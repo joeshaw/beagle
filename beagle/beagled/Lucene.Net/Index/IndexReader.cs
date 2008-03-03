@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,7 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using Similarity = Lucene.Net.Search.Similarity;
 using Directory = Lucene.Net.Store.Directory;
 using FSDirectory = Lucene.Net.Store.FSDirectory;
@@ -36,68 +37,92 @@ namespace Lucene.Net.Index
 	/// document in the index.  These document numbers are ephemeral--they may change
 	/// as documents are added to and deleted from an index.  Clients should thus not
 	/// rely on a given document having the same number between sessions.
-	/// </summary>
-	/// <summary><p> An IndexReader can be opened on a directory for which an IndexWriter is
+	/// <p> An IndexReader can be opened on a directory for which an IndexWriter is
 	/// opened already, but it cannot be used to delete documents from the index then.
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: IndexReader.cs,v 1.4 2006/10/02 17:08:52 joeshaw Exp $
+	/// <version>  $Id: IndexReader.java 497612 2007-01-18 22:47:03Z mikemccand $
 	/// </version>
 	public abstract class IndexReader
 	{
-		private class AnonymousClassWith : Lock.With
+		private class AnonymousClassFindSegmentsFile : SegmentInfos.FindSegmentsFile
 		{
-			private void  InitBlock(Lucene.Net.Store.Directory directory, bool closeDirectory)
+			private void  InitBlock(bool closeDirectory)
 			{
-				this.directory = directory;
 				this.closeDirectory = closeDirectory;
 			}
-			private Lucene.Net.Store.Directory directory;
 			private bool closeDirectory;
-			internal AnonymousClassWith(Lucene.Net.Store.Directory directory, bool closeDirectory, Lucene.Net.Store.Lock Param1, long Param2):base(Param1, Param2)
+			internal AnonymousClassFindSegmentsFile(bool closeDirectory, Lucene.Net.Store.Directory Param1) : base(Param1)
 			{
-				InitBlock(directory, closeDirectory);
+				InitBlock(closeDirectory);
 			}
-			public override System.Object DoBody()
+			
+			public override System.Object DoBody(System.String segmentFileName)
 			{
+				
 				SegmentInfos infos = new SegmentInfos();
-				infos.Read(directory);
+				infos.Read(directory, segmentFileName);
+				
 				if (infos.Count == 1)
 				{
 					// index is optimized
 					return SegmentReader.Get(infos, infos.Info(0), closeDirectory);
 				}
-				IndexReader[] readers = new IndexReader[infos.Count];
-				for (int i = 0; i < infos.Count; i++)
-					readers[i] = SegmentReader.Get(infos.Info(i));
-				return new MultiReader(directory, infos, closeDirectory, readers);
+				else
+				{
+					
+					// To reduce the chance of hitting FileNotFound
+					// (and having to retry), we open segments in
+					// reverse because IndexWriter merges & deletes
+					// the newest segments first.
+					
+					IndexReader[] readers = new IndexReader[infos.Count];
+					for (int i = infos.Count - 1; i >= 0; i--)
+					{
+						try
+						{
+							readers[i] = SegmentReader.Get(infos.Info(i));
+						}
+						catch (System.IO.IOException e)
+						{
+							// Close all readers we had opened:
+							for (i++; i < infos.Count; i++)
+							{
+								readers[i].Close();
+							}
+							throw e;
+						}
+					}
+					
+					return new MultiReader(directory, infos, closeDirectory, readers);
+				}
 			}
 		}
-		private class AnonymousClassWith1 : Lock.With
+		private class AnonymousClassFindSegmentsFile1 : SegmentInfos.FindSegmentsFile
 		{
-			private void  InitBlock(IndexReader enclosingInstance)
+			internal AnonymousClassFindSegmentsFile1(System.IO.FileInfo Param1):base(Param1)
 			{
-				this.enclosingInstance = enclosingInstance;
 			}
-			private IndexReader enclosingInstance;
-			public IndexReader Enclosing_Instance
+			public override System.Object DoBody(System.String segmentFileName)
 			{
-				get
-				{
-					return enclosingInstance;
-				}
-				
+				return (long) FSDirectory.FileModified(fileDirectory, segmentFileName);
 			}
-			internal AnonymousClassWith1(IndexReader enclosingInstance, Lucene.Net.Store.Lock Param1, long Param2) : base(Param1, Param2)
+		}
+		private class AnonymousClassFindSegmentsFile2 : SegmentInfos.FindSegmentsFile
+		{
+			private void  InitBlock(Lucene.Net.Store.Directory directory2)
 			{
-				InitBlock(enclosingInstance);
+				this.directory2 = directory2;
 			}
-			public override System.Object DoBody()
+			private Lucene.Net.Store.Directory directory2;
+			internal AnonymousClassFindSegmentsFile2(Lucene.Net.Store.Directory directory2, Lucene.Net.Store.Directory Param1):base(Param1)
 			{
-				Enclosing_Instance.DoCommit();
-				Enclosing_Instance.segmentInfos.Write(Enclosing_Instance.directory);
-				return null;
+				InitBlock(directory2);
+			}
+			public override System.Object DoBody(System.String segmentFileName)
+			{
+				return (long) directory2.FileModified(segmentFileName);
 			}
 		}
 		
@@ -154,7 +179,7 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <param name="segmentInfos">Used for write-l
 		/// </param>
-		/// <param name="closeDirectory">
+		/// <param name="">closeDirectory
 		/// </param>
 		internal IndexReader(Directory directory, SegmentInfos segmentInfos, bool closeDirectory)
 		{
@@ -172,19 +197,25 @@ namespace Lucene.Net.Index
 		private Directory directory;
 		private bool directoryOwner;
 		private bool closeDirectory;
+		protected internal IndexFileDeleter deleter;
 		
 		private SegmentInfos segmentInfos;
 		private Lock writeLock;
 		private bool stale;
 		private bool hasChanges;
 		
+		/// <summary>Used by commit() to record pre-commit state in case
+		/// rollback is necessary 
+		/// </summary>
+		private bool rollbackHasChanges;
+		private SegmentInfos rollbackSegmentInfos;
 		
 		/// <summary>Returns an IndexReader reading the index in an FSDirectory in the named
 		/// path. 
 		/// </summary>
 		public static IndexReader Open(System.String path)
 		{
-			return Open(FSDirectory.GetDirectory(path, false), true);
+			return Open(FSDirectory.GetDirectory(path), true);
 		}
 		
 		/// <summary>Returns an IndexReader reading the index in an FSDirectory in the named
@@ -192,7 +223,7 @@ namespace Lucene.Net.Index
 		/// </summary>
 		public static IndexReader Open(System.IO.FileInfo path)
 		{
-			return Open(FSDirectory.GetDirectory(path, false), true);
+			return Open(FSDirectory.GetDirectory(path), true);
 		}
 		
 		/// <summary>Returns an IndexReader reading the index in the given Directory. </summary>
@@ -203,11 +234,8 @@ namespace Lucene.Net.Index
 		
 		private static IndexReader Open(Directory directory, bool closeDirectory)
 		{
-			lock (directory)
-			{
-				// in- & inter-process sync
-				return (IndexReader) new AnonymousClassWith(directory, closeDirectory, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT).Run();
-			}
+			
+			return (IndexReader) new AnonymousClassFindSegmentsFile(closeDirectory, directory).run();
 		}
 		
 		/// <summary>Returns the directory this index resides in. </summary>
@@ -229,18 +257,18 @@ namespace Lucene.Net.Index
 		/// Do not use this to check whether the reader is still up-to-date, use
 		/// {@link #IsCurrent()} instead. 
 		/// </summary>
-		public static long LastModified(System.IO.FileInfo directory)
+		public static long LastModified(System.IO.FileInfo fileDirectory)
 		{
-			return FSDirectory.FileModified(directory, IndexFileNames.SEGMENTS);
+			return (long) ((System.Int64) new AnonymousClassFindSegmentsFile1(fileDirectory).run());
 		}
 		
 		/// <summary> Returns the time the index in the named directory was last modified. 
 		/// Do not use this to check whether the reader is still up-to-date, use
 		/// {@link #IsCurrent()} instead. 
 		/// </summary>
-		public static long LastModified(Directory directory)
+		public static long LastModified(Directory directory2)
 		{
-			return directory.FileModified(IndexFileNames.SEGMENTS);
+			return (long) ((System.Int64) new AnonymousClassFindSegmentsFile2(directory2, directory2).run());
 		}
 		
 		/// <summary> Reads version number from segments files. The version number is
@@ -270,7 +298,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if segments file cannot be read </throws>
 		public static long GetCurrentVersion(System.IO.FileInfo directory)
 		{
-			Directory dir = FSDirectory.GetDirectory(directory, false);
+			Directory dir = FSDirectory.GetDirectory(directory);
 			long version = GetCurrentVersion(dir);
 			dir.Close();
 			return version;
@@ -305,11 +333,15 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException </throws>
 		public virtual bool IsCurrent()
 		{
-			if (SegmentInfos.ReadCurrentVersion(directory) != segmentInfos.GetVersion())
-			{
-				return false;
-			}
-			return true;
+			return SegmentInfos.ReadCurrentVersion(directory) == segmentInfos.GetVersion();
+		}
+		
+		/// <summary> Checks is the index is optimized (if it has a single segment and no deletions)</summary>
+		/// <returns> <code>true</code> if the index is optimized; <code>false</code> otherwise
+		/// </returns>
+		public virtual bool IsOptimized()
+		{
+			return segmentInfos.Count == 1 && HasDeletions() == false;
 		}
 		
 		/// <summary>  Return an array of term frequency vectors for the specified document.
@@ -326,7 +358,7 @@ namespace Lucene.Net.Index
 		/// stored for the specified document.
 		/// </returns>
 		/// <throws>  IOException if index cannot be accessed </throws>
-		/// <seealso cref="Lucene.Net.document.Field.TermVector">
+		/// <seealso cref="Lucene.Net.Documents.Field.TermVector">
 		/// </seealso>
 		abstract public TermFreqVector[] GetTermFreqVectors(int docNumber);
 		
@@ -346,7 +378,7 @@ namespace Lucene.Net.Index
 		/// document or term vector was not stored.
 		/// </returns>
 		/// <throws>  IOException if index cannot be accessed </throws>
-		/// <seealso cref="Lucene.Net.document.Field.TermVector">
+		/// <seealso cref="Lucene.Net.Documents.Field.TermVector">
 		/// </seealso>
 		abstract public TermFreqVector GetTermFreqVector(int docNumber, System.String field);
 		
@@ -360,12 +392,14 @@ namespace Lucene.Net.Index
 		/// </returns>
 		public static bool IndexExists(System.String directory)
 		{
-			bool tmpBool;
-            if (System.IO.File.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory, IndexFileNames.SEGMENTS))).FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory, IndexFileNames.SEGMENTS))).FullName);
-			return tmpBool;
+            if (System.IO.Directory.Exists(directory))
+            {
+                return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory)) != - 1;
+            }
+            else
+            {
+                return false;
+            }
 		}
 		
 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
@@ -375,14 +409,17 @@ namespace Lucene.Net.Index
 		/// </param>
 		/// <returns> <code>true</code> if an index exists; <code>false</code> otherwise
 		/// </returns>
+		
 		public static bool IndexExists(System.IO.FileInfo directory)
 		{
-			bool tmpBool;
-			if (System.IO.File.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, IndexFileNames.SEGMENTS))).FullName))
-				tmpBool = true;
-			else
-				tmpBool = System.IO.Directory.Exists((new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, IndexFileNames.SEGMENTS))).FullName);
-			return tmpBool;
+            if (System.IO.Directory.Exists(directory.FullName))
+            {
+                return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory.FullName)) != - 1;
+            }
+            else
+            {
+                return false;
+            }
 		}
 		
 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
@@ -395,7 +432,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a problem with accessing the index </throws>
 		public static bool IndexExists(Directory directory)
 		{
-			return directory.FileExists(IndexFileNames.SEGMENTS);
+			return SegmentInfos.GetCurrentSegmentGeneration(directory) != - 1;
 		}
 		
 		/// <summary>Returns the number of documents in this index. </summary>
@@ -410,12 +447,41 @@ namespace Lucene.Net.Index
 		/// <summary>Returns the stored fields of the <code>n</code><sup>th</sup>
 		/// <code>Document</code> in this index. 
 		/// </summary>
-		public abstract Document Document(int n);
-
-		/// <summary>Returns the specified fields of the <code>n</code><sup>th</sup>
-		/// <code>Document</code> in this index. 
+		public virtual Document Document(int n)
+		{
+			return Document(n, null);
+		}
+		
+		/// <summary> Get the {@link Lucene.Net.Documents.Document} at the <code>n</code><sup>th</sup> position. The {@link Lucene.Net.Documents.FieldSelector}
+		/// may be used to determine what {@link Lucene.Net.Documents.Field}s to load and how they should be loaded.
+		/// 
+		/// <b>NOTE:</b> If this Reader (more specifically, the underlying {@link FieldsReader} is closed before the lazy {@link Lucene.Net.Documents.Field} is
+		/// loaded an exception may be thrown.  If you want the value of a lazy {@link Lucene.Net.Documents.Field} to be available after closing you must
+		/// explicitly load it or fetch the Document again with a new loader.
+		/// 
+		/// 
 		/// </summary>
-		public abstract Document Document(int n, string[] fields);
+		/// <param name="n">Get the document at the <code>n</code><sup>th</sup> position
+		/// </param>
+		/// <param name="fieldSelector">The {@link Lucene.Net.Documents.FieldSelector} to use to determine what Fields should be loaded on the Document.  May be null, in which case all Fields will be loaded.
+		/// </param>
+		/// <returns> The stored fields of the {@link Lucene.Net.Documents.Document} at the nth position
+		/// </returns>
+		/// <throws>  IOException If there is a problem reading this document </throws>
+		/// <summary> 
+		/// </summary>
+		/// <seealso cref="Lucene.Net.Documents.Fieldable">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.FieldSelector">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.SetBasedFieldSelector">
+		/// </seealso>
+		/// <seealso cref="Lucene.Net.Documents.LoadFirstFieldSelector">
+		/// </seealso>
+		//When we convert to JDK 1.5 make this Set<String>
+		public abstract Document Document(int n, FieldSelector fieldSelector);
+		
+		
 		
 		/// <summary>Returns true if document <i>n</i> has been deleted </summary>
 		public abstract bool IsDeleted(int n);
@@ -435,7 +501,7 @@ namespace Lucene.Net.Index
 		/// every document.  This is used by the search code to score documents.
 		/// 
 		/// </summary>
-		/// <seealso cref="Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Field#SetBoost(float)">
 		/// </seealso>
 		public abstract byte[] Norms(System.String field);
 		
@@ -443,20 +509,20 @@ namespace Lucene.Net.Index
 		/// document.  This is used by the search code to score documents.
 		/// 
 		/// </summary>
-		/// <seealso cref="Field.SetBoost(float)">
+		/// <seealso cref="Lucene.Net.Documents.Field#SetBoost(float)">
 		/// </seealso>
 		public abstract void  Norms(System.String field, byte[] bytes, int offset);
 		
 		/// <summary>Expert: Resets the normalization factor for the named field of the named
 		/// document.  The norm represents the product of the field's {@link
-		/// Field#SetBoost(float) boost} and its {@link Similarity#LengthNorm(String,
+		/// Fieldable#SetBoost(float) boost} and its {@link Similarity#LengthNorm(String,
 		/// int) length normalization}.  Thus, to preserve the length normalization
 		/// values when resetting this, one should base the new value upon the old.
 		/// 
 		/// </summary>
-		/// <seealso cref="Norms(String)">
+		/// <seealso cref="#Norms(String)">
 		/// </seealso>
-		/// <seealso cref="Similarity.DecodeNorm(byte)">
+		/// <seealso cref="Similarity#DecodeNorm(byte)">
 		/// </seealso>
 		public void  SetNorm(int doc, System.String field, byte value_Renamed)
 		{
@@ -464,8 +530,8 @@ namespace Lucene.Net.Index
 			{
 				if (directoryOwner)
 					AquireWriteLock();
-				DoSetNorm(doc, field, value_Renamed);
 				hasChanges = true;
+				DoSetNorm(doc, field, value_Renamed);
 			}
 		}
 		
@@ -476,9 +542,9 @@ namespace Lucene.Net.Index
 		/// document.
 		/// 
 		/// </summary>
-		/// <seealso cref="Norms(String)">
+		/// <seealso cref="#Norms(String)">
 		/// </seealso>
-		/// <seealso cref="Similarity.DecodeNorm(byte)">
+		/// <seealso cref="Similarity#DecodeNorm(byte)">
 		/// </seealso>
 		public virtual void  SetNorm(int doc, System.String field, float value_Renamed)
 		{
@@ -578,23 +644,6 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
-		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
-		/// Attempts to read its field with the {@link #document}
-		/// method will result in an error.  The presence of this document may still be
-		/// reflected in the {@link #docFreq} statistic, though
-		/// this will be corrected eventually as the index is further modified.
-		/// 
-		/// </summary>
-		/// <deprecated> Use {@link #DeleteDocument(int docNum)} instead.
-		/// </deprecated>
-		public void  Delete(int docNum)
-		{
-			lock (this)
-			{
-				DeleteDocument(docNum);
-			}
-		}
 		
 		/// <summary>Deletes the document numbered <code>docNum</code>.  Once a document is
 		/// deleted it will not appear in TermDocs or TermPostitions enumerations.
@@ -609,41 +658,24 @@ namespace Lucene.Net.Index
 			{
 				if (directoryOwner)
 					AquireWriteLock();
-				DoDelete(docNum);
 				hasChanges = true;
+				DoDelete(docNum);
 			}
 		}
 		
 		
 		/// <summary>Implements deletion of the document numbered <code>docNum</code>.
-		/// Applications should call {@link #Delete(int)} or {@link #Delete(Term)}.
+		/// Applications should call {@link #DeleteDocument(int)} or {@link #DeleteDocuments(Term)}.
 		/// </summary>
 		protected internal abstract void  DoDelete(int docNum);
 		
-		/// <summary>Deletes all documents containing <code>term</code>.
-		/// This is useful if one uses a document field to hold a unique ID string for
-		/// the document.  Then to delete such a document, one merely constructs a
-		/// term with the appropriate field and the unique ID string as its text and
-		/// passes it to this method.
-		/// See {@link #Delete(int)} for information about when this deletion will
-		/// become effective.
-		/// </summary>
-		/// <returns> the number of documents deleted
-		/// 
-		/// </returns>
-		/// <deprecated> Use {@link #DeleteDocuments(Term term)} instead.
-		/// </deprecated>
-		public int Delete(Term term)
-		{
-			return DeleteDocuments(term);
-		}
 		
-		/// <summary>Deletes all documents containing <code>term</code>.
+		/// <summary>Deletes all documents that have a given <code>term</code> indexed.
 		/// This is useful if one uses a document field to hold a unique ID string for
 		/// the document.  Then to delete such a document, one merely constructs a
 		/// term with the appropriate field and the unique ID string as its text and
 		/// passes it to this method.
-		/// See {@link #Delete(int)} for information about when this deletion will 
+		/// See {@link #DeleteDocument(int)} for information about when this deletion will 
 		/// become effective.
 		/// </summary>
 		/// <returns> the number of documents deleted
@@ -676,31 +708,122 @@ namespace Lucene.Net.Index
 			{
 				if (directoryOwner)
 					AquireWriteLock();
-				DoUndeleteAll();
 				hasChanges = true;
+				DoUndeleteAll();
 			}
 		}
 		
 		/// <summary>Implements actual undeleteAll() in subclass. </summary>
 		protected internal abstract void  DoUndeleteAll();
 		
-		/// <summary> Commit changes resulting from delete, undeleteAll, or setNorm operations
+		/// <summary> Should internally checkpoint state that will change
+		/// during commit so that we can rollback if necessary.
+		/// </summary>
+		internal virtual void  StartCommit()
+		{
+			if (directoryOwner)
+			{
+				rollbackSegmentInfos = (SegmentInfos) segmentInfos.Clone();
+			}
+			rollbackHasChanges = hasChanges;
+		}
+		
+		/// <summary> Rolls back state to just before the commit (this is
+		/// called by commit() if there is some exception while
+		/// committing).
+		/// </summary>
+		internal virtual void  RollbackCommit()
+		{
+			if (directoryOwner)
+			{
+				for (int i = 0; i < segmentInfos.Count; i++)
+				{
+					// Rollback each segmentInfo.  Because the
+					// SegmentReader holds a reference to the
+					// SegmentInfo we can't [easily] just replace
+					// segmentInfos, so we reset it in place instead:
+					segmentInfos.Info(i).Reset(rollbackSegmentInfos.Info(i));
+				}
+				rollbackSegmentInfos = null;
+			}
+			
+			hasChanges = rollbackHasChanges;
+		}
+		
+		/// <summary> Commit changes resulting from delete, undeleteAll, or
+		/// setNorm operations
+		/// 
+		/// If an exception is hit, then either no changes or all
+		/// changes will have been committed to the index
+		/// (transactional semantics).
 		/// 
 		/// </summary>
 		/// <throws>  IOException </throws>
-		protected internal void  Commit()
+		public void  Commit()
 		{
 			lock (this)
 			{
 				if (hasChanges)
 				{
+					if (deleter == null)
+					{
+						// In the MultiReader case, we share this deleter
+						// across all SegmentReaders:
+						SetDeleter(new IndexFileDeleter(segmentInfos, directory));
+					}
 					if (directoryOwner)
 					{
-						lock (directory)
+						
+						// Should not be necessary: no prior commit should
+						// have left pending files, so just defensive:
+						deleter.ClearPendingFiles();
+						
+						System.String oldInfoFileName = segmentInfos.GetCurrentSegmentFileName();
+						System.String nextSegmentsFileName = segmentInfos.GetNextSegmentFileName();
+						
+						// Checkpoint the state we are about to change, in
+						// case we have to roll back:
+						StartCommit();
+						
+						bool success = false;
+						try
 						{
-							// in- & inter-process sync
-							new AnonymousClassWith1(this, directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME), IndexWriter.COMMIT_LOCK_TIMEOUT).Run();
+							DoCommit();
+							segmentInfos.Write(directory);
+							success = true;
 						}
+						finally
+						{
+							
+							if (!success)
+							{
+								
+								// Rollback changes that were made to
+								// SegmentInfos but failed to get [fully]
+								// committed.  This way this reader instance
+								// remains consistent (matched to what's
+								// actually in the index):
+								RollbackCommit();
+								
+								// Erase any pending files that we were going to delete:
+								deleter.ClearPendingFiles();
+								
+								// Remove possibly partially written next
+								// segments file:
+								deleter.DeleteFile(nextSegmentsFileName);
+								
+								// Recompute deletable files & remove them (so
+								// partially written .del files, etc, are
+								// removed):
+								deleter.FindDeletableFiles();
+								deleter.DeleteFiles();
+							}
+						}
+						
+						// Attempt to delete all files we just obsoleted:
+						deleter.DeleteFile(oldInfoFileName);
+						deleter.CommitPendingFiles();
+						
 						if (writeLock != null)
 						{
 							writeLock.Release(); // release write lock
@@ -712,6 +835,15 @@ namespace Lucene.Net.Index
 				}
 				hasChanges = false;
 			}
+		}
+		
+		protected internal virtual void  SetDeleter(IndexFileDeleter deleter)
+		{
+			this.deleter = deleter;
+		}
+		protected internal virtual IndexFileDeleter GetDeleter()
+		{
+			return deleter;
 		}
 		
 		/// <summary>Implements commit. </summary>
@@ -729,7 +861,6 @@ namespace Lucene.Net.Index
 				DoClose();
 				if (closeDirectory)
 					directory.Close();
-                System.GC.SuppressFinalize(this);
 			}
 		}
 		
@@ -739,101 +870,19 @@ namespace Lucene.Net.Index
 		/// <summary>Release the write lock, if needed. </summary>
 		~IndexReader()
 		{
-			if (writeLock != null)
+			try
 			{
-				writeLock.Release(); // release write lock
-				writeLock = null;
+				if (writeLock != null)
+				{
+					writeLock.Release(); // release write lock
+					writeLock = null;
+				}
+			}
+			finally
+			{
 			}
 		}
 		
-		/// <summary> Returns a list of all unique field names that exist in the index pointed
-		/// to by this IndexReader.
-		/// </summary>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// </returns>
-		/// <throws>  IOException if there is a problem with accessing the index </throws>
-		/// <summary> 
-		/// </summary>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetFieldNames();
-		
-		/// <summary> Returns a list of all unique field names that exist in the index pointed
-		/// to by this IndexReader.  The boolean argument specifies whether the fields
-		/// returned are indexed or not.
-		/// </summary>
-		/// <param name="indexed"><code>true</code> if only indexed fields should be returned;
-		/// <code>false</code> if only unindexed fields should be returned.
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// </returns>
-		/// <throws>  IOException if there is a problem with accessing the index </throws>
-		/// <summary> 
-		/// </summary>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetFieldNames(bool indexed);
-		
-		/// <summary> </summary>
-		/// <param name="storedTermVector">if true, returns only Indexed fields that have term vector info, 
-		/// else only indexed fields without term vector info 
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// 
-		/// </returns>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public virtual System.Collections.ICollection GetIndexedFieldNames(bool storedTermVector)
-		{
-			if (storedTermVector)
-			{
-				System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.YES))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_POSITIONS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_OFFSETS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                foreach (object item in GetIndexedFieldNames(Field.TermVector.WITH_POSITIONS_OFFSETS))
-                {
-                    if (fieldSet.ContainsKey(item) == false)
-                    {
-                        fieldSet.Add(item, item);
-                    }
-                }
-                return fieldSet;
-			}
-			else
-				return GetIndexedFieldNames(Field.TermVector.NO);
-		}
-		
-		/// <summary> Get a list of unique field names that exist in this index, are indexed, and have
-		/// the specified term vector information.
-		/// 
-		/// </summary>
-		/// <param name="tvSpec">specifies which term vector information should be available for the fields
-		/// </param>
-		/// <returns> Collection of Strings indicating the names of the fields
-		/// 
-		/// </returns>
-		/// <deprecated>  Replaced by {@link #GetFieldNames(IndexReader.FieldOption)}
-		/// </deprecated>
-		public abstract System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec);
 		
 		/// <summary> Get a list of unique field names that exist in this index and have the specified
 		/// field option information.
@@ -854,7 +903,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a problem with accessing the index </throws>
 		public static bool IsLocked(Directory directory)
 		{
-			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked() || directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME).IsLocked();
+			return directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).IsLocked();
 		}
 		
 		/// <summary> Returns <code>true</code> iff the index in the named directory is
@@ -865,7 +914,7 @@ namespace Lucene.Net.Index
 		/// <throws>  IOException if there is a problem with accessing the index </throws>
 		public static bool IsLocked(System.String directory)
 		{
-			Directory dir = FSDirectory.GetDirectory(directory, false);
+			Directory dir = FSDirectory.GetDirectory(directory);
 			bool result = IsLocked(dir);
 			dir.Close();
 			return result;
@@ -880,7 +929,6 @@ namespace Lucene.Net.Index
 		public static void  Unlock(Directory directory)
 		{
 			directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
-			directory.MakeLock(IndexWriter.COMMIT_LOCK_NAME).Release();
 		}
 		
 		/// <summary> Prints the filename and size of each file within a given compound file.
@@ -888,7 +936,7 @@ namespace Lucene.Net.Index
 		/// In order to make the extracted version of the index work, you have to copy
 		/// the segments file from the compound index into the directory where the extracted files are stored.
 		/// </summary>
-		/// <param name="args">Usage: Lucene.Net.index.IndexReader [-extract] &lt;cfsfile&gt;
+		/// <param name="args">Usage: Lucene.Net.Index.IndexReader [-extract] &lt;cfsfile&gt;
 		/// </param>
 		[STAThread]
 		public static void  Main(System.String[] args)
@@ -910,7 +958,7 @@ namespace Lucene.Net.Index
 			
 			if (filename == null)
 			{
-				System.Console.Out.WriteLine("Usage: Lucene.Net.index.IndexReader [-extract] <cfsfile>");
+				System.Console.Out.WriteLine("Usage: Lucene.Net.Index.IndexReader [-extract] <cfsfile>");
 				return ;
 			}
 			
@@ -919,10 +967,10 @@ namespace Lucene.Net.Index
 			
 			try
 			{
-				System.IO.FileInfo file = new System.IO.FileInfo(filename);
-				System.String dirname = new System.IO.FileInfo(file.FullName).DirectoryName;
-				filename = file.Name;
-				dir = FSDirectory.GetDirectory(dirname, false);
+				string filepath = System.IO.Path.GetFullPath(filename);
+				System.String dirname = System.IO.Path.GetDirectoryName(filepath);
+				filename = System.IO.Path.GetFileName(filepath);
+				dir = FSDirectory.GetDirectory(dirname);
 				cfr = new CompoundFileReader(dir, filename);
 				
 				System.String[] files = cfr.List();
@@ -947,13 +995,13 @@ namespace Lucene.Net.Index
 							int bufLen = (int) System.Math.Min(chunk, len);
 							ii.ReadBytes(buffer, 0, bufLen);
 
-                            byte[] byteArray = new byte[buffer.Length];
-                            for (int index=0; index < buffer.Length; index++)
-                                byteArray[index] = (byte) buffer[index];
+							byte[] byteArray = new byte[buffer.Length];
+							for (int index=0; index < buffer.Length; index++)
+								byteArray[index] = (byte) buffer[index];
 
-                            f.Write(byteArray, 0, bufLen);
+							f.Write(byteArray, 0, bufLen);
 
-                            len -= bufLen;
+							len -= bufLen;
 						}
 						
 						f.Close();

@@ -1,9 +1,10 @@
 /*
- * Copyright 2005 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,14 +16,15 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 
 namespace Lucene.Net.Search
 {
 	
-	/// <summary> A query that generates the union of the documents produced by its subqueries, and that scores each document as the maximum
-	/// score for that document produced by any subquery plus a tie breaking increment for any additional matching subqueries.
-	/// This is useful to search for a word in multiple fields with different boost factors (so that the fields cannot be
+	/// <summary> A query that generates the union of documents produced by its subqueries, and that scores each document with the maximum
+	/// score for that document as produced by any subquery, plus a tie breaking increment for any additional matching subqueries.
+	/// This is useful when searching for a word in multiple fields with different boost factors (so that the fields cannot be
 	/// combined equivalently into a single search field).  We want the primary score to be the one associated with the highest boost,
 	/// not the sum of the field scores (as BooleanQuery would give).
 	/// If the query is "albino elephant" this ensures that "albino" matching one field and "elephant" matching
@@ -172,14 +174,16 @@ namespace Lucene.Net.Search
 			{
 				if (Enclosing_Instance.disjuncts.Count == 1)
 					return ((Weight) weights[0]).Explain(reader, doc);
-				Explanation result = new Explanation();
+				ComplexExplanation result = new ComplexExplanation();
 				float max = 0.0f, sum = 0.0f;
 				result.SetDescription(Enclosing_Instance.tieBreakerMultiplier == 0.0f ? "max of:" : "max plus " + Enclosing_Instance.tieBreakerMultiplier + " times others of:");
 				for (int i = 0; i < weights.Count; i++)
 				{
 					Explanation e = ((Weight) weights[i]).Explain(reader, doc);
-					if (e.GetValue() > 0)
+					if (e.IsMatch())
 					{
+						System.Boolean tempAux = true;
+						result.SetMatch(tempAux);
 						result.AddDetail(e);
 						sum += e.GetValue();
 						max = System.Math.Max(max, e.GetValue());
@@ -239,9 +243,19 @@ namespace Lucene.Net.Search
 		public override System.Object Clone()
 		{
 			DisjunctionMaxQuery clone = (DisjunctionMaxQuery) base.Clone();
-			clone.disjuncts = (System.Collections.ArrayList) this.disjuncts.Clone();
 			return clone;
 		}
+		
+		
+		// inherit javadoc
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			for (int i = 0; i < disjuncts.Count; i++)
+			{
+				((Query) disjuncts[i]).ExtractTerms(terms);
+			}
+		}
+		
 		
 		/// <summary>Prettyprint us.</summary>
 		/// <param name="field">the field to which we are applied

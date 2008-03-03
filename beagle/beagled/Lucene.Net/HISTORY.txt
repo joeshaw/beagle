@@ -1,18 +1,58 @@
-Lucene.Net History
-------------------
+Apache Lucene.Net History
+-------------------------
 
 
-29Sep06:
-	- Release:  Lucene.Net.1.9.1 build 002 "final"
-	- Fix: Lucene.Net.Index.SegmentReader.cs and Lucene.Net.Index.TermInfosReader.cs -- fixed memory leak by removing unused finalizer.
-	- Fix: Lucene.Net.Index.Compression.SharpZipLibAdapter -- provide full name-space to ICompressionAdapter
-	- Fix: Lucene.Net.Store.FSDirectory.RenameFile() -- added a missing while loop
-	- Fix: Lucene.Net.Store.MultiSearcher.CreateWeight() -- wasn't iterating over the term keys correctly
-	- Fix: Lucene.Net.Search.Query.Combine() -- wasn't checking for the right key before adding
+01May07:
+	- Dev Release:  Apache Lucene.Net.2.1 build 001 "early-Alpha"
+	- Issues: Optimizing an index will cause an exception.
+	- Issues: The "Test" code has not yet be ported for this release.
+	- Issues: Code in "contrib" have not been validated to work with this release.
+
+
+30Apr07:
+	- Patch:  Apache Lucene.Net.2.0 build 005 "final"
+	- Fix: LUCENENET-37 "Exception while search in Lucene.Net and Index prepared by Lucene Java"
+
+
+11Mar07:
+	- Release:  Apache Lucene.Net.2.0 build 004 "final"
+	- Fix: LUCENENET-36 "Countries using "," as decimal separator gets an exception in QueryParser.cs with a query like color~0.5"
+	- Fix: LUCENENET-35 "Tokenizer.Close should check if input is null"
+	- Fix: LUCENENET-33 "Frequent exceptions at Single Parse(String s)" 
+	- Fix: LUCENENET-32 "Check hashtable in PhraseQuery.ExtractTerms for existing keys"
+	- Fix: LUCENENET-31 "elimate exception when casting TermFreqVector"
+	- Fix: LUCENENET-30 "Unnecessary boxing of bytes"
+
+
+27Dec06:
+	- Release:  Apache Lucene.Net.2.0 build 003 "final"
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test now passes
+	- Fix: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test now passes
+
+
+27Nov06:
+	- Release:  Apache Lucene.Net.2.0 build 002 "Beta"
+	- Lucene.Net.Demo.SearchFiles.cs -- ported new code
+	- Lucene.Net.Index.SegmentReader.Get() -- changed Exception to SystemException
+	- Lucene.Net.Search.StringIndex.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldCacheImpl.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.FieldSortHitQueue.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.IndexSearcher.cs -- added a Close() method (to fix sort memory leak defect)
+	- Lucene.Net.Search.MatchAllDocsQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.MultiPhraseQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.PrefixQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Search.RangeQuery.Clone() -- removed this unused methods
+	- Lucene.Net.Index.FieldInfos.FieldName()/FieldInfo() -- avoid the use of exception throwing
+	- Issues: Lucene.Net.Search.TestSort.TestInternationalMultiSearcherSort -- NUnit test FAILS
+	- Issues: Lucene.Net.Search.TestSort.TestInternationalSort -- NUnit test FAILS
+
+
+17Aug06:
+	- Release:  Apache Lucene.Net.2.0 build 001 "Alpha"
 
 
 13Jul06:
-	- Release:  Lucene.Net.1.9.1 build 001
+	- Release:  Apache Lucene.Net.1.9.1 build 001
 	- Port: Lucene.Net.Documents.TimeToString() -- re-based with the Java version
 	- Port: Lucene.Net.Index.IndexWriter.SetMaxBufferedDocs() -- re-based with the Java version
 	- Port: Lucene.Net.Store.BufferedIndexOutput.WriteBytes() -- re-based with the Java version
@@ -23,7 +63,7 @@ Lucene.Net History
 
 
 09Jul06:
-	- Release:  Lucene.Net.1.9 RC1 build 005 "final"
+	- Release:  Apache Lucene.Net.1.9 RC1 build 005 "final"
 	- Fix: Lucene.Net.Search.MultiPhraseQuery.ToString() -- was skipping one too many item during the iteration
 	- Fix: Lucene.Net.Index.ParallelReader.GetFieldNames() -- was adding the object instead of the dictionary value
 	- Fix: Lucene.Net.Index.ParallelReader.Add() -- was adding the object instead of the dictionary value
@@ -46,7 +86,7 @@ Lucene.Net History
 
 
 13Jun06:
-	- Release:  Lucene.Net.1.9 RC1 build 004 Beta
+	- Release:  Apache Lucene.Net.1.9 RC1 build 004 Beta
 	- Fix: Lucene.Net.Search.FieldCacheImpl.GetFloats() -- must remove 'f" or "F" for System.Single.Parse() to work
 	- Fix: Lucene.Net.Index.GetFieldnames() -- was storing the object instead the value in the object
 	- Fix: Test.Lucene.Net.Index.CollectionContains() -- need to compare strings, not objects
@@ -54,7 +94,7 @@ Lucene.Net History
 
 
 03Jun06:
-	- Release: Lucene.Net.1.9 RC1 build 003 Alpha
+	- Release: Apache Lucene.Net.1.9 RC1 build 003 Alpha
 	- Note: This is the first release of Lucene.Net 1.9 to SVN
 	- Note: Added ZIP compression support via reflection.  Thanks to Eyal Post
 	- Note: Fixed bugs in the code which were expose via the NUnit "Test" code

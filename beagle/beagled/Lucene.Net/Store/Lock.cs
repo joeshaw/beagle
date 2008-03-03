@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,7 +16,6 @@
  */
 
 using System;
-using IndexWriter = Lucene.Net.Index.IndexWriter;
 
 namespace Lucene.Net.Store
 {
@@ -26,15 +26,15 @@ namespace Lucene.Net.Store
 	/// public Object doBody() {
 	/// <i>... code to execute while locked ...</i>
 	/// }
-	/// }.Run();
+	/// }.run();
 	/// </pre>
 	/// 
 	/// </summary>
 	/// <author>  Doug Cutting
 	/// </author>
-	/// <version>  $Id: Lock.cs,v 1.8 2006/10/02 17:11:11 joeshaw Exp $
+	/// <version>  $Id: Lock.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
-	/// <seealso cref="Directory.MakeLock(String)">
+	/// <seealso cref="Directory#MakeLock(String)">
 	/// </seealso>
 	public abstract class Lock
 	{
@@ -47,6 +47,12 @@ namespace Lucene.Net.Store
 		/// </returns>
 		public abstract bool Obtain();
 		
+		/// <summary> If a lock obtain called, this failureReason may be set
+		/// with the "root cause" Exception as to why the lock was
+		/// not obtained.
+		/// </summary>
+		protected internal System.Exception failureReason;
+		
 		/// <summary>Attempts to obtain an exclusive lock within amount
 		/// of time given. Currently polls once per second until
 		/// lockWaitTimeout is passed.
@@ -58,14 +64,14 @@ namespace Lucene.Net.Store
 		/// <throws>  IOException if lock wait times out or obtain() throws an IOException </throws>
 		public virtual bool Obtain(long lockWaitTimeout)
 		{
-			int sleepCount = 0;
-			bool locked = Obtain();
+			failureReason = null;
 			int maxSleepCount = (int) (lockWaitTimeout / LOCK_POLL_INTERVAL);
+			int sleepCount = 0;
 			maxSleepCount = System.Math.Min (maxSleepCount, 1);
-
+			SimpleFSLock.Log ("Lock.Obtain timeout={0} maxsleepcount={1}", lockWaitTimeout, maxSleepCount);
+			bool locked = Obtain();
 			while (!locked)
 			{
-				FSDirectory.Log ("Lock.Obtain timeout: sleepcount = {0} (timeout={1},maxsleepcount={2})", sleepCount, lockWaitTimeout, maxSleepCount);
 				if (sleepCount++ == maxSleepCount)
 				{
 					// Try and be a little more verbose on failure
@@ -91,7 +97,7 @@ namespace Lucene.Net.Store
 						ex.Append (" -- lock file doesn't exist!?");
 					}
 					throw new System.IO.IOException(ex.ToString ());
- 				}
+				}
 				System.Threading.Thread.Sleep((int) LOCK_POLL_INTERVAL);
 				locked = Obtain();
 			}
@@ -113,14 +119,6 @@ namespace Lucene.Net.Store
 			private Lock lock_Renamed;
 			private long lockWaitTimeout;
 			
-			/// <summary>Constructs an executor that will grab the named lock.
-			/// Defaults lockWaitTimeout to Lock.COMMIT_LOCK_TIMEOUT.
-			/// </summary>
-			/// <deprecated> Kept only to avoid breaking existing code.
-			/// </deprecated>
-			public With(Lock lock_Renamed) : this(lock_Renamed, IndexWriter.COMMIT_LOCK_TIMEOUT)
-			{
-			}
 			
 			/// <summary>Constructs an executor that will grab the named lock. </summary>
 			public With(Lock lock_Renamed, long lockWaitTimeout)
@@ -130,7 +128,7 @@ namespace Lucene.Net.Store
 			}
 			
 			/// <summary>Code to execute with exclusive access. </summary>
-			public abstract System.Object DoBody();
+			protected internal abstract System.Object DoBody();
 			
 			/// <summary>Calls {@link #doBody} while <i>lock</i> is obtained.  Blocks if lock
 			/// cannot be obtained immediately.  Retries to obtain lock once per second

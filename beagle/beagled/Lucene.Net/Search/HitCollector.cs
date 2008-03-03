@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -23,9 +24,9 @@ namespace Lucene.Net.Search
 	/// <br>HitCollectors are primarily meant to be used to implement queries,
 	/// sorting and filtering.
 	/// </summary>
-	/// <seealso cref="Searcher.Search(Query,HitCollector)">
+	/// <seealso cref="Searcher#Search(Query,HitCollector)">
 	/// </seealso>
-	/// <version>  $Id: HitCollector.cs,v 1.4 2006/10/02 17:09:04 joeshaw Exp $
+	/// <version>  $Id: HitCollector.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public abstract class HitCollector
 	{
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search
 		/// <p>Note: This is called in an inner search loop.  For good search
 		/// performance, implementations of this method should not call
 		/// {@link Searcher#Doc(int)} or
-		/// {@link Lucene.Net.index.IndexReader#Document(int)} on every
+		/// {@link Lucene.Net.Index.IndexReader#Document(int)} on every
 		/// document number encountered.  Doing so can slow searches by an order
 		/// of magnitude or more.
 		/// <p>Note: The <code>score</code> passed to this method is a raw score.

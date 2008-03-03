@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -29,7 +30,7 @@ namespace Lucene.Net.Documents
 	/// 
 	/// <p>
 	/// This class handles <b>all</b> long values (unlike
-	/// {@link Lucene.Net.document.DateField}).
+	/// {@link Lucene.Net.Documents.DateField}).
 	/// 
 	/// </summary>
 	/// <author>  Matt Quail (spud at madbean dot com)
@@ -37,19 +38,27 @@ namespace Lucene.Net.Documents
 	public class NumberTools
 	{
 		
-		private const int RADIX = 16;
+		private const int RADIX = 36;
 		
 		private const char NEGATIVE_PREFIX = '-';
 		
 		// NB: NEGATIVE_PREFIX must be < POSITIVE_PREFIX
 		private const char POSITIVE_PREFIX = '0';
 		
-		//NB: this must be less than
+		// NB: this must be less than
 		/// <summary> Equivalent to longToString(Long.MIN_VALUE)</summary>
-		public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+        public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000";
+#else
+        public static readonly System.String MIN_STRING_VALUE = NEGATIVE_PREFIX + "0000000000000000";
+#endif
 		
 		/// <summary> Equivalent to longToString(Long.MAX_VALUE)</summary>
-		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+		public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "1y2p0ij32e8e7";
+#else
+        public static readonly System.String MAX_STRING_VALUE = POSITIVE_PREFIX + "7fffffffffffffff";
+#endif
 		
 		/// <summary> The length of (all) strings returned by {@link #longToString}</summary>
 		public static readonly int STR_SIZE = MIN_STRING_VALUE.Length;
@@ -57,7 +66,8 @@ namespace Lucene.Net.Documents
 		/// <summary> Converts a long to a String suitable for indexing.</summary>
 		public static System.String LongToString(long l)
 		{
-            if (l == System.Int64.MinValue)
+			
+			if (l == System.Int64.MinValue)
 			{
 				// special case, because long is not symetric around zero
 				return MIN_STRING_VALUE;
@@ -74,7 +84,11 @@ namespace Lucene.Net.Documents
 			{
 				buf.Append(POSITIVE_PREFIX);
 			}
-			System.String num = System.Convert.ToString(l, RADIX);
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+			System.String num = ToString(l);
+#else
+            System.String num = System.Convert.ToString(l, RADIX);
+#endif
 			
 			int padLen = STR_SIZE - num.Length - buf.Length;
 			while (padLen-- > 0)
@@ -114,7 +128,11 @@ namespace Lucene.Net.Documents
 			}
 			
 			char prefix = str[0];
-			long l = System.Convert.ToInt64(str.Substring(1), RADIX);
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+			long l = ToLong(str.Substring(1));
+#else
+            long l = System.Convert.ToInt64(str.Substring(1), RADIX);
+#endif
 			
 			if (prefix == POSITIVE_PREFIX)
 			{
@@ -131,5 +149,62 @@ namespace Lucene.Net.Documents
 			
 			return l;
 		}
-	}
+
+#if !PRE_LUCENE_NET_2_0_0_COMPATIBLE
+        #region BASE36 OPS 
+        static System.String digits = "0123456789abcdefghijklmnopqrstuvwxyz";
+        static long[] powersOf36 = 
+            {
+                1L,
+                36L,
+                36L*36L,
+                36L*36L*36L,
+                36L*36L*36L*36L,
+                36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L*36L*36L*36L*36L,
+                36L*36L*36L*36L*36L*36L*36L*36L*36L*36L*36L*36L
+            };
+
+        public static System.String ToString(long lval)
+        {
+            if (lval == 0)
+            {
+                return "0";
+            }
+
+            int maxStrLen = powersOf36.Length;
+            long curval = lval;
+
+            char[] tb = new char[maxStrLen];
+            int outpos = 0;
+            for (int i = 0; i < maxStrLen; i++)
+            {
+                long pval = powersOf36[maxStrLen - i - 1];
+                int pos = (int)(curval / pval);
+                tb[outpos++] = digits.Substring(pos, 1).ToCharArray()[0];
+                curval = curval % pval;
+            }
+            if (outpos == 0)
+                tb[outpos++] = '0';
+            return new System.String(tb, 0, outpos).TrimStart('0');
+        }
+
+        public static long ToLong(System.String t)
+        {
+            long ival = 0;
+            char[] tb = t.ToCharArray();
+            for (int i = 0; i < tb.Length; i++)
+            {
+                ival += powersOf36[i] * digits.IndexOf(tb[tb.Length - i - 1]);
+            }
+            return ival;
+        }
+        #endregion
+#endif
+    }
 }

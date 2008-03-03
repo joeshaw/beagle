@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -16,7 +17,7 @@
 
 using System;
 using Document = Lucene.Net.Documents.Document;
-using Field = Lucene.Net.Documents.Field;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Index
@@ -25,7 +26,7 @@ namespace Lucene.Net.Index
 	/// <summary>An IndexReader which reads multiple indexes, appending their content.
 	/// 
 	/// </summary>
-	/// <version>  $Id: MultiReader.cs,v 1.4 2006/10/16 19:36:57 joeshaw Exp $
+	/// <version>  $Id: MultiReader.java 499176 2007-01-23 22:54:40Z dnaber $
 	/// </version>
 	public class MultiReader : IndexReader
 	{
@@ -50,7 +51,7 @@ namespace Lucene.Net.Index
 		}
 		
 		/// <summary>Construct reading the named set of readers. </summary>
-		public /*internal*/ MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders) : base(directory, sis, closeDirectory)
+		public MultiReader(Directory directory, SegmentInfos sis, bool closeDirectory, IndexReader[] subReaders) : base(directory, sis, closeDirectory)
 		{
 			Initialize(subReaders);
 		}
@@ -110,16 +111,10 @@ namespace Lucene.Net.Index
 			return maxDoc;
 		}
 		
-		public override Document Document(int n)
+		public override Document Document(int n, FieldSelector fieldSelector)
 		{
 			int i = ReaderIndex(n); // find segment num
-			return subReaders[i].Document(n - starts[i]); // dispatch to segment reader
-		}
-		
-		public override Document Document(int n, string[] fields)
-		{
-			int i = ReaderIndex(n); // find segment num
-			return subReaders[i].Document(n - starts[i], fields); // dispatch to segment reader
+			return subReaders[i].Document(n - starts[i], fieldSelector); // dispatch to segment reader
 		}
 		
 		public override bool IsDeleted(int n)
@@ -137,7 +132,7 @@ namespace Lucene.Net.Index
 		{
 			numDocs = - 1; // invalidate cache
 			int i = ReaderIndex(n); // find segment num
-			subReaders[i].Delete(n - starts[i]); // dispatch to segment reader
+			subReaders[i].DeleteDocument(n - starts[i]); // dispatch to segment reader
 			hasDeletions = true;
 		}
 		
@@ -187,7 +182,7 @@ namespace Lucene.Net.Index
 		}
 		
 		private byte[] ones;
-		private byte[] FakeNorms()
+		private byte[] fakeNorms()
 		{
 			if (ones == null)
 				ones = SegmentReader.CreateFakeNorms(MaxDoc());
@@ -202,7 +197,7 @@ namespace Lucene.Net.Index
 				if (bytes != null)
 					return bytes; // cache hit
 				if (!HasNorms(field))
-					return FakeNorms();
+					return fakeNorms();
 				
 				bytes = new byte[MaxDoc()];
 				for (int i = 0; i < subReaders.Length; i++)
@@ -218,13 +213,13 @@ namespace Lucene.Net.Index
 			{
 				byte[] bytes = (byte[]) normsCache[field];
 				if (bytes == null && !HasNorms(field))
-					bytes = FakeNorms();
+					bytes = fakeNorms();
 				if (bytes != null)
-				    // cache hit
+					// cache hit
 					Array.Copy(bytes, 0, result, offset, MaxDoc());
 				
 				for (int i = 0; i < subReaders.Length; i++)
-				    // read from segments
+					// read from segments
 					subReaders[i].Norms(field, result, offset + starts[i]);
 			}
 		}
@@ -264,10 +259,36 @@ namespace Lucene.Net.Index
 			return new MultiTermPositions(subReaders, starts);
 		}
 		
+		protected internal override void  SetDeleter(IndexFileDeleter deleter)
+		{
+			// Share deleter to our SegmentReaders:
+			this.deleter = deleter;
+			for (int i = 0; i < subReaders.Length; i++)
+				subReaders[i].SetDeleter(deleter);
+		}
+		
 		protected internal override void  DoCommit()
 		{
 			for (int i = 0; i < subReaders.Length; i++)
 				subReaders[i].Commit();
+		}
+		
+		internal override void  StartCommit()
+		{
+			base.StartCommit();
+			for (int i = 0; i < subReaders.Length; i++)
+			{
+				subReaders[i].StartCommit();
+			}
+		}
+		
+		internal override void  RollbackCommit()
+		{
+			base.RollbackCommit();
+			for (int i = 0; i < subReaders.Length; i++)
+			{
+				subReaders[i].RollbackCommit();
+			}
 		}
 		
 		protected internal override void  DoClose()
@@ -279,74 +300,7 @@ namespace Lucene.Net.Index
 			}
 		}
 		
-		/// <seealso cref="IndexReader.GetFieldNames()">
-		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames()
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames();
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(boolean)">
-		/// </seealso>
-		public override System.Collections.ICollection GetFieldNames(bool indexed)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetFieldNames(indexed);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		public override System.Collections.ICollection GetIndexedFieldNames(Field.TermVector tvSpec)
-		{
-			// maintain a unique set of field names
-			System.Collections.Hashtable fieldSet = new System.Collections.Hashtable();
-			for (int i = 0; i < subReaders.Length; i++)
-			{
-				IndexReader reader = subReaders[i];
-				System.Collections.ICollection names = reader.GetIndexedFieldNames(tvSpec);
-                for (System.Collections.IEnumerator iterator = names.GetEnumerator(); iterator.MoveNext(); )
-                {
-                    System.Collections.DictionaryEntry fi = (System.Collections.DictionaryEntry) iterator.Current;
-                    System.String s = fi.Key.ToString();
-                    if (fieldSet.ContainsKey(s) == false)
-                    {
-                        fieldSet.Add(s, s);
-                    }
-                }
-            }
-			return fieldSet;
-		}
-		
-		/// <seealso cref="IndexReader.GetFieldNames(IndexReader.FieldOption)">
+		/// <seealso cref="IndexReader#GetFieldNames(IndexReader.FieldOption)">
 		/// </seealso>
 		public override System.Collections.ICollection GetFieldNames(IndexReader.FieldOption fieldNames)
 		{
@@ -492,18 +446,22 @@ namespace Lucene.Net.Index
 		
 		public virtual bool Next()
 		{
-			if (current != null && current.Next())
+			for (; ; )
 			{
-				return true;
+				if (current != null && current.Next())
+				{
+					return true;
+				}
+				else if (pointer < readers.Length)
+				{
+					base_Renamed = starts[pointer];
+					current = TermDocs(pointer++);
+				}
+				else
+				{
+					return false;
+				}
 			}
-			else if (pointer < readers.Length)
-			{
-				base_Renamed = starts[pointer];
-				current = TermDocs(pointer++);
-				return Next();
-			}
-			else
-				return false;
 		}
 		
 		/// <summary>Optimized implementation. </summary>
@@ -541,16 +499,23 @@ namespace Lucene.Net.Index
 			}
 		}
 		
+		/* A Possible future optimization could skip entire segments */
 		public virtual bool SkipTo(int target)
 		{
-			if (current != null && current.SkipTo (target - base_Renamed)) {
-				return true;
-			} else if (pointer < readers.Length) {
-				base_Renamed = starts [pointer];
-				current = TermDocs (pointer++);
-				return SkipTo (target);
-			} else
-				return false;
+			for (; ; )
+			{
+				if (current != null && current.SkipTo(target - base_Renamed))
+				{
+					return true;
+				}
+				else if (pointer < readers.Length)
+				{
+					base_Renamed = starts[pointer];
+					current = TermDocs(pointer++);
+				}
+				else
+					return false;
+			}
 		}
 		
 		private TermDocs TermDocs(int i)

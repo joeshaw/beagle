@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -19,12 +20,28 @@ using System;
 namespace Lucene.Net.Util
 {
 	
+	/// <summary> Licensed to the Apache Software Foundation (ASF) under one or more
+	/// contributor license agreements.  See the NOTICE file distributed with
+	/// this work for additional information regarding copyright ownership.
+	/// The ASF licenses this file to You under the Apache License, Version 2.0
+	/// (the "License"); you may not use this file except in compliance with
+	/// the License.  You may obtain a copy of the License at
+	/// 
+	/// http://www.apache.org/licenses/LICENSE-2.0
+	/// 
+	/// Unless required by applicable law or agreed to in writing, software
+	/// distributed under the License is distributed on an "AS IS" BASIS,
+	/// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	/// See the License for the specific language governing permissions and
+	/// limitations under the License.
+	/// </summary>
+	
 	/// <summary> Some useful constants.
 	/// 
 	/// </summary>
 	/// <author>   Doug Cutting
 	/// </author>
-	/// <version>  $Id: Constants.cs,v 1.3 2006/10/02 17:09:10 joeshaw Exp $
+	/// <version>  $Id: Constants.java 472959 2006-11-09 16:21:50Z yonik $
 	/// 
 	/// </version>
 	
@@ -34,14 +51,16 @@ namespace Lucene.Net.Util
 		{
 		} // can't construct
 		
-		/// <summary>The value of <tt>System.getProperty("java.version")<tt>. *</summary>
-		public static readonly System.String JAVA_VERSION = System.Configuration.ConfigurationSettings.AppSettings.Get("java.version");     // {{Aroush-1.9}}
-		/// <summary>True iff this is Java version 1.1. </summary>
-		public static readonly bool JAVA_1_1 = JAVA_VERSION.StartsWith("1.1.");
-		/// <summary>True iff this is Java version 1.2. </summary>
-		public static readonly bool JAVA_1_2 = JAVA_VERSION.StartsWith("1.2.");
-		/// <summary>True iff this is Java version 1.3. </summary>
-		public static readonly bool JAVA_1_3 = JAVA_VERSION.StartsWith("1.3.");
+		/// <summary>Lucene.Net Runtime version</summary>
+		public static readonly string DOTNET_VERSION = System.Reflection.Assembly.GetAssembly(typeof(Lucene.Net.Index.IndexReader)).ImageRuntimeVersion.Substring(1);
+		/// <summary>True iff Lucene.Net Runtime version is 1.0</summary>
+		public static readonly bool DOTNET_VERSION_1_0 = DOTNET_VERSION.StartsWith("1.0.");
+		/// <summary>True iff Lucene.Net Runtime version is 1.1</summary>
+		public static readonly bool DOTNET_VERSION_1_1 = DOTNET_VERSION.StartsWith("1.1.");
+		/// <summary>True iff Lucene.Net Runtime version is 2.0</summary>
+		public static readonly bool DOTNET_VERSION_2_0 = DOTNET_VERSION.StartsWith("2.0.");
+		/// <summary>True iff Lucene.Net Runtime version is 3.0</summary>
+		public static readonly bool DOTNET_VERSION_3_0 = DOTNET_VERSION.StartsWith("3.0.");
 		
 		/// <summary>The value of <tt>System.getProperty("os.name")<tt>. *</summary>
 		public static readonly System.String OS_NAME = System.Environment.GetEnvironmentVariable("OS");

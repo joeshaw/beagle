@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -21,7 +22,7 @@ using IndexInput = Lucene.Net.Store.IndexInput;
 namespace Lucene.Net.Index
 {
 	
-	/// <version>  $Id: TermVectorsReader.cs,v 1.3 2006/10/02 17:09:00 joeshaw Exp $
+	/// <version>  $Id: TermVectorsReader.java 472959 2006-11-09 16:21:50Z yonik $
 	/// </version>
 	public class TermVectorsReader : System.ICloneable
 	{
@@ -35,7 +36,7 @@ namespace Lucene.Net.Index
 		private int tvdFormat;
 		private int tvfFormat;
 		
-		public /*internal*/ TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos)
+		public TermVectorsReader(Directory d, System.String segment, FieldInfos fieldInfos)
 		{
 			if (d.FileExists(segment + TermVectorsWriter.TVX_EXTENSION))
 			{
@@ -118,7 +119,7 @@ namespace Lucene.Net.Index
 		/// <returns> The TermFreqVector for the document and field or null if there is no termVector for this field.
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files </throws>
-		public /*internal*/ virtual TermFreqVector Get(int docNum, System.String field)
+		public virtual TermFreqVector Get(int docNum, System.String field)
 		{
 			// Check if no term vectors are available for this segment at all
 			int fieldNumber = fieldInfos.FieldNumber(field);
@@ -165,7 +166,7 @@ namespace Lucene.Net.Index
 				}
 				else
 				{
-					//System.out.println("Field not found");
+					//System.out.println("Fieldable not found");
 				}
 			}
 			else
@@ -183,7 +184,7 @@ namespace Lucene.Net.Index
 		/// <returns> All term frequency vectors
 		/// </returns>
 		/// <throws>  IOException if there is an error reading the term vector files  </throws>
-		public /*internal*/ virtual TermFreqVector[] Get(int docNum)
+		public virtual TermFreqVector[] Get(int docNum)
 		{
 			TermFreqVector[] result = null;
 			// Check if no term vectors are available for this segment at all
@@ -308,7 +309,7 @@ namespace Lucene.Net.Index
 					buffer = new char[totalLength];
 					
 					if (start > 0)
-				    	// just copy if necessary
+						// just copy if necessary
 						Array.Copy(previousBuffer, 0, buffer, 0, start);
 				}
 				

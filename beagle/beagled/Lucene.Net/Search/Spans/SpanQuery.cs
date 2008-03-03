@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,17 +16,18 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
-using Searcher = Lucene.Net.Search.Searcher;
 using Weight = Lucene.Net.Search.Weight;
+using Searcher = Lucene.Net.Search.Searcher;
 
 namespace Lucene.Net.Search.Spans
 {
 	
 	/// <summary>Base class for span-based queries. </summary>
 	[Serializable]
-	public abstract class SpanQuery:Query
+	public abstract class SpanQuery : Query
 	{
 		/// <summary>Expert: Returns the matches for this query in an index.  Used internally
 		/// to search for spans. 
@@ -36,11 +38,20 @@ namespace Lucene.Net.Search.Spans
 		public abstract System.String GetField();
 		
 		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="Query#ExtractTerms(Set)">
+		/// </seealso>
 		public abstract System.Collections.ICollection GetTerms();
 		
 		protected internal override Weight CreateWeight(Searcher searcher)
 		{
 			return new SpanWeight(this, searcher);
 		}
-	}
+
+        public Weight CreateWeight_ForNUnitTest(Searcher searcher)
+        {
+            return new SpanWeight(this, searcher);
+        }
+    }
 }

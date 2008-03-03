@@ -1,0 +1,34 @@
+From: Joe Shaw <joeshaw@novell.com>
+
+Remove instances of debugStream from throughout the code.  They unnecessarily
+open stdout (which causes the creation of a "Console" log file), but they're
+never actually used.
+
+Index: QueryParser/QueryParserTokenManager.cs
+===================================================================
+--- QueryParser/QueryParserTokenManager.cs	(revision 4506)
++++ QueryParser/QueryParserTokenManager.cs	(working copy)
+@@ -33,16 +33,7 @@
+ 	{
+ 		private void  InitBlock()
+ 		{
+-			System.IO.StreamWriter temp_writer;
+-			temp_writer = new System.IO.StreamWriter(System.Console.OpenStandardOutput(), System.Console.Out.Encoding);
+-			temp_writer.AutoFlush = true;
+-			debugStream = temp_writer;
+ 		}
+-		public System.IO.StreamWriter debugStream;
+-		public virtual void  SetDebugStream(System.IO.StreamWriter ds)
+-		{
+-			debugStream = ds;
+-		}
+ 		private int JjStopStringLiteralDfa_3(int pos, long active0)
+ 		{
+ 			switch (pos)
+@@ -1408,4 +1399,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

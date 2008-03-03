@@ -1,9 +1,10 @@
 /*
- * Copyright 2004 The Apache Software Foundation
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  * 
  * http://www.apache.org/licenses/LICENSE-2.0
  * 
@@ -15,6 +16,7 @@
  */
 
 using System;
+
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Query = Lucene.Net.Search.Query;
 using ToStringUtils = Lucene.Net.Util.ToStringUtils;
@@ -38,6 +40,7 @@ namespace Lucene.Net.Search.Spans
 				this.enclosingInstance = enclosingInstance;
 				includeSpans = Enclosing_Instance.include.GetSpans(reader);
 				excludeSpans = Enclosing_Instance.exclude.GetSpans(reader);
+				moreExclude = excludeSpans.Next();
 			}
 			private Lucene.Net.Index.IndexReader reader;
 			private SpanNotQuery enclosingInstance;
@@ -53,7 +56,7 @@ namespace Lucene.Net.Search.Spans
 			private bool moreInclude = true;
 			
 			private Spans excludeSpans;
-			private bool moreExclude = true;
+			private bool moreExclude;
 			
 			public virtual bool Next()
 			{
@@ -154,9 +157,19 @@ namespace Lucene.Net.Search.Spans
 			return include.GetField();
 		}
 		
+		/// <summary>Returns a collection of all terms matched by this query.</summary>
+		/// <deprecated> use extractTerms instead
+		/// </deprecated>
+		/// <seealso cref="#ExtractTerms(Set)">
+		/// </seealso>
 		public override System.Collections.ICollection GetTerms()
 		{
 			return include.GetTerms();
+		}
+		
+		public override void  ExtractTerms(System.Collections.Hashtable terms)
+		{
+			include.ExtractTerms(terms);
 		}
 		
 		public override System.String ToString(System.String field)
@@ -203,6 +216,28 @@ namespace Lucene.Net.Search.Spans
 			{
 				return this; // no clauses rewrote
 			}
+		}
+		
+		/// <summary>Returns true iff <code>o</code> is equal to this. </summary>
+		public  override bool Equals(System.Object o)
+		{
+			if (this == o)
+				return true;
+			if (!(o is SpanNotQuery))
+				return false;
+			
+			SpanNotQuery other = (SpanNotQuery) o;
+			return this.include.Equals(other.include) && this.exclude.Equals(other.exclude) && this.GetBoost() == other.GetBoost();
+		}
+		
+		public override int GetHashCode()
+		{
+			int h = include.GetHashCode();
+			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h ^= exclude.GetHashCode();
+			h = (h << 1) | ((int) (((uint) h) >> 31)); // rotate left
+			h ^= System.Convert.ToInt32(GetBoost());
+			return h;
 		}
 	}
 }
