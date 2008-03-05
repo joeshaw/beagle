@@ -181,7 +181,7 @@ namespace Beagle.Filters {
 	   		string name = node.GetAttributeValue ("name", String.Empty);
            		string content = node.GetAttributeValue ("content", String.Empty);
 			if (name != String.Empty)
-				AddProperty (Beagle.Property.New ("meta:" + name, content));
+				AddProperty (Beagle.Property.New ("meta:" + name.ToLower (), content));
 		}
 
 		protected void HandleContentFreeNode (HtmlNode node)
