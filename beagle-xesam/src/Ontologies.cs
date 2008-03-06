@@ -30,7 +30,7 @@ using System.Collections.Generic;
 namespace Beagle {
 	namespace Xesam {
 		class Ontologies {
-			private static Dictionary<string, string> fields_mapping;
+			private static Dictionary<string, List<string>> fields_mapping;
 			private static Dictionary<string, string> sources_mapping;
 			private static Dictionary<string, string> contents_mapping;
 			private static string[] fields_supported = null;
@@ -44,37 +44,100 @@ namespace Beagle {
 				InitializeContentsMapping ();
 			}
 
+			static void AddField (string xesam_field, string beagle_field)
+			{
+				if (!fields_mapping.ContainsKey (xesam_field))
+					fields_mapping.Add (xesam_field, new List<string> ());
+
+				// This is O(n), but probably worth it since 'n' is small
+				if (!fields_mapping [xesam_field].Contains (beagle_field))
+					fields_mapping [xesam_field].Add (beagle_field);
+			}
+
 			private static void InitializeFieldsMapping ()
 			{
-				fields_mapping = new Dictionary<string, string> ();
+				fields_mapping = new Dictionary<string, List<string>> ();
 
-				fields_mapping.Add ("dc:title", "dc:title");
-				fields_mapping.Add ("xesam:title", "dc:title");
+				// General fields
+				AddField ("dc:title", "dc:title");
+				AddField ("xesam:title", "dc:title");
 
-				fields_mapping.Add ("dc:author", "dc:author");
-				fields_mapping.Add ("xesam:author", "dc:author");
+				// FIXME: "dc:author" is not valid Dublin Core
+				AddField ("dc:author", "dc:author");
+				AddField ("xesam:author", "dc:author");
+				AddField ("xesam:author", "dc:creator");
 
-				fields_mapping.Add ("dc:creator", "dc:creator");
-				fields_mapping.Add ("xesam:creator", "dc:creator");
+				AddField ("dc:creator", "dc:creator");
+				AddField ("xesam:creator", "dc:creator");
 
-				fields_mapping.Add ("dc:date", "date");
+				AddField ("dc:date", "date");
+				AddField ("xesam:sourceModified", "date");
 
-				fields_mapping.Add ("xesam:width", "fixme:width");
-				fields_mapping.Add ("xesam:height", "fixme:height");
+				AddField ("mime", "mimetype");
+				AddField ("xesam:mimeType", "mimetype");
 
-				fields_mapping.Add ("xesam:pageCount", "fixme:page-count");
+				AddField ("uri", "uri");
+				AddField ("url", "uri");
+				AddField ("xesam:url", "uri");
 
-				fields_mapping.Add ("mime", "mimetype");
-				fields_mapping.Add ("xesam:mimeType", "mimetype");
+				// File fields
+				AddField ("xesam:name", "beagle:ExactFilename");
+				AddField ("xesam:fileExtension", "beagle:FilenameExtension");
+				AddField ("xesam:storageSize", "fixme:filesize");
 
-				fields_mapping.Add ("uri", "uri");
-				fields_mapping.Add ("url", "uri");
-				fields_mapping.Add ("xesam:url", "uri");
+				// Document fields
+				AddField ("xesam:wordCount", "fixme:word-count");
+				AddField ("xesam:pageCount", "fixme:page-count");
 
-				fields_mapping.Add ("xesam:fileExtension", "beagle:FilenameExtension");
-				fields_mapping.Add ("fileExtension", "beagle:FilenameExtension");
+				// EMail fields
+				AddField ("xesam:subject", "dc:title");
+				AddField ("xesam:author", "fixme:from");
+				AddField ("xesam:to", "fixme:to");
+				AddField ("xesam:cc", "fixme:cc");
+				AddField ("xesam:id", "fixme:msgid");
+				AddField ("xesam:mailingList", "fixme:mlist");
+				// FIXME: BCC fields seem to be ignored by the filters
+				//AddField ("xesam:bcc", "fixme:bcc");
 
-				fields_mapping.Add ("snippet", "snippet");
+				// Image fields
+				AddField ("xesam:width", "fixme:width");
+				AddField ("xesam:height", "fixme:height");
+				AddField ("xesam:pixelDataBitDepth", "fixme:depth");
+
+				// Audio (and Video) fields
+				AddField ("xesam:album", "fixme:album");
+				AddField ("xesam:artist", "fixme:artist");
+				AddField ("xesam:composer", "fixme:composer");
+				AddField ("xesam:performer", "fixme:performer");
+				AddField ("xesam:genre", "fixme:genre");
+				AddField ("xesam:trackNumber", "fixme:tracknumber");
+				AddField ("xesam:trackCount", "fixme:trackcount");
+				AddField ("xesam:discNumber", "fixme:discnumber");
+				// xesam doesn't have this yet
+				//AddField ("xesam:discCount", "fixme:disccount");
+				AddField ("xesam:audioBitrate", "fixme:bitrate");
+				AddField ("xesam:audioChannels", "fixme:channels");
+				AddField ("xesam:audioSampleRate", "fixme:samplerate");
+				AddField ("xesam:mediaDuration", "fixme:duration");
+				AddField ("xesam:comment", "fixme:comment");
+
+				// Video feilds
+				AddField ("xesam:audioCodec", "fixme:audio:codec");
+				AddField ("xesam:audioBitrate", "fixme:audio:bitrate");
+				AddField ("xesam:audioSampleRate", "fixme:audio:samplerate");
+				AddField ("xesam:videoCodec", "fixme:video:codec");
+				AddField ("xesam:frameRate", "fixme:fps");
+				AddField ("xesam:height", "fixme:video:height");
+				AddField ("xesam:width", "fixme:video:width");
+
+				// HTML fields
+				// FIXME: This only works with HTML with <meta> tags. What about other sources?
+				AddField ("xesam:generator", "meta:generator");
+				AddField ("xesam:description", "meta:description");
+
+				AddField ("xesam:remoteServer", "fixme:host");
+
+				AddField ("snippet", "snippet");
 			}
 
 			private static void InitializeSourcesMapping ()
@@ -83,6 +146,7 @@ namespace Beagle {
 
 				sources_mapping.Add ("xesam:ArchivedFile", "filetype:archive");
 				sources_mapping.Add ("xesam:File", "type:File");
+				sources_mapping.Add ("xesam:Filelike", "type:File");
 				sources_mapping.Add ("xesam:MessageboxMessage","type:MailMessage");
 			}
 
@@ -126,12 +190,12 @@ namespace Beagle {
 				return fields_supported;
 			}
 
-			public static string XesamToBeagleField (string xesamField) {
+			public static string[] XesamToBeagleField (string xesamField) {
 				if (fields_mapping.ContainsKey (xesamField))
-					return fields_mapping [xesamField];
+					return fields_mapping [xesamField].ToArray();
 				else {
 					Console.Error.WriteLine ("Unsupported field: {0}", xesamField);
-					return xesamField.Replace (':', '-');
+					return new string[] { "property:" + xesamField };
 				}
 			}
 

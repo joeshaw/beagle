@@ -86,7 +86,8 @@ namespace Beagle {
 			private static string ParseXesamField (XPathNavigator nav)
 			{
 				string field = nav.GetAttribute ("name", String.Empty);
-				field = Ontologies.XesamToBeagleField (field);
+				// FIXME: Using just the first field is NOT correct
+				field = Ontologies.XesamToBeagleField (field)[0];
 
 				if (field.Contains (":")) {
 					field = "property:" + field;

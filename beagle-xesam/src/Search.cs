@@ -65,7 +65,9 @@ namespace Beagle {
 				foreach (string field in fields) {
 					// We add String.Empty to attributes because they may be null and we cannot
 					// return null objects over DBus
-					switch (Ontologies.XesamToBeagleField (field)) {
+					string[] bfields = Ontologies.XesamToBeagleField (field);
+
+					switch (bfields [0]) {
 					case "uri":
 						hitValue [i++] = hit.Uri.ToString ();
 						break;
@@ -88,15 +90,25 @@ namespace Beagle {
 						// FIXME: This *will* break since we don't know what the expected
 						// type here is, and we're always using strings
 						
-						string[] prop = hit.GetProperties (Ontologies.XesamToBeagleField (field));
-						if (prop != null) {
-							if (prop.Length == 1)
-								hitValue [i++] = prop [0];
-							else
-								hitValue [i++] = prop;
-						} else {
-							hitValue [i++] = String.Empty;
+						List<string> values = new List<string> ();
+
+						foreach (string bfield in bfields) {
+							string[] prop = hit.GetProperties (bfield);
+
+							if (prop != null)
+								values.AddRange (prop);
 						}
+
+						if (values.Count == 0)
+							// No values found
+							hitValue [i++] = String.Empty;
+						else if (values.Count == 1)
+							// Only one value -- return as string
+							hitValue [i++] = values [0];
+						else
+							// Multiple values -- returns as string[]
+							hitValue [i++] = values.ToArray ();
+
 						break;
 					}
 				}
