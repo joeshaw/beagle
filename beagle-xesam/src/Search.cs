@@ -85,13 +85,18 @@ namespace Beagle {
 						break;
 					    
 					default:
-						//FIXME: This *will* break since we don't know what the expected
-						//type here is
-						object p = hit.GetFirstProperty (Ontologies.XesamToBeagleField (field));
-						if (p != null)
-							hitValue [i++] = p.ToString();
-						else
+						// FIXME: This *will* break since we don't know what the expected
+						// type here is, and we're always using strings
+						
+						string[] prop = hit.GetProperties (Ontologies.XesamToBeagleField (field));
+						if (prop != null) {
+							if (prop.Length == 1)
+								hitValue [i++] = prop [0];
+							else
+								hitValue [i++] = prop;
+						} else {
 							hitValue [i++] = String.Empty;
+						}
 						break;
 					}
 				}
