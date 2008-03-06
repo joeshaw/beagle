@@ -86,7 +86,13 @@ namespace Beagle {
 			private static string ParseXesamField (XPathNavigator nav)
 			{
 				string field = nav.GetAttribute ("name", String.Empty);
-				return Ontologies.XesamToBeagleField (field);
+				field = Ontologies.XesamToBeagleField (field);
+
+				if (field.Contains (":")) {
+					field = "property:" + field;
+				}
+
+				return field;
 			}
 
 			private static string ParseXesamData (XPathNavigator nav, ComparisonType dateComp)

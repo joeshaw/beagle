@@ -48,14 +48,14 @@ namespace Beagle {
 			{
 				fields_mapping = new Dictionary<string, string> ();
 
-				fields_mapping.Add ("dc:title", "property:dc:title");
-				fields_mapping.Add ("xesam:title", "property:dc:title");
+				fields_mapping.Add ("dc:title", "dc:title");
+				fields_mapping.Add ("xesam:title", "dc:title");
 
-				fields_mapping.Add ("dc:author", "property:dc:author");
-				fields_mapping.Add ("xesam:author", "property:dc:author");
+				fields_mapping.Add ("dc:author", "dc:author");
+				fields_mapping.Add ("xesam:author", "dc:author");
 
-				fields_mapping.Add ("dc:creator", "property:dc:creator");
-				fields_mapping.Add ("xesam:creator", "property:dc:creator");
+				fields_mapping.Add ("dc:creator", "dc:creator");
+				fields_mapping.Add ("xesam:creator", "dc:creator");
 
 				fields_mapping.Add ("dc:date", "date");
 
