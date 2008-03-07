@@ -50,6 +50,8 @@ namespace Beagle.Daemon {
 
 			if (build_usercache)
 				text_cache = TextCache.UserCache;
+
+			Shutdown.ShutdownEvent += OnShutdown;
 		}
 
 		public LuceneIndexingDriver (string index_name, int minor_version)
@@ -714,6 +716,16 @@ namespace Beagle.Daemon {
 
 			secondary_writer.AddIndexes (secondary_store);
 			secondary_writer.Close ();
+		}
+
+		//////////////////////////////////////////////////////
+
+		public void OnShutdown ()
+		{
+			lock (flush_lock) {
+				foreach (DeferredInfo di in deferred_indexables)
+					di.Cleanup ();
+			}
 		}
 	}
 }
