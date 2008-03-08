@@ -97,6 +97,42 @@ namespace Beagle.Util {
 			return builder.ToString ();
 		}
 
+		// Get a uri of our liking from a user-entered uri
+		// Basically hex-escape the path, query and the fragment
+		static public Uri UserUritoEscapedUri (string user_uri)
+		{
+			Uri uri;
+			try {
+				uri = new Uri (user_uri);
+			} catch {
+				return null;
+			}
+
+			UriBuilder new_uri = new UriBuilder ();
+			new_uri.Scheme = uri.Scheme;
+			new_uri.Host = uri.Host;
+
+			if (uri.UserInfo != String.Empty) {
+				int index = uri.UserInfo.IndexOf (":");
+				if (index == -1)
+					new_uri.UserName = uri.UserInfo;
+				else {
+					new_uri.UserName = uri.UserInfo.Substring (0, index);
+					index ++;
+					if (index < uri.UserInfo.Length)
+						new_uri.Password = uri.UserInfo.Substring (index);
+				}
+			}
+
+			if (! uri.IsDefaultPort)
+				new_uri.Port = uri.Port;
+			new_uri.Path = StringFu.HexEscape (uri.AbsolutePath);
+			new_uri.Query = uri.Query; // FIXME: escape ?
+			new_uri.Fragment = StringFu.HexEscape (uri.Fragment);
+
+			return new_uri.Uri;
+		}
+
 		//////////////////////////////////
 
 		static public bool Equals (Uri uri1, Uri uri2)

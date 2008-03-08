@@ -216,7 +216,7 @@ namespace Beagle.Daemon {
 				try {
 					QueryPart_Uri part = new QueryPart_Uri ();
 					part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
-					part.Uri = UriFu.EscapedStringToUri (text);
+					part.Uri = UriFu.UserUritoEscapedUri (text);
 					return part;
 				} catch (System.UriFormatException) {
 					Log.Warn ("Could not parse [{0}] as uri query. Assuming text.", text);

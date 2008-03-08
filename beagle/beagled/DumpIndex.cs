@@ -393,9 +393,9 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 					Uri uri;
 					
 					try {
-						uri = new Uri (arg);
+						uri = UriFu.UserUritoEscapedUri (arg);
 					} catch (UriFormatException) {
-						uri = new Uri (Path.GetFullPath (arg));
+						uri = UriFu.PathToFileUri (arg);
 					}
 
 					uris.Add (uri);
