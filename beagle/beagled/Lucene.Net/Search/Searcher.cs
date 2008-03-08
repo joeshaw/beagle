@@ -19,6 +19,7 @@ using System;
 
 using Term = Lucene.Net.Index.Term;
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 
 namespace Lucene.Net.Search
 {
@@ -208,6 +209,7 @@ namespace Lucene.Net.Search
 		abstract public int MaxDoc();
 		abstract public TopDocs Search(Weight weight, Filter filter, int n);
 		abstract public Document Doc(int i);
+		abstract public Document Doc(int i, FieldSelector fieldSelector);
 		abstract public Query Rewrite(Query query);
 		abstract public Explanation Explain(Weight weight, int doc);
 		abstract public TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);

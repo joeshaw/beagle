@@ -21,6 +21,7 @@ using Directory = Lucene.Net.Store.Directory;
 using Document = Lucene.Net.Documents.Document;
 using IndexReader = Lucene.Net.Index.IndexReader;
 using Term = Lucene.Net.Index.Term;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 
 namespace Lucene.Net.Search
 {
@@ -124,6 +125,11 @@ namespace Lucene.Net.Search
 		public override Document Doc(int i)
 		{
 			return reader.Document(i);
+		}
+		
+		public override Document Doc(int i, FieldSelector fieldSelector)
+		{
+			return reader.Document(i, fieldSelector);
 		}
 		
 		// inherit javadoc

@@ -18,6 +18,7 @@
 using System;
 
 using Document = Lucene.Net.Documents.Document;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 
 namespace Lucene.Net.Search
 {
@@ -90,11 +91,17 @@ namespace Lucene.Net.Search
 			return length;
 		}
 		
+		public Document Doc(int n)
+		{
+			return Doc(n, null);
+		}
+		
 		/// <summary>Returns the stored fields of the n<sup>th</sup> document in this set.
 		/// <p>Documents are cached, so that repeated requests for the same element may
-		/// return the same Document object. 
+		/// return the same Document object. If the fieldselector is changed, then the new
+		/// fields will not be loaded.
 		/// </summary>
-		public Document Doc(int n)
+		public Document Doc(int n, FieldSelector fieldSelector)
 		{
 			HitDoc hitDoc = HitDoc(n);
 			
@@ -111,12 +118,15 @@ namespace Lucene.Net.Search
 			
 			if (hitDoc.doc == null)
 			{
-				hitDoc.doc = searcher.Doc(hitDoc.id); // cache miss: read document
+				if (fieldSelector == null)
+					hitDoc.doc = searcher.Doc(hitDoc.id); // cache miss: read document
+				else
+					hitDoc.doc = searcher.Doc(hitDoc.id, fieldSelector); // cache miss: read document
 			}
 			
 			return hitDoc.doc;
 		}
-		
+
 		/// <summary>Returns the score for the nth document in this set. </summary>
 		public float Score(int n)
 		{

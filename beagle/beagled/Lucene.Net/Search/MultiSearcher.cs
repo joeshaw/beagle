@@ -19,6 +19,7 @@ using System;
 
 using Document = Lucene.Net.Documents.Document;
 using Term = Lucene.Net.Index.Term;
+using FieldSelector = Lucene.Net.Documents.FieldSelector;
 
 namespace Lucene.Net.Search
 {
@@ -121,6 +122,11 @@ namespace Lucene.Net.Search
 				throw new System.NotSupportedException();
 			}
 			
+			public override Document Doc(int i, FieldSelector fieldSelector)
+			{
+				throw new System.NotSupportedException();
+			}
+			
 			public override Explanation Explain(Weight weight, int doc)
 			{
 				throw new System.NotSupportedException();
@@ -193,6 +199,11 @@ namespace Lucene.Net.Search
 		{
 			int i = SubSearcher(n); // find searcher index
 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
+		}
+		
+		public override Document Doc(int n, FieldSelector fieldSelector)
+		{
+			throw new System.NotSupportedException();
 		}
 		
 		
