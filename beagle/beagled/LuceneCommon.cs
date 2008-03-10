@@ -87,7 +87,8 @@ namespace Beagle.Daemon {
 		// 18: add IsPersistent to properties, and adjust coded values
 		//     in AddPropertyToDocument() and GetPropertyFromDocument();
 		//     changed subdate field format rules for better readability
-		private const int MAJOR_VERSION = 18;
+		// 19: Update lucene and analyzer (lucene.net-2.1)
+		private const int MAJOR_VERSION = 19;
 		private int minor_version = 0;
 
 		private string index_name;
@@ -340,8 +341,11 @@ namespace Beagle.Daemon {
 				// http://mail-archives.apache.org/mod_mbox/lucene-java-user/200504.mbox/%3c4265767B.5090307@getopt.org%3e
 				enumerator = reader.Terms ();
 
-				while (enumerator.Next ()) {
+				do {
 					Term term = enumerator.Term ();
+					if (term == null)
+						break;
+
 					positions = reader.TermPositions (term);
 
 					while (positions.Next ()) {
@@ -352,7 +356,7 @@ namespace Beagle.Daemon {
 					}
 					positions.Close ();
 					positions = null;
-				}
+				} while (enumerator.Next ());
 
 				enumerator.Close ();
 				enumerator = null;
