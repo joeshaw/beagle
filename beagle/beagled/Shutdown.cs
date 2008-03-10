@@ -27,7 +27,9 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Diagnostics;
 using Beagle.Util;
+using Mono.Unix;
 
 namespace Beagle.Daemon {
 
@@ -40,6 +42,7 @@ namespace Beagle.Daemon {
 		static Hashtable workers_names = new Hashtable ();
 		static bool shutdownRequested = false;
 		static bool shutdownStarted = false;
+		static bool mainloop_finished = false;
 
 		public delegate void ShutdownHandler ();
 		public static event ShutdownHandler ShutdownEvent;
@@ -108,14 +111,6 @@ namespace Beagle.Daemon {
 			main_loop = loop;
 		}
 
-		// Our handler triggers an orderly shutdown when it receives a signal.
-		// However, this can be annoying if the process gets wedged during
-		// shutdown.  To deal with that case, we make a note of the time when
-		// the first signal comes in, and we allow signals to unconditionally
-		// kill the process after 5 seconds have passed.
-
-		static DateTime signal_time = DateTime.MinValue;
-
 		public static void BeginShutdown ()
 		{
 			lock (shutdownLock) {
@@ -129,31 +124,7 @@ namespace Beagle.Daemon {
 				shutdownStarted = true;
 			}
 
-			// FIXME: This whole "unconditional killing after 5 seconds because
-			// beagled can hang while shutting down" thing should not occur. Any such
-			// incident should be immediately investigated and fixed. Hint: Sending
-			// kill -quit `pidof beagled` will probably reveal that beagled got locked
-			// when signal handler was called and some thread was executing some native
-			// method.
-			bool first_signal = false;
-			if (signal_time == DateTime.MinValue) {
-				Log.Always ("Shutdown requested");
-				signal_time = DateTime.Now;
-				first_signal = true;
-			}
-
-			if (! first_signal) {
-				double t = (DateTime.Now - signal_time).TotalSeconds;
-				const double min_t = 5;
-
-				if (t < min_t) {
-					Logger.Log.Debug ("Signals can force an immediate shutdown in {0:0.00}s", min_t-t);
-					return;
-				} else {
-					Logger.Log.Debug ("Forcing immediate shutdown.");
-					Environment.Exit (0);
-				}
-			}
+			Log.Always ("Shutdown requested");
 
 			if (ShutdownEvent != null) {
 				try {
@@ -180,6 +151,70 @@ namespace Beagle.Daemon {
 
 			Logger.Log.Info ("All workers have finished.  Exiting main loop.");
 			main_loop.Quit ();
+
+#if MONO_1_9
+			// So (re)sending a SIGTERM or SIGINT after mainloop is over will kill the process.
+			// Is it good or bad ? (some of the exception handling thread might still be running)
+			// I think its good; it sort of emulates the 5sec forceful killing feature of < 0.3.4 
+			lock (shutdownLock)
+				mainloop_finished = true;
+
+			// Stop the signal handler thread by sending a signal
+			Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGINT);
+#endif
 		}
+
+#if MONO_1_9
+		static bool MainloopFinished {
+			get {
+				lock (shutdownLock)
+					return mainloop_finished;
+			}
+		}
+
+		public delegate void SignalHandler (int signal);
+
+		public static void SetupSignalHandlers (SignalHandler signal_handler)
+		{
+			UnixSignal[] signals = new UnixSignal [] {
+				new UnixSignal (Mono.Unix.Native.Signum.SIGINT),
+				new UnixSignal (Mono.Unix.Native.Signum.SIGTERM),
+				new UnixSignal (Mono.Unix.Native.Signum.SIGUSR1),
+				new UnixSignal (Mono.Unix.Native.Signum.SIGUSR2)
+			};
+
+			// Ignore SIGPIPE
+			// FIXME: Shouldn't this be done in every thread ?
+			Mono.Unix.Native.Stdlib.SetSignalAction (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.SignalAction.Ignore);
+
+			Thread signal_thread = new Thread (delegate () {
+				Log.Debug ("Starting signal handler thread");
+				int signal_handler_timeout = -1;
+				while (! MainloopFinished) {
+					int index = UnixSignal.WaitAny (signals, signal_handler_timeout);
+
+					if (index > 3)
+						continue;
+					Mono.Unix.Native.Signum signal = signals [index].Signum;
+
+					// Set shutdown flag to true so that other threads can stop initializing
+					if (signal == Mono.Unix.Native.Signum.SIGINT ||
+					    signal == Mono.Unix.Native.Signum.SIGTERM) {
+						ShutdownRequested = true;
+						signal_handler_timeout = 200; // 200 ms
+					}
+
+					if (signal_handler == null)
+						continue;
+
+					// Do all signal handling work in the main loop and not in the signal handler.
+					GLib.Idle.Add (new GLib.IdleHandler (delegate () { signal_handler ((int) signal); return false; }));
+				}
+				Log.Debug ("Exiting signal handler thread");
+			});
+
+			signal_thread.Start ();
+		}
+#endif
 	}
 }

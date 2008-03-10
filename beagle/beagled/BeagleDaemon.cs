@@ -33,7 +33,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Thread = System.Threading.Thread;
 using GLib;
-using Mono.Unix;
 
 using Beagle.Util;
 using Log = Beagle.Util.Log;
@@ -501,7 +500,12 @@ namespace Beagle.Daemon {
 			QueryDriver.Init ();
 			Server.Init ();
 
+#if MONO_1_9
+			Shutdown.SetupSignalHandlers (new Shutdown.SignalHandler (HandleSignal));
+#else
 			SetupSignalHandlers ();
+#endif
+
 			Shutdown.ShutdownEvent += OnShutdown;
 
 			main_loop = new MainLoop ();
@@ -553,108 +557,7 @@ namespace Beagle.Daemon {
 		}
 
 		/////////////////////////////////////////////////////////////////////////////
-#if MONO_1_9
-		private static void SetupSignalHandlers ()
-		{
-			// Force OurSignalHandler to be JITed
-			OurSignalHandler (-1);
 
-			UnixSignal[] signals = new UnixSignal [] {
-				new UnixSignal (Mono.Unix.Native.Signum.SIGINT),
-				new UnixSignal (Mono.Unix.Native.Signum.SIGTERM),
-				new UnixSignal (Mono.Unix.Native.Signum.SIGUSR1),
-				new UnixSignal (Mono.Unix.Native.Signum.SIGUSR2),
-				new UnixSignal (Mono.Unix.Native.Signum.SIGHUP) /* Use to break the signal listener itself */
-			};
-
-			// Ignore SIGPIPE
-			Mono.Unix.Native.Stdlib.SetSignalAction (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.SignalAction.Ignore);
-
-			Thread signal_thread = new Thread (delegate () {
-				Log.Debug ("Starting signal handler thread");
-				bool stop = false;
-				while (! stop) {
-					int signal = UnixSignal.WaitAny (signals, -1);
-					stop = OurSignalHandler (signal);
-				}
-				Log.Debug ("Exiting signal handler thread");
-			});
-
-			signal_thread.Start ();
-		}
-
-		// Mono signal handler allows setting of global variables;
-		// anything else e.g. function calls, even reentrant native methods are risky
-		// Returns true if the signal handler should not continue to listen to more signals
-		private static bool OurSignalHandler (int signal)
-		{
-			// This allows us to call OurSignalHandler w/o doing anything.
-			// We want to call it once to ensure that it is pre-JITed.
-			if (signal < 0 || (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGHUP)
-				return true;
-
-			bool ret = false;
-
-			// Set shutdown flag to true so that other threads can stop initializing
-			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1) {
-				Shutdown.ShutdownRequested = true;
-				ret = true;
-			}
-
-			// Do all signal handling work in the main loop and not in the signal handler.
-			GLib.Idle.Add (new GLib.IdleHandler (delegate () { HandleSignal (signal); return false; }));
-
-			return ret;
-		}
-
-		private static void HandleSignal (int signal)
-		{
-			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
-
-			// If we get SIGUSR1, turn the debugging level up.
-			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
-				LogLevel old_level = Log.Level;
-				Log.Level = LogLevel.Debug;
-				Log.Debug ("Moving from log level {0} to Debug", old_level);
-			}
-
-			// Send informational signals to the helper too.
-			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
-			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
-				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer ((Mono.Unix.Native.Signum) signal); return false; }));
-				return;
-			}
-
-			Logger.Log.Debug ("Initiating shutdown in response to signal.");
-			Shutdown.BeginShutdown ();
-		}
-
-		/////////////////////////////////////////////////////////////////////////////
-
-		private static void OnShutdown ()
-		{
-#if ENABLE_AVAHI
-			zeroconf.Dispose ();
-#endif			
-			// Send a signal to index-helper (if we miss this, even then index-helper will see the daemon going away and kill itself)
-			RemoteIndexer.SignalRemoteIndexer (Mono.Unix.Native.Signum.SIGINT);
-
-			// Stop our Inotify threads
-			Inotify.Stop ();
-
-			// Stop the global scheduler and ask it to shutdown
-			Scheduler.Global.Stop (true);
-
-			// Stop the messaging server
-			if (server != null)
-				server.Stop ();
-
-			// Stop the signal handler thread by sending a fake SIGHUP signal
-			Mono.Unix.Native.Syscall.kill (Process.GetCurrentProcess ().Id, Mono.Unix.Native.Signum.SIGHUP);
-		}
-
-		/////////////////////////////////////////////////////////////////////////////
-#else
 		private static void SetupSignalHandlers ()
 		{
 			// Force OurSignalHandler to be JITed
@@ -698,10 +601,15 @@ namespace Beagle.Daemon {
 				Log.Debug ("Moving from log level {0} to Debug", old_level);
 			}
 
-			// Send informational signals to the helper too.
+			// Pass the signals to the helper too.
+			GLib.Idle.Add (new GLib.IdleHandler (delegate ()
+							    {
+								    RemoteIndexer.SignalRemoteIndexer ((Mono.Unix.Native.Signum) signal);
+								    return false; 
+							    }));
+
 			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
 			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
-				GLib.Idle.Add (new GLib.IdleHandler (delegate () { RemoteIndexer.SignalRemoteIndexer ((Mono.Unix.Native.Signum) signal); return false; }));
 				return;
 			}
 
@@ -726,7 +634,6 @@ namespace Beagle.Daemon {
 			if (server != null)
 				server.Stop ();
 		}
-#endif
 
 		/////////////////////////////////////////////////////////////////////////////
 

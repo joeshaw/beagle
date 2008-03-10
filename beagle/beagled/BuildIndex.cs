@@ -354,7 +354,16 @@ namespace Beagle.Daemon
 			fa_store = new FileAttributesStore (backing_fa_store);
 			
 			// Set up signal handlers
+#if MONO_1_9
+			Shutdown.SetupSignalHandlers (delegate (int signal)
+							{
+								if (signal == (int) Mono.Unix.Native.Signum.SIGINT ||
+								    signal == (int) Mono.Unix.Native.Signum.SIGTERM)
+									Shutdown.BeginShutdown ();
+							});
+#else
 			SetupSignalHandlers ();
+#endif
 
 			Thread monitor_thread = null;
 

@@ -357,6 +357,7 @@ namespace Beagle.Daemon {
 			if (Shutdown.ShutdownRequested) {
 				foreach (DeferredInfo di in deferred_indexables)
 					di.Cleanup ();
+				deferred_indexables.Clear ();
 
 				foreach (Indexable indexable in request_indexables)
 					indexable.Cleanup ();
@@ -503,6 +504,7 @@ namespace Beagle.Daemon {
 			if (Shutdown.ShutdownRequested) {
 				foreach (DeferredInfo di in deferred_indexables)
 					di.Cleanup ();
+				deferred_indexables.Clear ();
 
 				primary_writer.Close ();
 				if (secondary_writer != null)
@@ -725,6 +727,7 @@ namespace Beagle.Daemon {
 			lock (flush_lock) {
 				foreach (DeferredInfo di in deferred_indexables)
 					di.Cleanup ();
+				deferred_indexables.Clear ();
 			}
 		}
 	}
