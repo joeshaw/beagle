@@ -92,6 +92,7 @@ using Beagle.Filters;
 	 typeof(FilterSpreadsheet),
 	 typeof(FilterSvg),
 	 typeof(FilterTeX),
+	 typeof(FilterTexi),
 	 typeof(FilterText),
 	 typeof(FilterTiff),
 	 typeof(FilterTotem),

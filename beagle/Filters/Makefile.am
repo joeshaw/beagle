@@ -107,6 +107,7 @@ CSFILES = 				\
 	$(srcdir)/FilterSpreadsheet.cs	\
 	$(srcdir)/FilterSvg.cs		\
 	$(srcdir)/FilterTeX.cs		\
+	$(srcdir)/FilterTexi.cs		\
 	$(srcdir)/FilterText.cs	        \
 	$(srcdir)/FilterTiff.cs		\
 	$(srcdir)/FilterTotem.cs	\
