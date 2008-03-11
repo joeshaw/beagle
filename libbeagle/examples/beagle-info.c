@@ -13,6 +13,10 @@ test_daemon_information (BeagleClient *client)
 								  is_indexing
 								);
 	response = beagle_client_send_request (client, BEAGLE_REQUEST (request), NULL);
+	if (response == NULL) {
+		g_printf ("Invalid response from beagled\n");
+		return;
+	}
 
 	g_object_unref (request);
 
@@ -36,6 +40,11 @@ main ()
 	g_type_init ();
 
 	client = beagle_client_new (NULL);
+	if (client == NULL) {
+		g_printf ("beagled not running.\n");
+		return 1;
+	}
+
 	test_daemon_information (client);
 
 	return 0;

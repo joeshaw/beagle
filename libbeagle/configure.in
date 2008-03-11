@@ -42,7 +42,7 @@ LIBBEAGLE_CURRENT=1
 dnl Update when changing implementation of current API,
 dnl reset to 0 when changing CURRENT.  This is the revision of
 dnl current API version
-LIBBEAGLE_REVISION=0
+LIBBEAGLE_REVISION=1
 
 dnl Increase of API change is ABI compatible, otherwise reset to 0
 LIBBEAGLE_AGE=0

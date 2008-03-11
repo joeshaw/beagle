@@ -387,8 +387,6 @@ beagle_daemon_information_response_get_human_readable_status (BeagleDaemonInform
 	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), NULL);
 
 	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
-	g_return_val_if_fail (priv->scheduler_information != NULL, NULL);
-
 	process_info = priv->scheduler_information;
 	
 	return beagle_scheduler_information_to_human_readable_string (process_info);
@@ -410,7 +408,6 @@ beagle_daemon_information_response_get_index_status (BeagleDaemonInformationResp
 	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), NULL);
 
 	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
-	g_return_val_if_fail (priv->index_status, NULL);
 
 	return priv->index_status;
 }
@@ -435,7 +432,6 @@ beagle_daemon_information_response_get_index_information (BeagleDaemonInformatio
 	g_return_val_if_fail (BEAGLE_IS_DAEMON_INFORMATION_RESPONSE (response), NULL);
 
 	priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
-	g_return_val_if_fail (priv->index_status != NULL, NULL);
 
 	tmp = g_string_new ("\n");
 

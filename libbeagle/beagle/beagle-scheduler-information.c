@@ -196,7 +196,14 @@ beagle_scheduler_information_to_human_readable_string (BeagleSchedulerInformatio
 	GSList *iter;
 	GString *tmp = g_string_new (NULL);
 
-	g_string_append_printf (tmp, "Scheduler:\nCount: %d\n", sched_info->total_task_count);
+	g_string_append (tmp, "Scheduler:");
+	/* sched_info can be null if there is no scheduling information */
+	if (sched_info == NULL) {
+		g_string_append (tmp, " (empty)\n");
+		return g_string_free (tmp, FALSE);
+	}
+
+	g_string_append_printf (tmp, "\nCount: %d\n", sched_info->total_task_count);
 
 	if (sched_info->status_string)
 		g_string_append_printf (tmp, "Status: %s\n", sched_info->status_string);

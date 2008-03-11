@@ -159,18 +159,11 @@ beagle_util_daemon_is_running (void)
 	if (socket_path == NULL)
 		return FALSE;
 
-	bzero (&sun, sizeof (sun));
-	sun.sun_family = AF_UNIX;
-	snprintf (sun.sun_path, sizeof (sun.sun_path), socket_path);
+	sockfd = _beagle_connect_timeout (socket_path, NULL);
 
 	g_free (socket_path);
 
-	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
 	if (sockfd < 0) {
-		return FALSE;
-	}
-
-	if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) < 0) {
 		return FALSE;
 	}
 

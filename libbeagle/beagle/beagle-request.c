@@ -34,6 +34,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include "beagle-error-response.h"
 #include "beagle-marshal.h"
@@ -165,7 +167,98 @@ _beagle_request_class_set_response_types (BeagleRequestClass *klass,
 
 	va_end (args);
 }
-	
+
+int
+_beagle_connect_timeout (const char *path, GError **err)
+{
+	int sockfd;
+	int ret;
+	int error, error_len;
+	long mode;
+	fd_set select_set;
+	struct timeval tv;
+	struct sockaddr_un sun;
+
+	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
+	if (sockfd < 0) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			     "Unable to create connection");
+		return -1;
+	}
+
+	/* Set non-blocking mode */
+	if ((mode = fcntl (sockfd, F_GETFL, NULL)) < 0) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			    "Internal error: unable to get status flag for socket");
+		return -1;
+	}
+
+	mode |= O_NONBLOCK;
+
+	if (fcntl (sockfd, F_SETFL, mode) < 0) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			    "Internal error: unable to set socket to non-blocking mode");
+		return -1;
+	}
+
+	bzero (&sun, sizeof (sun));
+	sun.sun_family = AF_UNIX;
+	snprintf (sun.sun_path, sizeof (sun.sun_path), path);
+
+	if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) < 0) {
+		if (errno != EINPROGRESS) {
+			g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+				"Unable to connect to Beagle daemon");
+			return -1;
+		} else {
+			tv.tv_sec = 10; /* 5 seconds should be enough for a unix socket */
+			tv.tv_usec = 0;
+
+			FD_ZERO (&select_set);
+			FD_SET (sockfd, &select_set);
+
+			ret = select (sockfd + 1, NULL, &select_set, NULL, &tv);
+			if (ret > 0) {
+				/* Check for any error during select() */
+				error_len = sizeof (error);
+				ret = getsockopt (sockfd, SOL_SOCKET, SO_ERROR, &error, &error_len);
+				if (ret < 0 || error != 0) {
+					g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+						"Unable to connect to Beagle daemon");
+					close (sockfd);
+					return -1;
+				}
+				/* Else, connection successful */
+			} else {
+				g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+					"Unable to connect to Beagle daemon");
+				close (sockfd);
+				return -1;
+			}
+		}
+	}
+
+	/* Set socket to blocking mode */
+	if ((mode = fcntl (sockfd, F_GETFL, NULL)) < 0) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			    "Internal error: unable to get status flag for socket");
+		close (sockfd);
+		return -1;
+	}
+
+	mode &= (~O_NONBLOCK);
+
+	if (fcntl (sockfd, F_SETFL, mode) < 0) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			    "Internal error: unable to set socket to non-blocking mode");
+		close (sockfd);
+		return -1;
+	}
+
+	/* Finally, we are done ! */
+	return sockfd;
+}
+
 static gboolean
 request_connect (BeagleRequest *request, const char *path, GError **err)
 {
@@ -175,22 +268,9 @@ request_connect (BeagleRequest *request, const char *path, GError **err)
 
 	priv = BEAGLE_REQUEST_GET_PRIVATE (request);
 
-	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
-	if (sockfd < 0) {
-		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
-			     "Unable to create connection");
+	sockfd = _beagle_connect_timeout (path, err);
+	if (sockfd == -1)
 		return FALSE;
-	}
-
-	bzero (&sun, sizeof (sun));
-	sun.sun_family = AF_UNIX;
-	snprintf (sun.sun_path, sizeof (sun.sun_path), path);
-
-	if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) < 0) {
-		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
-			     "Unable to connect to Beagle daemon");
-		return FALSE;
-	}
 
 	g_free (priv->path);
 	priv->path = g_strdup (path);

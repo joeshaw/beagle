@@ -124,6 +124,7 @@ void _beagle_query_part_append_standard_header (GString *data,
 						const char *xsi_type);
 void _beagle_query_part_append_standard_footer (GString *data);
 
+int _beagle_connect_timeout (const char *socket_path, GError **err);
 BeagleResponse *_beagle_request_send (BeagleRequest *request,
 				      const char *socket_path,
 				      GError **err);
