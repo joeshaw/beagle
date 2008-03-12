@@ -70,6 +70,7 @@ CSFILES = 				\
 	$(srcdir)/FilterHtml.cs		\
 	$(srcdir)/FilterIgnore.cs	\
 	$(srcdir)/FilterImage.cs	\
+	$(srcdir)/FilterInfo.cs		\
 	$(srcdir)/FilterJava.cs		\
 	$(srcdir)/FilterJpeg.cs		\
 	$(srcdir)/FilterJs.cs		\

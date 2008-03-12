@@ -28,7 +28,7 @@ using System;
 
 using Beagle.Filters;
 
-// All filter types have to be listed here to be loaded.
+// All (non-abstract) filter types have to be listed here to be loaded.
 [assembly: Beagle.Daemon.FilterTypes (
 	 typeof(FilterAbiWord),
 	 typeof(FilterApplication),
@@ -55,6 +55,7 @@ using Beagle.Filters;
 	 typeof(FilterGif),
 	 typeof(FilterHtml),
 	 typeof(FilterIgnore),
+	 typeof(FilterInfo),
 	 typeof(FilterJava),
 	 typeof(FilterJavascript),
 	 typeof(FilterJpeg),
