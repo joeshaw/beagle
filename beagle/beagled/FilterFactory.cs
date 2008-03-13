@@ -346,6 +346,7 @@ namespace Beagle.Daemon {
 
 			if (Debug)
 				Logger.Log.Debug ("None of the matching filters could process the file: {0}", path);
+			indexable.NoContent = true;
 			
 			return false;
 		}

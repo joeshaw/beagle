@@ -38,7 +38,7 @@
     <Mapping QueryKeyword="pkggroup" BeagleProperty="pkg:group" Tokenize="true">Group to which the package belongs e.g. System/Configuration/Packaging</Mapping>
     <Mapping QueryKeyword="inarchive" BeagleProperty="fixme:inside_archive" Tokenize="false">Use 'inarchive:true' for files inside an archive.</Mapping>
     <Mapping QueryKeyword="album" BeagleProperty="fixme:album" Tokenize="true">Album name of the music</Mapping>
-    <Mapping QueryKeyword="filename" BeagleProperty="beagle:NoPunctFilename" Tokenize="true">File name<Mapping>
-    <Mapping QueryKeyword="filename" BeagleProperty="beagle:SplitFilename" Tokenize="true">File name<Mapping>
+    <Mapping QueryKeyword="filename" BeagleProperty="beagle:NoPunctFilename" Tokenize="true">File name</Mapping>
+    <Mapping QueryKeyword="filename" BeagleProperty="beagle:SplitFilename" Tokenize="true">File name</Mapping>
   </Mappings>
 </QueryMapping>
