@@ -464,6 +464,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			lock (dir_models_by_path)
 				dir_models_by_path.Remove (expired_path);
+
+			FileAttributesStore.Drop (expired_path);
 		}
 
 		public void AddDirectory (DirectoryModel parent, string name)
@@ -1026,6 +1028,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					else
 						self_task = null;
 				}
+			}
+
+			internal void DebugHook ()
+			{
+				lock (queue_lock)
+					Log.Debug ("FSQ:FileSystemEventsGenerator Debughook: {0} more events to process, generator is {1}active",
+						event_queue.Count,
+						(self_task != null ? String.Empty : "in"));
 			}
 		}
 
@@ -2013,6 +2023,45 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			Uri internal_uri = GuidFu.ToUri (attr.UniqueId);
 
 			return internal_uri;
+		}
+
+		//////////////////////////
+
+		internal override void DebugHook ()
+		{
+			Log.Debug ("FSQ DebugHook: {0} roots, {1} roots by path, {2} dir_models_by_id, {3} name_info_by_id, {4} dir_models_by_path",
+				(roots != null ? roots.Count : -1),
+				(roots_by_path != null ? roots_by_path.Count : -1),
+				(dir_models_by_id != null ? dir_models_by_id.Count : -1),
+				(name_info_by_id != null ? name_info_by_id.Count : -1),
+				(dir_models_by_path != null ? dir_models_by_path.Count : -1));
+
+			Log.Debug ("FSQ Debughook: {0} external_pending_indexables",
+				(external_pending_indexables != null ? external_pending_indexables.Count : -1));
+
+			lock (big_lock) {
+				foreach (DirectoryModel root in roots) {
+					int count = 1;
+					ArrayList queue = new ArrayList ();
+					queue.Add (root);
+					DirectoryModel child;
+					while (queue.Count > 0) {
+						child = (DirectoryModel) queue [0];
+						queue.RemoveAt (0);
+
+						if (child.ChildCount == 0)
+							continue;
+						count += child.ChildCount;
+						queue.AddRange (child.Children);
+					}
+					Console.WriteLine ("FSQ Debughook: {0} has {1} subdirs", root.FullName, count);
+				}
+			}
+
+			tree_crawl_task.DebugHook ();
+			file_crawl_task.DebugHook ();
+			fs_event_generator.DebugHook ();
+			uid_manager.DebugHook ();
 		}
 	}
 }

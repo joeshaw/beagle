@@ -129,5 +129,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			SetIsActive (false, null);
 		}
 
+		internal void DebugHook ()
+		{
+			lock (big_lock)
+				Log.Debug ("FSQ:TreeCrawlTask Debughook: {0} directories left to crawl, current {1}active", to_be_crawled.Count, is_active ? String.Empty : "in");
+		}
 	}
 }

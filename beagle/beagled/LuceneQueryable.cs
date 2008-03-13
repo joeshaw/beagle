@@ -1054,5 +1054,11 @@ namespace Beagle.Daemon {
 		{
 			return new LuceneQueryingDriver (index_name, minor_version, read_only_mode);
 		}
+
+		//////////////////////////////////////////////////////////////////////////////////
+
+		virtual internal void DebugHook ()
+		{
+		}
 	}
 }

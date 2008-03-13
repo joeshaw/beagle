@@ -583,7 +583,8 @@ namespace Beagle.Daemon {
 				return;
 
 			// Set shutdown flag to true so that other threads can stop initializing
-			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1)
+			if ((Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR1 &&
+			    (Mono.Unix.Native.Signum) signal != Mono.Unix.Native.Signum.SIGUSR2)
 				Shutdown.ShutdownRequested = true;
 
 			// Do all signal handling work in the main loop and not in the signal handler.
@@ -594,13 +595,6 @@ namespace Beagle.Daemon {
 		{
 			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
-			// If we get SIGUSR1, turn the debugging level up.
-			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
-				LogLevel old_level = Log.Level;
-				Log.Level = LogLevel.Debug;
-				Log.Debug ("Moving from log level {0} to Debug", old_level);
-			}
-
 			// Pass the signals to the helper too.
 			GLib.Idle.Add (new GLib.IdleHandler (delegate ()
 							    {
@@ -608,8 +602,15 @@ namespace Beagle.Daemon {
 								    return false; 
 							    }));
 
-			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1 ||
-			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
+			// If we get SIGUSR1, turn the debugging level up.
+			if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR1) {
+				LogLevel old_level = Log.Level;
+				Log.Level = LogLevel.Debug;
+				Log.Debug ("Moving from log level {0} to Debug", old_level);
+				return;
+			} else if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
+				// Debugging hook for beagled
+				QueryDriver.DebugHook ();
 				return;
 			}
 

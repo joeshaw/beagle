@@ -61,6 +61,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		////////////////////////////////////////////////////////////////
 
+		// Ouch! Hardcoding prefix is not good
+		static FieldSelector fields_nameinfo = new MapFieldSelector (new string[] {"Uri",
+											   "prop:k:" + Property.ExactFilenamePropKey,
+											   "prop:k:" + Property.ParentDirUriPropKey,
+											   "prop:k:" + Property.IsDirectoryPropKey
+										});
 
 		private NameInfo DocumentToNameInfo (Document doc)
 		{
@@ -132,7 +138,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (match_id != -1) {
 				Document doc;
-				doc = reader.Document (match_id);
+				doc = reader.Document (match_id, fields_nameinfo);
 				info = DocumentToNameInfo (doc);
 			}
 
@@ -269,7 +275,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					break;
 
 				Document doc;
-				doc = searcher.Doc (i);
+				doc = searcher.Doc (i, fields_nameinfo);
 
 				NameInfo info;
 				info = DocumentToNameInfo (doc);
@@ -384,6 +390,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return GetAllDirectoryNameInfo (null);
 		}
 
+		internal void DebugHook ()
+		{
+			Log.Debug ("FSQ:InternalUriManager Debughook: {0} cached_uid_by_path", cached_uid_by_path.Count);
+		}
 	}
 }
 

@@ -135,5 +135,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			Reschedule = true;
 		}
+
+		internal void DebugHook ()
+		{
+			lock (big_lock)
+				Log.Debug ("FSQ:FileCrawlTask Debughook: Crawling {0} (generator is {1}) and is {2}active",
+					(current_dir != null ? current_dir.FullName : "nothing"),
+					(current_generator != null ? "busy" : "empty"),
+					(is_active ? String.Empty : "in"));
+		}
 	}
 }

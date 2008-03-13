@@ -198,6 +198,8 @@ namespace Beagle.Daemon {
 
 		////////////////////////////////////////////////////////////
 
+		static FieldSelector fields_uri = new MapFieldSelector (new string[] {"Uri"});
+
 		public void ProjectOnto (LuceneBitArray other)
 		{
 			int j = 0;
@@ -209,7 +211,7 @@ namespace Beagle.Daemon {
 				j = i+1;
 
 				Document doc;
-				doc = searcher.Doc (i);
+				doc = searcher.Doc (i, fields_uri);
 
 				other.AddUri (doc.Get ("Uri"));
 			}
