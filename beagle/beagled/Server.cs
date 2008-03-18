@@ -409,6 +409,8 @@ namespace Beagle.Daemon {
 			Shutdown.WorkerFinished (network_data);
 		}
 
+		private bool closed = false;
+
 		public override void Close ()
 		{
 			CancelIfBlocking ();
@@ -417,17 +419,24 @@ namespace Beagle.Daemon {
 			// grab the lock here and close the underlying
 			// UnixClient, or else we'd deadlock between here and
 			// the Read() in HandleConnection()
+
+			// Do this in a lock since Close() should be thread-safe (can be called from AsyncCallback handler)
 			lock (this.client_lock) {
+				if (closed)
+					return;
+
 				if (this.client != null) {
 					this.client.Close ();
 					this.client = null;
 				}
-			}
 
-			if (this.executor != null) {
-				this.executor.Cleanup ();
-				this.executor.AsyncResponseEvent -= OnAsyncResponse;
-				this.executor = null;
+				if (this.executor != null) {
+					this.executor.Cleanup ();
+					this.executor.AsyncResponseEvent -= OnAsyncResponse;
+					this.executor = null;
+				}
+
+			    closed = true;
 			}
 
 			Server.RunGC ();
@@ -439,8 +448,10 @@ namespace Beagle.Daemon {
 
 			try {
 				bytes_read = this.client.GetStream ().EndRead (ar);
-			} catch (SocketException) {
-			} catch (IOException) { }
+			} catch (IOException e) {
+				if (! (e.InnerException is SocketException))
+					throw e;
+			} catch (ObjectDisposedException) { }
 
 			if (bytes_read == 0)
 				Close ();
@@ -455,8 +466,26 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			this.client.GetStream ().BeginRead (new byte[1024], 0, 1024,
-							    new AsyncCallback (WatchCallback), null);
+			try {
+				this.client.GetStream ().BeginRead (new byte[1024], 0, 1024,
+								    new AsyncCallback (WatchCallback), null);
+			} catch (ObjectDisposedException) {
+				Log.Debug ("Network stream closed; closing connection at this end");
+				this.Close ();
+				return;
+			} catch (IOException e) {
+				if (e.InnerException is SocketException) {
+					Log.Debug (e.InnerException, "Socket exception while setting up watch");
+					this.Close ();
+					return;
+				} else
+					throw e;
+			} catch (System.ArgumentException e) {
+				// https://bugzilla.novell.com/show_bug.cgi?id=371923
+				Log.Debug (e, "Possibly socket is already closed");
+				this.Close ();
+				return;
+			}
 		}
 	}	
 
