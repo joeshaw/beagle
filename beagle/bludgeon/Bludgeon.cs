@@ -159,10 +159,10 @@ namespace Bludgeon {
 
 			root = CreateTestRoot ();
 			TreeBuilder.Build (root,
-					   30,    // three directories
-					   100,   // ten files
-					   0.1,   // no archives
-					   0.5,   // archive decay, which does nothing here
+					   30,    // number of directories
+					   100,   // number of files
+					   0, //0.1,   // no archives
+					   0, //0.5,   // archive decay, which does nothing here
 					   false, // build all directories first, not in random order
 					   null); // no need to track events
 			if (! root.VerifyOnDisk ())

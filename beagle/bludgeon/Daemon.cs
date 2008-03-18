@@ -128,7 +128,7 @@ namespace Bludgeon {
 			beagled = Environment.GetEnvironmentVariable ("BEAGLED_COMMAND");
 
 			string args;
-			args = "--debug-memory --bg --allow-backend files";
+			args = "--debug-memory --bg --backend Files";
 
 			if (UseHeapBuddy)
 				args += " --heap-buddy";

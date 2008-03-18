@@ -18,8 +18,7 @@ namespace Bludgeon {
 
 	abstract public class FileSystemObject {
 
-		// TURN THIS ON TO TEST THE ARCHIVE PATCH!
-		static public bool SearchInArchives = false;
+		const bool SearchInArchives = true;
 
 		private static int next_id = 0;
 
@@ -184,15 +183,15 @@ namespace Bludgeon {
 			get { return null; }
 		}
 
-		virtual protected string GetChildUri (FileSystemObject child)
+		virtual protected Uri GetChildUri (FileSystemObject child)
 		{
 			throw new Exception ("Invalid GetChildUri call");
 		}
 
-		virtual public string Uri {
+		virtual public Uri Uri {
 			get {
 				if (parent == null)
-					return "floating://" + Name;
+					return new Uri ("floating://" + Name);
 				return parent.GetChildUri (this);
 			}
 		}
@@ -229,7 +228,7 @@ namespace Bludgeon {
 		public ICollection Children {
 			get {
 				if (children == null)
-					throw new Exception ("Invalid request for children on " + Uri);
+					throw new Exception ("Invalid request for children on " + Uri.ToString ());
 				return children.Values;
 			}
 		}
@@ -237,16 +236,16 @@ namespace Bludgeon {
 		public FileSystemObject GetChild (string name)
 		{
 			if (children == null)
-				throw new Exception ("Invalid request for child '" + name + "' on " + Uri);
+				throw new Exception ("Invalid request for child '" + name + "' on " + Uri.ToString ());
 			return children [name] as FileSystemObject;
 		}
 
 		public virtual void AddChild (FileSystemObject child, EventTracker tracker)
 		{
 			if (children == null)
-				throw new Exception ("Can't add a child to " + Uri);
+				throw new Exception ("Can't add a child to " + Uri.ToString ());
 			if (child.parent != null)
-				throw new Exception ("Can't add parented child " + child.Uri + " to " + Uri);
+				throw new Exception ("Can't add parented child " + child.Uri.ToString () + " to " + Uri.ToString ());
 
 			// FIXME: Need to handle the case of the added child
 			// clobbering another w/ the same name.
@@ -261,11 +260,11 @@ namespace Bludgeon {
 		public virtual void ClobberingAddChild (FileSystemObject child, FileSystemObject victim, EventTracker tracker)
 		{
 			if (children == null)
-				throw new Exception ("Can't add a child to " + Uri);
+				throw new Exception ("Can't add a child to " + Uri.ToString ());
 			if (child.parent != null)
-				throw new Exception ("Can't add parented child " + child.Uri + " to " + Uri);
+				throw new Exception ("Can't add parented child " + child.Uri.ToString () + " to " + Uri.ToString ());
 			if (victim.parent != this)
-				throw new Exception ("Victim " + victim.Uri + " is not a child of " + Uri);
+				throw new Exception ("Victim " + victim.Uri.ToString () + " is not a child of " + Uri.ToString ());
 			if (child.Extension != victim.Extension)
 				throw new Exception ("Extension mismatch: " + child.Extension + " vs. " + victim.Extension);
 
@@ -283,7 +282,7 @@ namespace Bludgeon {
 		public virtual void RemoveChild (FileSystemObject child, EventTracker tracker)
 		{
 			if (child.parent != this)
-				throw new Exception (child.Uri + " is not a child of " + Uri);
+				throw new Exception (child.Uri.ToString () + " is not a child of " + Uri.ToString ());
 
 			if (IsRooted)
 				child.DeleteOnDisk (tracker);
@@ -295,7 +294,7 @@ namespace Bludgeon {
 		public virtual void MoveChild (FileSystemObject child, FileSystemObject new_parent, EventTracker tracker)
 		{
 			if (child.parent != this)
-				throw new Exception (child.Uri + " is not a child of " + Uri);
+				throw new Exception (child.Uri.ToString () + " is not a child of " + Uri.ToString ());
 
 			if (new_parent == null || new_parent == child.parent)
 				return;
@@ -303,7 +302,7 @@ namespace Bludgeon {
 			// We can't move child into new_parent if child is
 			// already above new_parent in the tree.
 			if (child.IsAncestorOf (new_parent))
-				throw new Exception ("Can't move " + child.Uri + " to " + new_parent.Uri);
+				throw new Exception ("Can't move " + child.Uri.ToString () + " to " + new_parent.Uri.ToString ());
 			
 			string old_full_name;
 			old_full_name = child.FullName;

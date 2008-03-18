@@ -32,7 +32,7 @@ namespace Bludgeon {
 		override public void AddToStream (Stream stream, EventTracker tracker)
 		{
 			if (tracker != null)
-				tracker.ExpectingAdded (this.Uri);
+				tracker.ExpectingAdded (UriFu.UriToEscapedString (this.Uri));
 			
 			// We can't just use a StreamWriter here, since that
 			// will close the underlying stream when it gets

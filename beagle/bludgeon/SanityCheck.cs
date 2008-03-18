@@ -29,10 +29,11 @@ namespace Bludgeon {
 			success = true;
 
 			foreach (FileSystemObject fso in matching_fsos) {
-				if (matching_hits.Contains (fso.Uri))
-					matching_hits.Remove (fso.Uri);
+				string uri = UriFu.UriToEscapedString (fso.Uri);
+				if (matching_hits.Contains (uri))
+					matching_hits.Remove (uri);
 				else {
-					Log.Failure ("Hit missing from beagled query results: {0}", fso.Uri);
+					Log.Failure ("Hit missing from beagled query results: {0}", uri);
 					success = false;
 				}
 			}
