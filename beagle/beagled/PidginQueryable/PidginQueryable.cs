@@ -54,7 +54,9 @@ namespace Beagle.Daemon.PidginQueryable {
 		private void StartWorker() 
 		{
 			bool gaim_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".gaim"));
+			gaim_exists = gaim_exists && Directory.Exists (Path.Combine (Path.Combine (PathFinder.HomeDir, ".gaim"), "logs"));
 			bool pidgin_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".purple"));
+			pidgin_exists = pidgin_exists && Directory.Exists (Path.Combine (Path.Combine (PathFinder.HomeDir, ".purple"), "logs"));
 
 			if (!pidgin_exists && !gaim_exists) {
 				GLib.Timeout.Add (polling_interval, new GLib.TimeoutHandler (CheckForExistence));
@@ -88,7 +90,9 @@ namespace Beagle.Daemon.PidginQueryable {
 		private bool CheckForExistence ()
 		{
 			bool gaim_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".gaim"));
+			gaim_exists = gaim_exists && Directory.Exists (Path.Combine (Path.Combine (PathFinder.HomeDir, ".gaim"), "logs"));
 			bool pidgin_exists = Directory.Exists (Path.Combine (PathFinder.HomeDir, ".purple"));
+			pidgin_exists = pidgin_exists && Directory.Exists (Path.Combine (Path.Combine (PathFinder.HomeDir, ".purple"), "logs"));
 
 			if (gaim_exists || pidgin_exists) {
 				this.Start ();
