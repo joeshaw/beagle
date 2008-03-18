@@ -5,5 +5,9 @@
 #
 # We need to do this since we are running uninstalled.
 
-cd ../beagled
+if [ ! -d ../../beagle/beagled ] || [ ! -e ../../beagle/beagled/BeagleDaemon.exe ]; then
+    echo "Local beagled not found at ../../beagle/beagled/. Exiting."
+fi
+
+cd ../../beagle/beagled
 ./beagled $BLUDGEON_EXTRA_ARGS $@

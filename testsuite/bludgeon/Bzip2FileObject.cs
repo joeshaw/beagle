@@ -20,10 +20,10 @@ namespace Bludgeon {
 			AddChild (bzip2ed_file, null);
 		}
 
-		override protected string GetChildUri (FileSystemObject children)
+		override protected Uri GetChildUri (FileSystemObject children)
 		{
 			// FIXME: What is the uri scheme for bzip2 files?
-			return this.Uri + "#" + children.Name;
+			return new Uri (this.Uri.ToString () + "#" + children.Name);
 		}
 
 		override public string MimeType {
@@ -40,7 +40,7 @@ namespace Bludgeon {
 				throw new Exception ("Bzip2 file " + Uri + " has " + ChildCount + " children");
 
 			if (tracker != null)
-				tracker.ExpectingAdded (this.Uri);
+				tracker.ExpectingAdded (UriFu.UriToEscapedString (this.Uri));
 
 			UnclosableStream unclosable;
 			unclosable = new UnclosableStream (stream);

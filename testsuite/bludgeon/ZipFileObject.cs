@@ -26,10 +26,10 @@ namespace Bludgeon {
 			}
 		}
 
-		override protected string GetChildUri (FileSystemObject children)
+		override protected Uri GetChildUri (FileSystemObject children)
 		{
 			// FIXME: What is the uri scheme for zip files?
-			string uri = this.Uri + "#" + children.Name;
+			Uri uri = new Uri (this.Uri.ToString () + "#" + children.Name);
 			return uri;
 		}
 
@@ -80,7 +80,7 @@ namespace Bludgeon {
 		override public void AddToStream (Stream stream, EventTracker tracker)
 		{
 			if (tracker != null)
-				tracker.ExpectingAdded (this.Uri);
+				tracker.ExpectingAdded (UriFu.UriToEscapedString (this.Uri));
 
 			UnclosableStream unclosable;
 			unclosable = new UnclosableStream (stream);

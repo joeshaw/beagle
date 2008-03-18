@@ -47,15 +47,17 @@ namespace Bludgeon {
 			}
 		}
 
-		override protected string GetChildUri (FileSystemObject child)
+		override protected Uri GetChildUri (FileSystemObject child)
 		{
-			return Path.Combine (this.Uri, child.Name);
+			string s = Path.Combine (UriFu.UriToEscapedString (this.Uri), child.Name);
+			//Console.WriteLine ("Asked to combine {0} and {1} = {2}", UriFu.UriToEscapedString (this.Uri), child.Name, s);
+			return UriFu.EscapedStringToUri (s);
 		}
 
-		override public string Uri {
+		override public Uri Uri {
 			get {
 				if (is_root)
-					return "file://" + root_path;
+					return UriFu.PathToFileUri (root_path);
 				return base.Uri;
 			}
 		}
@@ -164,7 +166,7 @@ namespace Bludgeon {
 			}
 
 			if (tracker != null)
-				tracker.ExpectingAdded (this.Uri);
+				tracker.ExpectingAdded (UriFu.UriToEscapedString (this.Uri));
 
 			// Recursively add the children
 			foreach (FileSystemObject fso in children.Values)
