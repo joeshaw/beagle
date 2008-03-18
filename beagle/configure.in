@@ -231,7 +231,12 @@ if test "x$enable_gui" = "xyes"; then
 ])
 	AC_SUBST(LIBTRAYICON_CFLAGS)
 	AC_SUBST(LIBTRAYICON_LIBS)
-	
+
+	AC_PATH_PROG(MSGFMT, msgfmt, no)
+	if test "x$MSGFMT" = "xno"; then
+		AC_MSG_ERROR([You need to install gettext, or pass --disable-gui to build without GUI support])
+	fi
+
 fi
 
 dnl ----------------------------------------------
