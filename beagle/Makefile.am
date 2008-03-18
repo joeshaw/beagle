@@ -38,10 +38,6 @@ if ENABLE_EPIPHANY_EXTENSION
 SUBDIRS += epiphany-extension
 endif
 
-if ENABLE_BLUDGEON
-SUBDIRS += bludgeon
-endif
-
 if ENABLE_THUNDERBIRD
 SUBDIRS += thunderbird-extension
 endif
