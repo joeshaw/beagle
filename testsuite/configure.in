@@ -1,0 +1,77 @@
+###
+### Welcome to Beagle's configure.in.  We hope you enjoy your stay.
+###
+
+AC_INIT(bludgeon/Bludgeon.cs)
+AC_CANONICAL_SYSTEM
+# Use beagle's versioning
+AM_INIT_AUTOMAKE(beagle-testsuite, 0.3.4)
+
+########################################################################
+
+###
+### Some dependencies
+###
+
+MONO_REQUIRED=1.2.4
+BEAGLE_REQUIRED=0.3.3
+GLIB_SHARP_REQUIRED=2.6.0
+
+########################################################################
+
+AM_MAINTAINER_MODE
+AM_CONFIG_HEADER(config.h)
+
+VERSION=${VERSION}
+AC_SUBST(VERSION)
+
+AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
+if test "x$PKG_CONFIG" = "xno"; then
+	AC_MSG_ERROR([You need to install pkg-config])
+fi
+
+AC_PATH_PROG(BASH, bash)
+AC_SUBST(BASH)
+
+AC_PATH_PROG(MCS, gmcs, no)
+if test "x$MCS" = "xno"; then
+	AC_MSG_ERROR([You need to install the Mono gmcs compiler])
+fi
+
+AC_MSG_CHECKING([for mono.pc])
+if test -z `$PKG_CONFIG --variable=prefix mono`; then
+  AC_MSG_ERROR([missing the mono.pc file, usually found in the mono-devel package])
+else
+  AC_MSG_RESULT([found])
+fi
+
+# check for various mono DLLs that we need.
+needed_dlls="Mono.Posix ICSharpCode.SharpZipLib"
+for i in $needed_dlls; do
+  AC_MSG_CHECKING([for $i.dll])
+  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+    AC_MSG_ERROR([missing required mono DLL: $i.dll])
+  else
+    AC_MSG_RESULT([found])
+  fi
+done
+
+# SharpZipLib was broken previously, and all our Makefile.am's depend on this
+# define.
+SHARPZIPLIB_LIBS="-r:ICSharpCode.SharpZipLib"
+AC_SUBST(SHARPZIPLIB_LIBS)
+
+# Beagle libraries
+PKG_CHECK_MODULES(BEAGLE,
+	[
+		beagle-0.0 >= $BEAGLE_REQUIRED
+		glib-sharp-2.0 >= $GLIB_SHARP_REQUIRED
+	])
+AC_SUBST(BEAGLE_LIBS)
+
+dnl ----------------------------------------------
+
+AC_OUTPUT([
+Makefile
+bludgeon/Makefile
+])
