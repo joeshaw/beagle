@@ -1,9 +1,0 @@
-#!/bin/sh
-
-# This is just a convenience thing that changes the directory
-# for the beagled.
-#
-# We need to do this since we are running uninstalled.
-
-cd ../beagled
-./beagled $BLUDGEON_EXTRA_ARGS $@
