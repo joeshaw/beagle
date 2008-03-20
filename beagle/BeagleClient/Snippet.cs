@@ -145,12 +145,15 @@ namespace Beagle {
 
 		public void AddMatchFragment (int query_term_index, string text)
 		{
+			text = StringFu.CleanupInvalidXmlCharacters (text);
+			if (String.IsNullOrEmpty (text))
+				return;
+
 			if (Fragments == null)
 				Fragments = new ArrayList (3); // mostly will be 3 fragments
 
 			// Before we send a snippet over the wire, clean up any
 			// characters that would be invalid in XML.
-			text = StringFu.CleanupInvalidXmlCharacters (text);
 			Fragments.Add (new Fragment (query_term_index, text));
 		}
 
