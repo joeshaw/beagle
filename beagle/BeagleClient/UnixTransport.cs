@@ -87,6 +87,8 @@ namespace Beagle {
 		protected override void SendRequest (RequestMessage request)
 		{
 			client = new UnixClient (this.socket_name);
+			client.SendBufferSize = 4096;
+			client.ReceiveBufferSize = 4096;
 			NetworkStream stream = client.GetStream ();
 			
 			base.SendRequest (request, stream);
@@ -121,7 +123,7 @@ namespace Beagle {
 
 				do {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (this.network_data, (byte) 0xff, prev_index);
+					end_index = Array.IndexOf<byte> (this.network_data, (byte) 0xff, prev_index);
 
 					int bytes_count = (end_index == -1 ? bytes_read : end_index) - prev_index;
 					this.BufferStream.Write (this.network_data, prev_index, bytes_count);

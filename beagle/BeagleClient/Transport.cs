@@ -41,8 +41,26 @@ namespace Beagle {
 
 	public abstract class Transport {
 
-		protected static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
-		protected static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+		//////////////// Serialization ////////////////
+
+		protected static XmlSerializer req_serializer, resp_serializer;
+#if GENERATE_SERIALIZE
+		static Transport () {
+			req_serializer = null;
+			resp_serializer = null;
+			Logger.Log.Error ("Should not be here");
+			Environment.Exit (1);
+		}
+#else
+		static Transport () {
+			Beagle.GeneratedSerializers.Literal.XmlSerializerContract factory = new Beagle.GeneratedSerializers.Literal.XmlSerializerContract ();
+
+			// What happens when the factory does not have a serializer for a particular type
+			// Does it fallback to its reflection based approach ?
+			req_serializer = factory.GetSerializer (typeof (RequestWrapper));
+			resp_serializer = factory.GetSerializer (typeof (ResponseWrapper));
+		}
+#endif
 
 		private bool local = false;
 
@@ -106,7 +124,6 @@ namespace Beagle {
 			Logger.Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
 			deserialize_stream.Seek (0, SeekOrigin.Begin);
 #endif
-
 			ResponseWrapper wrapper = (ResponseWrapper)resp_serializer.Deserialize (deserialize_stream);
 			ResponseMessage response = wrapper.Message;
 			deserialize_stream.Close ();
