@@ -294,12 +294,14 @@ namespace Beagle.Daemon {
 		public UnixConnectionHandler (UnixClient client)
 		{
 			this.client = client;
+			this.client.SendBufferSize = 4096;
+			this.client.ReceiveBufferSize = 4096;
 		}
 
 		public override bool SendResponse(ResponseMessage response)
 		{
 			bool result = false;
-			
+
 			lock (this.client_lock) {
 				if (this.client == null) 
 					return false;
