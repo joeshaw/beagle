@@ -21,7 +21,9 @@ TYPES =						\
 	Beagle.SnippetResponse			\
 	Beagle.CountMatchQueryResponse		\
 	Beagle.Hit				\
-	Beagle.Indexable
+	Beagle.Indexable			\
+	Beagle.RequestWrapper			\
+	Beagle.ResponseWrapper
 
 TYPES_SGEN_PARAMS = $(TYPES:%=--type:%)
 

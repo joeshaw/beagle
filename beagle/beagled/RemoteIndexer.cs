@@ -55,6 +55,9 @@ namespace Beagle.Daemon {
 			if (! File.Exists (helper_path))
 				throw new Exception ("Could not find " + helper_path);
 			Logger.Log.Debug ("Found index helper at {0}", helper_path);
+
+			// Beagled acts as a client here but sends message that is not defined in BeagleClient
+			Transport.SetLegacySerializers ();
 		}
 
 		static public IIndexer NewRemoteIndexer (string name, int minor_version)

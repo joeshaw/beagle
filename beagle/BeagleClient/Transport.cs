@@ -62,6 +62,18 @@ namespace Beagle {
 		}
 #endif
 
+		// This should be called by any Client class which needs to send/receive messages that are not defined
+		// in BeagleClient's Beagle.dll assembly. Server classes (like one side of beagled and indexhelper) need
+		// not call this since Server.cs has its own serializer.
+		// Currently RemoteIndexer calls this.
+		public static void SetLegacySerializers ()
+		{
+			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+			resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
+		}
+
+		//////////////////////////////////////////////////////////////
+
 		private bool local = false;
 
 		private MemoryStream buffer_stream = new MemoryStream ();
