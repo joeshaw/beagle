@@ -1457,6 +1457,24 @@
   )
 )
 
+(define-method set_context_length
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_set_context_length")
+  (return-type "none")
+  (parameters
+    '("gint" "ctx_length")
+  )
+)
+
+(define-method set_snippet_length
+  (of-object "BeagleSnippetRequest")
+  (c-name "beagle_snippet_request_set_snippet_length")
+  (return-type "none")
+  (parameters
+    '("gint" "snp_length")
+  )
+)
+
 (define-method set_query
   (of-object "BeagleSnippetRequest")
   (c-name "beagle_snippet_request_set_query")

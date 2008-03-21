@@ -61,5 +61,14 @@ void beagle_snippet_request_set_hit (BeagleSnippetRequest *request,
 void beagle_snippet_request_set_query (BeagleSnippetRequest *request,
 				       BeagleQuery          *query);
 
+void beagle_snippet_request_set_full_text (BeagleSnippetRequest *request,
+					   gboolean full_text);
+
+void beagle_snippet_request_set_context_length (BeagleSnippetRequest *request,
+						gint ctx_length);
+
+void beagle_snippet_request_set_snippet_length (BeagleSnippetRequest *request,
+						gint snp_length);
+
 #endif /* __BEAGLE_SNIPPET_REQUEST_H */
 

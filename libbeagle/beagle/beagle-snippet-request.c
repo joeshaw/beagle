@@ -38,6 +38,8 @@ typedef struct {
 	BeagleQuery *query;
 	BeagleHit *hit;
 	gboolean set_full_text;
+	gint ctx_length;
+	gint snp_length;
 } BeagleSnippetRequestPrivate;
 
 #define BEAGLE_SNIPPET_REQUEST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_SNIPPET_REQUEST, BeagleSnippetRequestPrivate))
@@ -62,6 +64,9 @@ beagle_snippet_request_to_xml (BeagleRequest *request, GError **err)
 		g_string_append (data, "<FullText>true</FullText>");
 	else
 		g_string_append (data, "<FullText>false</FullText>");
+
+	g_string_append_printf (data, "<ContextLength>%d</ContextLength>", priv->ctx_length);
+	g_string_append_printf (data, "<SnippetLength>%d</SnippetLength>", priv->snp_length);
 
 	_beagle_hit_to_xml (priv->hit, data);
 	
@@ -123,6 +128,8 @@ beagle_snippet_request_init (BeagleSnippetRequest *snippet_request)
 	
 	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (snippet_request);
 	priv->set_full_text = FALSE;
+	priv->ctx_length = -1;
+	priv->snp_length = -1;
 }
 
 /**
@@ -195,7 +202,7 @@ beagle_snippet_request_set_query (BeagleSnippetRequest *request,
 /**
  * beagle_snippet_request_set_full_text:
  * @request: a #BeagleSnippetRequest
- * @query: boolean
+ * @full_text: boolean
  *
  * Request full cached text of this hit. The text will not be marked with search terms
  * for performance reasons.
@@ -210,4 +217,42 @@ beagle_snippet_request_set_full_text (BeagleSnippetRequest *request,
 
 	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (request);
 	priv->set_full_text = full_text;
+}
+
+/**
+ * beagle_snippet_request_set_context_length:
+ * @request: a #BeagleSnippetRequest
+ * @ctx_length: the number of context words
+ *
+ * Set the number of maximum number of words before or after the matching query term. The default value is 6.
+ **/
+void 
+beagle_snippet_request_set_context_length (BeagleSnippetRequest *request,
+					   gint			 ctx_length)
+{
+	BeagleSnippetRequestPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (request));
+
+	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (request);
+	priv->ctx_length = ctx_length;
+}
+
+/**
+ * beagle_snippet_request_set_snippet_length:
+ * @request: a #BeagleSnippetRequest
+ * @snp_length: maximum length of the snippet
+ *
+ * Set the maximum number of characters for this snippet.
+ **/
+void 
+beagle_snippet_request_set_snippet_length (BeagleSnippetRequest *request,
+					   gint			 snp_length)
+{
+	BeagleSnippetRequestPrivate *priv;
+
+	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (request));
+
+	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (request);
+	priv->snp_length = snp_length;
 }
