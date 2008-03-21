@@ -58,6 +58,10 @@ $(GENERATED_TARGET): $(SERIALIZER_CSFILES) $(DUMMY_TARGET)
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES) $(GENERATED_TARGET)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES) $(GENERATED_DIR)/*.cs
+	@echo ""
+	@echo "WARNING! Keep an eye on the warning messages."
+	@echo "If some methods of the generated files are unused, make sure they only relate to writing of Enum variables."
+	@echo "Make sure all the required types have their serializer generated."
 
 all: $(TARGET)
 
