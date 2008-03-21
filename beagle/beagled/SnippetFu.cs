@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 	
 	public class SnippetFu {
 
-		static public SnippetReader GetSnippet (string[] query_terms, TextReader line_reader, bool full_text)
+		static public SnippetReader GetSnippet (string[] query_terms, TextReader line_reader, bool full_text, int ctx_length, int snp_length)
 		{
 			// FIXME: If the query doesn't have search text (or is null), we should
 			// generate a 'summary snippet'.
@@ -46,24 +46,24 @@ namespace Beagle.Daemon {
 			if (line_reader == null)
 				return null;
 
-			SnippetReader snippet_reader = new SnippetReader (line_reader, query_terms, full_text);
+			SnippetReader snippet_reader = new SnippetReader (line_reader, query_terms, full_text, ctx_length, snp_length);
 			return snippet_reader;
 		}
 		
-		static public SnippetReader GetSnippetFromFile (string[] query_terms, string filename, bool full_text)
+		static public SnippetReader GetSnippetFromFile (string[] query_terms, string filename, bool full_text, int ctx_length, int snp_length)
 		{
 			FileStream stream = new FileStream (filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
-			return GetSnippet (query_terms, new StreamReader (stream), full_text);
+			return GetSnippet (query_terms, new StreamReader (stream), full_text, ctx_length, snp_length);
 		}
 
-		static public SnippetReader GetSnippetFromTextCache (string[] query_terms, string filename, bool full_text)
+		static public SnippetReader GetSnippetFromTextCache (string[] query_terms, string filename, bool full_text, int ctx_length, int snp_length)
 		{
 			TextReader reader = TextCache.UserCache.GetReader (new Uri (filename));
 			if (reader == null)
 				return null;
 			try {
-				return GetSnippet (query_terms, reader, full_text);
+				return GetSnippet (query_terms, reader, full_text, ctx_length, snp_length);
 			} catch (ICSharpCode.SharpZipLib.SharpZipBaseException ex) {
 				Log.Debug ("Unexpected exception '{0}' while extracting snippet for {1}", ex.Message, filename);
 				return null;
@@ -127,19 +127,24 @@ namespace Beagle.Daemon {
 		// Keep a sliding window of the starting positions of words
 		SlidingWindow sliding_window;
 
-		const int between_snippet_words = 6;
-		const int soft_snippet_limit = 200;
+		public const int context_length_default = 6;
+		public const int snippet_length_default = 200;
 
-		public SnippetReader (TextReader line_reader, string[] query_terms, bool full_text)
+		private int context_length;
+		private int snippet_length;
+
+		public SnippetReader (TextReader line_reader, string[] query_terms, bool full_text, int context_length, int snippet_length)
 		{
 			this.line_reader = line_reader;
 			this.found_snippet_length = 0;
 			this.full_text = full_text;
+			this.context_length = (context_length >= 0 ? context_length : context_length_default);
+			this.snippet_length = (snippet_length > 0 ? snippet_length : snippet_length_default);
 
 			if (query_terms == null)
 				return;
 
-			this.sliding_window = new SlidingWindow (between_snippet_words);
+			this.sliding_window = new SlidingWindow (context_length);
 
 			// remove stop words from query_terms
 			query_terms_list = new ArrayList (query_terms.Length);
@@ -182,7 +187,7 @@ namespace Beagle.Daemon {
 			SnippetLine snippet_line;
 			ulong line = 0;
 
-			while (found_snippet_length < soft_snippet_limit) {
+			while (found_snippet_length < snippet_length) {
 				//Console.WriteLine ("Continue with last line ? {0}", continue_line);
 				if (! continue_line) {
 					try {
@@ -307,7 +312,7 @@ namespace Beagle.Daemon {
 					// Add the start pos of the token to the window
 					sliding_window.Add (pos);
 					// If we found a match previously and saw enough following words, stop
-					if (snippet_line != null && snippet_line.Count > 0 && sliding_window.Count == between_snippet_words) {
+					if (snippet_line != null && snippet_line.Count > 0 && sliding_window.Count == context_length) {
 						sliding_window.Reset ();
 						string after_match = text.Substring (prev_match_end_pos, end_pos - prev_match_end_pos);
 						snippet_line.AddNonMatchFragment (after_match);

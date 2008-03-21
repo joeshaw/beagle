@@ -513,7 +513,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 			return false;
 		}
 
-		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)
+		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length)
 		{
 			if (hit.ParentUri == null)
 				return null;
@@ -528,7 +528,7 @@ namespace Beagle.Daemon.KonversationQueryable {
 				LineTextReader reader;
 				reader = new LineTextReader (path, begin_offset, end_offset);
 
-				return SnippetFu.GetSnippet (query_terms, reader, full_text);
+				return SnippetFu.GetSnippet (query_terms, reader, full_text, ctx_length, snp_length);
 			} catch {
 				return null;
 			}

@@ -42,13 +42,15 @@ namespace Beagle.Daemon {
 			Queryable queryable = QueryDriver.GetQueryable (request.Hit.Source);
 			ISnippetReader snippet_reader;
 			bool full_text = request.FullText;
+			int ctx_length = request.ContextLength;
+			int snp_length = request.SnippetLength;
 
 			if (queryable == null) {
 				Log.Error ("SnippetExecutor: No queryable object matches '{0}'", request.Hit.Source);
-				snippet_reader = new SnippetReader (null, null, false);
+				snippet_reader = new SnippetReader (null, null, false, -1, -1);
 				full_text = false;
 			} else
-				snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text);
+				snippet_reader = queryable.GetSnippet (request.QueryTerms, request.Hit, full_text, ctx_length, snp_length);
 
 			return new SnippetResponse (new SnippetList (full_text, snippet_reader));
 		}

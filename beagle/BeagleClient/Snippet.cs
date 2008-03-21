@@ -47,6 +47,10 @@ namespace Beagle {
 		// should know that.
 		public bool FullText = false; // default, not fulltext
 
+		public int ContextLength = -1; // Use system default = 6 if not specified
+
+		public int SnippetLength = -1; // 200, if not specified
+
 		public SnippetRequest () : base (false) { }
 
 		public SnippetRequest (Query query, Hit hit) : base (false)

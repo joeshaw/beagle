@@ -69,7 +69,7 @@ namespace Beagle.Daemon {
 			return 0;
 		}
 
-		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text)
+		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length)
 		{
 			return null;
 		}

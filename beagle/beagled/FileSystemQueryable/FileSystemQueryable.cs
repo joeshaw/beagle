@@ -1853,7 +1853,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			return parent_dirs;
 		}
 
-		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text)
+		override public ISnippetReader GetSnippet (string [] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length)
 		{
 			// Uri remapping from a hit is easy: the internal uri
 			// is stored in a property.
@@ -1863,12 +1863,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			TextReader reader = TextCache.UserCache.GetReader (uri, ref self_cache);
 
 			if (self_cache)
-				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath, full_text);
+				return SnippetFu.GetSnippetFromFile (query_terms, hit.Uri.LocalPath, full_text, ctx_length, snp_length);
 
 			if (reader == null)
 				return null;
 
-			return SnippetFu.GetSnippet (query_terms, reader, full_text);
+			return SnippetFu.GetSnippet (query_terms, reader, full_text, ctx_length, snp_length);
 		}
 
 		override public void Start ()

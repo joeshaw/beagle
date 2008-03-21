@@ -45,7 +45,7 @@ class SnippetTestTool {
 
 		SnippetReader snippet_reader;
 		// FIXME: Oops ... does not quit by passing empty line
-		snippet_reader = SnippetFu.GetSnippet (args, Console.In, false); //delegate {
+		snippet_reader = SnippetFu.GetSnippet (args, Console.In, false, -1, -1); //delegate {
 
 		bool first = true;
 		foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ()) {

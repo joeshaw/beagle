@@ -46,7 +46,7 @@ namespace Beagle.Daemon {
 		// Just return the number of matches
 		int DoCountMatchQuery (Query query);
 
-		ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text);
+		ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text, int context_length, int snippet_length);
 
 		QueryableStatus GetQueryableStatus ();
 	}
