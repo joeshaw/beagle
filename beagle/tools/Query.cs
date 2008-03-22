@@ -69,11 +69,12 @@ public class QueryTool {
 					   (lastQueryTime - queryStartTime).TotalSeconds);
 		}
 
-		if (verbose)
+		if (verbose) {
 			if (response.NumMatches >= 0)
 				Console.WriteLine ("Returned latest {0} results out of total {1} matches", response.Hits.Count, response.NumMatches);
 			else
 				Console.WriteLine ("Returned latest {0} results", response.Hits.Count);
+		}
 
 		if (! display_hits) {
 			count += response.Hits.Count;
@@ -326,26 +327,8 @@ public class QueryTool {
 		else
 			query.ClosedEvent += OnClosed;
 
-		do {
 		SendQuery ();
 
 		main_loop.Run ();
-
-		query.HitsAddedEvent -= OnHitsAdded;
-		query.HitsSubtractedEvent -= OnHitsSubtracted;
-		query.FinishedEvent -= OnFinished;
-		query = null;
-
-		query = new Query ();
-		query.AddText (Console.ReadLine ());
-		query.MaxHits = 1000;
-
-		query.HitsAddedEvent += OnHitsAdded;
-		query.HitsSubtractedEvent += OnHitsSubtracted;
-		query.FinishedEvent += OnFinished;
-
-		count = 0;
-		lastQueryTime = DateTime.Now;
-		} while (true);
 	}
 }
