@@ -49,3 +49,30 @@ BeagleSnippetRequest
 @query: 
 
 
+<!-- ##### FUNCTION beagle_snippet_request_set_context_length ##### -->
+<para>
+
+</para>
+
+@request: 
+@ctx_length: 
+
+
+<!-- ##### FUNCTION beagle_snippet_request_set_full_text ##### -->
+<para>
+
+</para>
+
+@request: 
+@full_text: 
+
+
+<!-- ##### FUNCTION beagle_snippet_request_set_snippet_length ##### -->
+<para>
+
+</para>
+
+@request: 
+@snp_length: 
+
+

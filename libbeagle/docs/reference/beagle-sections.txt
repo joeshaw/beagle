@@ -195,9 +195,6 @@ BeagleQuery
 beagle_query_new
 beagle_query_add_part
 beagle_query_add_text
-beagle_query_add_mime_type
-beagle_query_add_hit_type
-beagle_query_add_source
 beagle_query_set_domain
 beagle_query_add_domain
 beagle_query_remove_domain
@@ -423,6 +420,9 @@ BeagleSnippetRequest
 beagle_snippet_request_new
 beagle_snippet_request_set_hit
 beagle_snippet_request_set_query
+beagle_snippet_request_set_context_length
+beagle_snippet_request_set_full_text
+beagle_snippet_request_set_snippet_length
 <SUBSECTION Standard>
 BEAGLE_SNIPPET_REQUEST
 BEAGLE_IS_SNIPPET_REQUEST
@@ -485,6 +485,7 @@ beagle_hit_unref
 beagle_hit_get_uri
 beagle_hit_get_type
 beagle_hit_get_mime_type
+beagle_hit_get_file_type
 beagle_hit_get_source
 beagle_hit_get_parent_uri
 beagle_hit_get_timestamp

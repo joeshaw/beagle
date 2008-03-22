@@ -120,7 +120,7 @@ beagle_queryable_status_get_item_count (BeagleQueryableStatus *status)
  * beagle_queryable_status_get_state:
  * @status: a #BeagleQueryableStatus
  *
- * DEPRECATED: This function will be removed in a future version.  At
+ * @DEPRECATED: This function is obsolete since 0.2.0. At
  * present, this function will always reutrn BEAGLE_QUERYABLE_STATE_NA.
  *
  * Return value: BEAGLE_QUERYABLE_STATE_NA.
@@ -128,9 +128,7 @@ beagle_queryable_status_get_item_count (BeagleQueryableStatus *status)
 BeagleQueryableState
 beagle_queryable_status_get_state (BeagleQueryableStatus *status)
 {
-	g_return_val_if_fail (status != NULL, BEAGLE_QUERYABLE_STATE_NA);
-
-	return status->state;
+	return BEAGLE_QUERYABLE_STATE_NA;
 }
 
 /**

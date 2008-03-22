@@ -75,6 +75,15 @@ BeagleHit
 @Returns: 
 
 
+<!-- ##### FUNCTION beagle_hit_get_file_type ##### -->
+<para>
+
+</para>
+
+@hit: 
+@Returns: 
+
+
 <!-- ##### FUNCTION beagle_hit_get_source ##### -->
 <para>
 

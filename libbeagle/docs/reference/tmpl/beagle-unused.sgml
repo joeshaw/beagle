@@ -1,0 +1,24 @@
+<!-- ##### FUNCTION beagle_query_add_hit_type ##### -->
+<para>
+
+</para>
+
+@query: 
+@hit_type: 
+
+<!-- ##### FUNCTION beagle_query_add_mime_type ##### -->
+<para>
+
+</para>
+
+@query: 
+@mime_type: 
+
+<!-- ##### FUNCTION beagle_query_add_source ##### -->
+<para>
+
+</para>
+
+@query: 
+@source: 
+
