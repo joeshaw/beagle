@@ -130,6 +130,7 @@ namespace Beagle.Daemon {
 
 		public static int IndexingDelay {
 			set { indexing_delay = value; }
+			get { return indexing_delay; }
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////
@@ -533,7 +534,7 @@ namespace Beagle.Daemon {
 					continue;
 				if (sb.Length > 0)
 					sb.Append (' ');
-				sb.Append (LuceneCommon.Stem (split [i]));
+				sb.Append (LuceneCommon.Stem (split [i].ToLower ()));
 			}
 			response.StemmedText.Add (sb.ToString ());
 		}

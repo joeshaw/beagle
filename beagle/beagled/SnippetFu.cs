@@ -127,8 +127,8 @@ namespace Beagle.Daemon {
 		// Keep a sliding window of the starting positions of words
 		SlidingWindow sliding_window;
 
-		public const int context_length_default = 6;
-		public const int snippet_length_default = 200;
+		private const int context_length_default = 6;
+		private const int snippet_length_default = 200;
 
 		private int context_length;
 		private int snippet_length;
@@ -138,13 +138,13 @@ namespace Beagle.Daemon {
 			this.line_reader = line_reader;
 			this.found_snippet_length = 0;
 			this.full_text = full_text;
-			this.context_length = (context_length >= 0 ? context_length : context_length_default);
+			this.context_length = (context_length > 0 ? context_length : context_length_default);
 			this.snippet_length = (snippet_length > 0 ? snippet_length : snippet_length_default);
 
 			if (query_terms == null)
 				return;
 
-			this.sliding_window = new SlidingWindow (context_length);
+			this.sliding_window = new SlidingWindow (this.context_length);
 
 			// remove stop words from query_terms
 			query_terms_list = new ArrayList (query_terms.Length);
@@ -278,7 +278,7 @@ namespace Beagle.Daemon {
 					// We cache the token, so as to avoid stemming it more than once
 					// when considering multiple terms.
 					if (stemmed_token == null) {
-						stemmed_token = LuceneCommon.Stem (token);
+						stemmed_token = LuceneCommon.Stem (token.ToLower ());
 					}
 
 					if (String.Compare ((string) stemmed_terms [i], stemmed_token, true) != 0)

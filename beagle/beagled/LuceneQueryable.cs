@@ -104,7 +104,8 @@ namespace Beagle.Daemon {
 
 			// If the queryable is in read-only more, don't 
 			// instantiate an indexer for it.
-			if (read_only_mode)
+			// FIXME: --indexing-delay -1 is a hack for --read-only; need to fix this
+			if (read_only_mode || QueryDriver.IndexingDelay < 0)
 				return;
 
 			indexer = LocalIndexerHook ();
