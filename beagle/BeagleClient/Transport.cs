@@ -41,38 +41,8 @@ namespace Beagle {
 
 	public abstract class Transport {
 
-		//////////////// Serialization ////////////////
-
-		protected static XmlSerializer req_serializer, resp_serializer;
-#if GENERATE_SERIALIZE
-		static Transport () {
-			req_serializer = null;
-			resp_serializer = null;
-			Logger.Log.Error ("Should not be here");
-			Environment.Exit (1);
-		}
-#else
-		static Transport () {
-			Beagle.GeneratedSerializers.Literal.XmlSerializerContract factory = new Beagle.GeneratedSerializers.Literal.XmlSerializerContract ();
-
-			// What happens when the factory does not have a serializer for a particular type
-			// Does it fallback to its reflection based approach ?
-			req_serializer = factory.GetSerializer (typeof (RequestWrapper));
-			resp_serializer = factory.GetSerializer (typeof (ResponseWrapper));
-		}
-#endif
-
-		// This should be called by any Client class which needs to send/receive messages that are not defined
-		// in BeagleClient's Beagle.dll assembly. Server classes (like one side of beagled and indexhelper) need
-		// not call this since Server.cs has its own serializer.
-		// Currently RemoteIndexer calls this.
-		public static void SetLegacySerializers ()
-		{
-			req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
-			resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
-		}
-
-		//////////////////////////////////////////////////////////////
+		protected static XmlSerializer req_serializer = new XmlSerializer (typeof (RequestWrapper), RequestMessage.Types);
+		protected static XmlSerializer resp_serializer = new XmlSerializer (typeof (ResponseWrapper), ResponseMessage.Types);
 
 		private bool local = false;
 

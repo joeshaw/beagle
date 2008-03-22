@@ -220,14 +220,9 @@ INOTIFY_TEST_CSFILES =				\
 Inotify.exe: $(INOTIFY_TEST_CSFILES)
 	$(CSC) -unsafe -out:$@ $^ -r:Mono.Posix -define:INOTIFY_TEST -define:ENABLE_INOTIFY
 
-# Local copy due to a mono bug https://bugzilla.novell.com/show_bug.cgi?id=372780
-sgen.exe: sgen.cs
-	$(CSC) -r:System.Xml.dll -define:NET_2_0 -out:$@ $^
-
 ALL_TARGETS =			\
 	$(UTIL_TARGET)		\
-	$(INOTIFY_EXE)		\
-	sgen.exe
+	$(INOTIFY_EXE)
 
 if ENABLE_GUI
 ALL_TARGETS += $(UI_UTIL_TARGET)
@@ -269,6 +264,5 @@ CLEANFILES =			\
 	$(UI_UTIL_TARGET)	\
 	$(UI_UTIL_TARGET).mdb	\
 	Inotify.exe		\
-	Inotify.exe.mdb		\
-	sgen.exe
+	Inotify.exe.mdb
 

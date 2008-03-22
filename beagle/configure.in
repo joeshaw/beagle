@@ -12,8 +12,8 @@ AM_INIT_AUTOMAKE(beagle, 0.3.3)
 ### Some dependencies
 ###
 
-MONO_REQUIRED=1.2.6
-MONODOC_REQUIRED=1.2.6
+MONO_REQUIRED=1.2.4
+MONODOC_REQUIRED=1.2.4
 NDESK_DBUS_REQUIRED=0.5.2
 NDESK_DBUS_GLIB_REQUIRED=0.3.0
 GTK_SHARP_REQUIRED=2.6.0
@@ -73,8 +73,10 @@ BEAGLE_DEFINES=""
 # Temporary: check for mono-1.9
 PKG_CHECK_MODULES(MONO, mono >= 1.9, mono_1_9=yes, mono_1_9=no) 
 if test "x$mono_1_9" = "xno"; then
+	AC_MSG_RESULT([missing mono >= 1.9. Searching for mono >= 1.2.4])
 	PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
 else
+	AC_MSG_RESULT([found mono >= 1.9])
 	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:MONO_1_9"
 fi
 

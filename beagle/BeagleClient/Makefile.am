@@ -10,8 +10,10 @@ if ENABLE_AVAHI
 CSFLAGS += -define:ENABLE_AVAHI
 endif
 
-SERIALIZER_CSFILES = 					\
+CSFILES = 						\
+	$(srcdir)/AssemblyInfo.cs			\
 	$(srcdir)/Hit.cs                		\
+	$(srcdir)/IIndexableGenerator.cs       		\
 	$(srcdir)/Indexable.cs          		\
 	$(srcdir)/IndexingService.cs			\
 	$(srcdir)/IndexingStatusResponse.cs		\
@@ -24,16 +26,9 @@ SERIALIZER_CSFILES = 					\
 	$(srcdir)/QueryableStatus.cs			\
 	$(srcdir)/RemoteControl.cs			\
 	$(srcdir)/Snippet.cs				\
-	$(srcdir)/Versioned.cs
-
-OTHER_CSFILES =	\
-	$(srcdir)/AssemblyInfo.cs			\
-	$(srcdir)/IIndexableGenerator.cs       		\
 	$(srcdir)/Transport.cs				\
-	$(srcdir)/UnixTransport.cs
-
-CSFILES = $(SERIALIZER_CSFILES)	\
-	  $(OTHER_CSFILES)
+	$(srcdir)/UnixTransport.cs			\
+	$(srcdir)/Versioned.cs
 
 LOCAL_ASSEMBLIES =					\
 	../Util/Util.dll
@@ -46,22 +41,8 @@ ASSEMBLIES = 						\
 
 RESOURCES =
 
-DUMMY_TARGET = Beagle.Dummy.dll
-GENERATED_DIR = generated
-GENERATED_TARGET = $(GENERATED_DIR)/$(DUMMY_TARGET:%.dll=%.XmlSerializers.dll)
-
-$(DUMMY_TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
-	$(CSC) -out:$@ $(CSFLAGS) -define:GENERATE_SERIALIZE $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
-
-$(GENERATED_TARGET): $(SERIALIZER_CSFILES) $(DUMMY_TARGET)
-	DUMMY_TARGET="$(DUMMY_TARGET)" $(MAKE) -e -C $(GENERATED_DIR)
-
-$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES) $(GENERATED_TARGET)
-	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES) $(GENERATED_DIR)/*.cs
-	@echo ""
-	@echo "WARNING! Keep an eye on the warning messages."
-	@echo "If some methods of the generated files are unused, make sure they only relate to writing of Enum variables."
-	@echo "Make sure all the required types have their serializer generated."
+$(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
+	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
 
 all: $(TARGET)
 
@@ -75,10 +56,6 @@ uninstall-local:
 EXTRA_DIST =		\
 	$(CSFILES)
 
-CLEANFILES =			\
-	$(DUMMY_TARGET)		\
-	$(DUMMY_TARGET).mdb 	\
-	$(GENERATED_TARGET)	\
-	$(GENERATED_TARGET).mdb	\
-	$(TARGET)		\
+CLEANFILES =		\
+	$(TARGET)	\
 	$(TARGET).mdb
