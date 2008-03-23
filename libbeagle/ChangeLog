@@ -1,4 +1,74 @@
 ------------------------------------------------------------------------
+r4635 | dbera | 2008-03-23 17:12:08 -0400 (Sun, 23 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/configure.in
+   M /trunk/libbeagle/wrappers/python/Makefile.am
+   M /trunk/libbeagle/wrappers/python/examples/beaglesearch.py
+
+Add missing example files to EXTA_DIST.
+Up version to 0.3.4
+
+------------------------------------------------------------------------
+r4634 | dbera | 2008-03-23 17:11:38 -0400 (Sun, 23 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+Catch EAGAIN during the non-blocking call to connect(). This can really happen, especially when requesting for lots of snippets.
+
+------------------------------------------------------------------------
+r4631 | dbera | 2008-03-21 21:08:53 -0400 (Fri, 21 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-queryable-status.c
+   M /trunk/libbeagle/docs/reference/Makefile.am
+   M /trunk/libbeagle/docs/reference/beagle-sections.txt
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-hit.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-query.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-snippet-request.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-timestamp.sgml
+   M /trunk/libbeagle/docs/reference/tmpl/beagle-unused.sgml
+
+Uptodate the documentation.
+
+------------------------------------------------------------------------
+r4629 | dbera | 2008-03-21 00:51:39 -0400 (Fri, 21 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+   M /trunk/libbeagle/beagle/beagle-snippet-request.h
+   M /trunk/libbeagle/wrappers/python/beagle.defs
+
+Add the snippet parameters to libbeagle and python bindings.
+
+------------------------------------------------------------------------
+r4605 | dbera | 2008-03-11 17:17:37 -0400 (Tue, 11 Mar 2008) | 5 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-daemon-information-response.c
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-request.c
+   M /trunk/libbeagle/beagle/beagle-scheduler-information.c
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/configure.in
+   M /trunk/libbeagle/examples/beagle-info.c
+
+* Let libbeagle connect to beagled with a timeout of 5 seconds, which should be enough for a unix based socket. So if beagled is hanged for some reason, libbeagle will not hang.
+* Scheduler information and index information can legally be null; so do not fail but return that information.
+* Up library revision to 1.
+* Catch common errors in the example.
+
+------------------------------------------------------------------------
+r4254 | dbera | 2007-12-03 23:47:09 -0500 (Mon, 03 Dec 2007) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query.c
+
+Remove dead code.
+
+------------------------------------------------------------------------
+r4241 | joeshaw | 2007-12-01 18:56:06 -0500 (Sat, 01 Dec 2007) | 1 line
+Changed paths:
+   M /trunk/libbeagle/ChangeLog
+   M /trunk/libbeagle/NEWS
+
+Add NEWS and ChangeLog for 0.3.0 release
+------------------------------------------------------------------------
 r4182 | dbera | 2007-11-11 14:41:55 -0500 (Sun, 11 Nov 2007) | 2 lines
 Changed paths:
    M /trunk/libbeagle/configure.in
