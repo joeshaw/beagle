@@ -1,10 +1,1306 @@
-2008-02-23  Kevin Kubasik <kevin@kubasik.net> 
+------------------------------------------------------------------------
+r4633 | dbera | 2008-03-22 11:33:52 -0400 (Sat, 22 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Query.cs
 
-	* Util/SystemInformation.cs, Util/StringFu.cs, beagled/Filter.cs,
-	  BeagleClient/Snippet.cs, BeagleClient/Property.cs, BeagleClient/Hit.cs,
-	  BeagleClient/Query.cs: Taking existing desciptive comments, cleaning
-	  them up, and putting them in the proper monodoc tags. This allows
-	  Monodevelop to display some useful inline documentation. 
+Accidentally committed testing code.
+
+------------------------------------------------------------------------
+r4632 | dbera | 2008-03-22 11:30:20 -0400 (Sat, 22 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Makefile.am
+   M /trunk/beagle/BeagleClient/Transport.cs
+   D /trunk/beagle/BeagleClient/generated
+   M /trunk/beagle/Util/Makefile.am
+   D /trunk/beagle/Util/sgen.cs
+   M /trunk/beagle/beagled/RemoteIndexer.cs
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/tools/Query.cs
+
+Revert the sgen changes (4620-4627). After lots of testing, MONO_XMLSERIALIZER_THS is a better        alternative suitable to the organization of our classes and does not requrie a whole lot of hack      while delivering the same results.
+Some other minor fixes (comments, whitespace changes, better messages).
+
+------------------------------------------------------------------------
+r4630 | dbera | 2008-03-21 20:46:25 -0400 (Fri, 21 Mar 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/SnippetFu.cs
+
+* Really start in a query-only mode (no optimization task etc.) with --indexing-delay -1
+* Fix a bug in the context length API recently added
+* Lowercase the stemmed terms returned from a query and also lower case the words when comparing with the stemmed term. Our lucene matches words in a case insensitive way, why should snippets be case sensitive.
+
+------------------------------------------------------------------------
+r4628 | dbera | 2008-03-21 00:36:02 -0400 (Fri, 21 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Snippet.cs
+   M /trunk/beagle/beagled/ExternalMetadataQueryable.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/IQueryable.cs
+   M /trunk/beagle/beagled/KonversationQueryable/KonversationQueryable.cs
+   M /trunk/beagle/beagled/KopeteQueryable/KopeteQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/NetworkServicesQueryable.cs
+   M /trunk/beagle/beagled/PidginQueryable/PidginQueryable.cs
+   M /trunk/beagle/beagled/Queryable.cs
+   M /trunk/beagle/beagled/SnippetExecutor.cs
+   M /trunk/beagle/beagled/SnippetFu.cs
+   M /trunk/beagle/beagled/SnippetTest.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/tools/StaticQuery.cs
+
+Add API for controlling the max snippet length and the number of words before and after a match.
+
+------------------------------------------------------------------------
+r4627 | dbera | 2008-03-20 22:09:13 -0400 (Thu, 20 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Transport.cs
+   M /trunk/beagle/BeagleClient/generated/Makefile
+   M /trunk/beagle/beagled/RemoteIndexer.cs
+
+Add a method to Transport to tell it to use old style serializers. This can be used by 'clients' that send/recv messages not defined in BeagleClient e.g. RemoteIndexer.cs
+Add a few more types to the list of generated serializers.
+
+------------------------------------------------------------------------
+r4626 | dbera | 2008-03-20 21:07:24 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Makefile.am
+   M /trunk/beagle/BeagleClient/generated/Makefile
+
+Explicitly add the types that need to be serialized.
+
+------------------------------------------------------------------------
+r4625 | dbera | 2008-03-20 20:03:10 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Today's sgen changes do not work with 1.2.4. Sorry Gutsy users, you need 1.2.6 now.
+
+------------------------------------------------------------------------
+r4624 | dbera | 2008-03-20 17:47:32 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Server.cs
+
+Set the buffer size of unix socket to 4K
+
+------------------------------------------------------------------------
+r4623 | dbera | 2008-03-20 17:46:52 -0400 (Thu, 20 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Transport.cs
+   M /trunk/beagle/BeagleClient/UnixTransport.cs
+
+Use the pre-generated serializers.
+Set the buffer size of the unix sockets to 4K.
+
+------------------------------------------------------------------------
+r4622 | dbera | 2008-03-20 17:43:52 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Makefile.am
+
+Oops - missed this.
+
+------------------------------------------------------------------------
+r4621 | dbera | 2008-03-20 17:43:14 -0400 (Thu, 20 Mar 2008) | 9 lines
+Changed paths:
+   A /trunk/beagle/BeagleClient/generated
+   A /trunk/beagle/BeagleClient/generated/Makefile
+
+Use sgen to create xml serializers for the BeagleClient classes. Decreases deserialization time to a third.
+Due to the extremely clumsy way sgen works, here is how we do it:
+- "ifdef false" the part of the code which call the generated serializer class
+- generate a dummy assembly
+- run sgen on this and ask it to keep its source files (we would really like to access System.Xml.Serialization/SerializationCodeGenerator.cs but mono does give us that)
+- now build the actual Beagle.dll by including the generated source file
+
+Oh ... and the generated source file has a bug and also it does not look like end-user-usable so we have to change it namespace to something else (otherwise, when mono internally generates serializers in runtime, the generated types will conflict).
+
+------------------------------------------------------------------------
+r4620 | dbera | 2008-03-20 17:36:39 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   A /trunk/beagle/Util/sgen.cs
+
+Add sgen.cs from mono trunk. This will be used to pre-generate serializers. But the upstream copy has a bug (https://bugzilla.novell.com/show_bug.cgi?id=372780). This will be removed when upstream is fixed.
+
+------------------------------------------------------------------------
+r4619 | dbera | 2008-03-20 01:48:36 -0400 (Thu, 20 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Snippet.cs
+
+Do not send empty fragments, that completely confuses libbeagle's xml handler.
+
+------------------------------------------------------------------------
+r4618 | dbera | 2008-03-18 18:01:50 -0400 (Tue, 18 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Check for msgfmt when building with gui enabled. Our autogen.sh checks for gettext and family but there is no check for them in configure.in for those who use tarball to build beagle.
+
+------------------------------------------------------------------------
+r4617 | dbera | 2008-03-18 16:21:41 -0400 (Tue, 18 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/PidginQueryable/PidginQueryable.cs
+
+Check for the existence of the log dir in pidgin backend to determine whether to start indexing or wait.
+
+------------------------------------------------------------------------
+r4615 | dbera | 2008-03-18 14:34:16 -0400 (Tue, 18 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Makefile.am
+   M /trunk/beagle/configure.in
+
+bludgeon cleanup.
+
+------------------------------------------------------------------------
+r4613 | dbera | 2008-03-18 14:30:00 -0400 (Tue, 18 Mar 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/bludgeon
+
+Move bludgeon to testsuite/
+
+------------------------------------------------------------------------
+r4612 | dbera | 2008-03-17 23:02:29 -0400 (Mon, 17 Mar 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/Util/ExceptionHandlingThread.cs
+   M /trunk/beagle/beagled/Server.cs
+
+Fix a deadlock diagnosed using bludgeon: UnixConnectionHandler:Close was not thread-safe but could be called from an async handler which runs in a thread. Also Network.BeginRead() could throw errors itself if the connection is already terminated; catch those exceptions.
+------------------------------------------------------------------------
+r4611 | dbera | 2008-03-17 21:11:52 -0400 (Mon, 17 Mar 2008) | 7 lines
+Changed paths:
+   M /trunk/beagle/bludgeon/Bludgeon.cs
+   M /trunk/beagle/bludgeon/Bzip2FileObject.cs
+   M /trunk/beagle/bludgeon/Daemon.cs
+   M /trunk/beagle/bludgeon/DirectoryObject.cs
+   M /trunk/beagle/bludgeon/FileSystemObject.cs
+   M /trunk/beagle/bludgeon/GzipFileObject.cs
+   M /trunk/beagle/bludgeon/SanityCheck.cs
+   M /trunk/beagle/bludgeon/TarFileObject.cs
+   M /trunk/beagle/bludgeon/TextFileObject.cs
+   M /trunk/beagle/bludgeon/ZipFileObject.cs
+
+Give bludgeon long-overdue love.
+* Fix parameters passed to beagled
+* Use our crazy Uri and Uri escape methods instead of dealing with Uris
+itself.
+* Passes non-archive tests. Archives do not pass the test yet, due to
+some more Uri weirdness.
+
+------------------------------------------------------------------------
+r4610 | kelemeng | 2008-03-15 21:18:03 -0400 (Sat, 15 Mar 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/hu.po
+
+2008-03-16  Gabor Kelemen  <kelemeng@gnome.hu>
+
+	* hu.po: Translation updated
+
+
+------------------------------------------------------------------------
+r4609 | dbera | 2008-03-13 15:26:47 -0400 (Thu, 13 Mar 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/beagled/FilterFactory.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/conf-data/query-mapping.xml
+
+* Typo in query mapping.
+* If no filter is able to index the indexable, set no content true
+correctly so that Lucene does not ask for content from this indexable.
+
+------------------------------------------------------------------------
+r4608 | dbera | 2008-03-12 22:56:55 -0400 (Wed, 12 Mar 2008) | 12 lines
+Changed paths:
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileCrawlTask.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/InternalUriManager.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/TreeCrawlTask.cs
+   M /trunk/beagle/beagled/LuceneBitArray.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+
+* Use FieldSelector in LuceneBitArray and LuceneNameResolver. If
+nothing, at least a bunch of useless allocations will be saved. Also FSQ
+startup should be faster.
+* Add a debugging hook in beagled with SIGUSR2 (similar to the one in
+IndexHelper). Sending a SIGUSR2 to beagled should print some internal
+state information. Currently FSQ is the only one using it. The state
+information should point out if we are leaking anything (e.g. the
+directory counts should match when you add/remove directories).
+* FSQ was not dropping the fileattributes for directories when they were
+removed. Would not have caused any trouble but still its good to delete
+the fastore information once the directory is removed.
+
+------------------------------------------------------------------------
+r4607 | dbera | 2008-03-12 19:25:46 -0400 (Wed, 12 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/conf-data/crawl-rules/crawl-manpages
+
+Add /usr/share/info to crawl-manpages rule.
+
+------------------------------------------------------------------------
+r4606 | dbera | 2008-03-12 19:25:08 -0400 (Wed, 12 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   A /trunk/beagle/Filters/FilterInfo.cs
+   M /trunk/beagle/Filters/FilterTexi.cs
+   M /trunk/beagle/Filters/Makefile.am
+
+Revert the earlier changes to FilterTexi. I stupidly thought that TeXinfo is the format for the 'info' files. They are not.
+Add a simple 'info' filter. As usual, can also extract from compressed info files.
+
+------------------------------------------------------------------------
+r4604 | dbera | 2008-03-10 16:00:22 -0400 (Mon, 10 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   M /trunk/beagle/Filters/FilterTexi.cs
+   M /trunk/beagle/Filters/Makefile.am
+
+Texinfo filter was included but not used. Enable it and make it work with compressed info pages. It still needs quite a bit of work though, it is really primitive.
+
+------------------------------------------------------------------------
+r4603 | dbera | 2008-03-10 13:36:28 -0400 (Mon, 10 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/conf-data/query-mapping.xml
+
+Add a query mapping for filename and remove duplicate mappings.
+
+------------------------------------------------------------------------
+r4602 | dbera | 2008-03-09 23:57:48 -0400 (Sun, 09 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneCommon.cs
+
+Forgot to up lucene index version after merging lucene.net-2.1
+
+------------------------------------------------------------------------
+r4601 | dbera | 2008-03-09 22:53:11 -0400 (Sun, 09 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Fix building with mono-1.9
+
+------------------------------------------------------------------------
+r4600 | dbera | 2008-03-09 22:52:26 -0400 (Sun, 09 Mar 2008) | 7 lines
+Changed paths:
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/beagled/Shutdown.cs
+
+Cleanup signal handling code. Move the common methods to Shutdown and
+let classes register their specific handlers with shutdown's signal
+handler thread. Remove SIGHUP hack. Remove the 5sec forceful termination
+feature (if anything hangs, generally it hangs beyond the ability of the
+5 sec termination).
+Fix a crash in LuceneIndexingDriver.
+
+------------------------------------------------------------------------
+r4597 | pwithnall | 2008-03-09 13:34:49 -0400 (Sun, 09 Mar 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/en_GB.po
+
+2008-03-09  Philip Withnall  <pwithnall@svn.gnome.org>
+
+	* en_GB.po: Updated British English translation.
+
+
+------------------------------------------------------------------------
+r4596 | dbera | 2008-03-09 12:33:09 -0400 (Sun, 09 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/beagle/configure.in
+
+Add new signal handler based on mono-1.9 UnixSignal. Enable this code if mono-1.9 is detected during configure. Then we dont need to enforce mono-1.9 on the users.
+
+------------------------------------------------------------------------
+r4590 | dbera | 2008-03-08 09:53:17 -0500 (Sat, 08 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Lucene.Net/Search/Hits.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/IndexSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/MultiSearcher.cs
+   M /trunk/beagle/beagled/Lucene.Net/Search/Searcher.cs
+   A /trunk/beagle/beagled/Lucene.Net/upstream-changes/17_more-fieldselector.patch
+
+Merge from beagle-rdf branch. Just some more field-selector applications.
+
+------------------------------------------------------------------------
+r4588 | dbera | 2008-03-08 09:47:09 -0500 (Sat, 08 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/UriFu.cs
+   M /trunk/beagle/beagled/DumpIndex.cs
+   M /trunk/beagle/beagled/QueryStringParser.cs
+
+Add a UriFu method to take a user supplied unescaped uri and change it to beagle specific uri (path and fragment escaped). Use this to suitably set the correct uri in DumpIndex and QueryParser (the two places where we take uri as a string from the user).
+
+------------------------------------------------------------------------
+r4586 | dbera | 2008-03-06 22:07:55 -0500 (Thu, 06 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+
+Currently LuceneIndexingDriver pauses during indexing generated indexables, asks the daemon and then continues. If shutdown is initiated during the pause then the tmpfiles for the generated indexables were left behind. Make sure to clean them up in that case.
+
+------------------------------------------------------------------------
+r4581 | stephaner | 2008-03-05 15:06:21 -0500 (Wed, 05 Mar 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/fr.po
+
+2008-03-05  Stéphane Raimbault  <stephane.raimbault@gmail.com>
+
+	* fr.po: Updated French translation.
+
+------------------------------------------------------------------------
+r4580 | arunsr | 2008-03-05 14:10:38 -0500 (Wed, 05 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterHtml.cs
+
+When translating <meta> tags into properties, convert them to lower-case for consistency.
+
+------------------------------------------------------------------------
+r4577 | dbera | 2008-03-03 17:03:27 -0500 (Mon, 03 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle
+   M /trunk/beagle/Util/PullingReader.cs
+   M /trunk/beagle/Util/StringFu.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   R /trunk/beagle/beagled/Lucene.Net (from /branches/beagle-lucene2_1/beagled/Lucene.Net:4574)
+   R /trunk/beagle/beagled/Lucene.Net/ABOUT.txt (from /branches/beagle-lucene2_1/beagled/Lucene.Net/ABOUT.txt:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Analyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Analyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/CharTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/CharTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/ISOLatin1AccentFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/ISOLatin1AccentFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordAnalyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/KeywordAnalyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/KeywordTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/KeywordTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/LengthFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/LengthFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/LetterTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/LetterTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/LowerCaseFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/LowerCaseTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/LowerCaseTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/PerFieldAnalyzerWrapper.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/PerFieldAnalyzerWrapper.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/PorterStemFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/PorterStemmer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/PorterStemmer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/SimpleAnalyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/SimpleAnalyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Standard (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Standard:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardAnalyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Standard/StandardAnalyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Standard/StandardFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Standard/StandardTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/StopAnalyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/StopAnalyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/StopFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/StopFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Token.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Token.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/TokenFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/TokenFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/TokenStream.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/TokenStream.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/Tokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/Tokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceAnalyzer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/WhitespaceAnalyzer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/WhitespaceTokenizer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/WhitespaceTokenizer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Analysis/WordlistLoader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Analysis/WordlistLoader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/AssemblyInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/AssemblyInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document/DateField.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document/DateField.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document/DateTools.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document/DateTools.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document/Document.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document/Document.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document/Field.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document/Field.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Document/NumberTools.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Document/NumberTools.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/HISTORY.txt (from /branches/beagle-lucene2_1/beagled/Lucene.Net/HISTORY.txt:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/CompoundFileReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/CompoundFileWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/CompoundFileWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/DocumentWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/DocumentWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/FieldInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/FieldInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/FieldInfos.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/FieldInfos.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/FieldsReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/FieldsReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/FieldsWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/FieldsWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/FilterIndexReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/FilterIndexReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNameFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/IndexFileNameFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/IndexFileNames.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/IndexFileNames.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/IndexModifier.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/IndexModifier.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/IndexReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/IndexReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/IndexWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/IndexWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/MultiReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/MultiReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/MultipleTermPositions.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/MultipleTermPositions.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/ParallelReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/ParallelReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentInfos.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentInfos.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentMergeInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentMergeQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentMergeQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentMerger.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentMerger.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermDocs.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentTermDocs.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermEnum.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentTermEnum.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositionVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentTermPositionVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermPositions.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentTermPositions.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/SegmentTermVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/SegmentTermVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/Term.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/Term.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermBuffer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermBuffer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermDocs.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermDocs.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermEnum.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermEnum.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermFreqVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermFreqVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermInfosReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermInfosReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermInfosWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermInfosWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermPositionVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermPositionVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermPositions.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermPositions.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermVectorOffsetInfo.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermVectorOffsetInfo.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsReader.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermVectorsReader.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Index/TermVectorsWriter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Index/TermVectorsWriter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/LICENSE.txt (from /branches/beagle-lucene2_1/beagled/Lucene.Net/LICENSE.txt:4574)
+   R /trunk/beagle/beagled/Lucene.Net/LucenePackage.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/LucenePackage.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/CharStream.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/CharStream.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/FastCharStream.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/FastCharStream.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/MultiFieldQueryParser.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/MultiFieldQueryParser.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/ParseException.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/ParseException.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParser.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/QueryParser.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserConstants.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/QueryParserConstants.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/QueryParserTokenManager.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/QueryParserTokenManager.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/Token.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/Token.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/QueryParser/TokenMgrError.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/QueryParser/TokenMgrError.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/BooleanClause.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/BooleanClause.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/BooleanQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/BooleanQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/BooleanScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/BooleanScorer2.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/BooleanScorer2.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/CachingWrapperFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/CachingWrapperFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ConjunctionScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ConjunctionScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ConstantScoreQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ConstantScoreRangeQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ConstantScoreRangeQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/DefaultSimilarity.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/DefaultSimilarity.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/DisjunctionMaxQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionMaxScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/DisjunctionMaxScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/DisjunctionSumScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/DisjunctionSumScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ExactPhraseScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ExactPhraseScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Explanation.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Explanation.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FieldCache.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FieldCache.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FieldCacheImpl.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FieldCacheImpl.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FieldDoc.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FieldDoc.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FieldDocSortedHitQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FieldDocSortedHitQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FieldSortedHitQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FieldSortedHitQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Filter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Filter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FilteredQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FilteredQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FilteredTermEnum.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FilteredTermEnum.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FuzzyQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FuzzyQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/FuzzyTermEnum.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/FuzzyTermEnum.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Hit.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Hit.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/HitCollector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/HitCollector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/HitIterator.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/HitIterator.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/HitQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/HitQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Hits.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Hits.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/IndexSearcher.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/IndexSearcher.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/MatchAllDocsQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/MatchAllDocsQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/MultiPhraseQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/MultiPhraseQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/MultiSearcher.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/MultiSearcher.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/MultiTermQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/MultiTermQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/NonMatchingScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/NonMatchingScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ParallelMultiSearcher.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ParallelMultiSearcher.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/PhrasePositions.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/PhrasePositions.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/PhraseQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/PhraseQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/PhraseQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/PhraseQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/PhraseScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/PhraseScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/PrefixQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/PrefixQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Query.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Query.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/QueryFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/QueryFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/QueryTermVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/QueryTermVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/RangeFilter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/RangeFilter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/RangeQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/RangeQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/RemoteSearchable.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/RemoteSearchable.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ReqExclScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ReqExclScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ReqOptSumScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ReqOptSumScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ScoreDoc.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ScoreDoc.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/ScoreDocComparator.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/ScoreDocComparator.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Scorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Scorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Searchable.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Searchable.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Searcher.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Searcher.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Similarity.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Similarity.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/SimilarityDelegator.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/SimilarityDelegator.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/SloppyPhraseScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/SloppyPhraseScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Sort.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Sort.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/SortComparator.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/SortComparator.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/SortComparatorSource.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/SortComparatorSource.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/SortField.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/SortField.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/NearSpans.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/NearSpans.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanFirstQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanFirstQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNearQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanNearQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanNotQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanNotQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanOrQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanOrQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanTermQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanTermQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/SpanWeight.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/SpanWeight.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Spans/Spans.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Spans/Spans.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TermQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TermQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TermScorer.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TermScorer.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TopDocCollector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TopDocCollector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TopDocs.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TopDocs.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TopFieldDocCollector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TopFieldDocCollector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/TopFieldDocs.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/TopFieldDocs.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/Weight.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/Weight.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/WildcardQuery.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/WildcardQuery.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Search/WildcardTermEnum.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Search/WildcardTermEnum.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/SharpZipLibAdapter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/SharpZipLibAdapter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexInput.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/BufferedIndexInput.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/BufferedIndexOutput.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/BufferedIndexOutput.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/Directory.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/Directory.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/FSDirectory.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/FSDirectory.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/IndexInput.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/IndexInput.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/IndexOutput.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/IndexOutput.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/Lock.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/Lock.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/MMapDirectory.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/MMapDirectory.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/RAMDirectory.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/RAMDirectory.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/RAMFile.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/RAMFile.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/RAMInputStream.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/RAMInputStream.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Store/RAMOutputStream.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Store/RAMOutputStream.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/SupportClass.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/SupportClass.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/BitVector.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/BitVector.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/Constants.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/Constants.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/Parameter.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/Parameter.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/PriorityQueue.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/PriorityQueue.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/SmallFloat.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/SmallFloat.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/StringHelper.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/StringHelper.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/Util/ToStringUtils.cs (from /branches/beagle-lucene2_1/beagled/Lucene.Net/Util/ToStringUtils.cs:4574)
+   R /trunk/beagle/beagled/Lucene.Net/upstream-changes (from /branches/beagle-lucene2_1/beagled/Lucene.Net/upstream-changes:4574)
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/NoiseFilter.cs
+   M /trunk/beagle/beagled/Snowball.Net/Lucene.Net/Analysis/Snowball/SnowballFilter.cs
+   A /trunk/beagle/beagled/Snowball.Net/upstream-changes (from /branches/beagle-lucene2_1/beagled/Snowball.Net/upstream-changes:4574)
+
+Merge beagle-lucene2_1 branch to trunk. In other words, we are switching to lucene-2.1. Thanks Nirbheek for testing. The branch looks stable and has lots of optimizations on top of lucene-2.1 which itself brings better performance (lock-less commits, faster, in-build field-selector). Further testing should be done with trunk and fixes will directly go here.
+
+------------------------------------------------------------------------
+r4570 | dbera | 2008-02-29 21:25:00 -0500 (Fri, 29 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterEbuild.cs
+   M /trunk/beagle/Filters/FilterXslt.cs
+
+Use Compiled Regex whereever possible. And fix some streamreader leaks in the Ebuild filter.
+
+------------------------------------------------------------------------
+r4569 | dbera | 2008-02-29 20:37:30 -0500 (Fri, 29 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Flavor.cs
+
+Fix our filter matching code to deal with multiple filters matching a file. Now we give more priority to a Uri match, then to an extension match. Also, fix the flavor IComparer to never 0 (i.e. the flavors are same) if they are not the same. This would prevent different flavors but with same weight from removing one another from the sortedlist.
+
+------------------------------------------------------------------------
+r4567 | dbera | 2008-02-29 08:00:02 -0500 (Fri, 29 Feb 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Util/SafeProcess.cs
+   M /trunk/beagle/beagled/EvolutionMailQueryable/EvolutionMailQueryable.cs
+
+* SafeProcess.cs: Fix serious typo.
+* EvolutionMailQueryable.cs: The generator list could change during computation of status, so lock it. The generator list is not a heavily used resource so this should be fine.
+
+------------------------------------------------------------------------
+r4566 | dooteo | 2008-02-29 07:08:04 -0500 (Fri, 29 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/eu.po
+
+2008-02-29  Inaki Larranaga Murgoitio  <dooteo@euskalgnu.org>
+
+	* eu.po: Updated Basque translation.
+
+
+------------------------------------------------------------------------
+r4565 | jorgegonz | 2008-02-29 06:48:29 -0500 (Fri, 29 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4564 | gforcada | 2008-02-29 06:40:22 -0500 (Fri, 29 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ca.po
+
+Updated Catalan translation
+------------------------------------------------------------------------
+r4543 | llipka | 2008-02-27 19:57:09 -0500 (Wed, 27 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/File.cs
+
+Only display the emblem if the base icon is at least twice its size in one direction.
+------------------------------------------------------------------------
+r4542 | dbera | 2008-02-27 19:02:46 -0500 (Wed, 27 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Hit.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+
+Property changes (renames, nautilus emblems) were broken since 0.3. Secondary docs were added but not removed. Fix it. Fix a small mistake in Hit.cs.
+
+------------------------------------------------------------------------
+r4541 | llipka | 2008-02-27 17:35:05 -0500 (Wed, 27 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/Util/SystemInformation.cs
+   M /trunk/beagle/tools
+
+Update SystemInformation-SetProcessName for 64-bit architectures and BSD-like OS.
+------------------------------------------------------------------------
+r4540 | llipka | 2008-02-27 17:08:12 -0500 (Wed, 27 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search/ISearch.cs
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/File.cs
+
+Get all previous functionality along with instance managment working. Fix a crasher for nautilus emblems on file tiles.
+------------------------------------------------------------------------
+r4539 | jwendell | 2008-02-27 11:37:03 -0500 (Wed, 27 Feb 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2008-02-27  Jonh Wendell  <jwendell@gnome.org>
+
+	* pt_BR.po: Brazilian Portuguese translation updated by Igor Soares.
+
+------------------------------------------------------------------------
+r4538 | llipka | 2008-02-25 03:43:26 -0500 (Mon, 25 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+
+Fix the focus line padding.
+------------------------------------------------------------------------
+r4535 | dbera | 2008-02-24 10:41:13 -0500 (Sun, 24 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/StaticQuery.cs
+
+Prevent a crash during retrieving snippets in static-query.
+
+------------------------------------------------------------------------
+r4534 | dbera | 2008-02-23 23:34:09 -0500 (Sat, 23 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/StaticQuery.cs
+
+Add snippet support to beagle-static-query.
+
+------------------------------------------------------------------------
+r4533 | dbera | 2008-02-23 22:26:27 -0500 (Sat, 23 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/Query.cs
+   A /trunk/beagle/tools/StaticQuery.cs
+
+Add a tool to query beagle indexes without the daemon (like 'locate'). Meant to be used with static indexes but could be used to any indexes in principle.
+$ beagle-static-query query-terms
+$ beagle-static-query --backend [+-] <backend-name> query-terms
+$ beagle-static-query --add-static-backend <static-backend-name> --backend none query-terms
+
+------------------------------------------------------------------------
+r4532 | kkubasik | 2008-02-23 15:59:27 -0500 (Sat, 23 Feb 2008) | 6 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Hit.cs
+   M /trunk/beagle/BeagleClient/Property.cs
+   M /trunk/beagle/BeagleClient/Query.cs
+   M /trunk/beagle/BeagleClient/Snippet.cs
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/Util/StringFu.cs
+   M /trunk/beagle/Util/SystemInformation.cs
+   M /trunk/beagle/beagled/Filter.cs
+
+* beagle/Util/SystemInformation.cs, beagle/Util/StringFu.cs,
+  beagle/beagled/Filter.cs, beagle/BeagleClient/Snippet.cs,
+  beagle/BeagleClient/Property.cs, beagle/BeagleClient/Hit.cs,
+  beagle/BeagleClient/Query.cs: Taking existing desciptive comments,
+  cleaning them up, and putting them in the proper monodoc tags. This
+  allows Monodevelop to display some useful inline documentation. 
+------------------------------------------------------------------------
+r4528 | llipka | 2008-02-23 09:09:10 -0500 (Sat, 23 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Namespace Gtk.Action because it conflicts with System.Action (#518220)
+------------------------------------------------------------------------
+r4511 | dnylande | 2008-02-21 17:53:09 -0500 (Thu, 21 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Updated Swedish translation
+------------------------------------------------------------------------
+r4502 | dbera | 2008-02-20 08:55:25 -0500 (Wed, 20 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Indexable.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/Filter.cs
+   M /trunk/beagle/beagled/FilterFactory.cs
+   M /trunk/beagle/beagled/KMailQueryable/KMailIndexer.cs
+   M /trunk/beagle/beagled/KonqHistoryQueryable/KonqQueryable.cs
+   M /trunk/beagle/beagled/ThunderbirdQueryable/ThunderbirdQueryable.cs
+
+Rename Indexable.Crawled to Indexable.FlushBufferCache because that is what it actually is.
+
+------------------------------------------------------------------------
+r4501 | ymarcheg | 2008-02-19 18:05:41 -0500 (Tue, 19 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/oc.po
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4500 | jmas | 2008-02-19 15:38:19 -0500 (Tue, 19 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ca.po
+
+2008-02-19  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation.
+
+
+------------------------------------------------------------------------
+r4499 | nirbheekc | 2008-02-19 01:26:08 -0500 (Tue, 19 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/WebServer.cs
+
+Remove stale file mapping
+------------------------------------------------------------------------
+r4498 | nirbheekc | 2008-02-19 01:24:27 -0500 (Tue, 19 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/WebServer.cs
+   M /trunk/beagle/beagled/webinterface/index.xsl
+   A /trunk/beagle/beagled/webinterface/opensearch.xml
+
+Beagle Open Search plugin, made by Jaikumar (a.k.a. flukebox -- http://home.iitk.ac.in/~jaiks/) as a part of the Beagle Hackfest during FOSSKriti
+------------------------------------------------------------------------
+r4497 | ituohela | 2008-02-19 00:22:23 -0500 (Tue, 19 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/fi.po
+
+Updated Finnish translation
+------------------------------------------------------------------------
+r4496 | kmaraas | 2008-02-18 12:42:45 -0500 (Mon, 18 Feb 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/POTFILES.in
+   M /trunk/beagle/po/nb.po
+
+2008-02-18  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* POTFILES.in: Add missing file.
+	* nb.po: Updated Norwegian bokmål translation.
+------------------------------------------------------------------------
+r4492 | aihana | 2008-02-16 09:04:07 -0500 (Sat, 16 Feb 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ja.po
+
+2008-02-16  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+	* ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r4490 | llipka | 2008-02-15 09:21:49 -0500 (Fri, 15 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search/ISearch.cs
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   A /trunk/beagle/search/Beagle.Search/SearchWindow.cs (from /trunk/beagle/search/Beagle.Search/Search.cs:4479)
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+   M /trunk/beagle/search/Makefile.am
+
+A very basic implementation of instance management.
+------------------------------------------------------------------------
+r4487 | dbera | 2008-02-14 19:24:30 -0500 (Thu, 14 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/AssemblyInfo.cs
+   M /trunk/beagle/BeagleClient/Query.cs
+   M /trunk/beagle/BeagleClient/QueryResponses.cs
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   M /trunk/beagle/beagled/ExternalMetadataQueryable.cs
+   M /trunk/beagle/beagled/IQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/NetworkServicesQueryable.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/QueryExecutor.cs
+   M /trunk/beagle/beagled/Queryable.cs
+
+Add API to quickly get the number of matches for a query. Can be used to provide google-suggest like suggestions, or generate interesting statistics (e.g. histograms).
+
+------------------------------------------------------------------------
+r4486 | dbera | 2008-02-14 19:22:24 -0500 (Thu, 14 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+
+More cleanup. Move large code to separate methods.
+
+------------------------------------------------------------------------
+r4485 | dbera | 2008-02-14 18:26:15 -0500 (Thu, 14 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+
+Move out code to assemble queries to a separate method. This will help in writing other query executors.
+
+------------------------------------------------------------------------
+r4484 | dbera | 2008-02-14 18:07:05 -0500 (Thu, 14 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/beagled-index-helper.in
+
+Minor corrections to the index-helper script.
+
+------------------------------------------------------------------------
+r4482 | llipka | 2008-02-14 17:44:03 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+
+Last one, I promise --- give the user a visual clue if the tile has focus
+------------------------------------------------------------------------
+r4481 | llipka | 2008-02-14 17:35:28 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   A /trunk/beagle/search/Beagle.Search/CairoFu.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+   M /trunk/beagle/search/Makefile.am
+
+Because I love you guys, you will get the delicious cairo rounded corners on selections.
+------------------------------------------------------------------------
+r4480 | llipka | 2008-02-14 17:15:10 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search/ISearch.cs
+
+Expose a simple Hide/Show DBus interface for beagle-search. I'm done for the day, more hacking tomorrow.
+------------------------------------------------------------------------
+r4479 | llipka | 2008-02-14 17:02:21 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+
+Four liner to get command line searches working --- yeah, I knew you would complain.
+------------------------------------------------------------------------
+r4478 | llipka | 2008-02-14 16:58:39 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Makefile.am
+
+Missed this.
+------------------------------------------------------------------------
+r4477 | llipka | 2008-02-14 16:56:03 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/conf-data
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/po/POTFILES.in
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/beagle-search.in
+
+Update potfiles, svn ignore, makefiles and wrappers.
+------------------------------------------------------------------------
+r4476 | llipka | 2008-02-14 16:38:52 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   A /trunk/beagle/search/AssemblyInfo.cs (from /trunk/beagle/search/Beagle.Search.Tiles/AssemblyInfo.cs:4475)
+   A /trunk/beagle/search/Beagle.Search/Category.cs (from /trunk/beagle/search/Category.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/DetailsPane.cs (from /trunk/beagle/search/DetailsPane.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/Driver.cs (from /trunk/beagle/search/Driver.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/Entry.cs (from /trunk/beagle/search/Entry.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/GroupView.cs (from /trunk/beagle/search/GroupView.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/ISearch.cs (from /trunk/beagle/search/ISearch.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/ListCategory.cs (from /trunk/beagle/search/ListCategory.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/NotificationArea.cs (from /trunk/beagle/search/NotificationArea.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/Panes.cs (from /trunk/beagle/search/Panes.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/Search.cs (from /trunk/beagle/search/Search.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/SortedTileList.cs (from /trunk/beagle/search/SortedTileList.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/Spinner.cs (from /trunk/beagle/search/Spinner.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/TileCategory.cs (from /trunk/beagle/search/TileCategory.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/TypeFilter.cs (from /trunk/beagle/search/TypeFilter.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/UIManager.cs (from /trunk/beagle/search/UIManager.cs:4474)
+   A /trunk/beagle/search/Beagle.Search/WidgetFu.cs (from /trunk/beagle/search/WidgetFu.cs:4474)
+   D /trunk/beagle/search/Beagle.Search.Tiles/AssemblyInfo.cs
+   D /trunk/beagle/search/Category.cs
+   D /trunk/beagle/search/DetailsPane.cs
+   D /trunk/beagle/search/Driver.cs
+   D /trunk/beagle/search/Entry.cs
+   D /trunk/beagle/search/GroupView.cs
+   D /trunk/beagle/search/ISearch.cs
+   D /trunk/beagle/search/ListCategory.cs
+   M /trunk/beagle/search/Makefile.am
+   D /trunk/beagle/search/NotificationArea.cs
+   D /trunk/beagle/search/Panes.cs
+   D /trunk/beagle/search/Search.cs
+   D /trunk/beagle/search/SortedTileList.cs
+   D /trunk/beagle/search/Spinner.cs
+   D /trunk/beagle/search/TileCategory.cs
+   D /trunk/beagle/search/TypeFilter.cs
+   D /trunk/beagle/search/UIManager.cs
+   D /trunk/beagle/search/WidgetFu.cs
+
+We will also in the end fix the keybindings stuff with this refactoring and make Bera happy. Actually make him happy happy :-)
+------------------------------------------------------------------------
+r4475 | llipka | 2008-02-14 16:20:00 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   A /trunk/beagle/search/Beagle.Search
+   A /trunk/beagle/search/Beagle.Search.Pages (from /trunk/beagle/search/Pages:4473)
+   R /trunk/beagle/search/Beagle.Search.Pages/Base.cs (from /trunk/beagle/search/Pages/Base.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Pages/IndexInfo.cs (from /trunk/beagle/search/Pages/IndexInfo.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Pages/NoMatch.cs (from /trunk/beagle/search/Pages/NoMatch.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Pages/QuickTips.cs (from /trunk/beagle/search/Pages/QuickTips.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Pages/RootUser.cs (from /trunk/beagle/search/Pages/RootUser.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Pages/StartDaemon.cs (from /trunk/beagle/search/Pages/StartDaemon.cs:4474)
+   A /trunk/beagle/search/Beagle.Search.Tiles (from /trunk/beagle/search/Tiles:4473)
+   R /trunk/beagle/search/Beagle.Search.Tiles/ActionMenuItem.cs (from /trunk/beagle/search/Tiles/ActionMenuItem.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Application.cs (from /trunk/beagle/search/Tiles/Application.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/ArchivedFile.cs (from /trunk/beagle/search/Tiles/ArchivedFile.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/AssemblyInfo.cs (from /trunk/beagle/search/Tiles/AssemblyInfo.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Audio.cs (from /trunk/beagle/search/Tiles/Audio.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/CApplet.cs (from /trunk/beagle/search/Tiles/CApplet.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Calendar.cs (from /trunk/beagle/search/Tiles/Calendar.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Contact.cs (from /trunk/beagle/search/Tiles/Contact.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Docbook.cs (from /trunk/beagle/search/Tiles/Docbook.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/File.cs (from /trunk/beagle/search/Tiles/File.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Folder.cs (from /trunk/beagle/search/Tiles/Folder.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/HitFlavor.cs (from /trunk/beagle/search/Tiles/HitFlavor.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/IMLog.cs (from /trunk/beagle/search/Tiles/IMLog.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Image.cs (from /trunk/beagle/search/Tiles/Image.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/MailAttachment.cs (from /trunk/beagle/search/Tiles/MailAttachment.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/MailMessage.cs (from /trunk/beagle/search/Tiles/MailMessage.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Manpage.cs (from /trunk/beagle/search/Tiles/Manpage.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Note.cs (from /trunk/beagle/search/Tiles/Note.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/OpenWithMenu.cs (from /trunk/beagle/search/Tiles/OpenWithMenu.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Presentation.cs (from /trunk/beagle/search/Tiles/Presentation.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/RSSFeed.cs (from /trunk/beagle/search/Tiles/RSSFeed.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Spreadsheet.cs (from /trunk/beagle/search/Tiles/Spreadsheet.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Task.cs (from /trunk/beagle/search/Tiles/Task.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TextDocument.cs (from /trunk/beagle/search/Tiles/TextDocument.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/ThumbnailFactory.cs (from /trunk/beagle/search/Tiles/ThumbnailFactory.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs (from /trunk/beagle/search/Tiles/Tile.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TileAction.cs (from /trunk/beagle/search/Tiles/TileAction.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TileActivator.cs (from /trunk/beagle/search/Tiles/TileActivator.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TileFlat.cs (from /trunk/beagle/search/Tiles/TileFlat.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TileGroup.cs (from /trunk/beagle/search/Tiles/TileGroup.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/TileTemplate.cs (from /trunk/beagle/search/Tiles/TileTemplate.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Utils.cs (from /trunk/beagle/search/Tiles/Utils.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/Video.cs (from /trunk/beagle/search/Tiles/Video.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tiles/WebHistory.cs (from /trunk/beagle/search/Tiles/WebHistory.cs:4474)
+   A /trunk/beagle/search/Beagle.Search.Tray (from /trunk/beagle/search/Tray:4473)
+   R /trunk/beagle/search/Beagle.Search.Tray/NotificationArea.cs (from /trunk/beagle/search/Tray/NotificationArea.cs:4474)
+   R /trunk/beagle/search/Beagle.Search.Tray/TrayIcon.cs (from /trunk/beagle/search/Tray/TrayIcon.cs:4474)
+   D /trunk/beagle/search/Pages
+   D /trunk/beagle/search/Tiles
+   D /trunk/beagle/search/Tray
+
+Move files around
+------------------------------------------------------------------------
+r4474 | llipka | 2008-02-14 16:07:53 -0500 (Thu, 14 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Category.cs
+   M /trunk/beagle/search/DetailsPane.cs
+   A /trunk/beagle/search/Driver.cs (from /trunk/beagle/search/Search.cs:4473)
+   M /trunk/beagle/search/Entry.cs
+   M /trunk/beagle/search/GroupView.cs
+   A /trunk/beagle/search/ISearch.cs
+   M /trunk/beagle/search/ListCategory.cs
+   M /trunk/beagle/search/Makefile.am
+   M /trunk/beagle/search/NotificationArea.cs
+   M /trunk/beagle/search/Pages/Base.cs
+   M /trunk/beagle/search/Pages/IndexInfo.cs
+   M /trunk/beagle/search/Pages/NoMatch.cs
+   M /trunk/beagle/search/Pages/QuickTips.cs
+   M /trunk/beagle/search/Pages/RootUser.cs
+   M /trunk/beagle/search/Pages/StartDaemon.cs
+   M /trunk/beagle/search/Panes.cs
+   M /trunk/beagle/search/Search.cs
+   M /trunk/beagle/search/SortedTileList.cs
+   M /trunk/beagle/search/Spinner.cs
+   M /trunk/beagle/search/TileCategory.cs
+   M /trunk/beagle/search/Tiles/ActionMenuItem.cs
+   M /trunk/beagle/search/Tiles/Application.cs
+   M /trunk/beagle/search/Tiles/ArchivedFile.cs
+   M /trunk/beagle/search/Tiles/AssemblyInfo.cs
+   M /trunk/beagle/search/Tiles/Audio.cs
+   M /trunk/beagle/search/Tiles/CApplet.cs
+   M /trunk/beagle/search/Tiles/Calendar.cs
+   M /trunk/beagle/search/Tiles/Contact.cs
+   M /trunk/beagle/search/Tiles/Docbook.cs
+   M /trunk/beagle/search/Tiles/File.cs
+   M /trunk/beagle/search/Tiles/Folder.cs
+   M /trunk/beagle/search/Tiles/HitFlavor.cs
+   M /trunk/beagle/search/Tiles/IMLog.cs
+   M /trunk/beagle/search/Tiles/Image.cs
+   M /trunk/beagle/search/Tiles/MailAttachment.cs
+   M /trunk/beagle/search/Tiles/MailMessage.cs
+   M /trunk/beagle/search/Tiles/Manpage.cs
+   M /trunk/beagle/search/Tiles/Note.cs
+   M /trunk/beagle/search/Tiles/OpenWithMenu.cs
+   M /trunk/beagle/search/Tiles/Presentation.cs
+   M /trunk/beagle/search/Tiles/RSSFeed.cs
+   M /trunk/beagle/search/Tiles/Spreadsheet.cs
+   M /trunk/beagle/search/Tiles/Task.cs
+   M /trunk/beagle/search/Tiles/TextDocument.cs
+   M /trunk/beagle/search/Tiles/ThumbnailFactory.cs
+   M /trunk/beagle/search/Tiles/Tile.cs
+   M /trunk/beagle/search/Tiles/TileAction.cs
+   M /trunk/beagle/search/Tiles/TileActivator.cs
+   M /trunk/beagle/search/Tiles/TileFlat.cs
+   M /trunk/beagle/search/Tiles/TileGroup.cs
+   M /trunk/beagle/search/Tiles/TileTemplate.cs
+   M /trunk/beagle/search/Tiles/Utils.cs
+   M /trunk/beagle/search/Tiles/Video.cs
+   M /trunk/beagle/search/Tiles/WebHistory.cs
+   M /trunk/beagle/search/Tray/NotificationArea.cs
+   M /trunk/beagle/search/Tray/TrayIcon.cs
+   M /trunk/beagle/search/TypeFilter.cs
+   M /trunk/beagle/search/UIManager.cs
+   M /trunk/beagle/search/WidgetFu.cs
+
+beagle-search refactoring which will in the end lead us to our DBus instance management implementation. Still needs work.
+------------------------------------------------------------------------
+r4471 | dbera | 2008-02-10 16:16:38 -0500 (Sun, 10 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterDOC.cs
+   M /trunk/beagle/Filters/FilterDeb.cs
+   M /trunk/beagle/Filters/FilterExternal.cs
+   M /trunk/beagle/Filters/FilterMPlayerVideo.cs
+   M /trunk/beagle/Filters/FilterPdf.cs
+   M /trunk/beagle/Filters/FilterRPM.cs
+   M /trunk/beagle/Filters/FilterSpreadsheet.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+   M /trunk/beagle/Util/SafeProcess.cs
+   M /trunk/beagle/glue/spawn-glue.c
+
+Use LANG=C for external programs used in filters. Fixes 509487.
+
+------------------------------------------------------------------------
+r4470 | dbera | 2008-02-09 14:29:26 -0500 (Sat, 09 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Fix #514252. Add explicit dependency of glib-sharp to evo-backends.
+
+------------------------------------------------------------------------
+r4469 | dbera | 2008-02-09 14:28:44 -0500 (Sat, 09 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/doc/api/BeagleClient/Beagle/EmptyResponse.xml
+   M /trunk/beagle/doc/api/BeagleClient/Beagle/Hit.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/ISnippetReader.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/PropertyList.xml
+   M /trunk/beagle/doc/api/BeagleClient/Beagle/Query.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestMessageAttribute.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestMessageExecutor+AsyncResponse.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestMessageExecutor.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestMessageExecutorTypesAttribute.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestMessageTypesAttribute.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/RequestWrapper.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/ResponseMessageTypesAttribute.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/ResponseWrapper.xml
+   M /trunk/beagle/doc/api/BeagleClient/Beagle/SnippetList.xml
+   M /trunk/beagle/doc/api/BeagleClient/Beagle/Transport.xml
+   A /trunk/beagle/doc/api/BeagleClient/Beagle/Versioned.xml
+   M /trunk/beagle/doc/api/BeagleClient/index.xml
+
+Update BeagleClient docs.
+
+------------------------------------------------------------------------
+r4468 | lferrett | 2008-02-08 16:18:24 -0500 (Fri, 08 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/it.po
+
+2008-02-08  Luca Ferretti  <elle.uca@libero.it>
+
+	* it.po: Updated Italian translation by Gianvito Cavasoli.
+
+
+------------------------------------------------------------------------
+r4467 | dooteo | 2008-02-08 11:14:07 -0500 (Fri, 08 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/eu.po
+
+2008-02-08  Inaki Larranaga Murgoitio  <dooteo@euskalgnu.org>
+
+	* eu.po: Updated Basque translation.
+
+
+------------------------------------------------------------------------
+r4466 | aflinta | 2008-02-07 15:37:04 -0500 (Thu, 07 Feb 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pl.po
+
+2008-02-07  Artur Flinta  <aflinta@svn.gnome.org>
+
+	* pl.po: Updated Polish translation by GNOME PL Team.
+
+
+------------------------------------------------------------------------
+r4465 | jorgegonz | 2008-02-06 16:46:15 -0500 (Wed, 06 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4464 | taofei | 2008-02-06 01:00:37 -0500 (Wed, 06 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/locale/en-US/beagle.properties
+
+fix a typo
+
+------------------------------------------------------------------------
+r4463 | taofei | 2008-02-06 00:58:37 -0500 (Wed, 06 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+   M /trunk/beagle/firefox-extension/chrome/locale/en-US/beagle.properties
+   M /trunk/beagle/firefox-extension/chrome/locale/zh-CN/beagle.properties
+
+change the error msg for beagle.storage.directory not found for a better understanding 
+
+------------------------------------------------------------------------
+r4461 | dbera | 2008-02-04 21:58:25 -0500 (Mon, 04 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/Makefile.am
+   M /trunk/beagle/firefox-extension/README
+
+Major goofup! Forgot to add the new sidebar files to Makefile.
+
+------------------------------------------------------------------------
+r4459 | dbera | 2008-02-03 13:55:42 -0500 (Sun, 03 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/PropertyKeywordFu.cs
+   M /trunk/beagle/conf-data/Makefile.am
+   D /trunk/beagle/conf-data/keyword-mapping.xml
+   A /trunk/beagle/conf-data/query-mapping.xml (from /trunk/beagle/conf-data/keyword-mapping.xml:4454)
+
+Rename keyword-mapping.xml to query-mapping.xml since the previous name was confusing when you consider that some of the mappings are for keywords. The word "keyword" was being used in different meaning in different context.
+
+------------------------------------------------------------------------
+r4458 | dbera | 2008-02-03 13:51:14 -0500 (Sun, 03 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/beagled/PropertyKeywordFu.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/QueryStringParser.cs
+
+Remove a whole lot of code now redundant due to the keyword-mapping.xml changes. Move all the logic in PropertyKeywordFu. Remove some of the unnecessary classes in PropertyKeywordFu and remove the mappings hardcoded in the code; they are now in the external mappings file.
+------------------------------------------------------------------------
+r4457 | dbera | 2008-02-03 13:48:02 -0500 (Sun, 03 Feb 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Property.cs
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/NautilusMetadataQueryable/NautilusMetadataQueryable.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/beagle/beagled/beagled.in
+   M /trunk/beagle/beagled/wrapper.in
+
+* Remove spurious whitespace.
+* Adapt BeagleDaemon.cs and BuildIndex.cs to PathFinder changes.
+* Remove System.Data from the required assemblies since we dont use it anymore.
+* Change wrapper scripts to set the env variable to conf-data.
+------------------------------------------------------------------------
+r4456 | dbera | 2008-02-03 13:44:28 -0500 (Sun, 03 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/PathFinder.cs
+   D /trunk/beagle/Util/PropertyKeywordAttribute.cs
+   A /trunk/beagle/Util/QueryKeywordMapping.cs (from /trunk/beagle/Util/PropertyKeywordAttribute.cs:4452)
+
+Fix PathFinder to deal with the data files from conf-data and BEAGLE_CONF_DATA env variable.
+No need for PropertyKeyword attribute since Filters and Backends wont have the mapping specified in their attributes any more. Instead, rename it to QueryKeywordMapping and change it suitably to store the mapping information.
+------------------------------------------------------------------------
+r4455 | dbera | 2008-02-03 13:42:01 -0500 (Sun, 03 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+   M /trunk/beagle/Filters/FilterAudio.cs
+   M /trunk/beagle/Filters/FilterDeb.cs
+   M /trunk/beagle/Filters/FilterEmpathyLog.cs
+   M /trunk/beagle/Filters/FilterExternal.cs
+   M /trunk/beagle/Filters/FilterKAddressBook.cs
+   M /trunk/beagle/Filters/FilterKopeteLog.cs
+   M /trunk/beagle/Filters/FilterMail.cs
+   M /trunk/beagle/Filters/FilterPidginLog.cs
+   M /trunk/beagle/Filters/Makefile.am
+   D /trunk/beagle/Filters/external-filters.xml.sample
+   D /trunk/beagle/Filters/keyword-mapping.xml
+
+Remove spurious whitespace and move external-filters.xml.sample and keyword-mapping.xml to conf-data.
+------------------------------------------------------------------------
+r4454 | dbera | 2008-02-03 13:40:58 -0500 (Sun, 03 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Makefile.am
+   A /trunk/beagle/conf-data
+   A /trunk/beagle/conf-data/Makefile.am
+   A /trunk/beagle/conf-data/config-files (from /trunk/beagle/tools/config-files:4450)
+   A /trunk/beagle/conf-data/crawl-rules (from /trunk/beagle/tools/crawl-rules:4450)
+   A /trunk/beagle/conf-data/external-filters.xml.sample (from /trunk/beagle/Filters/external-filters.xml.sample:4452)
+   A /trunk/beagle/conf-data/keyword-mapping.xml (from /trunk/beagle/Filters/keyword-mapping.xml:4452)
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/beagle-crawl-system.in
+   D /trunk/beagle/tools/config-files
+   D /trunk/beagle/tools/crawl-rules
+   M /trunk/beagle/tools/wrapper.in
+
+Move all the config data to its own directory beagle/conf-data. Set BEAGLE_CONF_DIR to point the local conf-data directory when running uninstalled.
+Install the crawl-rules in /etc/beagle/crawl-rules/ directory.
+------------------------------------------------------------------------
+r4453 | dbera | 2008-02-03 13:38:42 -0500 (Sun, 03 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/tools/Query.cs
+
+Remove code to read keyword mappings from backends.
+------------------------------------------------------------------------
+r4452 | kkubasik | 2008-02-03 04:59:02 -0500 (Sun, 03 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/BeagleClient/Property.cs
+   M /trunk/beagle/Filters/Makefile.am
+   A /trunk/beagle/Filters/keyword-mapping.xml
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/beagled/PropertyKeywordFu.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/tools/Query.cs
+
+cleaning up the extraction of keyword mapping. Easier to read file format and more configurable
+------------------------------------------------------------------------
+r4451 | kkubasik | 2008-02-03 00:21:25 -0500 (Sun, 03 Feb 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+   M /trunk/beagle/Filters/FilterAudio.cs
+   M /trunk/beagle/Filters/FilterDeb.cs
+   M /trunk/beagle/Filters/FilterEmpathyLog.cs
+   M /trunk/beagle/Filters/FilterJpeg.cs
+   M /trunk/beagle/Filters/FilterKAddressBook.cs
+   M /trunk/beagle/Filters/FilterKopeteLog.cs
+   M /trunk/beagle/Filters/FilterMail.cs
+   M /trunk/beagle/Filters/FilterPidginLog.cs
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/IndexingServiceQueryable/IndexingServiceQueryable.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/NautilusMetadataQueryable/NautilusMetadataQueryable.cs
+   M /trunk/beagle/beagled/PropertyKeywordFu.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/beagled/TomboyQueryable/TomboyQueryable.cs
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/Query.cs
+
+Move keyword maps into a separate XML file, still needs some testing to see how new installs go. Known issues: 1) File placement 2) inital data is currently a big string literal in Conf.cs, should be moved to a separate file
+------------------------------------------------------------------------
+r4446 | dbera | 2008-02-02 21:07:18 -0500 (Sat, 02 Feb 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+
+Update changelog.
 
 ------------------------------------------------------------------------
 r4445 | dbera | 2008-02-02 20:46:44 -0500 (Sat, 02 Feb 2008) | 2 lines

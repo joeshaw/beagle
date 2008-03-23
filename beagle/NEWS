@@ -1,3 +1,89 @@
+Version 0.3.4
+23 March 2008
+
+* Need Mono at least 1.2.6; recommended at 1.9
+
+* GMime-sharp recommended at least 2.2.16
+
+* Add API to set the number of words and the total length of the snippets.
+
+* Move to Lucene.Net 2.1 (backported a faster analyzer and other improvements).
+
+* Move query mapping (e.g. mappings for ext:, genre:) to a separate user editable /etc/beagle/query-mapping.xml (global) and ~/.beagle/query-mapping.xml (local). beagled needs to be restarted to read the new mappings.
+
+* Expose a Hide/Show DBus interface for beagle-search.
+
+* Firefox search bar plugin to query using beagle's web interface.
+
+* Add a tool beagle-static-query to query beagle without starting beagled. This is mainly meant for static indexes (like locate with the system index, like mod for a monodoc index).
+
+* Lots of beagle-search beautification.
+
+* Add a query mapping "filename:" to query for filenames and words in it (e.g. match My in MyFile.txt and My_File.txt).
+
+* Enable the TeXinfo filter.
+
+* Add a filter for .info files (including gz/bz2/lzma compressed info files). manpages crawl rule now contains /usr/share/info.
+
+* SIGUSR2 will now also print runtime debugging information of beagled.
+
+* Use the new Mono.Unix.UnixSignal if built with mono 1.9. This should remove the last of the beagled/index-helper hangs during shutdown.
+
+* Add the missing files for the firefox extension sidebar.
+
+* Show a better error message if ~/.beagle is not found when the firefox extension is started (should help debian #463922).
+
+* Fixes #514252 (evo backends now explicitly reference glib-sharp)
+
+* Fixes #509487 (use LANG=C when external programs are started from any filter)
+
+* Fix build with mono 1.9 and gnome-sharp 2.20 (#514252, #518220)
+
+* Fix property change indexing (renames, moves etc.) which broke in 0.3.0
+
+* Fix our filter matching algorithm to correctly choose filters in the right order and move to the next one if one filter fails.
+
+* Fix file leak in ebuild filter.
+
+* Clean up some tmp files which could have left behind during a corner case.
+
+* Fix a startup crash in the Pidgin backend if the Pidgin log directory is absent during beagled startup.
+
+* Check for msgfmt in ./configure before building.
+
+* Fix glib-critical warnings in libbeagle (and python bindings) when snippets with empty fragments were sent by beagled.
+
+* Fix some bugs in snippet due to which valid matches were not included in the snippets.
+
+* Timeout in libbeagle if connection to beagled takes more than 5 secs. This will prevent hangs in konqueror/gtkfilechooser if beagled is hanged for some reason.
+
+* Do not throw error if scheduler information and index information is empty since they can actually be empty.
+
+* Translations:
+ - Spanish (Jorge Gonzalez)
+ - Polish (GNOME PL Team.)
+ - Basque (Inaki Larranaga Murgoitio)
+ - Italian (Gianvito Cavasoli)
+ - Japanese (Takeshi AIHANA)
+ - Norwegian bokmål (Kjartan Maraas)
+ - Finnish (Ilkka Tuohela)
+ - Catalan (Jordi Mas, Gil Forcada)
+ - Occitan (Yannig Marchegay)
+ - Swedish (Daniel Nylander)
+ - Brazilian Portuguese (Igor Soares)
+ - French (Stéphane Raimbault)
+ - British English (Philip Withnall)
+ - Hungarian (Gabor Kelemen)
+
+Contributors to this release: Debajyoti Bera, Lukas Lipka, Kevin
+Kubasik, Nirbheek Chauhan and Jaikumar Singh.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_4/beagle/ChangeLog?view=markup
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_4/libbeagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.3
 2 February 2008
 
