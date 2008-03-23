@@ -36,6 +36,8 @@
 #include <sys/un.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <unistd.h>
+#include <string.h>
 
 #include "beagle-error-response.h"
 #include "beagle-marshal.h"
@@ -174,6 +176,7 @@ _beagle_connect_timeout (const char *path, GError **err)
 	int sockfd;
 	int ret;
 	int error, error_len;
+	int retries;
 	long mode;
 	fd_set select_set;
 	struct timeval tv;
@@ -205,8 +208,25 @@ _beagle_connect_timeout (const char *path, GError **err)
 	sun.sun_family = AF_UNIX;
 	snprintf (sun.sun_path, sizeof (sun.sun_path), path);
 
-	if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) < 0) {
-		if (errno != EINPROGRESS) {
+	/* We retry on EGAIN or EINTR: since both of these mean the socket is active,
+	 * there is no harm in trying to retry a lot of times. A blocking socket would
+	 * have done the same.
+	 */
+#define MAX_RETRIES 500
+
+	for (retries = 0; retries < MAX_RETRIES; ++ retries) {
+		if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) >= 0)
+			break;
+
+		/* Else, connection un-successful */
+		if (errno == EALREADY) {
+			break;
+		} else if (errno == EAGAIN) {
+			usleep (200000); /* 200 milliseconds */
+			continue;
+		} else if (errno == EINTR) {
+			continue;
+		} else if (errno != EINPROGRESS) {
 			g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
 				"Unable to connect to Beagle daemon");
 			return -1;
@@ -229,6 +249,7 @@ _beagle_connect_timeout (const char *path, GError **err)
 					return -1;
 				}
 				/* Else, connection successful */
+				/* FIXME: Catch EINTR during select() */
 			} else {
 				g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
 					"Unable to connect to Beagle daemon");
@@ -236,6 +257,12 @@ _beagle_connect_timeout (const char *path, GError **err)
 				return -1;
 			}
 		}
+	}
+
+	if (retries == MAX_RETRIES) {
+		g_set_error (err, BEAGLE_ERROR, BEAGLE_ERROR,
+			"Unable to connect to Beagle daemon");
+		return -1;
 	}
 
 	/* Set socket to blocking mode */
