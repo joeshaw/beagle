@@ -9,9 +9,16 @@ beagle_la_SOURCES = \
 
 nodist_beagle_la_SOURCES = beagle.c
 
+EXAMPLE_DIR = $(srcdir)/examples
+EXAMPLES =					\
+	$(EXAMPLE_DIR)/beagle-async-snippet.py	\
+	$(EXAMPLE_DIR)/beagleinfo.py		\
+	$(EXAMPLE_DIR)/beaglesearch.py
+
 CLEANFILES = beagle.c
-EXTRA_DIST = \
-	beagle.defs \
+EXTRA_DIST = 		\
+	$(EXAMPLES)	\
+	beagle.defs 	\
 	beagle.override \
 	gen-defs.sh
 
