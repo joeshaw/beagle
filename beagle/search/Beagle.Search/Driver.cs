@@ -124,7 +124,7 @@ namespace Beagle.Search {
 			if (!String.IsNullOrEmpty (query) || !icon_enabled)
 				search.Query (query);
 
-			Bus.Session.Register (new ObjectPath (PATH_NAME), search);
+			Bus.Session.Register (BUS_NAME, new ObjectPath (PATH_NAME), search);
 
 			program.Run ();
 		}
