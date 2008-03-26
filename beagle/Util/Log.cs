@@ -71,6 +71,9 @@ namespace Beagle.Util {
 			Log.cutoff_level = cutoff_level;
 			Log.running_in_foreground = running_in_foreground;
 
+			if (! running_in_foreground)
+				Console.WriteLine ("beagled will run in the background.\nUse beagle-status to check progress of beagled.\nFor log files check {0}/current-Beagle.\n", Log.log_directory);
+
 			PruneOldLogs ();
 
 			log_name_prefix = String.Format ("{0:yyyy-MM-dd-HH-mm-ss}-", DateTime.Now);
