@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Data;
-
 using SemWeb.Util;
 
 namespace SemWeb {
@@ -159,8 +157,8 @@ namespace SemWeb {
 					return Activator.CreateInstance(ttype, new object[] { spec, table });
 				/*case "bdb":
 					return new SemWeb.Stores.BDBStore(spec);*/
-				case "sparql-http":
-					return new SemWeb.Remote.SparqlHttpSource(spec);
+				/*case "sparql-http":
+					return new SemWeb.Remote.SparqlHttpSource(spec);*/
 				case "class":
 					ttype = Type.GetType(spec);
 					if (ttype == null)

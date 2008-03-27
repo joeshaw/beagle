@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Web;
  
 namespace SemWeb {
 	public class ParserException : ApplicationException {
@@ -74,6 +73,7 @@ namespace SemWeb {
 			}
 		}
 		
+		/*
 		public static RdfReader LoadFromUri(Uri webresource) {
 			// TODO: Add Accept header for HTTP resources.
 			
@@ -106,6 +106,7 @@ namespace SemWeb {
 
 			throw new InvalidOperationException("Could not determine the RDF format of the resource.");
 		}
+		*/
 		
 		internal static TextReader GetReader(string file) {
 			if (file == "-") return Console.In;

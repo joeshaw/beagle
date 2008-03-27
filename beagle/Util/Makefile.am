@@ -130,7 +130,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/Statement.cs           \
 	$(srcdir)/SemWeb/Store.cs               \
 	$(srcdir)/SemWeb/MemoryStore.cs         \
-	$(srcdir)/SemWeb/SQLStore.cs            \
 	$(srcdir)/SemWeb/RdfReader.cs           \
 	$(srcdir)/SemWeb/RdfXmlReader.cs        \
 	$(srcdir)/SemWeb/N3Reader.cs            \
@@ -143,17 +142,18 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/Inference.cs           \
 	$(srcdir)/SemWeb/RDFS.cs                \
 	$(srcdir)/SemWeb/Algos.cs               \
-	$(srcdir)/SemWeb/Remote.cs              \
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
 	$(srcdir)/QueryKeywordMapping.cs
+
+# To reduce dependencies, we don't build this
+IGNORED_SEMWEB_CSFILES =			\
+	$(srcdir)/SemWeb/Remote.cs
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\
 	$(NDESK_DBUS_GLIB_LIBS)			\
-	-r:System.Data				\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
-	-r:System.Web				\
 	-r:ICSharpCode.SharpZipLib
 
 if ENABLE_THUNDERBIRD
@@ -249,6 +249,7 @@ COND_CS_FILES =				\
 	$(srcdir)/Thunderbird.cs
 
 EXTRA_DIST =			\
+	$(IGNORED_SEMWEB_CSFILES)\
 	$(EXTSTR_IN)		\
 	$(UTIL_CSFILES)		\
 	$(UI_UTIL_CSFILES)	\
