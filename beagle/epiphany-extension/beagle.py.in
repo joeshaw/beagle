@@ -35,6 +35,7 @@ import gettext
 #these are constant
 beagle_data_path = os.environ["HOME"] + "/.beagle/ToIndex/"
 config_file_path = os.environ["HOME"] + "/.gnome2/epiphany/extensions/beagleIndexer.conf"
+epiphany_version = @EPIPHANY_MAJOR@
 
 #The following is about config
 class Config(dict):
@@ -136,13 +137,17 @@ _ui_str = """
 
 
 # we use window.get_active_tab(): we want the menu entries to reflect the active
-# tab, not necessarily the one which fired a signal.
+# tab, not necessarily the one which fired a signal. For Epiphany >= 2.22, we
+# need to use window.get_active_child()
 def _update_action(window):
     '''update action for PyBeagleExtIndexThisPage (enabe after page loaded)'''
     index_this_page_action = window.get_ui_manager().get_action('/menubar/ToolsMenu/BeagleMenu/PyBeagleExtIndexThisPage')
-    tab = window.get_active_tab()
+    if (epiphany_version < 2.22):
+        child = window.get_active_tab()
+    else:
+        child = window.get_active_child()
     # Tab is None when a window is first opened
-    sensitive = (tab != None and tab.get_load_status() != True)
+    sensitive = (child != None and child.get_load_status() != True)
     index_this_page_action.set_sensitive(sensitive)
 
 def _switch_page_cb(notebook, page, page_num, window):
@@ -151,8 +156,13 @@ def _switch_page_cb(notebook, page, page_num, window):
 
 def _index_this_page_cb(action, window):
     '''callback for index_this_page action'''
-    tab = window.get_active_tab()
-    embed = tab.get_embed()
+    if epiphany_version < 2.22:
+        tab = window.get_active_tab()
+        embed = tab.get_embed()
+    else:
+	tab = None
+	embed = window.get_active_child()
+
     index_embed(tab, embed, True)
     set_status_label(window, _("beagle is indexing %s") % embed.get_location(True))
 
@@ -177,7 +187,7 @@ def _index_link_cb(action, window):
     set_status_label(window, _("beagle is indexing link %s") % value)
     pass
 
-def _load_status_cb(tab, event, window):
+def _load_status_cb(child, event, window):
     '''
     Callback for load_status chanage
     the load_status == false means the page is loaded.
@@ -188,8 +198,13 @@ def _load_status_cb(tab, event, window):
         print "Auto Index is turned off. No index "
         return
     #page is loaded  
-    if tab != None and tab.get_load_status() != True:
-        embed = tab.get_embed()
+    if child != None and child.get_load_status() != True:
+	if (epiphany_version < 2.22):
+	    tab = child;
+	    embed = tab.get_embed()
+    	else:
+	    tab = None
+	    embed = child
         url = embed.get_location(True)
         if should_index(url) == False:
             print "%s will NOT be indexed." % url
@@ -368,7 +383,10 @@ def get_meta_from_embed(url,embed,tab):
     '''get mata data from embed "'''
     #guess content type here
     content_type = ""
-    doc_type = tab.get_document_type()
+    if (epiphany_version < 2.22):
+        doc_type = tab.get_document_type()
+    else:
+	doc_type = embed.get_document_type()
     if doc_type == epiphany.EMBED_DOCUMENT_HTML:
         content_type = "text/html"
     elif doc_type == epiphany.EMBED_DOCUMENT_XML:

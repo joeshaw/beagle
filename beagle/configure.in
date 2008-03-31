@@ -432,11 +432,6 @@ if test "x$enable_epiphany_extension" != "xno"; then
 		if test "x$found_ephy" = "xyes"; then
 			EPIPHANY_MAJOR=$v
 			AC_MSG_RESULT([yes])
-			
-			if test "x$v" = "x2.22"; then
-				use_new_epiphany_extension=yes
-			fi
-
 			break
 		else
 			AC_MSG_RESULT([no])
@@ -460,7 +455,7 @@ if test "x$enable_epiphany_extension" != "xno"; then
 fi
 
 AM_CONDITIONAL(ENABLE_EPIPHANY_EXTENSION, test "x$enable_epiphany_extension" = "xyes")
-AM_CONDITIONAL(USE_NEW_EPIPHANY_EXTENSION, test "x$use_new_epiphany_extension" = "xyes")
+AC_SUBST(EPIPHANY_MAJOR)
 
 # distcheck hack
 AC_ARG_ENABLE([epiphany-extension-install],
