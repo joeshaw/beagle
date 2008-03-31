@@ -424,6 +424,10 @@ use_new_epiphany_extension=no
 if test "x$enable_epiphany_extension" != "xno"; then
 	AC_MSG_CHECKING([for Epiphany])
 	AC_MSG_RESULT()
+
+	dnl If you want to add anything but a <major>.<minor> version here, you
+	dnl need to see the handling of the epiphany_version variable in the
+	dnl epiphany extension code
 	VALID_EPIPHANY_VERSIONS="2.22 2.20 2.19 2.18 2.17 2.16 2.15 2.14 1.8 1.6"
 	for v in $VALID_EPIPHANY_VERSIONS; do
 	
