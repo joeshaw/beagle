@@ -28,6 +28,7 @@ namespace Beagle.Search {
 
 		private SearchWindow icon_window = null;
 		private TrayIcon tray = null;
+		private XKeybinder keybinder = null;
 
 		public Search (bool icon_enabled, bool docs_enabled)
 		{
@@ -53,7 +54,7 @@ namespace Beagle.Search {
 
 				if (!String.IsNullOrEmpty (binding)) {
 					tip_text += String.Format (" ({0})", binding);
-					XKeybinder keybinder = new XKeybinder ();
+					keybinder = new XKeybinder ();
 					keybinder.Bind (binding, OnTrayActivated);
 				}
 

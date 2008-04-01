@@ -303,6 +303,7 @@ namespace Beagle.Search {
 		{
 			// FIXME: Destroy window
 			Hide ();
+			args.RetVal = true;
 		}
 
 		private void OnScopeChanged (ScopeType toggled, bool active)
