@@ -1,4 +1,90 @@
 ------------------------------------------------------------------------
+r4649 | dbera | 2008-04-01 14:06:11 -0400 (Tue, 01 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+
+* SearchWindow.cs: Set RetVal = true in the DeleteEvent handler so that the window is not "closed" (just hidden). This fixes the grey window on f12 that some people are seeing.
+* Search.cs: Make XKeybinder an instance variable so that it does not slip from beneath us. It should have a lifetime same as the application. Otherwise you would see crashes as in (debian #473285, gentoo #201093-comment-48).
+
+------------------------------------------------------------------------
+r4648 | arunsr | 2008-03-31 08:57:49 -0400 (Mon, 31 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Add a reminder in configure.in about the use of the Epiphany version string
+during generation of the extension
+
+------------------------------------------------------------------------
+r4647 | arunsr | 2008-03-31 05:21:07 -0400 (Mon, 31 Mar 2008) | 6 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/epiphany-extension/Makefile.am
+   D /trunk/beagle/epiphany-extension/beagle-2.22.py.in
+   M /trunk/beagle/epiphany-extension/beagle.py.in
+
+Merge the pre-Epiphany-2.22 and Epiphany-2.22+ extensions.
+
+This cleans up the previous fugly commit, since most of the code was the same.
+We get the Epiphany version at "configure" time, not runtime, which is
+suboptimal, but there doesn't seem to be a runtime way to do it.
+
+------------------------------------------------------------------------
+r4646 | arunsr | 2008-03-27 11:09:43 -0400 (Thu, 27 Mar 2008) | 8 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/epiphany-extension/Makefile.am
+   A /trunk/beagle/epiphany-extension/beagle-2.22.py.in
+
+Add support for Epiphany 2.22
+
+The API has changed in the new Epiphany python bindings, so we have another
+version of the plugin and we use that for the new version.
+
+The main API change is that the "tab" object has been removed so we get a
+direct handle to the EphyEmbed object with window.get_active_child().
+
+------------------------------------------------------------------------
+r4645 | arunsr | 2008-03-27 08:58:46 -0400 (Thu, 27 Mar 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/epiphany-extension/Makefile.am
+
+Removed some tabs Makefile.am which prevented extension* variables from being
+set (=> nothing in epiphany-extension/ was being built)
+
+------------------------------------------------------------------------
+r4644 | dbera | 2008-03-27 08:40:13 -0400 (Thu, 27 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/SemWeb/RdfReader.cs
+   M /trunk/beagle/Util/SemWeb/Store.cs
+
+Remove some unneeded dependencies; I specially hate System.Web (to know why run "monop2 -r:System.Web --refs".
+
+------------------------------------------------------------------------
+r4643 | dbera | 2008-03-25 21:16:10 -0400 (Tue, 25 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Log.cs
+
+Notify the user if beagled is started in the background mode. Otherwise, naive users can get confused if beagled silently returns the prompt.
+
+------------------------------------------------------------------------
+r4641 | arunsr | 2008-03-24 01:52:28 -0400 (Mon, 24 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+
+Use the old Bus.Register() method for compatibility with ndesk-dbus-0.4
+
+------------------------------------------------------------------------
+r4639 | dbera | 2008-03-23 17:44:52 -0400 (Sun, 23 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/configure.in
+
+Update NEWS, ChangeLog and up version to 0.3.4
+
+------------------------------------------------------------------------
 r4633 | dbera | 2008-03-22 11:33:52 -0400 (Sat, 22 Mar 2008) | 2 lines
 Changed paths:
    M /trunk/beagle/tools/Query.cs
