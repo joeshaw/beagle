@@ -1,3 +1,19 @@
+Version 0.3.5
+1 April 2008
+
+* Fix build with recent NDesk-DBus.
+
+* Fix building of Epiphany extension and add support for Epiphany 2.22
+
+* Fix a grey window bug and a crash on pressing shortcut key in beagle-search (debian #473285, gentoo #201093-comment-48).
+
+Contributors to this release: Arun Raghavan, Debajyoti Bera
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_5/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.4
 23 March 2008
 
