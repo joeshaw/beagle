@@ -227,18 +227,19 @@ namespace Beagle.Daemon {
 			return false;
 		}
 
+		/* Returns false if content can't/needn't be indexed.
+		 * If AlreadyFiltered, then we don't return a filter but return true.
+		 */
 		static public bool FilterIndexable (Indexable indexable, TextCache text_cache, out Filter filter)
 		{
 			filter = null;
 			ICollection filters = null;
 
 			if (indexable.Filtering == IndexableFiltering.AlreadyFiltered)
-				return false;
+				return true;
 
-			if (! ShouldWeFilterThis (indexable)) {
-				indexable.NoContent = true;
+			if (! ShouldWeFilterThis (indexable))
 				return false;
-			}
 
 			string path = null;
 
@@ -285,14 +286,10 @@ namespace Beagle.Daemon {
 
 			// We don't know how to filter this, so there is nothing else to do.
 			if (filters.Count == 0) {
-				if (! indexable.NoContent) {
-					indexable.NoContent = true;
-
+				if (! indexable.NoContent)
 					Logger.Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.DisplayUri, path, indexable.MimeType);
-					return false;
-				}
-				
-				return true;
+
+				return false;
 			}
 
 			foreach (Filter candidate_filter in filters) {
@@ -346,8 +343,7 @@ namespace Beagle.Daemon {
 
 			if (Debug)
 				Logger.Log.Debug ("None of the matching filters could process the file: {0}", path);
-			indexable.NoContent = true;
-			
+
 			return false;
 		}
 

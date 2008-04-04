@@ -543,11 +543,14 @@ namespace Beagle.Daemon {
 
 			// If we have content, try to find a filter
 			// we we can use to process the indexable
+			bool filter_content = false;
 			try {
-				if (! FilterFactory.FilterIndexable (indexable, (disable_textcache ? null : text_cache), out filter))
-					indexable.NoContent = true;
-			} catch (Exception e) {
+				filter_content = FilterFactory.FilterIndexable (indexable, (disable_textcache ? null : text_cache), out filter);
+			} catch { }
+
+			if (! filter_content) {
 				indexable.NoContent = true;
+				filter = null;
 			}
 
 			if (FileFilterNotifier != null)
