@@ -34,7 +34,7 @@
 #include "beagle-query-part-human.h"
 
 typedef struct {
-	const char *string;
+	char *string;
 } BeagleQueryPartHumanPrivate;
 
 #define BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_HUMAN, BeagleQueryPartHumanPrivate))
@@ -63,6 +63,12 @@ beagle_query_part_human_to_xml (BeagleQueryPart *part)
 static void
 beagle_query_part_human_finalize (GObject *obj)
 {
+	BeagleQueryPartHuman *part = BEAGLE_QUERY_PART_HUMAN (obj);
+	BeagleQueryPartHumanPrivate *priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);
+
+	g_warn_if_fail (priv->string != NULL);
+	g_free (priv->string);
+
         if (G_OBJECT_CLASS (parent_class)->finalize)
                 G_OBJECT_CLASS (parent_class)->finalize (obj);
 }
@@ -119,5 +125,5 @@ beagle_query_part_human_set_string (BeagleQueryPartHuman *part,
 	g_return_if_fail (string != NULL);
 	
 	priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
-	priv->string = string;
+	priv->string = g_strdup (string);
 }

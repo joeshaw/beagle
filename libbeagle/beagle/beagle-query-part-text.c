@@ -34,7 +34,7 @@
 #include "beagle-query-part-text.h"
 
 typedef struct {
-	const char *text;
+	char *text;
 	gboolean search_full_text : 1;
 	gboolean search_properties : 1;
 } BeagleQueryPartTextPrivate;
@@ -75,6 +75,12 @@ beagle_query_part_text_to_xml (BeagleQueryPart *part)
 static void
 beagle_query_part_text_finalize (GObject *obj)
 {
+	BeagleQueryPartText *part = BEAGLE_QUERY_PART_TEXT (obj);
+	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);
+
+	g_warn_if_fail (priv->text != NULL);
+	g_free (priv->text);
+
         if (G_OBJECT_CLASS (parent_class)->finalize)
                 G_OBJECT_CLASS (parent_class)->finalize (obj);
 }
@@ -133,7 +139,7 @@ beagle_query_part_text_set_text (BeagleQueryPartText *part,
 	g_return_if_fail (text != NULL);
 	
 	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
-	priv->text = text;
+	priv->text = g_strdup (text);
 }
 
 /**

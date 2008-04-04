@@ -34,7 +34,7 @@
 #include "beagle-query-part-uri.h"
 
 typedef struct {
-	const char *uri;
+	char *uri;
 } BeagleQueryPartUriPrivate;
 
 #define BEAGLE_QUERY_PART_URI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_QUERY_PART_URI, BeagleQueryPartUriPrivate))
@@ -63,6 +63,12 @@ beagle_query_part_uri_to_xml (BeagleQueryPart *part)
 static void
 beagle_query_part_uri_finalize (GObject *obj)
 {
+	BeagleQueryPartUri *part = BEAGLE_QUERY_PART_URI (obj);
+	BeagleQueryPartUriPrivate *priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);
+
+	g_warn_if_fail (priv->uri != NULL);
+	g_free (priv->uri);
+
         if (G_OBJECT_CLASS (parent_class)->finalize)
                 G_OBJECT_CLASS (parent_class)->finalize (obj);
 }
@@ -121,5 +127,5 @@ beagle_query_part_uri_set_uri (BeagleQueryPartUri *part,
 	g_return_if_fail (uri != NULL);
 	
 	priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);    
-	priv->uri = uri;
+	priv->uri = g_strdup (uri);
 }
