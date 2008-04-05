@@ -30,10 +30,10 @@ namespace Beagle.Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			// FIXME: I wonder if there is a standard icon name for
-			// notes in the icon naming scheme because I was unable to
-			// find one. :-(
-			image.Pixbuf = WidgetFu.LoadThemeIcon ("tomboy-note", size);
+			// The Freedesktop Icon Naming Spec doesn't specify
+			// an icon for notes. However, emblem-note is a fairly
+			// common one among icon themes
+			image.Pixbuf = WidgetFu.LoadThemeIcon ("emblem-note", size);
 		}
 
 		public override void Open ()
