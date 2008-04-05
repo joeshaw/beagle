@@ -77,6 +77,20 @@ beagle_query_part_property_to_xml (BeagleQueryPart *part)
 }
 
 static void
+beagle_query_part_property_constructed (GObject *obj)
+{
+	BeagleQueryPartProperty *part = BEAGLE_QUERY_PART_PROPERTY (obj);
+	BeagleQueryPartPropertyPrivate *priv;
+
+	if (G_OBJECT_CLASS (parent_class)->constructed)
+		G_OBJECT_CLASS (parent_class)->constructed (obj);
+
+	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	priv->key = NULL;
+	priv->value = NULL;
+}
+
+static void
 beagle_query_part_property_finalize (GObject *obj)
 {
 	BeagleQueryPartProperty *part = BEAGLE_QUERY_PART_PROPERTY (obj);
@@ -97,6 +111,7 @@ beagle_query_part_property_class_init (BeagleQueryPartPropertyClass *klass)
 	
         parent_class = g_type_class_peek_parent (klass);
 	
+        obj_class->constructed = beagle_query_part_property_constructed;
         obj_class->finalize = beagle_query_part_property_finalize;
         query_part_class->to_xml = beagle_query_part_property_to_xml;
 	

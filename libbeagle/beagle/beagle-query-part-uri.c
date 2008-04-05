@@ -61,6 +61,19 @@ beagle_query_part_uri_to_xml (BeagleQueryPart *part)
 }
 
 static void
+beagle_query_part_uri_constructed (GObject *obj)
+{
+	BeagleQueryPartUri *part = BEAGLE_QUERY_PART_URI (obj);
+	BeagleQueryPartUriPrivate *priv;
+
+	if (G_OBJECT_CLASS (parent_class)->constructed)
+		G_OBJECT_CLASS (parent_class)->constructed (obj);
+
+	priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);
+	priv->uri = NULL;
+}
+
+static void
 beagle_query_part_uri_finalize (GObject *obj)
 {
 	BeagleQueryPartUri *part = BEAGLE_QUERY_PART_URI (obj);
@@ -80,6 +93,7 @@ beagle_query_part_uri_class_init (BeagleQueryPartUriClass *klass)
 
         parent_class = g_type_class_peek_parent (klass);
 
+        obj_class->constructed = beagle_query_part_uri_constructed;
         obj_class->finalize = beagle_query_part_uri_finalize;
         query_part_class->to_xml = beagle_query_part_uri_to_xml;
 
