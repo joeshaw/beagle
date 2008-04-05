@@ -66,7 +66,6 @@ beagle_query_part_uri_finalize (GObject *obj)
 	BeagleQueryPartUri *part = BEAGLE_QUERY_PART_URI (obj);
 	BeagleQueryPartUriPrivate *priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);
 
-	g_warn_if_fail (priv->uri != NULL);
 	g_free (priv->uri);
 
         if (G_OBJECT_CLASS (parent_class)->finalize)
@@ -127,5 +126,6 @@ beagle_query_part_uri_set_uri (BeagleQueryPartUri *part,
 	g_return_if_fail (uri != NULL);
 	
 	priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);    
+	g_free (priv->uri);
 	priv->uri = g_strdup (uri);
 }

@@ -78,7 +78,6 @@ beagle_query_part_text_finalize (GObject *obj)
 	BeagleQueryPartText *part = BEAGLE_QUERY_PART_TEXT (obj);
 	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);
 
-	g_warn_if_fail (priv->text != NULL);
 	g_free (priv->text);
 
         if (G_OBJECT_CLASS (parent_class)->finalize)
@@ -139,6 +138,7 @@ beagle_query_part_text_set_text (BeagleQueryPartText *part,
 	g_return_if_fail (text != NULL);
 	
 	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);    
+	g_free (priv->text);
 	priv->text = g_strdup (text);
 }
 

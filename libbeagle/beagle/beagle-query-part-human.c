@@ -66,7 +66,6 @@ beagle_query_part_human_finalize (GObject *obj)
 	BeagleQueryPartHuman *part = BEAGLE_QUERY_PART_HUMAN (obj);
 	BeagleQueryPartHumanPrivate *priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);
 
-	g_warn_if_fail (priv->string != NULL);
 	g_free (priv->string);
 
         if (G_OBJECT_CLASS (parent_class)->finalize)
@@ -125,5 +124,6 @@ beagle_query_part_human_set_string (BeagleQueryPartHuman *part,
 	g_return_if_fail (string != NULL);
 	
 	priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);    
+	g_free (priv->string);
 	priv->string = g_strdup (string);
 }

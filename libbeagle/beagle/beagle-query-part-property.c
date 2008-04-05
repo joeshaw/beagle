@@ -82,11 +82,8 @@ beagle_query_part_property_finalize (GObject *obj)
 	BeagleQueryPartProperty *part = BEAGLE_QUERY_PART_PROPERTY (obj);
 	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
 
-	g_warn_if_fail (priv->key != NULL);
-
 	g_free (priv->key);
-	if (priv->value)
-		g_free (priv->value);
+	g_free (priv->value);	/* No-op if NULL */
 
         if (G_OBJECT_CLASS (parent_class)->finalize)
                 G_OBJECT_CLASS (parent_class)->finalize (obj);
@@ -143,6 +140,7 @@ beagle_query_part_property_set_key (BeagleQueryPartProperty *part,
 	g_return_if_fail (key != NULL);
 
 	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	g_free (priv->key);
 	priv->key = g_strdup (key);
 }
 
@@ -163,6 +161,7 @@ beagle_query_part_property_set_value (BeagleQueryPartProperty *part,
 	g_return_if_fail (BEAGLE_IS_QUERY_PART_PROPERTY (part));
 
 	priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	g_free (priv->value);
 	priv->value = g_strdup (value);
 }
 

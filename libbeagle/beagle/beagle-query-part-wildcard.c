@@ -66,7 +66,6 @@ beagle_query_part_wildcard_finalize (GObject *obj)
 	BeagleQueryPartWildcard *part = BEAGLE_QUERY_PART_WILDCARD (obj);
 	BeagleQueryPartWildcardPrivate *priv = BEAGLE_QUERY_PART_WILDCARD_GET_PRIVATE (part);
 
-	g_warn_if_fail (priv->query_string != NULL);
 	g_free (priv->query_string);
 
         if (G_OBJECT_CLASS (parent_class)->finalize)
@@ -132,5 +131,6 @@ beagle_query_part_wildcard_set_query_string (BeagleQueryPartWildcard *part,
 	g_return_if_fail (query_string != NULL);
 	
 	priv = BEAGLE_QUERY_PART_WILDCARD_GET_PRIVATE (part);    
+	g_free (priv->query_string);
 	priv->query_string = g_strdup (query_string);
 }
