@@ -61,19 +61,6 @@ beagle_query_part_wildcard_to_xml (BeagleQueryPart *part)
 }
 
 static void
-beagle_query_part_wildcard_constructed (GObject *obj)
-{
-	BeagleQueryPartWildcard *part = BEAGLE_QUERY_PART_WILDCARD (obj);
-	BeagleQueryPartWildcardPrivate *priv;
-
-	if (G_OBJECT_CLASS (parent_class)->constructed)
-		G_OBJECT_CLASS (parent_class)->constructed (obj);
-
-	priv = BEAGLE_QUERY_PART_WILDCARD_GET_PRIVATE (part);
-	priv->query_string = NULL;
-}
-
-static void
 beagle_query_part_wildcard_finalize (GObject *obj)
 {
 	BeagleQueryPartWildcard *part = BEAGLE_QUERY_PART_WILDCARD (obj);
@@ -93,7 +80,6 @@ beagle_query_part_wildcard_class_init (BeagleQueryPartWildcardClass *klass)
 	
         parent_class = g_type_class_peek_parent (klass);
 	
-        obj_class->constructed = beagle_query_part_wildcard_constructed;
         obj_class->finalize = beagle_query_part_wildcard_finalize;
         query_part_class->to_xml = beagle_query_part_wildcard_to_xml;
 	

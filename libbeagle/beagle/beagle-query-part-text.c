@@ -73,19 +73,6 @@ beagle_query_part_text_to_xml (BeagleQueryPart *part)
 }
 
 static void
-beagle_query_part_text_constructed (GObject *obj)
-{
-	BeagleQueryPartText *part = BEAGLE_QUERY_PART_TEXT (obj);
-	BeagleQueryPartTextPrivate *priv;
-
-	if (G_OBJECT_CLASS (parent_class)->constructed)
-		G_OBJECT_CLASS (parent_class)->constructed (obj);
-
-	priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);
-	priv->text = NULL;
-}
-
-static void
 beagle_query_part_text_finalize (GObject *obj)
 {
 	BeagleQueryPartText *part = BEAGLE_QUERY_PART_TEXT (obj);
@@ -105,7 +92,6 @@ beagle_query_part_text_class_init (BeagleQueryPartTextClass *klass)
 	
         parent_class = g_type_class_peek_parent (klass);
 	
-        obj_class->constructed = beagle_query_part_text_constructed;
         obj_class->finalize = beagle_query_part_text_finalize;
         query_part_class->to_xml = beagle_query_part_text_to_xml;
 	
