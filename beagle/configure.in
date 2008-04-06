@@ -188,6 +188,24 @@ AC_ARG_ENABLE([thunderbird],
         enable_tbird=yes)
 AM_CONDITIONAL(ENABLE_THUNDERBIRD, test "x$enable_tbird" = "xyes")
 
+dnl ----------------------------------------------
+
+AC_ARG_ENABLE([googlebackends],
+        AC_HELP_STRING([--disable-googlebackends], [Disable GMail and other Google backends (default yes)]),
+        enable_google=$enableval,
+        enable_google=no)
+AM_CONDITIONAL(ENABLE_GOOGLEBACKENDS, test "x$enable_google" = "xyes")
+
+if test "x$enable_google" = "xyes"; then
+  i="System.Security"
+  AC_MSG_CHECKING([for $i.dll (needed by Google backends)])
+  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+    AC_MSG_ERROR([missing required mono DLL: $i.dll])
+  else
+    AC_MSG_RESULT([found])
+  fi
+fi
+
 dnl -------------------------------------------------------
 
 AC_ARG_ENABLE([gui],
@@ -672,6 +690,7 @@ echo "
 	Firefox Extension?	  yes
 	Epiphany Extension?	  ${enable_epiphany_extension}
 	Thunderbird Extension? 	  ${enable_tbird}
+	Google Backends?          ${enable_google}
 
 	Local taglib-sharp?       ${enable_internal_taglib}
 

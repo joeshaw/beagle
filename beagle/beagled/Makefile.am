@@ -399,6 +399,40 @@ $(THUNDERBIRD_TARGET): $(THUNDERBIRD_CSFILES) $(THUNDERBIRD_LOCAL_ASSEMBLIES)
 
 ############################################################
 
+### GMail and other Google backends
+
+XEMAIL_DIR = $(srcdir)/xemail-net/src
+
+XEMAIL_CSFILES = 				\
+	$(XEMAIL_DIR)/Attachment.cs		\
+	$(XEMAIL_DIR)/AttachmentCollections.cs	\
+	$(XEMAIL_DIR)/Flag.cs			\
+	$(XEMAIL_DIR)/FlagCollection.cs		\
+	$(XEMAIL_DIR)/HMACMD5.cs		\
+	$(XEMAIL_DIR)/ImapClient.cs		\
+	$(XEMAIL_DIR)/Mail.cs			\
+	$(XEMAIL_DIR)/MailCollection.cs		\
+	$(XEMAIL_DIR)/Mailbox.cs		\
+	$(XEMAIL_DIR)/MailboxCollection.cs	\
+	$(XEMAIL_DIR)/MessageSet.cs		\
+	$(XEMAIL_DIR)/Namespace.cs		\
+	$(XEMAIL_DIR)/Quota.cs
+
+XEMAIL_ASSEMBLIES = -r:System.Web -r:Mono.Security
+
+XEMAIL_CSFLAGS = -d:MONO
+
+GOOGLE_BACKEND_TARGET = GoogleBackends.dll
+
+GOOGLE_BACKEND_LOCAL_CSFILES = GMailSearchDriver.cs
+
+GOOGLE_BACKEND_CSFILES = $(GOOGLE_BACKEND_LOCAL_CSFILES) $(XEMAIL_CSFILES)
+
+$(GOOGLE_BACKEND_TARGET): $(GOOGLE_BACKEND_CSFILES)  $(BACKEND_LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(GOOGLE_BACKEND_CSFILES) $(XEMAIL_CSFLAGS) $(XEMAIL_ASSEMBLIES) $(BACKEND_CSFLAGS) $(BACKEND_ASSEMBLIES) $(BEAGLED_LIBS)
+
+############################################################
+
 DAEMON_WRAPPER = beagled
 DAEMON_WRAPPER_IN = beagled.in
 DAEMON_TARGET = BeagleDaemon.exe
@@ -704,6 +738,10 @@ ALL_TARGETS +=				\
 	$(EVO_DLL_TARGET)
 endif
 
+if ENABLE_GOOGLEBACKENDS
+ALL_TARGETS += $(GOOGLE_BACKEND_TARGET)
+endif
+
 man_MANS = 				\
 	beagled.1			\
 	beagle-build-index.8		\
@@ -761,6 +799,9 @@ if ENABLE_THUNDERBIRD
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)$(BACKENDDIR)
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)$(BACKENDDIR)
 endif
+if ENABLE_GOOGLEBACKENDS
+	$(INSTALL_DATA) $(GOOGLE_BACKEND_TARGET) $(GOOGLE_BACKEND_TARGET).mdb $(DESTDIR)$(BACKENDDIR)
+endif
 
 uninstall-local:
 if ENABLE_THUNDERBIRD
@@ -770,6 +811,10 @@ endif
 if ENABLE_EVOLUTION
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET)
 	rm -f $(DESTDIR)$(BACKENDDIR)/$(EVO_DLL_TARGET).mdb
+endif
+if ENABLE_GOOGLEBACKENDS
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(GOOGLE_BACKEND_TARGET)
+	rm -f $(DESTDIR)$(BACKENDDIR)/$(GOOGLE_BACKEND_TARGET).mdb
 endif
 
 	@for i in $(BIN_WRAPPERS); do				\
@@ -829,6 +874,7 @@ EXTRA_DIST = \
 	$(DAEMON_CSFILES)			\
 	$(EVO_DLL_CSFILES)			\
 	$(THUNDERBIRD_CSFILES)			\
+	$(GOOGLE_BACKEND_CSFILES)		\
 	$(EXTRACT_CONTENT_CSFILES)		\
 	$(DUMP_INDEX_CSFILES)			\
 	$(SNIPPET_TEST_CSFILES)			\
@@ -870,4 +916,6 @@ CLEANFILES = \
 	$(BUILD_INDEX_WRAPPER)			\
 	$(THUNDERBIRD_TARGET)			\
 	$(THUNDERBIRD_TARGET).mdb		\
+	$(GOOGLE_BACKEND_TARGET)		\
+	$(GOOGLE_BACKEND_TARGET).mdb		\
 	$(WEBINTERFACE_INDEX_XML)

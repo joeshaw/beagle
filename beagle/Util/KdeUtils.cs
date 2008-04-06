@@ -2,6 +2,7 @@
 // KdeUtils.cs
 //
 // Copyright (C) 2005 Novell, Inc.
+// Copyright (C) 2008 D Bera <dbera.web@gmail.com>
 //
 
 //
@@ -30,10 +31,7 @@ using System.IO;
 using System.Text;
 
 namespace Beagle.Util {
-	public class KdeUtils {
-
-		// No instantiation
-		private KdeUtils () { }
+	public static class KdeUtils {
 
 		private static string [] icon_sizes = { "128x128", "64x64", "48x48", "32x32", "22x22", "16x16" };
 		private static string [] kde_locations = { ExternalStringsHack.KdePrefix, Environment.GetEnvironmentVariable ("KDEDIR"), "/opt/kde3", "/usr" };
@@ -108,6 +106,62 @@ namespace Beagle.Util {
 				break; 
 			}
 			return null;
+		}
+
+		public static string ReadPasswordKDEWallet (string folder, string username)
+		{
+			if (String.IsNullOrEmpty (folder) || String.IsNullOrEmpty (username))
+				throw new ArgumentException ("folder, username", "cannot be empty");
+
+			// Get name of the local wallet
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string[] { "dcop", "kded", "kwalletd", "localWallet" };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string localWallet = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				localWallet = pout.ReadLine ();
+			pc.Close ();
+
+			if (String.IsNullOrEmpty (localWallet) || localWallet == "-1")
+				throw new ArgumentException ("kwalletd", "Unable to reach local KDE wallet");
+
+			// Open local wallet
+			pc = new SafeProcess ();
+			pc.Arguments = new string[] {"dcop", "kded", "kwalletd", "open", localWallet, "K" };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string wallet_id = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				wallet_id = pout.ReadLine ();
+			pc.Close ();
+
+			if (String.IsNullOrEmpty (wallet_id) || wallet_id == "-1")
+				throw new ArgumentException ("kwalletd", "Unable to open local KDE wallet");
+
+			// Read password from the given folder and for the given username
+			pc = new SafeProcess ();
+			pc.Arguments = new string[] {"dcop", "kded", "kwalletd", "readPassword", wallet_id, folder, username };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string password = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				password = pout.ReadLine ();
+			pc.Close ();
+
+			if (String.IsNullOrEmpty (password))
+				throw new ArgumentException ("kwalletd", "Unable to read password.");
+
+			return password;
 		}
 
 	}
