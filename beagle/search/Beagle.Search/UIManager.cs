@@ -230,6 +230,12 @@ namespace Beagle.Search {
 						       Catalog.GetString ("Search only on local computer"),
 						       OnDomainChanged,
 						       true),
+				new ToggleActionEntry ("Global", null,
+						       Catalog.GetString ("_Global"),
+						       null,
+						       Catalog.GetString ("Search in internet services"),
+						       OnDomainChanged,
+						       true),
 				new ToggleActionEntry ("Neighborhood", null,
 						       Catalog.GetString ("_Neighborhood"),
 						       null,
@@ -292,10 +298,14 @@ namespace Beagle.Search {
 		"        <menuitem action='Archives'/>" +
 		"      </menu>" +
 
-#if ENABLE_AVAHI
+#if ENABLE_AVAHI || ENABLE_GOOGLEBACKENDS
 		"      <menu action='Domain'>" +
 		"        <menuitem action='Local'/>" +
+#if ENABLE_AVAHI
 		"        <menuitem action='Neighborhood'/>" +
+#elif ENABLE_GOOGLEBACKENDS
+		"        <menuitem action='Global'/>" +
+#endif
 		"      </menu>" +
 #endif
 

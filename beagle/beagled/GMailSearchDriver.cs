@@ -302,6 +302,7 @@ namespace Beagle.Daemon.GoogleBackend {
 			string subject = GMime.Utils.HeaderDecodePhrase (message.Subject);
 			hit.AddProperty (Property.New ("dc:title", subject));
 			hit.Timestamp = message.Date.ToUniversalTime ();
+			hit.AddProperty (Property.NewDate ("fixme:date", message.Date.ToUniversalTime ()));
 
 			GMime.InternetAddressList addrs;
 			addrs = message.GetRecipients (GMime.Message.RecipientType.To);

@@ -243,6 +243,9 @@ namespace Beagle.Search {
 
 				current_query = new Query ();
 				current_query.AddDomain (QueryDomain.Neighborhood);
+#if ENABLE_GOOGLEBACKENDS
+				current_query.AddDomain (QueryDomain.Global);
+#endif
 				current_query.AddText (query);
 				current_query.HitsAddedEvent += OnHitsAdded;
 				current_query.HitsSubtractedEvent += OnHitsSubtracted;

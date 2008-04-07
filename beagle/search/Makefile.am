@@ -28,6 +28,10 @@ if ENABLE_AVAHI
 CSFLAGS += -define:ENABLE_AVAHI
 endif
 
+if ENABLE_GOOGLEBACKENDS
+CSFLAGS += -define:ENABLE_GOOGLEBACKENDS
+endif
+
 SOURCES =							\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/Beagle.Search.Pages/Base.cs			\
