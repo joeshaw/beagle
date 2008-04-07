@@ -339,10 +339,8 @@ namespace Beagle.Util {
 
 			Config config = null;
 
-			using (StreamReader reader = new StreamReader (path)) {
+			using (StreamReader reader = new StreamReader (path))
 				config = (Config) conf_ser.Deserialize (reader);
-				Log.Debug ("Done reading conf from " + path);
-			}
 
 			return config;
 		}
