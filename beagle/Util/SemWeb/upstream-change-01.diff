@@ -1,0 +1,53 @@
+Remove unnecessary dependencies.
+
+Index: SemWeb/Store.cs
+===================================================================
+--- SemWeb/Store.cs	(revision 4633)
++++ SemWeb/Store.cs	(working copy)
+@@ -1,7 +1,5 @@
+ using System;
+ using System.Collections;
+-using System.Data;
+-
+ using SemWeb.Util;
+ 
+ namespace SemWeb {
+@@ -159,8 +157,8 @@
+ 					return Activator.CreateInstance(ttype, new object[] { spec, table });
+ 				/*case "bdb":
+ 					return new SemWeb.Stores.BDBStore(spec);*/
+-				case "sparql-http":
+-					return new SemWeb.Remote.SparqlHttpSource(spec);
++				/*case "sparql-http":
++					return new SemWeb.Remote.SparqlHttpSource(spec);*/
+ 				case "class":
+ 					ttype = Type.GetType(spec);
+ 					if (ttype == null)
+Index: SemWeb/RdfReader.cs
+===================================================================
+--- SemWeb/RdfReader.cs	(revision 4633)
++++ SemWeb/RdfReader.cs	(working copy)
+@@ -1,7 +1,6 @@
+ using System;
+ using System.Collections;
+ using System.IO;
+-using System.Web;
+  
+ namespace SemWeb {
+ 	public class ParserException : ApplicationException {
+@@ -74,6 +73,7 @@
+ 			}
+ 		}
+ 		
++		/*
+ 		public static RdfReader LoadFromUri(Uri webresource) {
+ 			// TODO: Add Accept header for HTTP resources.
+ 			
+@@ -106,6 +106,7 @@
+ 
+ 			throw new InvalidOperationException("Could not determine the RDF format of the resource.");
+ 		}
++		*/
+ 		
+ 		internal static TextReader GetReader(string file) {
+ 			if (file == "-") return Console.In;
