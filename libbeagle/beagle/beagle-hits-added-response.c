@@ -223,7 +223,12 @@ beagle_hits_added_response_class_init (BeagleHitsAddedResponseClass *klass)
 static void
 beagle_hits_added_response_init (BeagleHitsAddedResponse *response)
 {
-}	
+	BeagleHitsAddedResponsePrivate *priv = BEAGLE_HITS_ADDED_RESPONSE_GET_PRIVATE (response);
+	priv->hit = NULL;
+	priv->prop = NULL;
+	priv->hits = NULL;
+	priv->num_matches = 0;
+}
 
 /**
  * beagle_hits_added_response_get_hits:

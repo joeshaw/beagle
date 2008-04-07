@@ -89,6 +89,8 @@ beagle_query_part_wildcard_class_init (BeagleQueryPartWildcardClass *klass)
 static void
 beagle_query_part_wildcard_init (BeagleQueryPartWildcard *part)
 {
+	BeagleQueryPartWildcardPrivate *priv = BEAGLE_QUERY_PART_WILDCARD_GET_PRIVATE (part);
+	priv->query_string = NULL;
 }
 
 /**

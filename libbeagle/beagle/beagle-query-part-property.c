@@ -106,6 +106,10 @@ beagle_query_part_property_class_init (BeagleQueryPartPropertyClass *klass)
 static void
 beagle_query_part_property_init (BeagleQueryPartProperty *part)
 {
+	BeagleQueryPartPropertyPrivate *priv = BEAGLE_QUERY_PART_PROPERTY_GET_PRIVATE (part);
+	priv->key = NULL;
+	priv->value = NULL;
+	priv->prop_type = BEAGLE_PROPERTY_TYPE_UNKNOWN;
 }
 
 /**

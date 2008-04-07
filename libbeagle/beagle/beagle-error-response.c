@@ -114,6 +114,9 @@ beagle_error_response_class_init (BeagleErrorResponseClass *klass)
 static void
 beagle_error_response_init (BeagleErrorResponse *response)
 {
+	BeagleErrorResponsePrivate *priv = BEAGLE_ERROR_RESPONSE_GET_PRIVATE (response);
+	priv->message = NULL;
+	priv->details = NULL;
 }	
 
 /**

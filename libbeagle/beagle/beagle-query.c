@@ -239,6 +239,10 @@ beagle_query_init (BeagleQuery *query)
 
 	/* FIXME: This is a good default when on an airplane. */
 	priv->domain = BEAGLE_QUERY_DOMAIN_LOCAL | BEAGLE_QUERY_DOMAIN_SYSTEM;
+
+	priv->parts = NULL;
+	priv->stemmed_text = NULL;
+	priv->exact_text = NULL;
 }
 
 /**

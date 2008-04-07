@@ -101,7 +101,9 @@ beagle_hits_subtracted_response_class_init (BeagleHitsSubtractedResponseClass *k
 static void
 beagle_hits_subtracted_response_init (BeagleHitsSubtractedResponse *response)
 {
-}	
+	BeagleHitsSubtractedResponsePrivate *priv = BEAGLE_HITS_SUBTRACTED_RESPONSE_GET_PRIVATE (response);
+	priv->uris = NULL;
+}
 
 /**
  * beagle_hits_subtracted_response_get_uris:

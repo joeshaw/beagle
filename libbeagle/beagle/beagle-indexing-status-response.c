@@ -92,7 +92,9 @@ beagle_indexing_status_response_class_init (BeagleIndexingStatusResponseClass *k
 static void
 beagle_indexing_status_response_init (BeagleIndexingStatusResponse *response)
 {
-}	
+	BeagleIndexingStatusResponsePrivate *priv = BEAGLE_INDEXING_STATUS_RESPONSE_GET_PRIVATE (response);
+	priv->is_indexing = FALSE;
+}
 
 /**
  * beagle_indexing_status_response_is_indexing

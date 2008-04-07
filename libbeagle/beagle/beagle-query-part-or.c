@@ -100,7 +100,8 @@ beagle_query_part_or_class_init (BeagleQueryPartOrClass *klass)
 static void
 beagle_query_part_or_init (BeagleQueryPartOr *part)
 {
-    
+	BeagleQueryPartOrPrivate *priv = BEAGLE_QUERY_PART_OR_GET_PRIVATE (part);
+	priv->subparts = NULL;
 }
 
 /**

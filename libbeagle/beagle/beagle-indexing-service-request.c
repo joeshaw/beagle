@@ -123,6 +123,10 @@ beagle_indexing_service_request_class_init (BeagleIndexingServiceRequestClass *k
 static void
 beagle_indexing_service_request_init (BeagleIndexingServiceRequest *indexing_service_request)
 {
+	BeagleIndexingServiceRequestPrivate *priv = BEAGLE_INDEXING_SERVICE_REQUEST_GET_PRIVATE (indexing_service_request);
+	priv->source = NULL;
+	priv->to_add = NULL;
+	priv->to_remove = NULL;
 }
 
 /**

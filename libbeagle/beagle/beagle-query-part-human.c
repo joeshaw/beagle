@@ -89,7 +89,8 @@ beagle_query_part_human_class_init (BeagleQueryPartHumanClass *klass)
 static void
 beagle_query_part_human_init (BeagleQueryPartHuman *part)
 {
-	
+	BeagleQueryPartHumanPrivate *priv = BEAGLE_QUERY_PART_HUMAN_GET_PRIVATE (part);
+	priv->string = NULL;
 }
 
 /**

@@ -96,7 +96,9 @@ beagle_query_part_date_class_init (BeagleQueryPartDateClass *klass)
 static void
 beagle_query_part_date_init (BeagleQueryPartDate *part)
 {
-
+	BeagleQueryPartDatePrivate *priv = BEAGLE_QUERY_PART_DATE_GET_PRIVATE (part);
+	priv->start_date = NULL;
+	priv->end_date = NULL;
 }
 
 /**

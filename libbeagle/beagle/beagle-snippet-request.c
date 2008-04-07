@@ -127,6 +127,8 @@ beagle_snippet_request_init (BeagleSnippetRequest *snippet_request)
 	g_return_if_fail (BEAGLE_IS_SNIPPET_REQUEST (snippet_request));
 	
 	priv = BEAGLE_SNIPPET_REQUEST_GET_PRIVATE (snippet_request);
+	priv->query = NULL;
+	priv->hit = NULL;
 	priv->set_full_text = FALSE;
 	priv->ctx_length = -1;
 	priv->snp_length = -1;

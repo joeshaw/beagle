@@ -89,7 +89,8 @@ beagle_query_part_uri_class_init (BeagleQueryPartUriClass *klass)
 static void
 beagle_query_part_uri_init (BeagleQueryPartUri *part)
 {
-	
+	BeagleQueryPartUriPrivate *priv = BEAGLE_QUERY_PART_URI_GET_PRIVATE (part);
+	priv->uri = NULL;
 }
 
 /**

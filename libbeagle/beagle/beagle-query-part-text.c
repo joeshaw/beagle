@@ -101,7 +101,10 @@ beagle_query_part_text_class_init (BeagleQueryPartTextClass *klass)
 static void
 beagle_query_part_text_init (BeagleQueryPartText *part)
 {
-    
+	BeagleQueryPartTextPrivate *priv = BEAGLE_QUERY_PART_TEXT_GET_PRIVATE (part);
+	priv->text = NULL;
+	priv->search_full_text = FALSE;
+	priv->search_properties = FALSE;
 }
 
 /**
