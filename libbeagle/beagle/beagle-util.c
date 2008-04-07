@@ -73,14 +73,14 @@ beagle_util_get_home_dir ()
 	return beagle_home;
 }
 
-const char *
+char *
 beagle_util_get_storage_dir ()
 {
 	const char *beagle_home;
-	const char *beagle_storage_dir;
+	char *beagle_storage_dir;
 
 	/* Follow the C# API: First try BEAGLE_STORAGE */
-	beagle_storage_dir = g_getenv ("BEAGLE_STORAGE");
+	beagle_storage_dir = g_strdup (g_getenv ("BEAGLE_STORAGE"));
 
 	/* Then try BEAGLE_HOME/.beagle */
 	if (beagle_storage_dir == NULL) {
@@ -96,7 +96,7 @@ beagle_util_get_storage_dir ()
 char *
 beagle_util_get_socket_path (const char *client_name)
 {
-	const gchar *beagle_storage_dir;
+	gchar *beagle_storage_dir;
 	gchar *socket_dir; /* this is same as remote_storage_dir in PathFinder.cs */
 	gchar *socket_path;
 	struct stat buf;
@@ -112,11 +112,13 @@ beagle_util_get_socket_path (const char *client_name)
 		gchar *tmp;
 
 		if (! g_file_test (remote_storage_dir_location_file, G_FILE_TEST_EXISTS)) {
+			g_free (beagle_storage_dir);
 			g_free (remote_storage_dir_location_file);
 			return NULL;
 		}
 
 		if (! g_file_get_contents (remote_storage_dir_location_file, &socket_dir, NULL, NULL)) {
+			g_free (beagle_storage_dir);
 			g_free (remote_storage_dir_location_file);
 			return NULL;
 		}
@@ -137,6 +139,7 @@ beagle_util_get_socket_path (const char *client_name)
 	}
 
 	socket_path = g_build_filename (socket_dir, client_name, NULL);
+	g_free (beagle_storage_dir);
 	g_free (socket_dir);
 	if (stat (socket_path, &buf) == -1 || !S_ISSOCK (buf.st_mode)) {
 		g_free (socket_path);

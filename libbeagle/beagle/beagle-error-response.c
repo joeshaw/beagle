@@ -51,6 +51,7 @@ beagle_error_response_finalize (GObject *obj)
 	BeagleErrorResponsePrivate *priv = BEAGLE_ERROR_RESPONSE_GET_PRIVATE (obj);
 
 	g_free (priv->message);
+	g_free (priv->details);
 
 	if (G_OBJECT_CLASS (parent_class)->finalize)
 		G_OBJECT_CLASS (parent_class)->finalize (obj);
