@@ -1,0 +1,22 @@
+--- /home/debajyoti/xemail-net-0.2/src/ImapClient.cs	2006-01-18 14:58:57.000000000 -0500
++++ src/ImapClient.cs	2008-04-05 18:37:33.394369500 -0400
+@@ -498,7 +498,10 @@
+ 				//[TODO] be sure to parse correctly namespace when not all namespaces are present. NIL character
+ 				string reg =@"\((.*?)\) \((.*?)\) \((.*?)\)$";
+ 	            Match m = Regex.Match(response,reg);
+- 	           	if(m.Groups.Count != 4) throw new Exception("En error occure, this command is not fully supported !");
++ 	           	if(m.Groups.Count != 4) {
++				ReadLine();
++				throw new Exception("En error occure, this command is not fully supported !");
++			}
+ 				string reg2 = "\\(\\\"(.*?)\\\" \\\"(.*?)\\\"\\)";
+ 				Match m2 = Regex.Match(m.Groups[1].ToString(),reg2);
+ 				while(m2.Groups.Count>1) {
+@@ -582,6 +585,7 @@
+ 
+             string reg = @"^\* SEARCH (.*)";
+             string response = ReadLine();
++	    ReadLine (); // Read the SUCCESS line
+             MessageSet ms = new MessageSet();
+             Match m = Regex.Match(response,reg);
+             if(m.Groups.Count > 1){
