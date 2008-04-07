@@ -34,12 +34,6 @@
 #include "beagle-shutdown-request.h"
 #include "beagle-empty-response.h"
 
-typedef struct {
-	gint foo;
-} BeagleShutdownRequestPrivate;
-
-#define BEAGLE_SHUTDOWN_REQUEST_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), BEAGLE_TYPE_SHUTDOWN_REQUEST, BeagleShutdownRequestPrivate))
-
 static GObjectClass *parent_class = NULL;
 
 static GString *
@@ -72,8 +66,6 @@ beagle_shutdown_request_class_init (BeagleShutdownRequestClass *klass)
 
 	obj_class->finalize = beagle_shutdown_request_finalize;
 	request_class->to_xml = beagle_shutdown_request_to_xml;
-
-	g_type_class_add_private (klass, sizeof (BeagleShutdownRequestPrivate));
 
 	_beagle_request_class_set_response_types (request_class,
 						  "EmptyResponse",

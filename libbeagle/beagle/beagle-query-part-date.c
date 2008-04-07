@@ -34,7 +34,6 @@
 #include "beagle-query-part-date.h"
 
 typedef struct {
-	char *key;
 	BeagleTimestamp *start_date;
 	BeagleTimestamp *end_date;
 } BeagleQueryPartDatePrivate;
