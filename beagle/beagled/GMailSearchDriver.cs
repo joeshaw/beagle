@@ -80,7 +80,6 @@ namespace Beagle.Daemon.GoogleBackend {
 			if (config == null || config.Name != "GoogleBackends")
 				return;
 
-			bool enabled = config.GetOption ("GMailSearchEnabled", false);
 			username = config.GetOption ("GMailUsername", null);
 			search_folder = config.GetOption ("GMailSearchFolder", null);
 
@@ -109,7 +108,7 @@ namespace Beagle.Daemon.GoogleBackend {
 
 			}
 
-			valid_account = (enabled &&
+			valid_account = (
 				! String.IsNullOrEmpty (username) &&
 				! String.IsNullOrEmpty (password) &&
 				! String.IsNullOrEmpty (search_folder));
