@@ -181,7 +181,7 @@ public class QueryTool {
 			"  --max-hits\t\tLimit number of search results per backend\n" +
 			"            \t\t(default 100)\n" +
 			"\n" +
-			"  --network <yes|no>\tQuery other beagle systems in the network specified in config (default no)\n" +
+			"  --domain <local|system|network|global|all> Specify query domain (default local + system)\n" +
 			"\n" +
 			"  --flood\t\tExecute the query over and over again.  Don't do that.\n" +
 			"  --listener\t\tExecute an index listener query.  Don't do that either.\n" +
@@ -247,6 +247,8 @@ public class QueryTool {
 
 		query = new Query ();
 
+		QueryDomain domain = 0;
+
 		// Parse args
 		int i = 0;
 		while (i < args.Length) {
@@ -293,10 +295,33 @@ public class QueryTool {
 				System.Environment.Exit (0);
 				break;
 
-			case "--network":
+			case "--domain":
 				if (++i >= args.Length) PrintUsageAndExit ();
-				if (args [i].ToLower () == "yes")
-					query.AddDomain (QueryDomain.Neighborhood);
+				switch (args [i].ToLower ()) {
+				case "local":
+					domain |= QueryDomain.Local;
+					break;
+
+				case "system":
+					domain |= QueryDomain.System;
+					break;
+
+				case "network":
+					domain |= QueryDomain.Neighborhood;
+					break;
+
+				case "global":
+					domain |= QueryDomain.Global;
+					break;
+
+				case "all":
+					domain |= QueryDomain.All;
+					break;
+
+				default:
+					PrintUsageAndExit ();
+					break;
+				}
 				break;
 
 			default:
@@ -311,6 +336,9 @@ public class QueryTool {
 
 			++i;
 		}
+
+		if (domain != 0)
+			query.QueryDomain = domain;
 
 		if (listener) {
 			query.IsIndexListener = true;

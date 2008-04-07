@@ -41,7 +41,8 @@ namespace Beagle {
 		Local        = 1,
 		System       = 2,
 		Neighborhood = 4,
-		Global       = 8
+		Global       = 8,
+		All          = 15
 	}
 
 	public class Query : RequestMessage {
