@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-27 22:08+0000\n"
-"PO-Revision-Date: 2008-02-29 12:26+0100\n"
+"POT-Creation-Date: 2008-04-07 01:12+0100\n"
+"PO-Revision-Date: 2008-04-07 22:29+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -49,51 +49,51 @@ msgstr "Conversaciones con {0}"
 msgid "On This Computer"
 msgstr "En este equipo"
 
-#: ../Util/StringFu.cs:124 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
 #: ../search/Beagle.Search.Tiles/Utils.cs:216
 msgid "Today"
 msgstr "Hoy"
 
-#: ../Util/StringFu.cs:126 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
 #: ../search/Beagle.Search.Tiles/Utils.cs:214
 msgid "Yesterday"
 msgstr "Ayer"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:129
+#: ../Util/StringFu.cs:130
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:132
+#: ../Util/StringFu.cs:133
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:135
+#: ../Util/StringFu.cs:136
 msgid "h:mm tt"
 msgstr "HH:MM"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:159
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Hoy, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:161
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Ayer, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:166
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -101,23 +101,23 @@ msgstr[0] "Hace {0} día, {1}"
 msgstr[1] "Hace {0} días, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:172
+#: ../Util/StringFu.cs:173
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:177
+#: ../Util/StringFu.cs:178
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:187
+#: ../Util/StringFu.cs:188
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} hora"
 msgstr[1] "{0} horas"
 
-#: ../Util/StringFu.cs:194
+#: ../Util/StringFu.cs:195
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -125,7 +125,7 @@ msgstr[0] "{0} minuto"
 msgstr[1] "{0} minutos"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:228
+#: ../Util/StringFu.cs:229
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -133,48 +133,48 @@ msgstr[0] "{0} byte"
 msgstr[1] "{0} bytes"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:232
+#: ../Util/StringFu.cs:233
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KiB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:235
+#: ../Util/StringFu.cs:236
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MiB"
 
-#: ../epiphany-extension/beagle.py.in:157
+#: ../epiphany-extension/beagle.py.in:167
 #, python-format
 msgid "beagle is indexing %s"
 msgstr "Beagle está indexando %s"
 
-#: ../epiphany-extension/beagle.py.in:177
+#: ../epiphany-extension/beagle.py.in:187
 #, python-format
 msgid "beagle is indexing link %s"
 msgstr "Beagle está indexando el enlace %s"
 
-#: ../epiphany-extension/beagle.py.in:217
+#: ../epiphany-extension/beagle.py.in:232
 msgid "Index This Page"
 msgstr "Indexar esta página"
 
-#: ../epiphany-extension/beagle.py.in:224
+#: ../epiphany-extension/beagle.py.in:239
 msgid "Index Link"
 msgstr "Indexar enlace"
 
-#: ../epiphany-extension/beagle.py.in:231
+#: ../epiphany-extension/beagle.py.in:246
 msgid "Reload Config File"
 msgstr "Recargar el archivo de configuración"
 
-#: ../epiphany-extension/beagle.py.in:240
+#: ../epiphany-extension/beagle.py.in:255
 msgid "Auto Index"
 msgstr "Autoindexar"
 
-#: ../epiphany-extension/beagle.py.in:247
+#: ../epiphany-extension/beagle.py.in:262
 msgid "Prompt key words when index on demand"
 msgstr "Preguntar palabras clave al indexar bajo demanda"
 
-#: ../epiphany-extension/beagle.py.in:274
+#: ../epiphany-extension/beagle.py.in:289
 msgid "Extra keywords to index"
 msgstr "Palabras adicionales para indexar"
 
@@ -613,7 +613,7 @@ msgid "Accessed:"
 msgstr "Accedido:"
 
 #: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:51
+#: ../search/Beagle.Search/Search.cs:52
 #: ../search/Beagle.Search/SearchWindow.cs:65
 msgid "Desktop Search"
 msgstr "Búsquedas de Escritorio"
@@ -671,19 +671,19 @@ msgstr "Empezar a buscar"
 msgid "Desktop Search: {0}"
 msgstr "Búsquedas de Escritorio: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:439
+#: ../search/Beagle.Search/SearchWindow.cs:443
 msgid "There are computers near you running Beagle"
 msgstr "Existen equipos cerca del suyo que están ejecutando Beagle"
 
-#: ../search/Beagle.Search/SearchWindow.cs:440
+#: ../search/Beagle.Search/SearchWindow.cs:444
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Puede seleccionar buscar en otros equipos en el menú «Buscar»."
 
-#: ../search/Beagle.Search/SearchWindow.cs:492
+#: ../search/Beagle.Search/SearchWindow.cs:496
 msgid "Your data is being indexed"
 msgstr "Se están indexando sus datos"
 
-#: ../search/Beagle.Search/SearchWindow.cs:493
+#: ../search/Beagle.Search/SearchWindow.cs:497
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -691,14 +691,14 @@ msgstr ""
 "El servicio de búsqueda está indexando sus datos. Los resultados de búsqueda "
 "podrían estar incompletos hasta que el indexado haya terminado."
 
-#: ../search/Beagle.Search/SearchWindow.cs:519
+#: ../search/Beagle.Search/SearchWindow.cs:523
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
-#: ../search/Beagle.Search/SearchWindow.cs:521
+#: ../search/Beagle.Search/SearchWindow.cs:525
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
@@ -1057,18 +1057,26 @@ msgid "Search only on local computer"
 msgstr "Buscar sólo en un equipo local"
 
 #: ../search/Beagle.Search/UIManager.cs:234
+msgid "_Global"
+msgstr "_Global"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search in internet services"
+msgstr "Buscar en servicios de Internet"
+
+#: ../search/Beagle.Search/UIManager.cs:240
 msgid "_Neighborhood"
 msgstr "_Vecindad"
 
-#: ../search/Beagle.Search/UIManager.cs:236
+#: ../search/Beagle.Search/UIManager.cs:242
 msgid "Search on computers near me"
 msgstr "Buscar en equipos cerca de mi"
 
-#: ../search/Beagle.Search/UIManager.cs:244
+#: ../search/Beagle.Search/UIManager.cs:250
 msgid "Show Details"
 msgstr "Mostrar detalles"
 
-#: ../search/Beagle.Search/UIManager.cs:366
+#: ../search/Beagle.Search/UIManager.cs:376
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
