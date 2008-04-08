@@ -290,7 +290,7 @@ namespace Beagle.Daemon.GoogleBackend {
 
 			msgid = GMime.Utils.DecodeMessageId (msgid);
 			Hit hit = new Hit ();
-			hit.Uri = new Uri (String.Format ("http://mail.google.com/mail/#search/{0}", msgid));
+			hit.Uri = new Uri (String.Format ("https://mail.google.com/mail/#search/{0}", msgid));
                         hit.AddProperty (Property.NewUnsearched ("beagle:HitType", "MailMessage"));
                         hit.AddProperty (Property.NewUnsearched ("beagle:MimeType", "text/html"));
                         hit.AddProperty (Property.NewUnsearched ("beagle:Source", "GMailSearch"));
