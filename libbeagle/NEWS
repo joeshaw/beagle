@@ -1,5 +1,24 @@
+Version 0.3.5
+7 April 2008
+
+* Correctly deal with passed strings in functions. The earlier behaviour was inconsistent
+and could lead to crashes or leaks.
+
+* Fix memory leaks and remove redundant code.
+
+Contributors to this release: Arun Raghavan
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_5/libbeagle/ChangeLog?view=markup
+
+-------------------------------------------
+
 Version 0.3.4
 23 March 2008
+
+See the Beagle NEWS file for more details
+
+-------------------------------------------
 
 Version 0.3.0
 1 December 2007

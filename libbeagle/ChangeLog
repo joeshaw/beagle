@@ -1,4 +1,131 @@
 ------------------------------------------------------------------------
+r4668 | arunsr | 2008-04-07 14:17:53 +0000 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/configure.in
+
+Increment API revision so we can unleash the latest changes on an unsuspecting world
+
+------------------------------------------------------------------------
+r4667 | arunsr | 2008-04-07 08:38:08 +0000 (Mon, 07 Apr 2008) | 5 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-error-response.c
+   M /trunk/libbeagle/beagle/beagle-hits-added-response.c
+   M /trunk/libbeagle/beagle/beagle-hits-subtracted-response.c
+   M /trunk/libbeagle/beagle/beagle-indexing-service-request.c
+   M /trunk/libbeagle/beagle/beagle-indexing-status-response.c
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-or.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+   M /trunk/libbeagle/beagle/beagle-query-part.c
+   M /trunk/libbeagle/beagle/beagle-query.c
+   M /trunk/libbeagle/beagle/beagle-snippet-request.c
+
+Manually initialise all our private data
+
+While glib currently does this for us, it is not something that is documented
+(and thus, cannot be relied on).
+
+------------------------------------------------------------------------
+r4666 | arunsr | 2008-04-07 08:16:57 +0000 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-date.c
+   M /trunk/libbeagle/beagle/beagle-shutdown-request.c
+
+Removing some unused structures / structure members
+
+------------------------------------------------------------------------
+r4665 | arunsr | 2008-04-07 08:10:34 +0000 (Mon, 07 Apr 2008) | 8 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-error-response.c
+   M /trunk/libbeagle/beagle/beagle-util.c
+
+Plug a couple memory leaks
+
+ * beagle_util_get_storage_dir() had two paths, one of which allocated a
+   string, and one did not. We never free'd the string if it was allocated.
+
+ * We were also allocating a string for each BeagleErrorResponse and not
+   freeing it.
+
+------------------------------------------------------------------------
+r4661 | arunsr | 2008-04-06 18:18:04 +0000 (Sun, 06 Apr 2008) | 4 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+
+Undo change r4659
+
+We don't need to use the "constructed" hook. There's already an init() function.
+
+------------------------------------------------------------------------
+r4659 | arunsr | 2008-04-05 21:21:17 +0000 (Sat, 05 Apr 2008) | 6 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+
+Initialise private fields for various QueryPart classes to NULL
+
+While this is strictly not necessary (glib automatically zeroes out the memory
+for private data), it's probably better that we do this in case glib behaviour
+changes at some point.
+
+------------------------------------------------------------------------
+r4657 | arunsr | 2008-04-05 08:22:47 +0000 (Sat, 05 Apr 2008) | 8 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+
+Cleanups to previous commit
+
+ * Do a g_free() before g_strdup() so we don't leak memory on multiple calls
+   to the *_set_*() functions
+
+ * Don't warn on finding a NULL private field in finalize() -- if the object is
+   never used before being freed, the field will be NULL.
+
+------------------------------------------------------------------------
+r4655 | arunsr | 2008-04-04 18:34:28 +0000 (Fri, 04 Apr 2008) | 12 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-query-part-human.c
+   M /trunk/libbeagle/beagle/beagle-query-part-property.c
+   M /trunk/libbeagle/beagle/beagle-query-part-text.c
+   M /trunk/libbeagle/beagle/beagle-query-part-uri.c
+   M /trunk/libbeagle/beagle/beagle-query-part-wildcard.c
+
+Make beagle_quert_part_foo_set_bar() function allocate/free their own strings
+
+Several of the beagle_query_part_foo_set_bar() functions used to take a string
+alloc'ed by clients and assume that these would not be free'd by the client.
+This is counter-intuitive and not the GObject way.
+
+What we now do is g_strdup() all strings that are passed as arguments and then
+free the dup'ed strings in the class' finalize() method. Clients must now
+manage the strings they pass to these functions themselves.
+
+We will need to bump the ABI version after some more testing.
+
+------------------------------------------------------------------------
+r4636 | dbera | 2008-03-23 21:35:50 +0000 (Sun, 23 Mar 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/ChangeLog
+   M /trunk/libbeagle/NEWS
+
+Upload changelog and news for libbeagle.
+
+------------------------------------------------------------------------
 r4635 | dbera | 2008-03-23 17:12:08 -0400 (Sun, 23 Mar 2008) | 3 lines
 Changed paths:
    M /trunk/libbeagle/configure.in
