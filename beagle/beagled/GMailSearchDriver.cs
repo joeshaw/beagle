@@ -42,13 +42,16 @@ namespace Beagle.Daemon.GoogleBackend {
 	public class GMailSearchDriver : IQueryable {
 
 		// Bunch of const strings
-		const string GMailServer = "imap.gmail.com";
-		const string AuthMethod = "LOGIN";
-		const int Port = 993;
-		const bool UseSSL = true;
+		const string GMAIL_SERVER = "imap.gmail.com";
+		const string AUTH_METHOD = "LOGIN";
+		const string GMAIL_DOMAIN = "mail"; // Google Apps users have their own domain
+		const string GMAIL_HIT_URL = "https://mail.google.com/{0}/#search/{1}"; // 0 - domain, 1 - msgid
+		const int PORT = 993;
+		const bool USE_SSL = true;
 
 		private string username = null;
 		private string password = null;
+		private string domain = GMAIL_DOMAIN;
 		private string search_folder = null;
 		private bool valid_account = false;
 
@@ -117,6 +120,14 @@ namespace Beagle.Daemon.GoogleBackend {
 				Log.Warn ("GMail account information not set. Search is disabled.");
 			else
 				Log.Debug ("GMail account information successfully read.");
+
+			domain = config.GetOption ("GoogleAppDomainName", null);
+			if (String.IsNullOrEmpty (domain))
+				domain = GMAIL_DOMAIN;
+			else
+				// Google Apps domain is of form
+				// a/mydomain.name
+				domain = ("a/" + domain);
 		}
 
 		public bool AcceptQuery (Query query)
@@ -196,10 +207,10 @@ namespace Beagle.Daemon.GoogleBackend {
 
 			try {
 				imap_client = new ImapClient ();
-				imap_client.AuthMethod = AuthMethod;
-				imap_client.Port = Port;
-				imap_client.Ssl = UseSSL;
-				imap_client.Connect (GMailServer);
+				imap_client.AuthMethod = AUTH_METHOD;
+				imap_client.Port = PORT;
+				imap_client.Ssl = USE_SSL;
+				imap_client.Connect (GMAIL_SERVER);
 
 				success = imap_client.Login (username, password);
 
@@ -212,7 +223,7 @@ namespace Beagle.Daemon.GoogleBackend {
 						Log.Error ("Selection folder unsuccessful: {0}", imap_client.LastError);
 				}
 			} catch (Exception e) {
-				Log.Error (e, "GMailSearchDriver: Error in connecting to {0} with username {1}", username, GMailServer);
+				Log.Error (e, "GMailSearchDriver: Error in connecting to {0} with username {1}", GMAIL_SERVER, username);
 			}
 
 			if (! success && imap_client != null)
@@ -290,7 +301,7 @@ namespace Beagle.Daemon.GoogleBackend {
 
 			msgid = GMime.Utils.DecodeMessageId (msgid);
 			Hit hit = new Hit ();
-			hit.Uri = new Uri (String.Format ("https://mail.google.com/mail/#search/{0}", msgid));
+			hit.Uri = new Uri (String.Format (GMAIL_HIT_URL, domain, msgid));
                         hit.AddProperty (Property.NewUnsearched ("beagle:HitType", "MailMessage"));
                         hit.AddProperty (Property.NewUnsearched ("beagle:MimeType", "text/html"));
                         hit.AddProperty (Property.NewUnsearched ("beagle:Source", "GMailSearch"));

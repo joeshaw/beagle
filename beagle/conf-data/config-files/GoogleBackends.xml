@@ -7,5 +7,6 @@
     <StringOption Name="GMailPasswordSource" Description="Password obtained from:kdewallet/gnome-keyring/conf-file">conf-file</StringOption>
     <StringOption Name="GMailPassword" Description="Password for GMail stored in plaintext. WARNING!"></StringOption>
     <StringOption Name="GMailSearchFolder" Description="Search this folder for GMail live search.">INBOX</StringOption>
+    <StringOption Name="GoogleAppDomainName" Description="Domain name if using Google Apps; leave empty otherwise"></StringOption>
 </BeagleConf>
 
