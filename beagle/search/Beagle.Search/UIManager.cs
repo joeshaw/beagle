@@ -235,7 +235,7 @@ namespace Beagle.Search {
 						       null,
 						       Catalog.GetString ("Search in internet services"),
 						       OnDomainChanged,
-						       true),
+						       false),
 				new ToggleActionEntry ("Neighborhood", null,
 						       Catalog.GetString ("_Neighborhood"),
 						       null,
