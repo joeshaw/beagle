@@ -127,7 +127,10 @@ var beagle = {
                 this.disable();
             }
             if(!this.FILE_UTILS.exists(this.dataPath))
-                ;// do something here ? is it safe to create the dir ?
+            {
+                var d = new Dir(this.dataPath);
+                d.create();
+            };
         }
         this.addEventListener();
         if (this.pref.get("beagle.first.run"))

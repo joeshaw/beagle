@@ -23,7 +23,6 @@ function flat(node)
     return list;
 }
 
-try{
 
 var bookmarkIndexer = {
    
@@ -124,10 +123,5 @@ var bookmarkIndexer = {
         log(_f("beagle_index_bookmark_finish",[num]));
     },
 
-}
-}
-catch(e)
-{
-    //not firefox 3
 }
 

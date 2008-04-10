@@ -29,7 +29,19 @@
 <script type="text/javascript" src="json.js" />
 <script type="text/javascript" src="beaglePrefs.js" />
 <script type="text/javascript" src="beagleOverlay.js" />
-<script type="text/javascript" src="indexBookmark.js" />
+<script type="text/javascript">
+    var loader =  Cc["@mozilla.org/moz/jssubscript-loader;1"]
+		    .getService(Components.interfaces.mozIJSSubScriptLoader);
+    try{ 
+        Cc["@mozilla.org/browser/nav-bookmarks-service;1"]
+        .getService (Components.interfaces.nsINavBookmarksService);
+        //For firefox 3
+        loader.loadSubScript("chrome://beagle/content/indexBookmark3.js");    
+    }
+    catch(e){
+        loader.loadSubScript("chrome://beagle/content/indexBookmark.js");    
+    }
+</script>
 
 <commandset id="mainCommandSet">
     <command id="IndexThisCmd" label="&beagle.run.index.this.label;" 
@@ -85,6 +97,12 @@
 	command="IndexModifiedBookmarkCmd"/>
 </menupopup>
 
+<menupopup id="bookmarksMenuPopup">
+    <menuitem id="beagle-index-modified-bookmarks"
+        command="IndexModifiedBookmarkCmd"
+        insertbefore="organizeBookmarksSeparator"
+        />
+</menupopup>
 
 <popup id="contentAreaContextMenu">
     <menuseparator />
@@ -104,7 +122,6 @@
             <menuitem command="ShowPrefsCmd"/> 
         </menupopup>
     </menu>
-    <menuseparator />
 
 </popup>
 
@@ -130,7 +147,6 @@
 <menupopup id="viewSidebarMenu">
     <menuitem key="key-view-sidebar" observes="ViewSidebar"  />
 </menupopup>
-
 <keyset id="mainKeyset">
     <key
 	id="key-view-sidebar"
@@ -138,7 +154,6 @@
 	key="&beagle.sidebar.commandkey;" 
 	modifiers="&beagle.sidebar.modifierskey;" />
 </keyset>
-
 <broadcasterset id="mainBroadcasterSet"> 
     <broadcaster
 	id="ViewSidebar" 
@@ -150,5 +165,4 @@
         sidebartitle="&beagle.sidebar.title;"
         oncommand="toggleSidebar('ViewSidebar');" />
 </broadcasterset>
-
 </overlay>

@@ -19,6 +19,7 @@ XPI_FILES = 			\
 	chrome/content/indexLink.xul		\
 	chrome/content/indexLink.js		\
 	chrome/content/indexBookmark.js		\
+	chrome/content/indexBookmark3.js		\
 	chrome/content/md5.js			\
 	chrome/content/utils.js			\
 	chrome/content/i18n.js			\
