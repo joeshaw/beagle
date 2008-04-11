@@ -38,3 +38,4 @@ This extension was written as a part of Google Summer of Code project, 2007 by T
 Changelog:
     1.0.1 - initial version
     1.0.2 - added sidebar
+    1.1.0 - added support for Firefox 3.0

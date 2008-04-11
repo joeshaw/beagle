@@ -1,6 +1,13 @@
 
 PROJECT = beagle
-VERSION = 1.0.2
+VERSION = 1.1.0
+
+INSTALL_RDF = install.rdf
+INSTALL_RDF_IN = $(INSTALL_RDF).in
+VERSION_SED = sed -e "s|\@VERSION\@|$(VERSION)|g"
+
+$(INSTALL_RDF) : $(INSTALL_RDF_IN)
+	$(VERSION_SED) < $(srcdir)/$(INSTALL_RDF_IN) > $@
 
 all: $(PROJECT).xpi
 
@@ -59,4 +66,5 @@ EXTRA_DIST =			\
 	$(XPI_FILES)
 
 CLEANFILES =			\
-	$(PROJECT).xpi
+	$(PROJECT).xpi		\
+	$(INSTALL_RDF)
