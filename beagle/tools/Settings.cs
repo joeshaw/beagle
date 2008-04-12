@@ -173,8 +173,11 @@ public class SettingsDialog
 			case "--indexing":
 				notebook.Page = 1;
 				return;
-			case "--networking":
+			case "--backends":
 				notebook.Page = 2;
+				return;
+			case "--networking":
+				notebook.Page = 3;
 				return;
 			}
 		}
