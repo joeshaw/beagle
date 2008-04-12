@@ -656,6 +656,7 @@ Filters/Makefile
 tools/Makefile
 tools/beagle-settings.desktop.in
 search/Makefile
+search/icons/Makefile
 search/beagle-search.desktop.in
 ImLogViewer/Makefile
 epiphany-extension/Makefile

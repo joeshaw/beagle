@@ -1,3 +1,5 @@
+SUBDIRS = icons
+
 CSC = $(MCS) -debug
 CSFLAGS = -target:exe
 

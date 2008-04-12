@@ -30,10 +30,7 @@ namespace Beagle.Search.Tiles {
 
 		protected override void LoadIcon (Gtk.Image image, int size)
 		{
-			// The Freedesktop Icon Naming Spec doesn't specify
-			// an icon for notes. However, emblem-note is a fairly
-			// common one among icon themes
-			image.Pixbuf = WidgetFu.LoadThemeIcon ("emblem-note", size);
+			image.Pixbuf = WidgetFu.LoadThemeIcon ("tomboy", size);
 		}
 
 		public override void Open ()
