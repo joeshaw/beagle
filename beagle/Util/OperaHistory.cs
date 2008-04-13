@@ -139,7 +139,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LastVisited);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (Beagle.Util.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
 					} catch {
 						return DateTime.MinValue;
 					}
@@ -150,7 +150,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LocalSaveTime);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (Beagle.Util.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
 					} catch {
 						return DateTime.MinValue;
 					}
@@ -161,7 +161,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LastChanged);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (Beagle.Util.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
 					} catch {
 						return DateTime.MinValue;
 					}

@@ -34,7 +34,30 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@
 
+F_SPOT_FILES =						\
+	$(srcdir)/F-Spot/Imaging/Bim.cs			\
+	$(srcdir)/F-Spot/Imaging/Ciff.cs		\
+	$(srcdir)/F-Spot/Imaging/DCRawFile.cs		\
+	$(srcdir)/F-Spot/Imaging/Exif.cs		\
+	$(srcdir)/F-Spot/Imaging/ImageFile.cs		\
+	$(srcdir)/F-Spot/Imaging/IptcFile.cs		\
+	$(srcdir)/F-Spot/Imaging/JpegFile.cs		\
+	$(srcdir)/F-Spot/Imaging/JpegHeader.cs		\
+	$(srcdir)/F-Spot/Imaging/MrwFile.cs		\
+	$(srcdir)/F-Spot/Imaging/OrderedWriter.cs	\
+	$(srcdir)/F-Spot/Imaging/PngFile.cs		\
+	$(srcdir)/F-Spot/Imaging/PnmFile.cs		\
+	$(srcdir)/F-Spot/Imaging/RafFile.cs		\
+	$(srcdir)/F-Spot/Imaging/SvgFile.cs		\
+	$(srcdir)/F-Spot/Imaging/Tiff.cs		\
+	$(srcdir)/F-Spot/Imaging/X3fFile.cs		\
+	$(srcdir)/F-Spot/Imaging/XmpFile.cs		\
+	$(srcdir)/F-Spot/BitConverter.cs		\
+	$(srcdir)/F-Spot/MetadataStore.cs		\
+	$(srcdir)/F-Spot/PixbufUtils.cs
+
 UTIL_CSFILES = 			        	\
+	$(F_SPOT_FILES)				\
 	$(srcdir)/ArrayFu.cs              	\
 	$(srcdir)/Battery.cs			\
 	$(srcdir)/BetterBitArray.cs		\
@@ -88,16 +111,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/VersionFu.cs			\
 	$(srcdir)/XdgMime.cs			\
 	$(srcdir)/XmlFu.cs			\
-	$(srcdir)/F-Spot/Bim.cs			\
-	$(srcdir)/F-Spot/BitConverter.cs	\
-	$(srcdir)/F-Spot/Exif.cs		\
-	$(srcdir)/F-Spot/IptcFile.cs		\
-	$(srcdir)/F-Spot/JpegHeader.cs		\
-	$(srcdir)/F-Spot/MetadataStore.cs	\
-	$(srcdir)/F-Spot/PngFile.cs		\
-	$(srcdir)/F-Spot/PixbufUtils.cs		\
-	$(srcdir)/F-Spot/Tiff.cs		\
-	$(srcdir)/F-Spot/XmpFile.cs		\
 	$(srcdir)/Hal/AccessControl.cs		\
 	$(srcdir)/Hal/CPUFreq.cs		\
 	$(srcdir)/Hal/Context.cs		\
