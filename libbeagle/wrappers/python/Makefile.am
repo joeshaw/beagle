@@ -1,6 +1,6 @@
 INCLUDES = $(PYTHON_INCLUDES) $(PYBEAGLE_CFLAGS) -I$(top_srcdir)
 
-beagledir = $(pyexecdir)
+beagledir = $(pythondir)/beagle
 beagle_LTLIBRARIES = beagle.la
 beagle_la_LDFLAGS = -module -avoid-version -export-symbols-regex initbeagle
 beagle_la_LIBADD = $(BEAGLE_LIBS) $(top_builddir)/beagle/libbeagle.la
@@ -8,6 +8,14 @@ beagle_la_SOURCES = \
 	beaglemodule.c 
 
 nodist_beagle_la_SOURCES = beagle.c
+
+beagle_PYTHON = __init__.py
+beagle_PYTHON_IN =$(beagle_PYTHON).in
+
+$(beagle_PYTHON) : $(beagle_PYTHON_IN)
+	sed -e "s|\@VERSION\@|$(VERSION)|g" \
+	    -e "s|\@LIB_VERSION\@|$(LIBBEAGLE_VERSION_INFO)|" \
+	< $(srcdir)/$(beagle_PYTHON_IN) > $@
 
 EXAMPLE_DIR = $(srcdir)/examples
 EXAMPLES =					\

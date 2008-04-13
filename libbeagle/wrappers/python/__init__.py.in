@@ -1,0 +1,24 @@
+"""Python library to access Beagle search and indexing service.
+
+This library is the python bindings for BeagleClient,
+which can be used to query Beagle or submit data
+for indexing.
+
+For more information on Beagle, see
+    http://beagle-project.org
+
+This library is basically a wrapper over Libbeagle, the C
+bindings. For API documentation, follow the Libbeagle
+documentation
+    http://beagle-project.org/doc/libbeagle/
+
+Some example programs can be found at
+    http://svn.gnome.org/viewvc/beagle/trunk/libbeagle/wrappers/python/examples/
+"""
+
+__version__	= '@VERSION@'
+__lib_version__	= '@LIB_VERSION@'
+__url__		= 'http://beagle-project.org'
+
+from beagle import *
+
