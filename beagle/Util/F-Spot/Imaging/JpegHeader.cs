@@ -371,6 +371,26 @@ public class JpegHeader : SemWeb.StatementSource {
 		}
 	}
 
+	public FSpot.Iptc.IptcFile GetIptc ()
+	{
+		string name = PhotoshopSignature.Name;
+		JpegHeader.Marker marker = FindMarker (PhotoshopSignature);
+		if (marker != null) {
+			int len = name.Length;
+			using (System.IO.Stream bimstream = new System.IO.MemoryStream (marker.Data, len,
+											marker.Data.Length - len, false)) {
+
+				FSpot.Bim.BimFile bim = new FSpot.Bim.BimFile (bimstream);
+				// FIXME: What about EntryType.XMP ?
+				FSpot.Bim.Entry iptc_entry = bim.FindEntry (FSpot.Bim.EntryType.IPTCNAA);
+				System.IO.Stream iptcstream = new System.IO.MemoryStream (iptc_entry.Data);
+				FSpot.Iptc.IptcFile iptc = new FSpot.Iptc.IptcFile (iptcstream);
+				return iptc;
+			}
+		}
+		return null;
+	}
+
 	public Exif.ExifData Exif {
 		get {
 			Marker m = FindMarker (ExifSignature);
