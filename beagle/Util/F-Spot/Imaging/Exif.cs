@@ -247,8 +247,12 @@ namespace Exif {
 			string delimiters = " :";
 			string[] dt_data = dt.Split ( delimiters.ToCharArray(), 6 );
 			DateTime result;
+			try {
 			result = new DateTime (Int32.Parse(dt_data[0]), Int32.Parse(dt_data[1]), Int32.Parse(dt_data[2]),
 					       Int32.Parse(dt_data[3]), Int32.Parse(dt_data[4]), Int32.Parse(dt_data[5]));
+			} catch (FormatException) {
+				result = DateTime.MinValue;
+			}
 			
 			return result;
 		}	
