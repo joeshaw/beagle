@@ -63,7 +63,8 @@ $(PROJECT).xpi: $(XPI_FILES)
 
 
 EXTRA_DIST =			\
-	$(XPI_FILES)
+	$(XPI_FILES)		\
+	$(INSTALL_RDF_IN)
 
 CLEANFILES =			\
 	$(PROJECT).xpi		\

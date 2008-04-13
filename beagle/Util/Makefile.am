@@ -267,8 +267,8 @@ EXTRA_DIST =			\
 	$(UTIL_CSFILES)		\
 	$(UI_UTIL_CSFILES)	\
 	$(COND_CS_FILES)	\
-	UiUtil.dll.config	\
-	Util.dll.config.in	\
+	$(UI_UTIL_TARGET_CONFIG)\
+	$(UTIL_TARGET_CONFIG)	\
 	inotify-test
 
 CLEANFILES =			\

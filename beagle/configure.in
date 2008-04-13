@@ -402,22 +402,6 @@ AM_CONDITIONAL(INTERNAL_TAGLIB, test "x$enable_internal_taglib" = "xyes")
 
 dnl ----------------------------------------------
 
-dnl libexif: Needed to index jpeg metadata
-
-LIBEXIF_API_CHANGE=0.6.0
-LIBEXIF_REQUIRED_MIN=0.5.7
-LIBEXIF_REQUIRED_MAX=0.7.0
-
-PKG_CHECK_MODULES(LIBEXIF, libexif >= $LIBEXIF_REQUIRED_MIN libexif < $LIBEXIF_REQUIRED_MAX)
-PKG_CHECK_MODULES(LIBEXIF_API_CHECK, libexif >= $LIBEXIF_API_CHANGE, have_old_libexif=no, have_old_libexif=yes)
-
-if test "x$have_old_libexif" = "xyes"; then
-	EXIF_SOVERSION=9
-else
-	PKG_CHECK_MODULES(LIBEXIF_VERSION_CHECK, libexif >= 0.6.12, EXIF_SOVERSION=12, EXIF_SOVERSION=10)
-fi
-AC_SUBST(EXIF_SOVERSION)
-
 PKG_CHECK_MODULES(BEAGLED,
 [
 	shared-mime-info
@@ -648,7 +632,6 @@ dnl ----------------------------------------------
 AC_OUTPUT([
 Makefile
 Util/Makefile
-Util/Util.dll.config
 glue/Makefile
 BeagleClient/Makefile
 beagled/Makefile
