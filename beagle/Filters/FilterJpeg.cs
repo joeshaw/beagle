@@ -136,8 +136,10 @@ namespace Beagle.Filters {
 				if (entry != null)
 					// Assume datetime stored in the images are local times
 					AddProperty (Beagle.Property.NewDate ("exif:DateTime", entry.ValueAsDate.ToUniversalTime ()));
+			} catch (FormatException) {
+				Logger.Log.Debug ("EXIF DateTime '{0}' is invalid.", GetExifString (ifd.Directory, Tiff.TagId.DateTime));
 			} catch (ArgumentOutOfRangeException) {
-				Logger.Log.Debug("EXIF DateTime '{0}' is invalid.", GetExifString (ifd.Directory, Tiff.TagId.DateTime));
+				Logger.Log.Debug ("EXIF DateTime '{0}' is invalid.", GetExifString (ifd.Directory, Tiff.TagId.DateTime));
 			}
 
 			str = GetExifString (ifd.Directory, Tiff.TagId.Copyright);
