@@ -26,6 +26,7 @@ EXAMPLES =					\
 CLEANFILES = beagle.c
 EXTRA_DIST = 		\
 	$(EXAMPLES)	\
+	$(beagle_PYTHON_IN) \
 	beagle.defs 	\
 	beagle.override \
 	gen-defs.sh
