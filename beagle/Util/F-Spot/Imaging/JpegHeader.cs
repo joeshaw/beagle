@@ -258,6 +258,7 @@ public class JpegHeader : SemWeb.StatementSource {
 	}
 
 	public static Signature JfifSignature = new Signature (JpegMarker.App0, "JFIF\0");
+	public static Signature ComSignature = new Signature (JpegMarker.Com, null);
 	public static Signature JfxxSignature = new Signature (JpegMarker.App0, "JFXX\0");
 	public static Signature XmpSignature = new Signature (JpegMarker.App1, "http://ns.adobe.com/xap/1.0/\0");
 	public static Signature ExifSignature = new Signature (JpegMarker.App1, "Exif\0\0");
@@ -330,6 +331,20 @@ public class JpegHeader : SemWeb.StatementSource {
 			FSpot.Tiff.Header exif = new FSpot.Tiff.Header (exifstream);
 			return exif;
 		}
+	}
+
+	public string GetJFIFComment ()
+	{
+		string name = ComSignature.Name;
+		Marker marker = FindMarker (ComSignature);
+
+		if (marker == null)
+			return null;
+
+		if (marker.Data != null && marker.Data.Length != 0)
+			return System.Text.Encoding.Default.GetString (marker.Data, 0, marker.Data.Length);
+
+		return null;
 	}
 
 	public XmpFile GetXmp ()
