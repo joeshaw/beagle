@@ -380,7 +380,14 @@ public class JpegHeader : SemWeb.StatementSource {
 			using (System.IO.Stream bimstream = new System.IO.MemoryStream (marker.Data, len,
 											marker.Data.Length - len, false)) {
 
-				FSpot.Bim.BimFile bim = new FSpot.Bim.BimFile (bimstream);
+				FSpot.Bim.BimFile bim;
+				try {
+					bim = new FSpot.Bim.BimFile (bimstream);
+				} catch {
+					// Bim entry with marker "PHUT" is not handled by Bim.cs
+					return null;
+				}
+
 				// FIXME: What about EntryType.XMP ?
 				FSpot.Bim.Entry iptc_entry = bim.FindEntry (FSpot.Bim.EntryType.IPTCNAA);
 				if (iptc_entry == null)
