@@ -156,7 +156,7 @@ namespace Exif {
 		Count
 	}
 	
-	internal class ExifUtil {
+	public class ExifUtil {
 		
 		[DllImport ("libexif.dll")]
 		static extern IntPtr exif_tag_get_name (Tag tag);
