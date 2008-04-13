@@ -638,7 +638,7 @@ public class SettingsDialog
                                                               DialogFlags.Modal,
                                                               MessageType.Warning,
                                                               ButtonsType.Ok,
-                                                              Catalog.GetString ("Netbeagle Node not added"),
+                                                              Catalog.GetString ("Remote beagle host not added"),
                                                               error_message);
                 } else {
                         foreach (NetworkService node in new_nodes)
@@ -1579,7 +1579,6 @@ public class SettingsDialog
 			"Kopete",
 			"Labyrinth",
 			"Liferea",
-			"Locate",
 			"NautilusMetadata",
 			"NetworkServices", // This should be configurable in the network tab
 			"Opera",
@@ -1589,39 +1588,40 @@ public class SettingsDialog
 			"applications",
 			"documentation",
 			"manpages",
+			"Locate",
 			"monodoc",
 			"windows"
 		};
 
 		private string[] descriptions = new string[] {
-			"Evolution's mail.",
-			"Evolution's address book, memos and tasks.",
-			"Thunderbird's email.",
-			"RSS feeds from Akregator.",
-			"RSS feeds from Blam.",
-			"Files and folders on the local file system.",
-			"Mail messages from KMail.",
-			"Notes from KNotes.",
-			"Agenda from KOrganizer.",
-			"Contacts from KAddressBook.",
-			"Konqueror's bookmarks.",
-			"Konqueror's history.",
-			"IMs and chats from Konversation.",
-			"IMs and chats from Kopete",
-			"Mind-maps from Labyrinth.",
-			"RSS feeds from Liferea.",
-			"Supplementary search results using 'locate' command",
-			"Nautilus' metadata (emblems, notes, etc.)",
-			"Search other search services in the network (EXPERIMENTAL)",
-			"Opera's bookmarks and browsing history.",
-			"IMs and chats from Pidgin.",
-			"Notes from Tomboy.",
+			Catalog.GetString ("Evolution's mail."),
+			Catalog.GetString ("Evolution's address book, memos and tasks."),
+			Catalog.GetString ("Thunderbird's email."),
+			Catalog.GetString ("RSS feeds from Akregator."),
+			Catalog.GetString ("RSS feeds from Blam."),
+			Catalog.GetString ("Files and folders on the local file system."),
+			Catalog.GetString ("Mail messages from KMail."),
+			Catalog.GetString ("Notes from KNotes."),
+			Catalog.GetString ("Agenda from KOrganizer."),
+			Catalog.GetString ("Contacts from KAddressBook."),
+			Catalog.GetString ("Konqueror's bookmarks."),
+			Catalog.GetString ("Konqueror's history."),
+			Catalog.GetString ("IMs and chats from Konversation."),
+			Catalog.GetString ("IMs and chats from Kopete"),
+			Catalog.GetString ("Mind-maps from Labyrinth."),
+			Catalog.GetString ("RSS feeds from Liferea."),
+			Catalog.GetString ("Nautilus' metadata (emblems, notes, etc.)"),
+			Catalog.GetString ("Search other search services in the network (EXPERIMENTAL)"),
+			Catalog.GetString ("Opera's bookmarks and browsing history."),
+			Catalog.GetString ("IMs and chats from Pidgin."),
+			Catalog.GetString ("Notes from Tomboy."),
 			/* System-wide indexes */
-			"(System) Applications",
-			"(System) Help files",
-			"(System) Manual pages",
-			"(System) Mono documentation",
-			"(System) Files from Windows' partition"
+			Catalog.GetString ("(System) Applications"),
+			Catalog.GetString ("(System) Help files"),
+			Catalog.GetString ("(System) Manual pages"),
+			Catalog.GetString ("(System) Supplementary search results using 'locate' command"),
+			Catalog.GetString ("(System) Mono documentation"),
+			Catalog.GetString ("(System) Files from Windows' partition")
 		};
 
 		public BackendView ()
@@ -1638,7 +1638,7 @@ public class SettingsDialog
 			base.AppendColumn (Catalog.GetString ("Description"), new CellRendererText (), "markup", 2);
 
 			for (int i = 0; i < backends.Length; i++)
-				store.AppendValues (true, backends [i], "<i>" + Catalog.GetString (descriptions [i]) + "</i>");
+				store.AppendValues (true, backends [i], "<i>" + descriptions [i] + "</i>");
 		}
 
 		public void Set (string backend, bool enabled)
