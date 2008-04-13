@@ -399,8 +399,13 @@ namespace Beagle.Daemon {
 
 			foreach (Assembly assembly in assemblies) {
 				foreach (Type type in ReflectionFu.GetTypesFromAssemblyAttribute (assembly, typeof (IQueryableTypesAttribute))) {
-					foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor)))
-						ret += String.Format (" - {0}\n", flavor.Name);
+					foreach (QueryableFlavor flavor in ReflectionFu.ScanTypeForAttribute (type, typeof (QueryableFlavor))) {
+						ret += String.Format (" - {0}", flavor.Name);
+						if (flavor.DependsOn != null)
+							ret += String.Format (" (depends on {0})", flavor.DependsOn);
+
+						ret += "\n";
+					}
 				}
 			}
 			
