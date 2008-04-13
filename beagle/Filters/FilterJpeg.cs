@@ -29,10 +29,10 @@ using System.IO;
 using System.Text;
 
 using Beagle.Util;
-using Beagle.Util.Exif;
-using Beagle.Util.Xmp;
-using Beagle.Util.Iptc;
-using Tiff = Beagle.Util.Tiff;
+using Exif;
+using FSpot.Xmp;
+using FSpot.Iptc;
+using Tiff = FSpot.Tiff;
 using Beagle.Daemon;
 
 using SemWeb;
@@ -67,52 +67,52 @@ namespace Beagle.Filters {
 
 			string str;
 			
-			str = exif.LookupFirstValue (ExifTag.UserComment);
+			str = exif.LookupFirstValue (Exif.Tag.UserComment);
 			AddProperty (Beagle.Property.New ("exif:UserComment", str));
 
-			str = exif.LookupFirstValue (ExifTag.ImageDescription);
+			str = exif.LookupFirstValue (Exif.Tag.ImageDescription);
 			AddProperty (Beagle.Property.New ("exif:ImageDescription", str));
 
-			str = exif.LookupFirstValue (ExifTag.PixelXDimension);
+			str = exif.LookupFirstValue (Exif.Tag.PixelXDimension);
 			if (str != null && str != String.Empty) {
 				Width = Int32.Parse (str);
 				AddProperty (Beagle.Property.NewUnsearched ("exif:PixelXDimension", str));
 			}
 
-			str = exif.LookupFirstValue (ExifTag.PixelYDimension);
+			str = exif.LookupFirstValue (Exif.Tag.PixelYDimension);
 			if (str != null && str != String.Empty) {
 				Height = Int32.Parse (str);
 				AddProperty (Beagle.Property.NewUnsearched ("exif:PixelYDimension", str));
 			}
 
-			str = exif.LookupFirstValue (ExifTag.ISOSpeedRatings);
+			str = exif.LookupFirstValue (Exif.Tag.ISOSpeedRatings);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:ISOSpeedRatings", str));
 
-			str = exif.LookupFirstValue (ExifTag.ShutterSpeedValue);
+			str = exif.LookupFirstValue (Exif.Tag.ShutterSpeedValue);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:ShutterSpeedValue", str));
 
-			str = exif.LookupFirstValue (ExifTag.ExposureTime);
+			str = exif.LookupFirstValue (Exif.Tag.ExposureTime);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:ExposureTime", str));
 
-			str = exif.LookupFirstValue (ExifTag.FNumber);
+			str = exif.LookupFirstValue (Exif.Tag.FNumber);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:FNumber", str));
 
-			str = exif.LookupFirstValue (ExifTag.ApertureValue);
+			str = exif.LookupFirstValue (Exif.Tag.ApertureValue);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:ApertureValue", str));
 
-			str = exif.LookupFirstValue (ExifTag.FocalLength);
+			str = exif.LookupFirstValue (Exif.Tag.FocalLength);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:FocalLength", str));
 
-			str = exif.LookupFirstValue (ExifTag.Flash);
+			str = exif.LookupFirstValue (Exif.Tag.Flash);
 			AddProperty (Beagle.Property.NewUnsearched ("exif:Flash", str));
 
-			str = exif.LookupFirstValue (ExifTag.Model);
+			str = exif.LookupFirstValue (Exif.Tag.Model);
 			AddProperty (Beagle.Property.New ("exif:Model", str));
 
-			str = exif.LookupFirstValue (ExifTag.Copyright);
+			str = exif.LookupFirstValue (Exif.Tag.Copyright);
 			AddProperty (Beagle.Property.New ("dc:rights", str));
 
-			str = exif.LookupFirstValue (ExifTag.DateTime);
+			str = exif.LookupFirstValue (Exif.Tag.DateTime);
 			if (str != null && str != String.Empty) {
 				try {
 					DateTime dt = ExifUtil.DateTimeFromString (str);

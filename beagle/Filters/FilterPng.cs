@@ -29,7 +29,9 @@ using System.IO;
 
 using Beagle.Util;
 using Beagle.Daemon;
-using Beagle.Util.Xmp;
+using FSpot.Xmp;
+using FSpot.Png;
+using PngHeader = FSpot.Png.PngFile.PngHeader;
 
 using SemWeb;
 
@@ -50,9 +52,9 @@ namespace Beagle.Filters {
 		{
 			PngHeader png = new PngHeader (Stream);
 			
-			foreach (PngHeader.Chunk chunk in png.Chunks){
-				if (chunk is PngHeader.IhdrChunk) {
-					PngHeader.IhdrChunk ihdr = (PngHeader.IhdrChunk)chunk;
+			foreach (PngFile.Chunk chunk in png.Chunks){
+				if (chunk is PngFile.IhdrChunk) {
+					PngFile.IhdrChunk ihdr = (PngFile.IhdrChunk)chunk;
 
 					Width = (int)ihdr.Width;
 					Height = (int)ihdr.Height;
@@ -62,23 +64,23 @@ namespace Beagle.Filters {
 					string colorType = null;
 					
 					switch (ihdr.Color) {
-					case PngHeader.ColorType.Gray:
+					case PngFile.ColorType.Gray:
 						colorType = "Greyscale";
 						hasAlpha = false;
 						break;
-					case PngHeader.ColorType.Rgb:
+					case PngFile.ColorType.Rgb:
 						colorType = "Truecolor";
 						hasAlpha = false;
 						break;
-					case PngHeader.ColorType.Indexed:
+					case PngFile.ColorType.Indexed:
 						colorType = "Indexed";
 						hasAlpha = false;
 						break;
-					case PngHeader.ColorType.GrayAlpha:
+					case PngFile.ColorType.GrayAlpha:
 						colorType = "Greyscale";
 						hasAlpha = true;
 						break;
-					case PngHeader.ColorType.RgbA:
+					case PngFile.ColorType.RgbA:
 						colorType = "Truecolor";
 						hasAlpha = true;
 						break;
@@ -86,15 +88,15 @@ namespace Beagle.Filters {
 
 					AddProperty (Beagle.Property.NewUnsearched ("fixme:colortype", colorType));
 					AddProperty (Beagle.Property.NewBool ("fixme:hasalpha", hasAlpha));
-				} else if (chunk is PngHeader.TextChunk) {
-					ExtractTextProperty ((PngHeader.TextChunk) chunk);
+				} else if (chunk is PngFile.TextChunk) {
+					ExtractTextProperty ((PngFile.TextChunk) chunk);
 				}
 			}
 
 			Finished ();
 		}
 
-		private void ExtractTextProperty (PngHeader.TextChunk tchunk)
+		private void ExtractTextProperty (PngFile.TextChunk tchunk)
 		{
 			switch (tchunk.Keyword) {
 			case "Title":

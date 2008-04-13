@@ -30,7 +30,7 @@ using System.Text;
 
 using Beagle.Util;
 using Beagle.Daemon;
-using BitConverter = Beagle.Util.BitConverter;
+using BitConverter = FSpot.BitConverter;
 
 namespace Beagle.Filters {
 

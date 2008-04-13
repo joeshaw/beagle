@@ -30,7 +30,8 @@ using System.IO;
 using System.Text;
 
 using Beagle.Util;
-using Beagle.Util.Xmp;
+using FSpot;
+using FSpot.Xmp;
 using SemWeb;
 
 namespace Beagle.Filters {

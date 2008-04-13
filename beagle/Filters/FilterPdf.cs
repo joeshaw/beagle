@@ -13,7 +13,8 @@ using System.Diagnostics;
 
 using Beagle.Util;
 using Beagle.Daemon;
-using Beagle.Util.Xmp;
+using FSpot;
+using FSpot.Xmp;
 using SemWeb;
 
 namespace Beagle.Filters {
