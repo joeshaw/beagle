@@ -424,7 +424,8 @@ XEMAIL_CSFLAGS = -d:MONO
 
 GOOGLE_BACKEND_TARGET = GoogleBackends.dll
 
-GOOGLE_BACKEND_LOCAL_CSFILES = GMailSearchDriver.cs
+googlebackends = $(srcdir)/GoogleBackends
+GOOGLE_BACKEND_LOCAL_CSFILES = $(googlebackends)/GMailSearchDriver.cs
 
 GOOGLE_BACKEND_CSFILES = $(GOOGLE_BACKEND_LOCAL_CSFILES) $(XEMAIL_CSFILES)
 
