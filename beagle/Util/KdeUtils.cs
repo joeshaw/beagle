@@ -164,6 +164,60 @@ namespace Beagle.Util {
 			return password;
 		}
 
+		public static void StorePasswordKDEWallet (string folder, string username, string password)
+		{
+			if (String.IsNullOrEmpty (folder) || String.IsNullOrEmpty (username) || String.IsNullOrEmpty (password))
+				throw new ArgumentException ("folder, username or password", "cannot be empty");
+
+			// Get name of the local wallet
+			SafeProcess pc = new SafeProcess ();
+			pc.Arguments = new string[] { "dcop", "kded", "kwalletd", "localWallet" };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string localWallet = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				localWallet = pout.ReadLine ();
+			pc.Close ();
+
+			if (String.IsNullOrEmpty (localWallet) || localWallet == "-1")
+				throw new ArgumentException ("kwalletd", "Local KDE Wallet is not found. Please run kwalletmanager to enable KDE Wallet.");
+
+			// Open local wallet
+			pc = new SafeProcess ();
+			pc.Arguments = new string[] {"dcop", "kded", "kwalletd", "open", localWallet, "K" };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string wallet_id = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				wallet_id = pout.ReadLine ();
+			pc.Close ();
+
+			if (String.IsNullOrEmpty (wallet_id) || wallet_id == "-1")
+				throw new ArgumentException ("kwalletd", "Unable to open local KDE wallet");
+
+			// Write given password for the given folder and username
+			pc = new SafeProcess ();
+			pc.Arguments = new string[] {"dcop", "kded", "kwalletd", "writePassword", wallet_id, folder, username, password };
+			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
+			pc.UseLangC = true;
+
+			pc.Start ();
+			string ret = null;
+			using (StreamReader pout = new StreamReader (pc.StandardOutput))
+				password = pout.ReadLine ();
+			pc.Close ();
+
+			if (ret != "0")
+				throw new ArgumentException ("kwalletd", "Unable to save password.");
+		}
+
 	}
 }
 
