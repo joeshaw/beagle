@@ -220,9 +220,13 @@ NAUTILUS_QUERYABLE_CSFILES =					\
 	$(nautilusqueryable)/NautilusMetadataQueryable.cs
 
 networkservicesqueryable = $(srcdir)/NetworkServicesQueryable
-NETWORK_SERVICES_QUERYABLE =					\
+NETWORK_SERVICES_QUERYABLE_CSFILES =				\
 	$(networkservicesqueryable)/NetworkServicesQueryable.cs	\
 	$(networkservicesqueryable)/HttpTransport.cs
+
+locatequeryable = $(srcdir)/LocateQueryable
+LOCATE_QUERYABLE_CSFILES = 					\
+	$(locatequeryable)/LocateDriver.cs
 
 DAEMON_DLL_CSFILES = 						\
 	$(LUCENE_CSFILES)					\
@@ -245,8 +249,9 @@ DAEMON_DLL_CSFILES = 						\
 	$(KONVERSATION_QUERYABLE_CSFILES)			\
 	$(OPERA_QUERYABLE_CSFILES)				\
 	$(NAUTILUS_QUERYABLE_CSFILES)				\
-	$(NETWORK_SERVICES_QUERYABLE)				\
-	$(EMPATHY_QUERYABLE_CSFILES)			\
+	$(NETWORK_SERVICES_QUERYABLE_CSFILES)			\
+	$(EMPATHY_QUERYABLE_CSFILES)				\
+	$(LOCATE_QUERYABLE_CSFILES)				\
 	$(srcdir)/AssemblyInfo.cs				\
 	$(srcdir)/BatteryMonitor.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\

@@ -77,5 +77,6 @@ using Beagle.Daemon;
 	typeof (Beagle.Daemon.PidginQueryable.PidginQueryable),
 	typeof (Beagle.Daemon.StaticQueryable),
 	typeof (Beagle.Daemon.TomboyQueryable.TomboyQueryable),
-	typeof (Beagle.Daemon.EmpathyQueryable.EmpathyQueryable)                   
+	typeof (Beagle.Daemon.EmpathyQueryable.EmpathyQueryable),
+	typeof (Beagle.Daemon.LocateQueryable.LocateDriver)
 )]

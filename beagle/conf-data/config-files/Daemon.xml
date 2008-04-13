@@ -8,6 +8,8 @@
     <ListOption Name="DeniedBackends" Description="Disabled backends" Params="Backend name" Separator=",">
 	<!-- Disabled by default EXPERIMENTAL -->
 	<Value>NetworkServices</Value>
+	<!-- Directly use locate; needed for exceptional uses only -->
+	<Value>Locate</Value>
     </ListOption>
     <BoolOption Name="AllowStaticBackend" Description="Search static indexes">true</BoolOption>
     <BoolOption Name="IndexSynchronization" Description="Synchronize indexes locally if home directory is on a network device (eg. NFS/Samba)">true</BoolOption>

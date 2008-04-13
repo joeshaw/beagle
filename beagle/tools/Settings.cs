@@ -1579,6 +1579,7 @@ public class SettingsDialog
 			"Kopete",
 			"Labyrinth",
 			"Liferea",
+			"Locate",
 			"NautilusMetadata",
 			"NetworkServices", // This should be configurable in the network tab
 			"Opera",
@@ -1609,6 +1610,7 @@ public class SettingsDialog
 			"IMs and chats from Kopete",
 			"Mind-maps from Labyrinth.",
 			"RSS feeds from Liferea.",
+			"Supplementary search results using 'locate' command",
 			"Nautilus' metadata (emblems, notes, etc.)",
 			"Search other search services in the network (EXPERIMENTAL)",
 			"Opera's bookmarks and browsing history.",
