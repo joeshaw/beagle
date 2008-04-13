@@ -33,7 +33,7 @@ namespace FSpot {
 			return File.OpenRead (uri.LocalPath);
 
 #if false
-			System.Console.WriteLine ("open uri = {0}", uri.ToString ());
+			//System.Console.WriteLine ("open uri = {0}", uri.ToString ());
 			return new Gnome.Vfs.VfsStream (uri.ToString (), FileMode.Open);
 #endif
 		}

@@ -193,7 +193,7 @@ namespace FSpot.Bim {
 				try {
 					//System.Console.WriteLine (System.Text.Encoding.ASCII.GetString (current.Data));
 				} catch (System.Exception e) {
-					System.Console.WriteLine (e.ToString ());
+					Beagle.Util.Log.Error (e, "Error loading BIM file");
 				}
 				entries.Add (current);
 			}

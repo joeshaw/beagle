@@ -104,7 +104,7 @@ namespace FSpot.Png {
 							System.DateTime time = System.DateTime.Parse (text.Text);
 							MetadataStore.AddLiteral (sink, "xmp:CreateDate", time.ToString ("yyyy-MM-ddThh:mm:ss"));
 						} catch (System.Exception e) {
-							System.Console.WriteLine (e.ToString ());
+							//System.Console.WriteLine (e.ToString ());
 						}
 						break;
 					}
@@ -827,7 +827,7 @@ namespace FSpot.Png {
 			{
 				while (inflater.IsNeedingInput && chunks.Count > 0) {
 					inflater.SetInput (((Chunk)chunks[0]).Data);
-					//System.Console.WriteLine ("adding chunk {0}", ((Chunk)chunks[0]).Data.Length);
+					////System.Console.WriteLine ("adding chunk {0}", ((Chunk)chunks[0]).Data.Length);
 					chunks.RemoveAt (0);
 				}
 				return true;
@@ -879,7 +879,7 @@ namespace FSpot.Png {
 					
 					if (col < width) {
 						inflater.Fill ();
-						System.Console.WriteLine ("short read missing {0} {1} {2}", width - col, row, height);
+						//System.Console.WriteLine ("short read missing {0} {1} {2}", width - col, row, height);
 					}
 				}
 			}
@@ -1098,7 +1098,7 @@ namespace FSpot.Png {
 			}
 
 			IhdrChunk ihdr = (IhdrChunk) Chunks [0];
-			System.Console.WriteLine ("Attempting to to inflate photo {0}.{1}({2}, {3})", ihdr.Color, ihdr.Depth, ihdr.Width, ihdr.Height);
+			//System.Console.WriteLine ("Attempting to to inflate photo {0}.{1}({2}, {3})", ihdr.Color, ihdr.Depth, ihdr.Width, ihdr.Height);
 			ScanlineDecoder decoder = new ScanlineDecoder (ci, ihdr.GetScanlineLength (0), ihdr.Height);
 			decoder.Fill ();
 			//Gdk.Pixbuf pixbuf = decoder.GetPixbuf ();
@@ -1219,7 +1219,7 @@ namespace FSpot.Png {
 					if (time != null)
 						System.Console.Write(" Time {0}", time.Time);
 
-					System.Console.WriteLine (System.String.Empty);
+					//System.Console.WriteLine (System.String.Empty);
 #endif
 					
 					if (chunk.Name == "IEND")
@@ -1335,7 +1335,7 @@ namespace FSpot.Png {
 				try {
 					return new Profile (icc.Profile);
 				} catch (System.Exception ex) {
-					System.Console.WriteLine ("Error trying to decode embedded profile" + ex.ToString ());
+					//System.Console.WriteLine ("Error trying to decode embedded profile" + ex.ToString ());
 				}
 			}
 
@@ -1531,17 +1531,17 @@ namespace FSpot.Png {
 				} catch (System.Exception e) {
 					failed.Add (path);
 					//System.Console.WriteLine ("Error loading {0}", path);
-					System.Console.WriteLine (e.ToString ());
+					//System.Console.WriteLine (e.ToString ());
 				}
 
-				System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
+				//System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
 				box.PackStart (image);
 				win.ShowAll ();
 			}
 			
-			System.Console.WriteLine ("{0} Failed to Load", failed.Count);
+			//System.Console.WriteLine ("{0} Failed to Load", failed.Count);
 			foreach (string fail_path in failed) {
-				System.Console.WriteLine (fail_path);
+				//System.Console.WriteLine (fail_path);
 			}
 
 			Gtk.Application.Run ();

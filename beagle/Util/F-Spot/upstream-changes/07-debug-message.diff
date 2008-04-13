@@ -1,0 +1,569 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Remove some Console.WriteLine()
+
+Index: Imaging/ImageFile.cs
+===================================================================
+--- Imaging/ImageFile.cs	(revision 4696)
++++ Imaging/ImageFile.cs	(working copy)
+@@ -33,7 +33,7 @@
+ 			return File.OpenRead (uri.LocalPath);
+ 
+ #if false
+-			System.Console.WriteLine ("open uri = {0}", uri.ToString ());
++			//System.Console.WriteLine ("open uri = {0}", uri.ToString ());
+ 			return new Gnome.Vfs.VfsStream (uri.ToString (), FileMode.Open);
+ #endif
+ 		}
+Index: Imaging/PngFile.cs
+===================================================================
+--- Imaging/PngFile.cs	(revision 4696)
++++ Imaging/PngFile.cs	(working copy)
+@@ -104,7 +104,7 @@
+ 							System.DateTime time = System.DateTime.Parse (text.Text);
+ 							MetadataStore.AddLiteral (sink, "xmp:CreateDate", time.ToString ("yyyy-MM-ddThh:mm:ss"));
+ 						} catch (System.Exception e) {
+-							System.Console.WriteLine (e.ToString ());
++							//System.Console.WriteLine (e.ToString ());
+ 						}
+ 						break;
+ 					}
+@@ -827,7 +827,7 @@
+ 			{
+ 				while (inflater.IsNeedingInput && chunks.Count > 0) {
+ 					inflater.SetInput (((Chunk)chunks[0]).Data);
+-					//System.Console.WriteLine ("adding chunk {0}", ((Chunk)chunks[0]).Data.Length);
++					////System.Console.WriteLine ("adding chunk {0}", ((Chunk)chunks[0]).Data.Length);
+ 					chunks.RemoveAt (0);
+ 				}
+ 				return true;
+@@ -879,7 +879,7 @@
+ 					
+ 					if (col < width) {
+ 						inflater.Fill ();
+-						System.Console.WriteLine ("short read missing {0} {1} {2}", width - col, row, height);
++						//System.Console.WriteLine ("short read missing {0} {1} {2}", width - col, row, height);
+ 					}
+ 				}
+ 			}
+@@ -1098,7 +1098,7 @@
+ 			}
+ 
+ 			IhdrChunk ihdr = (IhdrChunk) Chunks [0];
+-			System.Console.WriteLine ("Attempting to to inflate photo {0}.{1}({2}, {3})", ihdr.Color, ihdr.Depth, ihdr.Width, ihdr.Height);
++			//System.Console.WriteLine ("Attempting to to inflate photo {0}.{1}({2}, {3})", ihdr.Color, ihdr.Depth, ihdr.Width, ihdr.Height);
+ 			ScanlineDecoder decoder = new ScanlineDecoder (ci, ihdr.GetScanlineLength (0), ihdr.Height);
+ 			decoder.Fill ();
+ 			//Gdk.Pixbuf pixbuf = decoder.GetPixbuf ();
+@@ -1219,7 +1219,7 @@
+ 					if (time != null)
+ 						System.Console.Write(" Time {0}", time.Time);
+ 
+-					System.Console.WriteLine (System.String.Empty);
++					//System.Console.WriteLine (System.String.Empty);
+ #endif
+ 					
+ 					if (chunk.Name == "IEND")
+@@ -1335,7 +1335,7 @@
+ 				try {
+ 					return new Profile (icc.Profile);
+ 				} catch (System.Exception ex) {
+-					System.Console.WriteLine ("Error trying to decode embedded profile" + ex.ToString ());
++					//System.Console.WriteLine ("Error trying to decode embedded profile" + ex.ToString ());
+ 				}
+ 			}
+ 
+@@ -1531,17 +1531,17 @@
+ 				} catch (System.Exception e) {
+ 					failed.Add (path);
+ 					//System.Console.WriteLine ("Error loading {0}", path);
+-					System.Console.WriteLine (e.ToString ());
++					//System.Console.WriteLine (e.ToString ());
+ 				}
+ 
+-				System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
++				//System.Console.WriteLine ("{2} Load Time {0} vs {1}", one.TotalMilliseconds, two.TotalMilliseconds, path); 
+ 				box.PackStart (image);
+ 				win.ShowAll ();
+ 			}
+ 			
+-			System.Console.WriteLine ("{0} Failed to Load", failed.Count);
++			//System.Console.WriteLine ("{0} Failed to Load", failed.Count);
+ 			foreach (string fail_path in failed) {
+-				System.Console.WriteLine (fail_path);
++				//System.Console.WriteLine (fail_path);
+ 			}
+ 
+ 			Gtk.Application.Run ();
+Index: Imaging/JpegFile.cs
+===================================================================
+--- Imaging/JpegFile.cs	(revision 4696)
++++ Imaging/JpegFile.cs	(working copy)
+@@ -31,7 +31,7 @@
+ 			try {
+ 				// Console.WriteLine ("approximate quality = {0}", Header.GuessQuality ());
+ 			} catch (Exception e) {
+-				System.Console.WriteLine (e);
++				Beagle.Util.Log.Error (e, "Error opening JPEG file {0}", uri);
+ 			}
+ 		}
+ 		
+@@ -277,7 +277,7 @@
+ 				DirectoryEntry e = ExifHeader.Directory.Lookup (TagId.Orientation);
+ 				orientation = (PixbufOrientation)e.ValueAsLong [0];
+ 			} catch {
+-				System.Console.WriteLine ("error checking orientation");
++				//System.Console.WriteLine ("error checking orientation");
+ 			}
+ #else						     
+ 			Exif.ExifEntry e = this.ExifData.GetContents (Exif.Ifd.Zero).Lookup (Exif.Tag.Orientation);
+Index: Imaging/Tiff.cs
+===================================================================
+--- Imaging/Tiff.cs	(revision 4696)
++++ Imaging/Tiff.cs	(working copy)
+@@ -421,7 +421,7 @@
+ 				try {
+ 					enc = System.Text.Encoding.GetEncoding ("euc-jp");
+ 				} catch {
+-					System.Console.WriteLine ("missing jis0208 encoding");
++					//System.Console.WriteLine ("missing jis0208 encoding");
+ 					enc = System.Text.Encoding.Default;
+ 				}
+ 				break;
+@@ -469,7 +469,7 @@
+ 			enc.GetBytes (Value, 0, Value.Length, data, heading.Length);
+ 			
+ 			UserComment c = new UserComment (data, is_little);
+-			System.Console.WriteLine ("old = \"{0}\" new = \"{1}\" heading = \"{2}\"", c.Value, description, heading);
++			//System.Console.WriteLine ("old = \"{0}\" new = \"{1}\" heading = \"{2}\"", c.Value, description, heading);
+ 			return data;
+ 		}
+ 
+@@ -895,13 +895,13 @@
+ 				//System.Console.WriteLine ("Found Standard Tiff Marker {0}", marker);
+ 				break;
+ 			case 0x4f52:
+-				System.Console.WriteLine ("Found Olympus Tiff Marker {0}", marker.ToString ("x"));
++				//System.Console.WriteLine ("Found Olympus Tiff Marker {0}", marker.ToString ("x"));
+ 				break;
+ 			case 0x4e31:
+-				System.Console.WriteLine ("Found Navy Interchange File Format Tiff Marker {0}", marker.ToString ("x")); 
++				//System.Console.WriteLine ("Found Navy Interchange File Format Tiff Marker {0}", marker.ToString ("x")); 
+ 				break;
+ 			default:
+-				System.Console.WriteLine ("Found Unknown Tiff Marker {0}", marker.ToString ("x"));
++				//System.Console.WriteLine ("Found Unknown Tiff Marker {0}", marker.ToString ("x"));
+ 				break;
+ 			}
+ 
+@@ -968,7 +968,7 @@
+ 						ImageDirectory sub = ((SubdirectoryEntry)e).Directory [0];
+ 						SelectDirectory (sub, sink);
+ 					} catch (System.Exception exc) {
+-						System.Console.WriteLine (exc);
++						//System.Console.WriteLine (exc);
+ 					}
+ 					break;
+ 				case TagId.Software:
+@@ -980,7 +980,7 @@
+ 					MetadataStore.AddLiteral (sink, "xmp:ModifyDate", 
+ 								  e.ValueAsDate.ToString ("yyyy-MM-ddThh:mm:ss"));
+ 					} catch (System.Exception ex) {
+-						System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.ValueAsString[0], ex, Environment.NewLine));
++						//System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.ValueAsString[0], ex, Environment.NewLine));
+ 					}
+ 
+ 					break;
+@@ -992,7 +992,7 @@
+ 						MetadataStore.AddLiteral (sink, "exif:" + e.Id.ToString (), 
+ 									  e.ValueAsDate.ToString ("yyyy-MM-ddThh:mm:ss"));
+ 					} catch (System.Exception ex) {
+-						System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.ValueAsString[0], ex, Environment.NewLine));
++						//System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.ValueAsString[0], ex, Environment.NewLine));
+ 					}
+ 					break;
+ 					//case TagId.SpatialFrequencyResponse
+@@ -1084,7 +1084,7 @@
+ 					try {
+ 						MetadataStore.AddLiteral (sink, "tiff:" + e.Id.ToString (), e.ValueAsString [0]);
+ 					} catch (System.Exception ex) {
+-						System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.Id, ex, Environment.NewLine));
++						//System.Console.WriteLine (String.Format ("error parsing {0}{2}{1}", e.Id, ex, Environment.NewLine));
+ 					}
+ 					break;
+ 				}
+@@ -1333,7 +1333,7 @@
+ 					try {
+ 						return new Cms.Profile (e.RawData);
+ 					} catch (System.Exception ex) {
+-						System.Console.WriteLine (ex);
++						//System.Console.WriteLine (ex);
+ 					}
+ 					break;
+ 				case TagId.ColorSpace:
+@@ -1343,7 +1343,7 @@
+ 					case ColorSpace.AdobeRGB:
+ 						return Cms.Profile.CreateAlternateRgb ();
+ 					case ColorSpace.Uncalibrated:
+-						System.Console.WriteLine ("Uncalibrated colorspace");
++						//System.Console.WriteLine ("Uncalibrated colorspace");
+ 						break;
+ 					}
+ 					break;
+@@ -1371,7 +1371,7 @@
+ 					ushort [] trns = e.ShortValue;
+ 					ushort gamma_count = (ushort) (1 << bits_per_sample);
+ 					Cms.GammaTable [] tables = new Cms.GammaTable [3];
+-					System.Console.WriteLine ("Parsing transfer function: count = {0}", trns.Length);
++					//System.Console.WriteLine ("Parsing transfer function: count = {0}", trns.Length);
+ 
+ 					// FIXME we should use the TransferRange here
+ 					// FIXME we should use bits per sample here
+@@ -1459,7 +1459,7 @@
+ 		public SubdirectoryEntry (byte [] data, int offset, Endian endian) : base (data, offset, endian)
+ 		{
+ 			if (this.GetEntryCount () > 1) {
+-				System.Console.WriteLine ("Count is greater than 1 ({1}) on Subdirectory {0} interesting", tagid, count);
++				//System.Console.WriteLine ("Count is greater than 1 ({1}) on Subdirectory {0} interesting", tagid, count);
+ 			}
+ 		}
+ 
+@@ -1510,8 +1510,8 @@
+ 						throw new Exception ("recursive ifd");
+ 					Directory [i] = new ImageDirectory (stream, directory_offset, endian);
+ 				} catch (System.Exception e) {
+-					System.Console.WriteLine ("Error loading Subdirectory {0} at {2} of {3}bytes:{4}{1}", 
+-								  this.Id, e, directory_offset, stream.Length, Environment.NewLine);
++					//System.Console.WriteLine ("Error loading Subdirectory {0} at {2} of {3}bytes:{4}{1}", 
++					//			  this.Id, e, directory_offset, stream.Length, Environment.NewLine);
+ 				}
+ 					
+ 			}
+@@ -1733,10 +1733,10 @@
+ #if DEBUG_LOADER
+ 			switch ((int)this.Id) {
+ 			case (int)TagId.NewSubfileType:
+-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new NewSubFileType {0}", (NewSubfileType) this.ValueAsLong [0]);
++				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new NewSubFileType {0}", (NewSubfileType) this.ValueAsLong [0]);
+ 				break;
+ 			case (int)TagId.SubfileType:
+-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new SubFileType {0}", (SubfileType) this.ValueAsLong [0]);
++				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new SubFileType {0}", (SubfileType) this.ValueAsLong [0]);
+ 				break;
+ 			case (int)TagId.Compression:
+ 				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX new Compression {0}", (Compression) this.ValueAsLong [0]);
+@@ -1756,8 +1756,8 @@
+ 			case 50648:
+ 			case 50656:
+ 			case 50752:
+-				System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX {0}({1}) - {2} {3}", this.Id, this.Id.ToString ("x"), this.type, raw_data.Length);
+-				System.Console.WriteLine ("XXXX ", System.Text.Encoding.ASCII.GetString (raw_data));
++				//System.Console.WriteLine ("XXXXXXXXXXXXXXXXXXXXX {0}({1}) - {2} {3}", this.Id, this.Id.ToString ("x"), this.type, raw_data.Length);
++				//System.Console.WriteLine ("XXXX ", System.Text.Encoding.ASCII.GetString (raw_data));
+ 				switch (this.type) {
+ 				case EntryType.Long:
+ 					foreach (uint val in ((LongEntry)this).Value)
+@@ -1772,7 +1772,7 @@
+ 						System.Console.Write (" {0}", val);
+ 					break;
+ 				}
+-				System.Console.WriteLine (String.Empty);
++				//System.Console.WriteLine (String.Empty);
+ 				break;
+ 			}
+ #endif
+@@ -1821,7 +1821,7 @@
+ 			byte [] tmp = new byte [len + 1];
+ 			System.Text.Encoding.UTF8.GetBytes (value, 0, value.Length, tmp, 0);
+ 			tmp[len] = 0;
+-			System.Console.WriteLine ("SetData: value = {0} len = {1}", value, len);
++			//System.Console.WriteLine ("SetData: value = {0} len = {1}", value, len);
+ 			SetData (tmp);
+ 		}
+ 	
+@@ -1864,7 +1864,7 @@
+ 				return StringValue.Split ('\0');
+ 				break;
+ 			default:
+-				System.Console.WriteLine ("{1}({2}) [{0}]", this.Count, this.Id, this.Type);
++				//System.Console.WriteLine ("{1}({2}) [{0}]", this.Count, this.Id, this.Type);
+ 				break;
+ 
+ 				}
+@@ -1907,7 +1907,7 @@
+ 					case TagId.ComponentsConfiguration:
+ 						return ArrayToString (ValueAsLong);
+ 					default:
+-						System.Console.WriteLine ("Cannot convert type \"{0}\" to string", Id);
++						//System.Console.WriteLine ("Cannot convert type \"{0}\" to string", Id);
+ 						break;
+ 					}
+ 					break;
+@@ -2040,7 +2040,7 @@
+ 				Header.Dump (this.ToString () + ":");
+ #endif
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e.ToString ());
++				Beagle.Util.Log.Error (e, "Error loading TIFF file {0}", path);
+ 			}
+ 		}
+ 
+@@ -2055,7 +2055,7 @@
+ 				Header.Dump (this.ToString () + ":");
+ #endif
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e.ToString ());
++				Beagle.Util.Log.Error (e, "Error loading TIFF file {0}", uri);
+ 			}
+ 		}
+ 
+@@ -2367,7 +2367,7 @@
+ 			header.Dump ("source");
+ 			header.Save (stream);
+ 			stream.Position = 0;
+-			System.Console.WriteLine ("----------------------------------------------LOADING TIFF");
++			//System.Console.WriteLine ("----------------------------------------------LOADING TIFF");
+ 			Header loader = new Header (stream);
+ 			loader.Dump ("loader");
+ 			
+Index: Imaging/PnmFile.cs
+===================================================================
+--- Imaging/PnmFile.cs	(revision 4696)
++++ Imaging/PnmFile.cs	(working copy)
+@@ -215,7 +215,7 @@
+ 					return pixbuf;
+ 				}
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e.ToString ());
++				//System.Console.WriteLine (e.ToString ());
+ 			}
+ 			return null;
+ 		}
+Index: Imaging/Exif.cs
+===================================================================
+--- Imaging/Exif.cs	(revision 4702)
++++ Imaging/Exif.cs	(working copy)
+@@ -581,7 +581,7 @@
+ 			byte [] tmp = new byte [len + 1];
+ 			System.Text.Encoding.UTF8.GetBytes (value, 0, value.Length, tmp, 0);
+ 			tmp[len] = 0;
+-			System.Console.WriteLine ("value = {0} len = {1}", value, len);
++			//System.Console.WriteLine ("value = {0} len = {1}", value, len);
+ 			SetData (tmp, 1);
+ 		}
+ 
+@@ -801,7 +801,7 @@
+ 				free (data);
+ 			}
+ 				
+-			System.Console.WriteLine ("Saved {0} bytes", content.Length);
++			//System.Console.WriteLine ("Saved {0} bytes", content.Length);
+ 			return content;
+ 		}
+ 		
+Index: Imaging/JpegHeader.cs
+===================================================================
+--- Imaging/JpegHeader.cs	(revision 4702)
++++ Imaging/JpegHeader.cs	(working copy)
+@@ -308,7 +308,7 @@
+ 			if (m != null)
+ 				return new Cms.Profile (m.Data, name.Length, m.Data.Length - name.Length); 
+ 		} catch (System.Exception e) {
+-			System.Console.WriteLine (e);
++			//System.Console.WriteLine (e);
+ 		}
+ 		
+ 		FSpot.Tiff.Header exif = GetExifHeader ();
+@@ -743,7 +743,7 @@
+ 
+ 		if (value != null) {
+ 			string xml = System.Text.Encoding.UTF8.GetString (value, 29, value.Length - 29);
+-			System.Console.WriteLine (xml);
++			//System.Console.WriteLine (xml);
+ 		}
+ 		
+ 		value = data.GetRaw ("ICC_PROFILE");
+Index: Imaging/SvgFile.cs
+===================================================================
+--- Imaging/SvgFile.cs	(revision 4696)
++++ Imaging/SvgFile.cs	(working copy)
+@@ -37,7 +37,7 @@
+ 				store.Dump ();
+ 
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e.ToString ());
++				Beagle.Util.Log.Error (e, "Error loading SVG file");
+ 			}
+ 		}
+ 
+Index: Imaging/DCRawFile.cs
+===================================================================
+--- Imaging/DCRawFile.cs	(revision 4696)
++++ Imaging/DCRawFile.cs	(working copy)
+@@ -120,7 +120,7 @@
+ 			// FIXME this filename quoting is super lame
+ 			args = System.String.Format ("-h -w -c \"{0}\"", path);
+ 
+-			System.Console.WriteLine ("path = {0}, args = \"{1}\"", path, args);
++			//System.Console.WriteLine ("path = {0}, args = \"{1}\"", path, args);
+ 			 
+ 			using (System.Diagnostics.Process process = new System.Diagnostics.Process ()) {
+ 				process.StartInfo = new System.Diagnostics.ProcessStartInfo (dcraw_command, args);
+Index: Imaging/XmpFile.cs
+===================================================================
+--- Imaging/XmpFile.cs	(revision 4696)
++++ Imaging/XmpFile.cs	(working copy)
+@@ -35,7 +35,7 @@
+ 				store.Import (reader);
+ 				//Dump ();
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e.ToString ());
++				Beagle.Util.Log.Error (e, "Error loading TIFF file");
+ 			}
+ 		}
+ 
+@@ -90,7 +90,7 @@
+ 				text.Close ();
+ 				
+ 			} catch (System.Exception e) {
+-				System.Console.WriteLine (e);
++				//System.Console.WriteLine (e);
+ 			}
+ 		}
+ 
+@@ -120,7 +120,7 @@
+ 			System.IO.StreamReader stream = new System.IO.StreamReader (System.IO.File.OpenRead (args [0]));
+ 
+ 			while (stream.BaseStream.Position < stream.BaseStream.Length) {
+-				System.Console.WriteLine (stream.ReadLine ());
++				//System.Console.WriteLine (stream.ReadLine ());
+ 			}
+ #endif
+ 		}
+Index: Imaging/MrwFile.cs
+===================================================================
+--- Imaging/MrwFile.cs	(revision 4696)
++++ Imaging/MrwFile.cs	(working copy)
+@@ -20,7 +20,7 @@
+ 			byte [] tmp = new byte [8];
+ 			stream.Read (tmp, 0, tmp.Length);
+ 			System.Array.Copy (tmp, name, name.Length);
+-			System.Console.WriteLine (this.Name);
++			//System.Console.WriteLine (this.Name);
+ 			Length = BitConverter.ToUInt32 (tmp, name.Length, false);
+ 			stream.Position = stream.Position + Length;
+ 		}
+@@ -129,10 +129,10 @@
+ 				if (header == null) {
+ 					try {
+ 						System.IO.MemoryStream mem = new System.IO.MemoryStream (this.Data);
+-						System.Console.WriteLine ("before header");
++						//System.Console.WriteLine ("before header");
+ 						header = new Header (mem);
+ 					} catch (System.Exception e) {
+-						System.Console.WriteLine (e.ToString ());
++						//System.Console.WriteLine (e.ToString ());
+ 					}
+ 				}
+ 				
+@@ -244,7 +244,7 @@
+ 						}
+ 					}
+ 				} catch (System.Exception e) {
+-					System.Console.WriteLine (e.ToString ());
++					//System.Console.WriteLine (e.ToString ());
+ 				}
+ 			}
+ 		}
+Index: Imaging/Ciff.cs
+===================================================================
+--- Imaging/Ciff.cs	(revision 4696)
++++ Imaging/Ciff.cs	(working copy)
+@@ -106,7 +106,7 @@
+ 			ComponentBitDepth = BitConverter.ToUInt32 (data, 16, little);
+ 			ColorBitDepth = BitConverter.ToUInt32 (data, 20, little);
+ 			ColorBW = BitConverter.ToUInt32 (data, 24, little);
+-			System.Console.WriteLine ("0x{0}", ColorBW.ToString ("x"));
++			//System.Console.WriteLine ("0x{0}", ColorBW.ToString ("x"));
+ 		}
+ 
+ 		public PixbufOrientation Orientation {
+@@ -259,7 +259,7 @@
+ 			for (int i = 0; i < Count; i++)
+ 			{
+ 				stream.Read (buf, 0, 10);
+-				System.Console.WriteLine ("reading {0} {1}", i, stream.Position);
++				//System.Console.WriteLine ("reading {0} {1}", i, stream.Position);
+ 				Entry entry = new Entry (buf, 0, little);
+ 				entry_list.Add (entry);
+ 			}
+@@ -267,11 +267,11 @@
+ 
+ 		public void Dump ()
+ 		{
+-			System.Console.WriteLine ("Dumping directory with {0} entries", entry_list.Count);
++			//System.Console.WriteLine ("Dumping directory with {0} entries", entry_list.Count);
+ 			for (int i = 0; i < entry_list.Count; i++) {
+ 				Entry e = (Entry) entry_list[i];
+-				System.Console.WriteLine ("\tentry[{0}] = {1}.{6}.{5}({4}).{2}-{3}", 
+-							  i, e.Tag, e.Size, e.Offset, e.Tag.ToString ("x"), (uint)e.Tag & ~(uint)Mask.StorageFormat, e.Type); 
++				//System.Console.WriteLine ("\tentry[{0}] = {1}.{6}.{5}({4}).{2}-{3}", 
++				//			  i, e.Tag, e.Size, e.Offset, e.Tag.ToString ("x"), (uint)e.Tag & ~(uint)Mask.StorageFormat, e.Type); 
+ 			}
+ 		}
+ 
+@@ -424,8 +424,8 @@
+ 			
+ 			if (data != null)
+ 				orientation = new ImageSpec (data, little).Orientation;
+-			else 
+-				System.Console.WriteLine ("NO ORIENTATION");
++			//else 
++				//System.Console.WriteLine ("NO ORIENTATION");
+ 
+ 			return orientation;
+ 		}
+@@ -436,7 +436,7 @@
+ 				byte [] date = props.ReadEntry (Tag.TimeStamp);
+ 
+ 				if (date == null) {
+-					System.Console.WriteLine ("NO DATE");
++					//System.Console.WriteLine ("NO DATE");
+ 					return base.Date;
+ 				}
+ 
+@@ -474,7 +474,7 @@
+ 
+ 			System.IO.Stream output = System.IO.File.Open (path, System.IO.FileMode.OpenOrCreate);
+ 			byte [] data = GetEmbeddedThumbnail ();
+-			System.Console.WriteLine ("data length {0}", data != null ? data.Length : -1);
++			//System.Console.WriteLine ("data length {0}", data != null ? data.Length : -1);
+ 			output.Write (data, 0, data.Length);
+ 			output.Close ();
+ 			*/
+Index: Imaging/Bim.cs
+===================================================================
+--- Imaging/Bim.cs	(revision 4696)
++++ Imaging/Bim.cs	(working copy)
+@@ -193,7 +193,7 @@
+ 				try {
+ 					//System.Console.WriteLine (System.Text.Encoding.ASCII.GetString (current.Data));
+ 				} catch (System.Exception e) {
+-					System.Console.WriteLine (e.ToString ());
++					Beagle.Util.Log.Error (e, "Error loading BIM file");
+ 				}
+ 				entries.Add (current);
+ 			}
+Index: Imaging/RafFile.cs
+===================================================================
+--- Imaging/RafFile.cs	(revision 4696)
++++ Imaging/RafFile.cs	(working copy)
+@@ -35,7 +35,7 @@
+ 			get {
+ 				if (exif_data == null)
+ 					exif_data = new Exif.ExifData(uri.LocalPath);
+-				System.Console.WriteLine ("loading exif data");
++				//System.Console.WriteLine ("loading exif data");
+ 				return exif_data;
+ 			}
+ 		}

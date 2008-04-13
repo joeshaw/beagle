@@ -37,7 +37,7 @@ namespace FSpot.Svg {
 				store.Dump ();
 
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e.ToString ());
+				Beagle.Util.Log.Error (e, "Error loading SVG file");
 			}
 		}
 

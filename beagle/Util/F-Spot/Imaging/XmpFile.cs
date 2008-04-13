@@ -35,7 +35,7 @@ namespace FSpot.Xmp {
 				store.Import (reader);
 				//Dump ();
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e.ToString ());
+				Beagle.Util.Log.Error (e, "Error loading TIFF file");
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace FSpot.Xmp {
 				text.Close ();
 				
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e);
+				//System.Console.WriteLine (e);
 			}
 		}
 
@@ -120,7 +120,7 @@ namespace FSpot.Xmp {
 			System.IO.StreamReader stream = new System.IO.StreamReader (System.IO.File.OpenRead (args [0]));
 
 			while (stream.BaseStream.Position < stream.BaseStream.Length) {
-				System.Console.WriteLine (stream.ReadLine ());
+				//System.Console.WriteLine (stream.ReadLine ());
 			}
 #endif
 		}

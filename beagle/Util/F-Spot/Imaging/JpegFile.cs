@@ -31,7 +31,7 @@ namespace FSpot {
 			try {
 				// Console.WriteLine ("approximate quality = {0}", Header.GuessQuality ());
 			} catch (Exception e) {
-				System.Console.WriteLine (e);
+				Beagle.Util.Log.Error (e, "Error opening JPEG file {0}", uri);
 			}
 		}
 		
@@ -277,7 +277,7 @@ namespace FSpot {
 				DirectoryEntry e = ExifHeader.Directory.Lookup (TagId.Orientation);
 				orientation = (PixbufOrientation)e.ValueAsLong [0];
 			} catch {
-				System.Console.WriteLine ("error checking orientation");
+				//System.Console.WriteLine ("error checking orientation");
 			}
 #else						     
 			Exif.ExifEntry e = this.ExifData.GetContents (Exif.Ifd.Zero).Lookup (Exif.Tag.Orientation);

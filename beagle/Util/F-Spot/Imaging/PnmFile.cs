@@ -215,7 +215,7 @@ namespace FSpot.Pnm {
 					return pixbuf;
 				}
 			} catch (System.Exception e) {
-				System.Console.WriteLine (e.ToString ());
+				//System.Console.WriteLine (e.ToString ());
 			}
 			return null;
 		}

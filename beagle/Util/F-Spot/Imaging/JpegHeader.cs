@@ -308,7 +308,7 @@ public class JpegHeader : SemWeb.StatementSource {
 			if (m != null)
 				return new Cms.Profile (m.Data, name.Length, m.Data.Length - name.Length); 
 		} catch (System.Exception e) {
-			System.Console.WriteLine (e);
+			//System.Console.WriteLine (e);
 		}
 		
 		FSpot.Tiff.Header exif = GetExifHeader ();
@@ -743,7 +743,7 @@ public class JpegHeader : SemWeb.StatementSource {
 
 		if (value != null) {
 			string xml = System.Text.Encoding.UTF8.GetString (value, 29, value.Length - 29);
-			System.Console.WriteLine (xml);
+			//System.Console.WriteLine (xml);
 		}
 		
 		value = data.GetRaw ("ICC_PROFILE");

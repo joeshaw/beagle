@@ -20,7 +20,7 @@ namespace FSpot.Mrw {
 			byte [] tmp = new byte [8];
 			stream.Read (tmp, 0, tmp.Length);
 			System.Array.Copy (tmp, name, name.Length);
-			System.Console.WriteLine (this.Name);
+			//System.Console.WriteLine (this.Name);
 			Length = BitConverter.ToUInt32 (tmp, name.Length, false);
 			stream.Position = stream.Position + Length;
 		}
@@ -129,10 +129,10 @@ namespace FSpot.Mrw {
 				if (header == null) {
 					try {
 						System.IO.MemoryStream mem = new System.IO.MemoryStream (this.Data);
-						System.Console.WriteLine ("before header");
+						//System.Console.WriteLine ("before header");
 						header = new Header (mem);
 					} catch (System.Exception e) {
-						System.Console.WriteLine (e.ToString ());
+						//System.Console.WriteLine (e.ToString ());
 					}
 				}
 				
@@ -244,7 +244,7 @@ namespace FSpot.Mrw {
 						}
 					}
 				} catch (System.Exception e) {
-					System.Console.WriteLine (e.ToString ());
+					//System.Console.WriteLine (e.ToString ());
 				}
 			}
 		}
