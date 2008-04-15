@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-20 23:51+0100\n"
-"PO-Revision-Date: 2008-02-20 23:52+0100\n"
+"POT-Creation-Date: 2008-04-15 22:29+0200\n"
+"PO-Revision-Date: 2008-04-15 22:42+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "<b>Konversationshistorik</b>"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
-msgstr "IM-visare"
+msgstr "Snabbmeddelandevisare"
 
 #: ../ImLogViewer/ImLogWindow.cs:108
 #: ../ImLogViewer/ImLogWindow.cs:120
@@ -45,53 +45,53 @@ msgstr "Konversationer med {0}"
 msgid "On This Computer"
 msgstr "På den här datorn"
 
-#: ../Util/StringFu.cs:116
+#: ../Util/StringFu.cs:125
 #: ../search/Beagle.Search.Tiles/Utils.cs:134
 #: ../search/Beagle.Search.Tiles/Utils.cs:216
 msgid "Today"
 msgstr "Idag"
 
-#: ../Util/StringFu.cs:118
+#: ../Util/StringFu.cs:127
 #: ../search/Beagle.Search.Tiles/Utils.cs:132
 #: ../search/Beagle.Search.Tiles/Utils.cs:214
 msgid "Yesterday"
 msgstr "Igår"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:130
 msgid "MMM d"
 msgstr "d MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:124
+#: ../Util/StringFu.cs:133
 msgid "MMM d, yyyy"
 msgstr "d MMM, yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:127
+#: ../Util/StringFu.cs:136
 msgid "h:mm tt"
 msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:133
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:150
+#: ../Util/StringFu.cs:159
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Idag, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:153
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Igår, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:158
+#: ../Util/StringFu.cs:167
 #, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
@@ -99,23 +99,23 @@ msgstr[0] "{0} dag sedan, {1}"
 msgstr[1] "{0} dagar sedan, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:164
+#: ../Util/StringFu.cs:173
 msgid "MMMM d, h:mm tt"
 msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:169
+#: ../Util/StringFu.cs:178
 msgid "MMMM d yyyy, h:mm tt"
 msgstr "d MMMM yyyy, HH:mm"
 
-#: ../Util/StringFu.cs:179
+#: ../Util/StringFu.cs:188
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
 msgstr[0] "{0} timme"
 msgstr[1] "{0} timmar"
 
-#: ../Util/StringFu.cs:186
+#: ../Util/StringFu.cs:195
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -123,7 +123,7 @@ msgstr[0] "{0} minut"
 msgstr[1] "{0} minuter"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:220
+#: ../Util/StringFu.cs:229
 #, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
@@ -131,48 +131,48 @@ msgstr[0] "{0} byte"
 msgstr[1] "{0} byte"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:224
+#: ../Util/StringFu.cs:233
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:227
+#: ../Util/StringFu.cs:236
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
 
-#: ../epiphany-extension/beagle.py.in:157
+#: ../epiphany-extension/beagle.py.in:167
 #, python-format
 msgid "beagle is indexing %s"
 msgstr "beagle indexerar %s"
 
-#: ../epiphany-extension/beagle.py.in:177
+#: ../epiphany-extension/beagle.py.in:187
 #, python-format
 msgid "beagle is indexing link %s"
 msgstr "beagle indexerar länken %s"
 
-#: ../epiphany-extension/beagle.py.in:217
+#: ../epiphany-extension/beagle.py.in:232
 msgid "Index This Page"
 msgstr "Indexera denna sida"
 
-#: ../epiphany-extension/beagle.py.in:224
+#: ../epiphany-extension/beagle.py.in:239
 msgid "Index Link"
 msgstr "Indexera länk"
 
-#: ../epiphany-extension/beagle.py.in:231
+#: ../epiphany-extension/beagle.py.in:246
 msgid "Reload Config File"
 msgstr "Läs om konfigurationsfil"
 
-#: ../epiphany-extension/beagle.py.in:240
+#: ../epiphany-extension/beagle.py.in:255
 msgid "Auto Index"
 msgstr "Automatiskt index"
 
-#: ../epiphany-extension/beagle.py.in:247
+#: ../epiphany-extension/beagle.py.in:262
 msgid "Prompt key words when index on demand"
 msgstr "Fråga efter nyckelord vid indexering vid behov"
 
-#: ../epiphany-extension/beagle.py.in:274
+#: ../epiphany-extension/beagle.py.in:289
 msgid "Extra keywords to index"
 msgstr "Extra nyckelord att indexera"
 
@@ -254,8 +254,8 @@ msgstr "Inne i arkivet {0}"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
 #: ../search/Beagle.Search.Tiles/Calendar.cs:44
-#: ../search/Beagle.Search.Tiles/File.cs:178
-#: ../search/Beagle.Search.Tiles/Note.cs:73
+#: ../search/Beagle.Search.Tiles/File.cs:176
+#: ../search/Beagle.Search.Tiles/Note.cs:70
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
 #: ../search/Beagle.Search.Tiles/Task.cs:41
 #: ../search/Beagle.Search.Tiles/WebHistory.cs:59
@@ -272,7 +272,7 @@ msgid "Inside File:"
 msgstr "inne i filen:"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:82
-#: ../search/Beagle.Search.Tiles/File.cs:182
+#: ../search/Beagle.Search.Tiles/File.cs:180
 msgid "Author:"
 msgstr "Upphovsman:"
 
@@ -313,29 +313,33 @@ msgstr "Arbetstelefon:"
 msgid "Home Phone:"
 msgstr "Hemtelefon:"
 
-#: ../search/Beagle.Search.Tiles/File.cs:33
+#: ../search/Beagle.Search.Tiles/File.cs:35
 msgid "Reveal in Folder"
 msgstr "Visa i mapp"
 
-#: ../search/Beagle.Search.Tiles/File.cs:34
+#: ../search/Beagle.Search.Tiles/File.cs:36
 msgid "E-Mail"
 msgstr "E-post"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Beagle.Search.Tiles/File.cs:36
+#: ../search/Beagle.Search.Tiles/File.cs:38
 #: ../search/Beagle.Search.Tiles/Folder.cs:38
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
-#: ../search/Beagle.Search.Tiles/File.cs:179
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Hitta dokument från samma författare"
+
+#: ../search/Beagle.Search.Tiles/File.cs:177
 #: ../search/Beagle.Search.Tiles/Folder.cs:51
-#: ../search/Beagle.Search.Tiles/Note.cs:74
+#: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
-#: ../search/Beagle.Search.Tiles/File.cs:184
+#: ../search/Beagle.Search.Tiles/File.cs:182
 #: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
@@ -355,7 +359,7 @@ msgstr[1] "Innehåller {0} objekt"
 
 #: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
-msgstr "IM-konversation"
+msgstr "Snabbmeddelandekonversation"
 
 #: ../search/Beagle.Search.Tiles/IMLog.cs:99
 #: ../tools/settings.glade.h:34
@@ -393,7 +397,7 @@ msgid "Set as Wallpaper"
 msgstr "Ställ in som skrivbordsbakgrund"
 
 #: ../search/Beagle.Search.Tiles/Image.cs:84
-#: ../search/Beagle.Search.Tiles/Note.cs:78
+#: ../search/Beagle.Search.Tiles/Note.cs:75
 msgid "Tags:"
 msgstr "Taggar:"
 
@@ -479,7 +483,7 @@ msgstr[0] "{0} sida"
 msgstr[1] "{0} sidor"
 
 #. Add the default 'Open' menu item
-#: ../search/Beagle.Search.Tiles/Tile.cs:95
+#: ../search/Beagle.Search.Tiles/Tile.cs:97
 msgid "Open"
 msgstr "Öppna"
 
@@ -589,7 +593,8 @@ msgid "Accessed:"
 msgstr "Kom åt:"
 
 #: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/SearchWindow.cs:57
+#: ../search/Beagle.Search/Search.cs:52
+#: ../search/Beagle.Search/SearchWindow.cs:65
 msgid "Desktop Search"
 msgstr "Skrivbordssökning"
 
@@ -625,56 +630,56 @@ msgstr "{0}-{1} av {2}"
 msgid "Hide"
 msgstr "Dölj"
 
-#: ../search/Beagle.Search/SearchWindow.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:85
 msgid "_Find:"
 msgstr "_Sök:"
 
-#: ../search/Beagle.Search/SearchWindow.cs:100
+#: ../search/Beagle.Search/SearchWindow.cs:107
 msgid "Find Now"
 msgstr "Sök nu"
 
-#: ../search/Beagle.Search/SearchWindow.cs:163
+#: ../search/Beagle.Search/SearchWindow.cs:170
 msgid "Type in search terms"
 msgstr "Skriv in söktermer"
 
-#: ../search/Beagle.Search/SearchWindow.cs:164
+#: ../search/Beagle.Search/SearchWindow.cs:171
 msgid "Start searching"
 msgstr "Påbörja sökning"
 
-#: ../search/Beagle.Search/SearchWindow.cs:187
+#: ../search/Beagle.Search/SearchWindow.cs:186
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivbordssökning: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:203
+#: ../search/Beagle.Search/SearchWindow.cs:443
+msgid "There are computers near you running Beagle"
+msgstr "Det finns datorer nära dig som kör Beagle"
+
+#: ../search/Beagle.Search/SearchWindow.cs:444
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Du kan välja att söka på andra datorer från \"Sök\"-menyn."
+
+#: ../search/Beagle.Search/SearchWindow.cs:496
+msgid "Your data is being indexed"
+msgstr "Ditt data håller på att indexeras"
+
+#: ../search/Beagle.Search/SearchWindow.cs:497
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
+
+#: ../search/Beagle.Search/SearchWindow.cs:523
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Visar {0} träff"
 msgstr[1] "Visar alla {0} träffar"
 
-#: ../search/Beagle.Search/SearchWindow.cs:205
+#: ../search/Beagle.Search/SearchWindow.cs:525
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
 msgstr[0] "Visar den första {0} av totalt {1} träffar"
 msgstr[1] "Visar de första {0} av totalt {1} träffar"
-
-#: ../search/Beagle.Search/SearchWindow.cs:452
-msgid "There are computers near you running Beagle"
-msgstr "Det finns datorer nära dig som kör Beagle"
-
-#: ../search/Beagle.Search/SearchWindow.cs:453
-msgid "You can select to search other computers from the \"Search\" menu."
-msgstr "Du kan välja att söka på andra datorer från \"Sök\"-menyn."
-
-#: ../search/Beagle.Search/SearchWindow.cs:503
-msgid "Your data is being indexed"
-msgstr "Ditt data håller på att indexeras"
-
-#: ../search/Beagle.Search/SearchWindow.cs:504
-msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
-msgstr "Söktjänsten håller på att indexerar ditt data.  Sökresultaten kan vara inkompletta tills indexeringar har färdigställts."
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
@@ -1054,18 +1059,26 @@ msgid "Search only on local computer"
 msgstr "Sök endast på lokala datorn"
 
 #: ../search/Beagle.Search/UIManager.cs:234
+msgid "_Global"
+msgstr "_Globalt"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search in internet services"
+msgstr "Sök på internettjänster"
+
+#: ../search/Beagle.Search/UIManager.cs:240
 msgid "_Neighborhood"
 msgstr "_Grannar"
 
-#: ../search/Beagle.Search/UIManager.cs:236
+#: ../search/Beagle.Search/UIManager.cs:242
 msgid "Search on computers near me"
 msgstr "Sök på datorer nära mig"
 
-#: ../search/Beagle.Search/UIManager.cs:244
+#: ../search/Beagle.Search/UIManager.cs:250
 msgid "Show Details"
 msgstr "Visa detaljer"
 
-#: ../search/Beagle.Search/UIManager.cs:366
+#: ../search/Beagle.Search/UIManager.cs:376
 msgid "Couldn't launch web browser"
 msgstr "Kunde inte starta webbläsare"
 
@@ -1077,129 +1090,238 @@ msgstr "Sök"
 msgid "Search for data on your desktop"
 msgstr "Sök efter data på ditt skrivbord"
 
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:349
 msgid "Reload configuration"
 msgstr "Läs om konfiguration"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
 msgstr "Konfigurationsfilen har ändrats av ett annat program. Vill du bortse från dina aktuella ändringar och läsa om inställningarna från disk?"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:484
 msgid "Select Path"
 msgstr "Välj sökväg"
 
-#: ../tools/Settings.cs:500
+#: ../tools/Settings.cs:503
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "Den valda sökvägen lades inte till. Den är redan vald för indexering."
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
 msgstr "Den valda sökvägen lades inte till. Listan innehåller objekt som förekommer den och datat blir redan indexerat."
 
-#: ../tools/Settings.cs:514
+#: ../tools/Settings.cs:517
 msgid "Path not added"
 msgstr "Sökvägen lades inte till"
 
-#: ../tools/Settings.cs:523
+#: ../tools/Settings.cs:526
 msgid "Remove obsolete paths"
 msgstr "Ta bort föråldrade sökvägar"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:527
 msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr "Lägga till denna sökväg kommer att göra vissa av de existerande sökvägarna föråldrade. Detta kommer att resultera i att gamla föråldrade sökvägar tas bort. Vill du fortfarande lägga till den?"
 
-#: ../tools/Settings.cs:550
+#: ../tools/Settings.cs:553
 msgid "Remove path"
 msgstr "Ta bort sökväg"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:554
 msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
 msgstr "Är du säker på att du vill ta bort denna sökväg från listan över kataloger som skall indexeras?"
 
-#: ../tools/Settings.cs:580
+#: ../tools/Settings.cs:583
 msgid "Remove item"
 msgstr "Ta bort objekt"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:584
 msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
 msgstr "Är du säker på att du vill ta bort det här objektet från listan över data som skall undanhållas från indexering."
 
-#: ../tools/Settings.cs:628
+#: ../tools/Settings.cs:631
 msgid "Remote host already present in the list."
 msgstr "Fjärrvärden finns redan i listan."
 
-#: ../tools/Settings.cs:638
-msgid "Netbeagle Node not added"
-msgstr "Netbeaglenod lades inte till"
+#: ../tools/Settings.cs:641
+msgid "Remote beagle host not added"
+msgstr "Fjärrbeaglevärd lades inte till"
 
-#: ../tools/Settings.cs:653
+#: ../tools/Settings.cs:656
 msgid "Remove host"
 msgstr "Ta bort värd"
 
-#: ../tools/Settings.cs:654
+#: ../tools/Settings.cs:657
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Är du säker på att du vill ta bort denna värd från listan?"
 
-#: ../tools/Settings.cs:713
-#: ../tools/Settings.cs:802
-#: ../tools/Settings.cs:883
-#: ../tools/Settings.cs:988
-#: ../tools/Settings.cs:1632
+#: ../tools/Settings.cs:716
+#: ../tools/Settings.cs:805
+#: ../tools/Settings.cs:886
+#: ../tools/Settings.cs:991
+#: ../tools/Settings.cs:1637
 msgid "Name"
 msgstr "Namn"
 
-#: ../tools/Settings.cs:796
+#: ../tools/Settings.cs:799
 msgid "Type"
 msgstr "Typ"
 
-#: ../tools/Settings.cs:849
+#: ../tools/Settings.cs:852
 msgid "Path:"
 msgstr "Sökväg:"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:855
 msgid "Pattern:"
 msgstr "Mönster:"
 
-#: ../tools/Settings.cs:855
+#: ../tools/Settings.cs:858
 msgid "Mail folder:"
 msgstr "E-postmapp:"
 
-#: ../tools/Settings.cs:890
+#: ../tools/Settings.cs:893
 msgid "Address"
 msgstr "Adress"
 
-#: ../tools/Settings.cs:1235
+#: ../tools/Settings.cs:1238
 msgid "Select Folder"
 msgstr "Välj mapp"
 
-#: ../tools/Settings.cs:1261
+#: ../tools/Settings.cs:1264
 #: ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "Sö_kväg:"
 
-#: ../tools/Settings.cs:1266
+#: ../tools/Settings.cs:1269
 msgid "M_ail folder:"
 msgstr "E-postm_app:"
 
-#: ../tools/Settings.cs:1271
+#: ../tools/Settings.cs:1274
 msgid "P_attern:"
 msgstr "Mö_nster:"
 
-#: ../tools/Settings.cs:1295
+#: ../tools/Settings.cs:1298
 msgid "Error adding path"
 msgstr "Fel när sökvägen skulle läggas till"
 
-#: ../tools/Settings.cs:1296
+#: ../tools/Settings.cs:1299
 msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
 msgstr "Den angivna sökvägen kunde inte hittas och kunde därför inte läggas till i listan på resurser som ska undanhållas från indexering."
 
-#: ../tools/Settings.cs:1337
+#: ../tools/Settings.cs:1340
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Ansluter till {0}"
 
-#: ../tools/Settings.cs:1633
+#: ../tools/Settings.cs:1597
+msgid "Evolution's mail."
+msgstr "Evolutions e-post."
+
+#: ../tools/Settings.cs:1598
+msgid "Evolution's address book, memos and tasks."
+msgstr "Evolutions adressbok, memon och uppgifter."
+
+#: ../tools/Settings.cs:1599
+msgid "Thunderbird's email."
+msgstr "Thunderbirds e-post."
+
+#: ../tools/Settings.cs:1600
+msgid "RSS feeds from Akregator."
+msgstr "RSS-kanaler från Akregator."
+
+#: ../tools/Settings.cs:1601
+msgid "RSS feeds from Blam."
+msgstr "RSS-kanaler från Blam."
+
+#: ../tools/Settings.cs:1602
+msgid "Files and folders on the local file system."
+msgstr "Filer och mappar på det lokala filsystemet."
+
+#: ../tools/Settings.cs:1603
+msgid "Mail messages from KMail."
+msgstr "E-postmeddelanden från KMail."
+
+#: ../tools/Settings.cs:1604
+msgid "Notes from KNotes."
+msgstr "Anteckningar från KNotes."
+
+#: ../tools/Settings.cs:1605
+msgid "Agenda from KOrganizer."
+msgstr "Agenda från KOrganizer."
+
+#: ../tools/Settings.cs:1606
+msgid "Contacts from KAddressBook."
+msgstr "Kontakter från KAddressBook."
+
+#: ../tools/Settings.cs:1607
+msgid "Konqueror's bookmarks."
+msgstr "Konquerors bokmärken."
+
+#: ../tools/Settings.cs:1608
+msgid "Konqueror's history."
+msgstr "Konquerors historik."
+
+#: ../tools/Settings.cs:1609
+msgid "IMs and chats from Konversation."
+msgstr "Snabbmeddelanden och chattar från Konversation."
+
+#: ../tools/Settings.cs:1610
+msgid "IMs and chats from Kopete"
+msgstr "Snabbmeddelanden och chattar från Kopete."
+
+#: ../tools/Settings.cs:1611
+msgid "Mind-maps from Labyrinth."
+msgstr "Tankekartor från Labyrinth."
+
+#: ../tools/Settings.cs:1612
+msgid "RSS feeds from Liferea."
+msgstr "RSS-kanaler från Liferea."
+
+#: ../tools/Settings.cs:1613
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Nautilus metadata (emblem, anteckningar, etc.)"
+
+#: ../tools/Settings.cs:1614
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Sök på andra söktjänster i nätverket (EXPERIMENTELL)"
+
+#: ../tools/Settings.cs:1615
+msgid "Opera's bookmarks and browsing history."
+msgstr "Operas bokmärken och bläddringshistorik."
+
+#: ../tools/Settings.cs:1616
+msgid "IMs and chats from Pidgin."
+msgstr "Snabbmeddelanden och chattar från Pidgin."
+
+#: ../tools/Settings.cs:1617
+msgid "Notes from Tomboy."
+msgstr "Anteckningar från Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1619
+msgid "(System) Applications"
+msgstr "(System) Program"
+
+#: ../tools/Settings.cs:1620
+msgid "(System) Help files"
+msgstr "(System) Hjälpfiler"
+
+#: ../tools/Settings.cs:1621
+msgid "(System) Manual pages"
+msgstr "(System) Manualsidor"
+
+#: ../tools/Settings.cs:1622
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "(System) Ytterligare sökresultat med kommandot \"locate\""
+
+#: ../tools/Settings.cs:1623
+msgid "(System) Mono documentation"
+msgstr "(System) Mono-dokumentation"
+
+#: ../tools/Settings.cs:1624
+msgid "(System) Files from Windows' partition"
+msgstr "(System) Filer från Windows-partition"
+
+#: ../tools/Settings.cs:1638
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -1419,8 +1541,6 @@ msgstr "_Lösenord:"
 msgid "_Start search & indexing services automatically "
 msgstr "_Starta söknings- och indexeringstjänster automatiskt "
 
-#~ msgid "Documentation"
-#~ msgstr "Dokumentation"
 #~ msgid "Image Directory"
 #~ msgstr "Bildkatalog"
 #~ msgid "Thumbnail Directory"
