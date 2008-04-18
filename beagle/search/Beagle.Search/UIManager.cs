@@ -297,18 +297,13 @@ namespace Beagle.Search {
 		"        <menuitem action='Feeds'/>" +
 		"        <menuitem action='Archives'/>" +
 		"      </menu>" +
-
-#if ENABLE_AVAHI || ENABLE_GOOGLEBACKENDS
 		"      <menu action='Domain'>" +
 		"        <menuitem action='Local'/>" +
-#if ENABLE_AVAHI
 		"        <menuitem action='Neighborhood'/>" +
-#elif ENABLE_GOOGLEBACKENDS
+#if ENABLE_GOOGLEBACKENDS
 		"        <menuitem action='Global'/>" +
 #endif
 		"      </menu>" +
-#endif
-
 		"      <menuitem action='Preferences'/>" +
 		"      <separator/>" +
 		"      <menuitem action='Quit'/>" +

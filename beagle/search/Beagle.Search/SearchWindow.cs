@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 using Gtk;
@@ -46,6 +47,7 @@ namespace Beagle.Search {
 		private Beagle.Search.ScopeType scope = ScopeType.Everything;
 		private Beagle.Search.SortType sort = SortType.Modified;
 		private Beagle.Search.TypeFilter filter = null;
+		private Dictionary<QueryDomain, bool> domains = null; // FIXME Overkill
 
 		// Whether we should grab focus from the text entry
 		private bool grab_focus = false;
@@ -178,6 +180,9 @@ namespace Beagle.Search {
 				pages.CurrentPage = pages.PageNum (quicktips);
 			}
 
+			domains = new Dictionary<QueryDomain, bool> (3);
+			domains [QueryDomain.Local] = true;
+
 			StartCheckingIndexingStatus ();
 		}
 
@@ -242,10 +247,15 @@ namespace Beagle.Search {
 				TotalMatches = 0;
 
 				current_query = new Query ();
-				current_query.AddDomain (QueryDomain.Neighborhood);
-#if ENABLE_GOOGLEBACKENDS
-				current_query.AddDomain (QueryDomain.Global);
-#endif
+
+				// FIXME This is ugly!
+				if (! domains.ContainsKey (QueryDomain.Local) || ! domains [QueryDomain.Local] )
+					current_query.RemoveDomain (QueryDomain.Local);
+				if (domains.ContainsKey (QueryDomain.Neighborhood) && domains [QueryDomain.Neighborhood])
+					current_query.AddDomain (QueryDomain.Neighborhood);
+				if (domains.ContainsKey (QueryDomain.Global) && domains [QueryDomain.Global])
+					current_query.AddDomain (QueryDomain.Global);
+
 				current_query.AddText (query);
 				current_query.HitsAddedEvent += OnHitsAdded;
 				current_query.HitsSubtractedEvent += OnHitsSubtracted;
@@ -366,17 +376,9 @@ namespace Beagle.Search {
 		
 		private void OnDomainChanged (QueryDomain domain, bool active)
 		{
-			if (current_query == null)
-				return;
-			
+			domains [domain] = active;
+
 			// FIXME: Most likely refire the query.
-			// Also keep the setting, so it can be used for future queries
-			// in this running instance.
-			
-			if (active)
-				current_query.AddDomain (domain);
-			else
-				current_query.RemoveDomain (domain);
 		}
 		
 		private void ShowInformation (Tiles.Tile tile)
