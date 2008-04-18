@@ -245,7 +245,7 @@ all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(srcdir)/$(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
 if ENABLE_GUI
 	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET).mdb $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
 endif
@@ -261,14 +261,14 @@ COND_CS_FILES =				\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs
 
-EXTRA_DIST =			\
-	$(IGNORED_SEMWEB_CSFILES)\
-	$(EXTSTR_IN)		\
-	$(UTIL_CSFILES)		\
-	$(UI_UTIL_CSFILES)	\
-	$(COND_CS_FILES)	\
-	$(UI_UTIL_TARGET_CONFIG)\
-	$(UTIL_TARGET_CONFIG)	\
+EXTRA_DIST =					\
+	$(IGNORED_SEMWEB_CSFILES)		\
+	$(EXTSTR_IN)				\
+	$(UTIL_CSFILES)				\
+	$(UI_UTIL_CSFILES)			\
+	$(COND_CS_FILES)			\
+	$(srcdir)/$(UI_UTIL_TARGET_CONFIG)	\
+	$(srcdir)/$(UTIL_TARGET_CONFIG)		\
 	inotify-test
 
 CLEANFILES =			\
