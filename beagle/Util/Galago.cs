@@ -41,11 +41,17 @@ namespace Beagle.Util {
 			Idle = 3,
 			NoStatus = -1,
 		};
-		
+
 		public static Status GetPresence (string service_id, string username)
 		{
-			if (! Galago.Global.Init ("beagle-galago-presence"))
+			try {
+				if (! Galago.Global.Init ("beagle-galago-presence"))
+					return Status.NoStatus;
+			} catch (DllNotFoundException) {
+				// Catch Debian Galago packaging bug
 				return Status.NoStatus;
+			}
+
 			service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
 			if (service == null)
 				return Status.NoStatus;
