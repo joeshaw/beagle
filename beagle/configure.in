@@ -191,9 +191,9 @@ AM_CONDITIONAL(ENABLE_THUNDERBIRD, test "x$enable_tbird" = "xyes")
 dnl ----------------------------------------------
 
 AC_ARG_ENABLE([googlebackends],
-        AC_HELP_STRING([--disable-googlebackends], [Disable GMail and other Google backends (default yes)]),
+        AC_HELP_STRING([--disable-googlebackends], [Disable GMail and other Google backends (default no)]),
         enable_google=$enableval,
-        enable_google=no)
+        enable_google=yes)
 AM_CONDITIONAL(ENABLE_GOOGLEBACKENDS, test "x$enable_google" = "xyes")
 
 if test "x$enable_google" = "xyes"; then

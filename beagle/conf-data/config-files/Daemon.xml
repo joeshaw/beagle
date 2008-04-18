@@ -8,6 +8,7 @@
     <ListOption Name="DeniedBackends" Description="Disabled backends" Params="Backend name" Separator=",">
 	<!-- Disabled by default EXPERIMENTAL -->
 	<Value>NetworkServices</Value>
+	<Value>GMailSearch</Value>
 	<!-- Directly use locate; needed for exceptional uses only -->
 	<Value>Locate</Value>
     </ListOption>
