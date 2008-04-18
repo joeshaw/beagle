@@ -97,7 +97,6 @@ public class SettingsDialog
 
         [Widget] ScrolledWindow networking_sw;
 
-#if ENABLE_AVAHI
         [Widget] Alignment networking_password_box;
 
         [Widget] CheckButton require_password_toggle;
@@ -105,7 +104,6 @@ public class SettingsDialog
         [Widget] Entry index_name_entry;
         [Widget] Entry password_entry;
 
-#endif
         [Widget] Button add_host_button;
         
         private NetworkingView networking_view;
@@ -146,9 +144,11 @@ public class SettingsDialog
                 networking_sw.Child = networking_view;
 		networking_box.Show ();
 
-#if ENABLE_AVAHI
 		networking_settings_box.Visible = true;
-#endif  
+
+		//FIXME Password feature is not yet implemented
+		networking_password_box.Sensitive = false;
+		require_password_toggle.Sensitive = false;
 
 		LoadConfiguration ();
 
@@ -251,13 +251,11 @@ public class SettingsDialog
 			}
 		}
 
-#if ENABLE_AVAHI
                 require_password_toggle.Active = networking_config.GetOption (Conf.Names.PasswordRequired, true);
                 index_name_entry.Text = networking_config.GetOption (Conf.Names.ServiceName, String.Empty);
                 string password = networking_config.GetOption (Conf.Names.ServicePassword, String.Empty);
 		password = password.PadRight (12);
                 password_entry.Text = password.Substring (0, 12);
-#endif
 
 		values = daemon_config.GetListOptionValues (Conf.Names.DeniedBackends);
 		if (values != null)
@@ -315,11 +313,9 @@ public class SettingsDialog
 
 		networking_config.SetOption ("WebInterface", allow_webinterface_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServiceEnabled, allow_global_access_toggle.Active);
-#if ENABLE_AVAHI
 		networking_config.SetOption (Conf.Names.ServiceName, index_name_entry.Text);
 		networking_config.SetOption (Conf.Names.PasswordRequired, require_password_toggle.Active);
 		networking_config.SetOption (Conf.Names.ServicePassword, Password.Encode (password_entry.Text));
-#endif
 
 		List<string[]> svcs = new List<string[]> (networking_view.Nodes.Count);
 		foreach (NetworkService svc in networking_view.Nodes) {
@@ -673,16 +669,13 @@ public class SettingsDialog
 	
 	private void OnGlobalAccessToggled (object o, EventArgs args)
 	{
-#if ENABLE_AVAHI
 		networking_settings_box.Sensitive = allow_global_access_toggle.Active;
-#endif  
 	}
 	
 	private void OnRequirePasswordToggled (object o, EventArgs args)
 	{
-#if ENABLE_AVAHI
-		networking_password_box.Sensitive = require_password_toggle.Active;
-#endif
+		//FIXME Passwords for remote beagled is not yet implemented
+		//networking_password_box.Sensitive = require_password_toggle.Active;
 	}
 
 	////////////////////////////////////////////////////////////////
@@ -1314,9 +1307,6 @@ public class SettingsDialog
 		}
 	}
 
-
-#if ENABLE_AVAHI
-
         ////////////////////////////////////////////////////////////////
         // PasswordDialog
 
@@ -1341,7 +1331,6 @@ public class SettingsDialog
                         Present ();
                 }
         }
-#endif
 
         ////////////////////////////////////////////////////////////////
         // AddHostDialog
@@ -1453,6 +1442,9 @@ public class SettingsDialog
                                 icon_view.Visible = false;
                                 mdns_radio_button.Visible = false;
 #endif  
+
+			// FIXME Password for remote host is not yet implemented
+			password_entry.Sensitive = false;
                 }
                 
                 private void CreateStore ()
