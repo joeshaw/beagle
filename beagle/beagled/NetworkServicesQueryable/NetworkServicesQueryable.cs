@@ -43,75 +43,40 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 					query.RegisterTransport (new HttpTransport (service [1]));
 			}
 
-			// - Turn an async operation (query.SendAsync)
-			// - to a sync operation (result.Add need to be called from this thread)
-			// - to an async operation (result.Add sends an async response to the client)
-
-			// To prevent FinishedResponse being sent before HitsAddedResponse
-			Queue<ResponseMessage> response_queue = new Queue<ResponseMessage> (2);
-
 			// Anonymous delegates cannot be un-registered ... hence
 			Query.HitsAdded hits_added_handler;
 			hits_added_handler = delegate (HitsAddedResponse response) {
-							lock (response_queue) {
-								response_queue.Enqueue (response);
-								Monitor.Pulse (response_queue);
-							}
+								//Console.WriteLine ("Adding hits added response");
+								result.Add (response.Hits, response.NumMatches);
 						};
 
 			Query.HitsSubtracted hits_subtracted_handler;
 			hits_subtracted_handler = delegate (HitsSubtractedResponse response) {
-							    lock (response_queue) {
-								    response_queue.Enqueue (response);
-								    Monitor.Pulse (response_queue);
-							    }
+								// Console.WriteLine ("Adding hits subtracted response");
+								result.Subtract (response.Uris);
 						    };
 
 			Query.Finished finished_handler;
 			finished_handler = delegate (FinishedResponse response) {
-						lock (response_queue) {
-							response_queue.Enqueue (response);
-							Monitor.Pulse (response_queue);
-						}
+							//Console.WriteLine ("Adding finished response");
+							// NO-OP
 					    };
+
+			// FIXME: ClosedEvent ? Should be handled by HttpTransport but should we do something more
 
 			query.HitsAddedEvent += hits_added_handler;
 			query.HitsSubtractedEvent += hits_subtracted_handler;
 			query.FinishedEvent += finished_handler;
-			// FIXME: Need a closed event handler ? In case the remote server is closed ?
-			//query.ClosedEvent += delegate () { };
 
-			bool done = false;
 			Exception throw_me = null;
 
 			try {
-				query.SendAsync ();
+				query.SendAsyncBlocking ();
 			} catch (Exception ex) {
 				throw_me = ex;
-				done = true;
 			}
 
-			while (! done) {
-				lock (response_queue) {
-					Monitor.Wait (response_queue);
-					while (response_queue.Count != 0) {
-						//Console.WriteLine ("Time to handle response ({0})", response_queue.Count);
-						ResponseMessage query_response = response_queue.Dequeue ();
-						if (query_response is FinishedResponse) {
-							//Console.WriteLine ("FinishedResponse. Do nothing");
-							done = true;
-						} else if (query_response is HitsAddedResponse) {
-							HitsAddedResponse response = (HitsAddedResponse) query_response;
-							//Console.WriteLine ("HitsAddedResponse. Adding {0} hits", response.NumMatches);
-							result.Add (response.Hits, response.NumMatches);
-						} else if (query_response is HitsSubtractedResponse) {
-							HitsSubtractedResponse response = (HitsSubtractedResponse) query_response;
-							//Console.WriteLine ("HitsAddedResponse. Removing {0} hits", response.Uris.Count);
-							result.Subtract (response.Uris);
-						}
-					}
-				}
-			}
+			// FIXME FIXME FIXME: Live query does not work!
 
 			query.HitsAddedEvent -= hits_added_handler;
 			query.HitsSubtractedEvent -= hits_subtracted_handler;
@@ -119,8 +84,6 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 			if (throw_me != null)
 				throw throw_me;
-
-			// FIXME FIXME FIXME: Live query does not work!
 
 			return;
 		}
