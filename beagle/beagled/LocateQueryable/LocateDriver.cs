@@ -56,13 +56,17 @@ namespace Beagle.Daemon.LocateQueryable {
 			// FIXME Process [-/OR] 'source:Locate' if specified
 
 			bool has_text = false;
-			foreach (QueryPart qp in query.Parts)
-				if (! has_text && qp is QueryPart_Text) {
+			foreach (QueryPart qp in query.Parts) {
+				if (! (qp is QueryPart_Text))
+					continue;
+
+				if (! has_text)
 					has_text = true;
-				} else {
+				else {
 					Log.Error ("LocateDriver does not support searching for multiple words");
 					return false;
 				}
+			}
 
 			if (! has_text) {
 				Log.Error ("LocateDriver can only search for text and does not support 'OR', 'NOT' queries.");
