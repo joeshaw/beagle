@@ -23,8 +23,9 @@ global_config_filesdir = $(sysconfdir)/beagle/config-files
 global_config_files_DATA = $(GLOBAL_CONFIG_FILES)
 
 confdir = $(sysconfdir)/beagle
-conf_DATA = external-filters.xml.sample \
-	    query-mapping.xml
+conf_DATA = $(srcdir)/blocate.conf			\
+	    $(srcdir)/external-filters.xml.sample	\
+	    $(srcdir)/query-mapping.xml
 
 EXTRA_DIST =				\
 	$(CRAWL_RULES)			\

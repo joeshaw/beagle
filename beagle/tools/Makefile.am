@@ -181,7 +181,8 @@ endif
 PREBUILT_WRAPPERS =		\
 	beagle-index-info	\
 	beagle-ping		\
-	beagle-status
+	beagle-status		\
+	blocate
 
 BIN_WRAPPERS = $(BUILT_WRAPPERS) $(PREBUILT_WRAPPERS)
 
@@ -261,6 +262,7 @@ EXTRA_DIST =				\
 	beagle-index-info		\
 	beagle-ping			\
 	beagle-status			\
+	blocate				\
 	boot.inotify.init		\
 	beagle-settings.desktop.in.in
 
