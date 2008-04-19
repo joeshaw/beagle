@@ -1,3 +1,43 @@
+Version 0.3.6
+19 April 2008
+
+* Fix regression in 0.3.4 (content of Tomboy notes were not indexed). For bug-fix backports please merge r4656.
+
+* Use an icon from the Tomboy project for displaying note tiles in beagle-search. Package this icon with beagle-search.
+
+* Add a GMail and Google Apps email live search backend. See http://beagle-project.org/Live_GMail_Search for details. This does not index the emails itself but directly queries GMail. Apart from a limited functionality, this will also submit user queries to Google (note to people concerned with privacy). This backend can be packaged separately by bundling GoogleBackends.xml and GoogleBackends.dll. The backend is disabled by default.
+
+* Add option to store and retrieve GMail password from KDE Wallet.
+
+* Show query-domain selection menu in beagle-search. Replace "--network yes|no" with "--domain ..." options in beagle-query for full choice of query domains.
+
+* Update Firefox extension to Firefox 3.0.
+
+* Add a 'locate' based backend to supplement the FileSystem backend. If enabled, results from 'locate' will also be returned except the ones which are already returned by the FileSystem backend. The FileSystem backend also has to be enabled for this backend to work. This is only meant to be used when FileSystem backend is still crawling or if results from the entire file system is desired; due to several limitation in locate itself and in this backend, this backend is disabled by default.
+
+* Update F-Spot files from latest F-Spot svn trunk. Update the JPEG filter to use the managed Tiff parser instead of libexif. Drop libexif dependency.
+
+* Display network search related options in beagle-settings.
+
+* Fix the network-service backend.
+
+* Catch the galago dllnotfoundexception and prevent a crash (relevant for Debian libgalago1.0-cil package).
+
+* Add 'blocate' - a 'locate' like tool to query static indexes without running beagled. It is a wrapper to beagle-static-query and can be configured using blocate.conf (globally at /etc/beagle and locally at ~/.beagle/config). blocate and beagle-update-index form the beagle powered replacement for locate and updatedb.
+
+* Translations:
+ - Japanese (Takeshi AIHANA)
+ - Spanish (Jorge Gonzalez)
+ - Brazilian Portuguese (Igor Soares)
+ - Swedish (Daniel Nylander)
+
+Contributors to this release: Debajyoti Bera, Filia Tao, Nirbheek Chauhan
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_6/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.5
 1 April 2008
 

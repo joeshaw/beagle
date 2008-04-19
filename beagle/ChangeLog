@@ -1,4 +1,582 @@
 ------------------------------------------------------------------------
+r4723 | jorgegonz | 2008-04-19 05:39:28 -0400 (Sat, 19 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4722 | dbera | 2008-04-18 17:52:23 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+
+Replace a Hashtable by an enum ... right, such magic can only be seen @dBera.
+
+------------------------------------------------------------------------
+r4721 | dbera | 2008-04-18 17:51:37 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/conf-data/config-files/Daemon.xml
+   M /trunk/beagle/configure.in
+
+Enable googlebackends by default during building but disable the backend by default in the conf-file.
+
+------------------------------------------------------------------------
+r4720 | dbera | 2008-04-18 17:40:02 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/conf-data/Makefile.am
+   A /trunk/beagle/conf-data/blocate.conf
+   M /trunk/beagle/tools/Makefile.am
+   A /trunk/beagle/tools/blocate
+
+Add 'blocate' - beagle powered locate, a wrapper over beagle-static-query. From Nirbheek Chauhan. It uses a global config file /etc/beagle/blocate.conf overriden by the users ~/.beagle/config/blocate.conf
+
+------------------------------------------------------------------------
+r4719 | dbera | 2008-04-18 14:41:32 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Galago.cs
+
+Catch Debian packaging bug of libgalago1.0-cil (they need to package the galago.dll.config file - its open for more than a year now).
+
+------------------------------------------------------------------------
+r4718 | dbera | 2008-04-18 12:50:56 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+
+Fix make distcheck.
+
+------------------------------------------------------------------------
+r4717 | dbera | 2008-04-18 12:48:58 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Show the search-domain menu always (and not only when EnableAvahi is set). Implement domain selection (ugly, needs work) in beagle-search.
+
+------------------------------------------------------------------------
+r4716 | dbera | 2008-04-18 12:47:23 -0400 (Fri, 18 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/NetworkServicesQueryable/HttpTransport.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/NetworkServicesQueryable.cs
+
+* HttpTransport.cs: Fix a bug in SendAsyncBlocking (check 0xff for end-of-message byte). Add an ENABLE_XML_DUMP debug block to HttpTransport.
+* NetworkServicesQueryable.cs: Redo the querying remote beagled part using SendAsyncBlocking; the earlier way was at best hackish and led to all sorts of deadlocks.
+
+------------------------------------------------------------------------
+r4715 | dbera | 2008-04-18 11:41:47 -0400 (Fri, 18 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Rescue the networkservice options from the clutches of ENABLE_AVAHI. Only the Avahi specific settings should be disabled if avahi is not enabled at build time.
+Also disable the networkservices password fields since they are currently not used and will only cause misconception.
+
+------------------------------------------------------------------------
+r4714 | dbera | 2008-04-18 11:05:17 -0400 (Fri, 18 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LocateQueryable/LocateDriver.cs
+
+Fix an earlier logic error: correctly determine if the query has only one text querypart since that is what locate wants.
+
+------------------------------------------------------------------------
+r4713 | dnylande | 2008-04-15 16:43:00 -0400 (Tue, 15 Apr 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+Updated Swedish translation
+------------------------------------------------------------------------
+r4711 | dbera | 2008-04-13 19:20:26 -0400 (Sun, 13 Apr 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   A /trunk/beagle/Util/Util.dll.config (from /trunk/beagle/Util/Util.dll.config.in:4694)
+   D /trunk/beagle/Util/Util.dll.config.in
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/firefox-extension/Makefile.am
+   M /trunk/beagle/po/POTFILES.skip
+
+* Remove libexif from our dependency. So we also do not need to generate Util.dll.config from the .in file any more.
+* Add the new F-Spot files to POTFILE.skip.
+* Add a missing file to extra-dist in firefox-extension.
+
+------------------------------------------------------------------------
+r4710 | dbera | 2008-04-13 18:44:56 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterJpeg.cs
+
+Catch more exceptions for photos with bad datetime values.
+
+------------------------------------------------------------------------
+r4709 | dbera | 2008-04-13 18:38:00 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterJpeg.cs
+
+Add a new Jpeg Filter based on the managed Tiff parser in F-Spot (yes yes, we bypassed libexif). The filter passes the test for the images in the testsuite/files directory but more testing would be nice (hint hint ;-).
+
+------------------------------------------------------------------------
+r4708 | dbera | 2008-04-13 16:36:36 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterBmp.cs
+   M /trunk/beagle/Filters/FilterGif.cs
+   M /trunk/beagle/Filters/FilterImage.cs
+   M /trunk/beagle/Filters/FilterJpeg.cs
+   M /trunk/beagle/Filters/FilterPdf.cs
+   M /trunk/beagle/Filters/FilterPng.cs
+   M /trunk/beagle/Filters/FilterTiff.cs
+
+Update the namespace and other minor changes wrt the new F-Spot code.
+
+------------------------------------------------------------------------
+r4707 | dbera | 2008-04-13 16:34:58 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/MetadataStore.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/11-add-cc-namespace.diff
+
+Merge svn r3993.
+
+------------------------------------------------------------------------
+r4706 | dbera | 2008-04-13 16:22:47 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/Exif.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/10-exitutil-public.diff
+
+Add another patch needed for our filters.
+
+------------------------------------------------------------------------
+r4705 | dbera | 2008-04-13 16:18:13 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/09-jfif.diff
+
+Add old 03-jfif.diff
+
+------------------------------------------------------------------------
+r4704 | dbera | 2008-04-13 16:01:31 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/Exif.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/08-exif-timestamp-local.diff
+
+Import old 08-exif-timestamp-local.diff
+
+------------------------------------------------------------------------
+r4703 | dbera | 2008-04-13 15:59:10 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/Bim.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/Ciff.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/DCRawFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/Exif.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/ImageFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/MrwFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/PngFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/PnmFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/RafFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/SvgFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/Tiff.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/XmpFile.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/07-debug-message.diff
+
+Remove debug messages and redirect some error messages to beagle logger.
+
+------------------------------------------------------------------------
+r4702 | dbera | 2008-04-13 15:46:22 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/Exif.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/06-bad-jpeg.diff
+
+Import old 06-bad-jpeg.diff
+
+------------------------------------------------------------------------
+r4701 | dbera | 2008-04-13 15:42:45 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/05-bim-PHUT.diff
+
+Import old 05-bim-PHUT.diff 
+
+------------------------------------------------------------------------
+r4700 | dbera | 2008-04-13 15:40:21 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/04-iptc-crasher-fix.diff
+
+Import old 04-iptc-crasher-fix.diff
+
+------------------------------------------------------------------------
+r4699 | dbera | 2008-04-13 15:35:26 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/IptcFile.cs
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/03-iptc.diff
+
+Import 02-iptc.diff.
+
+------------------------------------------------------------------------
+r4698 | dbera | 2008-04-13 15:29:23 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/upstream-changes/02-license.diff
+
+License change as requested by Novell.
+
+------------------------------------------------------------------------
+r4697 | dbera | 2008-04-13 15:27:49 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/F-Spot/upstream-changes/01-initial-diff-r3823.diff
+
+Oops. Diff was generated in the reverse direction. Generate the right diff.
+
+------------------------------------------------------------------------
+r4696 | dbera | 2008-04-13 15:18:35 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/Util/F-Spot
+   A /trunk/beagle/Util/F-Spot/BitConverter.cs
+   A /trunk/beagle/Util/F-Spot/Imaging
+   A /trunk/beagle/Util/F-Spot/Imaging/Bim.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/Ciff.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/DCRawFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/Exif.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/ImageFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/IptcFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/JpegFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/JpegHeader.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/JpegUtils.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/MrwFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/OrderedWriter.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/PngFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/PnmFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/RafFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/SvgFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/Tiff.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/X3fFile.cs
+   A /trunk/beagle/Util/F-Spot/Imaging/XmpFile.cs
+   A /trunk/beagle/Util/F-Spot/MetadataStore.cs
+   A /trunk/beagle/Util/F-Spot/PixbufUtils.cs
+   A /trunk/beagle/Util/F-Spot/README
+   A /trunk/beagle/Util/F-Spot/upstream-changes
+   A /trunk/beagle/Util/F-Spot/upstream-changes/01-initial-diff-r3823.diff
+
+Import F-Spot files from r3823.
+
+------------------------------------------------------------------------
+r4695 | dbera | 2008-04-13 15:17:11 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/Util/F-Spot
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/OperaHistory.cs
+
+Remove old F-Spot files. These are more than 2 years old. New ones are coming.
+
+------------------------------------------------------------------------
+r4694 | dbera | 2008-04-13 10:53:48 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/KdeUtils.cs
+
+Add utility method to save gmail-backend password to KDE Wallet. This will be used by beagle-settings[-qt].
+
+------------------------------------------------------------------------
+r4693 | dbera | 2008-04-13 10:42:50 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Mark the backend descriptions in the backend chooser for translation.
+
+------------------------------------------------------------------------
+r4692 | dbera | 2008-04-13 10:21:34 -0400 (Sun, 13 Apr 2008) | 9 lines
+Changed paths:
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   A /trunk/beagle/beagled/LocateQueryable
+   A /trunk/beagle/beagled/LocateQueryable/LocateDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/conf-data/config-files/Daemon.xml
+   M /trunk/beagle/tools/Settings.cs
+
+Users are treating beagle as a replacement to locate, which is not how I see it. Nevertheless, to not disappoint anybody here is a locate based backend.
+* Disabled by default (obviously, since I dont support this idea). Enable using beagle-config/beagle-settings.
+* Does not support searching for multiple words (because locate does not support our AND style queries).
+* Results are not sorted by date.
+* locate freaks out if asked to return results from non-hidden paths; so we prune them later. As a result, if the first 200 (double of MaxHits) paths returned are from a hidden path, no result is returned. Go and buy a book on locate, shell and regular expressions in that case :)
+* Its a supplementary backend i.e. will return results in _addition_ to the FileSystem backend. If you really really really want to use this backend without the FSQ, set FSQ to not index anything and pass --indexing-delay -1 to beagled (i.e. keep the FSQ backend enabled, but not let it return anything).
+
+All of the above are hints that you should use only one of beagle or locate. Peace!
+
+------------------------------------------------------------------------
+r4691 | dbera | 2008-04-13 08:00:00 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/QueryDriver.cs
+
+Also list the parent backend for dependent backends.
+
+------------------------------------------------------------------------
+r4690 | dbera | 2008-04-13 07:37:50 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/beagled/GMailSearchDriver.cs
+   A /trunk/beagle/beagled/GoogleBackends
+   A /trunk/beagle/beagled/GoogleBackends/GMailSearchDriver.cs (from /trunk/beagle/beagled/GMailSearchDriver.cs:4687)
+   M /trunk/beagle/beagled/Makefile.am
+
+Move GMailSearchDriver to a GoogleBackends directory. This directory is getting too cluttered!
+
+------------------------------------------------------------------------
+r4687 | nirbheekc | 2008-04-12 19:08:46 -0400 (Sat, 12 Apr 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+r4685 broke the command line args in beagle-settings since Settings.cs:ParseArgs was directly referencing the Page number.
+
+Fix the page number, and also add a command line argument for --backends
+
+
+------------------------------------------------------------------------
+r4686 | dbera | 2008-04-12 18:41:01 -0400 (Sat, 12 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/INSTALL
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/Note.cs
+   M /trunk/beagle/search/Makefile.am
+   A /trunk/beagle/search/icons
+   A /trunk/beagle/search/icons/Makefile.am
+   A /trunk/beagle/search/icons/hicolor_apps_16x16_tomboy.png
+   A /trunk/beagle/search/icons/hicolor_apps_16x16_tomboy.xcf.bz2
+   A /trunk/beagle/search/icons/hicolor_apps_22x22_tomboy.png
+   A /trunk/beagle/search/icons/hicolor_apps_22x22_tomboy.xcf.bz2
+   A /trunk/beagle/search/icons/hicolor_apps_24x24_tomboy.png
+   A /trunk/beagle/search/icons/hicolor_apps_32x32_tomboy.png
+   A /trunk/beagle/search/icons/hicolor_apps_48x48_tomboy.png
+   A /trunk/beagle/search/icons/hicolor_apps_scalable_tomboy.svg
+
+Add a custom icon for note (stolen from Tomboy, yet again ... thanks Tomboy).
+
+------------------------------------------------------------------------
+r4685 | nirbheekc | 2008-04-12 18:23:48 -0400 (Sat, 12 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/settings.glade
+
+beagle-settings: Interchange the positions of the "Backends" and "Networking" tabs, moving the "Networking" tab to the end
+
+------------------------------------------------------------------------
+r4684 | leonardof | 2008-04-12 17:38:01 -0400 (Sat, 12 Apr 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2008-04-12  Leonardo Ferreira Fontenelle  <leonardof@svn.gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation by Igor Pires
+	Soares.
+
+------------------------------------------------------------------------
+r4683 | dbera | 2008-04-11 15:41:09 -0400 (Fri, 11 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/Makefile.am
+   M /trunk/beagle/firefox-extension/README
+   D /trunk/beagle/firefox-extension/install.rdf
+   A /trunk/beagle/firefox-extension/install.rdf.in (from /trunk/beagle/firefox-extension/install.rdf:4682)
+
+Update the extension version and add a sed rule to generate the install.rdf using the right version. The same need to be done if we decide to use an update URL later.
+
+------------------------------------------------------------------------
+r4682 | dbera | 2008-04-10 11:35:43 -0400 (Thu, 10 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/GMailSearchDriver.cs
+   M /trunk/beagle/conf-data/config-files/GoogleBackends.xml
+
+Add support for Google Apps gmail account. Use config option GoogleAppDomainName to set your domain name and off you go!
+
+------------------------------------------------------------------------
+r4681 | dbera | 2008-04-10 09:58:39 -0400 (Thu, 10 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.xul
+   M /trunk/beagle/firefox-extension/install.rdf
+
+Treat these xml files as text files and provide diff options.
+
+------------------------------------------------------------------------
+r4680 | taofei | 2008-04-10 09:36:28 -0400 (Thu, 10 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/Makefile.am
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.xul
+   M /trunk/beagle/firefox-extension/chrome/content/indexBookmark3.js
+   M /trunk/beagle/firefox-extension/install.rdf
+
+Load differen't script for different firefox version (indexBookmark.js and indexBookmark3.js)
+It should work for both firefox 2 and firefox 3
+
+------------------------------------------------------------------------
+r4679 | taofei | 2008-04-10 09:01:42 -0400 (Thu, 10 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/indexBookmark3.js
+
+It works for firefox 3 
+Need to find a way to make it work for both firefox 2 and firefox 3
+
+------------------------------------------------------------------------
+r4678 | dbera | 2008-04-09 22:20:09 -0400 (Wed, 09 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Do not search in global querydomain by default. Opt-in is the policy for searches to go out of this computer.
+
+------------------------------------------------------------------------
+r4677 | taofei | 2008-04-09 09:28:40 -0400 (Wed, 09 Apr 2008) | 4 lines
+Changed paths:
+   A /trunk/beagle/firefox-extension/chrome/content/indexBookmark3.js
+
+add indexBookmark3.js 
+It is for bookmark index in firefox 3.
+NOT ENOUGH TEST YET
+
+------------------------------------------------------------------------
+r4673 | dbera | 2008-04-07 20:22:20 -0400 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/GMailSearchDriver.cs
+
+Use the https:// url to open gmail hits.
+
+------------------------------------------------------------------------
+r4672 | dbera | 2008-04-07 19:50:42 -0400 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+
+Remove irritating debug message.
+
+------------------------------------------------------------------------
+r4671 | dbera | 2008-04-07 19:49:35 -0400 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/GMailSearchDriver.cs
+   M /trunk/beagle/conf-data/config-files/GoogleBackends.xml
+
+Remove the GMailSearchEnabled config option. GMailSearch is a backends and the usual process to enable/disable backends should be followed.
+
+------------------------------------------------------------------------
+r4670 | dbera | 2008-04-07 19:38:47 -0400 (Mon, 07 Apr 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Query.cs
+   M /trunk/beagle/tools/Query.cs
+
+* Add a QueryDomain.All as a shortcut for all the QueryDomains.
+* Replace beagle-query option "--network yes|no" with a proper "--domain ..." with full choice to specify domains.
+
+
+------------------------------------------------------------------------
+r4669 | jorgegonz | 2008-04-07 16:54:02 -0400 (Mon, 07 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4664 | dbera | 2008-04-06 21:39:35 -0400 (Sun, 06 Apr 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/Util/SemWeb/upstream-change-01.diff
+
+Missed this one earlier too.
+
+------------------------------------------------------------------------
+r4663 | dbera | 2008-04-06 21:35:06 -0400 (Sun, 06 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/COPYING
+   A /trunk/beagle/beagled/xemail-net
+   A /trunk/beagle/beagled/xemail-net/README
+   A /trunk/beagle/beagled/xemail-net/src
+   A /trunk/beagle/beagled/xemail-net/src/AssemblyInfo.cs.in
+   A /trunk/beagle/beagled/xemail-net/src/Attachment.cs
+   A /trunk/beagle/beagled/xemail-net/src/AttachmentCollections.cs
+   A /trunk/beagle/beagled/xemail-net/src/Flag.cs
+   A /trunk/beagle/beagled/xemail-net/src/FlagCollection.cs
+   A /trunk/beagle/beagled/xemail-net/src/HMACMD5.cs
+   A /trunk/beagle/beagled/xemail-net/src/ImapClient.cs
+   A /trunk/beagle/beagled/xemail-net/src/Mail.cs
+   A /trunk/beagle/beagled/xemail-net/src/MailCollection.cs
+   A /trunk/beagle/beagled/xemail-net/src/Mailbox.cs
+   A /trunk/beagle/beagled/xemail-net/src/MailboxCollection.cs
+   A /trunk/beagle/beagled/xemail-net/src/Makefile.am
+   A /trunk/beagle/beagled/xemail-net/src/MessageSet.cs
+   A /trunk/beagle/beagled/xemail-net/src/Namespace.cs
+   A /trunk/beagle/beagled/xemail-net/src/Quota.cs
+   A /trunk/beagle/beagled/xemail-net/src/xemail.snk
+   A /trunk/beagle/beagled/xemail-net/upstream-patches
+   A /trunk/beagle/beagled/xemail-net/upstream-patches/01.patch
+
+Forgot to add the xemail files needed for the GMail backend.
+
+------------------------------------------------------------------------
+r4662 | dbera | 2008-04-06 20:12:37 -0400 (Sun, 06 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/GMailSearchDriver.cs
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+   M /trunk/beagle/search/Makefile.am
+
+Show the query domain menu in beagle-search if built with GoogleBackends enabled (GMailDriver works in QueryDomain.Global).
+Email tiles use fixme:date for message date instead of timestamp, so set a fixme:date property for GMail hits.
+
+------------------------------------------------------------------------
+r4660 | dbera | 2008-04-06 11:51:30 -0400 (Sun, 06 Apr 2008) | 8 lines
+Changed paths:
+   M /trunk/beagle/Util/KdeUtils.cs
+   A /trunk/beagle/beagled/GMailSearchDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/conf-data/Makefile.am
+   A /trunk/beagle/conf-data/config-files/GoogleBackends.xml
+   M /trunk/beagle/configure.in
+
+Add a GMail live search backend
+* very simple, uses IMAP search protocol
+* account information is stored in the config files ($ beagle-config GoogleBackends)
+* password can be stored as plaintext in the config-file or in KDE keyring as "Password" in a folder called "beagle" (gnome-keyring not yet supported since we dont want to depend on Gnome or X)
+* KdeUtils.cs: Add a mathod to get password from KDE Wallet; this could be useful in the future too when we deal with other protected resources
+* These are plugins so GoogleBackends.dll and GoogleBackends.xml can be packaged separately and just dropped in the right places.
+* Fully backward compatible till 0.3.0 (except the KDE wallet feature, which needs the current Util.dll)
+
+------------------------------------------------------------------------
+r4658 | nirbheekc | 2008-04-05 10:21:23 -0400 (Sat, 05 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Note.cs
+
+The current icon used in beagle-search for Tomboy notes (tomboy-note) doesn't work, and there's no standard icon for notes specified in the Freedesktop Icon Naming Spec. 
+So we'll use "emblem-note" instead which is fairly common among icon themes.
+
+------------------------------------------------------------------------
+r4656 | dbera | 2008-04-04 19:49:49 -0400 (Fri, 04 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/FilterFactory.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+
+Fix a bug uncovered by r4609 - if Indexable.AlreadyFiltered is set, then indexing should continue.
+Cleanup the relevant code a bit. NoContent is now only set in LuceneIndexingDriver. FilterFactory merely decides whether the content needs a filter or not.
+
+------------------------------------------------------------------------
+r4654 | aihana | 2008-04-04 10:55:03 -0400 (Fri, 04 Apr 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ja.po
+
+2008-04-04  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+        * ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r4651 | dbera | 2008-04-01 14:56:39 -0400 (Tue, 01 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/configure.in
+
+Okkkayy... 0.3.5 it is.
+
+------------------------------------------------------------------------
+r4650 | dbera | 2008-04-01 14:25:24 -0400 (Tue, 01 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/configure.in
+
+Up version to 0.3.4.1 and update changelog.
+
+------------------------------------------------------------------------
 r4649 | dbera | 2008-04-01 14:06:11 -0400 (Tue, 01 Apr 2008) | 3 lines
 Changed paths:
    M /trunk/beagle/search/Beagle.Search/Search.cs
