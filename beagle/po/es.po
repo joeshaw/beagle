@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-07 01:12+0100\n"
-"PO-Revision-Date: 2008-04-07 22:29+0200\n"
+"POT-Creation-Date: 2008-04-13 15:43+0100\n"
+"PO-Revision-Date: 2008-04-19 11:39+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -278,7 +278,7 @@ msgstr "Dentro del archivo {0}"
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
 #: ../search/Beagle.Search.Tiles/Calendar.cs:44
 #: ../search/Beagle.Search.Tiles/File.cs:176
-#: ../search/Beagle.Search.Tiles/Note.cs:73
+#: ../search/Beagle.Search.Tiles/Note.cs:70
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
 #: ../search/Beagle.Search.Tiles/Task.cs:41
 #: ../search/Beagle.Search.Tiles/WebHistory.cs:59
@@ -358,7 +358,7 @@ msgstr "Buscar documentos del mismo autor"
 
 #: ../search/Beagle.Search.Tiles/File.cs:177
 #: ../search/Beagle.Search.Tiles/Folder.cs:51
-#: ../search/Beagle.Search.Tiles/Note.cs:74
+#: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
@@ -419,7 +419,7 @@ msgid "Set as Wallpaper"
 msgstr "Poner como tapiz"
 
 #: ../search/Beagle.Search.Tiles/Image.cs:84
-#: ../search/Beagle.Search.Tiles/Note.cs:78
+#: ../search/Beagle.Search.Tiles/Note.cs:75
 msgid "Tags:"
 msgstr "Etiquetas:"
 
@@ -1088,11 +1088,11 @@ msgstr "Búsqueda"
 msgid "Search for data on your desktop"
 msgstr "Buscar datos en el escritorio"
 
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:349
 msgid "Reload configuration"
 msgstr "Recargar la configuración"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:350
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1101,15 +1101,15 @@ msgstr ""
 "descartar los valores mostrados actualmente y recargar la configuración "
 "desde el disco?"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:484
 msgid "Select Path"
 msgstr "Seleccione una ruta"
 
-#: ../tools/Settings.cs:500
+#: ../tools/Settings.cs:503
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:506
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1117,15 +1117,15 @@ msgstr ""
 "La ruta seleccionada no se ha añadido. La lista contiene elementos que la "
 "incluyen y los datos ya están siendo indexados."
 
-#: ../tools/Settings.cs:514
+#: ../tools/Settings.cs:517
 msgid "Path not added"
 msgstr "La ruta no se ha añadido"
 
-#: ../tools/Settings.cs:523
+#: ../tools/Settings.cs:526
 msgid "Remove obsolete paths"
 msgstr "Quitar rutas obsoletas"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:527
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1134,11 +1134,11 @@ msgstr ""
 "existentes. Esto causará que las rutas obsoletas se eliminen. ¿Aún desea "
 "añadir esta ruta?"
 
-#: ../tools/Settings.cs:550
+#: ../tools/Settings.cs:553
 msgid "Remove path"
 msgstr "Quitar ruta"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:554
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1146,11 +1146,11 @@ msgstr ""
 "¿Seguro que quiere quitar esta ruta de la lista de directorios que se "
 "excluirán de la indexación?"
 
-#: ../tools/Settings.cs:580
+#: ../tools/Settings.cs:583
 msgid "Remove item"
 msgstr "Quitar elemento"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:584
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1158,68 +1158,68 @@ msgstr ""
 "¿Seguro que quiere quitar este elemento de la lista de datos que se van a "
 "excluir de la indexación?"
 
-#: ../tools/Settings.cs:628
+#: ../tools/Settings.cs:631
 msgid "Remote host already present in the list."
 msgstr "El equipo remoto ya está en la lista."
 
-#: ../tools/Settings.cs:638
-msgid "Netbeagle Node not added"
-msgstr "No se añadió el nodo de Netbeagle"
+#: ../tools/Settings.cs:641
+msgid "Remote beagle host not added"
+msgstr "No se ha añadido el anfitrión remoto de Beagle"
 
-#: ../tools/Settings.cs:653
+#: ../tools/Settings.cs:656
 msgid "Remove host"
 msgstr "Quitar equipo"
 
-#: ../tools/Settings.cs:654
+#: ../tools/Settings.cs:657
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere eliminar este equipo de la lista?"
 
-#: ../tools/Settings.cs:713 ../tools/Settings.cs:802 ../tools/Settings.cs:883
-#: ../tools/Settings.cs:988 ../tools/Settings.cs:1632
+#: ../tools/Settings.cs:716 ../tools/Settings.cs:805 ../tools/Settings.cs:886
+#: ../tools/Settings.cs:991 ../tools/Settings.cs:1637
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:796
+#: ../tools/Settings.cs:799
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:849
+#: ../tools/Settings.cs:852
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:855
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:855
+#: ../tools/Settings.cs:858
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:890
+#: ../tools/Settings.cs:893
 msgid "Address"
 msgstr "Dirección"
 
-#: ../tools/Settings.cs:1235
+#: ../tools/Settings.cs:1238
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1261 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1264 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:1266
+#: ../tools/Settings.cs:1269
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:1271
+#: ../tools/Settings.cs:1274
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:1295
+#: ../tools/Settings.cs:1298
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1296
+#: ../tools/Settings.cs:1299
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1227,12 +1227,121 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1337
+#: ../tools/Settings.cs:1340
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Conectándose a {0}"
 
-#: ../tools/Settings.cs:1633
+#: ../tools/Settings.cs:1597
+msgid "Evolution's mail."
+msgstr "Correo-e de Evolution."
+
+#: ../tools/Settings.cs:1598
+msgid "Evolution's address book, memos and tasks."
+msgstr "Libreta de direcciones, notas y tareas de Evolution."
+
+#: ../tools/Settings.cs:1599
+msgid "Thunderbird's email."
+msgstr "Correo-e de Thunderbird."
+
+#: ../tools/Settings.cs:1600
+msgid "RSS feeds from Akregator."
+msgstr "Fuentes RSS de Akregator."
+
+#: ../tools/Settings.cs:1601
+msgid "RSS feeds from Blam."
+msgstr "Fuentes RSS de Blam."
+
+#: ../tools/Settings.cs:1602
+msgid "Files and folders on the local file system."
+msgstr "Archivos y carpetas en el sistema de archivos local."
+
+#: ../tools/Settings.cs:1603
+msgid "Mail messages from KMail."
+msgstr "Mensajes de correo de KMail."
+
+#: ../tools/Settings.cs:1604
+msgid "Notes from KNotes."
+msgstr "Notas de KNotes."
+
+#: ../tools/Settings.cs:1605
+msgid "Agenda from KOrganizer."
+msgstr "Agenda de KOrganizer."
+
+#: ../tools/Settings.cs:1606
+msgid "Contacts from KAddressBook."
+msgstr "Contactos de KAdressBook."
+
+#: ../tools/Settings.cs:1607
+msgid "Konqueror's bookmarks."
+msgstr "Marcadores de Konqueror."
+
+#: ../tools/Settings.cs:1608
+msgid "Konqueror's history."
+msgstr "Histórico de Konqueror."
+
+#: ../tools/Settings.cs:1609
+msgid "IMs and chats from Konversation."
+msgstr "Mensajes instantáneos y chats de Konversation."
+
+#: ../tools/Settings.cs:1610
+msgid "IMs and chats from Kopete"
+msgstr "Mensajes instantáneos y chats de Kopete."
+
+#: ../tools/Settings.cs:1611
+msgid "Mind-maps from Labyrinth."
+msgstr "Mapas mentales de Labyrinth."
+
+#: ../tools/Settings.cs:1612
+msgid "RSS feeds from Liferea."
+msgstr "Fuentes RSS de Liferea."
+
+#: ../tools/Settings.cs:1613
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Metadatos de Nautilus (emblemas, notas, etc.)"
+
+#: ../tools/Settings.cs:1614
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Buscar en otros servicios de la red (EXPÊRIMENTAL)"
+
+#: ../tools/Settings.cs:1615
+msgid "Opera's bookmarks and browsing history."
+msgstr "Marcadores e histórico de Opera."
+
+#: ../tools/Settings.cs:1616
+msgid "IMs and chats from Pidgin."
+msgstr "Mensajes instantáneos y chats de Pidgin."
+
+#: ../tools/Settings.cs:1617
+msgid "Notes from Tomboy."
+msgstr "Notas de Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1619
+msgid "(System) Applications"
+msgstr "(Sistema) aplicaciones"
+
+#: ../tools/Settings.cs:1620
+msgid "(System) Help files"
+msgstr "(Sistema) archivos de ayuda"
+
+#: ../tools/Settings.cs:1621
+msgid "(System) Manual pages"
+msgstr "(Sistema) páginas del manual"
+
+#: ../tools/Settings.cs:1622
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "(Sistema) resultados de la búsqueda complementaria usando el comando «locate»"
+
+#: ../tools/Settings.cs:1623
+msgid "(System) Mono documentation"
+msgstr "(Sistema) documentación de Mono"
+
+#: ../tools/Settings.cs:1624
+msgid "(System) Files from Windows' partition"
+msgstr "(Sistema) archivos de la partición Windows"
+
+#: ../tools/Settings.cs:1638
 msgid "Description"
 msgstr "Descripción"
 
