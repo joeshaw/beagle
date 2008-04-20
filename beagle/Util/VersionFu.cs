@@ -33,7 +33,7 @@ namespace Beagle.Util {
 	
 	public static class VersionFu {
 		
-		const string DefaultCopyright = "Copyright (C) 2004-2007 Novell, Inc.";
+		const string DefaultCopyright = "Copyright (C) 2004-2008 Novell, Inc. and others";
 
 		public static void PrintHeader (Assembly a)
 		{
