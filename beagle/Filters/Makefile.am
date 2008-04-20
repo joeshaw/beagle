@@ -18,8 +18,6 @@ HAP_CSFILES =						\
 	$(srcdir)/HtmlAgilityPack/MixedCodeDocument.cs	\
 	$(srcdir)/HtmlAgilityPack/tools.cs
 
-include TagLib/TagLib.sources
-
 include 7zip/7zip.sources
 
 # Local copy of http://svn.myrealbox.com/viewcvs/trunk/mcs/class/Managed.Windows.Forms/System.Windows.Forms.RTF/
@@ -115,6 +113,8 @@ CSFILES = 				\
 	$(srcdir)/FilterVideo.cs	\
 	$(srcdir)/FilterXslt.cs
 
+########################################################
+
 if ENABLE_GSF_SHARP
 CSFILES += 				\
 	$(srcdir)/FilterOle.cs		\
@@ -126,11 +126,21 @@ CSFILES += \
 endif
 endif
 
+COND_CS_FILES = \
+	$(srcdir)/FilterOle.cs		\
+	$(srcdir)/FilterPPT.cs		\
+	$(srcdir)/FilterDOC.cs
+
+########################################################
+
 if HAS_LIBCHM
 CSFILES += 				\
 	$(srcdir)/FilterChm.cs
 endif
 
+COND_CS_FILES += $(srcdir)/FilterChm.cs
+
+########################################################
 
 LOCAL_ASSEMBLIES =				\
 	../Util/Util.dll			\
@@ -144,13 +154,21 @@ ASSEMBLIES =				\
 	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
 
-RESOURCES =
+########################################################
+
+include TagLib/TagLib.sources
 
 if INTERNAL_TAGLIB
 CSFILES += $(TAGLIB_CSFILES)
 else
 ASSEMBLIES += $(TAGLIB_SHARP_LIBS)
 endif
+
+COND_CS_FILES += $(TAGLIB_CSFILES)
+
+########################################################
+
+RESOURCES =
 
 $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES)
 	$(CSC) -out:$@ $(CSFLAGS) $(CSFILES) $(ASSEMBLIES) $(RESOURCES)
@@ -164,12 +182,6 @@ install-data-local: $(TARGET)
 uninstall-local:
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET)
 	rm -f $(DESTDIR)$(FILTERDIR)/$(TARGET).mdb
-
-COND_CS_FILES = \
-	$(srcdir)/FilterOle.cs		\
-	$(srcdir)/FilterPPT.cs		\
-	$(srcdir)/FilterDOC.cs		\
-	$(srcdir)/FilterChm.cs
 
 EXTRA_DIST =			\
 	$(CSFILES)		\
