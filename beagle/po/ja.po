@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-04 23:41+0900\n"
-"PO-Revision-Date: 2008-04-04 23:40+0900\n"
+"POT-Creation-Date: 2008-04-20 11:18+0900\n"
+"PO-Revision-Date: 2008-04-20 11:15+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <takeshi.aihana@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -274,7 +274,7 @@ msgstr "書庫 {0} の中身"
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
 #: ../search/Beagle.Search.Tiles/Calendar.cs:44
 #: ../search/Beagle.Search.Tiles/File.cs:176
-#: ../search/Beagle.Search.Tiles/Note.cs:73
+#: ../search/Beagle.Search.Tiles/Note.cs:70
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
 #: ../search/Beagle.Search.Tiles/Task.cs:41
 #: ../search/Beagle.Search.Tiles/WebHistory.cs:59
@@ -354,7 +354,7 @@ msgstr "同じ作者のドキュメントを検索する"
 
 #: ../search/Beagle.Search.Tiles/File.cs:177
 #: ../search/Beagle.Search.Tiles/Folder.cs:51
-#: ../search/Beagle.Search.Tiles/Note.cs:74
+#: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "最終変更日時:"
 
@@ -415,7 +415,7 @@ msgid "Set as Wallpaper"
 msgstr "壁紙にセットする"
 
 #: ../search/Beagle.Search.Tiles/Image.cs:84
-#: ../search/Beagle.Search.Tiles/Note.cs:78
+#: ../search/Beagle.Search.Tiles/Note.cs:75
 msgid "Tags:"
 msgstr "タグ:"
 
@@ -610,7 +610,7 @@ msgstr "アクセスした日付:"
 
 #: ../search/Beagle.Search.Tray/TrayIcon.cs:33
 #: ../search/Beagle.Search/Search.cs:52
-#: ../search/Beagle.Search/SearchWindow.cs:65
+#: ../search/Beagle.Search/SearchWindow.cs:67
 msgid "Desktop Search"
 msgstr "デスクトップの検索"
 
@@ -646,40 +646,40 @@ msgstr "{0}-{1} / {2}"
 msgid "Hide"
 msgstr "隠す"
 
-#: ../search/Beagle.Search/SearchWindow.cs:85
+#: ../search/Beagle.Search/SearchWindow.cs:87
 msgid "_Find:"
 msgstr "検索(_F):"
 
-#: ../search/Beagle.Search/SearchWindow.cs:107
+#: ../search/Beagle.Search/SearchWindow.cs:109
 msgid "Find Now"
 msgstr "今すぐ見つける"
 
-#: ../search/Beagle.Search/SearchWindow.cs:170
+#: ../search/Beagle.Search/SearchWindow.cs:172
 msgid "Type in search terms"
 msgstr "検索する語句を入力して下さい"
 
-#: ../search/Beagle.Search/SearchWindow.cs:171
+#: ../search/Beagle.Search/SearchWindow.cs:173
 msgid "Start searching"
 msgstr "検索を開始します"
 
-#: ../search/Beagle.Search/SearchWindow.cs:186
+#: ../search/Beagle.Search/SearchWindow.cs:188
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "デスクトップの検索:  {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:440
+#: ../search/Beagle.Search/SearchWindow.cs:438
 msgid "There are computers near you running Beagle"
 msgstr "近くに Beagle を実行しているコンピュータがあります"
 
-#: ../search/Beagle.Search/SearchWindow.cs:441
+#: ../search/Beagle.Search/SearchWindow.cs:439
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "\"検索\" メニューから別のコンピュータを選択できます。"
 
-#: ../search/Beagle.Search/SearchWindow.cs:493
+#: ../search/Beagle.Search/SearchWindow.cs:491
 msgid "Your data is being indexed"
 msgstr "インデックスを作成しています"
 
-#: ../search/Beagle.Search/SearchWindow.cs:494
+#: ../search/Beagle.Search/SearchWindow.cs:492
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -687,14 +687,14 @@ msgstr ""
 "検索サービスはインデックスの作成中です。この作業が完了するまでは不完全な検索"
 "結果になるかもしれません。"
 
-#: ../search/Beagle.Search/SearchWindow.cs:520
+#: ../search/Beagle.Search/SearchWindow.cs:518
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "{0}個の結果を表示しています"
 msgstr[1] "{0}個の結果を全て表示しています"
 
-#: ../search/Beagle.Search/SearchWindow.cs:522
+#: ../search/Beagle.Search/SearchWindow.cs:520
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
@@ -1050,21 +1050,29 @@ msgstr "ローカル(_L)"
 
 #: ../search/Beagle.Search/UIManager.cs:230
 msgid "Search only on local computer"
-msgstr "ローカルのコンピュータからのみ検索します"
+msgstr "ローカルのコンピュータだけ検索します"
 
 #: ../search/Beagle.Search/UIManager.cs:234
+msgid "_Global"
+msgstr "グローバル(_G)"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search in internet services"
+msgstr "インターネット上のサービスを検索します"
+
+#: ../search/Beagle.Search/UIManager.cs:240
 msgid "_Neighborhood"
 msgstr "近く(_N)"
 
-#: ../search/Beagle.Search/UIManager.cs:236
+#: ../search/Beagle.Search/UIManager.cs:242
 msgid "Search on computers near me"
-msgstr "近くにあるコンピュータで検索します"
+msgstr "近くにあるコンピュータから検索します"
 
-#: ../search/Beagle.Search/UIManager.cs:244
+#: ../search/Beagle.Search/UIManager.cs:250
 msgid "Show Details"
 msgstr "詳細を表示する"
 
-#: ../search/Beagle.Search/UIManager.cs:366
+#: ../search/Beagle.Search/UIManager.cs:371
 msgid "Couldn't launch web browser"
 msgstr "ウェブ・ブラウザを起動できませんでした"
 
@@ -1076,11 +1084,11 @@ msgstr "検索"
 msgid "Search for data on your desktop"
 msgstr "デスクトップ上のデータを検索します"
 
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:345
 msgid "Reload configuration"
 msgstr "設定の再読込み"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:346
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1088,15 +1096,15 @@ msgstr ""
 "他のアプリケーションが設定ファイルを変更しました。現在表示している内容を破棄"
 "して、再び設定情報を読み直しますか？"
 
-#: ../tools/Settings.cs:481
+#: ../tools/Settings.cs:480
 msgid "Select Path"
 msgstr "パスの選択"
 
-#: ../tools/Settings.cs:500
+#: ../tools/Settings.cs:499
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr "指定したパスは既にインデックス作成の対象になっているので登録しません。"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:502
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1104,15 +1112,15 @@ msgstr ""
 "指定したパスを含んだアイテムがが既に登録され、そのインデックスが作成されてい"
 "るので、そのパスは登録しません。"
 
-#: ../tools/Settings.cs:514
+#: ../tools/Settings.cs:513
 msgid "Path not added"
 msgstr "パスを追加しませんでした"
 
-#: ../tools/Settings.cs:523
+#: ../tools/Settings.cs:522
 msgid "Remove obsolete paths"
 msgstr "古いパスの削除"
 
-#: ../tools/Settings.cs:524
+#: ../tools/Settings.cs:523
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1120,90 +1128,90 @@ msgstr ""
 "このパスを追加すると既に登録済みの古いパスを破棄することになります。それでも"
 "パスを追加しますか？"
 
-#: ../tools/Settings.cs:550
+#: ../tools/Settings.cs:549
 msgid "Remove path"
 msgstr "パスの削除"
 
-#: ../tools/Settings.cs:551
+#: ../tools/Settings.cs:550
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:580
+#: ../tools/Settings.cs:579
 msgid "Remove item"
 msgstr "アイテムの削除"
 
-#: ../tools/Settings.cs:581
+#: ../tools/Settings.cs:580
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 "本当に、このパスをインデックス作成の対象外一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:628
+#: ../tools/Settings.cs:627
 msgid "Remote host already present in the list."
 msgstr "既にリモートのホストが一覧の中にあります"
 
-#: ../tools/Settings.cs:638
-msgid "Netbeagle Node not added"
-msgstr "Netbeagle のノードを追加しません"
+#: ../tools/Settings.cs:637
+msgid "Remote beagle host not added"
+msgstr "リモートのホストが追加されていません"
 
-#: ../tools/Settings.cs:653
+#: ../tools/Settings.cs:652
 msgid "Remove host"
 msgstr "ホストの削除"
 
-#: ../tools/Settings.cs:654
+#: ../tools/Settings.cs:653
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "このホストを一覧から削除してもよろしいですか？"
 
-#: ../tools/Settings.cs:713 ../tools/Settings.cs:802 ../tools/Settings.cs:883
-#: ../tools/Settings.cs:988 ../tools/Settings.cs:1632
+#: ../tools/Settings.cs:709 ../tools/Settings.cs:798 ../tools/Settings.cs:879
+#: ../tools/Settings.cs:984 ../tools/Settings.cs:1629
 msgid "Name"
 msgstr "名前"
 
-#: ../tools/Settings.cs:796
+#: ../tools/Settings.cs:792
 msgid "Type"
 msgstr "種類"
 
-#: ../tools/Settings.cs:849
+#: ../tools/Settings.cs:845
 msgid "Path:"
 msgstr "パス名:"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:848
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../tools/Settings.cs:855
+#: ../tools/Settings.cs:851
 msgid "Mail folder:"
 msgstr "メール・フォルダ:"
 
-#: ../tools/Settings.cs:890
+#: ../tools/Settings.cs:886
 msgid "Address"
 msgstr "アドレス"
 
-#: ../tools/Settings.cs:1235
+#: ../tools/Settings.cs:1231
 msgid "Select Folder"
 msgstr "フォルダの選択"
 
-#: ../tools/Settings.cs:1261 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1257 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "パス名(_A):"
 
-#: ../tools/Settings.cs:1266
+#: ../tools/Settings.cs:1262
 msgid "M_ail folder:"
 msgstr "フォルダ(_A):"
 
-#: ../tools/Settings.cs:1271
+#: ../tools/Settings.cs:1267
 msgid "P_attern:"
 msgstr "パターン(_A):"
 
-#: ../tools/Settings.cs:1295
+#: ../tools/Settings.cs:1291
 msgid "Error adding path"
 msgstr "パス名を追加する際にエラーが発生しました"
 
-#: ../tools/Settings.cs:1296
+#: ../tools/Settings.cs:1292
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1211,12 +1219,121 @@ msgstr ""
 "指定したパスが見つからなかったので、インデックスの作成で除外するリソース一覧"
 "にパスを追加することができませんでした。"
 
-#: ../tools/Settings.cs:1337
+#: ../tools/Settings.cs:1330
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "{0} へ接続中"
 
-#: ../tools/Settings.cs:1633
+#: ../tools/Settings.cs:1589
+msgid "Evolution's mail."
+msgstr "Evolution のメール"
+
+#: ../tools/Settings.cs:1590
+msgid "Evolution's address book, memos and tasks."
+msgstr "Evolution の連絡先やメモやタスク"
+
+#: ../tools/Settings.cs:1591
+msgid "Thunderbird's email."
+msgstr "Thunderbird のメール"
+
+#: ../tools/Settings.cs:1592
+msgid "RSS feeds from Akregator."
+msgstr "RSS の配信元 (Akregator)"
+
+#: ../tools/Settings.cs:1593
+msgid "RSS feeds from Blam."
+msgstr "RSS の配信元 (Blam)"
+
+#: ../tools/Settings.cs:1594
+msgid "Files and folders on the local file system."
+msgstr "ローカルのファイルシステムにあるファイルやフォルダ"
+
+#: ../tools/Settings.cs:1595
+msgid "Mail messages from KMail."
+msgstr "KMail のメール"
+
+#: ../tools/Settings.cs:1596
+msgid "Notes from KNotes."
+msgstr "KNotes のメモ"
+
+#: ../tools/Settings.cs:1597
+msgid "Agenda from KOrganizer."
+msgstr "KOrganizer のアジェンダ"
+
+#: ../tools/Settings.cs:1598
+msgid "Contacts from KAddressBook."
+msgstr "KAddressBook の連絡先"
+
+#: ../tools/Settings.cs:1599
+msgid "Konqueror's bookmarks."
+msgstr "Konqueror のブックマーク"
+
+#: ../tools/Settings.cs:1600
+msgid "Konqueror's history."
+msgstr "Konqueror の履歴"
+
+#: ../tools/Settings.cs:1601
+msgid "IMs and chats from Konversation."
+msgstr "Konversation の IM とチャット"
+
+#: ../tools/Settings.cs:1602
+msgid "IMs and chats from Kopete"
+msgstr "Kopete の IM とチャット"
+
+#: ../tools/Settings.cs:1603
+msgid "Mind-maps from Labyrinth."
+msgstr "Labyrinth の Mind-maps"
+
+#: ../tools/Settings.cs:1604
+msgid "RSS feeds from Liferea."
+msgstr "RSS の配信元 (Liferea)"
+
+#: ../tools/Settings.cs:1605
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Nautilus のメタデータ (エンブレムやメモなど)"
+
+#: ../tools/Settings.cs:1606
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "ネットワーク上にある他の検索サービス (EXPERIMENTAL)"
+
+#: ../tools/Settings.cs:1607
+msgid "Opera's bookmarks and browsing history."
+msgstr "Opera のブックマークと履歴"
+
+#: ../tools/Settings.cs:1608
+msgid "IMs and chats from Pidgin."
+msgstr "Pidgin の IM とチャット"
+
+#: ../tools/Settings.cs:1609
+msgid "Notes from Tomboy."
+msgstr "Tomboy のメモ"
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1611
+msgid "(System) Applications"
+msgstr "(ローカル) アプリケーション"
+
+#: ../tools/Settings.cs:1612
+msgid "(System) Help files"
+msgstr "(ローカル) ヘルプ・ファイル"
+
+#: ../tools/Settings.cs:1613
+msgid "(System) Manual pages"
+msgstr "(ローカル) Man ページ"
+
+#: ../tools/Settings.cs:1614
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "(ローカル) 'locate' コマンドを用いた検索結果の補足"
+
+#: ../tools/Settings.cs:1615
+msgid "(System) Mono documentation"
+msgstr "(ローカル) Mono のドキュメント"
+
+#: ../tools/Settings.cs:1616
+msgid "(System) Files from Windows' partition"
+msgstr "(ローカル) Windows のパーティションにあるファイル"
+
+#: ../tools/Settings.cs:1630
 msgid "Description"
 msgstr "説明"
 
@@ -1270,7 +1387,7 @@ msgstr "<i>これらの変更点は検索サービスを再起動すると適用
 
 #: ../tools/settings.glade.h:11
 msgid "<i>This setting does not apply while on battery power.</i>"
-msgstr "<i>この設定はバッテリーを使用している際は利用できません</i>"
+msgstr "<i>バッテリーを使用している場合、この設定は利用できません</i>"
 
 #: ../tools/settings.glade.h:12
 msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
