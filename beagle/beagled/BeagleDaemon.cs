@@ -571,6 +571,13 @@ namespace Beagle.Daemon {
 
 			// Ignore SIGPIPE
 			Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGPIPE, Mono.Unix.Native.Stdlib.SIG_IGN);
+
+			// Work around a mono feature/bug
+			// https://bugzilla.novell.com/show_bug.cgi?id=381928
+			// When beagle crashes, mono will try to print a stack trace and then call abort()
+			// The abort somehow calls back into beagle and causes a deadlock
+			if (Environment.GetEnvironmentVariable ("BEAGLE_MONO_DEBUG_FLAG_IS_SET") == null)
+				Mono.Unix.Native.Stdlib.signal (Mono.Unix.Native.Signum.SIGABRT, Mono.Unix.Native.Stdlib.SIG_DFL);
 		}
 
 		// Mono signal handler allows setting of global variables;
