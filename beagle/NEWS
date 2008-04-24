@@ -1,3 +1,24 @@
+Version 0.3.7
+24 April 2008
+
+* Work around a mono feature/bug [1] where mono might hang trying to get a gdb
+  backtrace in the event of a native library segmentation fault. This is
+  specially important for the evolution-sharp bug [2] due to which beagled might
+  crash when the EvolutionDataServer backend is enabled. For some users, the
+  crash resulted in a non-functional but hanged beagled that in turn hanged
+  programs trying to contact beagled like gtkfilechooser.
+
+* Translations:
+ - Japanese (Takeshi AIHANA)
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_7/beagle/ChangeLog?view=markup
+
+[1] https://bugzilla.novell.com/show_bug.cgi?id=381928
+[2] http://bugzilla.gnome.org/show_bug.cgi?id=519284
+
+-------------------------------------------------------------------------------
+
 Version 0.3.6
 19 April 2008
 
