@@ -472,6 +472,9 @@ namespace Beagle.Search {
 
 			pages.Add (nomatch);
 			pages.CurrentPage = pages.PageNum (nomatch);
+
+			// Since there is no match, possibly the user wants to modify query; focus the search entry field.
+			GrabEntryFocus ();
 		}
 
 		/////////////////////////////////////
