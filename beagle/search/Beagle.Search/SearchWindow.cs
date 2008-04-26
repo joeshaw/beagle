@@ -47,7 +47,7 @@ namespace Beagle.Search {
 		private Beagle.Search.ScopeType scope = ScopeType.Everything;
 		private Beagle.Search.SortType sort = SortType.Modified;
 		private Beagle.Search.TypeFilter filter = null;
-		private QueryDomain domain = QueryDomain.Local;
+		private QueryDomain domain = QueryDomain.Local | QueryDomain.System; // default
 
 		// Whether we should grab focus from the text entry
 		private bool grab_focus = false;

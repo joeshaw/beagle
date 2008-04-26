@@ -227,19 +227,25 @@ namespace Beagle.Search {
 				new ToggleActionEntry ("Local", null,
 						       Catalog.GetString ("_Local"),
 						       null,
-						       Catalog.GetString ("Search only on local computer"),
+						       Catalog.GetString ("Search in personal data in this computer"), /* personal files, emails */
+						       OnDomainChanged,
+						       true),
+				new ToggleActionEntry ("System", null,
+						       Catalog.GetString ("_System"),
+						       null,
+						       Catalog.GetString ("Search in system data on this computer"), /* system manpages, applications */
 						       OnDomainChanged,
 						       true),
 				new ToggleActionEntry ("Global", null,
 						       Catalog.GetString ("_Global"),
 						       null,
-						       Catalog.GetString ("Search in internet services"),
+						       Catalog.GetString ("Search in internet services"), /* gmail and other web services */
 						       OnDomainChanged,
 						       false),
 				new ToggleActionEntry ("Neighborhood", null,
 						       Catalog.GetString ("_Neighborhood"),
 						       null,
-						       Catalog.GetString ("Search on computers near me"),
+						       Catalog.GetString ("Search on computers near me"), /* remote beagle services */
 						       OnDomainChanged,
 						       false)
 			};
@@ -299,6 +305,7 @@ namespace Beagle.Search {
 		"      </menu>" +
 		"      <menu action='Domain'>" +
 		"        <menuitem action='Local'/>" +
+		"        <menuitem action='System'/>" +
 		"        <menuitem action='Neighborhood'/>" +
 #if ENABLE_GOOGLEBACKENDS
 		"        <menuitem action='Global'/>" +
