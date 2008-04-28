@@ -31,7 +31,6 @@ using System.IO;
 using System.Threading;
 
 using Beagle.Util;
-using Camel = Beagle.Util.Camel;
 
 namespace Beagle.Daemon.EvolutionMailQueryable {
 

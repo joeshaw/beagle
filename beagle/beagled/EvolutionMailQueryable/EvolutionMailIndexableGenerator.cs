@@ -36,7 +36,7 @@ using System.Xml;
 using Beagle.Util;
 using Beagle.Daemon;
 
-using Camel = Beagle.Util.Camel;
+using B_U_Camel = Beagle.Util.Camel;
 
 namespace Beagle.Daemon.EvolutionMailQueryable {
 
@@ -309,7 +309,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			}
 		}
 
-		private static bool CheckFlags (uint flags, Camel.CamelFlags test)
+		private static bool CheckFlags (uint flags, B_U_Camel.CamelFlags test)
 		{
 			return (flags & (uint) test) == (uint) test;
 		}
@@ -317,7 +317,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		private Indexable GMimeMessageToIndexable (string uid, GMime.Message message, uint flags)
 		{
 			// Don't index messages flagged as junk
-			if (CheckFlags (flags, Camel.CamelFlags.Junk))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Junk))
 				return null;
 
 			System.Uri uri = EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, uid);
@@ -362,22 +362,22 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			flag_prop.IsMutable = true;
 			indexable.AddProperty (flag_prop);
 
-			if (CheckFlags (flags, Camel.CamelFlags.Answered))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Answered))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnswered"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.Deleted))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Deleted))
 				indexable.AddProperty (Property.NewFlag ("fixme:isDeleted"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.Draft))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Draft))
 				indexable.AddProperty (Property.NewFlag ("fixme:isDraft"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.Flagged))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Flagged))
 				indexable.AddProperty (Property.NewFlag ("fixme:isFlagged"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.Seen))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.Seen))
 				indexable.AddProperty (Property.NewFlag ("fixme:isSeen"));
 
-			if (CheckFlags (flags, Camel.CamelFlags.AnsweredAll))
+			if (CheckFlags (flags, B_U_Camel.CamelFlags.AnsweredAll))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 
 			indexable.SetBinaryStream (message.Stream);
@@ -427,7 +427,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 		private FileInfo summary_info;
 		private string imap_name;
 		private ImapBackendType backend_type;
-		private Camel.Summary summary;
+		private B_U_Camel.Summary summary;
 		private IEnumerator summary_enumerator;
 		private EvolutionSummaryTracker tracker;
 		private DateTime start_crawl_time;
@@ -593,9 +593,9 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			if (this.summary == null) {
 				try {
 					if (this.backend_type == ImapBackendType.Imap)
-						this.summary = Camel.Summary.LoadImapSummary (this.summary_info.FullName);
+						this.summary = B_U_Camel.Summary.LoadImapSummary (this.summary_info.FullName);
 					else
-						this.summary = Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
+						this.summary = B_U_Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
 					Logger.Log.Warn (e, "Unable to index {0}:", this.folder_name);
 					this.queryable.RemoveGenerator (this);
@@ -660,7 +660,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				return indexable;
 			}
 
-			Camel.MessageInfo mi = (Camel.MessageInfo) this.summary_enumerator.Current;
+			B_U_Camel.MessageInfo mi = (B_U_Camel.MessageInfo) this.summary_enumerator.Current;
 
 			++this.count;
 
@@ -717,12 +717,12 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			return indexable;
 		}
 
-		private Uri CamelMessageUri (Camel.MessageInfo message_info)
+		private Uri CamelMessageUri (B_U_Camel.MessageInfo message_info)
 		{
 			return EvolutionMailQueryable.EmailUri (this.account_name, this.folder_name, message_info.uid);
 		}
 
-		private Indexable CamelMessageToIndexable (Camel.MessageInfo messageInfo, string msg_file)
+		private Indexable CamelMessageToIndexable (B_U_Camel.MessageInfo messageInfo, string msg_file)
 		{
 			// Don't index messages flagged as junk
 			if (messageInfo.IsJunk)
