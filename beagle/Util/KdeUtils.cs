@@ -211,7 +211,7 @@ namespace Beagle.Util {
 			pc.Start ();
 			string ret = null;
 			using (StreamReader pout = new StreamReader (pc.StandardOutput))
-				password = pout.ReadLine ();
+				ret = pout.ReadLine ();
 			pc.Close ();
 
 			if (ret != "0")

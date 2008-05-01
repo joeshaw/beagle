@@ -23,7 +23,7 @@
    <item>
     <widget class="QTabWidget" name="TabWidget" >
      <property name="currentIndex" >
-      <number>3</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="GeneralTab" >
       <attribute name="title" >
@@ -478,15 +478,23 @@
        <string>Backends</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
        <item>
-        <widget class="QCheckBox" name="filesBackend" >
-         <property name="text" >
-          <string>Files</string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QCheckBox" name="filesBackend" >
+           <property name="text" >
+            <string>Files</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="locateBackend" >
+           <property name="text" >
+            <string>Supplement File backend results with matches from the 'locate' program</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_3" >
@@ -776,6 +784,13 @@
         </widget>
        </item>
        <item>
+        <widget class="Line" name="line" >
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupBox_8" >
          <property name="title" >
           <string>System backends </string>
@@ -873,6 +888,203 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="GoogleTab" >
+      <attribute name="title" >
+       <string>Google</string>
+      </attribute>
+      <attribute name="toolTip" >
+       <string>Settings for the Google backends</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QCheckBox" name="gmailLiveBackend" >
+         <property name="text" >
+          <string>Enable live GMail search</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>Username</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>@gmail.com</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLineEdit" name="GoogleUsername" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QLineEdit" name="GooglePassword" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="echoMode" >
+            <enum>QLineEdit::PasswordEchoOnEdit</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2" >
+          <widget class="QGroupBox" name="groupBox_9" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Maximum" hsizetype="Maximum" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="title" >
+            <string/>
+           </property>
+           <property name="flat" >
+            <bool>true</bool>
+           </property>
+           <layout class="QHBoxLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label_4" >
+              <property name="text" >
+               <string>Stored in</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="OptionStorePasswordConf" >
+              <property name="text" >
+               <string>Plaintext in configuration file</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="OptionStorePasswordKWallet" >
+              <property name="text" >
+               <string>KDE Wallet</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_5" >
+           <property name="text" >
+            <string>IMAP folder to search</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QLineEdit" name="GMailSearchFolder" >
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="toolTip" >
+            <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">You can only search one IMAP folder. To search in all emails use &lt;span style=" font-weight:600;">[GMail]/All Mail&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QCheckBox" name="IsGoogleAppsAccount" >
+           <property name="text" >
+            <string>Google Apps domain</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="QLineEdit" name="GoogleAppsAccountName" >
+           <property name="maximumSize" >
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>720</width>
+           <height>182</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
@@ -948,6 +1160,7 @@
   <tabstop>MailFolderRemove</tabstop>
   <tabstop>MailFolderList</tabstop>
   <tabstop>filesBackend</tabstop>
+  <tabstop>locateBackend</tabstop>
   <tabstop>kmailBackend</tabstop>
   <tabstop>evoBackend</tabstop>
   <tabstop>tbirdBackend</tabstop>
@@ -973,6 +1186,12 @@
   <tabstop>manpagesBackend</tabstop>
   <tabstop>monodocBackend</tabstop>
   <tabstop>WebinterfaceOption</tabstop>
+  <tabstop>gmailLiveBackend</tabstop>
+  <tabstop>GoogleUsername</tabstop>
+  <tabstop>GooglePassword</tabstop>
+  <tabstop>OptionStorePasswordConf</tabstop>
+  <tabstop>OptionStorePasswordKWallet</tabstop>
+  <tabstop>GMailSearchFolder</tabstop>
   <tabstop>OkButton</tabstop>
   <tabstop>CancelButton</tabstop>
  </tabstops>

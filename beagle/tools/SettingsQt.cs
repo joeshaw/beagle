@@ -1,3 +1,30 @@
+//
+// SettingsQt.cs
+// A Qt based beagle settings program.
+//
+// Copyright (C) 2008 D Bera <dbera.web@gmail.com>
+//
+
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+//
+
 using System;
 using System.Reflection;
 using System.Collections.Generic;
@@ -8,7 +35,7 @@ using Beagle.Util;
 // Assembly information
 [assembly: AssemblyTitle ("beagle-settings-qt")]
 [assembly: AssemblyDescription ("Qt interface to the Beagle configuration options.")]
-[assembly: AssemblyCopyright ("Copyright (C) 2007 Debajyoti Bera <dbera.web@gmail.com>")]
+[assembly: AssemblyCopyright ("Copyright (C) 2007-2008 Debajyoti Bera <dbera.web@gmail.com>")]
 
 public class Settings {
 	public static void Main (string[] args)
@@ -38,10 +65,11 @@ public class Settings {
 		string usage =
 			"Usage: beagle-settings-qt [OPTIONS]\n\n" +
 			"Options:\n" +
-			"--general    : Open the page with general options.\n" +
+			"--general    : Open the page with general options.(default)\n" +
 			"--indexing   : Open the page with indexing specific options.\n" +
 			"--backends   : Open the page with a list of backends to choose.\n" +
-			"--networking : Open the page with networking related options.\n\n";
+			"--networking : Open the page with networking related options.\n\n" +
+			"--google     : OPen the page with google backend specific options.\n\n";
 
 		Console.WriteLine (usage);
 
@@ -65,6 +93,7 @@ public class MainForm : QDialog
 		// create the checkbox mapping
 		backend_checkboxes = new Dictionary<string, QCheckBox> (20);
 		backend_checkboxes ["Files"] = main.filesBackend;
+		backend_checkboxes ["Locate"] = main.locateBackend;
 		backend_checkboxes ["KMail"] = main.kmailBackend;
 		backend_checkboxes ["EvolutionMail"] = main.evoBackend;
 		backend_checkboxes ["Thunderbird"] = main.tbirdBackend;
@@ -89,6 +118,7 @@ public class MainForm : QDialog
 		backend_checkboxes ["applications"] = main.appBackend;
 		backend_checkboxes ["manpages"] = main.manpagesBackend;
 		backend_checkboxes ["monodoc"] = main.monodocBackend;
+		backend_checkboxes ["GMailSearch"] = main.gmailLiveBackend;
 
 		Connect (main.CancelButton, SIGNAL ("clicked()"), qApp, SLOT ("quit()"));
 		Connect (main.OkButton, SIGNAL ("clicked()"), this, SLOT ("saveSettings()"));
@@ -100,6 +130,7 @@ public class MainForm : QDialog
 		Connect (main.PatternRemove, SIGNAL ("clicked()"), this, SLOT ("removeNamePattern()"));
 		Connect (main.MailFolderAdd, SIGNAL ("clicked()"), this, SLOT ("addFolderPattern()"));
 		Connect (main.MailFolderRemove, SIGNAL ("clicked()"), this, SLOT ("removeFolderPattern()"));
+		Connect (main.IsGoogleAppsAccount, SIGNAL ("stateChanged(int)"), this, SLOT ("isGoogleAppsToggled(int)"));
 
 		LoadSettings ();
 
@@ -112,6 +143,8 @@ public class MainForm : QDialog
 			main.TabWidget.SetCurrentWidget (main.BackendsTab);
 		else if (Array.IndexOf (args, "--networking") != -1)
 			main.TabWidget.SetCurrentWidget (main.NetworkingTab);
+		else if (Array.IndexOf (args, "--google") != -1)
+			main.TabWidget.SetCurrentWidget (main.GoogleTab);
 		else
 			main.TabWidget.SetCurrentWidget (main.GeneralTab);
 	}
@@ -159,6 +192,64 @@ public class MainForm : QDialog
 				backend_checkboxes [backend [0]].Checked = false;
 			}
 		}
+
+#if ENABLE_GOOGLEBACKENDS
+		LoadGoogleSettings ();
+#else
+		main.GoogleTab.SetDisabled (true);
+#endif
+	}
+
+	private void LoadGoogleSettings ()
+	{
+		Config google_config = Conf.Get ("GoogleBackends");
+		main.GMailSearchFolder.Text = google_config.GetOption ("GMailSearchFolder", null);
+
+		string username = google_config.GetOption ("GMailUsername", null);
+		if (! username.EndsWith ("@gmail.com"))
+			username = null;
+		else
+			main.GoogleUsername.Text = username.Remove (username.Length - 10);
+
+		string google_apps_domain = google_config.GetOption ("GoogleAppsAccountName", null);
+		if (google_apps_domain != null)
+			google_apps_domain = google_apps_domain.Trim ();
+		if (String.IsNullOrEmpty (google_apps_domain)) {
+			main.IsGoogleAppsAccount.Checked = false;
+			main.GoogleAppsAccountName.SetDisabled (true);
+		} else {
+			main.IsGoogleAppsAccount.Checked = true;
+			main.GoogleAppsAccountName.SetDisabled (false);
+			main.GoogleAppsAccountName.Text = google_apps_domain;
+		}
+
+		string password_source = google_config.GetOption ("GMailPasswordSource", "conf-file");
+		if (password_source == "gnome-keyring") {
+			QMessageBox.Critical (this, "Google password storage option", "Gnome keyring support not available from beagle-settings-qt");
+			return;
+		}
+
+		if (password_source == "kdewallet") {
+			if (String.IsNullOrEmpty (username))
+				return;
+
+			try {
+				string password = KdeUtils.ReadPasswordKDEWallet ("beagle", username);
+				main.GooglePassword.Text = password;
+				main.OptionStorePasswordKWallet.SetChecked (true);
+			} catch (ArgumentException e) {
+				QMessageBox.Warning (this, "KDEWallet", e.Message);
+			}
+			return;
+		}
+
+		if (password_source != "conf-file") {
+			QMessageBox.Warning (this, "Google password storage option", "Unknown password storage option.");
+			return;
+		}
+
+		main.GooglePassword.Text = google_config.GetOption ("GMailPassword", null);
+		main.OptionStorePasswordConf.SetChecked (true);
 	}
 
 	[Q_SLOT ("void saveSettings()")]
@@ -214,7 +305,42 @@ public class MainForm : QDialog
 		Conf.Save (daemon_config);
 		Conf.Save (networking_config);
 
+#if ENABLE_GOOGLEBACKENDS
+		SaveGoogleSettings ();
+#endif
+
 		QApplication.Quit ();
+	}
+
+	private void SaveGoogleSettings ()
+	{
+		Config google_config = Conf.Get ("GoogleBackends");
+		google_config.SetOption ("GMailSearchFolder", main.GMailSearchFolder.Text);
+
+		string username = main.GoogleUsername.Text.Trim ();
+		if (username != String.Empty) {
+			username = username + "@gmail.com";
+			google_config.SetOption ("GMailUsername", username);
+		}
+
+		if (main.IsGoogleAppsAccount.Checked)
+			google_config.SetOption ("GoogleAppsAccountName", main.GoogleAppsAccountName.Text);
+		else
+			google_config.SetOption ("GoogleAppsAccountName", String.Empty);
+
+		if (main.OptionStorePasswordConf.Checked) {
+			google_config.SetOption ("GMailPasswordSource", "conf-file");
+			google_config.SetOption ("GMailPassword", main.GooglePassword.Text);
+		} else if (main.OptionStorePasswordKWallet.Checked && ! String.IsNullOrEmpty (username)) {
+			try {
+				KdeUtils.StorePasswordKDEWallet ("beagle", username, main.GooglePassword.Text);
+				google_config.SetOption ("GMailPasswordSource", "kdewallet");
+			} catch (ArgumentException e) {
+				QMessageBox.Warning (this, "KDEWallet", e.Message);
+			}
+		}
+
+		Conf.Save (google_config);
 	}
 
 	[Q_SLOT ("showDirChooser()")]
@@ -322,6 +448,17 @@ public class MainForm : QDialog
 			return;
 
 		main.MailFolderList.TakeItem (main.MailFolderList.Row (folders [0]));
+	}
+
+	[Q_SLOT ("isGoogleAppsToggled(int)")]
+	private void IsGoogleAppsToggled (int _state)
+	{
+		Qt.CheckState state = (Qt.CheckState) Enum.ToObject (typeof (Qt.CheckState), _state);
+
+		if (state == Qt.CheckState.Unchecked)
+			main.GoogleAppsAccountName.SetDisabled (true);
+		else if (state == Qt.CheckState.Checked)
+			main.GoogleAppsAccountName.SetDisabled (false);
 	}
 }
 
