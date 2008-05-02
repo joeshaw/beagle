@@ -1,0 +1,37 @@
+More dependency removal. Specially disable the Sparql HTTP source.
+
+--- SemWeb/SparqlClient.cs	2008-05-02 19:15:37.388408844 -0400
++++ ../../../branches/beagle-rdf/Util/SemWeb/SparqlClient.cs	2008-03-06 22:33:57.051493323 -0500
+@@ -21,7 +21,6 @@
+ 		void RunSparqlQuery(string sparqlQuery, QueryResultSink selectResults);
+ 	}
+ 
+-#if false
+ 	public class SparqlHttpSource : QueryableSource, SparqlSource {
+ 		static bool Debug = System.Environment.GetEnvironmentVariable("SEMWEB_DEBUG_HTTP") != null;
+ 	
+@@ -585,7 +584,6 @@
+ 			}
+ 		}
+ 	}
+-#endif
+ }
+ 
+ namespace SemWeb.Query {
+--- SemWeb/Interfaces.cs	2008-05-02 19:13:34.487180978 -0400
++++ ../../../branches/beagle-rdf/Util/SemWeb/Interfaces.cs	2008-03-06 22:33:56.975489665 -0500
+@@ -1,6 +1,6 @@
+ using System;
+ using System.Collections;
+-//using System.Data;
++using System.Data;
+ 
+ using SemWeb.Util;
+ 
+@@ -69,4 +69,4 @@
+ 	}
+ 
+ 	
+-}
++}
+\ No newline at end of file

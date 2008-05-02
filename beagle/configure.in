@@ -630,6 +630,20 @@ else
 	AM_CONDITIONAL(BUILD_DOCS, false)
 fi
 
+dnl ----------------------------------------------
+
+dnl RDF Adapter is purely for research purposes right now
+
+AC_ARG_ENABLE([rdf-adapter],
+	AC_HELP_STRING([--enable-rdf-adapter], [Builds the RDF Adapter (default no)]),
+	enable_rdf_adapter=$enableval,
+	enable_rdf_adapter=no)
+
+if test "x$enable_rdf_adapter" = "xyes"; then
+	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:ENABLE_RDF_ADAPTER"
+fi
+
+AM_CONDITIONAL(ENABLE_RDF_ADAPTER, test "x$enable_rdf_adapter" = "xyes")
 
 dnl ----------------------------------------------
 
@@ -667,6 +681,7 @@ firefox-extension/Makefile
 thunderbird-extension/Makefile
 doc/Makefile
 doc/api/Makefile
+RDFAdapter/Makefile
 conf-data/Makefile
 beagle-0.0.pc
 beagle-daemon.pc
@@ -700,8 +715,8 @@ echo "
 
 	Monitor screensaver       ${have_xss}
 	beagle-search GUI	  ${enable_gui}
-
 	Qt beagle-settings GUI    ${enable_qt}
 
+	Build RDF Adapter         ${enable_rdf_adapter}
 	Build docs?               ${with_docs}
 "

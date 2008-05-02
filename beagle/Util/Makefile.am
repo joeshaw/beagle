@@ -135,12 +135,12 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/Hal/SystemPowerManagement.cs	\
 	$(srcdir)/Hal/Volume.cs			\
 	$(srcdir)/Hal/VolumeCrypto.cs		\
-	$(srcdir)/SemWeb/AssemblyInfo.cs        \
 	$(srcdir)/SemWeb/NamespaceManager.cs    \
 	$(srcdir)/SemWeb/Util.cs                \
 	$(srcdir)/SemWeb/UriMap.cs              \
 	$(srcdir)/SemWeb/Resource.cs            \
 	$(srcdir)/SemWeb/Statement.cs           \
+	$(srcdir)/SemWeb/Interfaces.cs		\
 	$(srcdir)/SemWeb/Store.cs               \
 	$(srcdir)/SemWeb/MemoryStore.cs         \
 	$(srcdir)/SemWeb/RdfReader.cs           \
@@ -149,18 +149,26 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/RdfWriter.cs           \
 	$(srcdir)/SemWeb/RdfXmlWriter.cs        \
 	$(srcdir)/SemWeb/N3Writer.cs            \
-	$(srcdir)/SemWeb/RSquary.cs             \
+	$(srcdir)/SemWeb/Query.cs	        \
 	$(srcdir)/SemWeb/LiteralFilters.cs      \
 	$(srcdir)/SemWeb/Query.cs               \
+	$(srcdir)/SemWeb/GraphMatch.cs		\
+	$(srcdir)/SemWeb/LiteralFilters.cs	\
 	$(srcdir)/SemWeb/Inference.cs           \
 	$(srcdir)/SemWeb/RDFS.cs                \
+	$(srcdir)/SemWeb/SpecialRelations.cs	\
 	$(srcdir)/SemWeb/Algos.cs               \
+	$(srcdir)/SemWeb/SparqlClient.cs	\
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
+	$(srcdir)/SemWeb/Euler.cs		\
 	$(srcdir)/QueryKeywordMapping.cs
 
 # To reduce dependencies, we don't build this
 IGNORED_SEMWEB_CSFILES =			\
-	$(srcdir)/SemWeb/Remote.cs
+	$(srcdir)/SemWeb/SQLStore.cs
+
+# Semweb compile flag
+CSFLAGS += -define:DOTNET2
 
 UTIL_ASSEMBLIES =				\
 	$(BEAGLED_LIBS)				\

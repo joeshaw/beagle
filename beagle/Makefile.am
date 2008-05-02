@@ -42,6 +42,10 @@ if ENABLE_THUNDERBIRD
 SUBDIRS += thunderbird-extension
 endif
 
+if ENABLE_RDF_ADAPTER
+SUBDIRS += RDFAdapter
+endif
+
 EXTRA_DIST = 			\
 	HACKING			\
 	intltool-extract.in	\
