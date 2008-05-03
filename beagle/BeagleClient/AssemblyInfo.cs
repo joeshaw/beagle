@@ -38,6 +38,9 @@ using Beagle;
 	 typeof (Query),
 	 typeof (ReloadConfigRequest),
 	 typeof (ShutdownRequest),
+#if ENABLE_RDF_ADAPTER
+	 typeof (RDFQuery),
+#endif
 	 typeof (SnippetRequest)
 )]
 	 
@@ -51,5 +54,8 @@ using Beagle;
 	 typeof (SearchTermResponse),
 	 typeof (DaemonInformationResponse),
 	 typeof (SnippetResponse),
+#if ENABLE_RDF_ADAPTER
+	 typeof (RDFQueryResult),
+#endif
 	 typeof (CountMatchQueryResponse)
 )]

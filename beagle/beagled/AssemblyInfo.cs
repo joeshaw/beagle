@@ -52,6 +52,9 @@ using Beagle.Daemon;
 	typeof (ReloadConfigExecutor),
 	typeof (ShutdownExecutor),
 	typeof (SnippetExecutor),
+#if ENABLE_RDF_ADAPTER
+	typeof (RDFQueryExecutor),
+#endif
 	typeof (CountMatchQueryExecutor)
 )]
 

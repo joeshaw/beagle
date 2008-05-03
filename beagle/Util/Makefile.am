@@ -160,8 +160,12 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/SemWeb/Algos.cs               \
 	$(srcdir)/SemWeb/SparqlClient.cs	\
 	$(srcdir)/SemWeb/XPathSemWebNavigator.cs\
-	$(srcdir)/SemWeb/Euler.cs		\
 	$(srcdir)/QueryKeywordMapping.cs
+
+if ENABLE_RDF_ADAPTER
+UTIL_CSFILES +=
+	$(srcdir)/SemWeb/Euler.cs
+endif
 
 # To reduce dependencies, we don't build this
 IGNORED_SEMWEB_CSFILES =			\

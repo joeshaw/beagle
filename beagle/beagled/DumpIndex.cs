@@ -205,7 +205,7 @@ class DumpIndexTool {
 				int freq;
 				freq = term_enum.DocFreq ();
 
-				Console.WriteLine ("{0} {1} {2}", index_name, term_enum.Term ().Text (), freq);
+				Console.WriteLine ("{0} '{1}' {2}", index_name, term_enum.Term ().Text (), freq);
 
 				// FIXME: spew these as a count
 				++distinct_term_count;

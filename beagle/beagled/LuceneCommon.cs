@@ -538,6 +538,9 @@ namespace Beagle.Daemon {
 					}
 				} else if (fieldName == "PropertyKeyword")
 					return new LowerCaseFilter (new SingletonTokenStream (reader.ReadToEnd ()));
+				else if (fieldName == "Properties")
+					return new WhitespaceTokenizer (new StringReader (reader.ReadToEnd ()));
+
 
 				TokenStream outstream;
 				outstream = base.TokenStream (fieldName, reader);
@@ -615,6 +618,8 @@ namespace Beagle.Daemon {
 		// Exposing this is a little bit suspicious.
 		static protected string PropertyToFieldName (PropertyType type, string key)
 		{
+			if (type == PropertyType.Internal)
+				return key;
 			return String.Format ("prop:{0}:{1}", TypeToCode (type), key);
 
 		}
@@ -871,6 +876,13 @@ namespace Beagle.Daemon {
 					
 				AddPropertyToDocument (prop, target_doc);
 			}
+#if ENABLE_RDF_ADAPTER
+
+			// Now add a field containing a whitespace separated list of other fields in the document
+			AddFieldProperies (primary_doc);
+			if (secondary_doc != null)
+				AddFieldProperies (secondary_doc);
+#endif
 		}
 
 		static private Document CreateSecondaryDocument (Uri uri, Uri parent_uri)
@@ -943,6 +955,9 @@ namespace Beagle.Daemon {
 				}
 			}
 
+#if ENABLE_RDF_ADAPTER
+			AddFieldProperies (new_doc);
+#endif
 			return new_doc;
 		}
 
@@ -964,7 +979,38 @@ namespace Beagle.Daemon {
 				}
 			}
 
+#if ENABLE_RDF_ADAPTER
+			AddFieldProperies (doc);
+#endif
 			return doc;
+		}
+
+		// Add a new field with whitespace separated names of the existing fields
+		static protected void AddFieldProperies (Document doc)
+		{
+			const string Separator = " ";
+
+			StringBuilder sb = new StringBuilder ();
+			bool seen_properties = false;
+
+			foreach (Field f in doc.Fields ()) {
+				if (f.Name () == "Properties") {
+					seen_properties = true;
+					continue;
+				}
+
+				sb.Append (f.Name ());
+				sb.Append (Separator);
+			}
+
+			if (sb.Length > 0)
+				sb.Length -= Separator.Length;
+
+			if (seen_properties)
+				doc.RemoveFields ("Properties");
+
+			Field field = new Field ("Properties", sb.ToString (), Field.Store.NO, Field.Index.TOKENIZED);
+			doc.Add (field);
 		}
 
 		static protected Uri GetUriFromDocument (Document doc)
@@ -997,8 +1043,8 @@ namespace Beagle.Daemon {
 
 		static protected void AddPropertiesToHit (Hit hit, Document doc, bool from_primary_index)
 		{
+			Property prop;
 			foreach (Field f in doc.Fields ()) {
-				Property prop;
 				prop = GetPropertyFromDocument (f, doc, from_primary_index);
 				if (prop != null)
 					hit.AddProperty (prop);
@@ -1455,7 +1501,9 @@ namespace Beagle.Daemon {
 			// This gives a chance to modify create new queries based on
 			// backend specific properties
 
-			abstract_part = query_part_hook (abstract_part);
+			if (query_part_hook != null)
+				abstract_part = query_part_hook (abstract_part);
+
 			if (abstract_part == null)
 				return;
 
@@ -1671,11 +1719,13 @@ namespace Beagle.Daemon {
 				else
 					field_name = PropertyToFieldName (part.Type, part.Key);
 
+				// Details of the conversion here depends on BeagleAnalyzer::TokenStream
 				if (part.Type == PropertyType.Text)
 					primary_query = StringToQuery (field_name, part.Value, term_list);
 				else {
 					Term term;
-					if (field_name.StartsWith ("prop:k:" + Property.PrivateNamespace))
+					// FIXME: Handle date queries for other date fields
+					if (part.Type == PropertyType.Internal || field_name.StartsWith ("prop:k:" + Property.PrivateNamespace))
 						term = new Term (field_name, part.Value);
 					else
 						term = new Term (field_name, part.Value.ToLower ());
@@ -2042,6 +2092,11 @@ namespace Beagle.Daemon {
 		// a lot of memory.  Don't call it without a good reason!
 		public ICollection GetHitsForUris (ICollection uris)
 		{
+			return GetHitsForUris (uris, null);
+		}
+
+		public ICollection GetHitsForUris (ICollection uris, FieldSelector fields)
+		{
 			Hashtable hits_by_uri = UriFu.NewHashtable ();
 
 			LNS.IndexSearcher primary_searcher = GetSearcher (PrimaryStore);
@@ -2052,7 +2107,9 @@ namespace Beagle.Daemon {
 			LNS.Hits primary_hits = primary_searcher.Search (uri_query);
 
 			for (int i = 0; i < primary_hits.Length (); i++) {
-				Document doc = primary_hits.Doc (i);
+				Document doc = ((fields == null) ?
+					primary_hits.Doc (i) :
+					primary_hits.Doc (i, fields));
 
 				Uri u = GetUriFromDocument (doc);
 
@@ -2064,7 +2121,9 @@ namespace Beagle.Daemon {
 				LNS.Hits secondary_hits = secondary_searcher.Search (uri_query);
 
 				for (int i = 0; i < secondary_hits.Length (); i++) {
-					Document doc = secondary_hits.Doc (i);
+					Document doc = ((fields == null) ?
+						secondary_hits.Doc (i) :
+						secondary_hits.Doc (i, fields));
 
 					Uri uri = GetUriFromDocument (doc);
 					Hit hit = (Hit) hits_by_uri [uri];

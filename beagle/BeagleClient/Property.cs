@@ -35,6 +35,7 @@ using Beagle.Util;
 namespace Beagle {
 
 	public enum PropertyType {
+		Internal = 0,
 		Text     = 1,
 		Keyword  = 2,
 		Date     = 3

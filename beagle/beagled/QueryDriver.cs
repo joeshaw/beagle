@@ -634,6 +634,25 @@ namespace Beagle.Daemon {
 			QueryEachQueryable (query, result);
 		}
 
+#if ENABLE_RDF_ADAPTER
+		static public ArrayList DoRDFQuery (RDFQuery query)
+		{
+			ArrayList all_results = new ArrayList ();
+
+			foreach (Queryable q in Queryables) {
+				if (! q.AcceptQuery (query))
+					continue;
+
+				ICollection results = q.DoRDFQuery (query);
+				if (results == null || results.Count == 0)
+					continue;
+				all_results.AddRange (results);
+			}
+
+			return all_results;
+		}
+#endif
+
 		////////////////////////////////////////////////////////
 
 		static public int DoCountMatchQuery (CountMatchQuery query)

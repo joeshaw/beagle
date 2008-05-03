@@ -31,6 +31,13 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			return (services != null && services.Count > 0);
 		}
 
+#if ENABLE_RDF_ADAPTER
+		public ICollection DoRDFQuery (Query query)
+		{
+			return null;
+		}
+#endif
+
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData data)
 		{
 			// Get rid of the standard UnixTransport so that we can
