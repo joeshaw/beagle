@@ -133,6 +133,13 @@ namespace Beagle.Daemon.LocateQueryable {
 			pc.Close ();
 		}
 
+#if ENABLE_RDF_ADAPTER
+		public ICollection DoRDFQuery (Query query)
+		{
+			return null;
+		}
+#endif
+
 		public int DoCountMatchQuery (Query query)
 		{
 			return 0;

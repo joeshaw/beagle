@@ -163,7 +163,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/QueryKeywordMapping.cs
 
 if ENABLE_RDF_ADAPTER
-UTIL_CSFILES +=
+UTIL_CSFILES +=					\
 	$(srcdir)/SemWeb/Euler.cs
 endif
 
@@ -270,6 +270,7 @@ uninstall-local:
 COND_CS_FILES =				\
 	$(srcdir)/AvahiBrowser.cs	\
 	$(srcdir)/ChmFile.cs		\
+	$(srcdir)/Euler.cs		\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs
 

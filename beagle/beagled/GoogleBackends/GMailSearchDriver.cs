@@ -177,6 +177,13 @@ namespace Beagle.Daemon.GoogleBackend {
 			}
 		}
 
+#if ENABLE_RDF_ADAPTER
+		public ICollection DoRDFQuery (Query query)
+		{
+			return null;
+		}
+#endif
+
 		public int DoCountMatchQuery (Query query)
 		{
 			// FIXME: Implement this
