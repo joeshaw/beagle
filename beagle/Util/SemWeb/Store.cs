@@ -51,8 +51,10 @@ namespace SemWeb {
 			
 			if (rdfs)
 				ret.AddReasoner(new RDFS(ret));
+#if ENABLE_RDF_ADAPTER
 			if (euler)
 				ret.AddReasoner(new Euler(ret)); // loads it all into memory!
+#endif
 			
 			return ret;
 		}

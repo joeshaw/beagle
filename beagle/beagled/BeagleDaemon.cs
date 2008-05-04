@@ -161,6 +161,7 @@ namespace Beagle.Daemon {
 				"\n" +
 				"Advanced options:\n" +
 				"  --debug\t\tWrite out debugging information.\n" +
+				"  --mono-debug\t\tShow mono related debugging information.\n" +
 				"  --debug-memory\tWrite out debugging information about memory use.\n" +
 				"  --indexing-test-mode\tRun in foreground, and exit when fully indexed.\n" +
 				"  --indexing-delay <t>\tWait 't' seconds before indexing.  (Default 60 seconds)\n" +
