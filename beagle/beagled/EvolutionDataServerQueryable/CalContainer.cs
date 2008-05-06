@@ -188,8 +188,20 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private Uri GetComponentUri (string id)
 		{
-			return new Uri (String.Format ("calendar://uri-class-sucks/?source-uid={0}&comp-uid={1}",
-						       this.source.Uid, id));
+			string protocol;
+			switch (cal_source_type) {
+			case CalSourceType.Todo:
+				protocol = "task";
+				break;
+
+			default:
+				// FIXME: Could not find the protocol for Journal
+				protocol = "calendar";
+				break;
+			}
+
+			return new Uri (String.Format ("{2}://uri-class-sucks/?source-uid={0}&comp-uid={1}",
+						       this.source.Uid, id, protocol));
 		}
 
 		/////////////////////////////////////
