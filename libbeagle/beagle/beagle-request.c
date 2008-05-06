@@ -211,8 +211,10 @@ _beagle_connect_timeout (const char *path, GError **err)
 	/* We retry on EGAIN or EINTR: since both of these mean the socket is active,
 	 * there is no harm in trying to retry a lot of times. A blocking socket would
 	 * have done the same.
+	 * Try maximum 10 times, more than a certain threshold means beagled is somehow
+	 * hanged and not reachable for all practical purposes.
 	 */
-#define MAX_RETRIES 500
+#define MAX_RETRIES 10 /* 10 * 200 msec ~> 2 sec */
 
 	for (retries = 0; retries < MAX_RETRIES; ++ retries) {
 		if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) >= 0)
