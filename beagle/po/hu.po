@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-13 15:43+0100\n"
-"PO-Revision-Date: 2008-04-26 20:57+0200\n"
+"POT-Creation-Date: 2008-04-26 19:05+0000\n"
+"PO-Revision-Date: 2008-05-09 14:29+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <gnome@fsf.hu>\n"
 "MIME-Version: 1.0\n"
@@ -259,7 +259,9 @@ msgstr "A keresőszolgáltatás nem fut"
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
-msgstr "Úgy tűnik, a keresőszolgáltatás nem fut. Az alábbi gombra kattintva elindíthatja."
+msgstr ""
+"Úgy tűnik, a keresőszolgáltatás nem fut. Az alábbi gombra kattintva "
+"elindíthatja."
 
 #: ../search/Beagle.Search.Pages/StartDaemon.cs:22
 msgid "Start search service"
@@ -545,7 +547,7 @@ msgstr "Webhelyek"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:45
 msgid "News Feeds"
-msgstr "Hírfolyamok"
+msgstr "Hírforrások"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:47
 msgid "Archives"
@@ -609,7 +611,7 @@ msgstr "Utolsó hozzáférés:"
 
 #: ../search/Beagle.Search.Tray/TrayIcon.cs:33
 #: ../search/Beagle.Search/Search.cs:52
-#: ../search/Beagle.Search/SearchWindow.cs:65
+#: ../search/Beagle.Search/SearchWindow.cs:67
 msgid "Desktop Search"
 msgstr "Asztali keresés"
 
@@ -645,42 +647,42 @@ msgstr "{0} – {1}, összesen {2}"
 msgid "Hide"
 msgstr "Elrejtés"
 
-#: ../search/Beagle.Search/SearchWindow.cs:85
+#: ../search/Beagle.Search/SearchWindow.cs:87
 msgid "_Find:"
 msgstr "K_eresés:"
 
-#: ../search/Beagle.Search/SearchWindow.cs:107
+#: ../search/Beagle.Search/SearchWindow.cs:109
 msgid "Find Now"
 msgstr "Keresés most"
 
-#: ../search/Beagle.Search/SearchWindow.cs:170
+#: ../search/Beagle.Search/SearchWindow.cs:172
 msgid "Type in search terms"
 msgstr "Írja be a keresendő kifejezéseket"
 
-#: ../search/Beagle.Search/SearchWindow.cs:171
+#: ../search/Beagle.Search/SearchWindow.cs:173
 msgid "Start searching"
 msgstr "A keresés megkezdése"
 
-#: ../search/Beagle.Search/SearchWindow.cs:186
+#: ../search/Beagle.Search/SearchWindow.cs:188
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Asztali keresés: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:443
+#: ../search/Beagle.Search/SearchWindow.cs:438
 msgid "There are computers near you running Beagle"
 msgstr "A közelében a Beagle-t futtató számítógépek vannak"
 
-#: ../search/Beagle.Search/SearchWindow.cs:444
+#: ../search/Beagle.Search/SearchWindow.cs:439
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr ""
 "A „Keresés” menüből kiválaszthatja azon számítógépeket, amelyeken keresni "
 "kíván."
 
-#: ../search/Beagle.Search/SearchWindow.cs:496
+#: ../search/Beagle.Search/SearchWindow.cs:494
 msgid "Your data is being indexed"
 msgstr "Az adatai indexelése"
 
-#: ../search/Beagle.Search/SearchWindow.cs:497
+#: ../search/Beagle.Search/SearchWindow.cs:495
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -688,14 +690,14 @@ msgstr ""
 "A Beagle szolgáltatás jelenleg indexeli az adatokat. A keresés eredményei "
 "hiányosak lehetnek az indexelés befejeződéséig."
 
-#: ../search/Beagle.Search/SearchWindow.cs:523
+#: ../search/Beagle.Search/SearchWindow.cs:521
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "{0} találat megjelenítve"
 msgstr[1] "Mind a(z) {0} találat megjelenítve"
 
-#: ../search/Beagle.Search/SearchWindow.cs:525
+#: ../search/Beagle.Search/SearchWindow.cs:523
 #, csharp-format
 msgid "Showing the top {0} of {1} total matches"
 msgid_plural "Showing the top {0} of {1} total matches"
@@ -862,7 +864,7 @@ msgid ""
 "blog\n"
 "rss"
 msgstr ""
-"hírfolyam\n"
+"hírforrás\n"
 "hírek\n"
 "news\n"
 "blog\n"
@@ -1019,11 +1021,11 @@ msgstr "Keresés a webes előzményekben"
 
 #: ../search/Beagle.Search/UIManager.cs:196
 msgid "_News Feeds"
-msgstr "_Hírfolyamok"
+msgstr "_Hírforrások"
 
 #: ../search/Beagle.Search/UIManager.cs:198
 msgid "Search news feeds"
-msgstr "Keresés hírfolyamokban"
+msgstr "Keresés hírforrásokban"
 
 #: ../search/Beagle.Search/UIManager.cs:202
 msgid "A_rchives"
@@ -1062,30 +1064,38 @@ msgid "_Local"
 msgstr "_Helyi"
 
 #: ../search/Beagle.Search/UIManager.cs:230
-msgid "Search only on local computer"
-msgstr "Keresés csak a helyi számítógépen"
+msgid "Search in personal data in this computer"
+msgstr "Keresés a helyi számítógépen a személyes adatok között"
 
 #: ../search/Beagle.Search/UIManager.cs:234
+msgid "_System"
+msgstr "_Rendszer"
+
+#: ../search/Beagle.Search/UIManager.cs:236
+msgid "Search in system data on this computer"
+msgstr "Keresés a helyi számítógépen a rendszeradatok között"
+
+#: ../search/Beagle.Search/UIManager.cs:240
 msgid "_Global"
 msgstr "Gl_obális"
 
-#: ../search/Beagle.Search/UIManager.cs:236
+#: ../search/Beagle.Search/UIManager.cs:242
 msgid "Search in internet services"
 msgstr "Keresés internetes szolgáltatásokban"
 
-#: ../search/Beagle.Search/UIManager.cs:240
+#: ../search/Beagle.Search/UIManager.cs:246
 msgid "_Neighborhood"
 msgstr "S_zomszédság"
 
-#: ../search/Beagle.Search/UIManager.cs:242
+#: ../search/Beagle.Search/UIManager.cs:248
 msgid "Search on computers near me"
 msgstr "Keresés a közeli számítógépeken"
 
-#: ../search/Beagle.Search/UIManager.cs:250
+#: ../search/Beagle.Search/UIManager.cs:256
 msgid "Show Details"
 msgstr "Részletek mutatása"
 
-#: ../search/Beagle.Search/UIManager.cs:376
+#: ../search/Beagle.Search/UIManager.cs:378
 msgid "Couldn't launch web browser"
 msgstr "Nem indítható webböngésző"
 
@@ -1097,11 +1107,11 @@ msgstr "Keresés"
 msgid "Search for data on your desktop"
 msgstr "Adatok keresése az asztalon"
 
-#: ../tools/Settings.cs:349
+#: ../tools/Settings.cs:345
 msgid "Reload configuration"
 msgstr "Beállítások újratöltése"
 
-#: ../tools/Settings.cs:350
+#: ../tools/Settings.cs:346
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -1109,17 +1119,17 @@ msgstr ""
 "A beállítási fájlt egy másik alkalmazás módosította. El szeretné dobni a "
 "jelenleg megjelenített értékeket és újratölteni a beállításokat a lemezről?"
 
-#: ../tools/Settings.cs:484
+#: ../tools/Settings.cs:480
 msgid "Select Path"
 msgstr "Válassza ki az útvonalat"
 
-#: ../tools/Settings.cs:503
+#: ../tools/Settings.cs:499
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "A kiválasztott útvonal már ki van választva indexelésre, ezért nem lesz "
 "hozzáadva."
 
-#: ../tools/Settings.cs:506
+#: ../tools/Settings.cs:502
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
@@ -1127,15 +1137,15 @@ msgstr ""
 "A kiválasztott útvonal nem lett hozzáadva. A lista olyan elemeket tartalmaz, "
 "amelyek megelőzik és az adatok már indexelve vannak."
 
-#: ../tools/Settings.cs:517
+#: ../tools/Settings.cs:513
 msgid "Path not added"
 msgstr "Az útvonal nem lesz hozzáadva"
 
-#: ../tools/Settings.cs:526
+#: ../tools/Settings.cs:522
 msgid "Remove obsolete paths"
 msgstr "Elavult útvonalak eltávolítása"
 
-#: ../tools/Settings.cs:527
+#: ../tools/Settings.cs:523
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -1143,11 +1153,11 @@ msgstr ""
 "Ezen útvonal hozzáadása elavulttá tesz néhány létező útvonalat, emiatt ezek "
 "az útvonalak el lesznek távolítva. Biztosan hozzá akarja adni?"
 
-#: ../tools/Settings.cs:553
+#: ../tools/Settings.cs:549
 msgid "Remove path"
 msgstr "Útvonal eltávolítása"
 
-#: ../tools/Settings.cs:554
+#: ../tools/Settings.cs:550
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -1155,11 +1165,11 @@ msgstr ""
 "Biztosan el akarja távolítani ezt az útvonalat az indexelendő könyvtárak "
 "listájából?"
 
-#: ../tools/Settings.cs:583
+#: ../tools/Settings.cs:579
 msgid "Remove item"
 msgstr "Elem eltávolítása"
 
-#: ../tools/Settings.cs:584
+#: ../tools/Settings.cs:580
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -1167,68 +1177,68 @@ msgstr ""
 "Biztosan el akarja távolítani ezt az útvonalat a nem indexelendő adatok "
 "listájából?"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:627
 msgid "Remote host already present in the list."
 msgstr "A távoli gép már rajta van a listán."
 
-#: ../tools/Settings.cs:641
+#: ../tools/Settings.cs:637
 msgid "Remote beagle host not added"
 msgstr "A távoli beagle gép nem került felvételre"
 
-#: ../tools/Settings.cs:656
+#: ../tools/Settings.cs:652
 msgid "Remove host"
 msgstr "Gép eltávolítása"
 
-#: ../tools/Settings.cs:657
+#: ../tools/Settings.cs:653
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Biztosan el akarja távolítani ezt a gépet a listából?"
 
-#: ../tools/Settings.cs:716 ../tools/Settings.cs:805 ../tools/Settings.cs:886
-#: ../tools/Settings.cs:991 ../tools/Settings.cs:1637
+#: ../tools/Settings.cs:709 ../tools/Settings.cs:798 ../tools/Settings.cs:879
+#: ../tools/Settings.cs:984 ../tools/Settings.cs:1629
 msgid "Name"
 msgstr "Név"
 
-#: ../tools/Settings.cs:799
+#: ../tools/Settings.cs:792
 msgid "Type"
 msgstr "Típus"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:845
 msgid "Path:"
 msgstr "Útvonal:"
 
-#: ../tools/Settings.cs:855
+#: ../tools/Settings.cs:848
 msgid "Pattern:"
 msgstr "Minta:"
 
-#: ../tools/Settings.cs:858
+#: ../tools/Settings.cs:851
 msgid "Mail folder:"
 msgstr "Levélmappa:"
 
-#: ../tools/Settings.cs:893
+#: ../tools/Settings.cs:886
 msgid "Address"
 msgstr "Cím"
 
-#: ../tools/Settings.cs:1238
+#: ../tools/Settings.cs:1231
 msgid "Select Folder"
 msgstr "Mappa kiválasztása"
 
-#: ../tools/Settings.cs:1264 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1257 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "Út_vonal:"
 
-#: ../tools/Settings.cs:1269
+#: ../tools/Settings.cs:1262
 msgid "M_ail folder:"
 msgstr "_Levélmappa:"
 
-#: ../tools/Settings.cs:1274
+#: ../tools/Settings.cs:1267
 msgid "P_attern:"
 msgstr "Mi_nta:"
 
-#: ../tools/Settings.cs:1298
+#: ../tools/Settings.cs:1291
 msgid "Error adding path"
 msgstr "Hiba az útvonal hozzáadása közben"
 
-#: ../tools/Settings.cs:1299
+#: ../tools/Settings.cs:1292
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1236,121 +1246,121 @@ msgstr ""
 "A megadott útvonal nem található, ezért nem adható hozzá az indexelésből "
 "kihagyandó erőforrások listájához."
 
-#: ../tools/Settings.cs:1340
+#: ../tools/Settings.cs:1330
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Kapcsolódás a következőhöz: {0}"
 
-#: ../tools/Settings.cs:1597
+#: ../tools/Settings.cs:1589
 msgid "Evolution's mail."
 msgstr "Evolution levelek."
 
-#: ../tools/Settings.cs:1598
+#: ../tools/Settings.cs:1590
 msgid "Evolution's address book, memos and tasks."
 msgstr "Evolution címjegyzék, feljegyzések és feladatok."
 
-#: ../tools/Settings.cs:1599
+#: ../tools/Settings.cs:1591
 msgid "Thunderbird's email."
 msgstr "Thunderbird levelek."
 
-#: ../tools/Settings.cs:1600
+#: ../tools/Settings.cs:1592
 msgid "RSS feeds from Akregator."
 msgstr "RSS hírforrások az Akregatorból."
 
-#: ../tools/Settings.cs:1601
+#: ../tools/Settings.cs:1593
 msgid "RSS feeds from Blam."
 msgstr "RSS hírforrások a Blamból."
 
-#: ../tools/Settings.cs:1602
+#: ../tools/Settings.cs:1594
 msgid "Files and folders on the local file system."
 msgstr "A helyi fájlrendszer fájljai és mappái."
 
-#: ../tools/Settings.cs:1603
+#: ../tools/Settings.cs:1595
 msgid "Mail messages from KMail."
 msgstr "Levelek a KMailből."
 
-#: ../tools/Settings.cs:1604
+#: ../tools/Settings.cs:1596
 msgid "Notes from KNotes."
 msgstr "Jegyzetek a KNotesből."
 
-#: ../tools/Settings.cs:1605
+#: ../tools/Settings.cs:1597
 msgid "Agenda from KOrganizer."
 msgstr "Teendők a KOrganizerből."
 
-#: ../tools/Settings.cs:1606
+#: ../tools/Settings.cs:1598
 msgid "Contacts from KAddressBook."
 msgstr "Névjegyek a KAddressBookból."
 
-#: ../tools/Settings.cs:1607
+#: ../tools/Settings.cs:1599
 msgid "Konqueror's bookmarks."
 msgstr "Konqueror könyvjelzők."
 
-#: ../tools/Settings.cs:1608
+#: ../tools/Settings.cs:1600
 msgid "Konqueror's history."
 msgstr "Konqueror előzmények."
 
-#: ../tools/Settings.cs:1609
+#: ../tools/Settings.cs:1601
 msgid "IMs and chats from Konversation."
 msgstr "Üzenetek és csevegések a Konversation-ből."
 
-#: ../tools/Settings.cs:1610
+#: ../tools/Settings.cs:1602
 msgid "IMs and chats from Kopete"
 msgstr "Üzenetek és csevegések a Kopeteből"
 
-#: ../tools/Settings.cs:1611
+#: ../tools/Settings.cs:1603
 msgid "Mind-maps from Labyrinth."
 msgstr "Gondolatvázlatok a Labyrinth-ből."
 
-#: ../tools/Settings.cs:1612
+#: ../tools/Settings.cs:1604
 msgid "RSS feeds from Liferea."
 msgstr "RSS hírforrások a Liferea-ból."
 
-#: ../tools/Settings.cs:1613
+#: ../tools/Settings.cs:1605
 msgid "Nautilus' metadata (emblems, notes, etc.)"
 msgstr "Nautilus metaadatok (matricák, jegyzetek, stb.)"
 
-#: ../tools/Settings.cs:1614
+#: ../tools/Settings.cs:1606
 msgid "Search other search services in the network (EXPERIMENTAL)"
 msgstr "Keresés más keresőszolgáltatásokkal a hálózaton (KÍSÉRLETI)"
 
-#: ../tools/Settings.cs:1615
+#: ../tools/Settings.cs:1607
 msgid "Opera's bookmarks and browsing history."
 msgstr "Opera könyvjelzők és előzmények."
 
-#: ../tools/Settings.cs:1616
+#: ../tools/Settings.cs:1608
 msgid "IMs and chats from Pidgin."
 msgstr "Üzenetek és csevegések a Pidginből."
 
-#: ../tools/Settings.cs:1617
+#: ../tools/Settings.cs:1609
 msgid "Notes from Tomboy."
 msgstr "Jegyzetek a Tomboy-ból."
 
 #. System-wide indexes
-#: ../tools/Settings.cs:1619
+#: ../tools/Settings.cs:1611
 msgid "(System) Applications"
 msgstr "(Rendszer) Alkalmazások"
 
-#: ../tools/Settings.cs:1620
+#: ../tools/Settings.cs:1612
 msgid "(System) Help files"
 msgstr "(Rendszer) Súgófájlok"
 
-#: ../tools/Settings.cs:1621
+#: ../tools/Settings.cs:1613
 msgid "(System) Manual pages"
 msgstr "(Rendszer) Kézikönyvoldalak"
 
-#: ../tools/Settings.cs:1622
+#: ../tools/Settings.cs:1614
 msgid "(System) Supplementary search results using 'locate' command"
 msgstr "(Rendszer) Kiegészítő keresési eredmények a „locate” parancs használatával"
 
-#: ../tools/Settings.cs:1623
+#: ../tools/Settings.cs:1615
 msgid "(System) Mono documentation"
 msgstr "(Rendszer) Mono dokumentáció"
 
-#: ../tools/Settings.cs:1624
+#: ../tools/Settings.cs:1616
 msgid "(System) Files from Windows' partition"
 msgstr "(Rendszer) Fájlok a Windows partíciójáról"
 
-#: ../tools/Settings.cs:1638
+#: ../tools/Settings.cs:1630
 msgid "Description"
 msgstr "Leírás"
 
