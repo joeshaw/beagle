@@ -124,6 +124,15 @@ public abstract class Summary : IEnumerable {
 				while (info == null && index < header.count) {
 					try {
 						info = s.ReadMessageInfo (f);
+					} catch (IOException) {
+						Log.Warn ("Unexpected end of file. Skipping rest of messages in {0}", s.filename);
+						info = null;
+						index = header.count; // just in case
+						if (f != null) {
+							f.Close ();
+							f = null;
+						}
+						break;
 					} catch (Exception e) {
 						Log.Warn ("Skipping bogus message " +
 							  "[file={0}, index={1}, error={2}]",
@@ -578,7 +587,7 @@ public abstract class Summary : IEnumerable {
 			}
 
 			if (v == -1)
-				throw new Exception ("Unexpected end of file");
+				throw new IOException ("Unexpected end of file");
 
 			return value | ((byte)(v & 0x7f));
 		}
@@ -606,7 +615,7 @@ public abstract class Summary : IEnumerable {
 				int v = f.ReadByte ();
 
 				if (v == -1)
-					throw new Exception ("Unexpected end of file");
+					throw new IOException ("Unexpected end of file");
 
 				seconds |= (uint) v << (i * 8);
 			}
