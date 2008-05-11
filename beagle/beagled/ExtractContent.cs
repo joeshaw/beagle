@@ -123,9 +123,9 @@ class ExtractContentTool {
 
 		watch.Start ();
 		if (! FilterFactory.FilterIndexable (indexable, out filter)) {
-			Console.WriteLine ("No filter for {0}", indexable.MimeType);
 			indexable.Cleanup ();
-			return;
+			indexable.NoContent = true;
+			filter = null;
 		}
 		watch.Stop ();
 
@@ -137,7 +137,7 @@ class ExtractContentTool {
 		Indexable generated_indexable;
 
 		bool first = true;
-		if (filter.HasGeneratedIndexable) {
+		if (filter != null && filter.HasGeneratedIndexable) {
 			while (filter.GenerateNextIndexable (out generated_indexable)) {
 				if (generated_indexable == null)
 					continue;
