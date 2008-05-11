@@ -52,6 +52,7 @@ CSFILES = 				\
 	$(srcdir)/FilterAbiword.cs	\
 	$(srcdir)/FilterArchive.cs	\
 	$(srcdir)/FilterAudio.cs	\
+	$(srcdir)/FilterBibTex.cs	\
 	$(srcdir)/FilterBmp.cs		\
 	$(srcdir)/FilterBoo.cs		\
 	$(srcdir)/FilterC.cs		\

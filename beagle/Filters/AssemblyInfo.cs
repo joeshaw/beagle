@@ -34,6 +34,7 @@ using Beagle.Filters;
 	 typeof(FilterApplication),
 	 typeof(FilterArchive),
 	 typeof(FilterAudio),
+	 typeof(FilterBibTex),
 	 typeof(FilterBMP),
 	 typeof(FilterBoo),
 	 typeof(FilterC),
