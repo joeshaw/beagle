@@ -339,8 +339,13 @@ namespace Beagle.Util {
 
 			Config config = null;
 
-			using (StreamReader reader = new StreamReader (path))
-				config = (Config) conf_ser.Deserialize (reader);
+			try {
+				using (StreamReader reader = new StreamReader (path))
+					config = (Config) conf_ser.Deserialize (reader);
+			} catch (XmlException e) {
+				Log.Error (e, "Unable to parse {0}, possibly corrupt file.", path);
+				return null;
+			}
 
 			return config;
 		}
