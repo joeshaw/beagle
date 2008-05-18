@@ -38,7 +38,7 @@ namespace Beagle.Daemon {
 
 	public class StaticQueryable : LuceneQueryable 	{
 
-		protected TextCache text_cache;
+		protected TextCache text_cache = null;
 
 		public StaticQueryable (string index_name, string index_path, bool read_only_mode) : base (index_path, read_only_mode)
 		{
@@ -52,6 +52,12 @@ namespace Beagle.Daemon {
 				}
 			}
 		}
+
+#if ENABLE_RDF_ADAPTER
+		protected override TextCache TextCache {
+			get { return text_cache; }
+		}
+#endif
 
 		override public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length) 
 		{

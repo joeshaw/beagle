@@ -282,9 +282,13 @@ namespace Beagle.Daemon {
 		}
 
 #if ENABLE_RDF_ADAPTER
+		protected virtual TextCache TextCache {
+			get { return TextCache.UserCache; }
+		}
+
 		public ICollection DoRDFQuery (Query query)
 		{
-			return Driver.DoRDFQuery (query);
+			return Driver.DoRDFQuery (query, TextCache);
 		}
 #endif
 

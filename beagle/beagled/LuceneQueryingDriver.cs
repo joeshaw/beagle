@@ -321,7 +321,7 @@ namespace Beagle.Daemon {
 		// They will come into play in the final FetchDocument part
 		// FIXME: Should RDFQuery do any query mapping using backend_query_part_hook ?
 		// I think it should not. QueryPart hooks are for human beings, RDF is for softwares.
-		public ICollection DoRDFQuery (Query _query)
+		public ICollection DoRDFQuery (Query _query, TextCache text_cache)
 		{
 			RDFQuery query = (RDFQuery) _query;
 
@@ -339,8 +339,13 @@ namespace Beagle.Daemon {
 			// ******** 8 cases **********
 
 			// Return all uris
-			if (subject == String.Empty && predicate == String.Empty && _object == String.Empty)
-				return GetAllHitsByUri ().Values;
+			if (subject == String.Empty && predicate == String.Empty && _object == String.Empty) {
+				ICollection hits = GetAllHitsByUri ().Values;
+				foreach (Hit hit in hits)
+					foreach (Property text_link_property in GetTextLinks (hit.Uri, text_cache))
+						hit.AddProperty (text_link_property);
+				return hits;
+			}
 
 			// Normal query
 			if (subject == String.Empty && predicate == String.Empty && _object != String.Empty) {
@@ -348,7 +353,7 @@ namespace Beagle.Daemon {
 				part.Text = _object;
 				part.SearchFullText = false; // We only search properties in RDF query
 				query.AddPart (part);
-				return DoLowLevelRDFQuery (query, pred_type, predicate, _object);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, _object, text_cache);
 			}
 
 			// Return uris for all documents with this property
@@ -361,7 +366,7 @@ namespace Beagle.Daemon {
 				part.Value = field_name;
 				query.AddPart (part);
 
-				return DoLowLevelRDFQuery (query, pred_type, predicate, null);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, null, text_cache);
 			}
 
 			// Property query
@@ -371,7 +376,7 @@ namespace Beagle.Daemon {
 				part.Key = predicate;
 				part.Value = _object;
 				query.AddPart (part);
-				return DoLowLevelRDFQuery (query, pred_type, predicate, _object);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, _object, text_cache);
 			}
 
 			// Return if the URI exists
@@ -380,7 +385,7 @@ namespace Beagle.Daemon {
 				part.Uri = UriFu.UserUritoEscapedUri (subject); // better be URI!
 				query.AddPart (part);
 				// FIXME: Which properties to return in the hit? All or none ?
-				return DoLowLevelRDFQuery (query, pred_type, predicate, null);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, null, text_cache);
 			}
 
 			// Normal query in the document with this URI
@@ -394,7 +399,7 @@ namespace Beagle.Daemon {
 				part.SearchFullText = false; // We only search properties in RDF query
 				query.AddPart (part);
 
-				return DoLowLevelRDFQuery (query, pred_type, predicate, _object);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, _object, text_cache);
 			}
 
 			// Return URI if the document with this URI contains this property
@@ -407,6 +412,11 @@ namespace Beagle.Daemon {
 				string field_name = PropertyToFieldName (pred_type, predicate);
 				FieldSelector fields = new MapFieldSelector (new string[] { "Uri", "Timestamp", field_name });
 				ICollection hits = GetHitsForUris (uri_list, fields);
+				if (predicate == "TextLinks") {
+					foreach (Hit hit in hits)
+						foreach (Property text_link_property in GetTextLinks (hit.Uri, text_cache))
+							hit.AddProperty (text_link_property);
+				}
 
 				return hits;
 			}
@@ -423,17 +433,17 @@ namespace Beagle.Daemon {
 				part.Value = _object;
 				query.AddPart (part);
 
-				return DoLowLevelRDFQuery (query, pred_type, predicate, _object);
+				return DoLowLevelRDFQuery (query, pred_type, predicate, _object, text_cache);
 			}
 
 			throw new Exception ("Never reaches");
 		}
-#endif
 
 		private ICollection DoLowLevelRDFQuery (Query query,
 							PropertyType pred_type,
 							string predicate,
-							string field_value)
+							string field_value,
+							TextCache text_cache)
 		{
 
 			Stopwatch total, a, b, c, d, e, f;
@@ -540,7 +550,7 @@ namespace Beagle.Daemon {
 
 			d.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Low-level queries finished in {1}", IndexName, d);
+				Logger.Log.Debug ("###### {0}: Low-level queries finished in {1} and returned {2} matches", IndexName, d, primary_matches.TrueCount);
 
 			e.Start ();
 
@@ -626,6 +636,17 @@ namespace Beagle.Daemon {
 						hit.AddProperty (Property.New ("#text", field_value));
 					}
 					
+					hits.Add (hit);
+				} else if (predicate == "TextLinks") {
+					// Special treatment: TextLinks is not stored but can be queried
+					doc = primary_searcher.Doc (match_index, fields_timestamp_uri);
+					Hit hit = CreateHit (doc, secondary_reader, secondary_term_docs, fields);
+					if (field_value != null)
+						hit.AddProperty (Property.New ("TextLinks", field_value));
+					else {
+						foreach (Property text_link_property in GetTextLinks (hit.Uri, text_cache))
+							hit.AddProperty (text_link_property);
+					}
 					hits.Add (hit);
 				} else {
 					doc = primary_searcher.Doc (match_index, fields);
@@ -723,6 +744,19 @@ namespace Beagle.Daemon {
 			return field_analyzed.Contains (value_analyzed);
 		}
 
+		private IEnumerable GetTextLinks (Uri uri, TextCache text_cache)
+		{
+			if (text_cache == null)
+				yield break;
+
+			IList<string> links = text_cache.GetLinks (uri);
+			if (links == null)
+				yield break;
+
+			foreach (string link in links)
+				yield return Property.NewKeyword ("TextLinks", link);
+		}
+#endif
 		////////////////////////////////////////////////////////////////
 
 		public int DoCountMatchQuery (Query query, QueryPartHook query_part_hook)

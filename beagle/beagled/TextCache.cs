@@ -178,11 +178,11 @@ namespace Beagle.Daemon {
 #if ENABLE_RDF_ADAPTER
 			try {
 				SqliteUtils.DoNonQuery (connection,
-							"CREATE TABLE links_data (  " +
-							"  uri TEXT UNIQUE NOT NULL," +
-							"  links TEXT		    " +
+							"CREATE TABLE IF NOT EXISTS links_data (  " +
+							"  uri TEXT UNIQUE NOT NULL,		  " +
+							"  links TEXT				  " +
 							")");
-			} catch { }
+			} catch (SqliteException) { }
 #endif
 			this.InitCommands ();
 		}
@@ -200,7 +200,7 @@ namespace Beagle.Daemon {
 
 #if ENABLE_RDF_ADAPTER
 			UpdateLinksCommand = new SqliteCommand (this.connection);
-			UpdateLinksCommand.CommandText = "UPDATE links_data SET links=@links WHERE uri=@uri";
+			UpdateLinksCommand.CommandText = "INSERT OR REPLACE INTO links_data (uri, links) VALUES (@uri, @links);";
 
 			LookupLinksCommand = new SqliteCommand (this.connection);
 			LookupLinksCommand.CommandText = "SELECT links FROM links_data WHERE uri=@uri";
@@ -256,7 +256,7 @@ namespace Beagle.Daemon {
 				if (SqliteUtils.ReadOrWait (reader))
 					path = reader.GetString (0);
 			}
-			
+
 			return path;
 		}
 
@@ -545,9 +545,6 @@ namespace Beagle.Daemon {
 		public void AddLinks (Uri uri, IList<string> links)
 		{
 			lock (connection) {
-				string path = LookupPathRawUnlocked (uri);
-				if (path == null)
-					return;
 				MaybeStartTransaction_Unlocked ();
 				UpdateLinksCommand.Parameters.AddWithValue("@uri", UriToString (uri));
 				UpdateLinksCommand.Parameters.AddWithValue("@links", GetLinksText (links));
