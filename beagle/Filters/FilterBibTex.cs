@@ -170,6 +170,10 @@ namespace Beagle.Filters {
 					yield return Property.NewKeyword (KeyToPropName (key), value);
 				else
 					yield return Property.New (KeyToPropName (key), CleanupValue (value));
+#if ENABLE_RDF_ADAPTER
+				if (key == "url")
+					AddLink (value);
+#endif
 				yield break;
 			}
 
