@@ -54,7 +54,7 @@ BACKENDDIR = $(pkglibdir)/Backends
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
-PLUGIN_CSFLAGS = -target:library
+PLUGIN_CSFLAGS = -target:library $(BEAGLE_DEFINES)
 
 PLUGIN_CSFILES =				\
 	$(srcdir)/Flavor.cs			\
@@ -527,7 +527,8 @@ $(EXTRACT_CONTENT_WRAPPER): $(srcdir)/$(WRAPPER_IN)
 
 
 EXTRACT_CONTENT_CSFLAGS = \
-	-target:exe
+	-target:exe	  \
+	$(BEAGLE_DEFINES)
 
 EXTRACT_CONTENT_CSFILES = \
 	$(srcdir)/ExtractContent.cs		\

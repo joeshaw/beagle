@@ -147,6 +147,7 @@ namespace Beagle.Filters {
 					AddProperty (Property.New ("fixme:to_address", ia.Addr));
 
 				AddProperty (Property.New ("fixme:to_name", ia.Name));
+				AddEmailLink (ia);
 			}
 			addrs.Dispose ();
 
@@ -157,6 +158,7 @@ namespace Beagle.Filters {
 					AddProperty (Property.New ("fixme:cc_address", ia.Addr));
 
 				AddProperty (Property.New ("fixme:cc_name", ia.Name));
+				AddEmailLink (ia);
 			}
 			addrs.Dispose ();
 
@@ -167,6 +169,7 @@ namespace Beagle.Filters {
 					AddProperty (Property.New ("fixme:from_address", ia.Addr));
 
 				AddProperty (Property.New ("fixme:from_name", ia.Name));
+				AddEmailLink (ia);
 			}
 			addrs.Dispose ();
 
@@ -202,9 +205,23 @@ namespace Beagle.Filters {
 				AddProperty (Property.NewFlag ("fixme:isSent"));
 		}
 
+		private void AddEmailLink (GMime.InternetAddress ia)
+		{
+#if ENABLE_RDF_ADAPTER
+			if (String.IsNullOrEmpty (ia.Name))
+				AddLink (String.Concat ("mailto://", ia.Addr));
+			else
+				AddLink (String.Concat ("mailto://", ia.Addr, "/", Uri.EscapeDataString (ia.Name)));
+#endif
+		}
+
 		protected override void DoPullSetup ()
 		{
-			this.handler = new PartHandler (Indexable);
+			this.handler = new PartHandler (Indexable,
+							delegate (string s)
+							{
+								AddLink (s);
+							});
 			using (GMime.Object mime_part = this.message.MimePart)
 				this.handler.OnEachPart (mime_part);
 
@@ -274,6 +291,7 @@ namespace Beagle.Filters {
 			private int depth = 0; // part recursion depth
 			private ArrayList child_indexables = new ArrayList ();
 			private TextReader reader;
+			private FilterHtml.AddLinkCallback link_handler;
 
 			private bool html_part = false;
 			internal bool HtmlPart {
@@ -291,9 +309,10 @@ namespace Beagle.Filters {
 				"text/x-vcard"
 			};
 
-			public PartHandler (Indexable parent_indexable)
+			public PartHandler (Indexable parent_indexable, FilterHtml.AddLinkCallback link_handler)
 			{
 				this.indexable = parent_indexable;
+				this.link_handler = link_handler;
 			}
 
 			private bool IsMimeTypeHandled (string mime_type)
@@ -406,7 +425,7 @@ namespace Beagle.Filters {
 							stream.Close ();
 
 							try {
-								this.reader = FilterHtml.GetHtmlReader (html_stream, enc);
+								this.reader = FilterHtml.GetHtmlReader (html_stream, enc, link_handler);
 							} catch (Exception e) {
 								Log.Debug (e, "Exception while filtering HTML email {0}", this.indexable.Uri);
 								this.reader = null;

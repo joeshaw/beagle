@@ -717,6 +717,6 @@ echo "
 	beagle-search GUI	  ${enable_gui}
 	Qt beagle-settings GUI    ${enable_qt}
 
-	Build RDF Adapter         ${enable_rdf_adapter}
+	Build RDF Adapter         ${enable_rdf_adapter} (purely experimental)
 	Build docs?               ${with_docs}
 "

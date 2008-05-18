@@ -492,6 +492,15 @@ namespace Beagle.Daemon {
 			private bool strip_extra_property_info = false;
 			private bool tokenize_email_hostname = false;
 
+			private NoiseEmailHostFilter.LinkCallback add_link = null;
+
+			public NoiseEmailHostFilter.LinkCallback AddLink {
+				set {
+				    lock (this)
+					    add_link = value;
+				}
+			}
+
 			public BeagleAnalyzer (bool is_indexing_analyzer)
 			{
 				if (is_indexing_analyzer) {
@@ -545,11 +554,17 @@ namespace Beagle.Daemon {
 				TokenStream outstream;
 				outstream = base.TokenStream (fieldName, reader);
 
+				NoiseEmailHostFilter.LinkCallback add_link_callback = null;
+				lock (this) {
+					if (fieldName == "Text")
+						add_link_callback = add_link;
+				}
+
 				if (fieldName == "Text"
 				    || fieldName == "HotText"
 				    || fieldName == "PropertyText"
 				    || is_text_prop) {
-					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname);
+					outstream = new NoiseEmailHostFilter (outstream, tokenize_email_hostname, add_link_callback);
 					// Sharing Stemmer is not thread safe.
 					// Currently our underlying lucene indexing is not done in multiple threads.
 					StemmerInfo stemmer_info = GetStemmer (DEFAULT_STEMMER_LANGUAGE);
@@ -560,11 +575,11 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		static private Analyzer indexing_analyzer = new BeagleAnalyzer (true);
-		static private Analyzer query_analyzer = new BeagleAnalyzer (false);
+		static private BeagleAnalyzer indexing_analyzer = new BeagleAnalyzer (true);
+		static private BeagleAnalyzer query_analyzer = new BeagleAnalyzer (false);
 
-		static protected Analyzer IndexingAnalyzer { get { return indexing_analyzer; } }
-		static protected Analyzer QueryAnalyzer { get { return query_analyzer; } }
+		static protected BeagleAnalyzer IndexingAnalyzer { get { return indexing_analyzer; } }
+		static protected BeagleAnalyzer QueryAnalyzer { get { return query_analyzer; } }
 
 		////////////////////////////////////////////////////////////////
 

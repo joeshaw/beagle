@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Reflection;
@@ -446,6 +447,21 @@ namespace Beagle.Daemon {
 				snippetWriter.WriteLine ();
 
 			return UpdateCharsAdded (1);
+		}
+
+#if ENABLE_RDF_ADAPTER
+		private IList<string> links_list = new List<string> ();
+
+		public IList<string> Links {
+			get { return links_list; }
+		}
+#endif
+
+		public void AddLink (string link)
+		{
+#if ENABLE_RDF_ADAPTER
+			links_list.Add (link);
+#endif
 		}
 
 		//private bool NeedsWhiteSpace (ArrayList array)

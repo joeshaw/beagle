@@ -40,15 +40,24 @@ namespace Beagle.Daemon {
 	// 3. Splits hostnames into subparts
 	public class NoiseEmailHostFilter : TokenFilter {
 			
+		public delegate void LinkCallback (string s, bool email);
+		private LinkCallback link_call_back;
+
 		private bool tokenize_email_hostname;
 
 		TokenStream token_stream;
 
 		public NoiseEmailHostFilter (TokenStream input, bool tokenize_email_hostname)
+			: this (input, tokenize_email_hostname, null)
+		{
+		}
+
+		public NoiseEmailHostFilter (TokenStream input, bool tokenize_email_hostname, LinkCallback link_call_back)
 			: base (input)
 		{
 			this.token_stream = input;
 			this.tokenize_email_hostname = tokenize_email_hostname;
+			this.link_call_back = link_call_back;
 		}
 
 		// FIXME: we should add some heuristics that are stricter
@@ -248,6 +257,10 @@ namespace Beagle.Daemon {
 			// and also remove the final tld part
 			Array.Copy (parts, 0, parts, 1, parts.Length - 1);
 			parts [0] = email.Substring (0, index_at);
+#if ENABLE_RDF_ADAPTER
+			if (link_call_back != null)
+				link_call_back ("mailto://" + email, true);
+#endif
 		}
 
 		private void ProcessURLToken (Lucene.Net.Analysis.Token token)

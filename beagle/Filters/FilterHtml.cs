@@ -61,6 +61,7 @@ namespace Beagle.Filters {
 		public delegate void AddPropertyCallback (Beagle.Property p);
 		public delegate bool AppendSpaceCallback ();
 		public delegate void HotCallback ();
+		public delegate void AddLinkCallback (string s);
 
 		// delegates
 		private new AppendTextCallback AppendText;
@@ -70,6 +71,7 @@ namespace Beagle.Filters {
 		private new AppendSpaceCallback AppendStructuralBreak;
 		private new HotCallback HotUp;
 		private new HotCallback HotDown;
+		private new AddLinkCallback AddLink;
 
 		// 1: Add meta keyword fields as meta:key
 		private int version = 1;
@@ -88,6 +90,9 @@ namespace Beagle.Filters {
 				AppendStructuralBreak = new AppendSpaceCallback (base.AppendStructuralBreak);
 				HotUp = new HotCallback (base.HotUp);
 				HotDown = new HotCallback (base.HotDown);
+#if ENABLE_RDF_ADAPTER
+				AddLink = new AddLinkCallback (base.AddLink);
+#endif
 			}
 
 			ignore_level = 0;
@@ -102,6 +107,14 @@ namespace Beagle.Filters {
 			this.version += version;
 			base.SetVersion (this.version);
 		}
+
+#if ENABLE_RDF_ADAPTER
+		public void SetAddLinkHandler (AddLinkCallback link_handler)
+		{
+			if (link_handler != null)
+				AddLink = link_handler;
+		}
+#endif
 
 		protected bool NodeIsHot (String nodeName) 
 		{
@@ -222,6 +235,11 @@ namespace Beagle.Filters {
 						string s = HtmlEntity.DeEntitize (
 							    SW.HttpUtility.UrlDecode (attr, enc));
 						AppendWord (s);
+#if ENABLE_RDF_ADAPTER
+						// Add valid and global URLs to special field "Link"
+						if (s.StartsWith ("http://") || s.StartsWith ("mailto:") || s.StartsWith ("ftp://"))
+							AddLink (s);
+#endif
 						ret = AppendWhiteSpace ();
 					}
 				} else if (node.Name == "br") // both <br> and </br> are used - special case
@@ -438,11 +456,19 @@ namespace Beagle.Filters {
 
 		public static TextReader GetHtmlReader (Stream stream, string charset)
 		{
+			return GetHtmlReader (stream, charset, null);
+		}
+
+		public static TextReader GetHtmlReader (Stream stream, string charset, AddLinkCallback link_handler)
+		{
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
 			FilterHtml html_filter = new FilterHtml ();
 			html_filter.SnippetMode = false;
+#if ENABLE_RDF_ADAPTER
+			html_filter.SetAddLinkHandler (link_handler);
+#endif
 
 			html_filter.Indexable = new Indexable (); // fake an indexable
 			html_filter.AddProperty (Property.NewUnsearched (StringFu.              UnindexedNamespace + "encoding", charset));
