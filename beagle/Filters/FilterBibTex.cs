@@ -59,8 +59,8 @@ namespace Beagle.Filters {
 			try {
 				pc.Start ();
 				bibparse_installed = true;
-			} catch (SafeProcessException e) {
-				Log.Warn (e, "bibparse is not found; bibtex files will not be indexed");
+			} catch (SafeProcessException) {
+				Log.Warn ("bibparse is not found; bibtex files will not be indexed");
 				bibparse_installed = false;
 			}
 
