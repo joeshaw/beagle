@@ -77,6 +77,7 @@ namespace Beagle.Filters {
 		}
 
 		bool setup_done = false;
+		string archive_type = "zip";
 
 		private void SetupArchiveStream ()
 		{
@@ -87,32 +88,38 @@ namespace Beagle.Filters {
 			case "application/zip":
 				archive_stream = new ZipInputStream (Stream);
 				get_next_entry = GetNextEntryZip;
+				archive_type = "zip";
 				break;
 
 			case "application/x-bzip-compressed-tar":
 				archive_stream = new TarInputStream (new BZip2InputStream (Stream));
 				get_next_entry = GetNextEntryTar;
+				archive_type = "tar-bz2";
 				break;
 
 			case "application/x-compressed-tar":
 			case "application/x-tgz":
 				archive_stream = new TarInputStream (new GZipInputStream (Stream));
 				get_next_entry = GetNextEntryTar;
+				archive_type = "tar-gz";
 				break;
 
 			case "application/x-tar":
 				archive_stream = new TarInputStream (Stream);
 				get_next_entry = GetNextEntryTar;
+				archive_type = "tar";
 				break;
 
 			case "application/x-gzip":
 				archive_stream = new GZipInputStream (Stream);
 				get_next_entry = GetNextEntrySingle;
+				archive_type = "gzip";
 				break;
 
 			case "application/x-bzip":
 				archive_stream = new BZip2InputStream (Stream);
 				get_next_entry = GetNextEntrySingle;
+				archive_type = "bz2";
 				break;
 
 			default:
@@ -181,7 +188,11 @@ namespace Beagle.Filters {
 			child.ContentUri = UriFu.PathToFileUri (a_entry.TempFile);
 			child.DeleteContent = true;
 
+			// FIXME Remove fixme:inside_archive during Property Hack Week
+			// Replace most flag properties by value properties
 			child.AddProperty (Property.NewBool ("fixme:inside_archive", true));
+			// Use this instead of fixme:inside_archive
+			child.AddProperty (Property.NewKeyword ("archive:type", archive_type));
 
 			child.AddProperty (Property.NewKeyword ("fixme:relativeuri", a_entry.Name));
 			child.AddProperty (Property.New ("fixme:comment", a_entry.Comment));
