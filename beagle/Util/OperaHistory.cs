@@ -35,6 +35,8 @@ namespace Beagle.Daemon.OperaQueryable {
 	public class OperaHistory {
 		private ArrayList rows;
 		private DateTime lastRead;
+		// Details of the cache file format from
+		// http://www.opera.com/docs/fileformats/
 		public enum Directives : byte {
 			RowStart		=	0x01,	// Row start (new entry)
 			Address			=	0x03,	// Web address
@@ -119,9 +121,9 @@ namespace Beagle.Daemon.OperaQueryable {
 				}
 			}
 			
-			public long Length {
+			public uint Length {
 				get {
-					return OperaHistory.GetLength (GetContent (Directives.Length));
+					return OperaHistory.GetUInt32 (GetContent (Directives.Length));
 				}
 			}
 			
@@ -139,7 +141,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LastVisited);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (GetUInt32 (content));
 					} catch {
 						return DateTime.MinValue;
 					}
@@ -150,7 +152,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LocalSaveTime);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (GetUInt32 (content));
 					} catch {
 						return DateTime.MinValue;
 					}
@@ -161,7 +163,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				get {
 					try {
 						byte[] content = GetContent (Directives.LastChanged);
-						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (FSpot.BitConverter.ToUInt32 (content, 0, false));
+						return Beagle.Util.DateTimeUtil.UnixToDateTimeUtc (GetUInt32 (content));
 					} catch {
 						return DateTime.MinValue;
 					}
@@ -208,6 +210,7 @@ namespace Beagle.Daemon.OperaQueryable {
 			Read (filename);
 		}
 		
+		static uint filepos = 12;
 		private void Read (string filename)
 		{
 			using (StreamReader stream = new StreamReader (filename)) {
@@ -216,8 +219,23 @@ namespace Beagle.Daemon.OperaQueryable {
 					// Skip first 12 bytes since their purpose is yet unknown
 					binary.BaseStream.Seek (12, SeekOrigin.Begin);
 					while (binary.ReadByte () == 1) {
-						int length = Convert.ToInt32 (GetLength (binary.ReadByte (), binary.ReadByte ()));
-						ReadLine (binary.ReadBytes (length));
+						uint length = GetUInt32 (binary.ReadByte (), binary.ReadByte ());
+						filepos += 3;
+
+						byte[] line =  binary.ReadBytes ((int)length);
+						if (line.Length < length)
+							break; // EOF
+
+						try {
+							ReadLine (line);
+						} catch (EndOfStreamException)  {
+							break;
+						} catch (IOException) {
+							break;
+						} catch(Exception e) { 
+							Beagle.Util.Logger.Log.Error(e);
+						}
+						filepos += length;
 					}
 				}
 			}
@@ -236,14 +254,10 @@ namespace Beagle.Daemon.OperaQueryable {
 			Row row = new Row ();
 			
 			while (position <= line.Length) {
-				try {
-					Property prop = NewProperty (line, ref position);
+				Property prop = NewProperty (line, ref position);
 				
-					if (prop != null)
-						row.AddProperty (prop);
-				} catch(Exception e) { 
-					Beagle.Util.Logger.Log.Error(e);
-				}
+				if (prop != null)
+					row.AddProperty (prop);
 			}
 			
 			return row;
@@ -254,21 +268,32 @@ namespace Beagle.Daemon.OperaQueryable {
 			if (position+3 > line.Length) {
 				position++;
 				return null;
-			} else if (line [position] == (byte) 0x8F) {
-				// It seems to be something magic with 0x8F because it appears when you least 
-				// expect it and doesn't seem to belong anywhere. Just ignore it.
-				position++;
-				return NewProperty (line, ref position);
 			}
 			
+			// Tag_id values in which the MSB (Most Significant Bit) is set to 1,
+			// are reserved for records with implicit no length.
+			// The tag_id field is NOT followed by a length field, nor a payload buffer.
+			// Such records are used as Boolean flags: True if present, False if not present. 
+			if ((line [position] & (byte) 0x80) == (byte) 0x80) {
+#if OPERA_DEBUG
+				Console.WriteLine ("Ignoring flag record 0x{0:x} at {1} ({2})", line [position], position, filepos + position);
+#endif
+				position++;
+				return null;
+			}
+
 			int start = position+1, length = 0, directive = position;
-			
+
 			// Read the two bytes that follows the directive byte and parse them as an integer.
 			// This will be how far we will be reading in the stream
 			byte[] length_bytes = new byte [2];
 			Array.Copy (line, start, length_bytes, 0, 2);
-			length = Convert.ToInt32 (GetLength (length_bytes));
-			
+			length = (int) GetUInt32 (length_bytes);
+	
+#if OPERA_DEBUG
+			Console.WriteLine ("Adding record 0x{0:x2} at {1} of length {2} ({3})", line [position], position, length, filepos + position);
+#endif
+
 			// The content is what we really is after. This can be an address, object size or 
 			// something else valuable.
 			byte[] content = new byte [length];
@@ -278,18 +303,20 @@ namespace Beagle.Daemon.OperaQueryable {
 			
 			return new Property (line [directive], content);
 		}
-		
-		public static long GetLength (params byte[] bytes)
+
+		public static uint GetUInt32 (params byte[] bytes)
 		{
-			byte[] t = new byte [8] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-			
-			if (bytes == null || bytes.Length > 8 || bytes.Length == 0)
+			if (bytes == null || bytes.Length > 4 || bytes.Length == 0)
 				return 0;
-			
-			for (int i = 0; i < bytes.Length; i++)
-				t [i] = bytes [bytes.Length-i-1];
-			
-			return BitConverter.ToInt64 (t, 0);
+
+			byte[] t = bytes;
+
+			if (bytes.Length < 4) {
+				t = new byte [4] {0x00, 0x00, 0x00, 0x00};
+				Array.Copy (bytes, 0, t, 4 - bytes.Length, bytes.Length);
+			}
+
+			return FSpot.BitConverter.ToUInt32 (t, 0, false);
 		}
 		
 		public IEnumerator GetEnumerator ()
@@ -301,5 +328,20 @@ namespace Beagle.Daemon.OperaQueryable {
 		{
 			return this.lastRead;
 		}
+#if OPERA_DEBUG
+		public static void Main (string[] args)
+		{
+			if (args.Length != 1)
+				return;
+			OperaHistory op = new OperaHistory (args [0]);
+			IEnumerator iter = op.GetEnumerator ();
+			while (iter.MoveNext ()) {
+				Row row = (Row) iter.Current;
+				Uri uri = row.Address;
+				Console.WriteLine (uri);
+			}
+		}
+#endif
 	}
 }
+
