@@ -114,7 +114,6 @@ var beagle = {
         if(!this.checkEnv())
         {
             this.runStatus = this.RUN_BEAGLE_NOT_FOUND;
-            this.error(_("beagle_not_found"));
         }
         else
         {
@@ -215,7 +214,8 @@ var beagle = {
         if(storage_directory == "")
             storage_directory = this.ENV.get("HOME") + "/.beagle";
         if (!this.FILE_UTILS.exists (storage_directory)) {
-            alert(_f("beagle_check_env_error",[storage_directory]));
+	    var errorMsg = (_f("beagle_check_env_error", [storage_directory]));
+	    this.error(errorMsg);
             return false;
         }
         this.dataPath = storage_directory + "/ToIndex";
@@ -637,9 +637,12 @@ var beagle = {
                 // currently disabled  enable.
                 this.enable();
                 break;
-            default:
+	    case this.RUN_BEAGLE_NOT_FOUND:
+		alert(this.STATUS_ICON.getAttribute("tooltiptext"));
+		break;
+            default: // RUN_ERROR
                 // last run was an error, show the error
-                alert("Error running Beagle Indexer: " + this.RunStatus);
+                alert("Error running Beagle Indexer.");
                 break;
             }
         }
