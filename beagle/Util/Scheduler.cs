@@ -191,6 +191,9 @@ namespace Beagle.Util {
 
 			public void Schedule (Scheduler scheduler)
 			{
+				if (this.cancelled)
+					return; // do not schedule a cancelled task
+
 				// Increment the task groups the first
 				// time a task is scheduled.
 				if (this.scheduler == null)
@@ -226,11 +229,30 @@ namespace Beagle.Util {
 
 			public void Cancel ()
 			{
+				Cancel (null);
+			}
+
+			public void Cancel (string reason)
+			{
 				if (! cancelled) {
+					AddToCancelledTaskList (reason);
 					DecrementAllTaskGroups ();
 					Cleanup (); // clean up after cancelled tasks
 				}
 				cancelled = true;
+			}
+
+			private void AddToCancelledTaskList (string reason)
+			{
+				string task_desc = String.Format ("Cancelled task: {5}\n"  +
+								  "        Tag: {0}\n" +
+								  "    Creator: {1}\n" +
+								  "Description: {2}\n" +
+								  "   Priority: {3} ({4})\n", 
+								  Tag, Creator, Description, Priority, SubPriority,
+								  (reason == null ? String.Empty : reason));
+				if (scheduler != null)
+					scheduler.ReportCancelledTask (task_desc);
 			}
 
 			///////////////////////////////
@@ -243,6 +265,18 @@ namespace Beagle.Util {
 			public int Count {
 				get { return count; }
 			}
+
+			// Keeps track of how many times the task was executed but
+			// there was some exception
+			private int misfires = 0;
+
+			// Allow at most this many exceptions per task
+			// This is a bit high since some tasks like the generators are
+			// long running tasks. This should be a high enough number
+			// to tolerate some exceptional cases but stop the task
+			// in case it went into an infinite loop with exceptions.
+			// Ideally all exceptions should be caught and handled downstream.
+			const int MAX_TASK_EXCEPTION = 200;
 
 			///////////////////////////////
 			
@@ -272,6 +306,7 @@ namespace Beagle.Util {
 					try {
 						DoTaskReal ();
 					} catch (Exception ex) {
+						misfires ++;
 						Logger.Log.Warn (ex,
 								 "Caught exception in DoTaskReal\n" +
 								 "        Tag: {0}\n" +
@@ -279,12 +314,23 @@ namespace Beagle.Util {
 								 "Description: {2}\n" +
 								 "   Priority: {3} ({4})", 
 								 Tag, Creator, Description, Priority, SubPriority);
+						if (misfires >= MAX_TASK_EXCEPTION) {
+							Log.Warn ("More than {5} exceptions in DoTaskReal. Disabling further execution of task:\n" +
+								 "        Tag: {0}\n" +
+								 "    Creator: {1}\n" +
+								 "Description: {2}\n" +
+								 "   Priority: {3} ({4})", 
+								 Tag, Creator, Description, Priority, SubPriority, MAX_TASK_EXCEPTION);
+							Cancel ("Exceptions in DoTaskReal");
+						}
 					}
 					sw.Stop ();
 					if (Debug)
 						Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
 
-					if (Reschedule) {
+					if (cancelled) {
+						return;
+					} else if (Reschedule) {
 						++count;
 						if (Debug)
 							Log.Debug ("Rescheduling task {0}", Tag);
@@ -311,6 +357,9 @@ namespace Beagle.Util {
 					DoCleanup ();
 				} catch (Exception ex) {
 					Logger.Log.Warn (ex, "Caught exception cleaning up task '{0}'", Tag);
+				} finally {
+					Reschedule = false;
+					scheduler = null;
 				}
 			}
 
@@ -557,7 +606,7 @@ namespace Beagle.Util {
 
 		private Hashtable tasks_by_tag = new Hashtable ();
 		private int total_executed_task_count = 0;
-		
+
 		public void Add (Task task)
 		{
 			if (task == null)
@@ -1041,6 +1090,18 @@ namespace Beagle.Util {
 		
 		//////////////////////////////////////////////////////////////////////////////
 
+		// A list of descriptions of cancelled tasks
+		// Kept for display purposes; it is useful to know
+		// which tasks were cancelled and why.
+		private ArrayList cancelled_tasks = new ArrayList ();
+
+		internal void ReportCancelledTask (string description)
+		{
+			cancelled_tasks.Add (description);
+		}
+
+		//////////////////////////////////////////////////////////////////////////////
+
 		private static StringBuilder cached_sb = new StringBuilder ();
 		
 		public SchedulerInformation GetCurrentStatus ()
@@ -1089,6 +1150,11 @@ namespace Beagle.Util {
 					task.AppendToStringBuilder (cached_sb);
 					current_status.BlockedTasks.Add (cached_sb.ToString ());
 				}
+
+				// Add the cancelled tasks to blocked_task list for the time being
+				// This is avoid ABI change in libbeagle
+				foreach (string description in cancelled_tasks)
+					current_status.BlockedTasks.Add (description);
 
 				current_status.TotalTaskCount = total_executed_task_count;
 				current_status.StatusString = status_str;
