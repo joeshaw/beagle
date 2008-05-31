@@ -99,4 +99,16 @@ namespace Beagle.Daemon {
 			return new EmptyResponse ();
 		}
 	}
+
+	[RequestMessage (typeof (RemovableIndexRequest))]
+	public class RemovableIndexExecutor : RequestMessageExecutor {
+		public override ResponseMessage Execute (RequestMessage req)
+		{
+			RemovableIndexRequest r = (RemovableIndexRequest) req;
+			string path = r.Path;
+			bool to_mount = r.Mount;
+
+			return QueryDriver.HandleRemovableIndexRequest (path, to_mount);
+		}
+	}
 }

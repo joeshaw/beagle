@@ -28,7 +28,7 @@ using System;
 
 namespace Beagle.Daemon {
 
-	public interface IFileAttributesStore {
+	public interface IFileAttributesStore : IDisposable {
 
 		FileAttributes Read  (string path);
 

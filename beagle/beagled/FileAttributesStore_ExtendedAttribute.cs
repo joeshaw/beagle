@@ -49,6 +49,8 @@ namespace Beagle.Daemon {
 			this.index_fingerprint = index_fingerprint;
 		}
 
+		public void Dispose () { }
+
 		public FileAttributes Read (string path)
 		{
 			if (Disable)

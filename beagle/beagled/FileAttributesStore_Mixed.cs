@@ -40,6 +40,12 @@ namespace Beagle.Daemon {
 			store_sqlite = new FileAttributesStore_Sqlite (directory, index_fingerprint);
 		}
 
+		public void Dispose ()
+		{
+			store_ea.Dispose ();
+			store_sqlite.Dispose ();
+		}
+
 		// We always have to query the Sqlite store first, because of our
 		// EA nightmare scenario: a file whose permissions or ownership get
 		// changed after the EAs have been attached.  Thus attributes in

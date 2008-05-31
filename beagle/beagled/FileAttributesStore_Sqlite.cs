@@ -194,6 +194,15 @@ namespace Beagle.Daemon {
 			DeleteCommand.CommandText = "DELETE FROM file_attributes WHERE directory=@directory AND filename=@filename";
 		}
 
+		public void Dispose ()
+		{
+			ReadCommand.Dispose ();
+			InsertCommand.Dispose ();
+			DeleteCommand.Dispose ();
+			connection.Dispose ();
+			connection = null;
+		}
+
 		///////////////////////////////////////////////////////////////////
 
 		private string GetDbPath (string directory)

@@ -1,7 +1,7 @@
 //
-// AssemblyInfo.cs
+// RemovableIndexControl.cs
 //
-// Copyright (C) 2006 Novell, Inc.
+// Copyright (C) 2008 D Bera <dbera.web@gmail.com>
 //
 
 //
@@ -24,40 +24,30 @@
 // DEALINGS IN THE SOFTWARE.
 //
 
-using System.Reflection;
+using System.Collections;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
-using Beagle;
+using Beagle.Util;
 
-// Any request message types in the Beagle.dll file must be registered here.
-[assembly: RequestMessageTypes (
-	 typeof (CountMatchQuery),
-	 typeof (DaemonInformationRequest),
-	 typeof (IndexingServiceRequest),
-	 typeof (InformationalMessagesRequest),
-	 typeof (OptimizeIndexesRequest),
-	 typeof (Query),
-#if ENABLE_RDF_ADAPTER
-	 typeof (RDFQuery),
-#endif
-	 typeof (ReloadConfigRequest),
-	 typeof (RemovableIndexRequest),
-	 typeof (ShutdownRequest),
-	 typeof (SnippetRequest)
-)]
-	 
-[assembly: ResponseMessageTypes (
-	 typeof (CountMatchQueryResponse),
-	 typeof (DaemonInformationResponse),
-	 typeof (EmptyResponse),
-	 typeof (ErrorResponse),
-	 typeof (FinishedResponse),
-	 typeof (HitsAddedResponse),
-	 typeof (HitsSubtractedResponse),
-	 typeof (IndexingStatusResponse),
-#if ENABLE_RDF_ADAPTER
-	 typeof (RDFQueryResult),
-#endif
-	 typeof (RemovableIndexResponse),
-	 typeof (SearchTermResponse),
-	 typeof (SnippetResponse)
-)]
+namespace Beagle {
+
+	public class RemovableIndexRequest : RequestMessage {
+		// To Mount or Unmount
+		public bool Mount;
+
+		// FIXME: More configurable ?
+		// 1. path to the config file
+		// 2. path to the index
+		// 3. path where the removable index is mounted
+		// Separate #3 is needed in case users want to search unmounted media
+		public string Path;
+	}
+
+	public class RemovableIndexResponse : ResponseMessage {
+		// If success, return the name of Static source.
+		// Otherwise return null.
+		public string Source;
+	}
+}

@@ -53,6 +53,18 @@ namespace Beagle.Daemon {
 			}
 		}
 
+		// FIXME: Move these to LuceneCommon if and when we decide to
+		// support adding/removing arbitrary backends at runtime
+		internal void Close ()
+		{
+			Log.Debug ("Removing static queryable {0}", IndexName);
+			if (text_cache != null)
+				text_cache.Dispose ();
+			Driver.PrimaryStore.Close ();
+			Driver.SecondaryStore.Close ();
+			FileAttributesStore.Dispose ();
+		}
+
 #if ENABLE_RDF_ADAPTER
 		protected override TextCache TextCache {
 			get { return text_cache; }

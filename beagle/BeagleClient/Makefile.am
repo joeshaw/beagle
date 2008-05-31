@@ -25,6 +25,7 @@ CSFILES = 						\
 	$(srcdir)/QueryResponses.cs            		\
 	$(srcdir)/QueryableStatus.cs			\
 	$(srcdir)/RemoteControl.cs			\
+	$(srcdir)/RemovableIndexControl.cs		\
 	$(srcdir)/Snippet.cs				\
 	$(srcdir)/Transport.cs				\
 	$(srcdir)/UnixTransport.cs			\

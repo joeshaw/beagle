@@ -30,7 +30,7 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class FileAttributesStore {
+	public class FileAttributesStore : IDisposable {
 		
 		private static bool Debug = false;
 
@@ -39,6 +39,11 @@ namespace Beagle.Daemon {
 		public FileAttributesStore (IFileAttributesStore ifas)
 		{
 			this.ifas = ifas;
+		}
+
+		public void Dispose ()
+		{
+			ifas.Dispose ();
 		}
 
 		public FileAttributes Read (string path)

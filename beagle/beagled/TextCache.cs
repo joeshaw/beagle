@@ -48,7 +48,7 @@ namespace Beagle.Daemon {
 	//
 	// See http://bugzilla.gnome.org/show_bug.cgi?329022
 
-	public class TextCache {
+	public class TextCache : IDisposable {
 
 		private const string SELF_CACHE_TAG = "*self*";
 		private const string BLOB_TAG = "*blob*";
@@ -206,12 +206,27 @@ namespace Beagle.Daemon {
 			LookupLinksCommand.CommandText = "SELECT links FROM links_data WHERE uri=@uri";
 #endif
 		}
+
 		private SqliteConnection Open (string db_filename)
 		{
 			SqliteConnection connection = new SqliteConnection ();
 			connection.ConnectionString = "version=3,encoding=UTF-8,URI=file:" + db_filename;
 			connection.Open ();
 			return connection;
+		}
+
+		public void Dispose ()
+		{
+			InsertCommand.Dispose ();
+			LookupPathCommand.Dispose ();
+			LookupDataCommand.Dispose ();
+			DeleteCommand.Dispose ();
+#if ENABLE_RDF_ADAPTER
+			UpdateLinksCommand.Dispose ();
+			LookupLinksCommand.Dispose ();
+#endif
+			connection.Dispose ();
+			connection = null;
 		}
 
 		private static string UriToString (Uri uri)

@@ -45,17 +45,18 @@ using Beagle.Daemon;
 
 // Executors go in here.
 [assembly: RequestMessageExecutorTypes (
+	typeof (CountMatchQueryExecutor),
 	typeof (DaemonInformationExecutor),
 	typeof (InformationalMessagesRequestExecutor),
 	typeof (OptimizeIndexesExecutor),
 	typeof (QueryExecutor),
-	typeof (ReloadConfigExecutor),
-	typeof (ShutdownExecutor),
-	typeof (SnippetExecutor),
 #if ENABLE_RDF_ADAPTER
 	typeof (RDFQueryExecutor),
 #endif
-	typeof (CountMatchQueryExecutor)
+	typeof (ReloadConfigExecutor),
+	typeof (RemovableIndexExecutor),
+	typeof (ShutdownExecutor),
+	typeof (SnippetExecutor)
 )]
 
 // All backends in this assembly must be registered here.

@@ -138,6 +138,10 @@ namespace Beagle.Daemon {
 		// Use introspection to find all classes that implement IQueryable, the construct
 		// associated Queryables objects.
 
+		// To protect the list of iqueryables, since now we support adding/removing of
+		// static queryables at runtime
+		static ReaderWriterLock iqueryable_lock = new ReaderWriterLock ();
+
 		static Hashtable iqueryable_to_queryable = new Hashtable ();
 		static ICollection Queryables {
 			get { return iqueryable_to_queryable.Values; }
@@ -200,7 +204,7 @@ namespace Beagle.Daemon {
 				if (! UseQueryable (index_dir.Name))
 					continue;
 				
-				if (LoadStaticQueryable (index_dir, QueryDomain.System))
+				if (LoadStaticQueryable (index_dir, QueryDomain.System) != null)
 					count++;
 			}
 
@@ -229,33 +233,35 @@ namespace Beagle.Daemon {
 					continue;
 				
 				// FIXME: QueryDomain might be other than local
-				if (LoadStaticQueryable (index_dir, QueryDomain.Local))
+				if (LoadStaticQueryable (index_dir, QueryDomain.Local) != null)
 					count++;
 			}
 
 			Logger.Log.Info ("Found {0} user-configured static indexes..", count);
+
+			static_queryables = null;
 		}
 
 		// Instantiates and loads a StaticQueryable from an index directory
-		static private bool LoadStaticQueryable (DirectoryInfo index_dir, QueryDomain query_domain) 
+		static private Queryable LoadStaticQueryable (DirectoryInfo index_dir, QueryDomain query_domain) 
 		{
 			StaticQueryable static_queryable = null;
 			
 			if (!index_dir.Exists)
-				return false;
+				return null;
 			
 			try {
 				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, true);
 			} catch (InvalidOperationException) {
 				Logger.Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
-				return false;
+				return null;
 			} catch (Exception e) {
 				Logger.Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
-				return false;
+				return null;
 			}
 
 			if (static_queryable == null)
-				return false;
+				return null;
 
 			// Load StaticIndex.xml from index_dir.FullName/config
 			string config_file_path = Path.Combine (index_dir.FullName, "StaticIndex.xml");
@@ -264,17 +270,17 @@ namespace Beagle.Daemon {
 				static_index_config = Conf.LoadFrom (config_file_path);
 				if (static_index_config == null) {
 					Log.Error ("Unable to read config from {0}", config_file_path);
-					return false;
+					return null;
 				}
 			} catch (Exception e) {
 				Log.Error (e, "Caught exception while reading config from {0}", config_file_path);
-				return false;
+				return null;
 			}
 
 			string source = static_index_config.GetOption ("Source", null);
 			if (source == null) {
 				Log.Error ("Invalid config file: {0}", config_file_path);
-				return false;
+				return null;
 			}
 
 			QueryableFlavor flavor = new QueryableFlavor ();
@@ -284,7 +290,7 @@ namespace Beagle.Daemon {
 			Queryable queryable = new Queryable (flavor, static_queryable);
 			iqueryable_to_queryable [static_queryable] = queryable;
 
-			return true;
+			return queryable;
 		}
 
 		////////////////////////////////////////////////////////
@@ -602,13 +608,19 @@ namespace Beagle.Daemon {
 
 			if (! result.WorkerStart (dummy_worker))
 				return;
-			
-			foreach (Queryable queryable in Queryables)
-				DoOneQuery (queryable, query, result, null);
+
+			try {
+				iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
+
+				foreach (Queryable queryable in Queryables)
+					DoOneQuery (queryable, query, result, null);
+			} finally {
+				iqueryable_lock.ReleaseReaderLock ();
+			}
 			
 			result.WorkerFinished (dummy_worker);
 		}
-		
+
 		static public void DoQueryLocal (Query       query,
 						 QueryResult result)
 		{
@@ -639,14 +651,20 @@ namespace Beagle.Daemon {
 		{
 			ArrayList all_results = new ArrayList ();
 
-			foreach (Queryable q in Queryables) {
-				if (! q.AcceptQuery (query))
-					continue;
+			try {
+				iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
 
-				ICollection results = q.DoRDFQuery (query);
-				if (results == null || results.Count == 0)
-					continue;
-				all_results.AddRange (results);
+				foreach (Queryable q in Queryables) {
+					if (! q.AcceptQuery (query))
+						continue;
+
+					ICollection results = q.DoRDFQuery (query);
+					if (results == null || results.Count == 0)
+						continue;
+					all_results.AddRange (results);
+				}
+			} finally {
+				iqueryable_lock.ReleaseReaderLock ();
 			}
 
 			return all_results;
@@ -661,11 +679,17 @@ namespace Beagle.Daemon {
 
 			int num_matches = 0;
 
-			foreach (Queryable q in Queryables) {
-				if (! q.AcceptQuery (query))
-					continue;
+			try {
+				iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
 
-				num_matches += q.DoCountMatchQuery (query);
+				foreach (Queryable q in Queryables) {
+					if (! q.AcceptQuery (query))
+						continue;
+
+					num_matches += q.DoCountMatchQuery (query);
+				}
+			} finally {
+				iqueryable_lock.ReleaseReaderLock ();
 			}
 
 			return num_matches;
@@ -675,8 +699,14 @@ namespace Beagle.Daemon {
 
 		static public IEnumerable GetIndexInformation ()
 		{
-			foreach (Queryable q in Queryables)
-				yield return q.GetQueryableStatus ();
+			try {
+				iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
+
+				foreach (Queryable q in Queryables)
+					yield return q.GetQueryableStatus ();
+			} finally {
+				iqueryable_lock.ReleaseReaderLock ();
+			}
 		}
 
 		////////////////////////////////////////////////////////
@@ -689,18 +719,117 @@ namespace Beagle.Daemon {
 				if (! queryables_started)
 					return true;
 
-				foreach (Queryable q in Queryables) {
-					QueryableStatus status = q.GetQueryableStatus ();
+				try {
+					iqueryable_lock.AcquireReaderLock (System.Threading.Timeout.Infinite);
 
-					if (status == null)
-						return false;
+					foreach (Queryable q in Queryables) {
+						QueryableStatus status = q.GetQueryableStatus ();
 
-					if (status.IsIndexing)
-						return true;
+						if (status == null)
+							return false;
+
+						if (status.IsIndexing)
+							return true;
+					}
+
+					return false;
+				} finally {
+					iqueryable_lock.ReleaseReaderLock ();
 				}
-
-				return false;
 			}
+		}
+
+		/////////////////////////////////////////////////////////
+
+		// Removable Index related stuff
+
+		private static Dictionary<string, Queryable> removable_queryables = new Dictionary<string, Queryable> (4); // small number
+
+		internal static ResponseMessage HandleRemovableIndexRequest (string path, bool to_mount)
+		{
+			lock (removable_queryables) {
+				if (to_mount)
+					return AddRemovableIndex (path);
+				else
+					return RemoveRemovableIndex (path);
+			}
+		}
+
+		private static ResponseMessage AddRemovableIndex (string path)
+		{
+			DirectoryInfo index_dir = new DirectoryInfo (StringFu.SanitizePath (path));
+			if (! index_dir.Exists) {
+				ErrorResponse msg;
+				msg = new ErrorResponse ();
+				msg.ErrorMessage = "Adding removable index failed";
+				msg.Details = String.Format ("'{0}' does not exist.", path);
+				return msg;
+			}
+
+			if (removable_queryables.ContainsKey (path)) {
+				ErrorResponse msg;
+				msg = new ErrorResponse ();
+				msg.ErrorMessage = "Adding removable index failed";
+				msg.Details = String.Format ("'{0}' already added.", path);
+				return msg;
+			}
+
+			Queryable removable_queryable = null;
+
+			try {
+				iqueryable_lock.AcquireWriterLock (System.Threading.Timeout.Infinite);
+				removable_queryable = LoadStaticQueryable (index_dir, QueryDomain.Local);
+			} finally {
+				iqueryable_lock.ReleaseWriterLock ();
+			}
+
+			if (removable_queryable == null)
+				return new ErrorResponse ("Adding removable index failed");
+
+			removable_queryables [path] = removable_queryable;
+
+			RemovableIndexResponse resp = new RemovableIndexResponse ();
+			resp.Source = removable_queryable.Name;
+			Log.Info ("Adding removable index '{0}' from {1}", resp.Source, path);
+			return resp;
+		}
+
+		private static ResponseMessage RemoveRemovableIndex (string path)
+		{
+			if (! removable_queryables.ContainsKey (path)) {
+				ErrorResponse msg;
+				msg = new ErrorResponse ();
+				msg.ErrorMessage = "Removing removable-index failed";
+				msg.Details = String.Format ("'{0}' was not added.", path);
+				return msg;
+			}
+
+			Queryable removable_queryable = removable_queryables [path];
+
+			// Assert
+			if (removable_queryable == null ||
+			    ! (removable_queryable.IQueryable is StaticQueryable)) {
+				ErrorResponse msg = new ErrorResponse ("Removing removable-index failed");
+				return msg;
+			}
+
+			StaticQueryable static_queryable = (StaticQueryable) removable_queryable.IQueryable;
+			static_queryable.Close ();
+
+			removable_queryables.Remove (path);
+
+			try {
+				iqueryable_lock.AcquireWriterLock (System.Threading.Timeout.Infinite);
+				iqueryable_to_queryable [removable_queryable.IQueryable] = null;
+				iqueryable_to_queryable.Remove (removable_queryable.IQueryable);
+			} finally {
+				iqueryable_lock.ReleaseWriterLock ();
+			}
+
+			RemovableIndexResponse resp = new RemovableIndexResponse ();
+			resp.Source = removable_queryable.Name;
+			Log.Info ("Removed removable-index '{0}' at {1}", removable_queryable.Name, path);
+			return resp;
 		}
 
 		/////////////////////////////////////////////////////////
@@ -711,6 +840,7 @@ namespace Beagle.Daemon {
 		{
 			Log.Debug ("Debughook called:");
 			LuceneQueryable l;
+
 			foreach (Queryable q in Queryables) {
 				l = q.IQueryable as LuceneQueryable;
 				if (l == null)
