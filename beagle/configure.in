@@ -381,24 +381,8 @@ dnl ----------------------------------------------
 
 dnl taglib-sharp: Needed for indexing audio formats
 
-AC_ARG_ENABLE([internal-taglib],
-	AC_HELP_STRING([--enable-internal-taglib], [Use internal taglib-sharp (default auto)]),
-	enable_internal_taglib=$enableval,
-	enable_internal_taglib=auto)
-
-if test "x$enable_internal_taglib" != "xyes"; then
-	PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp >= 2.0, internal_taglib=no, internal_taglib=yes)
-	if test "x$enable_internal_taglib" = "xno" -a "x$internal_taglib" = "xyes"; then
-		AC_MSG_ERROR([taglib-sharp >= 2.0 not found])
-	else
-		enable_internal_taglib=$internal_taglib
-	fi
-else
-	enable_internal_taglib="yes"
-fi
-
+PKG_CHECK_MODULES(TAGLIB_SHARP, taglib-sharp >= 2.0)
 AC_SUBST(TAGLIB_SHARP_LIBS)
-AM_CONDITIONAL(INTERNAL_TAGLIB, test "x$enable_internal_taglib" = "xyes")
 
 dnl ----------------------------------------------
 
@@ -710,8 +694,6 @@ echo "
 	Epiphany Extension?	  ${enable_epiphany_extension}
 	Thunderbird Extension? 	  ${enable_tbird}
 	Google Backends?          ${enable_google}
-
-	Local taglib-sharp?       ${enable_internal_taglib}
 
 	Monitor screensaver       ${have_xss}
 	beagle-search GUI	  ${enable_gui}

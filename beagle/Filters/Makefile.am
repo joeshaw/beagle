@@ -151,21 +151,10 @@ LOCAL_ASSEMBLIES =				\
 ASSEMBLIES =				\
 	$(BEAGLED_LIBS)			\
 	$(SHARPZIPLIB_LIBS)		\
+	$(TAGLIB_SHARP_LIBS)		\
 	-r:Mono.Posix			\
 	-r:System.Web			\
 	$(LOCAL_ASSEMBLIES:%=-r:%)
-
-########################################################
-
-include TagLib/TagLib.sources
-
-if INTERNAL_TAGLIB
-CSFILES += $(TAGLIB_CSFILES)
-else
-ASSEMBLIES += $(TAGLIB_SHARP_LIBS)
-endif
-
-COND_CS_FILES += $(TAGLIB_CSFILES)
 
 ########################################################
 
