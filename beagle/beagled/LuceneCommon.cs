@@ -1913,6 +1913,19 @@ namespace Beagle.Daemon {
 				this.Version = version;
 				this.Refcount = 1;
 			}
+
+			// Use these methods to keep one instance of a reader
+			// always opened.
+
+			public void MarkNoClose ()
+			{
+				this.Refcount ++;
+			}
+
+			public void MarkClose ()
+			{
+				this.Refcount --;
+			}
 		}
 
 		static private Hashtable directory_rav_map = new Hashtable ();
@@ -1938,6 +1951,7 @@ namespace Beagle.Daemon {
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
+					rav.MarkNoClose (); // keep this reader open until...
 
 					directory_rav_map [directory] = rav;
 					reader_rav_map [reader] = rav;
@@ -1948,6 +1962,8 @@ namespace Beagle.Daemon {
 				version = IndexReader.GetCurrentVersion (directory);
 				
 				if (version != rav.Version) {
+					rav.MarkClose ();
+
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
@@ -1981,6 +1997,21 @@ namespace Beagle.Daemon {
 				if (rav != null)
 					UnrefReaderAndVersion_Unlocked (rav);
 				else
+					reader.Close ();
+			}
+		}
+
+		// Special function to permanently remove this reader
+		// Called when StaticQueryables need to unload
+		static internal void CloseReader (IndexReader reader)
+		{
+			lock (reader_rav_map) {
+				ReaderAndVersion rav = (ReaderAndVersion) reader_rav_map [reader];
+
+				if (rav != null) {
+					rav.MarkClose ();
+					UnrefReaderAndVersion_Unlocked (rav);
+				} else
 					reader.Close ();
 			}
 		}
@@ -2200,6 +2231,32 @@ namespace Beagle.Daemon {
 			ReleaseSearcher (secondary_searcher);
 
 			return hits_by_uri.Values;
+		}
+
+		//////////////////////////////////////////////////
+
+		public static void DebugHook ()
+		{
+			lock (reader_rav_map) {
+				Lucene.Net.Store.Directory dir;
+				ReaderAndVersion rav;
+				IndexReader reader;
+
+				Log.Debug ("Cached readers per directory:");
+				foreach (DictionaryEntry entry in directory_rav_map) {
+					dir = entry.Key as Lucene.Net.Store.Directory;
+					rav = entry.Value as ReaderAndVersion;
+					Log.Debug ("\tDirectory {0} has {1} readers open", dir.GetLockID (), rav.Refcount);
+				}
+
+				Log.Debug ("Opened readers:");
+				foreach (DictionaryEntry entry in reader_rav_map) {
+					reader = entry.Key as IndexReader;
+					rav = entry.Value as ReaderAndVersion;
+					dir = reader.Directory ();
+					Log.Debug ("\t{2} readers v{0} opened for directory {1}", rav.Version, dir.GetLockID (), rav.Refcount);
+				}
+			}
 		}
 	}
 }

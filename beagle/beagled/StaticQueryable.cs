@@ -60,6 +60,11 @@ namespace Beagle.Daemon {
 			Log.Debug ("Removing static queryable {0}", IndexName);
 			if (text_cache != null)
 				text_cache.Dispose ();
+
+			// Free the cached IndexReaders
+			LuceneCommon.CloseReader (LuceneCommon.GetReader (Driver.PrimaryStore));
+			LuceneCommon.CloseReader (LuceneCommon.GetReader (Driver.SecondaryStore));
+
 			Driver.PrimaryStore.Close ();
 			Driver.SecondaryStore.Close ();
 			FileAttributesStore.Dispose ();
