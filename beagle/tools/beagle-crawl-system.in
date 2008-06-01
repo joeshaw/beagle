@@ -37,6 +37,11 @@ if [ ! -x @sbindir@/beagle-build-index ] ; then
     exit 1
 fi
 
+if [ "$1" = "--list" ]; then
+    grep -H CRAWL_ENABLED @sysconfdir@/beagle/crawl-rules/crawl-*
+    exit 0
+fi
+
 CRAWL_USER=beagleindex
 
 export TMPDIR=/tmp
@@ -45,12 +50,12 @@ export TMPDIR=/tmp
 MONO_SHARED_DIR=`mktemp -d -p $TMPDIR .beagleindexwapi.XXXXXXXXXX`|| ( echo "$0: Can't create wapi directory!" ; exit 1 )
 chown $CRAWL_USER $MONO_SHARED_DIR
 
+if [ "$DEBUG" = "1" ]; then
+    echo "$0: Processing files in @sysconfdir@/beagle/crawl-rules/..."
+fi
+
 for crawl_file in @sysconfdir@/beagle/crawl-rules/crawl-*; do
     unset CRAWL_ENABLED CRAWL_DISABLE_FILTERING CRAWL_DISABLE_DIRECTORIES CRAWL_DISABLE_ON_BATTERY CRAWL_RECURSIVE CRAWL_CACHE_TEXT CRAWL_ALLOW_PATTERNS CRAWL_DENY_PATTERNS CRAWL_PATHS CRAWL_INDEX_NAME CRAWL_REMOVE_DELETED_FILES
-
-    if [ "$DEBUG" = "1" ]; then
-	echo "$0: Processing files in @sysconfdir@/beagle/crawl-rules/..."
-    fi
 
     if [ -f $crawl_file ] ; then
 	if [ "$DEBUG" = "1" ]; then
@@ -58,6 +63,11 @@ for crawl_file in @sysconfdir@/beagle/crawl-rules/crawl-*; do
 	fi
 
 	. $crawl_file
+
+	if [ "$1" != "" ]; then
+	    CRAWL_FILE_NAME=`basename $crawl_file`
+	    [ "$1" = "$CRAWL_FILE_NAME" ] && CRAWL_ENABLED="yes" || CRAWL_ENABLED="no"
+	fi
 
 	if [ -n "$CRAWL_ENABLED" -a "$CRAWL_ENABLED" = "yes" ] ; then
 
