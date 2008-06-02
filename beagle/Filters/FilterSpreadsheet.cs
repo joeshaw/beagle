@@ -37,7 +37,6 @@ namespace Beagle.Filters {
 	public class FilterSpreadsheet : Filter {
 
 		XmlTextReader xmlReader;
-		bool ignoredFirst2lines = false;
 		public FilterSpreadsheet () 
 		{
 			SnippetMode = true;
@@ -72,17 +71,13 @@ namespace Beagle.Filters {
 			}
 		}
 		
-		override protected void DoOpen (FileInfo info)
-		{
-			ignoredFirst2lines = false;
-		}
-
 		override protected void DoPull ()
 		{
 			// create new external process
 			SafeProcess pc = new SafeProcess ();
 			pc.Arguments = new string [] { "ssindex", "-i", FileInfo.FullName };
 			pc.RedirectStandardOutput = true;
+			pc.RedirectStandardError = false;
 			pc.UseLangC = true;
 
 			// Let ssindex run for 10 seconds, max.
@@ -98,12 +93,7 @@ namespace Beagle.Filters {
 
 			// process ssindex output
 			StreamReader pout = new StreamReader (pc.StandardOutput);
-			if (!ignoredFirst2lines) {
-				pout.ReadLine ();
-				pout.ReadLine ();
-				xmlReader = new XmlTextReader (pout);
-				ignoredFirst2lines = true;
-			}
+			xmlReader = new XmlTextReader (pout);
 
 			try {
 				WalkContentNodes (xmlReader);

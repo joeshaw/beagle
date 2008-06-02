@@ -35,7 +35,7 @@ namespace Beagle.Util {
 
 	public class SafeProcess {
 
-		private bool redirect_stdin, redirect_stdout, redirect_stderr;
+		private bool redirect_stdin = false, redirect_stdout = true, redirect_stderr = false;
 		private string[] args;
 		private UnixStream stdin_stream, stdout_stream, stderr_stream;
 		private int pid;
