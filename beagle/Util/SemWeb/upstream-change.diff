@@ -1,0 +1,50 @@
+Mostly to remove unneeded dependency on System.Remote.
+
+--- /usr/share/devel/cvsdev/semweb/src/Store.cs	2008-06-02 06:53:41.765078790 -0400
++++ Store.cs	2008-06-02 06:58:47.705070026 -0400
+@@ -152,7 +152,7 @@
+ 				/*case "bdb":
+ 					return new SemWeb.Stores.BDBStore(spec);*/
+ 				case "sparql-http":
+-					#if !SILVERLIGHT
++					#if false
+ 					return new SemWeb.Remote.SparqlHttpSource(spec);
+ 					#else
+ 					throw new NotSupportedException("The SparqlHttpSource class is not available in the Silverlight build of SemWeb.");
+--- /usr/share/devel/cvsdev/semweb/src/RdfReader.cs	2008-06-02 06:53:41.921075546 -0400
++++ RdfReader.cs	2008-06-02 06:59:20.221472537 -0400
+@@ -122,7 +122,7 @@
+ 			}
+ 		}
+ 
+-		#if !SILVERLIGHT
++		#if false
+ 		public static RdfReader LoadFromUri(Uri webresource) {
+ 			// TODO: Add Accept header for HTTP resources.
+ 			
+--- /usr/share/devel/cvsdev/semweb/src/SparqlClient.cs	2008-06-02 06:53:41.789077382 -0400
++++ SparqlClient.cs	2008-06-02 07:07:54.145078453 -0400
+@@ -20,7 +20,7 @@
+ 		void RunSparqlQuery(string sparqlQuery, QueryResultSink selectResults);
+ 	}
+ 
+-	#if !SILVERLIGHT
++	#if false
+ 	public class SparqlHttpSource : QueryableSource, SparqlSource {
+ 		static bool Debug = System.Environment.GetEnvironmentVariable("SEMWEB_DEBUG_HTTP") != null;
+ 	
+@@ -584,6 +584,7 @@
+ 			}
+ 		}
+ 	}
++	#endif
+ }
+ 
+ namespace SemWeb.Query {
+@@ -679,6 +680,5 @@
+ 			output.Flush();
+ 		}
+ 	}
+-	#endif
+ 	
+ }	

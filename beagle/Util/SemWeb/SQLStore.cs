@@ -44,6 +44,8 @@
  * not in this table or in the _literals table.
  */
 
+#if !SILVERLIGHT
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -124,7 +126,6 @@ namespace SemWeb.Stores {
 		// Debugging flags from environment variables.
 		static bool Debug = System.Environment.GetEnvironmentVariable("SEMWEB_DEBUG_SQL") != null;
 		static bool DebugLogSpeed = System.Environment.GetEnvironmentVariable("SEMWEB_DEBUG_SQL_LOG_SPEED") != null;
-		static bool NoSQLView = System.Environment.GetEnvironmentVariable("SEMWEB_SQL_NOVIEWS") != null;
 		static string InitCommands = System.Environment.GetEnvironmentVariable("SEMWEB_SQL_INIT_COMMANDS");
 		
 		// This guy is reused in various calls to avoid allocating a new one of
@@ -183,6 +184,7 @@ namespace SemWeb.Stores {
 		protected abstract string InsertIgnoreCommand { get; }
 		protected abstract bool SupportsInsertCombined { get; }
 		protected abstract bool SupportsSubquery { get; }
+		protected virtual bool SupportsLimitClause { get { return true; } }
 		protected virtual bool SupportsViews { get { return false; } }
 		protected virtual int MaximumUriLength { get { return -1; } }
 		
@@ -368,13 +370,18 @@ namespace SemWeb.Stores {
 				if (ret != null) return (int)ret;
 			} else {
 				StringBuilder b = cmdBuffer; cmdBuffer.Length = 0;
-				b.Append("SELECT id FROM ");
+				b.Append("SELECT ");
+				if (!SupportsLimitClause)
+					b.Append("TOP 1 ");
+				b.Append("id FROM ");
 				b.Append(table);
 				b.Append("_literals WHERE hash =");
 				b.Append(quote);
 				b.Append(GetLiteralHash(literal));
 				b.Append(quote);
-				b.Append(" LIMIT 1;");
+				if (SupportsLimitClause)
+					b.Append(" LIMIT 1");
+				b.Append(';');
 				
 				object id = RunScalar(b.ToString());
 				if (id != null) return AsInt(id);
@@ -1139,6 +1146,7 @@ namespace SemWeb.Stores {
 		void PrefetchResourceIds(IList resources) {
 			Hashtable seen_e = new Hashtable();
 			Hashtable seen_l = new Hashtable();
+			Hashtable res_map = new Hashtable();
 			
 			int resStart = 0;
 			while (resStart < resources.Count) {
@@ -1165,7 +1173,14 @@ namespace SemWeb.Stores {
 				ctr++;
 			
 				if (r.Uri != null) {
-					if (seen_e.ContainsKey(r.Uri)) continue;
+					if (seen_e.ContainsKey(r.Uri)) {
+						// We can only query for a URI once, but it might be that multiple objects
+						// coming in have the same URI, so when we see a duplicate, associate the
+						// duplicate with the first instance of the URI we saw.
+						if ((object)r != (object)seen_e[r.Uri])
+							res_map[r] = seen_e[r.Uri];
+						continue;
+					}
 					if (hasEnts)
 						cmd_e.Append(" , ");
 					EscapedAppend(cmd_e, r.Uri);
@@ -1176,7 +1191,14 @@ namespace SemWeb.Stores {
 				Literal lit = r as Literal;
 				if (lit != null) {
 					string hash = GetLiteralHash(lit);
-					if (seen_l.ContainsKey(hash)) continue;
+					if (seen_l.ContainsKey(hash)) {
+						// We can only query for a literal value once, but it might be that multiple objects
+						// coming in have the same value, so when we see a duplicate, associate the
+						// duplicate with the first instance of the value we saw.
+						if ((object)lit != (object)seen_l[hash])
+							res_map[lit] = seen_l[hash];
+						continue;
+					}
 					
 					if (hasLiterals)
 						cmd_l.Append(" , ");
@@ -1210,6 +1232,10 @@ namespace SemWeb.Stores {
 				}
 			}
 			
+			}
+			
+			foreach (Resource r in res_map.Keys) {
+				SetResourceKey(r, GetResourceKey((Resource)res_map[r]));
 			}
 		}
 		
@@ -1253,8 +1279,11 @@ namespace SemWeb.Stores {
 			}*/
 			
 			// Have to select something
-			if (!columns.SubjectId && !columns.PredicateId && !columns.ObjectId && !columns.MetaId)
+			bool fakeSubjectIdSelect = false;
+			if (!columns.SubjectId && !columns.PredicateId && !columns.ObjectId && !columns.MetaId) {
 				columns.SubjectId = true;
+				fakeSubjectIdSelect = true;
+			}
 				
 			// Pre-cache the IDs of resources in a MultiRes. TODO: Pool these into one array.
 			foreach (Resource r in new Resource[] { templateSubject, templatePredicate, templateObject, templateMeta }) {
@@ -1272,6 +1301,11 @@ namespace SemWeb.Stores {
 			// exclude the results of the join.
 						
 			System.Text.StringBuilder cmd = new System.Text.StringBuilder("SELECT ");
+			if (!SupportsLimitClause && limit >= 1) {
+				cmd.Append("TOP ");
+				cmd.Append(limit);
+				cmd.Append(' ');
+			}
 			if (!HasUniqueStatementsConstraint)
 				cmd.Append("DISTINCT ");
 			SelectFilterColumns(columns, cmd);
@@ -1297,7 +1331,7 @@ namespace SemWeb.Stores {
 				}
 			}
 			
-			if (limit >= 1) {
+			if (SupportsLimitClause && limit >= 1) {
 				cmd.Append(" LIMIT ");
 				cmd.Append(limit);
 			}
@@ -1337,7 +1371,7 @@ namespace SemWeb.Stores {
 					if (columns.ObjectData) { ot = reader.GetInt32(col++); ouri = AsString(reader[col++]); lv = AsString(reader[col++]); ll = AsString(reader[col++]); ld = AsString(reader[col++]);}
 					if (columns.MetaUri) { muri = AsString(reader[col++]); }
 					
-					Entity subject = GetSelectedEntity(sid, suri, templateSubject, columns.SubjectId, columns.SubjectUri, entMap);
+					Entity subject = GetSelectedEntity(sid, suri, templateSubject, columns.SubjectId && !fakeSubjectIdSelect, columns.SubjectUri, entMap);
 					Entity predicate = GetSelectedEntity(pid, puri, templatePredicate, columns.PredicateId, columns.PredicateUri, entMap);
 					Resource objec = GetSelectedResource(oid, ot, ouri, lv, ll, ld, templateObject, columns.ObjectId, columns.ObjectData, entMap);
 					Entity meta = GetSelectedEntity(mid, muri, templateMeta, columns.MetaId, columns.MetaUri, templateMeta != null ? entMap : null);
@@ -1359,7 +1393,48 @@ namespace SemWeb.Stores {
 		
 		public void Query(Statement[] graph, SemWeb.Query.QueryOptions options, SemWeb.Query.QueryResultSink sink) {
 			if (graph.Length == 0) throw new ArgumentException("graph array must have at least one element");
-
+			
+			// This method translates the graph pattern into a single SQL statement. Each graph statement
+			// corresponds to a new use of the _statements table in the FROM clause. For instance:
+			//     ?a foaf:knows ?b . ?b foaf:name ?c .
+			// translates to
+			//     SELECT
+			//       g0.subject, v0.value,
+			//       g0.object, v1.value,
+			//       g1.object, v2.value, v2lit.value, v2lit.language, v2lit.datatype
+			//     FROM
+			//       db_tables as g0 LEFT JOIN db_entities AS v0 ON g0.subject=v0.id LEFT JOIN db_entities AS v1 ON g0.object=v1.id,
+			//       db_tables as g1 LEFT JOIN db_entities AS v2 ON g1.object=v2.id LEFT JOIN db_literals AS v2lit ON g1.object=v2lit.id
+			//     WHERE
+			//       g0.predicate = <the id of the foaf:knows entity> AND
+			//       g1.predicate = <the id of the foaf:name entity> AND
+			//       g0.object = g1.subject
+			//
+			// If any variable column is an *undistinguished* variable --- which is to say that the caller
+			// says it is a variable, but is not concerned with its values --- then we want to apply
+			// DISTINCT to the SELECT statement. This is because while in the normal case we may get
+			// duplicates, we expect that to not occur more than the caller expects, but in the latter
+			// case there will often be many duplicates. Consider the SPARQL query:
+			//      SELECT DISTINCT ?p WHERE { ?s ?p ?o }
+			// to get a list of predicates in the dataset, which corresponds to the graph query
+			//      ?s ?p ?o
+			// where only ?p is distinguished.
+			// This normally translates to:
+			//     SELECT
+			//       g0.predicate, v0.value,
+			//     FROM
+			//       db_tables as g0 LEFT JOIN db_entities AS v0 ON g0.predicate=v0.id
+			// which of course is going to return a result for every triple in the database.
+			// So we add DISTINCT to beginning ("SELECT DISTINCT").
+			// Unfortunately, MySQL performs the DISTINCT bit only after the LEFT JOINs (which makes sense normally).
+			// That means that MySQL is repeatedly fetching the URI values of the predicates and checking
+			// if a new unique row has been created, and this is very slow. What we want is to get the distinct
+			// IDs of the predicates first, and then get their URIs.
+			// I first tried implementing this with VIEWs, but it didn't always speed things up, and it was
+			// difficult to manage the creation and deletion of VIEWs.
+			// So instead, in this case, we do the query in two parts. First we get the IDs of the variables,
+			// and then we get their URIs.
+			
 			options = options.Clone(); // because we modify the knownvalues array
 			
 			// Order the variables mentioned in the graph.
@@ -1405,8 +1480,6 @@ namespace SemWeb.Stores {
 				foreach (Variable v in seenvars.Keys)
 					varOrder[ctr++] = v;
 			}
-			
-			bool useView = useDistinct && SupportsViews && !NoSQLView;
 			
 			// Set the initial bindings to the result sink
 
@@ -1474,8 +1547,12 @@ namespace SemWeb.Stores {
 			
 			string[] colnames = { "subject", "predicate", "object", "meta" };
 			
+			// we initialize these things while locked, but use them after we release the lock
+			ArrayList results = new ArrayList();
+			Hashtable resourceCache = new Hashtable(); // map resource ID to Resource instances
+						
 			// Lock the store and make sure we are initialized and any pending add's have been committed. 
-					
+
 			lock (syncroot) {
 			
 			Init();
@@ -1483,15 +1560,14 @@ namespace SemWeb.Stores {
 			
 			// Compile the SQL statement.
 
-			Hashtable varRef_Inner = new Hashtable(); // the column name representing the variable: if we're using VIEWs, then within the VIEW (i.e. name of column in underlying table)
-			Hashtable varRef_Outer = new Hashtable(); // if we're using VIEWs, then the column name representing the variable of the VIEW itself 
-			Hashtable varRef2 = new Hashtable();
-			Hashtable varSelectedLiteral = new Hashtable();
+			Hashtable varRef = new Hashtable(); // the column name representing the variable, as in "g0.subject"
+			Hashtable varRef2 = new Hashtable(); // the index of the variable, for accessing the entities and literals joined tables
+			Hashtable varSelectedLiteral = new Hashtable(); // whether the variable is in a literal column and a LEFT JOIN for the literals table was used for it
+			Hashtable varCouldBeLiteral = new Hashtable(); // whether the variable is only in literal columns
+			Hashtable varSelectedEntity = new Hashtable(); // whether a LEFT JOIN for the entities table was used for a variable
 			
 			StringBuilder fromClause = new StringBuilder();
 			StringBuilder whereClause = new StringBuilder();
-			StringBuilder outerSelectJoins = new StringBuilder();
-			StringBuilder outerWhereClause = new StringBuilder();
 			
 			for (int f = 0; f < graph.Length; f++) {
 				// For each filter, we select FROM the statements table with an
@@ -1505,6 +1581,7 @@ namespace SemWeb.Stores {
 				// For each component of the filter...
 				
 				for (int i = 0; i < 4; i++) {
+					// This has the name of the column corresponding to this variable (i.e. "g1.predicate").
 					string myRef = "g" + f + "." + colnames[i];
 					
 					Variable v = graph[f].GetComponent(i) as Variable;
@@ -1520,47 +1597,56 @@ namespace SemWeb.Stores {
 						// that the proper columns here and in a previous
 						// filter are forced to have the same value.
 					
-						if (!varRef_Inner.ContainsKey(v)) {
-							varRef_Inner[v] = myRef;
-							varRef_Outer[v] = "v" + Array.IndexOf(varOrder, v);
+						if (!varRef.ContainsKey(v)) {
+							// This is the first time we are seeing this variable.
+									
+							// Record the column name for the variable (i.e. g0.subject).
+							varRef[v] = myRef;
 							
-							int vIndex = varRef_Inner.Count;
+							// Record an index for the variable (i.e. 0, 1, 2, ...)
+							int vIndex = varRef.Count;
 							varRef2[v] = vIndex;
 							
+							varCouldBeLiteral[v] = (i == 2);
+							
+							// LEFT JOIN the entities table for this variable to get its URI
+							// only if it is a distinguished variable and we are not using DISTINCT.
+							varSelectedEntity[v] = false;
+							if (!useDistinct && distinguishedVars.Contains(v)) {
+								varSelectedEntity[v] = true; // Record that we are selecting the entities table for this variable.
+								fromClause.Append(" LEFT JOIN ");
+								fromClause.Append(table);
+								fromClause.Append("_entities AS vent");
+								fromClause.Append(vIndex);
+								fromClause.Append(" ON ");
+								fromClause.Append(myRef);
+								fromClause.Append("=");
+								fromClause.Append("vent" + vIndex + ".id ");
+							}
+									
+							// LEFT JOIN the literals table for this variable:
+							//    if it is in an object position
+							//    to get its value, language, and datatype only if it is a distinguished variable and we are not using DISTINCT
+							//    to apply a literal value filter (which will be done later)
 							#if !DOTNET2
 							bool hasLitFilter = (options.VariableLiteralFilters != null && options.VariableLiteralFilters[v] != null);
 							#else
 							bool hasLitFilter = (options.VariableLiteralFilters != null && options.VariableLiteralFilters.ContainsKey(v));
 							#endif
-							if (distinguishedVars.Contains(v) || hasLitFilter) {
-								StringBuilder joinTarget = fromClause;
-								if (useView) joinTarget = outerSelectJoins;
-								
-								string onRef = (string)(!useView ? varRef_Inner : varRef_Outer)[v];
-								
-								joinTarget.Append(" LEFT JOIN ");
-								joinTarget.Append(table);
-								joinTarget.Append("_entities AS vent");
-								joinTarget.Append(vIndex);
-								joinTarget.Append(" ON ");
-								joinTarget.Append(onRef);
-								joinTarget.Append("=");
-								joinTarget.Append("vent" + vIndex + ".id ");
-								
-								varSelectedLiteral[v] = (i == 2);
-								
-								if (i == 2) { // literals cannot be in any other column
-									joinTarget.Append(" LEFT JOIN ");
-									joinTarget.Append(table);
-									joinTarget.Append("_literals AS vlit");
-									joinTarget.Append(vIndex);
-									joinTarget.Append(" ON ");
-									joinTarget.Append(onRef);
-									joinTarget.Append("=");
-									joinTarget.Append("vlit" + vIndex + ".id ");
-								}
+							varSelectedLiteral[v] = false;
+							if (i == 2 && ((!useDistinct && distinguishedVars.Contains(v)) || hasLitFilter)) {
+								varSelectedLiteral[v] = true; // Record that we are selecting the literals table for this variable.
+								fromClause.Append(" LEFT JOIN ");
+								fromClause.Append(table);
+								fromClause.Append("_literals AS vlit");
+								fromClause.Append(vIndex);
+								fromClause.Append(" ON ");
+								fromClause.Append(myRef);
+								fromClause.Append("=");
+								fromClause.Append("vlit" + vIndex + ".id ");
 							}
 							
+							// If this variable has known values, then we must restrict what values can appear using a WHERE clause.
 							if (options.VariableKnownValues != null) {
 								ICollection values = null;
 								#if DOTNET2
@@ -1582,17 +1668,24 @@ namespace SemWeb.Stores {
 							}
 							
 						} else {
+							// We've seen this variable before, so link up the column in this
+							// statement to the corresponding column in a previous (or this) statement.
 							if (whereClause.Length != 0) whereClause.Append(" AND ");
 							whereClause.Append('(');
-							whereClause.Append((string)varRef_Inner[v]);
+							whereClause.Append((string)varRef[v]);
 							whereClause.Append('=');
 							whereClause.Append(myRef);
 							whereClause.Append(')');
+							if (i != 2)
+								varCouldBeLiteral[v] = false;
 						}
 					
 					} else {
 						// If this is not a variable, then it is a resource.
 					
+						// Append something into the WHERE clause to make sure this component gets
+						// the right fixed value. If we cannot add the component to the WHERE clause
+						// because the fixed value isn't even known in the data source, we can stop early.
 						if (!WhereItem(myRef, graph[f].GetComponent(i), whereClause, whereClause.Length != 0)) {
 							// We know at this point that the query cannot return any results.
 							sink.Finished();
@@ -1623,52 +1716,39 @@ namespace SemWeb.Stores {
 					string s = FilterToSQL(filter, "vlit" + (int)varRef2[v] + ".value");
 					if (s == null) continue;
 
-					StringBuilder where = whereClause;
-					if (useView) where = outerWhereClause;
-					
-					if (where.Length != 0) where.Append(" AND ");
-					where.Append(s);
+					if (whereClause.Length != 0) whereClause.Append(" AND ");
+					whereClause.Append(s);
 				}
 			}
 
 			// Put the parts of the SQL statement together
 
 			StringBuilder cmd = new StringBuilder();
-			StringBuilder outercmd = new StringBuilder();
 			
-			string viewname = "queryview" + Math.Abs(GetHashCode());
-			if (useView) {
-				cmd.Append("DROP VIEW IF EXISTS ");
-				cmd.Append(viewname);
-				cmd.Append("; CREATE VIEW ");
-				cmd.Append(viewname);
-				cmd.Append(" AS ");
-				
-				outercmd.Append("SELECT ");
-			}
 			cmd.Append("SELECT ");
+
+			if (!SupportsLimitClause && options.Limit > 0) {
+				cmd.Append("TOP ");
+				cmd.Append(options.Limit);
+				cmd.Append(' ');
+			}
 			
 			if (useDistinct) cmd.Append("DISTINCT ");
 			
-			for (int i = 0; i < varOrder.Length; i++) {
-				if (i > 0) cmd.Append(',');
-				cmd.Append((string)varRef_Inner[varOrder[i]]);
+			// Add all of the distinguished variables to the SELECT clause.
+			bool firstvar = true;
+			foreach (Variable v in varOrder) {
+				if (!firstvar) cmd.Append(','); firstvar = false;
 				
-				StringBuilder c = cmd;
-				if (useView) {
-					cmd.Append(" AS ");
-					cmd.Append((string)varRef_Outer[varOrder[i]]);
-
-					if (i > 0) outercmd.Append(',');
-					outercmd.Append((string)varRef_Outer[varOrder[i]]);
-					c = outercmd;
+				cmd.Append((string)varRef[v]);
+				
+				if ((bool)varSelectedEntity[v]) {
+					cmd.Append(", vent" + (int)varRef2[v] + ".value");
 				}
-				
-				c.Append(", vent" + (int)varRef2[varOrder[i]] + ".value");
-				if ((bool)varSelectedLiteral[varOrder[i]]) {
-					c.Append(", vlit" + (int)varRef2[varOrder[i]] + ".value");
-					c.Append(", vlit" + (int)varRef2[varOrder[i]] + ".language");
-					c.Append(", vlit" + (int)varRef2[varOrder[i]] + ".datatype");
+				if ((bool)varSelectedLiteral[v]) {
+					cmd.Append(", vlit" + (int)varRef2[v] + ".value");
+					cmd.Append(", vlit" + (int)varRef2[v] + ".language");
+					cmd.Append(", vlit" + (int)varRef2[v] + ".datatype");
 				}
 			}
 			
@@ -1679,83 +1759,170 @@ namespace SemWeb.Stores {
 				cmd.Append(" WHERE ");
 			cmd.Append(whereClause.ToString());
 			
-			if (options.Limit > 0) {
+			if (SupportsLimitClause && options.Limit > 0) {
 				cmd.Append(" LIMIT ");
 				cmd.Append(options.Limit);
 			}
 			
 			cmd.Append(';');
 
-			if (useView) {
-				outercmd.Append(" FROM ");
-				outercmd.Append(viewname);
-				outercmd.Append(outerSelectJoins);
-				
-				if (outerWhereClause.Length > 0)
-					outercmd.Append(" WHERE ");
-				outercmd.Append(outerWhereClause.ToString());
-			}
-			
-			
 			if (Debug) {
 				string cmd2 = cmd.ToString();
 				//if (cmd2.Length > 80) cmd2 = cmd2.Substring(0, 80);
 				Console.Error.WriteLine(cmd2);
-				if (useView)
-					Console.Error.WriteLine(outercmd.ToString());
 			}
 			
-			// Execute the query
-			
-			Hashtable entityCache = new Hashtable();
-			
-			if (useView) {
-				RunCommand(cmd.ToString());
-				cmd = outercmd;
-			}
-			
-			try {
+			// Execute the query.
+					
+			// When we use DISTINCT and don't select URI and literal values at first,
+			// we have to select them after. And since we can't maintain two IDataReaders
+			// simultaneously, that means we have to pull the first set of results into
+			// memory. It would be nice to not have to do that when we don't use DISTINCT,
+			// but in practice it doesn't really matter since in SPARQL it's all sucked
+			// into memory anyway.
+					
 			using (IDataReader reader = RunReader(cmd.ToString())) {
 				while (reader.Read()) {
-					Resource[] variableBindings = new Resource[varOrder.Length];
-				
+					QueryResultRowVariable[] row = new QueryResultRowVariable[varOrder.Length];
+					results.Add(row);
+					
 					int col = 0;
 					for (int i = 0; i < varOrder.Length; i++) {
-						int id = reader.GetInt32(col++);
-						string uri = AsString(reader[col++]);
+						Variable v = varOrder[i];
 						
-						string litvalue = null, litlanguage = null, litdatatype = null;
-
-						if ((bool)varSelectedLiteral[varOrder[i]]) {
-							litvalue = AsString(reader[col++]);
-							litlanguage = AsString(reader[col++]);
-							litdatatype = AsString(reader[col++]);
+						row[i].id = reader.GetInt32(col++);
+						if ((bool)varSelectedEntity[v]) {
+							row[i].uri = AsString(reader[col++]);
 						}
-						
-						if (litvalue != null) {
-							Literal lit = new Literal(litvalue, litlanguage, litdatatype);
-							variableBindings[i] = lit;
-							
-							ArrayList litFilters = (ArrayList)varLitFilters[varOrder[i]];
-							if (litFilters != null && !LiteralFilter.MatchesFilters(lit, (LiteralFilter[])litFilters.ToArray(typeof(LiteralFilter)), this))
-								continue;
-							
-						} else {
-							variableBindings[i] = MakeEntity(id, uri, entityCache);
+						if ((bool)varSelectedLiteral[v]) {
+							row[i].litvalue = AsString(reader[col++]);
+							row[i].litlanguage = AsString(reader[col++]);
+							row[i].litdatatype = AsString(reader[col++]);
+						}
+					}
+				}
+			}
+		
+			// For any distinguished variable that we did not select URIs or literal values for,
+			// select that information now.
+			
+			for (int i = 0; i < varOrder.Length; i++) {
+				Variable v = varOrder[i];
+			
+				if ((bool)varSelectedEntity[v] && (!(bool)varCouldBeLiteral[v] || (bool)varSelectedLiteral[v])) continue;
+				
+				// Get the list of resource IDs found for this variable.
+				ArrayList rids = new ArrayList();
+				foreach (QueryResultRowVariable[] row in results) {
+					if (row[i].id <= 1) continue; // can't fetch for Statement.DefaultMeta
+					if (resourceCache.ContainsKey(row[i].id)) continue; // we've already fetched it
+					rids.Add(row[i].id); // probably no need to remove duplicates
+				}
+				
+				if (rids.Count > 0) {
+					// Fetch what we can for entities.
+					if (!(bool)varSelectedEntity[v]) {
+						StringBuilder cmd2 = new StringBuilder();
+						cmd2.Append("SELECT id, value FROM ");
+						cmd2.Append(table);
+						cmd2.Append("_entities WHERE id IN (");
+						bool first = true;
+						foreach (int id in rids) {
+							if (!first) cmd2.Append(','); first = false;
+							cmd2.Append(id);
+						}
+						cmd2.Append(")");
+						if (Debug) { Console.Error.WriteLine(cmd2.ToString()); }
+						using (IDataReader reader = RunReader(cmd2.ToString())) {
+							while (reader.Read()) {
+								int id = reader.GetInt32(0);
+								string uri = AsString(reader[1]);
+								resourceCache[id] = MakeEntity(id, uri, null);
+							}
 						}
 					}
 					
-					if (!sink.Add(new SemWeb.Query.VariableBindings(varOrder, variableBindings))) return;
+					// Fetch what we can for literals.
+					if ((bool)varCouldBeLiteral[v] && !(bool)varSelectedLiteral[v]) {
+						StringBuilder cmd2 = new StringBuilder();
+						cmd2.Append("SELECT id, value, language, datatype FROM ");
+						cmd2.Append(table);
+						cmd2.Append("_literals WHERE id IN (");
+						bool first = true;
+						foreach (int id in rids) {
+							if (!first) cmd2.Append(','); first = false;
+							cmd2.Append(id);
+						}
+						cmd2.Append(")");
+						if (Debug) { Console.Error.WriteLine(cmd2.ToString()); }
+						using (IDataReader reader = RunReader(cmd2.ToString())) {
+							while (reader.Read()) {
+								int id = reader.GetInt32(0);
+								string value = AsString(reader[1]);
+								string language = AsString(reader[2]);
+								string datatype = AsString(reader[3]);
+								Literal lit = new Literal(value, language, datatype);
+								SetResourceKey(lit, new ResourceKey(id));
+								resourceCache[id] = lit;
+							}
+						}
+					}
+					
+					// Any ids not found so far are bnodes.
+					foreach (int id in rids) {
+						if (!resourceCache.ContainsKey(id)) {
+							BNode b = new BNode();
+							SetResourceKey(b, new ResourceKey(id));
+							resourceCache[id] = b;
+						}
+					}
 				}
 			}
-			} finally {
-				if (useView)
-					RunCommand("DROP VIEW " + viewname);
-
-				sink.Finished();
-			}
-				
+			
 			} // lock
+			
+			// Now loop through the binding results.
+			
+			foreach (QueryResultRowVariable[] row in results) {
+				bool match = true;
+				Resource[] variableBindings = new Resource[varOrder.Length];
+				
+				for (int i = 0; i < varOrder.Length; i++) {
+					int id = row[i].id;
+					if (resourceCache.ContainsKey(id)) {
+						variableBindings[i] = (Resource)resourceCache[id];
+					} else {
+						if (row[i].litvalue == null) {
+							variableBindings[i] = MakeEntity(id, row[i].uri, null);
+						} else {
+							Literal lit = new Literal(row[i].litvalue, row[i].litlanguage, row[i].litdatatype);
+							
+							ArrayList litFilters = (ArrayList)varLitFilters[varOrder[i]];
+							if (litFilters != null && !LiteralFilter.MatchesFilters(lit, (LiteralFilter[])litFilters.ToArray(typeof(LiteralFilter)), this)) {
+								match = false;
+								break;
+							}
+								
+							SetResourceKey(lit, new ResourceKey(id));
+							variableBindings[i] = lit;
+						}
+						
+						// reuse this entity later
+						resourceCache[id] = variableBindings[i];
+					}
+				}
+				
+				if (!match) continue;
+				if (!sink.Add(new SemWeb.Query.VariableBindings(varOrder, variableBindings))) return;
+			}
+			
+			sink.Finished();
+		}
+				
+		private struct QueryResultRowVariable {
+			public int id;
+			public string uri;
+			public string litvalue, litlanguage, litdatatype;
 		}
 		
 		Entity GetSelectedEntity(int id, string uri, Resource given, bool idSelected, bool uriSelected, Hashtable entMap) {
@@ -1773,10 +1940,13 @@ namespace SemWeb.Stores {
 		Resource GetSelectedResource(int id, int type, string uri, string lv, string ll, string ld, Resource given, bool idSelected, bool uriSelected, Hashtable entMap) {
 			if (!idSelected) return (Resource)given;
 			if (!uriSelected) return (Resource)entMap[id];
-			if (type == 0)
+			if (type == 0) {
 				return MakeEntity(id, uri, entMap);
-			else
-				return new Literal(lv, ll, ld);
+			} else {
+				Literal lit = new Literal(lv, ll, ld);
+				SetResourceKey(lit, new ResourceKey(id));
+				return lit;
+			}
 		}
 		
 		private string CreateLikeTest(string column, string match, int method) {
@@ -1844,6 +2014,7 @@ namespace SemWeb.Stores {
 					case '\\':
 					case '\"':
 					case '*':
+					case '\'':
 						b.Append('\\');
 						b.Append(c);
 						break;
@@ -2047,3 +2218,5 @@ namespace SemWeb.Stores {
 	}
 	
 }
+
+#endif

@@ -9,7 +9,7 @@ Subprojects include:
 	* Hal# - MIT License
 	* HtmlAgilityPack - BSD License
 	* Parts of libegg (eggaccelerators.c and eggtrayicon.c) - GNU LGPL v2
-	* SemWeb - Creative Commons Attribution License
+	* SemWeb - GPLv3
 	* System.Windows.Forms.RTF - MIT License
 	* jslib - Mozilla Public License v1.1
 	* xdgmime - Academic Free License v2.0 or GNU LGPL v2

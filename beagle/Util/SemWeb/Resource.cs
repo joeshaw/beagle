@@ -4,8 +4,10 @@ using System.Xml;
 
 namespace SemWeb {
 	
-	public abstract class Resource :
-	IComparable
+	public abstract class Resource : IComparable
+#if DOTNET2
+	, IComparable<Resource>
+#endif
 	{
 		internal object ekKey, ekValue;
 		internal ArrayList extraKeys;
@@ -67,14 +69,17 @@ namespace SemWeb {
 			extraKeys.Add(k);
 		}
 
-		public int CompareTo(object other) {
+		int IComparable.CompareTo(object other) {
+			return CompareTo((Resource)other);
+		}
+		public int CompareTo(Resource other) {
 			// We'll make an ordering over resources.
 			// First named entities, then bnodes, then literals.
 			// Named entities are sorted by URI.
 			// Bnodes by hashcode.
 			// Literals by their value, language, datatype.
 		
-			Resource r = (Resource)other;
+			Resource r = other;
 			if (Uri != null && r.Uri == null) return -1;
 			if (Uri == null && r.Uri != null) return 1;
 			if (this is BNode && r is Literal) return -1;
@@ -510,6 +515,7 @@ namespace SemWeb {
 			return new Literal(value, lang, datatype);
 		}
 		
+		#if !SILVERLIGHT
 		public object ParseValue() {
 			string dt = DataType;
 			if (dt == null || !dt.StartsWith(NS.XMLSCHEMA)) return Value;
@@ -542,6 +548,7 @@ namespace SemWeb {
 			if (DataType == null) return this;
 			return new Literal(ParseValue().ToString(), Language, DataType);
 		}
+		#endif
 		
 		public static Literal FromValue(float value) {
 			return new Literal(value.ToString(), null, NS.XMLSCHEMA + "float");

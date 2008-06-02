@@ -71,7 +71,11 @@ namespace SemWeb {
 
 		public abstract void Select(StatementSink sink);
 		
-		public virtual void Dispose() {
+		protected virtual void Dispose() {
+		}
+		
+		void IDisposable.Dispose() {
+			Dispose();
 		}
 		
 		internal static string NormalizeMimeType(string type) {
@@ -118,7 +122,7 @@ namespace SemWeb {
 			}
 		}
 
-		/*
+		#if false
 		public static RdfReader LoadFromUri(Uri webresource) {
 			// TODO: Add Accept header for HTTP resources.
 			
@@ -152,7 +156,7 @@ namespace SemWeb {
 			
 			return reader;
 		}
-		*/
+		#endif
 		
 		internal static TextReader GetReader(string file) {
 			if (file == "-") return Console.In;
@@ -170,6 +174,7 @@ namespace SemWeb {
 				return uri;
 			}
 			if (uri.IndexOf(':') != -1) return uri;
+			#if !SILVERLIGHT
 			try {
 				UriBuilder b = new UriBuilder(baseuri);
 				b.Fragment = null; // per W3 RDF/XML test suite
@@ -177,6 +182,9 @@ namespace SemWeb {
 			} catch (UriFormatException) {
 				return baseuri + uri;
 			}			
+			#else
+			return baseuri + uri;
+			#endif
 		}
 
 	}

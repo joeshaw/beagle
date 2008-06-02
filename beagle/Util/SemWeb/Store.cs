@@ -128,7 +128,8 @@ namespace SemWeb {
 				case "sqlite":
 				case "mysql":
 				case "postgresql":
-					if (spec == "") throw new ArgumentException("Use: sqlite|mysql|postgresql:table:connection-string");
+				case "sqlserver":
+					if (spec == "") throw new ArgumentException("Use: sqlite|mysql|postgresql|sqlserver:table:connection-string");
 				
 					c = spec.IndexOf(':');
 					if (c == -1) throw new ArgumentException("Invalid format for SQL spec parameter (table:constring).");
@@ -143,6 +144,8 @@ namespace SemWeb {
 						classtype = "SemWeb.Stores.MySQLStore, SemWeb.MySQLStore";
 					} else if (type == "postgresql") {
 						classtype = "SemWeb.Stores.PostgreSQLStore, SemWeb.PostgreSQLStore";
+					} else if( type == "sqlserver" ) {
+						classtype = "SemWeb.Stores.SQLServerStore, SemWeb.SQLServerStore";
 					}
 					ttype = Type.GetType(classtype);
 					if (ttype == null)
@@ -150,8 +153,12 @@ namespace SemWeb {
 					return Activator.CreateInstance(ttype, new object[] { spec, table });
 				/*case "bdb":
 					return new SemWeb.Stores.BDBStore(spec);*/
-				/*case "sparql-http":
-					return new SemWeb.Remote.SparqlHttpSource(spec);*/
+				case "sparql-http":
+					#if false
+					return new SemWeb.Remote.SparqlHttpSource(spec);
+					#else
+					throw new NotSupportedException("The SparqlHttpSource class is not available in the Silverlight build of SemWeb.");
+					#endif
 				case "class":
 					ttype = Type.GetType(spec);
 					if (ttype == null)
@@ -492,7 +499,7 @@ namespace SemWeb {
 
 		public void Query(Statement[] graph, SemWeb.Query.QueryOptions options, SemWeb.Query.QueryResultSink sink) {
 			// If reasoning is applied, delegate this call to the last reasoner
-			// and pass it a clone of this store but with itself removed.
+			// and pass it a clone of this store but with that reasoner removed.
 			ReasoningHelper rh = GetReasoningHelper(null);
 			if (rh != null) {
 				rh.reasoner.Query(graph, options, rh.nextStore, sink);
@@ -528,7 +535,58 @@ namespace SemWeb {
 				if (!mq[i].QuerySupported)
 					return null;
 			}
-		
+			
+			// Establish which statements can be answered definitively by which data sources.
+			bool[,] definitive = new bool[query.Length, allsources.Count];
+			for (int j = 0; j < query.Length; j++) {
+				// Find a definitive source for this statement
+				for (int i = 0; i < mq.Length; i++) {
+					if (mq[i].IsDefinitive != null && mq[i].IsDefinitive[j]) {
+						definitive[j,i] = true;
+						sink.AddComments("Data source '" + allsources[i] + "' definitively answers:  " + query[j]);
+					}
+				}
+				
+				// See if only one source can answer this statement.
+				System.Collections.ArrayList answerables = new System.Collections.ArrayList();
+				for (int i = 0; i < mq.Length; i++) {
+					if (mq[i].NoData != null && mq[i].NoData[j]) continue;
+					answerables.Add(i);
+				}
+				if (answerables.Count == 0) {
+					sink.AddComments("No data source could answer a part of the query: " + query[j]);
+					return null;
+				}
+				
+				if (answerables.Count == 1) {
+					//sink.AddComments("Only '" + allsources[(int)answerables[0]] + "' could answer:  " + query[j]);
+					definitive[j,(int)answerables[0]] = true;
+				}
+			}
+			
+			// Create a table that indicates preferred grouping: two statements that can be
+			// definitively answered by the same data source prefer to be grouped together.
+			bool[,] group = new bool[query.Length, query.Length];
+			for (int i = 0; i < query.Length; i++) {
+				for (int j = 0; j < query.Length; j++) {
+					if (i == j) continue;
+					
+					for (int k = 0; k < mq.Length; k++) {
+						if (definitive[i,k] && definitive[j,k]) {
+							group[i,j] = true;
+							group[j,i] = true;
+						}
+					}
+				}
+			}
+			
+			// Reorder the statements. Then run MetaQuery again because the order of statements changed.
+			query = SemWeb.Query.GraphMatch.ReorderQuery(query, SemWeb.Query.GraphMatch.toArray(options.VariableKnownValues), this, group);
+			for (int i = 0; i < allsources.Count; i++)
+				mq[i] = ((QueryableSource)allsources[i]).MetaQuery(query, options);
+
+			// Chunk the statements.
+			
 			System.Collections.ArrayList chunks = new System.Collections.ArrayList();
 			
 			int curSource = -1;
@@ -540,7 +598,6 @@ namespace SemWeb {
 					// statement in the graph, include this statement in the
 					// current chunk.
 					if (mq[curSource].IsDefinitive != null && mq[curSource].IsDefinitive[j]) {
-						sink.AddComments(allsources[curSource] + " answers definitively: " + query[j]);
 						curStatements.Add(query[j]);
 						continue;
 					}
@@ -576,7 +633,6 @@ namespace SemWeb {
 					if (mq[i].IsDefinitive != null && mq[i].IsDefinitive[j]) {
 						curSource = i;
 						curStatements.Add(query[j]);
-						sink.AddComments(allsources[i] + " answers definitively: " + query[j]);
 						break;
 					}
 				}
@@ -602,7 +658,6 @@ namespace SemWeb {
 					continue;
 				}
 				if (answerables.Count == 0) {
-					sink.AddComments("No data source could answer: " + query[j]);
 					return null;
 				}
 				
@@ -737,7 +792,7 @@ namespace SemWeb {
 		// ModifiableSource
 		
 		public void Clear() {
-			if (allsources.Count > 0) throw new InvalidOperationException("The Clear() method is not supported when multiple data sources are added to a Store.");
+			if (allsources.Count > 1) throw new InvalidOperationException("The Clear() method is not supported when multiple data sources are added to a Store.");
 			if (!(allsources[0] is ModifiableSource)) throw new InvalidOperationException("The data source is not modifiable.");
 			((ModifiableSource)allsources[0]).Clear();
 		}
@@ -1013,7 +1068,7 @@ namespace SemWeb.Stores {
 		}
 
 		public void Query(Statement[] graph, SemWeb.Query.QueryOptions options, SemWeb.Query.QueryResultSink sink) {
-			output.WriteLine("QUERY:");
+			output.WriteLine("QUERY: " + source);
 			foreach (Statement s in graph)
 				output.WriteLine("\t" + s);
 			if (options.VariableKnownValues != null) {
