@@ -61,16 +61,18 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			http_request.KeepAlive = true;
 			http_request.AllowWriteStreamBuffering = false;
 			http_request.SendChunked = true;
+			http_request.Timeout = 5*1000; // 5 sec
+			http_request.ReadWriteTimeout = 5*1000; // 5 sec
 			
 			Stream stream = http_request.GetRequestStream ();			
 			base.SendRequest (request, stream);
-			
-			stream.Flush ();
+
+			// FIXME: Should we close the stream ?
 			stream.Close ();
 				
 			Logger.Log.Debug ("HttpClient: Sent request");
 		}
-		
+
 		public override ResponseMessage Send (RequestMessage request)
 		{
 			if (request.Keepalive)

@@ -88,6 +88,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			query.HitsAddedEvent -= hits_added_handler;
 			query.HitsSubtractedEvent -= hits_subtracted_handler;
 			query.FinishedEvent -= finished_handler;
+			query.Transports.Clear ();
 
 			if (throw_me != null)
 				throw throw_me;
@@ -102,13 +103,104 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 		public ISnippetReader GetSnippet (string[] query_terms, Hit hit, bool full_text, int ctx_length, int snp_length)
 		{
-			return null;
+			string source = hit ["beagle:Source"];
+			hit ["beagle:Source"] = hit ["beagle:OrigSource"];
+
+			string network_node = hit ["beagle:NetworkNode"];
+			SnippetReader snippet_reader = null;
+
+			// FIXME: Creating a snippet request, registering transports, all of this
+			// doing everytime for hundreds of hits may become quite expensive.
+			// In that case, pre generate one snippetrequest and use it over and over.
+
+			// Form a correct snippet request
+			SnippetRequest sreq = new SnippetRequest ();
+			sreq.Hit = hit;
+			sreq.QueryTerms = query_terms;
+			sreq.FullText = full_text;
+			sreq.ContextLength = ctx_length;
+			sreq.SnippetLength = snp_length;
+
+			// fake a blocking snippet retrieval
+			sreq.RegisterAsyncResponseHandler (typeof (SnippetResponse),
+							   delegate (ResponseMessage response) {
+				if (response is ErrorResponse) {
+					Log.Error ("Error retrieval snippet for {0} from network node {1}", hit.Uri, network_node);
+					return;
+				}
+
+				snippet_reader = new SnippetReader ((SnippetResponse) response);
+			});
+
+			List<string[]> network_services = Conf.Networking.GetListOptionValues (Conf.Names.NetworkServices);
+			foreach (string[] service in network_services) {
+				if (network_node != service [0])
+					continue;
+
+				sreq.Transports.Clear ();
+				sreq.RegisterTransport (new HttpTransport (service [1]));
+
+				// fake a blocking snippet retrieval
+				try {
+					sreq.SendAsyncBlocking ();
+				} catch (Exception e) {
+					Log.Debug (e, "Error while requesting snippet from {0} for {1}", service [1], hit.Uri);
+				}
+				break;
+			}
+
+			hit ["beagle:Source"] = source; // reset source
+			return snippet_reader;
 		}
 
 		public QueryableStatus GetQueryableStatus ()
 		{
 			QueryableStatus status = new QueryableStatus ();
 			return status;
+		}
+
+		private class SnippetReader : ISnippetReader {
+			private SnippetResponse response;
+			public SnippetReader (SnippetResponse response)
+			{
+				this.response = response;
+			}
+
+			public IEnumerable GetSnippet ()
+			{
+				return response.SnippetList.Snippets;
+			}
+
+			private System.IO.StringReader fulltext_reader = null;
+
+			private bool ReadLineInit ()
+			{
+				if (response.SnippetList.Snippets == null)
+					return false;
+
+				foreach (SnippetLine line in response.SnippetList.Snippets) {
+					if (line.Fragments == null || line.Fragments.Count == 0)
+						return false;
+
+					Fragment fragment = (Fragment) line.Fragments [0];
+					fulltext_reader = new System.IO.StringReader (fragment.Text);
+					return true;
+				}
+
+				return false; // make gmcs happy
+			}
+
+			public string ReadLine ()
+			{
+				if (fulltext_reader == null && ! ReadLineInit ())
+					return null;
+
+				return fulltext_reader.ReadLine ();
+			}
+
+			public void Close ()
+			{
+			}
 		}
 	}
 }

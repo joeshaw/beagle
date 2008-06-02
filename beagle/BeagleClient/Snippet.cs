@@ -274,20 +274,7 @@ namespace Beagle {
 			if (snippet_reader == null)
 				return;
 
-			// If fulltext is false, read lines from snippet reader
-			if (! FullText) {
- 				foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ()) {
-					writer.WriteStartElement ("SnippetLine");
-					writer.WriteAttributeString ("Line", Convert.ToString (snippet_line.Line));
-					foreach (Fragment fragment in snippet_line.Fragments) {
-						writer.WriteStartElement ("Fragment");
-						writer.WriteAttributeString ("QueryTermIndex", Convert.ToString (fragment.QueryTermIndex));
-						writer.WriteString (fragment.Text);
-						writer.WriteEndElement ();
-					}
-					writer.WriteEndElement ();
-				}
-			} else {
+			if (FullText) {
 				writer.WriteStartElement ("SnippetLine");
 				writer.WriteAttributeString ("Line", "1");
 				writer.WriteStartElement ("Fragment");
@@ -302,6 +289,19 @@ namespace Beagle {
 
 				writer.WriteEndElement ();
 				writer.WriteEndElement ();
+			} else if (snippet_reader.GetSnippet() != null) {
+			// If fulltext is false, read lines from snippet reader
+ 				foreach (SnippetLine snippet_line in snippet_reader.GetSnippet ()) {
+					writer.WriteStartElement ("SnippetLine");
+					writer.WriteAttributeString ("Line", Convert.ToString (snippet_line.Line));
+					foreach (Fragment fragment in snippet_line.Fragments) {
+						writer.WriteStartElement ("Fragment");
+						writer.WriteAttributeString ("QueryTermIndex", Convert.ToString (fragment.QueryTermIndex));
+						writer.WriteString (fragment.Text);
+						writer.WriteEndElement ();
+					}
+					writer.WriteEndElement ();
+				}
 			}
 			snippet_reader.Close ();
 		}

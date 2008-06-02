@@ -61,12 +61,15 @@ namespace Beagle.Daemon {
 		{
 			Hit requested = (Hit) items [path];
 
-			if (requested == null)
+			if (requested == null || ! requested.Uri.IsFile) {
+				context.Response.StatusCode = 404;
+				context.Response.Close ();
 				return;
+			}
 
 			//Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
 			context.Response.ContentType = requested.MimeType;
-			
+
 			// FIXME: We can only handle files for now
 			/*if (requested ["Type"] != "File") {
 			  Logger.Log.Debug ("httpitemhandler: can only serve files");
@@ -97,12 +100,16 @@ namespace Beagle.Daemon {
 		private HttpItemHandler item_handler = null;
 		private System.Timers.Timer keepalive_timer = null;
 		private System.Guid id = Guid.Empty;
+		private string network_node = null;
 
 		public HttpConnectionHandler (System.Guid guid, HttpListenerContext context, HttpItemHandler item_handler)
 		{
 			this.id = guid;
 			this.context = context;
 			this.item_handler = item_handler;
+
+			Config config = Conf.Get (Conf.Names.NetworkingConfig);
+			network_node = config.GetOption ("ServiceName", String.Empty);
 		}
 
 		internal System.Guid Guid {
@@ -174,8 +181,13 @@ namespace Beagle.Daemon {
 			
 			//Logger.Log.Debug ("HTTP Server: Handling received request message");
 			
-			buffer_stream.Seek (0, SeekOrigin.Begin);
-			base.HandleConnection (buffer_stream);
+                        // The 0xff bytes from a remote beagled comes in a separate http request
+                        // and causes havoc by creating empty messages. HTTP streams do not behave
+                        // like a continous stream like UnixStream
+                        if (total_bytes > 0) {
+				buffer_stream.Seek (0, SeekOrigin.Begin);
+				base.HandleConnection (buffer_stream);
+			}
 			
 			Server.MarkHandlerAsKilled (this);
 			Shutdown.WorkerFinished (context.Request.InputStream);
@@ -253,17 +265,30 @@ namespace Beagle.Daemon {
 			if (response == null)
 				return;
 
+			// Change the Hit source and add a property with the name of this remote node
 			foreach (Hit hit in response.Hits) {
-				hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
-				hit ["beagle:Source"] = "Network";
+				//hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
+				IList new_props = new Property [2];
+				new_props [0] = Property.NewKeyword ("beagle:OrigSource", hit ["beagle:Source"]);
+				new_props [1] = Property.NewKeyword ("beagle:NetworkNode", network_node);
+				hit.AddProperty (new_props);
 
-				item_handler.RegisterHit (hit);
-			}	
+                                // Need to replace the existing beagle:Source property
+                                foreach (Property prop in hit.Properties) {
+                                        if (prop.Key == "beagle:Source") {
+                                                prop.Value = "NetworkServices";
+                                                break;
+                                        }
+                                }
+
+				//FIXME Retrieving the files for a remote hit is disabled for now
+				//item_handler.RegisterHit (hit);
+			}
 		}
 
 		public override bool SendResponse (ResponseMessage response)
-		{	
-			//TransformResponse (ref response); Disable for now
+		{
+			TransformResponse (ref response);
 
 			bool r = false;
 
@@ -870,7 +895,7 @@ namespace Beagle.Daemon {
 					Guid guid = Guid.NewGuid ();
 					HttpItemHandler item_handler = new HttpItemHandler ();
 					item_handlers [guid] = item_handler;
-					
+
 					ConnectionHandler handler = new HttpConnectionHandler (guid, context, item_handler);
 
 					lock (live_handlers)
