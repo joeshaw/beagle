@@ -619,6 +619,7 @@ namespace Beagle.Daemon {
 			} else if ((Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2) {
 				// Debugging hook for beagled
 				QueryDriver.DebugHook ();
+				LuceneCommon.DebugHook ();
 				return;
 			}
 
