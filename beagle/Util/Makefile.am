@@ -167,8 +167,9 @@ UTIL_CSFILES +=					\
 	$(srcdir)/SemWeb/Euler.cs
 endif
 
-# To reduce dependencies, we don't build this
+# To reduce dependencies and other reasons, we don't build this
 IGNORED_SEMWEB_CSFILES =			\
+	$(srcdir)/SemWeb/AssemblyInfo.cs	\
 	$(srcdir)/SemWeb/SQLStore.cs
 
 # Semweb compile flag
