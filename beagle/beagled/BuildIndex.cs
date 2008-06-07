@@ -64,6 +64,13 @@ namespace Beagle.Daemon
 
 		/////////////////////////////////////////////////////////
 
+		// Removable index related options
+		static bool arg_removable = false;
+		static string mnt_dir = null;
+		static string volume_label = null;
+
+		/////////////////////////////////////////////////////////
+
 		// 1. Different handling of --disable-directories
 		const int MINOR_VERSION = 1;
 
@@ -218,6 +225,10 @@ namespace Beagle.Daemon
 					++i;
 					break;
 
+				case "--removable":
+					arg_removable = true;
+					break;
+
 				default:
 					if (arg.StartsWith ("-") || arg.StartsWith ("--"))
 						PrintUsage ();
@@ -299,10 +310,65 @@ namespace Beagle.Daemon
 					Environment.Exit (1);
 				}
 
+				bool prev_removable = static_index_config.GetOption ("Removable", false);
+				if (arg_removable != prev_removable) {
+					Log.Error ("Index previously created for {0}-removable path",
+						   (prev_removable ? "" : "non"));
+					Environment.Exit (1);
+				} else {
+					volume_label = static_index_config.GetOption ("VolumeLabel", null);
+				}
+
 				// If arg_source is not given, and prev_source is present, use prev_source
 				// as the arg_source. This is useful for re-running build-index without
 				// giving --arg_source for already existing static index
 				arg_source = prev_source;
+			}
+
+			// Removable media related options
+			if (arg_removable) {
+				if (pending_files.Count > 0) {
+					Log.Error ("Indexing individual files is not allowed for removable media.");
+					Environment.Exit (1);
+				} else if (pending_directories.Count > 1) {
+					Log.Error ("Indexing multiple root directories is not allowed for removable media.");
+					Environment.Exit (1);
+				}
+
+				mnt_dir = ((DirectoryInfo) pending_directories.Peek ()).FullName;
+				if (mnt_dir.Length != 1)
+					mnt_dir = mnt_dir.TrimEnd ('/');
+
+				// compute volume label
+				// (1) directory name if block.is_volume is false
+				// (2) hal volume.label if set
+				// (3) hal volume.uuid if set
+				Hal.Manager manager = new Hal.Manager (new Hal.Context ());
+				Hal.Device mnt_device = null;
+
+				foreach (Hal.Device device in manager.FindDeviceStringMatch ("volume.mount_point", mnt_dir))
+					mnt_device = device;
+
+				string new_volume_label = null;
+				if (mnt_device != null) {
+					new_volume_label = mnt_device.GetPropertyString ("volume.label");
+
+
+					if (String.IsNullOrEmpty (new_volume_label))
+						new_volume_label = mnt_device.GetPropertyString ("volume.uuid");
+				}
+
+				if (new_volume_label == null)
+					new_volume_label = ((DirectoryInfo) pending_directories.Peek ()).Name;
+
+				// Sanity check
+				// Volume label is part of the URI, so cannot be changed once set
+				if (volume_label == null) {
+					volume_label = new_volume_label;
+				} else if (volume_label != new_volume_label) {
+					Log.Error ("Volume label (earlier '{0}') changed (to '{1}')! You need to create a new index.", volume_label, new_volume_label);
+					Environment.Exit (1);
+				}
 			}
 
 			if (arg_source == null) {
@@ -395,6 +461,15 @@ namespace Beagle.Daemon
 				// The name of the source
 				static_index_config.SetOption ("Source", arg_source);
 				static_index_config ["Source"].Description = "Source of the static index";
+
+				if (arg_removable) {
+					static_index_config.SetOption ("VolumeLabel", volume_label);
+					static_index_config ["VolumeLabel"].Description = "Volume label of the removable source";
+
+					static_index_config.SetOption ("Removable", true);
+					static_index_config ["Removable"].Description = "Removable source";
+				}
+
 				Conf.SaveTo (static_index_config, config_file_path);
 			}
 
@@ -489,7 +564,7 @@ namespace Beagle.Daemon
 						modified_directories.Enqueue (new DirectoryInfo (info.FullName));
 					
 					// remove
-					Uri uri = UriFu.PathToFileUri (info.FullName);
+					Uri uri = PathToUri (info.FullName);
 					indexable = new Indexable (IndexableType.Remove, uri);
 					AddToRequest (indexable);
 				}
@@ -643,12 +718,16 @@ namespace Beagle.Daemon
 
 		static Indexable FileToIndexable (FileInfo file)
 		{
-			if (!file.Exists || fa_store.IsUpToDateAndFiltered (file.FullName))
+			if (!file.Exists)
+				return null;
+			
+			if (fa_store.IsUpToDateAndFiltered (PathInIndex (file.FullName),
+							    FileSystem.GetLastWriteTimeUtc (file.FullName)))
 				return null;
 
 			// Create the indexable and add the standard properties we
 			// use in the FileSystemQueryable.
-			Uri uri = UriFu.PathToFileUri (file.FullName);
+			Uri uri = PathToUri (file.FullName);
 			Indexable indexable = new Indexable (uri);
 			indexable.Timestamp = file.LastWriteTimeUtc;
 			indexable.FlushBufferCache = true;
@@ -657,7 +736,12 @@ namespace Beagle.Daemon
 
 			// Store directory name in the index
 			string dirname = file.DirectoryName;
-			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, PathToUri (dirname)));
+
+			if (arg_removable) {
+				indexable.AddProperty (Property.NewKeyword ("beagle:RemovableVolume", volume_label));
+				indexable.ContentUri = UriFu.PathToFileUri (file.FullName);
+			}
 
 			return indexable;
 		}
@@ -669,13 +753,13 @@ namespace Beagle.Daemon
 
 			// Check if the directory information is stored in attributes store
 			// And if the mtime of the directory is same as that in the attributes store
-			FileAttributes attr = fa_store.Read (dir.FullName);
+			FileAttributes attr = fa_store.Read (PathInIndex (dir.FullName));
 
 			// If the directory exists in the fa store, then it is already indexed.
 			if (attr != null) {
 				// If we don't care about deleted content then we are fine.
 				// If the attributes are up-to-date, then we are fine too.
-				if (! arg_delete || FileAttributesStore.IsUpToDate (dir.FullName, attr))
+				if (! arg_delete || FileAttributesStore.IsUpToDate (attr, FileSystem.GetLastWriteTimeUtc (dir.FullName)))
 					return null;
 
 				// But the last write time needs to be uptodate to support enable-deletion,
@@ -686,7 +770,7 @@ namespace Beagle.Daemon
 
 			// Create the indexable and add the standard properties we
 			// use in the FileSystemQueryable.
-			Uri uri = UriFu.PathToFileUri (dir.FullName);
+			Uri uri = PathToUri (dir.FullName);
 			Indexable indexable = new Indexable (uri);
 			indexable.MimeType = "inode/directory";
 			indexable.NoContent = true;
@@ -700,13 +784,42 @@ namespace Beagle.Daemon
 
 			// Add directory name property
 			string dirname = dir.Parent.FullName;
-			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, UriFu.PathToFileUri (dirname)));
+			indexable.AddProperty (Property.NewUnsearched (Property.ParentDirUriPropKey, PathToUri (dirname)));
 
 			indexable.AddProperty (Property.NewBool (Property.IsDirectoryPropKey, true));
 
+			if (arg_removable)
+				indexable.AddProperty (Property.NewKeyword ("beagle:removable", volume_label));
+
 			return indexable;
 		}
-		
+
+		static string PathInIndex (string fullpath)
+		{
+			if (! arg_removable)
+				return fullpath;
+
+			if (fullpath == mnt_dir)
+				return "/";
+
+			if (fullpath.IndexOf (mnt_dir) != 0) {
+				Log.Warn ("Outside mounted directory: {0}", fullpath);
+				return fullpath;
+			}
+
+			return fullpath.Remove (0, mnt_dir.Length);
+		}
+
+		static Uri PathToUri (string fullpath)
+		{
+			fullpath = PathInIndex (fullpath);
+
+			return new Uri (String.Format ("removable{0}{1}{2}",
+							Uri.SchemeDelimiter,
+							volume_label,
+							StringFu.HexEscape (fullpath)), true);
+		}
+
 		class Dirent {
 			private bool is_directory;
 			private string path;
@@ -749,7 +862,7 @@ namespace Beagle.Daemon
 		static ICollection GetAllItemsInDirectory (DirectoryInfo dir)
 		{
 			// form the query
-			string parent_uri_str = UriFu.PathToFileUri (dir.FullName).ToString ();
+			string parent_uri_str = PathToUri (dir.FullName).ToString ();
 
 			// Instead of taking the painfull way of using BeagleAnalyzer, lets just add the prefix manually
 			// LuceneCommon thinks exposing secret property type encoding is bad, I think so too... except for now
@@ -903,6 +1016,13 @@ namespace Beagle.Daemon
 				"  --deny-pattern [pattern]\tKeep any files that match the pattern from being indexed.\n" + 
 				"  --disable-restart\t\tDon't restart when memory usage gets above a certain threshold.\n" +
 				"  --disable-on-battery\t\tDisable indexer while on battery power.\n";
+
+			usage +="\n" +
+				"Removable media options:\n" +
+				"  --removable\t\t\tCreate a removable media.\n" +
+				"\n" +
+				" * Use --source [name] to specify a name for the removable media.\n" +
+				" * You can specify only one <path>. Paths will be stored relative to <path>.\n";
 
 			Console.WriteLine (usage);
 			Environment.Exit (0);

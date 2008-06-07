@@ -105,10 +105,11 @@ namespace Beagle.Daemon {
 		public override ResponseMessage Execute (RequestMessage req)
 		{
 			RemovableIndexRequest r = (RemovableIndexRequest) req;
-			string path = r.Path;
 			bool to_mount = r.Mount;
+			string index_dir = r.IndexDir;
+			string mnt_dir = r.MountDir;
 
-			return QueryDriver.HandleRemovableIndexRequest (path, to_mount);
+			return QueryDriver.HandleRemovableIndexRequest (to_mount, index_dir, mnt_dir);
 		}
 	}
 }

@@ -37,12 +37,12 @@ namespace Beagle {
 		// To Mount or Unmount
 		public bool Mount;
 
-		// FIXME: More configurable ?
-		// 1. path to the config file
-		// 2. path to the index
-		// 3. path where the removable index is mounted
+		// 1. path to the config file and the index
+		public string IndexDir;
+
+		// 2. path where the removable index is mounted
 		// Separate #3 is needed in case users want to search unmounted media
-		public string Path;
+		public string MountDir;
 	}
 
 	public class RemovableIndexResponse : ResponseMessage {

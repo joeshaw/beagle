@@ -157,7 +157,24 @@ namespace Beagle.Daemon {
 			return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
 		}
 
+		// To be used if the last_write_time to use for comparison is not the
+		// one obtained from path
+		public static bool IsUpToDate (FileAttributes attr, DateTime last_write_time)
+		{
+			if (attr == null)
+				return false;
+
+			return (attr.LastWriteTime >= last_write_time);
+		}
+
 		public bool IsUpToDate (string path, Filter filter)
+		{
+			return IsUpToDate (path, filter, DateTime.MaxValue);
+		}
+
+		// To be used if the last_write_time to use for comparison is not the
+		// one obtained from path
+		public bool IsUpToDate (string path, Filter filter, DateTime last_write_time)
 		{
 			FileAttributes attr;
 
@@ -189,10 +206,20 @@ namespace Beagle.Daemon {
 					return false;
 			} 
 
-			return IsUpToDate (path, attr);
+			if (last_write_time == DateTime.MaxValue)
+				return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
+			else
+				return (attr.LastWriteTime >= last_write_time);
 		}
 
 		public bool IsUpToDateAndFiltered (string path)
+		{
+			return IsUpToDateAndFiltered (path, DateTime.MaxValue);
+		}
+
+		// To be used if the last_write_time to use for comparison is not the
+		// one obtained from path
+		public bool IsUpToDateAndFiltered (string path, DateTime last_write_time)
 		{
 			FileAttributes attr;
 
@@ -203,10 +230,14 @@ namespace Beagle.Daemon {
 			if (attr == null)
 				return false;
 
-			if (! FilterFactory.DirtyFilterCache)
+			if (! FilterFactory.DirtyFilterCache) {
 				// If the filters are same as in last run,
 				// since attr is not null, check the timestamps (bypass HasFilterInfo)
-				return IsUpToDate (path, attr);
+				if (last_write_time == DateTime.MaxValue)
+					return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
+				else
+					return (attr.LastWriteTime >= last_write_time);
+			}
 
 			// If there is a new filter in the mean time
 			// take previous filter information into consideration.
@@ -218,10 +249,20 @@ namespace Beagle.Daemon {
 			if (current_filter_version > attr.FilterVersion)
 				return false;
 
-			return IsUpToDate (path, attr);
+			if (last_write_time == DateTime.MaxValue)
+				return (attr.LastWriteTime >= FileSystem.GetLastWriteTimeUtc (path));
+			else
+				return (attr.LastWriteTime >= last_write_time);
 		}
 
 		public bool IsUpToDate (string path)
+		{
+			return IsUpToDate (path, DateTime.MaxValue);
+		}
+
+		// To be used if the last_write_time to use for comparison is not the
+		// one obtained from path
+		public bool IsUpToDate (string path, DateTime last_write_time)
 		{
 			return IsUpToDate (path, (Filter) null);
 		}

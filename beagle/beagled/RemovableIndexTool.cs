@@ -1,6 +1,6 @@
 //
 // RemovableIndexTool.cs
-// Single tool to create, load and unload removable indexes
+// Tool to load and unload removable indexes
 //
 // Copyright (C) 2008 D Bera <dbera.web@gmail.com>
 //
@@ -42,11 +42,13 @@ public class RemovableIndexTool {
 		VersionFu.PrintHeader ();
 
 		string usage =
-			"Usage: beagle-removable-index [OPTIONS]\n\n" +
+			"Usage: beagle-removable-index --indexdir INDEXDIR --mount DIR\n" +
+			"       beagle-removable-index --indexdir INDEXDIR --unmount DIR\n" +
 			"Options:\n" +
-			"  --mount PATH\tTell beagled to load a removable index from the given directory.\n" +
-			"  --umount PATH\tTell beagled to unload a removable index from the given directory.\n" +
-			"               \tGive full path to the directory in two options above.\n" +
+			"  --indexdir DIR\tSpecify the path to the index directory.\n" +
+			"  --mount DIR \tTell beagled to load a removable index from the given directory.\n" +
+			"  --umount DIR\tTell beagled to unload a removable index from the given directory.\n" +
+			"               \tGive full path to the directory in the above options.\n\n" +
 			"  --help\t\tPrint this usage message.\n" +
 			"  --version\t\tPrint version information.\n";
 
@@ -60,6 +62,10 @@ public class RemovableIndexTool {
 	{
 		// Initialize GObject type system
 		g_type_init ();
+
+		string index_dir = null;
+		string target_dir = null;
+		bool mount = false;
 
 		int i = 0;
 		while (i < args.Length) {
@@ -75,19 +81,25 @@ public class RemovableIndexTool {
 				Environment.Exit (0);
 				break;
 
-			case "--mount":
+			case "--indexdir":
 				if (next_arg != null)
-					MountRemovableIndex (next_arg);
-				else
-					PrintUsage ();
+					index_dir = next_arg;
+				++ i;
+				break;
+
+			case "--mount":
+				if (next_arg != null) {
+					target_dir = next_arg;
+					mount = true;
+				}
 				++ i;
 				break;
 
 			case "--unmount":
-				if (next_arg != null)
-					UnmountRemovableIndex (next_arg);
-				else
-					PrintUsage ();
+				if (next_arg != null) {
+					target_dir = next_arg;
+					mount = false;
+				}
 				++ i;
 				break;
 
@@ -103,15 +115,26 @@ public class RemovableIndexTool {
 
 			}
 		}
+
+		if (target_dir == null || index_dir == null) {
+			PrintUsage ();
+			Environment.Exit (1);
+		}
+
+		if (mount)
+			MountRemovableIndex (index_dir, target_dir);
+		else
+			UnmountRemovableIndex (index_dir, target_dir);
 	}
 
-	private static void MountRemovableIndex (string path)
+	private static void MountRemovableIndex (string index_dir, string mnt_dir)
 	{
-		Console.WriteLine ("Loading removable index from '{0}'", path);
+		Console.WriteLine ("Loading removable index from '{0}' for '{1}'", index_dir, mnt_dir);
 
 		RemovableIndexRequest req = new RemovableIndexRequest ();
 		req.Mount = true;
-		req.Path = Path.IsPathRooted (path) ? path : Path.GetFullPath (path);
+		req.IndexDir = Path.IsPathRooted (index_dir) ? index_dir : Path.GetFullPath (index_dir);
+		req.MountDir = Path.IsPathRooted (mnt_dir) ? mnt_dir : Path.GetFullPath (mnt_dir);
 
 		ResponseMessage resp;
 		
@@ -123,16 +146,17 @@ public class RemovableIndexTool {
 		}
 
 		RemovableIndexResponse res = (RemovableIndexResponse) resp;
-		Console.WriteLine ("Successfully added source '{0}' from {1}", res.Source, path);
+		Console.WriteLine ("Successfully mounted '{0}'@{1} from {2}", res.Source, mnt_dir, index_dir);
 	}
 
-	private static void UnmountRemovableIndex (string path)
+	private static void UnmountRemovableIndex (string index_dir, string mnt_dir)
 	{
-		Console.WriteLine ("Unloading removable index from '{0}'", path);
+		Console.WriteLine ("Unloading removable index from '{0}' for '{1}'", index_dir, mnt_dir);
 
 		RemovableIndexRequest req = new RemovableIndexRequest ();
 		req.Mount = false;
-		req.Path = Path.IsPathRooted (path) ? path : Path.GetFullPath (path);
+		req.IndexDir = Path.IsPathRooted (index_dir) ? index_dir : Path.GetFullPath (index_dir);
+		req.MountDir = Path.IsPathRooted (mnt_dir) ? mnt_dir : Path.GetFullPath (mnt_dir);
 
 		ResponseMessage resp;
 		try {
@@ -143,6 +167,6 @@ public class RemovableIndexTool {
 		}
 
 		RemovableIndexResponse res = (RemovableIndexResponse) resp;
-		Console.WriteLine ("Successfully unloaded source '{0}' from {1}", res.Source, path);
+		Console.WriteLine ("Successfully unloaded '{0}'@{1} from {2}", res.Source, mnt_dir, index_dir);
 	}
 }

@@ -200,12 +200,16 @@ namespace Beagle.Daemon {
 
 			int count = 0;
 
+			Queryable queryable;
 			foreach (DirectoryInfo index_dir in new DirectoryInfo (PathFinder.SystemIndexesDir).GetDirectories ()) {
 				if (! UseQueryable (index_dir.Name))
 					continue;
 				
-				if (LoadStaticQueryable (index_dir, QueryDomain.System) != null)
+				queryable = StaticQueryable.LoadStaticQueryable (index_dir, QueryDomain.System);
+				if (queryable != null) {
+					iqueryable_to_queryable [queryable.IQueryable] = queryable;
 					count++;
+				}
 			}
 
 			Logger.Log.Info ("Found {0} system-wide indexes.", count);
@@ -226,6 +230,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
+			Queryable queryable;
 			foreach (string path in static_queryables) {
 				DirectoryInfo index_dir = new DirectoryInfo (StringFu.SanitizePath (path));
 
@@ -233,64 +238,16 @@ namespace Beagle.Daemon {
 					continue;
 				
 				// FIXME: QueryDomain might be other than local
-				if (LoadStaticQueryable (index_dir, QueryDomain.Local) != null)
+				queryable = StaticQueryable.LoadStaticQueryable (index_dir, QueryDomain.Local);
+				if (queryable != null) {
+					iqueryable_to_queryable [queryable.IQueryable] = queryable;
 					count++;
+				}
 			}
 
 			Logger.Log.Info ("Found {0} user-configured static indexes..", count);
 
 			static_queryables = null;
-		}
-
-		// Instantiates and loads a StaticQueryable from an index directory
-		static private Queryable LoadStaticQueryable (DirectoryInfo index_dir, QueryDomain query_domain) 
-		{
-			StaticQueryable static_queryable = null;
-			
-			if (!index_dir.Exists)
-				return null;
-			
-			try {
-				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, true);
-			} catch (InvalidOperationException) {
-				Logger.Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
-				return null;
-			} catch (Exception e) {
-				Logger.Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
-				return null;
-			}
-
-			if (static_queryable == null)
-				return null;
-
-			// Load StaticIndex.xml from index_dir.FullName/config
-			string config_file_path = Path.Combine (index_dir.FullName, "StaticIndex.xml");
-			Config static_index_config;
-			try {
-				static_index_config = Conf.LoadFrom (config_file_path);
-				if (static_index_config == null) {
-					Log.Error ("Unable to read config from {0}", config_file_path);
-					return null;
-				}
-			} catch (Exception e) {
-				Log.Error (e, "Caught exception while reading config from {0}", config_file_path);
-				return null;
-			}
-
-			string source = static_index_config.GetOption ("Source", null);
-			if (source == null) {
-				Log.Error ("Invalid config file: {0}", config_file_path);
-				return null;
-			}
-
-			QueryableFlavor flavor = new QueryableFlavor ();
-			flavor.Name = source;
-			flavor.Domain = query_domain;
-
-			Queryable queryable = new Queryable (flavor, static_queryable);
-			iqueryable_to_queryable [static_queryable] = queryable;
-
-			return queryable;
 		}
 
 		////////////////////////////////////////////////////////
@@ -745,17 +702,17 @@ namespace Beagle.Daemon {
 
 		private static Dictionary<string, Queryable> removable_queryables = new Dictionary<string, Queryable> (4); // small number
 
-		internal static ResponseMessage HandleRemovableIndexRequest (string path, bool to_mount)
+		internal static ResponseMessage HandleRemovableIndexRequest (bool to_mount, string index_dir, string mnt_dir)
 		{
 			lock (removable_queryables) {
 				if (to_mount)
-					return AddRemovableIndex (path);
+					return AddRemovableIndex (index_dir, mnt_dir);
 				else
-					return RemoveRemovableIndex (path);
+					return RemoveRemovableIndex (index_dir, mnt_dir);
 			}
 		}
 
-		private static ResponseMessage AddRemovableIndex (string path)
+		private static ResponseMessage AddRemovableIndex (string path, string mnt_dir)
 		{
 			DirectoryInfo index_dir = new DirectoryInfo (StringFu.SanitizePath (path));
 			if (! index_dir.Exists) {
@@ -763,6 +720,16 @@ namespace Beagle.Daemon {
 				msg = new ErrorResponse ();
 				msg.ErrorMessage = "Adding removable index failed";
 				msg.Details = String.Format ("'{0}' does not exist.", path);
+				return msg;
+			}
+
+			// Allow late loading of mount dir ?
+			mnt_dir = StringFu.SanitizePath (mnt_dir);
+			if (! Directory.Exists (mnt_dir)) {
+				ErrorResponse msg;
+				msg = new ErrorResponse ();
+				msg.ErrorMessage = "Adding removable index failed";
+				msg.Details = String.Format ("Mount directory '{0}' does not exist.", mnt_dir);
 				return msg;
 			}
 
@@ -778,7 +745,7 @@ namespace Beagle.Daemon {
 
 			try {
 				iqueryable_lock.AcquireWriterLock (System.Threading.Timeout.Infinite);
-				removable_queryable = LoadStaticQueryable (index_dir, QueryDomain.Local);
+				removable_queryable = StaticQueryable.LoadRemovableQueryable (index_dir, mnt_dir);
 			} finally {
 				iqueryable_lock.ReleaseWriterLock ();
 			}
@@ -786,6 +753,7 @@ namespace Beagle.Daemon {
 			if (removable_queryable == null)
 				return new ErrorResponse ("Adding removable index failed");
 
+			iqueryable_to_queryable [removable_queryable.IQueryable] = removable_queryable;
 			removable_queryables [path] = removable_queryable;
 
 			RemovableIndexResponse resp = new RemovableIndexResponse ();
@@ -794,7 +762,7 @@ namespace Beagle.Daemon {
 			return resp;
 		}
 
-		private static ResponseMessage RemoveRemovableIndex (string path)
+		private static ResponseMessage RemoveRemovableIndex (string path, string mnt_dir)
 		{
 			if (! removable_queryables.ContainsKey (path)) {
 				ErrorResponse msg;
@@ -814,6 +782,14 @@ namespace Beagle.Daemon {
 			}
 
 			StaticQueryable static_queryable = (StaticQueryable) removable_queryable.IQueryable;
+			if (static_queryable.RemovableMountDir != mnt_dir) {
+				ErrorResponse msg;
+				msg = new ErrorResponse ();
+				msg.ErrorMessage = "Removing removable-index failed";
+				msg.Details = String.Format ("No index mounted at {0}.", mnt_dir);
+				return msg;
+			}
+
 			static_queryable.Close ();
 
 			removable_queryables.Remove (path);
