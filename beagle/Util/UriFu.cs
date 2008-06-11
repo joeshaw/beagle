@@ -1,6 +1,7 @@
 //
 // UriFu.cs
 //
+// Copyright (C) 2008 D Bera <dbera.web@gmail.com>
 // Copyright (C) 2004 Novell, Inc.
 //
 
@@ -31,70 +32,93 @@ using System.Text;
 
 namespace Beagle.Util {
 
-	public class UriFu {
+	/* Beagle URIs : A bunch of hacks
+	 * ------------------------------
+	 *
+	 * Every indexed document is identified by a URI.
+	 * In general URI format is not very flexible so we
+	 * construct our own URI format and convince System.Uri
+	 * to use that. Also, we do our own URI<->string conversion
+	 * and use that during XML serialization/deserialization.
+	 *
+	 * The format is similar to the Uri RFC:
+	 *
+	 * Scheme
+	 * SchemeDelimiter
+	 * Userinfo
+	 * Host (case sensitive - different from the RFC)
+	 * Absolute path and query (escaped)
+	 * Zero or more fragments: each fragment is
+	 *   - '#' (unescaped)
+	 *   - fragment path (escaped)
+	 *
+	 * The difference is the presence of multiple fragments
+	 * and case-sensitive hostname.
+	 *
+	 * Also there are a bunch of functions for converting a
+	 * file path to a file:/// URI. This is needed because
+	 * sometimes path can contain characters prohibited
+	 * in the path component of a URI. These paths first need
+	 * to be escaped. Otherwise Uri() will think these are
+	 * special characters!
+	 *
+	 * Note: Beagle internal uris are of the form "uid:xyz".
+	 *
+	 */
 
-		private UriFu () { } // class is static
+	public static class UriFu {
 
 		static public Uri PathToFileUri (string path)
 		{
-			return PathToFileUri (path, null);
+			return new Uri (PathToFileUriString (path), true);
 		}
 
-		static public Uri PathToFileUri (string path, string fragment)
+		// DEPRECATED! path is always escaped but escaping of fragment is
+		// context dependent.
+		//static public Uri PathToFileUri (string path, string fragment)
+		//
+
+		// Whether fragment should be escaped or not is crucial and depends on the context.
+		// Hence the caller of the method should set it accordingly and no default
+		// value for escape_fragment is provided.
+		static public Uri AddFragment (Uri uri, string fragment, bool dont_escape_fragment)
 		{
-			return new Uri (PathToFileUriString (path, fragment), true);
+			if (fragment [0] == '#')
+				fragment = fragment.Substring (1);
+
+			if (! dont_escape_fragment)
+				fragment = StringFu.HexEscape (fragment);
+
+			fragment = String.Concat (uri.Fragment,
+						  '#',
+						  fragment); // Append to existing fragment
+
+			return new Uri (uri, fragment, true /* dont escape*/);
 		}
 
 		static public string PathToFileUriString (string path)
 		{
-			return PathToFileUriString (path, null);
+			return String.Concat (Uri.UriSchemeFile,
+					      Uri.SchemeDelimiter,
+					      StringFu.HexEscape (Path.GetFullPath (path)));
 		}
 
-		static public string PathToFileUriString (string path, string fragment)
+		static public Uri EscapedStringToUri (string uri_string)
 		{
-			string str = String.Concat (Uri.UriSchemeFile,
-						    Uri.SchemeDelimiter,
-						    StringFu.HexEscape (Path.GetFullPath (path)));
-			if (fragment != null)
-				str = str + fragment;
-			return str;
+			return new Uri (uri_string, true);
 		}
 
-		static public Uri EscapedStringToUri (string path)
-		{
-			// Our current hackery attempts to serialize Uri strings in
-			// escaped and constructable form, so we don't require any
-			// extra processing on deserialization right now.
-			return new Uri (path, true);
-		}
-
-		// UriBuilder is a piece of shit so we have to do this ourselves.
 		static public string UriToEscapedString (Uri uri)
 		{
-			StringBuilder builder = new StringBuilder ();
+			if (uri.UserEscaped)
+				return uri.OriginalString;
 
-			builder.Append (uri.Scheme);
-
-			if (uri.ToString ().IndexOf (Uri.SchemeDelimiter) == uri.Scheme.Length)
-				builder.Append (Uri.SchemeDelimiter);
-			else
-				builder.Append (':');
-
-			if (uri.Host != String.Empty) {
-				if (uri.UserInfo != String.Empty)
-					builder.Append (uri.UserInfo + "@");
-
-				builder.Append (uri.Host);
-			}
-
-			if (! uri.IsDefaultPort)
-				builder.Append (":" + uri.Port);
-
-			// Both PathAndQuery and Fragment are escaped for us
-			builder.Append (uri.PathAndQuery);
-			builder.Append (uri.Fragment);
-
-			return builder.ToString ();
+			// Do not use uri.ToString(), it actually unescapes certain characters.
+			// uri.AbsoluteUri also returns "uid:xxx" from the beagle internal
+			// uid:xxx URIs.
+			// If AbsoluteUri is found to skip any information in the URI, then
+			// manually the string needs to be constructed.
+			return uri.AbsoluteUri;
 		}
 
 		// Get a uri of our liking from a user-entered uri
@@ -134,6 +158,8 @@ namespace Beagle.Util {
 		}
 
 		//////////////////////////////////
+
+		// Uri.ToString() should not be used. Use Uri.AbsoluteUri
 
 		static public bool Equals (Uri uri1, Uri uri2)
 		{
