@@ -117,7 +117,9 @@ class DumpIndexTool {
 					internal_uri = UriFu.UriToEscapedString (hit.ParentUri);
 					
 					hit.ParentUri = UriFu.PathToFileUri (path);
-					hit.Uri = UriFu.PathToFileUri (path, hit.Uri.Fragment);
+					hit.Uri = UriFu.AddFragment (UriFu.PathToFileUri (path),
+								     hit.Uri.Fragment,
+								     true);
 				} else {
 					internal_uri = UriFu.UriToEscapedString (hit.Uri);
 

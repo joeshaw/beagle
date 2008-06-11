@@ -1744,7 +1744,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			string is_child = hit [Property.IsChildPropKey];
 			string fragment = null;
 			if (is_child == "true") {
-				hit.Uri = UriFu.PathToFileUri (path, old_uri.Fragment);
+				Uri uri = UriFu.PathToFileUri (path);
+				hit.Uri = UriFu.AddFragment (uri, old_uri.Fragment, true);
 				hit.ParentUri = UriFu.PathToFileUri (path);
 			}
 

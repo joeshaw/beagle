@@ -69,7 +69,7 @@ namespace Beagle.Daemon {
 				// We're in read-only mode, but we can't create an index.
 				// Maybe a different exception would be better?  This one is caught
 				// in QueryDriver.LoadStaticQueryable ()
-				throw new InvalidOperationException ();
+				throw new InvalidOperationException (String.Format ("Index {0} does not exist.", index_name));
 			}
 
 			// Initialize the user text cache only if we're not in
