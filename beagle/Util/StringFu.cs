@@ -469,7 +469,7 @@ namespace Beagle.Util {
 			for (; index < str.Length; ++ index) {
 				char c = str [index];
 
-				if (ArrayFu.IndexOfChar (CharsToQuote, c) != -1)
+				if (Array.IndexOf<char> (CharsToQuote, c) != -1)
 					builder.Append (Uri.HexEscape (c));
 				else if (c < 128)
 					builder.Append (c);

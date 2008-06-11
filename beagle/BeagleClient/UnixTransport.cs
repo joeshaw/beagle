@@ -193,7 +193,7 @@ namespace Beagle {
 					break;
 
 				int end_index;
-				end_index = ArrayFu.IndexOfByte (buffer, (byte) 0xff);
+				end_index = Array.IndexOf<byte> (buffer, (byte) 0xff);
 
 				if (end_index == -1) {
 					deserialize_stream.Write (buffer, 0, bytes_read);
@@ -256,7 +256,7 @@ namespace Beagle {
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (this.network_data, (byte) 0xff);
+					end_index = Array.IndexOf<byte> (this.network_data, (byte) 0xff);
 					
 					this.BufferStream.Write (this.network_data, 0,
 								  end_index == -1 ? bytes_read : end_index);

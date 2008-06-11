@@ -172,7 +172,7 @@ namespace Beagle.Daemon {
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (network_data, (byte) 0xff);
+					end_index = Array.IndexOf<byte> (network_data, (byte) 0xff);
 
 					buffer_stream.Write (network_data, 0,
 							     end_index == -1 ? bytes_read : end_index);
@@ -404,7 +404,7 @@ namespace Beagle.Daemon {
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (network_data, (byte) 0xff);
+					end_index = Array.IndexOf<byte> (network_data, (byte) 0xff);
 
 					buffer_stream.Write (network_data, 0,
 							     end_index == -1 ? bytes_read : end_index);

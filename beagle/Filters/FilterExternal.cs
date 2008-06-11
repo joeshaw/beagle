@@ -133,7 +133,7 @@ namespace Beagle.Filters {
 					if (efi.Extensions == null)
 						continue;
 
-					if (ArrayFu.IndexOfString (efi.Extensions, extension) != -1)
+					if (Array.IndexOf<string> (efi.Extensions, extension) != -1)
 						return efi;
 				}
 			}
@@ -143,7 +143,7 @@ namespace Beagle.Filters {
 					if (efi.MimeTypes == null)
 						continue;
 
-					if (ArrayFu.IndexOfString (efi.MimeTypes, mime_type) != -1)
+					if (Array.IndexOf<string> (efi.MimeTypes, mime_type) != -1)
 						return efi;
 				}
 			}

@@ -85,7 +85,7 @@ namespace Beagle.Filters {
 							if (reader.IsEmptyElement)
 								break;
 							
-							if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
+							if (Array.IndexOf<string> (ignore_strings, reader.LocalName) != -1)
 								break;
 							else if (reader.LocalName == "title") {
 								grab_property = true;
@@ -165,7 +165,7 @@ namespace Beagle.Filters {
  								break;
 							}
 
-							if (ArrayFu.IndexOfString (ignore_strings, reader.LocalName) != -1)
+							if (Array.IndexOf<string> (ignore_strings, reader.LocalName) != -1)
 								break;
 							else if (reader.NamespaceURI == dcnamespace) {
 								if (reader.LocalName == "date")

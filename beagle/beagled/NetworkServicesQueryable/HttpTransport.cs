@@ -100,7 +100,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (network_data, (byte) 0xff);
+					end_index = Array.IndexOf<byte> (network_data, (byte) 0xff);
 					this.BufferStream.Write (network_data, 0, end_index == -1 ? bytes_read : end_index);
 				}
 			} while (bytes_read > 0 && end_index == -1);
@@ -192,7 +192,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 				do {
 					// 0xff signifies end of message
-					end_index = ArrayFu.IndexOfByte (network_data, (byte) 0xff, prev_index);
+					end_index = Array.IndexOf<byte> (network_data, (byte) 0xff, prev_index);
 					
 					if (end_index > bytes_read) {
 						// I'm not sure how this ever comes to be true, but it does,
@@ -271,7 +271,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 					break;
 
 				int end_index;
-				end_index = ArrayFu.IndexOfByte (buffer, (byte) 0xff);
+				end_index = Array.IndexOf<byte> (buffer, (byte) 0xff);
 
 				if (end_index == -1) {
 					deserialize_stream.Write (buffer, 0, bytes_read);
