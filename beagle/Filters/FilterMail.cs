@@ -442,8 +442,9 @@ namespace Beagle.Filters {
 						// attachments along with (real) attachments.
 
 						if (Array.IndexOf (blacklisted_mime_types, mime_type) == -1) {
-							string sub_uri = this.indexable.Uri.ToString () + "#" + this.count;
-							Indexable child = new Indexable (new Uri (sub_uri));
+							string sub_uri = "#" + this.count;
+							Indexable child;
+							child = new Indexable (UriFu.AddFragment (this.indexable.Uri, sub_uri, true));
 
 							child.DisplayUri = new Uri (this.indexable.DisplayUri.ToString () + "#" + this.count);
 

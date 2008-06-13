@@ -125,10 +125,10 @@ namespace Beagle.Filters {
 			if (line == null)
 				return false;
 
-			child = new Indexable (new Uri (Indexable.Uri.ToString() + "#" + name));
+			child = new Indexable (UriFu.AddFragment (Indexable.Uri, name, false));
 			child.CacheContent = false;
 			child.MimeType = "text/x-bibtex";
-			child.DisplayUri = (new Uri (Indexable.Uri.ToString() + "#" + name));
+			child.DisplayUri = child.Uri;
 			child.NoContent = true;
 			child.AddProperty (Property.NewKeyword ("bibtex:type", type));
 

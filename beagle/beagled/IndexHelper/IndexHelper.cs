@@ -163,12 +163,14 @@ namespace Beagle.IndexHelper {
 				// Whether we should generate heap-shot snapshots
 				heap_shot = (Environment.GetEnvironmentVariable ("_HEY_LETS_DO_A_HEAP_SHOT") != null);
 
-				// Start the monitor thread, which keeps an eye on memory usage and idle time.
-				ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
+				if (! run_by_hand) {
+					// Start the monitor thread, which keeps an eye on memory usage and idle time.
+					ExceptionHandlingThread.Start (new ThreadStart (MemoryAndIdleMonitorWorker));
 
-				// Start a thread that watches the daemon and begins a shutdown
-				// if it terminates.
-				ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
+					// Start a thread that watches the daemon and begins a shutdown
+					// if it terminates.
+					ExceptionHandlingThread.Start (new ThreadStart (DaemonMonitorWorker));
+				}
 
 				// Start the main loop
 				main_loop.Run ();

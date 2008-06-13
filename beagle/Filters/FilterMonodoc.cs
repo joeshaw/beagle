@@ -100,7 +100,7 @@ namespace Beagle.Filters {
 				if (type == null)
 					continue;
 				
-				Indexable type_indexable = TypeNodeToIndexable (type, FileInfo);
+				Indexable type_indexable = TypeNodeToIndexable (type, Indexable.Uri);
 				type_indexable.SetChildOf (this.Indexable);
 				type_indexable.StoreStream ();
 				type_indexable.CloseStreams ();
@@ -108,7 +108,7 @@ namespace Beagle.Filters {
 				
 				foreach(XmlNode member in type.SelectNodes ("Members/Member")) {
 					Indexable member_indexable = MemberNodeToIndexable (member,
-											    FileInfo,
+											    Indexable.Uri,
 											    type.Attributes ["FullName"].Value);
 					member_indexable.SetChildOf (this.Indexable);
 					member_indexable.StoreStream ();
@@ -120,9 +120,10 @@ namespace Beagle.Filters {
 			Finished ();
 		}
 
-		static private Indexable TypeNodeToIndexable (XmlNode node, FileInfo file)
+		static private Indexable TypeNodeToIndexable (XmlNode node, Uri base_uri)
 		{
-			Indexable indexable = new Indexable (UriFu.PathToFileUri (file + "#T:" + node.Attributes ["FullName"].Value));
+			string fragment = "T:" + node.Attributes ["FullName"].Value;
+			Indexable indexable = new Indexable (UriFu.AddFragment (base_uri, fragment, false));
 			
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";
@@ -137,7 +138,7 @@ namespace Beagle.Filters {
 			return indexable;
 		}
 		
-		static private Indexable MemberNodeToIndexable(XmlNode node, FileInfo file, string parentName)
+		static private Indexable MemberNodeToIndexable(XmlNode node, Uri base_uri, string parentName)
 		{
 			char memberType = MemberTypeToChar (node.SelectSingleNode ("MemberType").InnerText);
 			StringBuilder memberFullName = new StringBuilder ();
@@ -159,7 +160,7 @@ namespace Beagle.Filters {
 				memberFullName.Append (")");
 			}
 
-			Indexable indexable = new Indexable (UriFu.PathToFileUri (file + "#" + memberFullName));
+			Indexable indexable = new Indexable (UriFu.AddFragment (base_uri, memberFullName.ToString (), false));
 
 			indexable.MimeType = "text/html";
 			indexable.HitType = "MonodocEntry";

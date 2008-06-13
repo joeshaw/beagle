@@ -58,7 +58,7 @@ namespace Beagle.Filters
 		public FilterDocbook ()
 		{
 			SnippetMode = false;
-			SetVersion (4);
+			SetVersion (5);
 			SetFileType ("documentation");
 		}
 
@@ -159,7 +159,8 @@ namespace Beagle.Filters
 						if (entries_stack.Count > 0)
 							parent_entry = (DocbookEntry) entries_stack.Peek ();
 						
-						Indexable indexable = new Indexable (UriFu.PathToFileUri (String.Format ("{0}#{1}", base_path, entry.Id)));
+						Indexable indexable;
+						indexable = new Indexable (UriFu.AddFragment (Indexable.Uri, entry.Id, false));
 						indexable.HitType = "DocbookEntry";
 						indexable.MimeType = "text/x-docbook-entry";
 						indexable.Filtering = IndexableFiltering.AlreadyFiltered;

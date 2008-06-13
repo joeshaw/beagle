@@ -43,8 +43,6 @@ namespace Beagle.IndexHelper {
 		static public int Count = 0;
 		static Hashtable indexer_table = new Hashtable ();
 
-		Indexable[] child_indexables;
-
 		public override ResponseMessage Execute (RequestMessage raw_request)
 		{
 			RemoteIndexerRequest remote_request = (RemoteIndexerRequest) raw_request;

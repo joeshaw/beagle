@@ -171,15 +171,10 @@ namespace Beagle.Filters {
 			++count;
 			total_size += a_entry.Size;
 
-			// FIXME: For nested archives, create uid:foo#bar
-			// instead of uid:foo#xxx#bar (avoid duplicates ?)
-			// FIXME: Construct correct Uri
-			// 1. Use Uri (foo, true): foo is not escaped. This creates serialization error for uris containing non-ascii character
-			// 2: Using Uri (foo): foo is escaped. This causes foo.zip#b#c (file c in archive b in archive foo) to be escaped to foo.zip#b%23c. This should be properly escaped back. Note that, file b#c in archive foo.zip would also be escaped to foo.zip#b%23c. If there is any problem about incorrect filename containing '#' in an archive, then System.Uri should be abandoned and a custom Beagle.Uri should be created which can handle multiple fragments.
-			// If you read the Uri related FIXMEs and hacks in beagled/*Queryable,
-			// then you would see why creating Beagle.Uri class over System.Uri
-			// is not at all a bad idea :)
-			child = new Indexable (new Uri (Indexable.Uri.ToString () + "#" + a_entry.Name));
+			// Add "#<escaped-path-to-entry>" to the end of the Indexable Uri
+			// So, file b#c in archive foo.zip becomes file:///foo.zip#b%23c
+			// And file c in archive b in archive foo.zip becomes file:///foo.zip#b#c
+			child = new Indexable (UriFu.AddFragment (Indexable.Uri, a_entry.Name, false));
 
 			child.CacheContent = true;
 			child.MimeType = a_entry.MimeType;
