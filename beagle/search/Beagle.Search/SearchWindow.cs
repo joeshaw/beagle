@@ -520,7 +520,8 @@ namespace Beagle.Search {
 					if (tile_count == this.total_matches)
 						message = String.Format (Catalog.GetPluralString ("Showing {0} match", "Showing all {0} matches", this.total_matches), this.total_matches);
 					else
-						message = String.Format (Catalog.GetPluralString ("Showing the top {0} of {1} total matches", "Showing the top {0} of {1} total matches", this.total_matches), view.TileCount, this.total_matches);
+					// .
+						message = String.Format (Catalog.GetString ("Too many matches. Showing latest {0} of total {1}"), view.TileCount, this.total_matches);
 
 					this.statusbar.Push (0, message);
 				}
