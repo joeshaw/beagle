@@ -137,6 +137,9 @@ namespace Beagle.Filters
 							if (entry.Title == null)
 								entry.Title = reader.Value;
 						}
+					} else if (reader.Name == "keyword") {
+						reader.Read (); // read the text node
+						AddProperty (Property.NewKeyword ("dc:subject", reader.Value));
 					}
 					break;
 					
@@ -146,7 +149,8 @@ namespace Beagle.Filters
 						((DocbookEntry) entries_stack.Peek ()).Content.Append (reader.Value);
 
 					// Append text to the main indexable
-					AppendText (reader.Value);
+					else
+						AppendWord (reader.Value);
 					break;
 					
 				case XmlNodeType.EndElement:
@@ -163,6 +167,7 @@ namespace Beagle.Filters
 						indexable = new Indexable (UriFu.AddFragment (Indexable.Uri, entry.Id, false));
 						indexable.HitType = "DocbookEntry";
 						indexable.MimeType = "text/x-docbook-entry";
+						indexable.AddProperty (Property.NewKeyword ("beagle:FileType", "documentation"));
 						indexable.Filtering = IndexableFiltering.AlreadyFiltered;
 
 						indexable.AddProperty (Property.NewUnsearched ("fixme:id", entry.Id));
