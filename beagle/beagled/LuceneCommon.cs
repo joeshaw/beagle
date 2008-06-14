@@ -1913,19 +1913,6 @@ namespace Beagle.Daemon {
 				this.Version = version;
 				this.Refcount = 1;
 			}
-
-			// Use these methods to keep one instance of a reader
-			// always opened.
-
-			public void MarkNoClose ()
-			{
-				this.Refcount ++;
-			}
-
-			public void MarkClose ()
-			{
-				this.Refcount --;
-			}
 		}
 
 		static private Hashtable directory_rav_map = new Hashtable ();
@@ -1951,7 +1938,7 @@ namespace Beagle.Daemon {
 					reader = IndexReader.Open (directory);
 
 					rav = new ReaderAndVersion (reader, version);
-					rav.MarkNoClose (); // keep this reader open until...
+					rav.Refcount ++; // add one refcount to keep this reader open until...
 
 					directory_rav_map [directory] = rav;
 					reader_rav_map [reader] = rav;
@@ -1960,9 +1947,10 @@ namespace Beagle.Daemon {
 				}
 
 				version = IndexReader.GetCurrentVersion (directory);
-				
+
 				if (version != rav.Version) {
-					rav.MarkClose ();
+					// unref once and then close reader or call UnrefReaderAndVersion_Unlocked as a single step
+					UnrefReaderAndVersion_Unlocked (rav);
 
 					reader = IndexReader.Open (directory);
 
@@ -2009,7 +1997,7 @@ namespace Beagle.Daemon {
 				ReaderAndVersion rav = (ReaderAndVersion) reader_rav_map [reader];
 
 				if (rav != null) {
-					rav.MarkClose ();
+					rav.Refcount --; // Remove one extra refcount that was added to keep the reader opened
 					UnrefReaderAndVersion_Unlocked (rav);
 				} else
 					reader.Close ();
