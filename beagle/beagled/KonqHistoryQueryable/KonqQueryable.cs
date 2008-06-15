@@ -28,6 +28,7 @@ using System.IO;
 using System.Collections;
 using System.Threading;
 using System.Text;
+using ICSharpCode.SharpZipLib.GZip;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -166,24 +167,34 @@ namespace Beagle.Daemon.KonqQueryable {
 		private Indexable FileToIndexable (string path, bool crawling) {
 			//Logger.Log.Debug ("KonqQ: Trying to index " + path);
 
-			FileStream stream;
+			Stream stream;
 			try {
 				stream = new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.Read);
 			} catch (FileNotFoundException) {
 				// that was fast - lost the file
 				return null;
 			}
-			
+
+			bool gzip_cached = false;
+
+			if (KonqHistoryUtil.IsGZipCache (stream))
+				gzip_cached = true;
+
+			if (gzip_cached)
+				stream = new GZipInputStream (stream);
+
 			using (StreamReader reader = new StreamReader (stream, latin_encoding)) {
 				string url = null;
 				string creation_date = null;
 				string mimetype = null;
 				string charset = null;
+				string revision = null;
 				bool is_ok = KonqHistoryUtil.ShouldIndex (reader, 
 									  out url, 
 									  out creation_date,
 									  out mimetype, 
-									  out charset);
+									  out charset,
+									  out revision);
 			
 				if (!is_ok || url == String.Empty) {
 					//Logger.Log.Debug ("KonqQ: Skipping non-html file " + path + " of type=" + mimetype);
@@ -193,13 +204,13 @@ namespace Beagle.Daemon.KonqQueryable {
 					return null; // we wont index bad files and non-html files
 				}
 
-				//Logger.Log.Debug ("KonqQ: Indexing " + path + " with url=" + url);
+				//Logger.Log.Debug ("KonqQ: Indexing {0} = {1},{2},{3},{4},{5}", path, url, creation_date, mimetype, charset, revision);
 				Uri uri = new Uri (url, true);
 				if (uri.Scheme == Uri.UriSchemeHttps) {
 					Logger.Log.Error ("Indexing secure https:// URIs is not secure!");
 					return null;
 				}
-			
+
 				Indexable indexable = new Indexable (uri);
 				indexable.HitType = "WebHistory";
 				indexable.MimeType = KonqHistoryUtil.KonqCacheMimeType;
@@ -207,8 +218,10 @@ namespace Beagle.Daemon.KonqQueryable {
 				indexable.AddProperty (Property.NewUnstored ("fixme:urltoken", StringFu.UrlFuzzyDivide (url)));
 				// hint for the filter about the charset
 				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "charset", charset));
+				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "gzipped", gzip_cached));
+				indexable.AddProperty (Property.NewUnsearched (StringFu.UnindexedNamespace + "revision", revision));
 				indexable.FlushBufferCache = crawling;
-			
+
 				DateTime date = DateTimeUtil.UnixToDateTimeUtc (0);
 				date = date.AddSeconds (Int64.Parse (creation_date));
 				indexable.Timestamp = date;
@@ -253,7 +266,8 @@ namespace Beagle.Daemon.KonqQueryable {
 				current_file = (FileInfo) file_enumerator.Current;
 				//if (!IsUpToDate (current_file.FullName))
 				//	Logger.Log.Debug (current_file.FullName + " is not upto date");
-			} while (IsUpToDate (current_file.FullName));
+				// KDE4 cache contains _freq files which are non-cache files
+			} while (current_file.FullName.EndsWith ("_freq") || IsUpToDate (current_file.FullName));
 
 			return true;
 		}

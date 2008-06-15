@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
+using ICSharpCode.SharpZipLib.GZip;
 
 using Beagle.Daemon;
 using Beagle.Util;
@@ -51,35 +52,69 @@ namespace Beagle.Filters {
 			if (buf == null)
 				buf = new byte [1024];
 
-			StreamReader reader = new StreamReader (Stream, Encoding.GetEncoding (28591));
-
 			// read the charset hint from indexable
 			string charset = null;
-			foreach (Property property in Indexable.Properties) {
-				if (property.Key != (StringFu.UnindexedNamespace + "charset"))
-					continue;
-				charset = (string) property.Value;
-				//Console.WriteLine ("charset hint accepted: " + charset);
-				break;
-			}
-					
+			string gzipped = null;
+			string revision = "7";
 
-			// now create a memorystream where htmlfilter will begin his show
-			Stream.Seek (0, SeekOrigin.Begin);
+			foreach (Property property in Indexable.Properties) {
+				if (property.Key == (StringFu.UnindexedNamespace + "charset"))
+					charset = (string) property.Value;
+				else if (property.Key == (StringFu.UnindexedNamespace + "revision"))
+					revision = (string) property.Value;
+				else if (property.Key == (StringFu.UnindexedNamespace + "gzipped"))
+					gzipped = (string) property.Value.ToLower ();
+				//Console.WriteLine ("charset hint accepted: " + charset);
+			}
+
+			if (revision != "7" && revision != "9") {
+				Error ();
+				return;
+			}
+
+			Stream stream;
+			if (gzipped == "true")
+				stream = new GZipInputStream (Stream);
+			else
+				stream = Stream;
+
 			// count past 8 lines ... Streams suck!
 			int c = 0; // stores the number of newlines read
 			int b = 0;
-			while (c < 8 && (b = Stream.ReadByte ()) != -1) {
+			int lines_to_skip = 0;
+			if (revision == "7")
+				lines_to_skip = 8;
+			else if (revision == "9")
+				lines_to_skip = 7;
+
+			while (c < lines_to_skip && (b = stream.ReadByte ()) != -1) {
 				if (b == '\n')
 					c ++;
-			}	
+			}
+
+			if (revision == "9") {
+				// skip HTTP response headers i.e. keep reading till a blank line is found
+				long last_pos = 0; // GZipInputStream.Position can be fake, keep our own count
+				long cur_pos = 0;
+
+				while ((b = stream.ReadByte ()) != -1) {
+					cur_pos ++;
+					if (b != '\n')
+						continue;
+
+					if (cur_pos == last_pos + 1)
+						break;
+					else
+						last_pos = cur_pos;
+				}
+			}
+
 			// copy the rest of the file to a memory stream
 			MemoryStream mem_stream = new MemoryStream ();
-			while ((b = Stream.Read (buf, 0, 1024)) != 0)
+			while ((b = stream.Read (buf, 0, 1024)) != 0)
 				mem_stream.Write (buf, 0, b);
 			mem_stream.Seek (0, SeekOrigin.Begin);
-			reader.Close ();
-			
+
 			HtmlDocument doc = new HtmlDocument ();
 			doc.ReportNode += HandleNodeEvent;
 			doc.StreamMode = true;

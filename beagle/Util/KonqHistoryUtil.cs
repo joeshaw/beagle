@@ -31,16 +31,46 @@ namespace Beagle.Util {
 	public class KonqHistoryUtil {
 		public const string KonqCacheMimeType = "beagle/x-konq-cache";
 
+		public static bool IsGZipCache (Stream stream)
+		{
+			byte id1 = (byte) stream.ReadByte ();
+			byte id2 = (byte) stream.ReadByte ();
+			stream.Position = 0;
+
+			return (id1 == (byte) 0x1f && id2 == (byte) 0x8b);
+		}
+
 		public static bool ShouldIndex (StreamReader reader,
+					  out string url,
+					  out string creation_date,
+					  out string mimetype,
+					  out string charset,
+					  out string revision)
+		{
+			url = null;
+			creation_date = null;
+			mimetype = null;
+			charset = null;
+
+			// format from kdelibs/kioslave/http/http.cc
+			// line-1: Cache revision
+			// FIXME: What happens when cache revision changes ???
+			revision = reader.ReadLine ().Trim ();
+			if (revision == "7")
+				return ShouldIndexRev7 (reader, out url, out creation_date, out mimetype, out charset);
+			else if (revision == "9")
+				return ShouldIndexRev9 (reader, out url, out creation_date, out mimetype, out charset);
+
+			return false;
+		}
+
+		public static bool ShouldIndexRev7 (StreamReader reader,
 					  out string url,
 					  out string creation_date,
 					  out string mimetype,
 					  out string charset)
 		{
 			// format from kdelibs/kioslave/http/http.cc
-			// line-1: Cache revision - mine is 7
-			// FIXME: What happens when cache revision changes ???
-			reader.ReadLine ();
 
 			// line-2: URL
 			url = reader.ReadLine ();
@@ -78,6 +108,35 @@ namespace Beagle.Util {
 			*/
 			// rest is data ...
 			return (mimetype == "text/html");
+		}
+
+		public static bool ShouldIndexRev9 (StreamReader reader,
+					  out string url,
+					  out string creation_date,
+					  out string mimetype,
+					  out string charset)
+		{
+			bool ret = ShouldIndexRev7 (reader, out url, out creation_date, out mimetype, out charset);
+
+			// Revision 9 is mostly same as revisiom 7
+			// 7 lines followed by HTTP response headers.
+			// http://websvn.kde.org/trunk/KDE/kdelibs/kioslave/http/http.cpp
+
+			// The charset line is at a different place. What the above function read was the HTTP response headers.
+			// Keep reading the HTTP response headers till an empty line is found or the charset line is found
+			string line;
+			while ((line = reader.ReadLine ().ToLower ()) != String.Empty) {
+				if (! line.StartsWith ("content-type: "))
+					continue;
+
+				int pos = line.IndexOf ("charset=");
+				if (pos != -1)
+					charset = line.Substring (pos + 8);
+				else
+					charset = "utf-8";
+			}
+
+			return ret;
 		}
 	}
 }
