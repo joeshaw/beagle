@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-04-26 16:49+0000\n"
-"PO-Revision-Date: 2008-04-27 20:35+0200\n"
+"POT-Creation-Date: 2008-06-14 11:07+0000\n"
+"PO-Revision-Date: 2008-06-15 13:22+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -204,8 +204,8 @@ msgid ""
 "You can change the scope of your search using the \"Search\" menu. A broader "
 "search scope might produce more results."
 msgstr ""
-"Puedes cambiar el ámbito de tu búsqueda usando el menú «Buscar». Un ámbito "
-"de búsqueda más ancho quizá produzca más resultados."
+"Puedes cambiar el ámbito de tu búsqueda usando el menú «Buscar». Un ámbito de "
+"búsqueda más ancho quizá produzca más resultados."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -698,12 +698,11 @@ msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
-#: ../search/Beagle.Search/SearchWindow.cs:523
+#. .
+#: ../search/Beagle.Search/SearchWindow.cs:524
 #, csharp-format
-msgid "Showing the top {0} of {1} total matches"
-msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Mostrando la primera {0} de {1} coincidencias en total"
-msgstr[1] "Mostrando las primeras {0} de {1} coincidencias en total"
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr "Demasiadas coincidencias. Mostrando las últimas {0} de un total de {1}"
 
 #. Translators: the strings in TypeFilter.cs are for when the user
 #. * wants to limit search results to a specific type. You don't need
