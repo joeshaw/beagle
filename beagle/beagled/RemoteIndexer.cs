@@ -228,6 +228,8 @@ namespace Beagle.Daemon {
 					p.Arguments = new string [] { helper_path, "--disable-text-cache" };
 				else
 					p.Arguments = new string [] { helper_path };
+				p.RedirectStandardOutput = false;
+				p.RedirectStandardError = false;
 				p.Start ();
 
 				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);
