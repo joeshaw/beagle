@@ -91,7 +91,14 @@ namespace Beagle.Search {
 
 		public static void Main (string[] args)
 		{
-			BusG.Init ();
+			try {
+				// Init DBus
+				BusG.Init ();
+			} catch (Exception e) {
+				// Lack of specific exception
+				Log.Error (e, "Failed to access dbus session bus. Make sure dbus session bus is running and the environment variable DBUS_SESSION_BUS_ADDRESS is set.");
+				Environment.Exit (1);
+			}
 
 			string query = ParseArgs (args);
 
