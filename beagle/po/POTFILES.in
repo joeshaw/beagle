@@ -60,7 +60,6 @@ search/Beagle.Search/SearchWindow.cs
 search/Beagle.Search/SortedTileList.cs
 search/Beagle.Search/Spinner.cs
 search/Beagle.Search/TileCategory.cs
-search/Beagle.Search/TypeFilter.cs
 search/Beagle.Search/UIManager.cs
 search/Beagle.Search/WidgetFu.cs
 search/beagle-search.desktop.in.in

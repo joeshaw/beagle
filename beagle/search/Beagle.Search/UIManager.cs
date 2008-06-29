@@ -283,7 +283,7 @@ namespace Beagle.Search {
 #pragma warning disable 612 // don't warn that Gnome.About is deprecated
 			Gnome.About about = new Gnome.About ("Beagle Search",
 							     Beagle.Util.ExternalStringsHack.Version,
-							     "Copyright 2005-2007 Novell, Inc.",
+							     VersionFu.DefaultCopyright,
 							     null, people, null, null,
 							     logo);
 			about.Run ();
