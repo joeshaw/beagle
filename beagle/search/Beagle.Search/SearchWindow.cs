@@ -30,6 +30,7 @@ namespace Beagle.Search {
 		private Gtk.Tooltips tips;
 		private Gtk.Notebook pages;
 		private Gtk.Statusbar statusbar;
+		private Gtk.ComboBox scope_list;
 
 		private Beagle.Search.UIManager uim;
 		private Beagle.Search.NotificationArea notification_area;
@@ -44,9 +45,7 @@ namespace Beagle.Search {
 		private Beagle.Search.Pages.StartDaemon startdaemon;
 		private Beagle.Search.Pages.NoMatch nomatch;
 
-		private Beagle.Search.ScopeType scope = ScopeType.Everything;
 		private Beagle.Search.SortType sort = SortType.Modified;
-		private Beagle.Search.TypeFilter filter = null;
 		private QueryDomain domain = QueryDomain.Local | QueryDomain.System; // default
 
 		// Whether we should grab focus from the text entry
@@ -59,6 +58,57 @@ namespace Beagle.Search {
 		private int total_matches = -1;
 
 		public event QueryEventDelegate QueryEvent;
+
+		private struct ScopeMapping {
+			internal string label;
+			internal string query_mapping;
+			internal ScopeMapping (string label, string query_mapping)
+			{
+				this.label = label;
+				this.query_mapping = query_mapping;
+			}
+		};
+		private static List<ScopeMapping> scope_mappings;
+
+		static SearchWindow ()
+		{
+			// FIXME: Currently hardcoded list is bit too long! Need to hire some usability expert.
+			scope_mappings = new List<ScopeMapping> (16);
+
+			/* Translators: This labels are used in a combo-box to allow
+			 * the user to select which kind of data he wants to search.
+			 */
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("All"), String.Empty)); // Default search scope. Should be at the first
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("My Files"), "source:Files"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Applications"), "filetype:application OR source:applications"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Documents"), "filetype:document"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Pictures"), "filetype:image"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Media"), "filetype:audio OR filetype:video"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Source Code"), "filetype:source"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Archives"), "inarchive:true"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Emails"), "type:MailMessage OR filetype:mail"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("News Feeds"), "type:FeedItem"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Websites"), "type:WebHistory OR type:Bookmark"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Chat Logs"), "type:IMLog"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Contacts"), "type:Contact"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Notes"), "type:Note"));
+			scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Calendar Events"), "type:Task OR type:Calendar"));
+			//scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Custom"), ""));
+
+			// Allow users to define custom scope choices by defining envirionment var:
+			// export BEAGLE_SCOPE="mymusic=source:music;win=tag:windows";
+			string user_scopes = Environment.GetEnvironmentVariable ("BEAGLE_SCOPE");
+			if (String.IsNullOrEmpty (user_scopes))
+				return;
+
+			string[] user_scope_list = user_scopes.Split (';');
+			foreach (string s in user_scope_list) {
+				string[] key_value = s.Split ('=');
+				if (key_value.Length != 2)
+					continue;
+				scope_mappings.Add (new ScopeMapping (key_value [0], key_value [1]));
+			}
+		}
 
 		public SearchWindow (ISearch search) : base (WindowType.Toplevel)
 		{
@@ -75,7 +125,6 @@ namespace Beagle.Search {
 
 			uim = new UIManager (this);
 			uim.DomainChanged += OnDomainChanged;
-			uim.ScopeChanged += OnScopeChanged;
 			uim.SortChanged += OnSortChanged;
 			uim.ToggleDetails += OnToggleDetails;
 			uim.ShowQuickTips += OnShowQuickTips;
@@ -84,9 +133,24 @@ namespace Beagle.Search {
 
 			HBox hbox = new HBox (false, 6);
 			
-			Label label = new Label (Catalog.GetString ("_Find:"));
+			Label label = new Label (Catalog.GetString ("_Find in:"));
 			hbox.PackStart (label, false, false, 0);
 			
+			scope_list = ComboBox.NewText ();
+			foreach (ScopeMapping mapping in scope_mappings)
+				scope_list.AppendText (mapping.label);
+			scope_list.Active = 0;
+
+			scope_list.Changed += new EventHandler (delegate (object o, EventArgs args) {
+									ComboBox combo = o as ComboBox;
+									if (o == null)
+										return;
+									int active = combo.Active;
+									Log.Debug ("Scope changed: {0} maps to '{1}'", combo.ActiveText, scope_mappings [active].query_mapping);
+									Query (true);
+								});
+			hbox.PackStart (scope_list, false, false, 0);
+
 			entry = new Entry ();
 			entry.Activated += OnEntryActivated;
 			hbox.PackStart (entry, true, true, 0);
@@ -160,7 +224,6 @@ namespace Beagle.Search {
 
 			view = new GroupView ();
 			view.TileSelected += ShowInformation;
-			view.CategoryToggled += OnCategoryToggled;
 			panes.MainContents = view;
 
 			this.statusbar = new Gtk.Statusbar ();
@@ -228,10 +291,8 @@ namespace Beagle.Search {
 			if (QueryEvent != null)
 				QueryEvent (query);
 
-			filter = TypeFilter.MakeFilter (ref query);
-
 			view.Clear ();
-			view.Scope = scope;
+			view.Scope = ScopeType.Everything;
 			view.SortType = sort;
 			pages.CurrentPage = pages.PageNum (panes);
 
@@ -260,6 +321,11 @@ namespace Beagle.Search {
 					part.Value = "documentation";
 					current_query.AddPart (part);
 				}
+
+				// set scope from scope list
+				ScopeMapping mapping = scope_mappings [scope_list.Active];
+				if (! String.IsNullOrEmpty (mapping.query_mapping))
+					current_query.AddText (mapping.query_mapping);
 
 				current_query.SendAsync ();
 
@@ -309,30 +375,6 @@ namespace Beagle.Search {
 			args.RetVal = true;
 		}
 
-		private void OnScopeChanged (ScopeType toggled, bool active)
-		{
-			if (active) {
-				view.Scope = scope = scope | toggled;
-			} else {
-				view.Scope = scope = scope ^ toggled;
-			}
-			
-			CheckNoMatch ();
-		}
-		
-		private void OnCategoryToggled (ScopeType toggled)
-		{
-			string name =  ScopeType.GetName (typeof (ScopeType), toggled);
-
-			try {
-				ToggleAction act = (ToggleAction) uim.GetAction ("/ui/MenuBar/Search/Scope/" +  name);
-				act.Active = !act.Active;
-			} catch (Exception e) {
-				Console.WriteLine ("Exception caught when trying to deactivate menu entry {0}:",name);
-				Console.WriteLine (e);
-			}
-		}
-		
 		private void OnSortChanged (SortType value)
 		{
 			view.SortType = sort = value;
@@ -406,9 +448,6 @@ namespace Beagle.Search {
 					Console.WriteLine ("No tile found for: {0} ({1})", hit.Uri, hit.Type);
 					continue;
 				}
-
-				if (filter != null && !filter.Filter (tile))
-					continue;
 
 				view.AddHit (tile);
 

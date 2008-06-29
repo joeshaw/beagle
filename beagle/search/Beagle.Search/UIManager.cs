@@ -8,6 +8,7 @@ using Beagle.Util;
 
 namespace Beagle.Search {
 
+	//FIXME: This way of handling scope needs to change since now we provide a direct combo box to set query scope
 	[Flags]
 	public enum ScopeType : ushort {
 		Nothing       = 0,
@@ -37,7 +38,7 @@ namespace Beagle.Search {
 		
 		private Gtk.ActionGroup actions;
 		private Gtk.RadioActionEntry[] sort_entries;
-		private Gtk.ToggleActionEntry[] scope_entries, view_entries, domain_entries;
+		private Gtk.ToggleActionEntry[] view_entries, domain_entries;
 
 		public UIManager (SearchWindow search)
 		{
@@ -62,9 +63,6 @@ namespace Beagle.Search {
 			Gtk.ActionEntry[] entries = new ActionEntry[] {
 				new ActionEntry ("Search", null,
 						 Catalog.GetString ("_Search"),
-						 null, null, null),
-				new ActionEntry ("Scope", null,
-						 Catalog.GetString ("Show _Categories"),
 						 null, null, null),
 				new ActionEntry ("Domain", null,
 						 Catalog.GetString ("Search _Domains"),
@@ -112,100 +110,6 @@ namespace Beagle.Search {
 						 OnHideWindow)
 			};
 			actions.Add (entries);
-
-			Gtk.ActionEntry[] multiscope_entries = new ActionEntry[] {
-				new ActionEntry ("All", null,
-						 Catalog.GetString ("_All"),
-						 null, null,
-						 delegate {
-							 if (ScopeChanged != null)
-								 ScopeChanged (ScopeType.Everything, true);
-
-							 foreach (ToggleActionEntry t in scope_entries)
-								 ((ToggleAction) actions [t.name]).Active = true;
-						 }),
-				new ActionEntry ("None", null,
-						 Catalog.GetString ("_None"),
-						 null, null,
-						 delegate {
-							 if (ScopeChanged != null)
-								 ScopeChanged (ScopeType.Nothing, true);
-
-							 foreach (ToggleActionEntry t in scope_entries)
-								 ((ToggleAction) actions [t.name]).Active = false;
-						 })
-			};
-			actions.Add (multiscope_entries);
-
-			scope_entries = new ToggleActionEntry[] {
-				new ToggleActionEntry ("Applications", null,
-						      Catalog.GetString ("A_pplications"),
-						      null,
-						      Catalog.GetString ("Search applications"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Contacts", null,
-						      Catalog.GetString ("_Contacts"),
-						      null,
-						      Catalog.GetString ("Search contacts"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Calendar", null,
-						      Catalog.GetString ("Ca_lendar events"),
-						      null,
-						      Catalog.GetString ("Search calendar events"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Documents", null,
-						      Catalog.GetString ("_Documents"),
-						      null,
-						      Catalog.GetString ("Search documents"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Conversations", null,
-						      Catalog.GetString ("Conve_rsations"),
-						      null,
-						      Catalog.GetString ("Search E-Mail and Instant Messaging logs"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Images", null,
-						      Catalog.GetString ("_Images"),
-						      null,
-						      Catalog.GetString ("Search images"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Media", null,
-						      Catalog.GetString ("_Media"),
-						      null,
-						      Catalog.GetString ("Search sound and video files"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Folders", null,
-						      Catalog.GetString ("_Folders"),
-						      null,
-						      Catalog.GetString ("Search for folder names"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Websites", null,
-						      Catalog.GetString ("_Websites"),
-						      null,
-						      Catalog.GetString ("Search website history"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Feeds", null,
-						      Catalog.GetString ("_News Feeds"),
-						      null,
-						      Catalog.GetString ("Search news feeds"),
-						      OnScopeChanged,
-						      true),
-				new ToggleActionEntry ("Archives", null,
-						      Catalog.GetString ("A_rchives"),
-						      null,
-						      Catalog.GetString ("Search files in Archives"),
-						      OnScopeChanged,
-						      true)
-			};
-			actions.Add (scope_entries);
 
 			sort_entries = new RadioActionEntry[] {
 				new RadioActionEntry ("SortModified", null,
@@ -275,9 +179,6 @@ namespace Beagle.Search {
 
 				actions ["QuickTips"].Sensitive = value;
 
-				foreach (Gtk.ToggleActionEntry rae in scope_entries)
-					actions [rae.name].Sensitive = value;
-
 				foreach (Gtk.RadioActionEntry rae in sort_entries)
 					actions [rae.name].Sensitive = value;
 			}
@@ -287,22 +188,6 @@ namespace Beagle.Search {
 		"<ui>" +
 		"  <menubar name='MenuBar'>" +
 		"    <menu action='Search'>" +
-		"      <menu action='Scope'>" +
-		"        <menuitem action='All'/>" +
-		"        <menuitem action='None'/>" +
-		"        <separator/>" +
-		"        <menuitem action='Applications'/>" +
-		"        <menuitem action='Contacts'/>" +
-		"        <menuitem action='Calendar'/>" +
-		"        <menuitem action='Documents'/>" +
-		"        <menuitem action='Conversations'/>" +
-		"        <menuitem action='Images'/>" +
-		"        <menuitem action='Media'/>" +
-		"        <menuitem action='Folders'/>" +
-		"        <menuitem action='Websites'/>" +
-		"        <menuitem action='Feeds'/>" +
-		"        <menuitem action='Archives'/>" +
-		"      </menu>" +
 		"      <menu action='Domain'>" +
 		"        <menuitem action='Local'/>" +
 		"        <menuitem action='System'/>" +
@@ -387,11 +272,13 @@ namespace Beagle.Search {
 			Gdk.Pixbuf logo = WidgetFu.LoadThemeIcon ("system-search", 48);
 
 			string[] people = new string[] { "Anna Dirks <anna@novell.com>",
+							 "Dan Winship <danw@novell.com>",
+							 "D Bera <dbera.web@gmail.com>",
 							 "Fredrik Hedberg <fredrik@avafan.com>",
-							 "Lukas Lipka <lukaslipka@gmail.com>",
 							 "Joe Shaw <joeshaw@novell.com>", 
 							 "Jakub Steiner <jimmac@novell.com>",
-							 "Dan Winship <danw@novell.com>" };
+							 "Lukas Lipka <lukaslipka@gmail.com>",
+					    };
 			
 #pragma warning disable 612 // don't warn that Gnome.About is deprecated
 			Gnome.About about = new Gnome.About ("Beagle Search",
@@ -411,18 +298,6 @@ namespace Beagle.Search {
 		{
 			if (FocusSearchEntry != null)
 				FocusSearchEntry ();
-		}
-
-		public delegate void ScopeChangedDelegate (ScopeType scope, bool active);
-		public event ScopeChangedDelegate ScopeChanged;
-
-		private void OnScopeChanged (object o, EventArgs args)
-		{
-			if (ScopeChanged == null)
-				return;
-
-			ScopeType scope = (ScopeType) System.Enum.Parse (typeof (ScopeType), ((Gtk.Action) o).Name);
-			ScopeChanged (scope, ((ToggleAction) o).Active);
 		}
 
 		public delegate void SortChangedDelegate (SortType scope);
