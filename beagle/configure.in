@@ -233,7 +233,7 @@ if test "x$enable_gui" = "xyes"; then
 ])
 	AC_SUBST(BEAGLE_UI_LIBS)
 
-	PKG_CHECK_MODULES(UIGLUE, gtk+-2.0 >= $GTK_REQUIRED librsvg-2.0)
+	PKG_CHECK_MODULES(UIGLUE, gtk+-2.0 >= $GTK_REQUIRED librsvg-2.0 x11)
 	AC_SUBST(UIGLUE_CFLAGS)
 	AC_SUBST(UIGLUE_LIBS)
 	
