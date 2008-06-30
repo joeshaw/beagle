@@ -59,7 +59,7 @@ F_SPOT_FILES =						\
 UTIL_CSFILES = 			        	\
 	$(F_SPOT_FILES)				\
 	$(srcdir)/ArrayFu.cs              	\
-	$(srcdir)/Battery.cs			\
+	$(srcdir)/BatteryMonitor.cs		\
 	$(srcdir)/BetterBitArray.cs		\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/Config.cs			\

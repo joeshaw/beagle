@@ -253,7 +253,6 @@ DAEMON_DLL_CSFILES = 						\
 	$(EMPATHY_QUERYABLE_CSFILES)				\
 	$(LOCATE_QUERYABLE_CSFILES)				\
 	$(srcdir)/AssemblyInfo.cs				\
-	$(srcdir)/BatteryMonitor.cs				\
 	$(srcdir)/ExternalMetadataQueryable.cs			\
 	$(srcdir)/FileAttributes.cs				\
 	$(srcdir)/FileAttributesStore.cs			\
