@@ -45,8 +45,20 @@ public class SettingsDialog
 {
 	public static void Main (string[] args)
 	{
-		SettingsDialog settings = new SettingsDialog (args);
-		settings.Run ();
+		try {
+			SettingsDialog settings = new SettingsDialog (args);
+			settings.Run ();
+		} catch (Exception e) {
+			Log.Error (e, "Error while running beagle-settings");
+			HigMessageDialog dialog = new HigMessageDialog (null,
+					DialogFlags.Modal,
+					MessageType.Error, 
+					ButtonsType.Close, 
+					Catalog.GetString ("An error occurred"), 
+					e.Message);
+			dialog.Run ();
+			Environment.Exit (1);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////
