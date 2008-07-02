@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-06-09 15:16+0200\n"
+"POT-Creation-Date: 2008-07-02 08:55+0200\n"
 "PO-Revision-Date: 2008-06-11 12:55+0200\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -226,7 +226,7 @@ msgid ""
 msgstr ""
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:19
-#: ../search/Beagle.Search/UIManager.cs:96
+#: ../search/Beagle.Search/UIManager.cs:94
 msgid "Quick Tips"
 msgstr ""
 
@@ -360,7 +360,9 @@ msgstr "Void"
 #: ../search/Beagle.Search.Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
-msgstr ""
+msgid_plural "Contains {0} Items"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -462,7 +464,9 @@ msgstr "Dobrir amb"
 #: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
-msgstr ""
+msgid_plural "{0} slides"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
 msgid "Site:"
@@ -489,14 +493,17 @@ msgid "Open"
 msgstr "Dobrir"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
 msgid "Applications"
 msgstr "Aplicacions"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
 msgid "Contacts"
 msgstr "Contactes"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
 msgid "Calendar Events"
 msgstr "Eveniments de calendièr"
 
@@ -517,6 +524,7 @@ msgid "Video"
 msgstr "Vidèo"
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
 msgid "Documents"
 msgstr "Documents"
 
@@ -525,14 +533,17 @@ msgid "Conversations"
 msgstr ""
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
 msgid "Websites"
 msgstr ""
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
 msgid "News Feeds"
 msgstr ""
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
 msgid "Archives"
 msgstr ""
 
@@ -551,7 +562,9 @@ msgstr[1] "{0} setmanas i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
-msgstr ""
+msgid_plural "In {0} weeks"
+msgstr[0] ""
+msgstr[1] ""
 
 #. Let's say a year and a half to stop saying months
 #: ../search/Beagle.Search.Tiles/Utils.cs:238
@@ -564,7 +577,9 @@ msgstr[1] "{0} meses i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
-msgstr ""
+msgid_plural "In {0} months"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:242
 #, csharp-format
@@ -576,7 +591,9 @@ msgstr[1] "{0} ans i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
-msgstr ""
+msgid_plural "In {0} years"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../search/Beagle.Search.Tiles/WebHistory.cs:60
 msgid "URL:"
@@ -588,7 +605,7 @@ msgstr "Darrièr accès :"
 
 #: ../search/Beagle.Search.Tray/TrayIcon.cs:33
 #: ../search/Beagle.Search/Search.cs:52
-#: ../search/Beagle.Search/SearchWindow.cs:67
+#: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr ""
 
@@ -624,391 +641,205 @@ msgstr "{0}-{1} sus {2}"
 msgid "Hide"
 msgstr "Amagar"
 
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+#, fuzzy
+msgid "All"
+msgstr "_Totas"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr ""
+
 #: ../search/Beagle.Search/SearchWindow.cs:87
-msgid "_Find:"
+msgid "Source Code"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+#, fuzzy
+msgid "Emails"
+msgstr "Corrièl"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+#, fuzzy
+msgid "Notes"
+msgstr "_Pas cap"
+
+#: ../search/Beagle.Search/SearchWindow.cs:136
+#, fuzzy
+msgid "_Find in:"
 msgstr "_Recercar :"
 
-#: ../search/Beagle.Search/SearchWindow.cs:109
+#: ../search/Beagle.Search/SearchWindow.cs:173
 msgid "Find Now"
 msgstr "Recercar ara"
 
-#: ../search/Beagle.Search/SearchWindow.cs:172
+#: ../search/Beagle.Search/SearchWindow.cs:235
 msgid "Type in search terms"
 msgstr ""
 
 #
-#: ../search/Beagle.Search/SearchWindow.cs:173
+#: ../search/Beagle.Search/SearchWindow.cs:236
 msgid "Start searching"
 msgstr "Començar la recèrca"
 
-#: ../search/Beagle.Search/SearchWindow.cs:188
+#: ../search/Beagle.Search/SearchWindow.cs:251
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:438
+#: ../search/Beagle.Search/SearchWindow.cs:477
 msgid "There are computers near you running Beagle"
 msgstr ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:439
+#: ../search/Beagle.Search/SearchWindow.cs:478
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:494
+#: ../search/Beagle.Search/SearchWindow.cs:533
 msgid "Your data is being indexed"
 msgstr ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:495
+#: ../search/Beagle.Search/SearchWindow.cs:534
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
 msgstr ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:521
+#: ../search/Beagle.Search/SearchWindow.cs:560
 #, csharp-format
 msgid "Showing {0} match"
-msgstr ""
+msgid_plural "Showing all {0} matches"
+msgstr[0] ""
+msgstr[1] ""
 
-#: ../search/Beagle.Search/SearchWindow.cs:523
+#. .
+#: ../search/Beagle.Search/SearchWindow.cs:563
 #, csharp-format
-msgid "Showing the top {0} of {1} total matches"
+msgid "Too many matches. Showing latest {0} of total {1}"
 msgstr ""
 
-#. Translators: the strings in TypeFilter.cs are for when the user
-#. * wants to limit search results to a specific type. You don't need
-#. * to give an exact translation of the exact same set of English
-#. * words. Just provide a list of likely words the user might use
-#. * after the "type:" keyword to refer to each type of match.
-#.
-#: ../search/Beagle.Search/TypeFilter.cs:39
-msgid ""
-"file\n"
-"files"
-msgstr ""
-"fichièr\n"
-"fichièrs"
-
-#: ../search/Beagle.Search/TypeFilter.cs:40
-msgid ""
-"mail\n"
-"email\n"
-"e-mail"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:41
-msgid ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"instant-message\n"
-"instant-messages\n"
-"chat\n"
-"chats"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:42
-msgid ""
-"presentation\n"
-"presentations\n"
-"slideshow\n"
-"slideshows\n"
-"slide\n"
-"slides"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:44
-msgid ""
-"application\n"
-"applications\n"
-"app\n"
-"apps"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:45
-msgid ""
-"contact\n"
-"contacts\n"
-"vcard\n"
-"vcards"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:46
-msgid ""
-"folder\n"
-"folders"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:47
-msgid ""
-"image\n"
-"images\n"
-"img"
-msgstr ""
-"imatge\n"
-"imatges\n"
-"img"
-
-#: ../search/Beagle.Search/TypeFilter.cs:48
-msgid "audio"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:49
-msgid "video"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:50
-msgid "media"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:51
-msgid ""
-"document\n"
-"documents\n"
-"office document\n"
-"office documents"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:52
-msgid ""
-"conversation\n"
-"conversations"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:53
-msgid ""
-"web\n"
-"www\n"
-"website\n"
-"websites"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:54
-msgid ""
-"feed\n"
-"news\n"
-"blog\n"
-"rss"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:55
-msgid ""
-"archive\n"
-"archives"
-msgstr ""
-
-#: ../search/Beagle.Search/TypeFilter.cs:56
-msgid ""
-"person\n"
-"people"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:52
+#: ../search/Beagle.Search/UIManager.cs:53
 msgid "Close Desktop Search"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:57
-#: ../search/Beagle.Search/UIManager.cs:84
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:82
 msgid "Exit Desktop Search"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:64
+#: ../search/Beagle.Search/UIManager.cs:65
 msgid "_Search"
 msgstr "_Recercar"
 
-#: ../search/Beagle.Search/UIManager.cs:67
-msgid "Show _Categories"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:70
+#: ../search/Beagle.Search/UIManager.cs:68
 msgid "Search _Domains"
 msgstr "Recercar d'imatges"
 
-#: ../search/Beagle.Search/UIManager.cs:73
+#: ../search/Beagle.Search/UIManager.cs:71
 msgid "_Actions"
 msgstr "_Accions"
 
-#: ../search/Beagle.Search/UIManager.cs:76
+#: ../search/Beagle.Search/UIManager.cs:74
 msgid "_View"
 msgstr "_Visualizacion"
 
-#: ../search/Beagle.Search/UIManager.cs:79
+#: ../search/Beagle.Search/UIManager.cs:77
 msgid "_Help"
 msgstr "_Ajuda"
 
-#: ../search/Beagle.Search/UIManager.cs:87
+#: ../search/Beagle.Search/UIManager.cs:85
 msgid "_Contents"
 msgstr "_Ensenhador"
 
-#: ../search/Beagle.Search/UIManager.cs:89
+#: ../search/Beagle.Search/UIManager.cs:87
 msgid "Help - Table of Contents"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:93
+#: ../search/Beagle.Search/UIManager.cs:91
 msgid "About Desktop Search"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:99
+#: ../search/Beagle.Search/UIManager.cs:97
 msgid "Index information"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:118
-msgid "_All"
-msgstr "_Totas"
-
-#: ../search/Beagle.Search/UIManager.cs:128
-msgid "_None"
-msgstr "_Pas cap"
-
-#: ../search/Beagle.Search/UIManager.cs:142
-msgid "A_pplications"
-msgstr "A_plicacions"
-
-#: ../search/Beagle.Search/UIManager.cs:144
-msgid "Search applications"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:148
-msgid "_Contacts"
-msgstr "_Contactes"
-
-#: ../search/Beagle.Search/UIManager.cs:150
-msgid "Search contacts"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:154
-msgid "Ca_lendar events"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:156
-msgid "Search calendar events"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:160
-msgid "_Documents"
-msgstr "_Documents"
-
-#: ../search/Beagle.Search/UIManager.cs:162
-msgid "Search documents"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:166
-msgid "Conve_rsations"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:168
-msgid "Search E-Mail and Instant Messaging logs"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:172
-msgid "_Images"
-msgstr "_Imatges"
-
-#: ../search/Beagle.Search/UIManager.cs:174
-msgid "Search images"
-msgstr "Recercar d'imatges"
-
-#: ../search/Beagle.Search/UIManager.cs:178
-msgid "_Media"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:180
-msgid "Search sound and video files"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:184
-msgid "_Folders"
-msgstr "_Repertòris"
-
-#: ../search/Beagle.Search/UIManager.cs:186
-msgid "Search for folder names"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:190
-msgid "_Websites"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:192
-msgid "Search website history"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:196
-msgid "_News Feeds"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:198
-msgid "Search news feeds"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:202
-msgid "A_rchives"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:204
-msgid "Search files in Archives"
-msgstr ""
-
-#: ../search/Beagle.Search/UIManager.cs:212
+#: ../search/Beagle.Search/UIManager.cs:116
 msgid "Sort by Date _Modified"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:213
+#: ../search/Beagle.Search/UIManager.cs:117
 msgid "Sort the most-recently-modified matches first"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:216
+#: ../search/Beagle.Search/UIManager.cs:120
 msgid "Sort by _Name"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:217
+#: ../search/Beagle.Search/UIManager.cs:121
 msgid "Sort matches by name"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:220
+#: ../search/Beagle.Search/UIManager.cs:124
 msgid "Sort by _Relevance"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:221
+#: ../search/Beagle.Search/UIManager.cs:125
 msgid "Sort the best matches first"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:228
+#: ../search/Beagle.Search/UIManager.cs:132
 msgid "_Local"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:230
+#: ../search/Beagle.Search/UIManager.cs:134
 msgid "Search in personal data in this computer"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:234
+#: ../search/Beagle.Search/UIManager.cs:138
 msgid "_System"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:236
+#: ../search/Beagle.Search/UIManager.cs:140
 msgid "Search in system data on this computer"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:240
+#: ../search/Beagle.Search/UIManager.cs:144
 msgid "_Global"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:242
+#: ../search/Beagle.Search/UIManager.cs:146
 msgid "Search in internet services"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:246
+#: ../search/Beagle.Search/UIManager.cs:150
 msgid "_Neighborhood"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:248
+#: ../search/Beagle.Search/UIManager.cs:152
 msgid "Search on computers near me"
 msgstr ""
 
-#: ../search/Beagle.Search/UIManager.cs:256
+#: ../search/Beagle.Search/UIManager.cs:160
 msgid "Show Details"
 msgstr "Visualizar los detalhs"
 
-#: ../search/Beagle.Search/UIManager.cs:378
+#: ../search/Beagle.Search/UIManager.cs:263
 msgid "Couldn't launch web browser"
 msgstr ""
 
@@ -1484,6 +1315,40 @@ msgstr "Mot de _pas :"
 #: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr ""
+
+#~ msgid ""
+#~ "file\n"
+#~ "files"
+#~ msgstr ""
+#~ "fichièr\n"
+#~ "fichièrs"
+
+#~ msgid ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+#~ msgstr ""
+#~ "imatge\n"
+#~ "imatges\n"
+#~ "img"
+
+#~ msgid "A_pplications"
+#~ msgstr "A_plicacions"
+
+#~ msgid "_Contacts"
+#~ msgstr "_Contactes"
+
+#~ msgid "_Documents"
+#~ msgstr "_Documents"
+
+#~ msgid "_Images"
+#~ msgstr "_Imatges"
+
+#~ msgid "Search images"
+#~ msgstr "Recercar d'imatges"
+
+#~ msgid "_Folders"
+#~ msgstr "_Repertòris"
 
 #~ msgid "Image Directory"
 #~ msgstr "Repertòri dels imatges"
