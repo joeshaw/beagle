@@ -9,14 +9,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-02 08:55+0200\n"
-"PO-Revision-Date: 2008-06-11 12:55+0200\n"
+"POT-Creation-Date: 2008-07-03 10:07+0200\n"
+"PO-Revision-Date: 2008-07-03 10:07+0200\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -360,9 +360,7 @@ msgstr "Void"
 #: ../search/Beagle.Search.Tiles/Folder.cs:33
 #, csharp-format
 msgid "Contains {0} Item"
-msgid_plural "Contains {0} Items"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
@@ -464,9 +462,7 @@ msgstr "Dobrir amb"
 #: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
-msgid_plural "{0} slides"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
 msgid "Site:"
@@ -562,9 +558,7 @@ msgstr[1] "{0} setmanas i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
-msgid_plural "In {0} weeks"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #. Let's say a year and a half to stop saying months
 #: ../search/Beagle.Search.Tiles/Utils.cs:238
@@ -577,9 +571,7 @@ msgstr[1] "{0} meses i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
-msgid_plural "In {0} months"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: ../search/Beagle.Search.Tiles/Utils.cs:242
 #, csharp-format
@@ -591,9 +583,7 @@ msgstr[1] "{0} ans i a"
 #: ../search/Beagle.Search.Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
-msgid_plural "In {0} years"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #: ../search/Beagle.Search.Tiles/WebHistory.cs:60
 msgid "URL:"
@@ -645,9 +635,8 @@ msgstr "Amagar"
 #. * the user to select which kind of data he wants to search.
 #.
 #: ../search/Beagle.Search/SearchWindow.cs:81
-#, fuzzy
 msgid "All"
-msgstr "_Totas"
+msgstr ""
 
 #. Default search scope. Should be at the first
 #: ../search/Beagle.Search/SearchWindow.cs:82
@@ -667,23 +656,20 @@ msgid "Source Code"
 msgstr ""
 
 #: ../search/Beagle.Search/SearchWindow.cs:89
-#, fuzzy
 msgid "Emails"
-msgstr "Corrièl"
+msgstr "Corrièls"
 
 #: ../search/Beagle.Search/SearchWindow.cs:92
 msgid "Chat Logs"
 msgstr ""
 
 #: ../search/Beagle.Search/SearchWindow.cs:94
-#, fuzzy
 msgid "Notes"
-msgstr "_Pas cap"
+msgstr "Nòtas"
 
 #: ../search/Beagle.Search/SearchWindow.cs:136
-#, fuzzy
 msgid "_Find in:"
-msgstr "_Recercar :"
+msgstr "_Recercar dins :"
 
 #: ../search/Beagle.Search/SearchWindow.cs:173
 msgid "Find Now"
@@ -724,9 +710,7 @@ msgstr ""
 #: ../search/Beagle.Search/SearchWindow.cs:560
 #, csharp-format
 msgid "Showing {0} match"
-msgid_plural "Showing all {0} matches"
-msgstr[0] ""
-msgstr[1] ""
+msgstr ""
 
 #. .
 #: ../search/Beagle.Search/SearchWindow.cs:563
