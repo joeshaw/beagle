@@ -37,7 +37,7 @@ namespace Beagle.Search.Tiles {
 
 		public TileArchivedFile (Beagle.Hit hit, Beagle.Query query) : base (hit, query)
 		{
-			Description = String.Format (Catalog.GetString ("Inside archive {0}"), GetTitle (hit, true));
+			Description = String.Format (Catalog.GetString ("Inside archive {0}"), Utils.GetFirstPropertyOfParent (hit, "beagle:ExactFilename"));
 		}
 
 		protected override void LoadIcon (Gtk.Image image, int size)
@@ -74,8 +74,12 @@ namespace Beagle.Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle (Hit));
-			details.AddLabelPair (Catalog.GetString ("File Name:"), Hit.Uri.Fragment.Substring (1)); // Substring to move past the initial #
+			details.AddLabelPair (Catalog.GetString ("File:"), Hit.GetFirstProperty ("beagle:ExactFilename"));
+
+			string title = Hit.GetFirstProperty ("dc:title");
+			if (! String.IsNullOrEmpty (title))
+				details.AddLabelPair (Catalog.GetString ("Title:"), title);
+
 			details.AddLabelPair (Catalog.GetString ("Inside File:"), Hit.Uri.LocalPath);
 
 			if (Hit ["dc:author"] != null)

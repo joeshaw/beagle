@@ -83,28 +83,16 @@ namespace Beagle.Search.Tiles {
 			image.Pixbuf = icon;
 		}
 
-		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
+		protected static string GetTitle (Beagle.Hit hit)
 		{
 			string title;
 
-			if (get_parent)
-				title = Utils.GetFirstPropertyOfParent (hit, "dc:title");
-			else
-				title = hit.GetFirstProperty ("dc:title");
+			title = hit.GetFirstProperty ("dc:title");
 
-			if (title == null || title == "") {
-				if (get_parent)
-					title = Utils.GetFirstPropertyOfParent (hit, "beagle:ExactFilename");
-				else
-					title = hit.GetFirstProperty ("beagle:ExactFilename");
-			}
+			if (! String.IsNullOrEmpty (title))
+				title = hit.GetFirstProperty ("beagle:ExactFilename");
 
 			return title;
-		}
-
-		protected static string GetTitle (Beagle.Hit hit)
-		{
-			return GetTitle (hit, false);
 		}
 
 		public override void Open ()
@@ -173,9 +161,9 @@ namespace Beagle.Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("File:"), hit.GetFirstProperty ("beagle:ExactFilename"));
+			details.AddLabelPair (Catalog.GetString ("File:"), Hit.GetFirstProperty ("beagle:ExactFilename"));
 
-			string title = hit.GetFirstProperty ("dc:title");
+			string title = Hit.GetFirstProperty ("dc:title");
 			if (! String.IsNullOrEmpty (title))
 				details.AddLabelPair (Catalog.GetString ("Title:"), title);
 

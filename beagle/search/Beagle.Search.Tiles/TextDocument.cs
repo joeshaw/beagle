@@ -38,20 +38,9 @@ namespace Beagle.Search.Tiles {
 				Description = String.Format (Catalog.GetPluralString ("{0} page", "{0} pages", count), count);
 			}
 			
-		}
-		
-		// These files generally have a default title or an auto-generated title.
-		// So use the filename for these types of files.
-		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
-		{
-			string title;
-
-			if (get_parent)
-				title = Utils.GetFirstPropertyOfParent (hit, "beagle:ExactFilename");
-			else
-				title = hit.GetFirstProperty ("beagle:ExactFilename");
-
-			return title;
+			// These files generally have a default title or an auto-generated title.
+			// So use the filename for these types of files.
+			Title = hit.GetFirstProperty ("beagle:ExactFilename");
 		}
 	}
 }
