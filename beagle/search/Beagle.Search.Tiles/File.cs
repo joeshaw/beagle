@@ -173,7 +173,12 @@ namespace Beagle.Search.Tiles {
 		{
 			DetailsPane details = new DetailsPane ();
 
-			details.AddLabelPair (Catalog.GetString ("Title:"), GetTitle (Hit));
+			details.AddLabelPair (Catalog.GetString ("File:"), hit.GetFirstProperty ("beagle:ExactFilename"));
+
+			string title = hit.GetFirstProperty ("dc:title");
+			if (! String.IsNullOrEmpty (title))
+				details.AddLabelPair (Catalog.GetString ("Title:"), title);
+
 			details.AddLabelPair (Catalog.GetString ("Last Edited:"), Utils.NiceLongDate (Timestamp));
 
 			if (Hit ["dc:author"] != null)
@@ -184,7 +189,7 @@ namespace Beagle.Search.Tiles {
 
 			return details;
 		}
-		
+
 		public void FindSameAuthor()
 		{
 			SafeProcess p = new SafeProcess ();

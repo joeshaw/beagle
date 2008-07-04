@@ -40,6 +40,18 @@ namespace Beagle.Search.Tiles {
 			
 		}
 		
-		
+		// These files generally have a default title or an auto-generated title.
+		// So use the filename for these types of files.
+		protected static string GetTitle (Beagle.Hit hit, bool get_parent)
+		{
+			string title;
+
+			if (get_parent)
+				title = Utils.GetFirstPropertyOfParent (hit, "beagle:ExactFilename");
+			else
+				title = hit.GetFirstProperty ("beagle:ExactFilename");
+
+			return title;
+		}
 	}
 }
