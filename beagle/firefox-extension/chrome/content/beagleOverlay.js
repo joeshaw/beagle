@@ -427,6 +427,10 @@ var beagle = {
 
 	// Tokenize the url
 	var loc = page.location;
+	if (loc.protocol == "javascript:") {
+		log("skipping javascript..");
+		return;
+	}
 	var url_tokenized = loc.host + " " + loc.port + " " + loc.pathname + " " + loc.hash + " " + loc.search;
 	url_tokenized = url_tokenized.replace(/\./g, " ").replace(/\//g, " ").replace(/&/g, " ").replace (/\+/g, " ").replace (/=/g, " ").replace(/%../g, " ");
 	meta.push("t:beagle:inuri=" + url_tokenized);
