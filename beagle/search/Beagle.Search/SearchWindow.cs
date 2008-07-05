@@ -129,6 +129,8 @@ namespace Beagle.Search {
 			uim.ToggleDetails += OnToggleDetails;
 			uim.ShowQuickTips += OnShowQuickTips;
 			uim.ShowIndexInfo += OnShowIndexInfo;
+			uim.StartDaemon += OnStartDaemon;
+			uim.StopDaemon += OnStopDaemon;
 			vbox.PackStart (uim.MenuBar, false, false, 0);
 
 			HBox hbox = new HBox (false, 6);
@@ -418,6 +420,8 @@ namespace Beagle.Search {
 		
 		private void ShowInformation (Tiles.Tile tile)
 		{
+			notification_area.Hide ();
+
 			if (tile != null) {
 				panes.Details = tile.Details;
 				if (tile.Details != null)
@@ -493,6 +497,64 @@ namespace Beagle.Search {
 			}
                 }
 #endif
+
+		private void OnStartDaemon ()
+		{
+			notification_area.Hide ();
+
+			DaemonInformationRequest request = new DaemonInformationRequest (true, false, false, false);
+
+			try {
+				request.Send ();
+			} catch (Beagle.ResponseMessageException) {
+				// beagled is not running
+				// Start beagled and once it is started, display the quicktips page
+				Beagle.Search.Pages.StartDaemon.DoStartDaemon (delegate () {
+										this.statusbar.Pop (0);
+										this.statusbar.Push (0, Catalog.GetString ("Search service started"));
+										});
+				pages.CurrentPage = pages.PageNum (quicktips);
+				return;
+			} catch (Exception e) {
+				Console.WriteLine ("Stopping the Beagle daemon failed: {0}", e.Message);
+			}
+
+			// beagled is running
+			NotificationMessage m = new NotificationMessage ();
+			m.Icon = Gtk.Stock.DialogError;
+			m.Title = Catalog.GetString ("Starting service failed");
+			m.Message = Catalog.GetString ("Service is already running!");
+			notification_area.Display (m);
+		}
+
+		private void OnStopDaemon ()
+		{
+			notification_area.Hide ();
+
+			ShutdownRequest request = new ShutdownRequest ();
+			try {
+				request.Send ();
+			} catch (Beagle.ResponseMessageException) {
+				// beagled is not running
+				NotificationMessage m = new NotificationMessage ();
+				m.Icon = Gtk.Stock.DialogError;
+				m.Title = Catalog.GetString ("Stopping service failed");
+				m.Message = Catalog.GetString ("Service was not running!");
+				notification_area.Display (m);
+
+				// show the start daemon if the user wants to start the daemom
+				pages.CurrentPage = pages.PageNum (startdaemon);
+				return;
+			} catch (Exception e) {
+				Console.WriteLine ("Stopping the Beagle daemon failed: {0}", e.Message);
+			}
+
+			// beagled was running and should be now stopped.
+			// Show the start page. The start-daemon page feels as if the user-request failed.
+			pages.CurrentPage = pages.PageNum (quicktips);
+			this.statusbar.Pop (0);
+			this.statusbar.Push (0, Catalog.GetString ("Search service stopped"));
+		}
 
 		private void CheckNoMatch ()
 		{

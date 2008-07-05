@@ -28,6 +28,11 @@ namespace Beagle.Search.Pages {
 
 		private void OnStartDaemon (object o, EventArgs args)
 		{
+			DoStartDaemon (DaemonStarted);
+		}
+
+		internal static void DoStartDaemon (DaemonStarted DaemonStarted)
+		{
 			string beagled_filename = "beagled";
 
 			Process daemon = new Process ();
@@ -42,15 +47,11 @@ namespace Beagle.Search.Pages {
 			
 			// Give the daemon some time to start
 			if (DaemonStarted != null)
-				GLib.Timeout.Add (5000, DaemonStartedTimeout);
-		}
-
-		private bool DaemonStartedTimeout ()
-		{
-			if (DaemonStarted != null)
-				DaemonStarted ();
-
-			return false;
+				GLib.Timeout.Add (5000, delegate () {
+								if (DaemonStarted != null)
+									DaemonStarted ();
+								return false;
+							});
 		}
 	}
 }

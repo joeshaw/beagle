@@ -73,6 +73,9 @@ namespace Beagle.Search {
 				new ActionEntry ("View", null,
 						 Catalog.GetString ("_View"),
 						 null, null, null),
+				new ActionEntry ("Service", null,
+						 Catalog.GetString ("Service _Options"),
+						 null, null, null),
 				new ActionEntry ("Help", null,
 						 Catalog.GetString ("_Help"),
 						 null, null, null),
@@ -81,6 +84,15 @@ namespace Beagle.Search {
 						 null, null,
 						 Catalog.GetString ("Exit Desktop Search"),
 						 Preferences),
+				new ActionEntry ("StartService", Gtk.Stock.Execute,
+						 Catalog.GetString ("Start service"),
+						 null, null, StartService),
+				new ActionEntry ("StopService", Gtk.Stock.Stop,
+						 Catalog.GetString ("Stop service"),
+						 null, null, StopService),
+				new ActionEntry ("IndexInfo", Gtk.Stock.Index,
+						 Catalog.GetString ("Index information"),
+						 null, null, IndexInfo),
 				new ActionEntry ("Contents", Gtk.Stock.Help,
 						 Catalog.GetString ("_Contents"),
 						 "F1",
@@ -93,9 +105,6 @@ namespace Beagle.Search {
 				new ActionEntry ("QuickTips", null,
 						 Catalog.GetString ("Quick Tips"),
 						 null, null, QuickTips),
-				new ActionEntry ("IndexInfo", null,
-						 Catalog.GetString ("Index information"),
-						 null, null, IndexInfo),
 				new ActionEntry ("FocusSearchEntry", null, "",
 						 "<control>K", null,
 						 OnFocusSearchEntry),
@@ -209,10 +218,14 @@ namespace Beagle.Search {
 		"      <separator/>" +
 		"      <menuitem action='ShowDetails'/>" +
 		"    </menu>" +
+		"    <menu action='Service'>" +
+		"      <menuitem action='StartService'/>" +
+		"      <menuitem action='StopService'/>" +
+		"      <menuitem action='IndexInfo'/>" +
+		"    </menu>" +
 		"    <menu action='Help'>" +
 		"      <menuitem action='Contents'/>" +
 		"      <menuitem action='QuickTips'/>" +
-		"      <menuitem action='IndexInfo'/>" +
 		"      <menuitem action='About'/>" +
 		"    </menu>" +
 		"  </menubar>" +
@@ -340,11 +353,29 @@ namespace Beagle.Search {
 
 		public delegate void ShowIndexInfoDelegate ();
 		public event ShowIndexInfoDelegate ShowIndexInfo;
-		
+
 		private void IndexInfo (object obj, EventArgs args)
 		{
 			if (ShowIndexInfo != null)
 				ShowIndexInfo ();
+		}
+
+		public delegate void StartDaemonDelegate ();
+		public event StartDaemonDelegate StartDaemon;
+
+		private void StartService (object obj, EventArgs args)
+		{
+			if (StartDaemon != null)
+				StartDaemon ();
+		}
+
+		public delegate void StopDaemonDelegate ();
+		public event StopDaemonDelegate StopDaemon;
+
+		private void StopService (object obj, EventArgs args)
+		{
+			if (StopDaemon != null)
+				StopDaemon ();
 		}
 	}
 }
