@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-03 03:18+0000\n"
-"PO-Revision-Date: 2008-07-04 15:39+0200\n"
+"POT-Creation-Date: 2008-07-05 11:27+0000\n"
+"PO-Revision-Date: 2008-07-05 16:41+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -276,8 +276,13 @@ msgid "Inside archive {0}"
 msgstr "Dentro del archivo {0}"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "Archivo:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
 #: ../search/Beagle.Search.Tiles/Calendar.cs:44
-#: ../search/Beagle.Search.Tiles/File.cs:176
+#: ../search/Beagle.Search.Tiles/File.cs:168
 #: ../search/Beagle.Search.Tiles/Note.cs:70
 #: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
 #: ../search/Beagle.Search.Tiles/Task.cs:41
@@ -285,17 +290,12 @@ msgstr "Dentro del archivo {0}"
 msgid "Title:"
 msgstr "Título:"
 
-#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:78
-msgid "File Name:"
-msgstr "Nombre de archivo:"
-
-#. Substring to move past the initial #
-#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:79
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
 msgid "Inside File:"
 msgstr "Dentro del archivo:"
 
-#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:82
-#: ../search/Beagle.Search.Tiles/File.cs:180
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
 msgid "Author:"
 msgstr "Autor:"
 
@@ -356,13 +356,13 @@ msgstr "Mover a la papelera"
 msgid "Find Documents From Same Author"
 msgstr "Buscar documentos del mismo autor"
 
-#: ../search/Beagle.Search.Tiles/File.cs:177
+#: ../search/Beagle.Search.Tiles/File.cs:170
 #: ../search/Beagle.Search.Tiles/Folder.cs:51
 #: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Modificado por última vez:"
 
-#: ../search/Beagle.Search.Tiles/File.cs:182
+#: ../search/Beagle.Search.Tiles/File.cs:175
 #: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
