@@ -12,6 +12,7 @@ using System.Diagnostics;
 using Mono.Unix;
 
 using Gtk;
+using Gnome.Vfs;
 using Beagle;
 using Beagle.Util;
 
@@ -323,8 +324,8 @@ namespace Beagle.Search.Tiles {
 
 		protected void OpenFromMime (Hit hit)
 		{
-			string command = null, item;
-			bool expects_uris = false;
+			string command = null;
+			string uri = null, path = null;
 
 			string mimetype = hit.MimeType;
 
@@ -333,70 +334,46 @@ namespace Beagle.Search.Tiles {
 			if (mimetype == "inode/directory")
 				mimetype = "x-directory/normal";
 
+			// FIXME: I'm not sure that opening the parent
+			// URI (if present) is the right thing to do in
+			// all cases, but it does work for all our
+			// current cases.
+			if (hit.ParentUri != null)
+				uri = hit.EscapedParentUri;
+			else
+				uri = hit.EscapedUri;
+
 #if ENABLE_DESKTOP_LAUNCH
-			command = "desktop-launch";
-			expects_uris = true;
+			RunDefaultHandler ("desktop-launch", uri);
 #elif ENABLE_XDG_OPEN
-			command = "xdg-open";
-			expects_uris = true;
+			RunDefaultHandler ("xdg-open", uri);
 #else
-			GnomeFu.VFSMimeApplication app;
-			app = GnomeFu.GetDefaultAction (mimetype);
-			if (app.command != null) {
-				command = app.command;
-				expects_uris = (app.expects_uris != GnomeFu.VFSMimeApplicationArgumentType.Path);
-			}
-#endif			
-			if (command == null) {
+			MimeApplication app;
+			app = Mime.GetDefaultApplication (mimetype);
+			bool expect_uris = app.SupportUris ();
+			path = hit.Path;
+
+			if (app == null) {
 				Console.WriteLine ("Can't open MimeType '{0}'", mimetype);
 				return;
 			}
 			
-			if (expects_uris) {
-				// FIXME: I'm not sure that opening the parent
-				// URI (if present) is the right thing to do in
-				// all cases, but it does work for all our
-				// current cases.
-				if (hit.ParentUri != null)
-					item = hit.EscapedParentUri;
-				else
-					item = hit.EscapedUri;
-			} else
-				item = hit.Path;
+			GLib.List list = new GLib.List ((IntPtr) 0);
+			list.Append (expect_uris ? uri : path);
 
-			// Sometimes the command is 'quoted'
-			if (command.IndexOf ('\'') == 0 && command.LastIndexOf ('\'') == command.Length - 1)
-				command = command.Trim ('\'');
+			Gnome.Vfs.Result result = app.Launch (list);
+			if (result != Gnome.Vfs.Result.Ok)
+				Console.WriteLine ("Error in opening {0}: {1}", uri, result);
+#endif
+		}
 
-			// This won't work if a program really has a space in
-			// the command filename, but I think other things would
-			// break with that too, and in practice it doesn't seem to
-			// happen.
-			//
-			// A bigger issue is that the arguments are split up by
-			// spaces, so quotation marks used to indicate a single
-			// entry in the argv won't work.  This probably should
-			// be fixed.
-			string[] arguments = null;
-			int idx = command.IndexOf (' ');
-			if (idx != -1) {
-				arguments = command.Substring (idx + 1).Split (' ');
-				command = command.Substring (0, idx);
-			}
-
+		private static void RunDefaultHandler (string command, string uri)
+		{
 			string[] argv;
-			if (arguments == null)
-				argv = new string [] { command, item };
-			else {
-				argv = new string [arguments.Length + 2];
-				argv [0] = command;
-				argv [argv.Length - 1] = item;
-				Array.Copy (arguments, 0, argv, 1, arguments.Length);
-			}
+			argv = new string [] { command, uri };
 
 			Console.WriteLine ("Cmd: {0}", command);
-			Console.WriteLine ("Arg: {0}", String.Join (" ", argv, 1, argv.Length - 2));
-			Console.WriteLine ("Itm: {0}", item);
+			Console.WriteLine ("Uri: {0}", uri);
 
 			SafeProcess p = new SafeProcess ();
 			p.Arguments = argv;
@@ -408,7 +385,7 @@ namespace Beagle.Search.Tiles {
 			}
 		}
 
-		public void OpenFromUri (Uri uri)
+		public void OpenFromUri (System.Uri uri)
 		{
 			OpenFromUri (UriFu.UriToEscapedString (uri));
 		}

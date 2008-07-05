@@ -37,8 +37,8 @@ namespace Beagle.Util {
 
 		// FIXME: When gtk-sharp 2.5 is a requirement
 		// use Gnome.Vfs.MimeApplication stuff instead
-		[DllImport("libgnomevfs-2")]
-		static extern IntPtr gnome_vfs_mime_get_default_application(string mime_type);
+		//[DllImport("libgnomevfs-2")]
+		//static extern IntPtr gnome_vfs_mime_get_default_application(string mime_type);
 
 		static GnomeFu ()
 		{
@@ -64,75 +64,6 @@ namespace Beagle.Util {
 
 			return icon_info.Filename;
 		}
-
-		public static VFSMimeApplication GetDefaultAction(string mime_type)
-		{
-			IntPtr ptr = gnome_vfs_mime_get_default_application(mime_type);
-			VFSMimeApplication ret = VFSMimeApplication.New(ptr);
-			return ret;
-		}
-
-		public enum VFSMimeApplicationArgumentType
-		{
-			Uris,
-			Path,
-			UrisForNonFiles
-		}
-
-		[StructLayout(LayoutKind.Sequential)]
-		public struct VFSMimeApplication
-		{
-			public string id;
-			public string name;
-			public string command;
-			public bool can_open_multiple_files;
-			public VFSMimeApplicationArgumentType expects_uris;
-			//public List supported_uri_schemes;
-			private IntPtr supported_uri_schemes;
-			public bool requires_terminal;
-	
-			public IntPtr reserved1;
-			public IntPtr reserved2;
-
-			public static VFSMimeApplication Zero = new VFSMimeApplication ();
-	
-			public static VFSMimeApplication New (IntPtr raw)
-			{
-				if(raw == IntPtr.Zero)
-					return VFSMimeApplication.Zero;
-				VFSMimeApplication self = new VFSMimeApplication();
-				self = (VFSMimeApplication) Marshal.PtrToStructure (raw, self.GetType ());
-				return self;
-			}
-
-			//Fixme: Create the supported uri schemes struct
-			public List SupportedUriSchemes {
-				get { return new List (supported_uri_schemes); }
-			}
-
-			public static bool operator == (VFSMimeApplication a, VFSMimeApplication b)
-			{
-				return a.Equals (b);
-			}
-
-			public static bool operator != (VFSMimeApplication a, VFSMimeApplication b)
-			{
-				return ! a.Equals (b);
-			}
-
-			public override bool Equals (object o)
-			{
-				//if (!(o is GnomeVFSMimeApplication))
-				//	 return false;
-				return base.Equals(o)  ;
-			}
-
-			public override int GetHashCode ()
-			{
-				return base.GetHashCode ();
-			}
-		}
-
 	}
 
 }

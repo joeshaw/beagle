@@ -29,7 +29,6 @@ $(EXTSTR): $(EXTSTR_IN)
 		-e "s|\@localstatedir\@|$(localstatedir)|g"	\
 		-e "s|\@datadir\@|$(datadir)|g"			\
 		-e "s|\@VERSION\@|$(VERSION)|g"			\
-		-e "s|\@GNOME_PREFIX\@|$(GNOME_PREFIX)|g"	\
 		-e "s|\@KDE_PREFIX\@|$(KDE_PREFIX)|g"		\
 		-e "s|\@SQLITE_MAJ_VER\@|$(SQLITE_MAJ_VER)|g"	\
 		< $(EXTSTR_IN) > $@

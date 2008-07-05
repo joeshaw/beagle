@@ -36,14 +36,11 @@ namespace Beagle.Util {
 			get { return "@datadir@"; }
 		}
 
-		static public string GnomePrefix {
-			get { return "@GNOME_PREFIX@"; }
-		}
-
 		static public string LocaleDir {
 		       get { return "@prefix@/share/locale"; }
 		}
 
+		/* Still need this since we directly do not use KDE C# bindings */
 		static public string KdePrefix {
 			get { return "@KDE_PREFIX@"; }
 		}

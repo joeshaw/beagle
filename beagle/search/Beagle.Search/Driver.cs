@@ -125,6 +125,8 @@ namespace Beagle.Search {
 			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
 			Gtk.IconTheme.Default.AppendSearchPath (System.IO.Path.Combine (ExternalStringsHack.PkgDataDir, "icons"));
 
+			Gnome.Vfs.Vfs.Initialize ();
+
 			// FIXME: Passing these icon and docs enabled properties
 			// sucks. We really need to do something about them.
 			Search search = new Search (icon_enabled, docs_enabled);
