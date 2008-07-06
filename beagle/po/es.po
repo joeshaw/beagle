@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-05 11:27+0000\n"
-"PO-Revision-Date: 2008-07-05 16:41+0200\n"
+"POT-Creation-Date: 2008-07-05 15:47+0000\n"
+"PO-Revision-Date: 2008-07-06 15:39+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -238,7 +238,7 @@ msgstr ""
 "\"</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:19
-#: ../search/Beagle.Search/UIManager.cs:94
+#: ../search/Beagle.Search/UIManager.cs:106
 msgid "Quick Tips"
 msgstr "Consejos rápidos"
 
@@ -693,40 +693,64 @@ msgstr "Registro de chats"
 msgid "Notes"
 msgstr "Notas"
 
-#: ../search/Beagle.Search/SearchWindow.cs:136
+#: ../search/Beagle.Search/SearchWindow.cs:138
 msgid "_Find in:"
 msgstr "_Buscar en:"
 
-#: ../search/Beagle.Search/SearchWindow.cs:173
+#: ../search/Beagle.Search/SearchWindow.cs:175
 msgid "Find Now"
 msgstr "Buscar ahora"
 
-#: ../search/Beagle.Search/SearchWindow.cs:235
+#: ../search/Beagle.Search/SearchWindow.cs:237
 msgid "Type in search terms"
 msgstr "Teclee los términos de búsqueda"
 
-#: ../search/Beagle.Search/SearchWindow.cs:236
+#: ../search/Beagle.Search/SearchWindow.cs:238
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Beagle.Search/SearchWindow.cs:251
+#: ../search/Beagle.Search/SearchWindow.cs:253
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Búsquedas de Escritorio: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:477
+#: ../search/Beagle.Search/SearchWindow.cs:481
 msgid "There are computers near you running Beagle"
 msgstr "Existen equipos cerca del suyo que están ejecutando Beagle"
 
-#: ../search/Beagle.Search/SearchWindow.cs:478
+#: ../search/Beagle.Search/SearchWindow.cs:482
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Puede seleccionar buscar en otros equipos en el menú «Buscar»."
 
-#: ../search/Beagle.Search/SearchWindow.cs:533
+#: ../search/Beagle.Search/SearchWindow.cs:514
+msgid "Search service started"
+msgstr "Servicio de búsqueda iniciado"
+
+#: ../search/Beagle.Search/SearchWindow.cs:525
+msgid "Starting service failed"
+msgstr "Falló la inicialización del servicio"
+
+#: ../search/Beagle.Search/SearchWindow.cs:526
+msgid "Service is already running!"
+msgstr "El servicio ya está en ejecución"
+
+#: ../search/Beagle.Search/SearchWindow.cs:541
+msgid "Stopping service failed"
+msgstr "Falló al parar el servicio"
+
+#: ../search/Beagle.Search/SearchWindow.cs:542
+msgid "Service was not running!"
+msgstr "El servicio no está en ejecución"
+
+#: ../search/Beagle.Search/SearchWindow.cs:556
+msgid "Search service stopped"
+msgstr "Servicio de búsqueda detenido"
+
+#: ../search/Beagle.Search/SearchWindow.cs:595
 msgid "Your data is being indexed"
 msgstr "Se están indexando sus datos"
 
-#: ../search/Beagle.Search/SearchWindow.cs:534
+#: ../search/Beagle.Search/SearchWindow.cs:596
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -734,7 +758,7 @@ msgstr ""
 "El servicio de búsqueda está indexando sus datos. Los resultados de búsqueda "
 "podrían estar incompletos hasta que el indexado haya terminado."
 
-#: ../search/Beagle.Search/SearchWindow.cs:560
+#: ../search/Beagle.Search/SearchWindow.cs:622
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
@@ -742,7 +766,7 @@ msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
 #. .
-#: ../search/Beagle.Search/SearchWindow.cs:563
+#: ../search/Beagle.Search/SearchWindow.cs:625
 #, csharp-format
 msgid "Too many matches. Showing latest {0} of total {1}"
 msgstr "Demasiadas coincidencias. Mostrando las últimas {0} de un total de {1}"
@@ -752,7 +776,7 @@ msgid "Close Desktop Search"
 msgstr "Cerrar búsqueda de Escritorio"
 
 #: ../search/Beagle.Search/UIManager.cs:58
-#: ../search/Beagle.Search/UIManager.cs:82
+#: ../search/Beagle.Search/UIManager.cs:85
 msgid "Exit Desktop Search"
 msgstr "Salir de la búsqueda de Escritorio"
 
@@ -773,86 +797,98 @@ msgid "_View"
 msgstr "_Ver"
 
 #: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "_Opciones del servicio"
+
+#: ../search/Beagle.Search/UIManager.cs:80
 msgid "_Help"
 msgstr "Ay_uda"
 
-#: ../search/Beagle.Search/UIManager.cs:85
-msgid "_Contents"
-msgstr "_Índice"
-
-#: ../search/Beagle.Search/UIManager.cs:87
-msgid "Help - Table of Contents"
-msgstr "Ayuda - Tabla de contenido"
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "Iniciar el servicio"
 
 #: ../search/Beagle.Search/UIManager.cs:91
-msgid "About Desktop Search"
-msgstr "Acerca de la búsqueda de Escritorio"
+msgid "Stop service"
+msgstr "Parar el servicio"
 
-#: ../search/Beagle.Search/UIManager.cs:97
+#: ../search/Beagle.Search/UIManager.cs:94
 msgid "Index information"
 msgstr "Información indexada"
 
-#: ../search/Beagle.Search/UIManager.cs:116
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "_Índice"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "Ayuda - Tabla de contenido"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "Acerca de la búsqueda de Escritorio"
+
+#: ../search/Beagle.Search/UIManager.cs:125
 msgid "Sort by Date _Modified"
 msgstr "Ordenar por fecha de _modificación"
 
-#: ../search/Beagle.Search/UIManager.cs:117
+#: ../search/Beagle.Search/UIManager.cs:126
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ordenar con el más recientemente modificado primero"
 
-#: ../search/Beagle.Search/UIManager.cs:120
+#: ../search/Beagle.Search/UIManager.cs:129
 msgid "Sort by _Name"
 msgstr "Ordenar por _nombre"
 
-#: ../search/Beagle.Search/UIManager.cs:121
+#: ../search/Beagle.Search/UIManager.cs:130
 msgid "Sort matches by name"
 msgstr "Ordenar coincidencias por nombre"
 
-#: ../search/Beagle.Search/UIManager.cs:124
+#: ../search/Beagle.Search/UIManager.cs:133
 msgid "Sort by _Relevance"
 msgstr "Ordenar por _relevancia"
 
-#: ../search/Beagle.Search/UIManager.cs:125
+#: ../search/Beagle.Search/UIManager.cs:134
 msgid "Sort the best matches first"
 msgstr "Ordenar las mejores coincidencias primero"
 
-#: ../search/Beagle.Search/UIManager.cs:132
+#: ../search/Beagle.Search/UIManager.cs:141
 msgid "_Local"
 msgstr "_Local"
 
-#: ../search/Beagle.Search/UIManager.cs:134
+#: ../search/Beagle.Search/UIManager.cs:143
 msgid "Search in personal data in this computer"
 msgstr "Buscar en los datos personales en este equipo"
 
-#: ../search/Beagle.Search/UIManager.cs:138
+#: ../search/Beagle.Search/UIManager.cs:147
 msgid "_System"
 msgstr "_Sistema"
 
-#: ../search/Beagle.Search/UIManager.cs:140
+#: ../search/Beagle.Search/UIManager.cs:149
 msgid "Search in system data on this computer"
 msgstr "Buscar en los datos del sistema en este equipo"
 
-#: ../search/Beagle.Search/UIManager.cs:144
+#: ../search/Beagle.Search/UIManager.cs:153
 msgid "_Global"
 msgstr "_Global"
 
-#: ../search/Beagle.Search/UIManager.cs:146
+#: ../search/Beagle.Search/UIManager.cs:155
 msgid "Search in internet services"
 msgstr "Buscar en servicios de Internet"
 
-#: ../search/Beagle.Search/UIManager.cs:150
+#: ../search/Beagle.Search/UIManager.cs:159
 msgid "_Neighborhood"
 msgstr "_Vecindad"
 
-#: ../search/Beagle.Search/UIManager.cs:152
+#: ../search/Beagle.Search/UIManager.cs:161
 msgid "Search on computers near me"
 msgstr "Buscar en equipos cerca de mi"
 
-#: ../search/Beagle.Search/UIManager.cs:160
+#: ../search/Beagle.Search/UIManager.cs:169
 msgid "Show Details"
 msgstr "Mostrar detalles"
 
-#: ../search/Beagle.Search/UIManager.cs:263
+#: ../search/Beagle.Search/UIManager.cs:276
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
