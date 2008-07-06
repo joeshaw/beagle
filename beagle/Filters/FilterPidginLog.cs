@@ -163,7 +163,7 @@ namespace Beagle.Filters {
 
 			// If this is true, then the line probably spills
 			// from the previous one
-			if (line [0] != '(' || i == -1) {				
+			if (line [0] != '(' || i == -1 || line.Length <= i + 2) {				
 				return line;
 			}
 
@@ -181,7 +181,7 @@ namespace Beagle.Filters {
 			// Also pay attention so that we don't break on aliases that
 			// have a ':' in their name.
 			i = line.IndexOf (": ");
-			if (i == -1 || line.Length < i + 2)
+			if (i == -1 || line.Length <= i + 2)
 				return null;
 			
 			return line.Substring (i + 2);
