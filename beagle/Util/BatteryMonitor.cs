@@ -39,7 +39,7 @@ namespace Beagle.Util {
 		{
 			try {
 				// Init System DBus
-				NDesk.DBus.BusG.Init (NDesk.DBus.Bus.Session);
+				NDesk.DBus.BusG.Init (NDesk.DBus.Bus.System);
 			} catch (Exception e) {
 				// Lack of specific exception
 				Log.Error (e, "Failed to access dbus session bus. Battery monitoring will be disabled.");
