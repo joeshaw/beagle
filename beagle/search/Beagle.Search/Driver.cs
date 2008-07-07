@@ -91,13 +91,15 @@ namespace Beagle.Search {
 
 		public static void Main (string[] args)
 		{
+			bool dbus_enabled = true;
+
 			try {
 				// Init DBus
 				BusG.Init ();
 			} catch (Exception e) {
 				// Lack of specific exception
 				Log.Error (e, "Failed to access dbus session bus. Make sure dbus session bus is running and the environment variable DBUS_SESSION_BUS_ADDRESS is set.");
-				Environment.Exit (1);
+				dbus_enabled = false;
 			}
 
 			string query = ParseArgs (args);
@@ -106,8 +108,8 @@ namespace Beagle.Search {
 			// request our search proxy object and open up a query in
 			// that instance.
 
-			if (Bus.Session.RequestName (BUS_NAME) != RequestNameReply.PrimaryOwner) {
-				if (icon_enabled == true) {
+			if (dbus_enabled && Bus.Session.RequestName (BUS_NAME) != RequestNameReply.PrimaryOwner) {
+				if (icon_enabled) {
 					Console.WriteLine ("There is already an instance of beagle-search running.");
 					Console.WriteLine ("Cannot run in --icon mode! Exiting...");
 					Environment.Exit (1);
@@ -121,20 +123,31 @@ namespace Beagle.Search {
 
 			SystemInformation.SetProcessName ("beagle-search");
 			Catalog.Init ("beagle", ExternalStringsHack.LocaleDir);
-			
+
 			Gnome.Program program = new Gnome.Program ("search", "0.0", Gnome.Modules.UI, args);
 			Gtk.IconTheme.Default.AppendSearchPath (System.IO.Path.Combine (ExternalStringsHack.PkgDataDir, "icons"));
+
+			if (icon_enabled && ! dbus_enabled) {
+				HigMessageDialog.RunHigMessageDialog (null,
+								      Gtk.DialogFlags.Modal,
+								      Gtk.MessageType.Error, 
+								      Gtk.ButtonsType.Close, 
+								      Catalog.GetString ("Session D-Bus not accessible"), 
+								      Catalog.GetString ("Cannot run with parameter '--icon' when session D-Bus is not accessible."));
+				Environment.Exit (1);
+			}
 
 			Gnome.Vfs.Vfs.Initialize ();
 
 			// FIXME: Passing these icon and docs enabled properties
 			// sucks. We really need to do something about them.
 			Search search = new Search (icon_enabled, docs_enabled);
-			
+
 			if (!String.IsNullOrEmpty (query) || !icon_enabled)
 				search.Query (query);
 
-			Bus.Session.Register (BUS_NAME, new ObjectPath (PATH_NAME), search);
+			if (dbus_enabled)
+				Bus.Session.Register (BUS_NAME, new ObjectPath (PATH_NAME), search);
 
 			program.Run ();
 		}
