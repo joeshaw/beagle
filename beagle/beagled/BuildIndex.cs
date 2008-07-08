@@ -794,6 +794,10 @@ namespace Beagle.Daemon
 			return indexable;
 		}
 
+		////////////////////////////////////////////////////
+		// Methods to generate the relative path and
+		// uri for removable sources.
+
 		static string PathInIndex (string fullpath)
 		{
 			if (! arg_removable)
@@ -812,6 +816,9 @@ namespace Beagle.Daemon
 
 		static Uri PathToUri (string fullpath)
 		{
+			if (! arg_removable)
+				return UriFu.PathToFileUri (fullpath);
+
 			fullpath = PathInIndex (fullpath);
 
 			return new Uri (String.Format ("removable{0}{1}{2}",
@@ -819,6 +826,8 @@ namespace Beagle.Daemon
 							volume_label,
 							StringFu.HexEscape (fullpath)), true);
 		}
+
+		///////////////////////////////////////////////////
 
 		class Dirent {
 			private bool is_directory;
