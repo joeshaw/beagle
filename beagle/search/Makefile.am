@@ -14,10 +14,6 @@ if ENABLE_XDG_OPEN
 CSFLAGS += -define:ENABLE_XDG_OPEN
 endif
 
-if ENABLE_OPEN_WITH
-CSFLAGS += -define:ENABLE_OPEN_WITH
-endif
-
 if ENABLE_GALAGO
 CSFLAGS += -define:ENABLE_GALAGO
 endif
@@ -59,6 +55,7 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search.Tiles/MailMessage.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Manpage.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Note.cs			\
+	$(srcdir)/Beagle.Search.Tiles/OpenWithMenu.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Presentation.cs		\
 	$(srcdir)/Beagle.Search.Tiles/RSSFeed.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Spreadsheet.cs		\
@@ -93,10 +90,6 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search/TileCategory.cs			\
 	$(srcdir)/Beagle.Search/UIManager.cs			\
 	$(srcdir)/Beagle.Search/WidgetFu.cs
-
-if ENABLE_OPEN_WITH
-SOURCES += $(srcdir)/Beagle.Search.Tiles/OpenWithMenu.cs
-endif
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\

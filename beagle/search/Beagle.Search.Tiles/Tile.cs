@@ -45,7 +45,9 @@ namespace Beagle.Search.Tiles {
 
 		private List<TileAction> actions = new List<TileAction> ();
 
-		protected bool EnableOpenWith = false;
+		// FIXME: It was false initially. I enabled it but don't know
+		// why it was disabled. - dBera
+		protected bool EnableOpenWith = true;
 
 		public event EventHandler Selected;
 
@@ -100,7 +102,6 @@ namespace Beagle.Search.Tiles {
 			ActionMenuItem open_menu_item = new ActionMenuItem (open);
 			menu.Append (open_menu_item);
 
-#if ENABLE_OPEN_WITH
 			if (EnableOpenWith) {
 				// FIXME: Not sure if going with the parent is
 				// the right thing to do in all cases.
@@ -110,7 +111,6 @@ namespace Beagle.Search.Tiles {
 				owm.ApplicationActivated += OpenWith;
 				owm.AppendToMenu (menu);
 			}
-#endif
 
 			if (Actions.Count > 0) {
 				SeparatorMenuItem separator = new SeparatorMenuItem ();
@@ -313,14 +313,12 @@ namespace Beagle.Search.Tiles {
 			System.Console.WriteLine ("Warning: Open method not implemented for '{0}'", this.GetType ());
 		}
 
-#if ENABLE_OPEN_WITH
 		private void OpenWith (Gnome.Vfs.MimeApplication mime_application)
 		{
 			GLib.List uri_list = new GLib.List (typeof (string));
 			uri_list.Append (Hit.EscapedUri);
 			mime_application.Launch (uri_list);
 		}
-#endif
 
 		protected void OpenFromMime (Hit hit)
 		{
