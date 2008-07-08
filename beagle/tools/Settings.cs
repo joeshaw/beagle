@@ -74,10 +74,9 @@ public class SettingsDialog
 	[Widget] CheckButton battery_toggle;
 	[Widget] CheckButton screensaver_toggle;
 	[Widget] CheckButton auto_search_toggle;
-	[Widget] CheckButton press_ctrl_toggle;
- 	[Widget] CheckButton press_alt_toggle;
-
-	[Widget] Entry show_search_window_entry;
+	[Widget] Label shortcut_label;
+	[Widget] Button shortcut_button;
+	string binding;
 
 	[Widget] CheckButton index_home_toggle;
 	[Widget] Button remove_include_button;
@@ -162,6 +161,10 @@ public class SettingsDialog
 		networking_password_box.Sensitive = false;
 		require_password_toggle.Sensitive = false;
 
+		// Keybinding button
+
+		shortcut_button.Clicked += new EventHandler (OnKeybindingClicked);
+
 		LoadConfiguration ();
 
 		Conf.Subscribe (Conf.Names.FilesQueryableConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
@@ -216,13 +219,18 @@ public class SettingsDialog
 
 		autostart_toggle.Active = IsAutostartEnabled ();
 
-		bool binding_ctrl = bs_config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
-		bool binding_alt = bs_config.GetOption (Conf.Names.KeyBinding_Alt, false);
-		string binding_key = bs_config.GetOption (Conf.Names.KeyBinding_Key, "F12");
-		KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
-		press_ctrl_toggle.Active = show_binding.Ctrl;
-		press_alt_toggle.Active = show_binding.Alt;
-		show_search_window_entry.Text = show_binding.Key;
+		binding = bs_config.GetOption ("KeyBinding", null);
+		if (String.IsNullOrEmpty (binding)) {
+			// Move old preference value to new
+			bool binding_ctrl = bs_config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
+			bool binding_alt = bs_config.GetOption (Conf.Names.KeyBinding_Alt, false);
+			string binding_key = bs_config.GetOption (Conf.Names.KeyBinding_Key, "F12");
+			KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
+
+			binding = show_binding.ToString ();
+		}
+
+		shortcut_label.Text = String.Format (Catalog.GetString ("Display the search window by pressing {0}"), binding);
 
 		if (fsq_config.GetOption (Conf.Names.IndexHomeDir, true))
 			index_home_toggle.Active = true;
@@ -282,13 +290,11 @@ public class SettingsDialog
 		Config bs_config = Conf.Get (Conf.Names.BeagleSearchConfig);
 
 		daemon_config.SetOption (Conf.Names.AllowRoot, allow_root_toggle.Active);
-		bs_config.SetOption (Conf.Names.BeagleSearchAutoSearch,auto_search_toggle.Active);
 		daemon_config.SetOption (Conf.Names.IndexOnBattery,battery_toggle.Active);
 		daemon_config.SetOption (Conf.Names.IndexFasterOnScreensaver, screensaver_toggle.Active);
 
-		bs_config.SetOption (Conf.Names.KeyBinding_Key, show_search_window_entry.Text);
-		bs_config.SetOption (Conf.Names.KeyBinding_Ctrl, press_ctrl_toggle.Active);
-		bs_config.SetOption (Conf.Names.KeyBinding_Alt, press_alt_toggle.Active);
+		bs_config.SetOption (Conf.Names.BeagleSearchAutoSearch,auto_search_toggle.Active);
+		bs_config.SetOption ("KeyBinding", binding);
 
 		fsq_config.SetOption (Conf.Names.IndexHomeDir, index_home_toggle.Active);
 
@@ -688,6 +694,48 @@ public class SettingsDialog
 	{
 		//FIXME Passwords for remote beagled is not yet implemented
 		//networking_password_box.Sensitive = require_password_toggle.Active;
+	}
+
+	private void OnKeybindingClicked (object o, EventArgs args)
+	{
+		try {
+			string new_binding = GetBindingFromKeygrabber ();
+			if (! String.IsNullOrEmpty (new_binding))
+				binding = new_binding;
+		} catch (Exception e) {
+			Console.WriteLine ("Could not run python keygrabber: {0}", e.Message);
+			Console.WriteLine ("Showing old keybinding widget");
+			binding = GetBindingFromUserInput ();
+		}
+
+		shortcut_label.Text = String.Format (Catalog.GetString ("Display the search window by pressing {0}"), binding);
+	}
+
+	private static string GetBindingFromKeygrabber ()
+	{
+		SafeProcess pc = new SafeProcess ();
+
+		string keygrabber_file = Path.Combine (ExternalStringsHack.PkgLibDir, "keygrabber.py");
+		if (! File.Exists (keygrabber_file))
+			throw new Exception ("keygrabber.py not found");
+
+		pc.Arguments = new string[] {"python", keygrabber_file};
+		pc.RedirectStandardError = false;
+		pc.RedirectStandardOutput = true;
+
+		pc.Start ();
+		string output;
+		using (StreamReader pout = new StreamReader (pc.StandardOutput))
+			output = pout.ReadLine ();
+		pc.Close ();
+
+		Console.WriteLine ("New binding '{0}'", output);
+		return output;
+	}
+
+	private string GetBindingFromUserInput ()
+	{
+		return UserShortcutDialog.GetUserShortcut (settings_dialog, binding);
 	}
 
 	////////////////////////////////////////////////////////////////
@@ -1343,6 +1391,83 @@ public class SettingsDialog
                         Present ();
                 }
         }
+
+	////////////////////////////////////////////////////////////////
+	// ShortcutInput Dialog
+	// Simple dialog that is shown in case the python keygrabber script
+	// cannot be run.
+	// This deliberately does not try to cover all cases. We assume
+	// everyone has python installed.
+
+	public class UserShortcutDialog : Dialog
+	{
+		CheckButton ctrl_button, alt_button;
+		Entry entry;
+		string binding;
+
+		public UserShortcutDialog (Gtk.Window parent, string binding_string) : base (null, parent, DialogFlags.DestroyWithParent)
+		{
+			Title = "KeyGrabber";
+			Modal = true;
+			HasSeparator = false;
+
+			AddButton ("Ok", ResponseType.Ok);
+			AddButton ("Cancel", ResponseType.Cancel);
+
+			binding = binding_string;
+
+			ctrl_button = new CheckButton ("Ctrl");
+			int i = binding_string.IndexOf ("<ctrl>", StringComparison.InvariantCultureIgnoreCase);
+			if (i != -1) {
+				ctrl_button.Active = true;
+				binding_string = binding_string.Remove (i, 6);
+			}
+
+			alt_button = new CheckButton ("Alt");
+			i = binding_string.IndexOf ("<alt>", StringComparison.InvariantCultureIgnoreCase);
+			if (i != -1) {
+				alt_button.Active = true;
+				binding_string = binding_string.Remove (i, 5);
+			}
+
+			entry = new Entry ();
+			entry.Text = binding_string;
+
+			HBox box = new HBox (false, 0);
+			box.PackEnd (ctrl_button, true, false, 0);
+			ctrl_button.Show ();
+			box.PackEnd (alt_button, true, false, 0);
+			alt_button.Show ();
+			box.PackEnd (entry, true, false, 0);
+			entry.Show ();
+
+			VBox.PackStart (box, true, false, 0);
+			box.Show ();
+		}
+
+		public static string GetUserShortcut (Gtk.Window parent, string binding)
+		{
+			UserShortcutDialog dialog = new UserShortcutDialog (parent, binding);
+			dialog.Response += new ResponseHandler (OnResponse);
+			dialog.Run ();
+			dialog.Destroy ();
+
+			Console.WriteLine ("new binding = '{0}'", dialog.binding);
+			return dialog.binding;
+		}
+
+		private static void OnResponse (object obj, ResponseArgs args)
+		{
+			UserShortcutDialog dialog = (UserShortcutDialog) obj;
+			if (args.ResponseId != ResponseType.Ok)
+				return;
+
+			bool ctrl = dialog.ctrl_button.Active;
+			bool alt = dialog.alt_button.Active;
+			string key = dialog.entry.Text;
+			dialog.binding = (new KeyBinding (key, ctrl, alt)).ToString ();
+		}
+	}
 
         ////////////////////////////////////////////////////////////////
         // AddHostDialog

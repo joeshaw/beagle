@@ -282,6 +282,7 @@ EXTRA_DIST =					\
 	$(COND_CS_FILES)			\
 	$(srcdir)/$(UI_UTIL_TARGET_CONFIG)	\
 	$(srcdir)/$(UTIL_TARGET_CONFIG)		\
+	$(srcdir)/SemWeb/Euler.cs
 	inotify-test
 
 CLEANFILES =			\

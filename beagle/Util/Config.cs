@@ -1338,7 +1338,7 @@ namespace Beagle.Util {
 				result += "<Alt>";
 			
 			result += Key;
-			
+
 			return result;
 		}
 		

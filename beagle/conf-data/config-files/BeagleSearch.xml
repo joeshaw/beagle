@@ -6,6 +6,7 @@
     <BoolOption Name="KeyBinding_Ctrl" Description="Use ctrl as key-modifier">false</BoolOption>
     <BoolOption Name="KeyBinding_Alt" Description="Use alt as key-modifier">false</BoolOption>
     <StringOption Name="KeyBinding_Key" Description="Shortcut key">F12</StringOption>
+    <StringOption Name="KeyBinding" Description="Shortcut key (including modifiers)"></StringOption>
     <StringOption Name="BeaglePosX" Description=""></StringOption>
     <StringOption Name="BeaglePosY" Description=""></StringOption>
     <StringOption Name="BeagleSearchWidth" Description=""></StringOption>

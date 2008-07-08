@@ -170,8 +170,11 @@ BUILT_WRAPPERS = 			\
 	$(STATIC_QUERY_WRAPPER)		\
 	$(CONFIG_WRAPPER)
 
+KEYGRABBER =
+
 if ENABLE_GUI
 BUILT_WRAPPERS += $(SETTINGS_WRAPPER)
+KEYGRABBER += $(srcdir)/keygrabber.py
 endif
 
 if ENABLE_WV1
@@ -234,6 +237,9 @@ install-data-local: $(TARGETS) $(WRAPPERS)
 
 	$(mkinstalldirs) $(DESTDIR)$(crondir)
 	$(INSTALL_SCRIPT) $(CRAWL_WRAPPER) $(DESTDIR)$(crondir)
+if ENABLE_GUI
+	$(INSTALL_DATA) $(KEYGRABBER) $(DESTDIR)$(pkglibdir)
+endif
 
 uninstall-local:
 	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
@@ -244,6 +250,9 @@ uninstall-local:
 	done
 
 	cd $(DESTDIR)$(crondir) && rm -f $(CRAWL_WRAPPER)
+if ENABLE_GUI
+	cd $(DESTDIR)$(pkglibdir) && rm -f $(KEYGRABBER)
+endif
 
 EXTRA_DIST =				\
 	$(WRAPPER_IN)			\
@@ -263,10 +272,7 @@ EXTRA_DIST =				\
 	$(QT_SETTINGS_CSFILES)		\
 	$(QT_SETTINGS_UIFILE)		\
 	$(QT_SETTINGS_ICON)		\
-	beagle-index-info		\
-	beagle-ping			\
-	beagle-status			\
-	blocate				\
+	$(KEYGRABBER)			\
 	boot.inotify.init		\
 	beagle-settings.desktop.in.in
 

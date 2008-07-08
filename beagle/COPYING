@@ -16,6 +16,7 @@ Subprojects include:
 	* LZMA SDK - GNU LGPL v2
 	* xemail-net - GNU LGPL v2
 	* Util/SemWeb/Euler.cs - W3C software license
+	* tools/keygrabber.py - GPLv3
 
 -----------------------------------------------------------------------------
 
