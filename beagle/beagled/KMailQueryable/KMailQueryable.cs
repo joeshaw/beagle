@@ -211,6 +211,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 * is valid.
 		 * Guesses the kmail local folder path
 		 * first try ~/.kde/share/apps/kmail/mail
+		 * then try ~/.kde4/share/apps/kmail/mail (for KDE4 distro but KDE3 PIM)
 		 * then try ~/.Mail, then try ~/Mail
 		 * Also do not try to "guess" for folder location specified
 		 * in config or the .kde/share/... location
@@ -229,12 +230,20 @@ namespace Beagle.Daemon.KMailQueryable {
 			location3 = Path.Combine (location3, "kmail");
 			location3 = Path.Combine (location3, "mail");
 
-			if (locationrc != null) {
+			string location4 = Path.Combine (PathFinder.HomeDir, ".kde4");
+			location4 = Path.Combine (location3, "share");
+			location4 = Path.Combine (location3, "apps");
+			location4 = Path.Combine (location3, "kmail");
+			location4 = Path.Combine (location3, "mail");
+
+			if (locationrc != null)
 				// If location is present in config file,
 				// do not check for other locations.
 				return locationrc;
-			} else if (Directory.Exists (location3))
+			else if (Directory.Exists (location3))
 				return location3;
+			else if (Directory.Exists (location4))
+				return location4;
 			else if (GuessLocalFolder (location1, verbose))
 				return location1;
 			else if (GuessLocalFolder (location2, verbose))
@@ -290,31 +299,39 @@ namespace Beagle.Daemon.KMailQueryable {
 		/**
 		 * tries to extract folder name from ~/.kde/share/config/kmailrc
 		 */
-		private string GetLocalFolderPathFromKmailrc ()
+		private static string GetLocalFolderPathFromKmailrc ()
 		{
-			string kmailrc = Path.Combine (PathFinder.HomeDir, ".kde");
+			string path = ReadKDEConfig (Path.Combine (PathFinder.HomeDir, ".kde"));
+			if (path != null)
+				return path;
+
+			path = ReadKDEConfig (Path.Combine (PathFinder.HomeDir, ".kde4"));
+			return path;
+		}
+
+		private static string ReadKDEConfig (string kde_dir)
+		{
+			string kmailrc = kde_dir;
 			kmailrc = Path.Combine (kmailrc, "share");
 			kmailrc = Path.Combine (kmailrc, "config");
 			kmailrc = Path.Combine (kmailrc, "kmailrc");
 
-			if (File.Exists (kmailrc)) {
-				StreamReader reader = new StreamReader (kmailrc);
+			if (! File.Exists (kmailrc))
+				return null;
+
+			using (StreamReader reader = new StreamReader (kmailrc)) {
 				string section = "";
 				string line;
 
-				try {
-					while ((line = reader.ReadLine ()) != null) {
-						if (line.StartsWith ("[") && line.EndsWith ("]")) {
-							section = line;
-						}
-						if (section == "[General]") {
-							if (line.StartsWith ("folders=") && line.Length > 8) {
-								return StringFu.ExpandEnvVariables (line.Substring(8));
-							}
+				while ((line = reader.ReadLine ()) != null) {
+					if (line.StartsWith ("[") && line.EndsWith ("]")) {
+						section = line;
+					}
+					if (section == "[General]") {
+						if (line.StartsWith ("folders=") && line.Length > 8) {
+							return StringFu.ExpandEnvVariables (line.Substring(8));
 						}
 					}
-				} finally {
-					reader.Close ();
 				}
 			}
 
