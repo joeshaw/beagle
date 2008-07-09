@@ -70,6 +70,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/ExceptionHandlingThread.cs	\
 	$(srcdir)/ExtendedAttribute.cs  	\
 	$(srcdir)/FileAdvise.cs			\
+	$(srcdir)/FileNameMarshaler.cs		\
 	$(srcdir)/FileSystem.cs			\
 	$(srcdir)/FrequencyStatistics.cs	\
 	$(srcdir)/FSpotTools.cs         	\
@@ -240,6 +241,7 @@ INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
 	$(srcdir)/FileSystem.cs			\
+	$(srcdir)/FileNameMarshaler.cs		\
 	$(srcdir)/ExceptionHandlingThread.cs
 
 Inotify.exe: $(INOTIFY_TEST_CSFILES)

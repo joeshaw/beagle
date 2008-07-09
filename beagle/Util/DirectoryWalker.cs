@@ -30,6 +30,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
+using Mono.Unix.Native;
+
 namespace Beagle.Util {
 
 	public class DirectoryWalker {
@@ -38,26 +40,31 @@ namespace Beagle.Util {
 		private delegate object FileObjectifier (string path, string name);
 
 		[DllImport ("libc", SetLastError = true)]
-		private static extern IntPtr opendir (string name);
-		
+		private static extern IntPtr opendir ([MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Mono.Unix.Native.FileNameMarshaler))] string name);
+
 		[DllImport ("libc", SetLastError = true)]
 		private static extern int closedir (IntPtr dir);
 
 		[DllImport ("libbeagleglue", EntryPoint = "beagled_utils_readdir", SetLastError = true)]
-		private static extern int sys_readdir (IntPtr dir, [Out] StringBuilder name, int max_len);
+		private static extern int sys_readdir (IntPtr dir, [Out] byte[] buf, int max_len);
 		
-		private static string readdir (IntPtr dir, StringBuilder buffer)
+		private static Encoding filename_encoding = Encoding.Default;
+
+		private static string readdir (IntPtr dir, ref byte[] buffer)
 		{
 			int r = 0;
-			buffer.Length = 0;
-			while (r == 0 && buffer.Length == 0) {
-			       r = sys_readdir (dir, buffer, buffer.Capacity); 
-			}
 
+			// We can reuse the same buffer since sys_readdir
+			// will fill up the rest of the space by null characters
+			r = sys_readdir (dir, buffer, buffer.Length); 
 			if (r == -1)
 				return null;
 
-			return buffer.ToString ();
+			int n_chars = 0;
+			while (n_chars < buffer.Length && buffer [n_chars] != 0)
+				++n_chars;
+
+			return FileNameMarshaler.LocalToUTF8 (buffer, 0, n_chars);
 		}
 
 		private class FileEnumerator : IEnumerator {
@@ -67,7 +74,7 @@ namespace Beagle.Util {
 			FileObjectifier file_objectifier;
 			IntPtr dir_handle = IntPtr.Zero;
 			string current;
-			StringBuilder name_buffer = new StringBuilder (256);
+			byte[] buffer = new byte [256];
 
 			public bool NamesOnly = false;
 			
@@ -108,15 +115,7 @@ namespace Beagle.Util {
 				bool skip_file = false;
 
 				do {
-					// FIXME?  I think this might be a bug in mono, but the
-					// capacity of the StringBuilder can apparently shrink
-					// from underneath us.  This leads to truncated filenames,
-					// and the DirectoryWalker drops them because the file
-					// doesn't exist.  Adding an EnsureCapacity() here fixes
-					// this.
-					name_buffer.EnsureCapacity (256);
-
-					current = readdir (dir_handle, name_buffer);
+					current = readdir (dir_handle, ref buffer);
 					if (current == null)
 						break;
 

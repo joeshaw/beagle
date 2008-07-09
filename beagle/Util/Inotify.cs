@@ -34,6 +34,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
+using Mono.Unix.Native;
+
 namespace Beagle.Util {
 
 	public class Inotify {
@@ -94,7 +96,7 @@ namespace Beagle.Util {
 		static extern int inotify_glue_init ();
 
 		[DllImport ("libbeagleglue")]
-		static extern int inotify_glue_watch (int fd, string filename, EventType mask);
+		static extern int inotify_glue_watch (int fd, [MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Mono.Unix.Native.FileNameMarshaler))] string filename, EventType mask);
 
 		[DllImport ("libbeagleglue")]
 		static extern int inotify_glue_ignore (int fd, int wd);
@@ -536,7 +538,6 @@ namespace Beagle.Util {
 
 		private static unsafe void SnarfWorker ()
 		{
-			Encoding filename_encoding = Encoding.UTF8;
 			int event_size = Marshal.SizeOf (typeof (inotify_event));
 			
 			while (running) {
@@ -588,7 +589,7 @@ namespace Beagle.Util {
 						++n_chars;
 					qe.Filename = "";
 					if (n_chars > 0)
-						qe.Filename = filename_encoding.GetString (filename_bytes, 0, n_chars);
+						qe.Filename = FileNameMarshaler.LocalToUTF8 (filename_bytes, 0, n_chars);
 
 					new_events.Add (qe);
 					nr -= event_size + (int) raw_event.len;
