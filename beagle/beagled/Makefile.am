@@ -778,7 +778,7 @@ endif
 man_MANS = 				\
 	beagled.1			\
 	beagle-build-index.8		\
-	beagle-dump-index.1		\
+	beagle-dump-index.8		\
 	beagle-extract-content.8	\
 	beagle-imlogviewer.8		\
 	beagle-manage-index.8
