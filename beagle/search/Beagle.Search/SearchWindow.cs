@@ -568,7 +568,7 @@ namespace Beagle.Search {
 			if (nomatch != null)
 				nomatch.Destroy ();
 
-			nomatch = new Pages.NoMatch (query_text, matches == MatchType.NoneInScope);
+			nomatch = new Pages.NoMatch (query_text, matches == MatchType.NoneInScope || scope_list.Active != 0);
 			nomatch.Show ();
 
 			pages.Add (nomatch);
