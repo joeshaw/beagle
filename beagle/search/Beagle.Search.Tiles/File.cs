@@ -89,7 +89,7 @@ namespace Beagle.Search.Tiles {
 
 			title = hit.GetFirstProperty ("dc:title");
 
-			if (! String.IsNullOrEmpty (title))
+			if (String.IsNullOrEmpty (title))
 				title = hit.GetFirstProperty ("beagle:ExactFilename");
 
 			return title;

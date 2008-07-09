@@ -445,11 +445,14 @@ namespace Beagle.Search {
 
 		private void OnHitsAdded (HitsAddedResponse response)
 		{
+			int missed_tiles = 0;
+
 			foreach (Hit hit in response.Hits) {
 				Tile tile = TileActivatorOrg.MakeTile (hit, current_query);
 
 				if (tile == null) {
 					Console.WriteLine ("No tile found for: {0} ({1})", hit.Uri, hit.Type);
+					missed_tiles ++;
 					continue;
 				}
 
@@ -460,7 +463,7 @@ namespace Beagle.Search {
 			}
 
 			if (response.NumMatches != -1)
-				TotalMatches += response.NumMatches;
+				TotalMatches += (response.NumMatches - missed_tiles);
 		}
 
 		private void OnHitsSubtracted (HitsSubtractedResponse response)
@@ -621,7 +624,6 @@ namespace Beagle.Search {
 					if (tile_count == this.total_matches)
 						message = String.Format (Catalog.GetPluralString ("Showing {0} match", "Showing all {0} matches", this.total_matches), this.total_matches);
 					else
-					// .
 						message = String.Format (Catalog.GetString ("Too many matches. Showing latest {0} of total {1}"), view.TileCount, this.total_matches);
 
 					this.statusbar.Push (0, message);
