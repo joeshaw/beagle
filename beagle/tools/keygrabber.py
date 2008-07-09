@@ -189,10 +189,6 @@ class KeyGrabber (gtk.Button):
             label = _("Disabled")
         gtk.Button.set_label (self, label)
 
-def _(x):
-    # how to mark python strings for translation ?
-    return x
-
 def gtk_process_events ():
     while gtk.events_pending ():
         gtk.main_iteration ()
