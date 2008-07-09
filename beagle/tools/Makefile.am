@@ -198,10 +198,14 @@ WRAPPERS =			\
 	$(CRAWL_WRAPPER)
 
 man_MANS = 			\
+	beagle-config.1		\
+	beagle-doc-extractor.8	\
+	beagle-index-info.8	\
+	beagle-info.1		\
+	beagle-ping.1		\
 	beagle-query.1		\
 	beagle-shutdown.1	\
-	beagle-status.1		\
-	beagle-config.1
+	beagle-status.1
 
 @INTLTOOL_DESKTOP_RULE@
 
@@ -211,6 +215,9 @@ desktop_files = $(desktop_in_files:.desktop.in=.desktop)
 
 desktopdir = $(datadir)/applications
 desktop_DATA = $(desktop_files)
+
+man_MANS += beagle-settings.1
+
 endif
 
 all: $(TARGETS) $(WRAPPERS)
