@@ -273,6 +273,7 @@ EXTRA_DIST =				\
 	$(QT_SETTINGS_UIFILE)		\
 	$(QT_SETTINGS_ICON)		\
 	$(KEYGRABBER)			\
+	$(PREBUILT_WRAPPERS)		\
 	boot.inotify.init		\
 	beagle-settings.desktop.in.in
 

@@ -50,6 +50,7 @@ search/Beagle.Search.Tiles/WebHistory.cs
 search/Beagle.Search.Tray/NotificationArea.cs
 search/Beagle.Search.Tray/TrayIcon.cs
 search/Beagle.Search/Category.cs
+search/Beagle.Search/Driver.cs
 search/Beagle.Search/Entry.cs
 search/Beagle.Search/GroupView.cs
 search/Beagle.Search/ListCategory.cs
@@ -66,4 +67,5 @@ search/beagle-search.desktop.in.in
 tools/Config.cs
 tools/Settings.cs
 tools/beagle-settings.desktop.in.in
+tools/keygrabber.py
 tools/settings.glade

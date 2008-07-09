@@ -270,7 +270,7 @@ uninstall-local:
 COND_CS_FILES =				\
 	$(srcdir)/AvahiBrowser.cs	\
 	$(srcdir)/ChmFile.cs		\
-	$(srcdir)/Euler.cs		\
+	$(srcdir)/SemWeb/Euler.cs	\
 	$(srcdir)/Galago.cs		\
 	$(srcdir)/Thunderbird.cs
 
@@ -282,7 +282,6 @@ EXTRA_DIST =					\
 	$(COND_CS_FILES)			\
 	$(srcdir)/$(UI_UTIL_TARGET_CONFIG)	\
 	$(srcdir)/$(UTIL_TARGET_CONFIG)		\
-	$(srcdir)/SemWeb/Euler.cs
 	inotify-test
 
 CLEANFILES =			\
