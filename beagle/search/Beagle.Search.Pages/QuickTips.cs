@@ -10,7 +10,8 @@ namespace Beagle.Search.Pages {
 			Catalog.GetString ("You can use upper and lower case; search is case-insensitive."),
 			Catalog.GetString ("To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"),
 			Catalog.GetString ("To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"),
-			Catalog.GetString ("When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>")
+			Catalog.GetString ("When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"),
+			Catalog.GetString ("Specify the extension to search among files with that extension. ex: <b>bean soup .html</b>")
 		};
 
 		public QuickTips ()

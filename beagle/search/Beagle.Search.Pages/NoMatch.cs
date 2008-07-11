@@ -21,7 +21,7 @@ namespace Beagle.Search.Pages {
 			Append (String.Format (Catalog.GetString ("Your search for \"{0}\" did not match any files on your computer."), "<b>" + GLib.Markup.EscapeText (query) + "</b>"));
 
 			if (suggest_scope)
-				Append (Catalog.GetString ("You can change the scope of your search using the \"Find in\" list. A broader search scope might produce more results."));
+				Append (Catalog.GetString ("You can select \"Find in: All\" to search everywhere."));
 			
 			Append (Catalog.GetString ("You should check the spelling of your search words to see if you accidentally misspelled any words."));
 #if ENABLE_GOOGLEBACKENDS
