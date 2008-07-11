@@ -212,8 +212,9 @@ namespace Beagle.Daemon.TomboyQueryable {
 			return indexable.Uri;
 		}
 
-		override protected bool HitIsValid (Uri uri)
+		override protected bool HitFilter (Hit hit)
 		{
+			Uri uri = hit.Uri;
 			string note = Path.Combine (tomboy_dir, uri.Segments [1] + ".note");
 
 			if (File.Exists (note))

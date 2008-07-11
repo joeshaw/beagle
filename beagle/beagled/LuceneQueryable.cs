@@ -74,7 +74,6 @@ namespace Beagle.Daemon {
 		private LuceneQueryingDriver driver;
 		private IIndexer indexer = null;
 
-		private LuceneQueryingDriver.UriFilter our_uri_filter;
 		private LuceneCommon.HitFilter our_hit_filter;
 		private LuceneCommon.QueryPartHook backend_query_part_hook;
 		private Scheduler.Task our_final_flush_task = null;
@@ -98,7 +97,6 @@ namespace Beagle.Daemon {
 			this.read_only_mode = read_only_mode;
 
 			driver = BuildLuceneQueryingDriver (this.index_name, this.minor_version, this.read_only_mode);
-			our_uri_filter = new LuceneQueryingDriver.UriFilter (this.HitIsValid);
 			our_hit_filter = new LuceneCommon.HitFilter (this.HitFilter);
 			backend_query_part_hook = new LuceneCommon.QueryPartHook (this.QueryPartHook);
 
@@ -180,11 +178,6 @@ namespace Beagle.Daemon {
 		}
 
 		/////////////////////////////////////////
-
-		virtual protected bool HitIsValid (Uri uri)
-		{
-			return true;
-		}
 
 		virtual protected bool HitFilter (Hit hit)
 		{
@@ -322,19 +315,6 @@ namespace Beagle.Daemon {
 				if (query.IsIndexListener) {
 					ArrayList synthetic_hits = new ArrayList ();
 					foreach (Uri uri in added_uris) {
-						if (our_uri_filter != null) {
-							bool accept = false;
-
-							try {
-								accept = our_uri_filter (uri);
-							} catch (Exception e) {
-								Log.Warn (e, "Caught an exception in HitIsValid for {0}", uri);
-							}
-
-							if (! accept)
-								continue;
-						}
-
 						Hit hit = new Hit ();
 						hit.Uri = uri;
 
@@ -363,7 +343,6 @@ namespace Beagle.Daemon {
 					query_result,
 					added_uris,
 					backend_query_part_hook,
-					our_uri_filter,
 					our_hit_filter);
 		}
 

@@ -51,7 +51,6 @@ namespace Beagle.Daemon {
 
 		static private bool Debug = false;
 
-		public delegate bool UriFilter (Uri uri);
 		public delegate double RelevancyMultiplier (Hit hit);
 
 		public LuceneQueryingDriver (string index_name, bool read_only)
@@ -572,14 +571,8 @@ namespace Beagle.Daemon {
 
 				count++;
 
-				// If we have a UriFilter, apply it.
-				// RDF FIXME: Ignore Uri Filter for now
-				//if (uri_filter != null) {
-				//	Uri uri;
-				//	uri = GetUriFromDocument (doc);
-				//	if (! uri_filter (uri))
-				//		continue;
-				//}
+				// If we have a HitFilter, apply it.
+				// RDF FIXME: Ignore Hit Filter for now
 
 				// If predicate was not specified but object was specified,
 				// then figure out the right predicate
@@ -845,7 +838,6 @@ namespace Beagle.Daemon {
 				     IQueryResult        result,
 				     ICollection         search_subset_uris, // should be internal uris
 				     QueryPartHook       query_part_hook,
-				     UriFilter           uri_filter,
 				     HitFilter           hit_filter)
 		{
 			if (Debug)
@@ -963,7 +955,6 @@ namespace Beagle.Daemon {
 						      result,
 						      term_list,
 						      query.MaxHits,
-						      uri_filter,
 						      new HitFilter (all_hit_filters.HitFilter),
 						      IndexName);
 			}
@@ -1196,7 +1187,6 @@ namespace Beagle.Daemon {
 							  IQueryResult      result,
 							  ICollection       query_term_list,
 							  int               max_results,
-							  UriFilter         uri_filter,
 							  HitFilter         hit_filter,
 							  string            index_name)
 		{
@@ -1227,13 +1217,16 @@ namespace Beagle.Daemon {
 			// This is used only for scoring
 			Dictionary<int, Hit> hits_by_id = new Dictionary<int, Hit> (num_hits);
 
+			int total_number_of_matches = primary_matches.TrueCount;
+
 			if (primary_matches.TrueCount > max_results)
 				final_list_of_hits = ScanRecentDocs (primary_reader,
 					secondary_reader,
 					primary_matches,
 					hits_by_id,
 					max_results,
-					uri_filter,
+					ref total_number_of_matches,
+					hit_filter,
 					index_name);
 
 			if (final_list_of_hits == null)
@@ -1242,7 +1235,8 @@ namespace Beagle.Daemon {
 					primary_matches,
 					hits_by_id,
 					max_results,
-					uri_filter,
+					ref total_number_of_matches,
+					hit_filter,
 					index_name);
 
 			d.Start ();
@@ -1256,8 +1250,6 @@ namespace Beagle.Daemon {
 				Log.Debug (">>> {0}: Scored hits in {1}", index_name, d);
 
 			e.Start ();
-
-			int total_number_of_matches = primary_matches.TrueCount;
 
 			// 25 hits seems to be the sweet spot: anything lower
 			// and serialization overhead gets us, higher takes
@@ -1333,7 +1325,8 @@ namespace Beagle.Daemon {
 						    BetterBitArray	    primary_matches,
 						    Dictionary<int, Hit>    hits_by_id,
 						    int			    max_results,
-						    UriFilter		    uri_filter,
+						    ref int		    total_number_of_matches,
+						    HitFilter		    hit_filter,
 						    string		    index_name)
 		{
 			Stopwatch a = new Stopwatch ();
@@ -1344,6 +1337,7 @@ namespace Beagle.Daemon {
 			ArrayList results = new ArrayList (max_results);
 			int docs_found = 0;
 			int docs_walked = 0;
+			int hit_filter_removed = 0;
 			int max_docs = (int) (primary_matches.TrueCount * 1.25);
 
 			Term term;
@@ -1366,18 +1360,19 @@ namespace Beagle.Daemon {
 
 					if (primary_matches.Get (doc_id)) {
 						Document doc = primary_reader.Document (doc_id);
-						// If we have a UriFilter, apply it.
-						if (uri_filter != null) {
-							Uri uri;
-							uri = GetUriFromDocument (doc);
-							if (uri_filter (uri)) {
-								Hit hit = CreateHit (doc, secondary_reader, secondary_term_docs);
-								hits_by_id [doc_id] = hit;
-								// Add the result, last modified first
-								results.Add (hit);
-								docs_found++;
-							}
+						Hit hit = CreateHit (doc, secondary_reader, secondary_term_docs);
+
+						// If we have a HitFilter, apply it.
+						if (hit_filter != null && ! hit_filter (hit)) {
+							if (Debug)
+								Log.Debug ("Filtered out {0}", hit.Uri);
+							hit_filter_removed ++;
+							continue;
 						}
+						hits_by_id [doc_id] = hit;
+						// Add the result, last modified first
+						results.Add (hit);
+						docs_found++;
 					}
 			
 					docs_walked++;
@@ -1396,6 +1391,13 @@ namespace Beagle.Daemon {
 				// Otherwise bad luck! Not all docs found
 				// Start afresh - this time traversing all results
 				results = null;
+			} else {
+				// Adjust total_number_of_matches. We need to do this to avoid scenarios like the following:
+				// max_hits = 100. Matched 100 results. But hit filter removed 30. So 70 results will be returned.
+				// We want to avoid saying "Showing top 70 of 100". Note that since we are not passing
+				// every document in the index through the hit_filter, when we say "Showing top 100 of 1234", the
+				// 1234 could actually be much less. But since max_hits was 100, that will not mislead the user.
+				total_number_of_matches -= hit_filter_removed;
 			}
 
 			a.Stop ();
@@ -1414,7 +1416,8 @@ namespace Beagle.Daemon {
 							      BetterBitArray	    primary_matches,
 							      Dictionary<int, Hit>  hits_by_id,
 							      int		    max_results,
-							      UriFilter		    uri_filter,
+							      ref int		    total_number_of_matches,
+							      HitFilter		    hit_filter,
 							      string		    index_name)
 		{
 			Stopwatch b = new Stopwatch ();
@@ -1461,17 +1464,18 @@ namespace Beagle.Daemon {
 						continue;
 				}
 
-				// If we have a UriFilter, apply it.
-				if (uri_filter != null) {
-					Uri uri;
-					uri = GetUriFromDocument (doc);
-					if (! uri_filter (uri))
-						continue;
+				// Get the actual hit now
+				// doc was created with only 2 fields, so first get the complete lucene document for primary document.
+				// Also run our hit_filter now, if we have one. Since we insist of returning max_results
+				// most recent hits, any hits that would be filtered out should happen now and not later.
+				Hit hit = CreateHit (primary_reader.Document (match_index), secondary_reader, term_docs);
+				if (hit_filter != null && ! hit_filter (hit)) {
+					if (Debug)
+						Log.Debug ("Filtered out {0}", hit.Uri);
+					total_number_of_matches --;
+					continue;
 				}
 
-				// Get the actual hit now
-				// doc was created with only 2 fields, so first get the complete lucene document for primary document
-				Hit hit = CreateHit (primary_reader.Document (match_index), secondary_reader, term_docs);
 				hits_by_id [match_index] = hit;
 
 				// Add the document to the appropriate data structure.

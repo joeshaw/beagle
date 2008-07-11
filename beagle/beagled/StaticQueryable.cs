@@ -172,7 +172,7 @@ namespace Beagle.Daemon {
 			return SnippetFu.GetSnippet (query_terms, reader, full_text, ctx_length, snp_length);
 		}
 
-		override protected bool HitIsValid (Uri uri)
+		private bool HitIsValid (Uri uri)
 		{
 			// We can't check anything else than file uris
 			if (! uri.IsFile)
@@ -192,6 +192,14 @@ namespace Beagle.Daemon {
 		// Remap uri based on mount point for removable indexes
 		// FIXME: Allow option to search unmounted media ? Return false in that case.
 		override protected bool HitFilter (Hit hit)
+		{
+			if (! HitIsValid (hit.Uri))
+				return false;
+
+			return HitIsValidRemovable (hit);
+		}
+
+		private bool HitIsValidRemovable (Hit hit)
 		{
 			if (mount_dir == null || hit.Uri.Scheme != "removable")
 				return true;

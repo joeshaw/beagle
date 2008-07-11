@@ -186,7 +186,12 @@ namespace Beagle.Daemon {
 			return indexable.Uri;
 		}
 
-		override protected bool HitIsValid (Uri uri)
+		override protected bool HitFilter (Hit hit)
+		{
+			return HitIsValid (hit.Uri);
+		}
+
+		private bool HitIsValid (Uri uri)
 		{
 			// Do the right thing if the Uri is a file.
 			// If the file Uri we need is the ContentUri, this won't work.
