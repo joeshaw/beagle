@@ -141,7 +141,7 @@ public class RemovableIndexTool {
 		try {
 			resp = req.Send ();
 		} catch (ResponseMessageException ex) {
-			Log.Error (ex, "Error in loading index.");
+			Log.Error ("Error in loading index: {0}", ex.ToString ());
 			return;
 		}
 
@@ -162,7 +162,7 @@ public class RemovableIndexTool {
 		try {
 			resp = req.Send ();
 		} catch (ResponseMessageException ex) {
-			Log.Error (ex, "Error in unloading index.");
+			Log.Error ("Error in unloading index: {0}", ex.ToString ());
 			return;
 		}
 
