@@ -210,15 +210,24 @@ namespace Beagle.Daemon {
 			return term_list;
 		}
 
-		private void BuildSearchers (out IndexReader primary_reader,
+		// Returns true if there are docs to search and creates the readers and searchers
+		// in that case. Otherwise, returns false.
+		private bool BuildSearchers (out IndexReader primary_reader,
 					    out LNS.IndexSearcher primary_searcher,
 					    out IndexReader secondary_reader,
 					    out LNS.IndexSearcher secondary_searcher)
 		{
+			primary_searcher = null;
 			secondary_reader = null;
 			secondary_searcher = null;
 
 			primary_reader = LuceneCommon.GetReader (PrimaryStore);
+			if (primary_reader.NumDocs() == 0) {
+				ReleaseReader (primary_reader);
+				primary_reader = null;
+				return false;
+			}
+
 			primary_searcher = new LNS.IndexSearcher (primary_reader);
 
 			if (SecondaryStore != null) {
@@ -231,6 +240,8 @@ namespace Beagle.Daemon {
 
 			if (secondary_reader != null)
 				secondary_searcher = new LNS.IndexSearcher (secondary_reader);
+
+			return true;
 		}
 
 		private void CloseSearchers (IndexReader primary_reader,
@@ -503,8 +514,9 @@ namespace Beagle.Daemon {
 			LNS.IndexSearcher secondary_searcher;
 
 			// Create the searchers that we will need.
+			if (! BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher))
+				return null;
 
-			BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher);
 			b.Stop ();
 			if (Debug)
 				Log.Debug ("###### {0}: Readers/searchers built in {1}", IndexName, b);
@@ -788,7 +800,8 @@ namespace Beagle.Daemon {
 			IndexReader secondary_reader;
 			LNS.IndexSearcher secondary_searcher;
 
-			BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher);
+			if (! BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher))
+				return 0;
 
 			// Build whitelists and blacklists for search subsets.
 			LuceneBitArray primary_whitelist, secondary_whitelist;
@@ -897,8 +910,8 @@ namespace Beagle.Daemon {
 			LNS.IndexSearcher secondary_searcher;
 
 			// Create the searchers that we will need.
-
-			BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher);
+			if (! BuildSearchers (out primary_reader, out primary_searcher, out secondary_reader, out secondary_searcher))
+				return;
 
 			b.Stop ();
 			if (Debug)
