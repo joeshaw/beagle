@@ -96,8 +96,8 @@ namespace Beagle.Search {
 			//scope_mappings.Add (new ScopeMapping (Catalog.GetString ("Custom"), ""));
 
 			// Allow users to define custom scope choices by defining envirionment var:
-			// export BEAGLE_SCOPE="mymusic=source:music;win=tag:windows";
-			string user_scopes = Environment.GetEnvironmentVariable ("BEAGLE_SCOPE");
+			// export BEAGLE_SEARCH_SCOPE="mymusic=source:music;win=tag:windows";
+			string user_scopes = Environment.GetEnvironmentVariable ("BEAGLE_SEARCH_SCOPE");
 			if (String.IsNullOrEmpty (user_scopes))
 				return;
 
@@ -245,6 +245,7 @@ namespace Beagle.Search {
 				pages.CurrentPage = pages.PageNum (quicktips);
 			}
 
+			entry.GrabFocus ();
 			StartCheckingIndexingStatus ();
 		}
 
