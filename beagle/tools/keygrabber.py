@@ -22,6 +22,7 @@
 #          Christopher Williams (christopherw@verizon.net)
 # Copyright (C) 2007 Quinn Storm
 
+import sys
 import pygtk
 import gtk
 import gtk.gdk
@@ -29,6 +30,7 @@ import gobject
 pygtk.require('2.0')
 import gtk
 import time
+import gettext
 
 KeyModifier = ["Shift", "Control", "Mod1", "Mod2", "Mod3", "Mod4",
                "Mod5", "Alt", "Meta", "Super", "Hyper", "ModeSwitch"]
@@ -57,6 +59,8 @@ class GrabberWindow:
         self.button.set_no_show_all(True)
         self.button.connect('changed', self.GotKey)
 
+	self.shortcut = ""
+
         # This packs the button into the window (a GTK container).
         self.window.add(self.button)
     
@@ -67,14 +71,13 @@ class GrabberWindow:
         self.window.show()
 
     def GotKey(self, widget, key, mods):
-        new = gtk.accelerator_name (key, mods)
+        self.shortcut = gtk.accelerator_name (key, mods)
         for mod in KeyModifier:
-            if "%s_L" % mod in new:
-                new = new.replace ("%s_L" % mod, "<%s>" % mod)
-            if "%s_R" % mod in new:
-                new = new.replace ("%s_R" % mod, "<%s>" % mod)
+            if "%s_L" % mod in self.shortcut:
+                self.shortcut = self.shortcut.replace ("%s_L" % mod, "<%s>" % mod)
+            if "%s_R" % mod in self.shortcut:
+                self.shortcut = self.shortcut.replace ("%s_R" % mod, "<%s>" % mod)
 
-	print new
         gtk.main_quit()
 
     def main(self):
@@ -194,6 +197,12 @@ def gtk_process_events ():
         gtk.main_iteration ()
 
 if __name__ == "__main__":
-    window = GrabberWindow()
-    window.main()
+    if len (sys.argv) == 2:
+	gettext.install ('beagle', sys.argv [1])
+    else:
+	gettext.install ('beagle')
+    window = GrabberWindow ()
+    window.main ()
 
+    # print the shortcut if the program successfully runs
+    print window.shortcut

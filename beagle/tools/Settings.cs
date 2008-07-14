@@ -719,17 +719,22 @@ public class SettingsDialog
 		if (! File.Exists (keygrabber_file))
 			throw new Exception ("keygrabber.py not found");
 
-		pc.Arguments = new string[] {"python", keygrabber_file};
+		pc.Arguments = new string[] {"python", keygrabber_file, ExternalStringsHack.LocaleDir};
 		pc.RedirectStandardError = false;
 		pc.RedirectStandardOutput = true;
 
 		pc.Start ();
-		string output;
+		string output = null;
 		using (StreamReader pout = new StreamReader (pc.StandardOutput))
 			output = pout.ReadLine ();
 		pc.Close ();
 
-		Console.WriteLine ("New binding '{0}'", output);
+		// We can't check the return value of the program.
+		// Instead we this to figure out if the program worked correctly.
+		if (output == null)
+			throw new ApplicationException ();
+
+		Console.WriteLine ("New binding from keygrabber '{0}'", output);
 		return output;
 	}
 

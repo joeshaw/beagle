@@ -6,6 +6,7 @@
     <BoolOption Name="KeyBinding_Ctrl" Description="Use ctrl as key-modifier">false</BoolOption>
     <BoolOption Name="KeyBinding_Alt" Description="Use alt as key-modifier">false</BoolOption>
     <StringOption Name="KeyBinding_Key" Description="Shortcut key">F12</StringOption>
+    <!-- Remove the 3 KeyBinding_{Ctrl,Alt,Key} options when releasing 0.4.0 - they are deprecated in favour of KeyBinding -->
     <StringOption Name="KeyBinding" Description="Shortcut key (including modifiers)"></StringOption>
     <StringOption Name="BeaglePosX" Description=""></StringOption>
     <StringOption Name="BeaglePosY" Description=""></StringOption>

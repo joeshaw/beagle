@@ -46,7 +46,17 @@ namespace Beagle.Search {
 				Config config = Conf.Get (Conf.Names.BeagleSearchConfig);
 
 				string tip_text = Catalog.GetString ("Desktop Search");
-				string binding = config.GetOption ("KeyBinding", "F12");
+				string binding = config.GetOption ("KeyBinding", null);
+
+				if (String.IsNullOrEmpty (binding)) {
+					// Move old preference value to new
+					bool binding_ctrl = config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
+					bool binding_alt = config.GetOption (Conf.Names.KeyBinding_Alt, false);
+					string binding_key = config.GetOption (Conf.Names.KeyBinding_Key, "F12");
+					KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
+
+					binding = show_binding.ToString ();
+				}
 
 				if (!String.IsNullOrEmpty (binding)) {
 					tip_text += String.Format (" ({0})", binding);
