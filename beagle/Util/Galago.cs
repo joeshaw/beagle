@@ -29,11 +29,8 @@ using Galago;
 
 namespace Beagle.Util {
 
-	public class GalagoTools {
+	public static class GalagoTools {
 
-		private GalagoTools () {} // This class is static
-		private static Galago.Service service;
-	
 		public enum Status {
 			Available = 0,
 			Offline = 1,
@@ -42,17 +39,27 @@ namespace Beagle.Util {
 			NoStatus = -1,
 		};
 
+		private static bool init;
+
+		static GalagoTools ()
+		{
+			// Init only once. I see no reason to init and uninit during every function invocation.
+			try {
+				init = Galago.Global.Init ("beagle-galago-presence");
+			} catch (DllNotFoundException) {
+				// FIXME: Catch Debian Galago packaging bug.
+				// Catching runtime exceptions is not right. Do here but monitor the distro bug.
+				init = false;
+				Console.Error.WriteLine ("Galago init failed. No buddy information will be provided.");
+			}
+		}
+
 		public static Status GetPresence (string service_id, string username)
 		{
-			try {
-				if (! Galago.Global.Init ("beagle-galago-presence"))
-					return Status.NoStatus;
-			} catch (DllNotFoundException) {
-				// Catch Debian Galago packaging bug
+			if (! init)
 				return Status.NoStatus;
-			}
 
-			service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
+			Galago.Service service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
 			if (service == null)
 				return Status.NoStatus;
 
@@ -86,16 +93,16 @@ namespace Beagle.Util {
 						break;
 				}
 			}
-			Galago.Global.Uninit();
 
 			return user_status;
 		}
+
 		public static string GetIdleTime (string service_id, string username)
 		{
-			if (! Galago.Global.Init ("beagle-galago-presence"))
+			if (! init)
 				return null;
 
-			service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
+			Galago.Service service = Galago.Global.GetService (service_id, Galago.Origin.Remote, true);
 			if (service == null)
 				return null;
 
@@ -111,7 +118,6 @@ namespace Beagle.Util {
 			
 			string str =  StringFu.DurationToPrettyString  ( DateTime.Now, presence.IdleStartTime);
 			
-			Galago.Global.Uninit();
 			return str;
 		}
 	}
