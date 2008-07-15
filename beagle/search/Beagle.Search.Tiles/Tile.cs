@@ -348,7 +348,7 @@ namespace Beagle.Search.Tiles {
 #else
 			MimeApplication app;
 			app = Mime.GetDefaultApplication (mimetype);
-			bool expect_uris = app.SupportUris ();
+			bool expect_uris = app.SupportsUris ();
 			path = hit.Path;
 
 			if (app == null) {
