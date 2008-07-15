@@ -1,3 +1,128 @@
+Version 0.3.8
+July 15 2008
+
+Dependencies:
+
+* Update local copy of SemWeb and include it under GPLv3 instead of CC-by-2.0.
+
+* Update beagle-settings-qt requirements: look for either qyoto.pc or qt-dotnet.dll
+
+* Remove internal taglib-sharp. We now require that taglib-sharp be installed.
+
+* Remove the build dependency of sqlite3-devel, 
+
+* Fix our D-Bus requirements. System D-Bus is an optional requirement for beagled.
+  Session D-Bus is a necessary requirement for "beagle-search --icon". Distributions
+  should make beagle-search depend on something that starts session D-Bus at login
+  (e.g. KDE3 does not automatically start D-Bus at login).
+
+* Explicitly use -lX11 to build libbeagleuiglue.so. Fixes #540120.
+
+* Require gtk+/# >= 2.10.
+
+* Remove the build dependencies of libgnome-2.0-dev and libgnomevfs-dev.
+
+Features:
+
+* Add a SemWeb based adapter for querying beagle using RDF.
+  Strictly experimental and enabled only with --enable-rdf-adapter.
+  (http://beagle-project.org/RDF)
+
+* Add the GMail backend related options to beagle-settings-qt.
+
+* Add a BibTex filter based on the command line program 'bibparse'.
+  bibparse is a run-time requirement and can be found in the btparse package.
+
+* Add infrastructure and command-line tools to create and manage
+  static indexes for removable sources.
+  (http://beagle-project.org/Static_Indexes#Indexing_Removable_Medium)
+
+* Add a crawl-rule for indexing executables in /usr/bin, /bin etc.
+  Add beagle-crawl-system [--list] [crawl-<name>] options to list the system
+  indexes and selectively update only one system index.
+
+* Add support for snippets for remote beagled query.
+
+* Add support for KDE4 konqueror history.
+
+* Show a drop-down list in beagle-search to choose search categories.
+  This was previously hidden in the menus. Use BEAGLE_SEARCH_SCOPE
+  environment variable to allow users to create custom categories.
+
+* Add menu options to beagle-search to start and stop beagled and
+  show index statistics.
+
+* Enable the Open-With context-menu in beagle-search results.
+
+* Include a python script to grab shortcut keys from beagle-settings
+  (distributed under GPL3).
+
+Bugfixes:
+
+* Focus the search entry is there are no results initially. Fixes #529540.
+
+* Fix a regression where searching applications and other system wide indexes
+ were disabled by default in beagle-search.
+
+* Update Evolution backend for the new Evolution-Sharp API. Fixes #526685.
+
+* Use the correct protocol for evolution-tasks "task:///...". Fixes #530624.
+
+* Handle corrupt config files. Fixes #532308.
+
+* Fix parsing of Opera history cache. Fixes #533529.
+
+* If the firefox extension does not find ~/.beagle, show the message in the
+  icon tooltip instead of showing the disruptive alert. Fixes debian #463922, bnc #385513.
+
+* Handle rogue backends if they start throwing lots of errors. This will
+  save the log files from getting flooded with unnecessary exceptions.
+
+* Fix the spreadsheet filter which was broken since 2007!
+
+* Correctly generate URIs for child-indexables (e.g. archive contents,
+  docbook entries). Fixes #535020.
+
+* Fix the docbook filter to not return unnecessary matches when only
+  one docbook section matches the query.
+
+* Show an error dialog if beagle-settings encounters an unhandled exception.
+  This gives a better feedback to the user. Fixes #541134.
+
+* Always show the filename separately in the beagle-search results. Show the
+  filename instead of document title for pdf, odt etc. files whose titles are mostly
+  unset or auto-generated.
+
+* Do not index javascript: pages in the firefox extension.
+
+* Properly parse Pidgin log files with smilies; these lines used to throw
+  an exception earlier.
+
+* Support KMail-3 in KDE4. Fixes #540153.
+
+* The FileSystem backend now correctly handles filenames in a
+   non-utf8 locale if MONO_EXTERNAL_ENCODINGS is set to the platform encoding.
+  Fixes #440458.
+
+* Fix a bug where beagled sometimes returns less than 100 (max-results) results even
+  though more results are available.
+
+Translations:
+  - Hungarian (Gabor Kelemen)
+  - Spanish (Jorge Gonzalez)
+  - Italian (Gianvito Cavasoli)
+  - Occitan (Yannig Marchegay)
+  - French (Claude Paroz)
+  - Brazilian Portuguese (Fábio Nogueira)
+  - Czech (Adrian Gunis (Fixes #537846))
+  - Swedish (Daniel Nylander)
+  - Norwegian bokmål (Kjartan Maraas)
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_8/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.7
 24 April 2008
 

@@ -1271,19 +1271,8 @@ namespace Beagle.Daemon {
 			int sent_index = 0;
 
 			// Break up the hits into reasonably sized chunks for
-			// sending over the wire.  Also run our hit_filter, if
-			// we have one.
+			// sending over the wire.
 			for (int i = 0; i < final_list_of_hits.Count; ++i) {
-				if (hit_filter != null) {
-					Hit hit = (Hit) final_list_of_hits [i];
-					if (! hit_filter (hit)) {
-						if (Debug)
-							Log.Debug ("Filtered out {0}", hit.Uri);
-						final_list_of_hits [i] = null;
-						total_number_of_matches --;
-					}
-				}
-
 				// Flush our hits
 				if (i > 0 && i % MAX_QUEUED_HITS == 0) {
 					result.Add (final_list_of_hits.GetRange (0, MAX_QUEUED_HITS));

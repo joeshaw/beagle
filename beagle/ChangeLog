@@ -1,4 +1,981 @@
 ------------------------------------------------------------------------
+r4834 | dbera | 2008-07-14 19:49:49 -0400 (Mon, 14 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+
+   Rename the environment variable BEAGLE_SCOPE to BEAGLE_SEARCH_SCOPE. Focus
+   the search entry at startup.
+
+------------------------------------------------------------------------
+r4833 | dbera | 2008-07-14 17:36:38 -0400 (Mon, 14 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/conf-data/config-files/BeagleSearch.xml
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/tools/Settings.cs
+   M /trunk/beagle/tools/keygrabber.py
+
+Fix some loose ends in the keygrabber.
+
+------------------------------------------------------------------------
+r4832 | dbera | 2008-07-14 15:52:42 -0400 (Mon, 14 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/settings.glade
+
+Remove some technical words from beagle-settings and make it easier to understand.
+
+------------------------------------------------------------------------
+r4831 | dbera | 2008-07-14 15:11:56 -0400 (Mon, 14 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+
+Save previous seconds (.01 sec/empty backend in my VM) by not searching backends without any documents to search.
+
+------------------------------------------------------------------------
+r4830 | dbera | 2008-07-14 11:04:38 -0400 (Mon, 14 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Galago.cs
+
+Ahh... I made the mistake of catching a runtime exception; unfortunately that code got shipped and now cannot be taken back. Cushion the mistake by printing an error message and adding a FIXME in the code. Also, do galago_init() only once instead of init() and uninit() every time the functions are called.
+
+------------------------------------------------------------------------
+r4829 | jorgegonz | 2008-07-13 15:00:00 -0400 (Sun, 13 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4828 | dbera | 2008-07-12 01:16:25 -0400 (Sat, 12 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/RemovableIndexTool.cs
+
+Print the details of the ResponseMessageExceptions.
+
+------------------------------------------------------------------------
+r4827 | dbera | 2008-07-11 13:16:32 -0400 (Fri, 11 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Pages/NoMatch.cs
+   M /trunk/beagle/search/Beagle.Search.Pages/QuickTips.cs
+
+Add a quick tip for extension queries and change a NoMatch tip. Translators will probably hate me now :-)
+
+------------------------------------------------------------------------
+r4826 | dbera | 2008-07-10 22:38:38 -0400 (Thu, 10 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneFileQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/beagled/TomboyQueryable/TomboyQueryable.cs
+
+Resolve the mysterious "Too many matches. Returned top 10 of 200 results" even when query.max-hits is 100. This happened as we applied hit_filter just before sending the results and for FSQ, the hit_filter is responsible for checking if the file actually exists. So if the number of initial matches is 200, but for some reason there are 90 bad matches among the first 100 then we would have returned only 10 hits! Fix this by removing uri-filter. Uri filter is not useful anymore since we already have a hit-filter and both uri-filter and hit-filter were applied more or less one after another. Now do all kind of hit validation in hit-filter and call it right when we were calling uri-filter i.e. creating hits.
+
+------------------------------------------------------------------------
+r4825 | dbera | 2008-07-09 17:04:19 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/keygrabber.py
+
+keygrabber is already marked for translation so remove the dummy _(...) method.
+
+------------------------------------------------------------------------
+r4824 | dbera | 2008-07-09 15:24:42 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/Makefile.am
+
+Missed this Makefile change in the last commit.
+
+------------------------------------------------------------------------
+r4823 | dbera | 2008-07-09 12:57:51 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/beagled/beagle-dump-index.1
+   A /trunk/beagle/beagled/beagle-dump-index.8 (from /trunk/beagle/beagled/beagle-dump-index.1:4821)
+
+beagle-dump-index should go to man 8 (maintenance section).
+
+------------------------------------------------------------------------
+r4822 | dbera | 2008-07-09 12:31:09 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/File.cs
+
+Fix a typo and keep track of the number of results that could not be shown due to unavailable tile.
+
+------------------------------------------------------------------------
+r4821 | kmaraas | 2008-07-09 10:34:50 -0400 (Wed, 09 Jul 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/nb.po
+
+2008-07-09  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* nb.po: Updated Norwegian bokmål translation.
+
+2008-07-06  Jorge Gonzalez  <jorgegonz@svn.gnome.org>
+------------------------------------------------------------------------
+r4820 | dbera | 2008-07-09 10:17:23 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/beagle-config.1
+   D /trunk/beagle/tools/beagle-index-info.1
+   A /trunk/beagle/tools/beagle-index-info.8 (from /trunk/beagle/tools/beagle-index-info.1:4817)
+   M /trunk/beagle/tools/beagle-info.1
+   M /trunk/beagle/tools/beagle-ping.1
+   M /trunk/beagle/tools/beagle-query.1
+
+Update the man pages in tools/.
+
+------------------------------------------------------------------------
+r4819 | dbera | 2008-07-09 08:37:13 -0400 (Wed, 09 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/DirectoryWalker.cs
+   A /trunk/beagle/Util/FileNameMarshaler.cs
+   M /trunk/beagle/Util/Inotify.cs
+   M /trunk/beagle/Util/Makefile.am
+
+Use a custom marshaller (based on Mono's FileNameMarshaler) to convert filenames returned by libc to UTF8 strings. If MONO_EXTERNAL_ENCODINGS is set to something not "utf8", then the platform default encoding is used instead of utf8. (It is a bit weird, if M_E_E is set, then the value of M_E_E is not used but Encoding.Default is used.) Non-UTF8 filenames should be correctly handled now.
+
+------------------------------------------------------------------------
+r4818 | dbera | 2008-07-08 23:51:15 -0400 (Tue, 08 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/KMailQueryable/KMailQueryable.cs
+
+Support KMail-3 in KDE4. Basically look in ~/.kde4 instead of ~/.kde. Fixes #540153.
+
+------------------------------------------------------------------------
+r4817 | dbera | 2008-07-08 20:44:01 -0400 (Tue, 08 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search.Pages/NoMatch.cs
+
+Add some more tips if no results are returned.
+
+------------------------------------------------------------------------
+r4816 | dbera | 2008-07-08 20:25:57 -0400 (Tue, 08 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/po/POTFILES.in
+   M /trunk/beagle/tools/Makefile.am
+
+distcheck fixes.
+
+------------------------------------------------------------------------
+r4815 | dbera | 2008-07-08 19:52:06 -0400 (Tue, 08 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/COPYING
+   M /trunk/beagle/Util/Config.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/conf-data/config-files/BeagleSearch.xml
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/Settings.cs
+   A /trunk/beagle/tools/keygrabber.py
+   M /trunk/beagle/tools/settings.glade
+
+Add a python script (from CCSM) to grab shortcut keys from user input. Use the script in beagle-settings to get the shortcut key for beagle-search. Store the entire binding string in config instead of separately storing ctrl, alt and the key. Note that CCSM is GPLv2+ so we are including the script as GPLv3. It is possible to create a C# program to do what the script does but I am not taking the risk yet.
+
+------------------------------------------------------------------------
+r4814 | dbera | 2008-07-08 00:29:19 -0400 (Tue, 08 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BuildIndex.cs
+
+Fix a sloppy bug where the Uri for a non-removable source was incorrect.
+
+------------------------------------------------------------------------
+r4813 | dbera | 2008-07-07 22:11:34 -0400 (Mon, 07 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+   M /trunk/beagle/search/Makefile.am
+
+Why was the OpenWith menu disabled even with gtk+ > 2.8. I enabled it to see how it goes. If it does not work, then there is no sense in keeping around unused code.
+
+------------------------------------------------------------------------
+r4812 | dbera | 2008-07-07 14:12:24 -0400 (Mon, 07 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+
+I would still like to run beagle-search inspite of Kubuntu not starting dbus-session at login.
+
+------------------------------------------------------------------------
+r4811 | dbera | 2008-07-07 10:25:39 -0400 (Mon, 07 Jul 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/Filters/TagLib
+
+Ahh... forgot to remove local copy of taglib-sharp.
+
+------------------------------------------------------------------------
+r4810 | dbera | 2008-07-06 15:59:39 -0400 (Sun, 06 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterPidginLog.cs
+
+Catch some string parsing errors while parsing piding log files.
+
+------------------------------------------------------------------------
+r4809 | dbera | 2008-07-06 15:44:06 -0400 (Sun, 06 Jul 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/Util/Battery.cs
+   M /trunk/beagle/Util/BatteryMonitor.cs
+
+Forgot to remove unused Util/Battery.cs. And fix a typo :)
+
+------------------------------------------------------------------------
+r4808 | jorgegonz | 2008-07-06 09:40:20 -0400 (Sun, 06 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spansih translation
+
+------------------------------------------------------------------------
+r4807 | dbera | 2008-07-05 19:22:21 -0400 (Sat, 05 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/ExternalStringsHack.cs.in
+   M /trunk/beagle/Util/GnomeFu.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+
+Bump gtk+/# >= 2.10. Use the nice Gnome.Vfs.MimeApplication to open hits instead of our home-cooker GnomeFu. We dont really need gnome prefix since we use the Gnome# API to get what we need - this drops the build dependencies of libgnome-2.0-dev and libgnomevfs-dev.
+
+------------------------------------------------------------------------
+r4806 | dbera | 2008-07-05 11:47:15 -0400 (Sat, 05 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+   M /trunk/beagle/search/Beagle.Search.Pages/StartDaemon.cs
+
+Add a menu for beagled specific options. Add menu entries to start, stop beagled and move Index-Info to this menu option. Note that we never mention "beagled" in beagle-search but always refer to it as "service".
+
+------------------------------------------------------------------------
+r4805 | jorgegonz | 2008-07-05 10:56:46 -0400 (Sat, 05 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4804 | jorgegonz | 2008-07-05 07:27:25 -0400 (Sat, 05 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spansih translation
+
+------------------------------------------------------------------------
+r4803 | taofei | 2008-07-04 22:05:37 -0400 (Fri, 04 Jul 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+
+accept patch from
+http://mail.gnome.org/archives/dashboard-hackers/2008-July/msg00002.html
+don't index page with protocal javascript: 
+
+------------------------------------------------------------------------
+r4802 | dbera | 2008-07-04 18:46:52 -0400 (Fri, 04 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/ArchivedFile.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/File.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/TextDocument.cs
+
+Some more cleanup of the last changes. Display the correct information for ArchivedFiles and Files. Remove the unnecessary GetTitle(hit, true) since it was redundant.
+
+------------------------------------------------------------------------
+r4801 | dbera | 2008-07-04 18:28:44 -0400 (Fri, 04 Jul 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/File.cs
+   M /trunk/beagle/search/Beagle.Search.Tiles/TextDocument.cs
+
+Slightly alter the information for hits in beagle-search.
+* For .doc, .odt, .pdf like office documents, often the document title property is incorrectly set or some autogenerated garbage. Instead of showing the title in the tile, use the filename.
+* Always show the filename in the details pane; sometimes when the path is long, it is cut-off and it becomes hard to determine which file it is. Show title of the hit if it exists.
+
+------------------------------------------------------------------------
+r4800 | ymarcheg | 2008-07-03 04:08:21 -0400 (Thu, 03 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/oc.po
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4799 | dbera | 2008-07-02 17:15:53 -0400 (Wed, 02 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/Settings.cs
+
+Show an error dialog if beagle-settings encounters an unhandled exception. This is better than silently crashing because it gives a better feedback to the user. Fixes #541134. Patch from Arun Chaganty <arunchaganty@gmail.com>.
+
+------------------------------------------------------------------------
+r4798 | ymarcheg | 2008-07-02 14:46:20 -0400 (Wed, 02 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/oc.po
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4797 | dbera | 2008-06-30 14:44:03 -0400 (Mon, 30 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+tomboykeybinder.c explicitly calls X11 functions, so explicitly use -lX11 to build libbeagleuiglue.so. Fixes #540120.
+
+------------------------------------------------------------------------
+r4796 | dbera | 2008-06-29 22:03:01 -0400 (Sun, 29 Jun 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/Util/BatteryMonitor.cs (from /trunk/beagle/beagled/BatteryMonitor.cs:4787)
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/Scheduler.cs
+   D /trunk/beagle/beagled/BatteryMonitor.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/Makefile.am
+
+* Remove duplicate code for checking Battery status (beagled/BatteryMonitor.cs) and use Util/BatteryMonitor.cs.
+* Only initialize the system dbus for battery monitoring; we don't need session dbus for that. This will remove the unnecessary error beagled prints if session dbus is not enabled.
+------------------------------------------------------------------------
+r4795 | dbera | 2008-06-29 13:19:57 -0400 (Sun, 29 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Driver.cs
+
+If DBUS session bus is not found, print a helpful message and then exit instead of crashing. Distros should make beagle-search depend on dbus-x11.
+
+------------------------------------------------------------------------
+r4794 | dbera | 2008-06-29 12:20:27 -0400 (Sun, 29 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/VersionFu.cs
+   M /trunk/beagle/po/POTFILES.in
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Use the VersionFu copyright also in beagle-search (which also corrects the beagle-search copyright). Remove TypeFilter.cs from POTFILES.
+
+------------------------------------------------------------------------
+r4793 | dbera | 2008-06-29 12:11:58 -0400 (Sun, 29 Jun 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/search/Beagle.Search/TypeFilter.cs
+   M /trunk/beagle/search/Makefile.am
+
+Remove TypeFilter.cs.
+
+------------------------------------------------------------------------
+r4792 | dbera | 2008-06-29 12:09:33 -0400 (Sun, 29 Jun 2008) | 6 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+An attempt to address the "too many matches" problem. Replace the oft-unnoticed/multiple-choice scope menu by a short(!) combo box displaying the common search scopes. In the earlier implementation the selected scope menu was used to filter results after a query against all data. In this implementation, use the scope option to search against only the selected type of data. Remove the use of TypeFilter.cs which was asked in the FIXME "it would be nicer to create QueryParts to do the filtering beagled-side".
+
+One problem with this approach is that there are just too many categories (currently ~ 15). Ideally, only the most common categories can be put here and the rest moved to the "Custom search" dialog. Oh right, someone has to create the Custom-search/Advanced-search dialog.
+
+To allow users to add custom scopes, use the environment variables BEAGLE_SCOPE="label1=query-string1;label2=query-string2" and the appropriate query-string is appended to the query when one of these labels are selected in the combobox.
+
+------------------------------------------------------------------------
+r4791 | dnylande | 2008-06-23 16:32:56 -0400 (Mon, 23 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Updated Swedish translation
+------------------------------------------------------------------------
+r4790 | pmkovar | 2008-06-21 06:47:12 -0400 (Sat, 21 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/cs.po
+
+cs.po: Updated Czech translation by Adrian Gunis (bug #537846).
+------------------------------------------------------------------------
+r4789 | jwendell | 2008-06-20 08:36:43 -0400 (Fri, 20 Jun 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2008-06-20  Jonh Wendell  <jwendell@gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation by Fábio Nogueira.
+
+------------------------------------------------------------------------
+r4788 | dbera | 2008-06-15 09:51:12 -0400 (Sun, 15 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/RemoteIndexer.cs
+
+Last SafeProcess fix also removed the console output of IndexHelper. Fix it.
+
+------------------------------------------------------------------------
+r4787 | jorgegonz | 2008-06-15 07:32:05 -0400 (Sun, 15 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4786 | dbera | 2008-06-14 20:47:25 -0400 (Sat, 14 Jun 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterKonqHistory.cs
+   M /trunk/beagle/Util/KonqHistoryUtil.cs
+   M /trunk/beagle/beagled/KonqHistoryQueryable/KonqQueryable.cs
+
+Add support for KDE4 konqueror history.
+* The cache files are now stored gzipped.
+* Change of format of the gunzipped file, now the HTTP response header is also stored in the cached file.
+
+------------------------------------------------------------------------
+r4785 | dbera | 2008-06-14 16:53:17 -0400 (Sat, 14 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneCommon.cs
+
+Fix a bug I introduced in refcounting IndexReaders. Remove the MarkClose and MarkNoClose methods and instead do it directly using the Refcount; this is easier to understand.
+
+------------------------------------------------------------------------
+r4784 | dbera | 2008-06-14 07:07:05 -0400 (Sat, 14 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+
+Explicitly inform the user if too many results were found. It would be better if somehow we could also display a suggestion to "narrow your search scope".
+
+------------------------------------------------------------------------
+r4783 | claudep | 2008-06-14 06:20:11 -0400 (Sat, 14 Jun 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/fr.po
+
+2008-06-14  Claude Paroz  <claude@2xlibre.net>
+
+	* fr.po: Updated French translation.
+------------------------------------------------------------------------
+r4782 | dbera | 2008-06-14 03:57:05 -0400 (Sat, 14 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterDocbook.cs
+
+* FilterDocbook.cs: Extract "keyword"s as properties. Don't add the child-indexable content to the content of the parent. This _might_ break yelp since now matches in child-indexables (docbook entries) will be returned only as child indexables. yelp needs to use the ParentUri if hits have it, otherwise it should use Uri.
+
+------------------------------------------------------------------------
+r4781 | dbera | 2008-06-13 07:24:49 -0400 (Fri, 13 Jun 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+   M /trunk/beagle/Filters/FilterBibTex.cs
+   M /trunk/beagle/Filters/FilterDocbook.cs
+   M /trunk/beagle/Filters/FilterMail.cs
+   M /trunk/beagle/Filters/FilterMonodoc.cs
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/beagle/beagled/IndexHelper/RemoteIndexerExecutor.cs
+
+* Fix our child URIs for the relevant filters. See UriFu comments for our URI format.
+* The above fixes #535020.
+* IndexHelper.cs: Fix running the helper by hand.
+
+------------------------------------------------------------------------
+r4780 | ymarcheg | 2008-06-11 06:56:37 -0400 (Wed, 11 Jun 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/oc.po
+
+Updated Occitan translation
+------------------------------------------------------------------------
+r4779 | dbera | 2008-06-11 01:22:43 -0400 (Wed, 11 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/UnixTransport.cs
+   M /trunk/beagle/Filters/FilterExternal.cs
+   M /trunk/beagle/Filters/FilterSvg.cs
+   M /trunk/beagle/Util/ArrayFu.cs
+   M /trunk/beagle/Util/StringFu.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/HttpTransport.cs
+   M /trunk/beagle/beagled/Server.cs
+
+Remove our temporary implementations of Array.IndexOfTYPE methods. We now use the Array.IndexOf generics method.
+
+------------------------------------------------------------------------
+r4778 | dbera | 2008-06-10 23:15:35 -0400 (Tue, 10 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/DumpIndex.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+
+Incorporate the UriFu API changes.
+
+------------------------------------------------------------------------
+r4777 | dbera | 2008-06-10 23:14:28 -0400 (Tue, 10 Jun 2008) | 8 lines
+Changed paths:
+   M /trunk/beagle/Util/UriFu.cs
+
+Cleanup our Uri handling methods.
+
+* Uri.Fragment is treated differently than Uri.Path (based on when to escape and when to not). Make the API explicit if the fragment needs to be escaped.
+
+* Previous UriToEscapedString (which was converted from a legacy code) did some juggling with the scheme, hostname etc. and then merely appended the path and the fragment. This worked since we always create Uris where the path and the fragment are escaped.
+
+Now, instead of duplicating efforts, we either return the original string used to create the already escaped Uri or we use the AbsoluteUri (which is more correct than uri.ToString()). For our path Uris, we really want the string we used to create the path-uri, so that works as before. For the rest, AbsoluteUri makes sure the Uri is already escaped which is what the earlier method would have done.
+
+------------------------------------------------------------------------
+r4776 | dbera | 2008-06-07 01:33:08 -0400 (Sat, 07 Jun 2008) | 8 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/RemovableIndexControl.cs
+   M /trunk/beagle/beagled/BuildIndex.cs
+   M /trunk/beagle/beagled/FileAttributesStore.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/RemoteControlExecutors.cs
+   M /trunk/beagle/beagled/RemovableIndexTool.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+
+Implement indexing of removable sources.
+* RemovableIndexControl.cs: Change API to pass locations of both the index directory and the mount point.
+* FileAttributesStore.cs: Add methods to perform IsUpToDate...() against a supplied datetime instead of the last_mtime stored for the file.
+* QueryDriver.cs: Move static index loading to StaticQueryable.cs and update for the API changes.
+* StaticQueryable.cs: This can now create both normal static indexes and removable static indexes (which is similar to the usual index except takes an additional mount dir). Modify GetSnippet to deal with self-cached yet removable:// uris in the textcache. Add a HitFilter hook to change hit.Uri from removable:///a/b to file:///path/to/mount/dir/a/b
+* RemovableIndexTool.cs: Minor changes.
+* BuildIndex.cs: Add a "--removable" option which will create a removable index. The only difference is all Uris will be relative to the mount dir (which is the first <path> directory). Use Hal and other heuristics to obtain a "volume label" for the removable source and use it as Uri.Host (this value is not used currently but could be useful later). Tweak some methods since now it is dealing with two Uris, one fake removable:/// and one real file:///...
+
+------------------------------------------------------------------------
+r4775 | dbera | 2008-06-02 19:15:10 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Snippet.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/HttpTransport.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/NetworkServicesQueryable.cs
+   M /trunk/beagle/beagled/Server.cs
+
+Flush some pending changes with respect to snippets from remote beagled. But nevertheless, this whole HTTP as a substitute of UnixSocket is the gateway to disaster. The remote server sometimes just stops responding to incoming HTTP requests and even though the sender has a timeout set, the timeout never happens. Basically, the whole querying over HTTP is not gonna work. Still, retrieving snippets was the last missing piece, so the network backend is now done.
+
+------------------------------------------------------------------------
+r4774 | dbera | 2008-06-02 16:32:50 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+
+Add a debughook for lucenecommon static data. This will help in finding if we are leaking Lucene IndexReaders.
+
+------------------------------------------------------------------------
+r4773 | dbera | 2008-06-02 10:12:35 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterSpreadsheet.cs
+   M /trunk/beagle/Util/SafeProcess.cs
+
+Since gnumeric svn r15294, ssindex writes the first two diagnostic lines when run as "ssindex -i" to stderr instead of stdout. As a result, ssindex based spreadsheet filter broke in Dec-06 !!!
+
+------------------------------------------------------------------------
+r4772 | dbera | 2008-06-02 07:34:58 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/SemWeb/README.txt
+
+Update README.txt from SemWeb.
+
+------------------------------------------------------------------------
+r4771 | dbera | 2008-06-02 07:30:11 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+
+Add SemWeb/AssemblyInfo.cs to the tarball but not build it.
+
+------------------------------------------------------------------------
+r4770 | dbera | 2008-06-02 07:28:03 -0400 (Mon, 02 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/COPYING
+   M /trunk/beagle/Util/SemWeb/AssemblyInfo.cs
+   M /trunk/beagle/Util/SemWeb/Euler.cs
+   M /trunk/beagle/Util/SemWeb/GraphMatch.cs
+   M /trunk/beagle/Util/SemWeb/Inference.cs
+   M /trunk/beagle/Util/SemWeb/Interfaces.cs
+   M /trunk/beagle/Util/SemWeb/N3Reader.cs
+   M /trunk/beagle/Util/SemWeb/N3Writer.cs
+   M /trunk/beagle/Util/SemWeb/Query.cs
+   D /trunk/beagle/Util/SemWeb/README
+   A /trunk/beagle/Util/SemWeb/README.txt (from /trunk/beagle/Util/SemWeb/README:4763)
+   M /trunk/beagle/Util/SemWeb/RdfReader.cs
+   M /trunk/beagle/Util/SemWeb/RdfXmlReader.cs
+   M /trunk/beagle/Util/SemWeb/Resource.cs
+   M /trunk/beagle/Util/SemWeb/SQLStore.cs
+   M /trunk/beagle/Util/SemWeb/SparqlClient.cs
+   M /trunk/beagle/Util/SemWeb/SpecialRelations.cs
+   M /trunk/beagle/Util/SemWeb/Store.cs
+   M /trunk/beagle/Util/SemWeb/UriMap.cs
+   M /trunk/beagle/Util/SemWeb/Util.cs
+   D /trunk/beagle/Util/SemWeb/upstream-change-01.diff
+   D /trunk/beagle/Util/SemWeb/upstream-change-02.diff
+   A /trunk/beagle/Util/SemWeb/upstream-change.diff
+
+Update SemWeb. Make a note that we are incorporating SemWeb under the GPLv3 license. Merge the upstream changes into a single file.
+
+------------------------------------------------------------------------
+r4769 | dbera | 2008-06-01 17:10:32 -0400 (Sun, 01 Jun 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+
+Instead of checking for sqlite3.pc, which we don't really need, look for the library libsqlite3 which is what we actually need. One less dependency!
+
+------------------------------------------------------------------------
+r4768 | dbera | 2008-06-01 16:36:18 -0400 (Sun, 01 Jun 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Filters/Makefile.am
+   M /trunk/beagle/configure.in
+
+Hard dependency added: taglib-sharp-2.x.
+ - Every (major?) distribution now has packages for taglib-sharp. Save some trouble by not including it anymore.
+
+------------------------------------------------------------------------
+r4767 | dbera | 2008-06-01 10:37:19 -0400 (Sun, 01 Jun 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/conf-data/Makefile.am
+   A /trunk/beagle/conf-data/crawl-rules/crawl-executables
+   M /trunk/beagle/tools/beagle-crawl-system.in
+
+Add a crawl-executables for indexing the file names, extensions of /usr/bin, /usr/local/bin etc., keep it disabled by default.
+Allow users to list the system indexes by /etc/beagle-crawl-system --list.
+Allow users to update only a particular index by /etc/beagle-crawl-system crawl-monodoc
+
+------------------------------------------------------------------------
+r4766 | dbera | 2008-05-31 23:28:24 -0400 (Sat, 31 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+
+r2417 had partly negated the performance boost added in r2215 by allowing the search methods to call ReleaseReader. This essentially led to the creation of a new IndexReader almost everytime. Now we ensure that we have 1 IndexReader open at all times. Add a special method to even remove that 1 always-open IndexReader and use that from StaticQueryable to unload removable indexes.
+
+------------------------------------------------------------------------
+r4765 | dbera | 2008-05-31 19:25:07 -0400 (Sat, 31 May 2008) | 10 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/AssemblyInfo.cs
+   M /trunk/beagle/BeagleClient/Makefile.am
+   A /trunk/beagle/BeagleClient/RemovableIndexControl.cs
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   M /trunk/beagle/beagled/FileAttributesStore.cs
+   M /trunk/beagle/beagled/FileAttributesStore_ExtendedAttribute.cs
+   M /trunk/beagle/beagled/FileAttributesStore_Mixed.cs
+   M /trunk/beagle/beagled/FileAttributesStore_Sqlite.cs
+   M /trunk/beagle/beagled/IFileAttributesStore.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/RemoteControlExecutors.cs
+   A /trunk/beagle/beagled/RemovableIndexTool.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+Initial support for removable index:
+* Add infrastructure for unloading a staticqueryable. Unloading a static queryable means
+ 1. Remove it from QueryDriver's list
+ 2. Close text-cache connection, fileattributestore_sqlite connection
+ 3. Close lucene.net.store.{primary, secondary}directory
+* Add BeagleClient API to mount/unmount a removable index by giving its path
+* Add a simple tool beagle-removable-index with --mount/--unmount <path>
+
+TODO: Create a wrapper around BuildIndex which will support storing paths relative to the mount point and storing indexes in a different location (e.g. to build a catalogue of all CDs).
+
+------------------------------------------------------------------------
+r4764 | dbera | 2008-05-25 12:41:30 -0400 (Sun, 25 May 2008) | 6 lines
+Changed paths:
+   M /trunk/beagle/Util/Scheduler.cs
+
+* Scheduler.cs: Punish misbehaving tasks. Frustrated by the numerous large-log-file complains, allow at most 200 exceptions before a task is automatically cancelled. One part of my brain wants to disallow even a single exception, but ... to keep with existing behaviour I am allowing a large number of exceptions for long running generator tasks. Ration your exceptions.
+
+Show the list of cancelled tasks in beagle-status.
+
+Also deal with task cancellation correctly i.e. DoTaskReal might itself cancel a task so take that into consideration, do not schedule a cancelled task and some other such things.
+
+------------------------------------------------------------------------
+r4763 | dbera | 2008-05-19 22:17:37 -0400 (Mon, 19 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/RDFAdapter/Makefile.am
+
+Add RdfQueryTool.exe to Makefile; generate wrapper beagle-rdf-query. This is a testing tool so it is not installed.
+
+------------------------------------------------------------------------
+r4762 | dbera | 2008-05-19 08:32:05 -0400 (Mon, 19 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+
+Do not show an alert in the firefox extension if .beagle is not found. Instead show the message in the tooltip of the extension icon.
+Fixes debian #463922 (the extension will _not_ create the directory if it does not exist, so this is as far as the extension will go if the directory is not found), bnc #385513.
+
+------------------------------------------------------------------------
+r4761 | dbera | 2008-05-18 13:12:18 -0400 (Sun, 18 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/OperaHistory.cs
+
+Fix #533529. Fix parsing of the opera cache file according to the format at http://www.opera.com/docs/fileformats/. Two major fixes - most integers are uint32 and stored in Big-Endian format and in case of parsing error, be conservative and skip records to avoid any kind of looping.
+
+------------------------------------------------------------------------
+r4760 | dbera | 2008-05-18 10:06:20 -0400 (Sun, 18 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+
+Add a property archive:type to denote if the child indexable is from a zip/targz/tarbz2/tar/gzip/bz2 archive. Most flag properties (like fixme:inside_archive=true) will be replaced during Property Hack Week by checking if a mandatory property exists (e.g. archive:type).
+
+------------------------------------------------------------------------
+r4759 | dbera | 2008-05-18 02:09:11 -0400 (Sun, 18 May 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/RDFAdapter/RdfQueryTool.cs (from /trunk/beagle/tools/RdfQueryTool.cs:4754)
+   D /trunk/beagle/tools/RdfQueryTool.cs
+
+Move the RdfQueryTool to RDFAdapter/ and add instructions for building it and running it.
+
+------------------------------------------------------------------------
+r4758 | dbera | 2008-05-18 02:04:15 -0400 (Sun, 18 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterBibTex.cs
+
+Extract links from bibtex files.
+
+------------------------------------------------------------------------
+r4757 | dbera | 2008-05-18 01:54:29 -0400 (Sun, 18 May 2008) | 9 lines
+Changed paths:
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/StaticQueryable.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+Finish the remaining work wrt extracted-links for rdf. Specifically,
+* Add an unstored field "TextLinks" in the primary-index which is a whitespace separated list of all extracted links.
+* Store the actual links in the textcache.
+* The reason for not storing the links in the index itself is, the links are extracted when the "Text" field is getting added to the index. Lucene makes it impossible to add a stored field whose content is dynamic.
+* This textcache-index shuffling requires us to use the text-cache when dealing with "TextLinks" predicate. So expose the TextCache in LuceneQueryable and pass it to the rdf query function. This is because static queryables handle their own textcache.
+* Rest is a continuation of creating virtual TextLinks properties for a Hit as and when needed. This is expensive and adds a necessary but costly step to rdf overlaying.
+
+In short, if you are asking for all properties for all documents, watch out for smoke coming out of your computer.
+
+------------------------------------------------------------------------
+r4756 | dbera | 2008-05-18 01:43:41 -0400 (Sun, 18 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterBibTex.cs
+
+Print a simple message instead of an elaborate exception is bibparse is not found. Ideally, this check should only be done if some bibtex file is going to be indexed; for the time being check always resulting in a warning at the beginning of beagle-extract-content :(.
+
+------------------------------------------------------------------------
+r4755 | dbera | 2008-05-17 22:46:42 -0400 (Sat, 17 May 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Indexable.cs
+   M /trunk/beagle/Filters/FilterHtml.cs
+   M /trunk/beagle/Filters/FilterMail.cs
+   M /trunk/beagle/beagled/ExtractContent.cs
+   M /trunk/beagle/beagled/Filter.cs
+   M /trunk/beagle/beagled/FilterFactory.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/LuceneIndexingDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+   M /trunk/beagle/beagled/NoiseFilter.cs
+   M /trunk/beagle/beagled/TextCache.cs
+   M /trunk/beagle/configure.in
+
+Merge the links-extraction feature from the rdf branch. Builds with and without ENABLE_RDF_ADAPTER. TODO for the links feature:
+- store the links in the index (do we need to ?)
+- create virtual RDF property for the links metadata
+
+------------------------------------------------------------------------
+r4754 | dbera | 2008-05-13 19:57:30 -0400 (Tue, 13 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Config.cs
+
+Catch exceptions due to corrupt config files. Fixes #532308.
+
+------------------------------------------------------------------------
+r4753 | lferrett | 2008-05-12 16:52:54 -0400 (Mon, 12 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/it.po
+
+2008-05-12  Luca Ferretti  <elle.uca@libero.it>
+
+	* it.po: Updated Italian translation by Gianvito Cavasoli.
+------------------------------------------------------------------------
+r4752 | dbera | 2008-05-10 21:50:48 -0400 (Sat, 10 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/AssemblyInfo.cs
+   A /trunk/beagle/Filters/FilterBibTex.cs
+   M /trunk/beagle/Filters/Makefile.am
+
+Add a BibTex filter based on the command line program 'bibparse' from the btparse package. Most distributions I checked ship this program.
+
+------------------------------------------------------------------------
+r4751 | dbera | 2008-05-10 21:49:31 -0400 (Sat, 10 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/ExtractContent.cs
+
+Fix extract-content to work with the fixed FilterFactory.FilterIndexable.
+
+------------------------------------------------------------------------
+r4750 | dbera | 2008-05-10 12:44:17 -0400 (Sat, 10 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/camel.cs
+
+* Util/camel.cs: Throw IOException if camel believes end of file is reached. Later if IOException is caught, then stop further parsing of the summary file. For other exceptions, as before parsing continues for the next header. If end of file is reached (due to currupted file or whatever), then there is no point in trying to parse the summary for next headers.
+
+------------------------------------------------------------------------
+r4749 | kelemeng | 2008-05-09 08:30:44 -0400 (Fri, 09 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/hu.po
+
+2008-05-09  Gabor Kelemen  <kelemeng@gnome.org>
+
+	* hu.po: Translation updated.
+------------------------------------------------------------------------
+r4748 | dbera | 2008-05-06 11:42:43 -0400 (Tue, 06 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionDataServerQueryable/CalContainer.cs
+
+Use the correct protocol for evolution-tasks "task:///...". Fixes #530624.
+NOTE: evolution on this machine does not open tasks from command line unless it is already opened in the tasks component. It works for calendar items. This is an evolution bug.
+
+------------------------------------------------------------------------
+r4746 | dbera | 2008-05-05 21:04:42 -0400 (Mon, 05 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/xemail-net/README
+
+Add pointer to xemail-net homepage and mention the license in the README. Make meebay somewhat happy.
+
+------------------------------------------------------------------------
+r4745 | dbera | 2008-05-04 17:01:42 -0400 (Sun, 04 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Util/SemWeb/Store.cs
+   M /trunk/beagle/beagled/BeagleDaemon.cs
+
+* BeagleDaemon.cs: Add --mono-debug to beagled --help options.
+* Store.cs: Fix building without --enable-rdf-adapter
+
+------------------------------------------------------------------------
+r4744 | dbera | 2008-05-02 20:15:27 -0400 (Fri, 02 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/beagled/GoogleBackends/GMailSearchDriver.cs
+   M /trunk/beagle/beagled/LocateQueryable/LocateDriver.cs
+   M /trunk/beagle/beagled/Makefile.am
+
+RDF Adapter merge #4: Fix build with --enable-rdf-adapter.
+
+------------------------------------------------------------------------
+r4743 | dbera | 2008-05-02 20:02:00 -0400 (Fri, 02 May 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/AssemblyInfo.cs
+   M /trunk/beagle/BeagleClient/Property.cs
+   M /trunk/beagle/BeagleClient/Query.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/beagled/AssemblyInfo.cs
+   M /trunk/beagle/beagled/DumpIndex.cs
+   M /trunk/beagle/beagled/ExternalMetadataQueryable.cs
+   M /trunk/beagle/beagled/IQueryable.cs
+   M /trunk/beagle/beagled/LuceneCommon.cs
+   M /trunk/beagle/beagled/LuceneQueryable.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/NetworkServicesQueryable/NetworkServicesQueryable.cs
+   M /trunk/beagle/beagled/QueryDriver.cs
+   M /trunk/beagle/beagled/QueryExecutor.cs
+   M /trunk/beagle/beagled/Queryable.cs
+
+RDF Adapter merge #3: Merge the final changes from the RDF branch (except the extract-links patch).
+
+------------------------------------------------------------------------
+r4742 | dbera | 2008-05-02 19:24:30 -0400 (Fri, 02 May 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/AUTHORS
+   M /trunk/beagle/COPYING
+   M /trunk/beagle/Makefile.am
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/SemWeb/Algos.cs
+   M /trunk/beagle/Util/SemWeb/AssemblyInfo.cs
+   A /trunk/beagle/Util/SemWeb/Euler.cs (from /branches/beagle-rdf/Util/SemWeb/Euler.cs:4591)
+   A /trunk/beagle/Util/SemWeb/GraphMatch.cs (from /branches/beagle-rdf/Util/SemWeb/GraphMatch.cs:4591)
+   M /trunk/beagle/Util/SemWeb/Inference.cs
+   A /trunk/beagle/Util/SemWeb/Interfaces.cs (from /branches/beagle-rdf/Util/SemWeb/Interfaces.cs:4591)
+   M /trunk/beagle/Util/SemWeb/LiteralFilters.cs
+   M /trunk/beagle/Util/SemWeb/MemoryStore.cs
+   M /trunk/beagle/Util/SemWeb/N3Reader.cs
+   M /trunk/beagle/Util/SemWeb/N3Writer.cs
+   M /trunk/beagle/Util/SemWeb/NamespaceManager.cs
+   M /trunk/beagle/Util/SemWeb/Query.cs
+   M /trunk/beagle/Util/SemWeb/RDFS.cs
+   D /trunk/beagle/Util/SemWeb/RSquary.cs
+   M /trunk/beagle/Util/SemWeb/RdfReader.cs
+   M /trunk/beagle/Util/SemWeb/RdfWriter.cs
+   M /trunk/beagle/Util/SemWeb/RdfXmlReader.cs
+   M /trunk/beagle/Util/SemWeb/RdfXmlWriter.cs
+   D /trunk/beagle/Util/SemWeb/Remote.cs
+   M /trunk/beagle/Util/SemWeb/Resource.cs
+   M /trunk/beagle/Util/SemWeb/SQLStore.cs
+   A /trunk/beagle/Util/SemWeb/SparqlClient.cs (from /branches/beagle-rdf/Util/SemWeb/SparqlClient.cs:4591)
+   A /trunk/beagle/Util/SemWeb/SpecialRelations.cs (from /branches/beagle-rdf/Util/SemWeb/SpecialRelations.cs:4591)
+   M /trunk/beagle/Util/SemWeb/Statement.cs
+   M /trunk/beagle/Util/SemWeb/Store.cs
+   M /trunk/beagle/Util/SemWeb/Util.cs
+   A /trunk/beagle/Util/SemWeb/upstream-change-02.diff
+   M /trunk/beagle/configure.in
+   A /trunk/beagle/tools/RdfQueryTool.cs (from /branches/beagle-rdf/tools/RdfQueryTool.cs:4585)
+
+RDF Adapter merge #2: Merge new files, add updates to SemWeb and build switches.
+RDF Adapter can be enabled with ./configure --enable-rdf-adapter, by default disabled. --enable-rdf-adapter does not quite build yet, some more changes have to be merged.
+
+------------------------------------------------------------------------
+r4741 | dbera | 2008-05-02 18:12:55 -0400 (Fri, 02 May 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/RDFAdapter (from /branches/beagle-rdf/RDFAdapter:4740)
+
+Begin merging of RDF branch. Merge beagle/RDFAdapter directory.
+
+------------------------------------------------------------------------
+r4740 | dbera | 2008-04-30 21:11:53 -0400 (Wed, 30 Apr 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/Util/KdeUtils.cs
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/tools/Makefile.am
+   M /trunk/beagle/tools/SettingsQt.cs
+   M /trunk/beagle/tools/beagle-settings-qt.ui
+
+Add the google backend related options to beagle-settings-qt.
+* KdeUtils.cs: Fix a bug during storing passwords in kdewallet.
+* beagle/tools/beagle-settings-qt.ui, beagle/tools/SettingsQt.cs, beagle/tools/Makefile.am: Add google backend specific options. Disable the whole tab when build without google backend support.
+* configure.in: Some distributions do not ship qyoto.pc; fallback on checking presence of qt-dotnet.dll. This should cover most of the mainline distros.
+
+------------------------------------------------------------------------
+r4739 | nirbheekc | 2008-04-29 20:19:16 -0400 (Tue, 29 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/help.html
+
+Update webinterface help to include help on opening search results in epiphany.
+
+------------------------------------------------------------------------
+r4738 | dbera | 2008-04-28 13:03:37 -0400 (Mon, 28 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/EvolutionMailQueryable/EvolutionMailIndexableGenerator.cs
+   M /trunk/beagle/beagled/EvolutionMailQueryable/EvolutionMailQueryable.cs
+
+Update Evolution backend for the new Evolution-Sharp API. Fixes bgo #526685.
+
+------------------------------------------------------------------------
+r4737 | jorgegonz | 2008-04-27 15:10:17 -0400 (Sun, 27 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4736 | kelemeng | 2008-04-26 15:05:26 -0400 (Sat, 26 Apr 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/hu.po
+
+2008-04-26  Gabor Kelemen  <kelemeng@gnome.org>
+
+	* hu.po: Translation updated.
+------------------------------------------------------------------------
+r4735 | dbera | 2008-04-26 12:48:53 -0400 (Sat, 26 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Fix regression. Default query domain is local + system. QueryDomain.System got removed when I enabled the query domain menu in beagle-search.
+
+------------------------------------------------------------------------
+r4734 | dbera | 2008-04-25 19:37:15 -0400 (Fri, 25 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
+
+Focus the search entry is there are no results initially. Fixes #529540.
+
+------------------------------------------------------------------------
+r4731 | dbera | 2008-04-24 12:11:45 -0400 (Thu, 24 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/configure.in
+
+Urgent release - 0.3.7 - fixing the beagled hang.
+
+------------------------------------------------------------------------
 r4730 | dbera | 2008-04-22 17:38:25 -0400 (Tue, 22 Apr 2008) | 2 lines
 Changed paths:
    M /trunk/beagle/beagled/BeagleDaemon.cs
