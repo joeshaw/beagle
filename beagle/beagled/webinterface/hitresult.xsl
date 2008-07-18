@@ -54,7 +54,8 @@
 					    <i>Attachment&nbsp;</i>
 					</xsl:when>
 				</xsl:choose>
-				<a target="_blank" href="{@Uri}">
+				<xsl:variable name="mimetype"><xsl:value-of select="Properties/Property[@Key='beagle:MimeType']/@Value"/></xsl:variable>
+				<a target="_blank" href="{@Uri}" onClick="return open_hit('{@Uri}', '{$mimetype}');">
 					<xsl:call-template name="Uri"/>
 				</a>
 			</span>

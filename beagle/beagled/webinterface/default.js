@@ -710,6 +710,14 @@ function toggle_category (category)
 	}
 }
 
+// Special function to handle opening of hits.
+// Override this function with your own.
+function open_hit (uri, mimetype)
+{
+	// Do nothing for now. Use the default click handler.
+	return true;
+}
+
 /******* Add to bookmark *******************************************/
 
 function bookmark_query ()
