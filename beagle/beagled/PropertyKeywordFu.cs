@@ -37,12 +37,9 @@ using Beagle.Util;
 
 namespace Beagle.Daemon {
 
-	public class PropertyKeywordFu {
+	public static class PropertyKeywordFu {
 		// mapping
 		private static Hashtable property_table;
-
-		// static class
-		private PropertyKeywordFu () { }
 
 		public static IEnumerable Keys {
 			get { return property_table.Keys; }

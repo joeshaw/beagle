@@ -29,14 +29,11 @@ using System.Collections;
 using System.Text.RegularExpressions;
 
 using Beagle.Util;
-using FSQ=Beagle.Daemon.FileSystemQueryable;
 
 namespace Beagle.Daemon {
 
-	public class QueryStringParser {
+	public static class QueryStringParser {
 		
-		private QueryStringParser () { } // a static class
-
 		private static Regex query_string_regex;
 		private static Regex extension_re;
 
@@ -52,11 +49,11 @@ namespace Beagle.Daemon {
 				(		# Query Text
 				 (\"([^\"]*)\"?)#  quoted
 				 |		#  or
-				 ([^\s\"]+)	#  unquoted
+				 (([^\s\"]+)(\"([^\"]*)\"?)?) # unquoted followed by optional quoted
 				)
 				";
 			 */
-			string Pattern = "(?<pm>[+-]?) ( (?<key>\\w+) :)? ( (\"(?<quote>[^\"]*)\"?) | (?<unquote>[^\\s\"]+) )";
+			string Pattern = "(?<pm>[+-]?) ( (?<key>\\w+) :)? ( (\"(?<quote>[^\"]*)\"?) | ((?<midquote1>[^\\s\"]+) (\"(?<midquote2>[^\"]*)\"?)?) )";
 	
 			query_string_regex = new Regex (Pattern, RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
@@ -91,7 +88,7 @@ namespace Beagle.Daemon {
 				// ahead to the next part.
 				if ( next.Success
 				    && (next.Groups ["key"].ToString () == "")
-				    && (next.Groups ["unquote"].ToString ().ToUpper () == "OR") ) {
+				    && (next.Groups ["midquote1"].ToString ().ToUpper () == "OR") ) {
 
 					if (or_list == null) {
 						or_list = new ArrayList ();
@@ -159,13 +156,13 @@ namespace Beagle.Daemon {
 			// m.Groups["pm"]	plus or minus sign 
 			// m.Groups["key"]	keyname
 			// m.Groups["quote"]	quoted string
-			// m.Groups["unquote"]	unquoted string
+			// m.Groups["midquote1"] + m.Groups["midquote2"] quoted midway string also represents unquoted string
 			
 			string query = m.ToString ();
-			string unquote = m.Groups["unquote"].ToString ();
-			string text = m.Groups ["quote"].ToString () + m.Groups ["unquote"].ToString ();	// only one of both is set.
+			// Either quote is set or midquote1 and (optionally) midquote2 is set
+			string text = m.Groups ["quote"].ToString () + m.Groups ["midquote1"].ToString () + m.Groups ["midquote2"].ToString ();
 			string key = m.Groups ["key"].ToString ();
-			
+
 			bool IsProhibited = (m.Groups ["pm"].ToString () == "-");
 				
 
@@ -424,6 +421,24 @@ namespace Beagle.Daemon {
 
 			return dt_query;
 		}
+
+#if false
+// gmcs QueryStringParser.cs -r:../Util/Util.dll -r:../BeagleClient/Beagle.dll PropertyKeywordFu.cs
+		public static void Main ()
+		{
+			PropertyKeywordFu.ReadKeywordMappings ();
+
+			while (true) {
+				string input = Console.ReadLine ();
+				if (input == String.Empty)
+					continue;
+
+				Console.WriteLine ("Parsing query string '{0}'", input);
+				foreach (QueryPart part in Parse (input))
+					Console.WriteLine (part.ToString ());
+			}
+		}
+#endif
 	}
 }
 
