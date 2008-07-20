@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-11 17:16+0000\n"
-"PO-Revision-Date: 2008-07-13 19:58+0200\n"
+"POT-Creation-Date: 2008-07-14 19:52+0000\n"
+"PO-Revision-Date: 2008-07-20 14:29+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -246,8 +246,8 @@ msgid ""
 "Specify the extension to search among files with that extension. ex: <b>bean "
 "soup .html</b>"
 msgstr ""
-"Especifique la extensión que buscar entre los archivos con esa extensión. Ej: <b>sopa "
-"de fideos.html</b>"
+"Especifique la extensión que buscar entre los archivos con esa extensión. "
+"Ej: <b>sopa de fideos.html</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:20
 #: ../search/Beagle.Search/UIManager.cs:106
@@ -396,7 +396,7 @@ msgstr[1] "Contiene {0} elementos"
 msgid "IM Conversation"
 msgstr "Conversación MI"
 
-#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:33
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Nombre:"
 
@@ -671,7 +671,9 @@ msgstr "La sesión de D-Bus no está accesible"
 
 #: ../search/Beagle.Search/Driver.cs:136
 msgid "Cannot run with parameter '--icon' when session D-Bus is not accessible."
-msgstr "No se puede ejecutar con el parámetro «--icon» cuando la sesión D-Bus no está accesible."
+msgstr ""
+"No se puede ejecutar con el parámetro «--icon» cuando la sesión D-Bus no está "
+"accesible."
 
 #: ../search/Beagle.Search/NotificationArea.cs:63
 msgid "Hide"
@@ -1043,7 +1045,7 @@ msgstr "Dirección"
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1317 ../tools/settings.glade.h:35
+#: ../tools/Settings.cs:1317 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Ruta:"
 
@@ -1226,52 +1228,56 @@ msgid "<b>General</b>"
 msgstr "<b>General</b>"
 
 #: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>Fuentes local y del sistema</b>"
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
 msgstr "<b>Red</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:8
 msgid "<b>Privacy</b>"
 msgstr "<b>Privacidad</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:9
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Seleccione la carpeta de correo</b>"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
 msgid "<b>User Interface</b>"
 msgstr "<b>Interfaz de usuario</b>"
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:11
 msgid "<i>Changes will take effect only after daemon restart.</i>"
 msgstr "<i>Los cambios tendrán efecto sólo después de reiniciar el demonio.</i>"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "<i>This setting does not apply while on battery power.</i>"
 msgstr "<i>Este ajuste no se aplica cuando se esté funcionando con la batería.</i>"
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:13
 msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Se necesita contraseña.</span>"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:14
 msgid "Add Remote Host"
 msgstr "Añadir equipo remoto"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
 msgid "Add a static host"
 msgstr "Añadir un equipo estático"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:16
 msgid "Add any additional paths to be included for indexing."
 msgstr "Añadir cualquier ruta adicional para incluirla en la inexación."
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:17
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
 "Añadir cualquier equipo remoto que tenga la búsqueda activada con el que "
 "quiera interconectarse."
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1279,49 +1285,49 @@ msgstr ""
 "Configurar qué tipos de resultados deberían ser visibles, y en qué orden "
 "deberían presentarse al agruparlos por tipo."
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:19
 msgid "Allow external access to local search services (EXPERIMENTAL)"
 msgstr "Permitir acceso externo a los servicios de búsqueda locales (EXPERIMENTAL)"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr ""
 "Empezar a buscar _automáticamente después de que el usuario haya terminado "
 "de teclear"
-
-#: ../tools/settings.glade.h:20
-msgid "Backends"
-msgstr "Backends"
 
 #: ../tools/settings.glade.h:21
 msgid "Change"
 msgstr "Cambiar"
 
 #: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Fuentes de datos"
+
+#: ../tools/settings.glade.h:23
 msgid "Display the search window by pressing"
 msgstr "Mostrar la ventana de búsqueda al presionar"
 
-#: ../tools/settings.glade.h:23
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr "Activar las fuentes de datos que quiera indexar y buscar."
+
+#: ../tools/settings.glade.h:25
 msgid "Enable web interface for local search service"
 msgstr "Activar la interfaz web para el servicio local de búsqueda"
 
-#: ../tools/settings.glade.h:24
-msgid "Enable/Disable backends from the indexing and searching process."
-msgstr "Activar/desactivar los «backends» de los procesos de indexado y búsqueda."
-
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "Excluir recurso"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "_Patrón de nombre de archivo"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "_Indexar mi directorio personal"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid ""
 "In order for you to perform Beagle searches on this computer, you must enter "
 "a password."
@@ -1329,59 +1335,59 @@ msgstr ""
 "Para poder realizar búsquedas con Beagle en este equipo, debe introducir una "
 "contraseña."
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Index data while on _battery power"
 msgstr "Indexar datos cuando se esté funcionando con _baterías"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid "Index more aggressively while the s_creensaver is activated"
 msgstr "Indexar más agresivamente mientras el _salvapantallas está activado"
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Index name:"
 msgstr "Nombre del índice:"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "Indexación"
 
-#: ../tools/settings.glade.h:34
-msgid "Networking"
-msgstr "Red"
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Opciones de red"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "Password for {0}"
 msgstr "Contraseña para {0}"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "Password:"
 msgstr "Contraseña:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Seleccione un recurso que desee excluir de la indexación."
 
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Seleccione la carpeta de correo que desee excluir de la indexación. "
 
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:41
 msgid "Require a password to search this computer remotely"
 msgstr "Pedir contraseña para buscar en este equipo de forma remota"
 
-#: ../tools/settings.glade.h:41
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "Preferencias de búsqueda"
 
-#: ../tools/settings.glade.h:42
+#: ../tools/settings.glade.h:43
 msgid "Searching"
 msgstr "Buscando"
 
-#: ../tools/settings.glade.h:43
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "Seleccione la carpeta de correo"
 
-#: ../tools/settings.glade.h:44
+#: ../tools/settings.glade.h:45
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1389,39 +1395,39 @@ msgstr ""
 "Especifique cualquier recurso, como rutas, patrones, carpetas de correo ó "
 "tipos de objetos que desea excluir del índice."
 
-#: ../tools/settings.glade.h:45
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "Tipo:"
 
-#: ../tools/settings.glade.h:46
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
 msgstr "_Permitir a Beagle ejecutarse como root"
 
-#: ../tools/settings.glade.h:47
+#: ../tools/settings.glade.h:48
 msgid "_Browse..."
 msgstr "_Examinar…"
 
-#: ../tools/settings.glade.h:48
+#: ../tools/settings.glade.h:49
 msgid "_Choose from currently available hosts"
 msgstr "_Elija uno de los equipos actualmente disponibles"
 
-#: ../tools/settings.glade.h:49
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "_Ruta a la carpeta"
 
-#: ../tools/settings.glade.h:50
+#: ../tools/settings.glade.h:51
 msgid "_Hostname:"
 msgstr "Nombre del _equipo:"
 
-#: ../tools/settings.glade.h:51
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "Carpeta de _correo"
 
-#: ../tools/settings.glade.h:52
+#: ../tools/settings.glade.h:53
 msgid "_Password:"
 msgstr "_Contraseña:"
 
-#: ../tools/settings.glade.h:53
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "_Iniciar los servicios de búsqueda e indexación automáticamente"
 
