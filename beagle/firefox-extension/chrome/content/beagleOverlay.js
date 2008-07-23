@@ -254,12 +254,19 @@ var beagle = {
     {
 
         var prefObject = this.pref.load();
-        
+
+	// Don't index any of the custom URLs; only http[s]:// is good for browsing history
+	if (page.location.protocol != "http:" && page.location.protocol != "https:")
+	{
+	    return false;
+	}
+
         //check https
         if (page.location.protocol == "https:" && !prefObject['beagle.security.active'])
         {
             return false;
         }
+
         var lists = ['beagle.exclude.list','beagle.include.list'];
         var flags = [false,false];
         for(var j = 0; j < 2; j++)
@@ -427,10 +434,6 @@ var beagle = {
 
 	// Tokenize the url
 	var loc = page.location;
-	if (loc.protocol == "javascript:") {
-		log("skipping javascript..");
-		return;
-	}
 	var url_tokenized = loc.host + " " + loc.port + " " + loc.pathname + " " + loc.hash + " " + loc.search;
 	url_tokenized = url_tokenized.replace(/\./g, " ").replace(/\//g, " ").replace(/&/g, " ").replace (/\+/g, " ").replace (/=/g, " ").replace(/%../g, " ");
 	meta.push("t:beagle:inuri=" + url_tokenized);
