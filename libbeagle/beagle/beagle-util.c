@@ -59,7 +59,7 @@ beagle_util_is_path_on_block_device (const char *path)
 }
 
 const char *
-beagle_util_get_home_dir ()
+beagle_util_get_home_dir (void)
 {
 	const char *beagle_home;
 
@@ -74,7 +74,7 @@ beagle_util_get_home_dir ()
 }
 
 char *
-beagle_util_get_storage_dir ()
+beagle_util_get_storage_dir (void)
 {
 	const char *beagle_home;
 	char *beagle_storage_dir;
@@ -176,7 +176,7 @@ beagle_util_daemon_is_running (void)
 }
 
 char*
-_beagle_util_set_c_locale ()
+_beagle_util_set_c_locale (void)
 {
 	char *old_locale, *saved_locale;
 

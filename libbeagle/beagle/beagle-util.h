@@ -40,8 +40,8 @@ GQuark beagle_error_quark (void);
 
 gboolean beagle_util_is_path_on_block_device (const char *path);
 
-const gchar *beagle_util_get_home_dir ();
-const gchar *beagle_util_get_socket_dir ();
+const gchar *beagle_util_get_home_dir (void);
+const gchar *beagle_util_get_socket_dir (void);
 gchar *beagle_util_get_socket_path (const char *client_name);
 
 gboolean beagle_util_daemon_is_running (void);
