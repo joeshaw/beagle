@@ -6,9 +6,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-07 09:52+0000\n"
-"PO-Revision-Date: 2007-09-05 13:29+0000\n"
-"Last-Translator: Revan <mark125@gmail.com>\n"
+"POT-Creation-Date: 2008-07-14 19:52+0000\n"
+"PO-Revision-Date: 2008-07-25 21:32+0200\n"
+"Last-Translator: Mark Krapivner <mark125@gmail.com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,41 +16,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2007-10-10 15:33+0000\n"
 "X-Generator: Launchpad (build Unknown)\n"
-
-#: ../epiphany-extension/beagle.py.in:157
-#, python-format
-msgid "beagle is indexing %s"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:177
-#, python-format
-msgid "beagle is indexing link %s"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:217
-msgid "Index This Page"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:224
-msgid "Index Link"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:231
-#, fuzzy
-msgid "Reload Config File"
-msgstr "טוען הגדרות מחדש"
-
-#: ../epiphany-extension/beagle.py.in:240
-msgid "Auto Index"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:247
-msgid "Prompt key words when index on demand"
-msgstr ""
-
-#: ../epiphany-extension/beagle.py.in:274
-msgid "Extra keywords to index"
-msgstr ""
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -66,14 +31,872 @@ msgid "Conversations in {0}"
 msgstr "שיחות ב־{0}"
 
 #: ../ImLogViewer/ImLogWindow.cs:111
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "Conversations in {0} ({1})"
-msgstr "שיחות ב־{0}"
+msgstr "שיחות בתוך {0} ({1})"
 
 #: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "שיחות עם {0}"
+
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "על מחשב זה"
+
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "היום"
+
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "אתמול"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, csharp-format
+msgid "Today, {0}"
+msgstr "היום, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "אתמול, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "לפני {0} ימים, {1}"
+msgstr[1] "לפני {0} ימים, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "שעה"
+msgstr[1] "{0} שעות"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "דקה"
+msgstr[1] "{0} דקות"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} בתים"
+msgstr[1] "{0} בתים"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "טען מחדש קובץ הגדרות"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "לא נמצאו תוצאות"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "החיפוש אחר \"{0}\" לא העלה תוצאות"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid ""
+"You should check the spelling of your search words to see if you "
+"accidentally misspelled any words."
+msgstr ""
+"עליך לבדוק את האיות של מילות החיפוש שציינת על מנת לבדוק אם איות של מילה "
+"כלשהי בצורה שגויה."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid ""
+"If you are searching for GMail emails, select \"Global\" Search Domain using "
+"the \"Search\" menu."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"עבור מילים לועזיות, אתה יכול להשתמש באותיות גדולות או קטנות. התייחסות זהה "
+"לשני הסוגים."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+"כדי לחפש ביטוי אופציונלי, השתמש ב-\"OR\". לדוגמה: <b>ג'ורג' OR רינגו</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "כשמחפשים ביטוי, יש להוסיף גרשיים. לדוגמה: <b>\"שם תהיו דרקונים\"</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid ""
+"Specify the extension to search among files with that extension. ex: <b>bean "
+"soup .html</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
+msgid "Quick Tips"
+msgstr "טיפים זריזים"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "לא ניתן להריץ את Beagle כמשתמש על"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid ""
+"For security reasons, Beagle cannot be run as root. You should restart as a "
+"regular user."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+msgid "Search service not running"
+msgstr "שירות החיפוש לא פעיל"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+msgid "Start search service"
+msgstr "התחלת שירות החיפוש"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "קובץ:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "כותרת:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+msgid "Inside File:"
+msgstr "בתוך קובץ:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+msgid "Author:"
+msgstr "מחבר:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "תיאור:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "זמן:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "מיקום:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "שלח דואר"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "דוא\"ל:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "טלפון נייד:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "טלפון בעבודה:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "טלפון בבית:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+msgid "Reveal in Folder"
+msgstr "הצגה בתוך התיקייה:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+msgid "E-Mail"
+msgstr "דוא‏\"ל"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:38
+msgid "Move to Trash"
+msgstr "העבר לאשפה"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+msgid "Last Edited:"
+msgstr "נערך לאחרונה:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+msgid "Full Path:"
+msgstr "נתיב מלא:"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:31
+msgid "Empty"
+msgstr "ריק"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "מכיל פריט אחד"
+msgstr[1] "מכיל {0} פריטים"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "שיחה בתוכנת מסרים מיידיים"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
+msgid "Name:"
+msgstr "שם:‏"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Received:"
+msgstr "תאריך קבלה:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "מצב:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "לא פעיל"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "רחוק"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "מנותק"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "זמין"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "קבע כטפט"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "תוויות:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "השתנה:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "הערה:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "תצריף דוא\"ל"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "מצא הודעות מהשולח"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(ללא שם)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "שלך בדואר"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "נושא:‏"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "אל:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "מאת:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "תאריך שליחה:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "תיקייה:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "עמוד הדרכה"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "פתח באמצעות"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} שקופית"
+msgstr[1] "{0} שקופיות"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "אתר:"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "תאריך צפייה:"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "תאריך:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} עמוד"
+msgstr[1] "{0} עמודים"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
+msgid "Open"
+msgstr "פתח"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
+msgid "Applications"
+msgstr "יישומים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
+msgid "Contacts"
+msgstr "אנשי קשר"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
+msgid "Calendar Events"
+msgstr "אירוע יומן"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "תיקיות"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "תמונות"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "קול"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "וידאו"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
+msgid "Documents"
+msgstr "מסמכים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "שיחות"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
+msgid "Websites"
+msgstr "אתרי אינטרנט"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
+msgid "News Feeds"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
+msgid "Archives"
+msgstr "ארכיונים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "מחר"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "לפני שבוע {0}"
+msgstr[1] "לפני {0} שבועות"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "בעוד שבוע {0}"
+msgstr[1] "בעוד {0} שבועות"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "לפני חודש {0}"
+msgstr[1] "לפני {0} חודשים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "בעוד חודש {0}"
+msgstr[1] "בעוד {0} חודשים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "לפני שנה {0}"
+msgstr[1] "לפני {0} שנים"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "בעוד שנה {0}"
+msgstr[1] "בעוד {0} שנים"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "כתובת אינטרנט (URL):"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "תאריך גישה:"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
+#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search/SearchWindow.cs:117
+msgid "Desktop Search"
+msgstr "חיפוש במחשב"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+msgid "No Recent Searches"
+msgstr "אין חיפושים אחרונים"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+msgid "Recent Searches"
+msgstr "חיפושים אחרונים"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+msgid "Clear"
+msgstr "נקה"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+msgid "Quit"
+msgstr "יציאה"
+
+#: ../search/Beagle.Search/Category.cs:142
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} תוצאות"
+msgstr[1] "{0} תוצאות"
+
+#: ../search/Beagle.Search/Category.cs:144
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} מתוך {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr ""
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid ""
+"Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr ""
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "הסתר"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "הכל"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "הקבצים שלי"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "תמונות"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "מדיה"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "קוד מקור"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "דואר אלקטרוני"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "יומני שיחות"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "פתקיות"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "_חפש ב:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "חפש עכשיו"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr "הקלד ביטוי לחיפוש"
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "התחל חיפוש"
+
+#: ../search/Beagle.Search/SearchWindow.cs:253
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "חיפוש בשולחן עבודה: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:484
+msgid "There are computers near you running Beagle"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:517
+msgid "Search service started"
+msgstr "שירות החיפוש התחיל"
+
+#: ../search/Beagle.Search/SearchWindow.cs:528
+msgid "Starting service failed"
+msgstr "התחלת השירות נכשלה"
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Service is already running!"
+msgstr "השירות כבר פועל!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:544
+msgid "Stopping service failed"
+msgstr "עצירת השירות נכשלה"
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Service was not running!"
+msgstr "השירות לא פועל!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:559
+msgid "Search service stopped"
+msgstr "שירות החיפוש נעצר"
+
+#: ../search/Beagle.Search/SearchWindow.cs:598
+msgid "Your data is being indexed"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid ""
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:625
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "מציג {0} התאמות"
+msgstr[1] "מציג {0} התאמות"
+
+#: ../search/Beagle.Search/SearchWindow.cs:627
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:53
+msgid "Close Desktop Search"
+msgstr "סגור את החיפוש במחשב"
+
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
+msgid "Exit Desktop Search"
+msgstr "צא מהחיפוש במחשב"
+
+#: ../search/Beagle.Search/UIManager.cs:65
+msgid "_Search"
+msgstr "_חיפוש"
+
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "_מתחמי חיפוש"
+
+#: ../search/Beagle.Search/UIManager.cs:71
+msgid "_Actions"
+msgstr "_פעולות"
+
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "_תצוגה"
+
+#: ../search/Beagle.Search/UIManager.cs:77
+#, fuzzy
+msgid "Service _Options"
+msgstr "חיפוש יישומים"
+
+#: ../search/Beagle.Search/UIManager.cs:80
+msgid "_Help"
+msgstr "_עזרה"
+
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "התחל שירות"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "עצור שירות"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "_תוכן עניינים"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "עזרה - תוכן עניינים"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "אודות חיפוש במחשב"
+
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr "מיון לפי תאריך _שינוי"
+
+#: ../search/Beagle.Search/UIManager.cs:126
+msgid "Sort the most-recently-modified matches first"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "מיין לפי _שם"
+
+#: ../search/Beagle.Search/UIManager.cs:130
+msgid "Sort matches by name"
+msgstr "מיין לפי שם"
+
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "מיין לפי _רלוונטיות"
+
+#: ../search/Beagle.Search/UIManager.cs:134
+msgid "Sort the best matches first"
+msgstr "מיין לפי רלוונטיות"
+
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "_מקומי"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "_מערכת"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr "_גלובלי"
+
+#: ../search/Beagle.Search/UIManager.cs:155
+#, fuzzy
+msgid "Search in internet services"
+msgstr "העדפות חיפוש"
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "הצג פרטים"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "לא ניתן לפתוח את דפדפן האינטרנט"
 
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
@@ -83,830 +906,20 @@ msgstr "חיפוש"
 msgid "Search for data on your desktop"
 msgstr "חפש מידע בשולחן העבודה שלכם"
 
-#: ../search/Category.cs:132
-#, fuzzy, csharp-format
-msgid "{0} result"
-msgid_plural "{0} results"
-msgstr[0] "אין תוצרות."
-msgstr[1] "אין תוצרות."
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "אירעה שגיאה"
 
-#: ../search/Category.cs:134
+#: ../tools/Settings.cs:233 ../tools/Settings.cs:711
 #, csharp-format
-msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} מתוך {2}"
-
-#: ../search/NotificationArea.cs:63
-msgid "Hide"
+msgid "Display the search window by pressing {0}"
 msgstr ""
 
-#: ../search/Pages/NoMatch.cs:19
-msgid "No results were found."
-msgstr "לא נמצאו תוצאות"
-
-#: ../search/Pages/NoMatch.cs:21
-#, csharp-format
-msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "החיפוש אחר \"{0}\" לא העלה תוצאות"
-
-#: ../search/Pages/NoMatch.cs:24
-msgid ""
-"You can change the scope of your search using the \"Search\" menu. A broader "
-"search scope might produce more results."
-msgstr ""
-"ניתן לשנות את הקף החיפוש בעזרת התפריט \"חיפוש\". יתכן שחיפוש בעל הקף רחב "
-"יותר יפיק עוד תוצאות."
-
-#: ../search/Pages/NoMatch.cs:26
-msgid ""
-"You should check the spelling of your search words to see if you "
-"accidentally misspelled any words."
-msgstr ""
-"עליך לבדוק את האיות של מילות החיפוש שציינת על מנת לבדוק אם איות של מילה "
-"כלשהי בצורה שגויה."
-
-#: ../search/Pages/QuickTips.cs:10
-msgid "You can use upper and lower case; search is case-insensitive."
-msgstr ""
-"עבור מילים לועזיות, אתה יכול להשתמש באותיות גדולות או קטנות. התייחסות זהה "
-"לשני הסוגים."
-
-#: ../search/Pages/QuickTips.cs:11
-msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr ""
-
-#: ../search/Pages/QuickTips.cs:12
-msgid ""
-"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr ""
-
-#: ../search/Pages/QuickTips.cs:13
-msgid ""
-"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "כשמחפשים ביטוי, יש להוסיף גרשיים. לדוגמה: <b>\"שם תהיו דרקונים\"</b>"
-
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:95
-msgid "Quick Tips"
-msgstr "טיפים זריזים"
-
-#: ../search/Pages/RootUser.cs:12
-msgid "Beagle cannot be run as root"
-msgstr "לא ניתן להריץ את Beagle כמשתמש על"
-
-#: ../search/Pages/RootUser.cs:14
-msgid ""
-"For security reasons, Beagle cannot be run as root. You should restart as a "
-"regular user."
-msgstr ""
-
-#: ../search/Pages/StartDaemon.cs:17
-msgid "Search service not running"
-msgstr "שירות החיפוש לא פעיל"
-
-#: ../search/Pages/StartDaemon.cs:19
-msgid ""
-"The search service does not appear to be running. You can start it by "
-"clicking the button below."
-msgstr ""
-
-#: ../search/Pages/StartDaemon.cs:22
-msgid "Start search service"
-msgstr "התחלת שירות החיפוש"
-
-#: ../search/Search.cs:148 ../search/Search.cs:276
-#: ../search/Tray/TrayIcon.cs:33
-msgid "Desktop Search"
-msgstr "חיפוש במחשב"
-
-#: ../search/Search.cs:169
-msgid "_Find:"
-msgstr "_חפש:"
-
-#: ../search/Search.cs:190
-msgid "Find Now"
-msgstr "חפש עכשיו"
-
-#: ../search/Search.cs:253
-msgid "Type in search terms"
-msgstr "הקלד ביטוי לחיפוש"
-
-#: ../search/Search.cs:254
-msgid "Start searching"
-msgstr "התחל חיפוש"
-
-#: ../search/Search.cs:295
-#, csharp-format
-msgid "Desktop Search: {0}"
-msgstr ""
-
-#: ../search/Search.cs:311
-#, csharp-format
-msgid "Showing {0} match"
-msgid_plural "Showing all {0} matches"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../search/Search.cs:313
-#, csharp-format
-msgid "Showing the top {0} of {1} total matches"
-msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../search/Search.cs:569
-msgid "There are computers near you running Beagle"
-msgstr ""
-
-#: ../search/Search.cs:570
-msgid "You can select to search other computers from the \"Search\" menu."
-msgstr ""
-
-#: ../search/Search.cs:642
-msgid "Your data is being indexed"
-msgstr ""
-
-#: ../search/Search.cs:643
-msgid ""
-"The search service is in the process of indexing your data.  Search results "
-"may be incomplete until indexing has finished."
-msgstr ""
-
-#: ../search/Tiles/ArchivedFile.cs:40
-#, csharp-format
-msgid "Inside archive {0}"
-msgstr ""
-
-#: ../search/Tiles/ArchivedFile.cs:77 ../search/Tiles/Calendar.cs:44
-#: ../search/Tiles/File.cs:178 ../search/Tiles/Note.cs:73
-#: ../search/Tiles/RSSFeed.cs:59 ../search/Tiles/Task.cs:41
-#: ../search/Tiles/WebHistory.cs:58
-msgid "Title:"
-msgstr "כותרת:"
-
-#: ../search/Tiles/ArchivedFile.cs:78
-msgid "File Name:"
-msgstr "שם קובץ:"
-
-#. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:79
-#, fuzzy
-msgid "Inside File:"
-msgstr "בקבצים"
-
-#: ../search/Tiles/ArchivedFile.cs:82 ../search/Tiles/File.cs:182
-msgid "Author:"
-msgstr "מחבר:"
-
-#: ../search/Tiles/Calendar.cs:47 ../search/Tiles/Task.cs:44
-msgid "Description:"
-msgstr "תיאור:"
-
-#: ../search/Tiles/Calendar.cs:57
-#, fuzzy
-msgid "Time:"
-msgstr "כותרת:"
-
-#: ../search/Tiles/Calendar.cs:61
-msgid "Location:"
-msgstr "מיקום:"
-
-#: ../search/Tiles/Calendar.cs:65
-msgid "Attendees:"
-msgstr ""
-
-#: ../search/Tiles/Contact.cs:30
-msgid "Send Mail"
-msgstr "שלח דואר"
-
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "דוא\"ל:"
-
-#: ../search/Tiles/Contact.cs:70
-msgid "Mobile Phone:"
-msgstr "טלפון נייד:"
-
-#: ../search/Tiles/Contact.cs:72
-msgid "Work Phone:"
-msgstr "טלפון בעבודה:"
-
-#: ../search/Tiles/Contact.cs:74
-msgid "Home Phone:"
-msgstr "טלפון בבית:"
-
-#: ../search/Tiles/Documentation.cs:57
-msgid "Documentation"
-msgstr "תיעוד"
-
-#: ../search/Tiles/File.cs:33
-msgid "Reveal in Folder"
-msgstr "הצגה בתוך התיקייה:"
-
-#: ../search/Tiles/File.cs:34
-msgid "E-Mail"
-msgstr "דוא‏\"ל"
-
-#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
-#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:36 ../search/Tiles/Folder.cs:38
-msgid "Move to Trash"
-msgstr "העבר לאשפה"
-
-#: ../search/Tiles/File.cs:179 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:74
-msgid "Last Edited:"
-msgstr "נערך לאחרונה:"
-
-#: ../search/Tiles/File.cs:184 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:87 ../search/Tiles/Video.cs:45
-msgid "Full Path:"
-msgstr "נתיב מלא:"
-
-#: ../search/Tiles/Folder.cs:31
-msgid "Empty"
-msgstr "ריק"
-
-#: ../search/Tiles/Folder.cs:33
-#, csharp-format
-msgid "Contains {0} Item"
-msgid_plural "Contains {0} Items"
-msgstr[0] "מכיל פריט אחד"
-msgstr[1] "מכיל {0} פריטים"
-
-#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#: ../search/Tiles/Image.cs:39
-msgid "Set as Wallpaper"
-msgstr "קבע כטפט"
-
-#: ../search/Tiles/Image.cs:84 ../search/Tiles/Note.cs:78
-msgid "Tags:"
-msgstr "תוויות:"
-
-#: ../search/Tiles/Image.cs:86 ../search/Tiles/Video.cs:44
-msgid "Modified:"
-msgstr "השתנה:"
-
-#: ../search/Tiles/Image.cs:96
-msgid "Comment:"
-msgstr ""
-
-#: ../search/Tiles/IMLog.cs:30
-msgid "IM Conversation"
-msgstr "שיחה בתוכנת מסרים מיידיים"
-
-#: ../search/Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
-msgid "Name:"
-msgstr "שם:‏"
-
-#: ../search/Tiles/IMLog.cs:100 ../search/Tiles/MailMessage.cs:108
-msgid "Date Received:"
-msgstr "תאריך קבלה:"
-
-#: ../search/Tiles/IMLog.cs:104
-msgid "Status:"
-msgstr ""
-
-#: ../search/Tiles/IMLog.cs:119
-msgid "Idle"
-msgstr ""
-
-#: ../search/Tiles/IMLog.cs:126
-msgid "Away"
-msgstr ""
-
-#: ../search/Tiles/IMLog.cs:129
-msgid "Offline"
-msgstr ""
-
-#: ../search/Tiles/IMLog.cs:132
-msgid "Available"
-msgstr ""
-
-#: ../search/Tiles/MailAttachment.cs:45
-msgid "Mail attachment"
-msgstr "תצריף דוא\"ל"
-
-#: ../search/Tiles/MailAttachment.cs:48 ../search/Tiles/MailMessage.cs:70
-msgid "Find Messages From Sender"
-msgstr ""
-
-#: ../search/Tiles/MailMessage.cs:58
-msgid "(untitled)"
-msgstr ""
-
-#: ../search/Tiles/MailMessage.cs:68
-msgid "Send in Mail"
-msgstr "שלך בדואר"
-
-#: ../search/Tiles/MailMessage.cs:103
-msgid "Subject:"
-msgstr "נושא:‏"
-
-#: ../search/Tiles/MailMessage.cs:105
-msgid "To:"
-msgstr "אל:"
-
-#: ../search/Tiles/MailMessage.cs:105
-msgid "From:"
-msgstr "מאת:"
-
-#: ../search/Tiles/MailMessage.cs:108
-msgid "Date Sent:"
-msgstr "תאריך שליחה:"
-
-#: ../search/Tiles/MailMessage.cs:114
-msgid "Folder:"
-msgstr "תיקייה:"
-
-#: ../search/Tiles/OpenWithMenu.cs:47
-#, fuzzy
-msgid "Open With"
-msgstr "פתח"
-
-#: ../search/Tiles/Presentation.cs:33
-#, csharp-format
-msgid "{0} slide"
-msgid_plural "{0} slides"
-msgstr[0] "{0} שקופית"
-msgstr[1] "{0} שקופיות"
-
-#: ../search/Tiles/RSSFeed.cs:60
-msgid "Site:"
-msgstr "אתר:"
-
-#: ../search/Tiles/RSSFeed.cs:61
-msgid "Date Viewed:"
-msgstr "תאריך צפייה:"
-
-#: ../search/Tiles/Task.cs:47
-msgid "Date:"
-msgstr "תאריך:"
-
-#: ../search/Tiles/TextDocument.cs:38
-#, csharp-format
-msgid "{0} page"
-msgid_plural "{0} pages"
-msgstr[0] "{0} עמוד"
-msgstr[1] "{0} עמודים"
-
-#: ../search/Tiles/Tile.cs:179
-msgid "Open"
-msgstr "פתח"
-
-#: ../search/Tiles/Utils.cs:25
-msgid "Applications"
-msgstr "יישומים"
-
-#: ../search/Tiles/Utils.cs:27
-msgid "Contacts"
-msgstr "אנשי קשר"
-
-#: ../search/Tiles/Utils.cs:29
-msgid "Calendar Events"
-msgstr "אירוע יומן"
-
-#: ../search/Tiles/Utils.cs:31
-msgid "Folders"
-msgstr "תיקיות"
-
-#: ../search/Tiles/Utils.cs:33
-msgid "Images"
-msgstr "תמונות"
-
-#: ../search/Tiles/Utils.cs:35
-msgid "Audio"
-msgstr "קול"
-
-#: ../search/Tiles/Utils.cs:37
-msgid "Video"
-msgstr "וידאו"
-
-#: ../search/Tiles/Utils.cs:39
-msgid "Documents"
-msgstr "מסמכים"
-
-#: ../search/Tiles/Utils.cs:41
-msgid "Conversations"
-msgstr "שיחות"
-
-#: ../search/Tiles/Utils.cs:43
-msgid "Websites"
-msgstr ""
-
-#: ../search/Tiles/Utils.cs:45
-msgid "News Feeds"
-msgstr ""
-
-#: ../search/Tiles/Utils.cs:47
-msgid "Archives"
-msgstr ""
-
-#: ../search/Tiles/Utils.cs:132 ../search/Tiles/Utils.cs:214
-#: ../Util/StringFu.cs:118
-msgid "Yesterday"
-msgstr "אתמול"
-
-#: ../search/Tiles/Utils.cs:134 ../search/Tiles/Utils.cs:216
-#: ../Util/StringFu.cs:116
-msgid "Today"
-msgstr "היום"
-
-#: ../search/Tiles/Utils.cs:136 ../search/Tiles/Utils.cs:218
-msgid "Tomorrow"
-msgstr "מחר"
-
-#: ../search/Tiles/Utils.cs:234
-#, csharp-format
-msgid "{0} week ago"
-msgid_plural "{0} weeks ago"
-msgstr[0] "לפני שבוע {0}"
-msgstr[1] "לפני {0} שבועות"
-
-#: ../search/Tiles/Utils.cs:236
-#, csharp-format
-msgid "In {0} week"
-msgid_plural "In {0} weeks"
-msgstr[0] "בעוד שבוע {0}"
-msgstr[1] "בעוד {0} שבועות"
-
-#. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:238
-#, csharp-format
-msgid "{0} month ago"
-msgid_plural "{0} months ago"
-msgstr[0] "לפני חודש {0}"
-msgstr[1] "לפני {0} חודשים"
-
-#: ../search/Tiles/Utils.cs:240
-#, csharp-format
-msgid "In {0} month"
-msgid_plural "In {0} months"
-msgstr[0] "בעוד חודש {0}"
-msgstr[1] "בעוד {0} חודשים"
-
-#: ../search/Tiles/Utils.cs:242
-#, csharp-format
-msgid "{0} year ago"
-msgid_plural "{0} years ago"
-msgstr[0] "לפני שנה {0}"
-msgstr[1] "לפני {0} שנים"
-
-#: ../search/Tiles/Utils.cs:244
-#, csharp-format
-msgid "In {0} year"
-msgid_plural "In {0} years"
-msgstr[0] "בעוד שנה {0}"
-msgstr[1] "בעוד {0} שנים"
-
-#: ../search/Tiles/WebHistory.cs:59
-msgid "URL:"
-msgstr "כתובת אינטרנט (URL):"
-
-#: ../search/Tiles/WebHistory.cs:60
-msgid "Accessed:"
-msgstr "תאריך גישה:"
-
-#: ../search/Tray/TrayIcon.cs:69
-msgid "No Recent Searches"
-msgstr "אין חיפושים אחרונים"
-
-#: ../search/Tray/TrayIcon.cs:74
-msgid "Recent Searches"
-msgstr "חיפושים אחרונים"
-
-#: ../search/Tray/TrayIcon.cs:94
-msgid "Clear"
-msgstr "נקה"
-
-#: ../search/Tray/TrayIcon.cs:102
-msgid "Quit"
-msgstr "יציאה"
-
-#. Translators: the strings in TypeFilter.cs are for when the user
-#. * wants to limit search results to a specific type. You don't need
-#. * to give an exact translation of the exact same set of English
-#. * words. Just provide a list of likely words the user might use
-#. * after the "type:" keyword to refer to each type of match.
-#.
-#: ../search/TypeFilter.cs:36
-msgid ""
-"file\n"
-"files"
-msgstr ""
-
-#: ../search/TypeFilter.cs:37
-msgid ""
-"mail\n"
-"email\n"
-"e-mail"
-msgstr ""
-
-#: ../search/TypeFilter.cs:38
-msgid ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"instant-message\n"
-"instant-messages\n"
-"chat\n"
-"chats"
-msgstr ""
-
-#: ../search/TypeFilter.cs:39
-msgid ""
-"presentation\n"
-"presentations\n"
-"slideshow\n"
-"slideshows\n"
-"slide\n"
-"slides"
-msgstr ""
-
-#: ../search/TypeFilter.cs:41
-msgid ""
-"application\n"
-"applications\n"
-"app\n"
-"apps"
-msgstr ""
-
-#: ../search/TypeFilter.cs:42
-msgid ""
-"contact\n"
-"contacts\n"
-"vcard\n"
-"vcards"
-msgstr ""
-
-#: ../search/TypeFilter.cs:43
-msgid ""
-"folder\n"
-"folders"
-msgstr ""
-
-#: ../search/TypeFilter.cs:44
-msgid ""
-"image\n"
-"images\n"
-"img"
-msgstr ""
-
-#: ../search/TypeFilter.cs:45
-msgid "audio"
-msgstr "קול"
-
-#: ../search/TypeFilter.cs:46
-msgid "video"
-msgstr "וידאו"
-
-#: ../search/TypeFilter.cs:47
-msgid "media"
-msgstr "מדיה"
-
-#: ../search/TypeFilter.cs:48
-msgid ""
-"document\n"
-"documents\n"
-"office document\n"
-"office documents"
-msgstr ""
-
-#: ../search/TypeFilter.cs:49
-#, fuzzy
-msgid ""
-"conversation\n"
-"conversations"
-msgstr "שיחות ב־{0}"
-
-#: ../search/TypeFilter.cs:50
-msgid ""
-"web\n"
-"www\n"
-"website\n"
-"websites"
-msgstr ""
-
-#: ../search/TypeFilter.cs:51
-msgid ""
-"feed\n"
-"news\n"
-"blog\n"
-"rss"
-msgstr ""
-
-#: ../search/TypeFilter.cs:52
-msgid ""
-"archive\n"
-"archives"
-msgstr ""
-
-#: ../search/TypeFilter.cs:53
-msgid ""
-"person\n"
-"people"
-msgstr ""
-
-#: ../search/UIManager.cs:51
-msgid "Close Desktop Search"
-msgstr "סגור את החיפוש במחשב"
-
-#: ../search/UIManager.cs:56 ../search/UIManager.cs:83
-msgid "Exit Desktop Search"
-msgstr "צא מהחיפוש במחשב"
-
-#: ../search/UIManager.cs:63
-msgid "_Search"
-msgstr "_חיפוש"
-
-#: ../search/UIManager.cs:66
-msgid "Show _Categories"
-msgstr ""
-
-#: ../search/UIManager.cs:69
-#, fuzzy
-msgid "Search _Domains"
-msgstr "חפש מושגים:"
-
-#: ../search/UIManager.cs:72
-msgid "_Actions"
-msgstr "_פעולות"
-
-#: ../search/UIManager.cs:75
-msgid "_View"
-msgstr "_תצוגה"
-
-#: ../search/UIManager.cs:78
-msgid "_Help"
-msgstr "_עזרה"
-
-#: ../search/UIManager.cs:86
-msgid "_Contents"
-msgstr "_תוכן עניינים"
-
-#: ../search/UIManager.cs:88
-msgid "Help - Table of Contents"
-msgstr "עזרה - תוכן עניינים"
-
-#: ../search/UIManager.cs:92
-msgid "About Desktop Search"
-msgstr "אודות חיפוש במחשב"
-
-#: ../search/UIManager.cs:98
-msgid "Index information"
-msgstr ""
-
-#: ../search/UIManager.cs:117
-msgid "_All"
-msgstr ""
-
-#: ../search/UIManager.cs:127
-msgid "_None"
-msgstr ""
-
-#: ../search/UIManager.cs:141
-msgid "A_pplications"
-msgstr "_יישומים"
-
-#: ../search/UIManager.cs:143
-msgid "Search applications"
-msgstr "חיפוש יישומים"
-
-#: ../search/UIManager.cs:147
-msgid "_Contacts"
-msgstr "_אנשי קשר"
-
-#: ../search/UIManager.cs:149
-msgid "Search contacts"
-msgstr "חיפוש אנשי קשר"
-
-#: ../search/UIManager.cs:153
-msgid "Ca_lendar events"
-msgstr "איר_ועי יומן"
-
-#: ../search/UIManager.cs:155
-msgid "Search calendar events"
-msgstr "חיפוש אירועי יומן"
-
-#: ../search/UIManager.cs:159
-msgid "_Documents"
-msgstr "_מסמכים"
-
-#: ../search/UIManager.cs:161
-msgid "Search documents"
-msgstr "חיפוש מסמכים"
-
-#: ../search/UIManager.cs:165
-msgid "Conve_rsations"
-msgstr "שיחות"
-
-#: ../search/UIManager.cs:167
-msgid "Search E-Mail and Instant Messaging logs"
-msgstr "חפש דוא\"ל וביומני שיחות"
-
-#: ../search/UIManager.cs:171
-msgid "_Images"
-msgstr "_תמונות"
-
-#: ../search/UIManager.cs:173
-msgid "Search images"
-msgstr "חיפוש תמונות"
-
-#: ../search/UIManager.cs:177
-msgid "_Media"
-msgstr "_מדיה"
-
-#: ../search/UIManager.cs:179
-msgid "Search sound and video files"
-msgstr "חפש קול ווידאו"
-
-#: ../search/UIManager.cs:183
-msgid "_Folders"
-msgstr "תיקיות_"
-
-#: ../search/UIManager.cs:185
-#, fuzzy
-msgid "Search for folder names"
-msgstr "חפש מושגים:"
-
-#: ../search/UIManager.cs:189
-msgid "_Websites"
-msgstr ""
-
-#: ../search/UIManager.cs:191
-msgid "Search website history"
-msgstr ""
-
-#: ../search/UIManager.cs:195
-msgid "_News Feeds"
-msgstr ""
-
-#: ../search/UIManager.cs:197
-#, fuzzy
-msgid "Search news feeds"
-msgstr "חפש מושגים:"
-
-#: ../search/UIManager.cs:201
-msgid "A_rchives"
-msgstr ""
-
-#: ../search/UIManager.cs:203
-msgid "Search files in Archives"
-msgstr ""
-
-#: ../search/UIManager.cs:211
-msgid "Sort by Date _Modified"
-msgstr ""
-
-#: ../search/UIManager.cs:212
-msgid "Sort the most-recently-modified matches first"
-msgstr ""
-
-#: ../search/UIManager.cs:215
-msgid "Sort by _Name"
-msgstr "מיין לפי _שם"
-
-#: ../search/UIManager.cs:216
-msgid "Sort matches by name"
-msgstr "מיין לפי שם"
-
-#: ../search/UIManager.cs:219
-msgid "Sort by _Relevance"
-msgstr "מיין לפי _רלוונטיות"
-
-#: ../search/UIManager.cs:220
-msgid "Sort the best matches first"
-msgstr "מיין לפי רלוונטיות"
-
-#: ../search/UIManager.cs:227
-msgid "_Local"
-msgstr ""
-
-#: ../search/UIManager.cs:229
-msgid "Search only on local computer"
-msgstr ""
-
-#: ../search/UIManager.cs:233
-msgid "_Neighborhood"
-msgstr ""
-
-#: ../search/UIManager.cs:235
-msgid "Search on computers near me"
-msgstr ""
-
-#: ../search/UIManager.cs:243
-msgid "Show Details"
-msgstr ""
-
-#: ../search/UIManager.cs:366
-msgid "Couldn't launch web browser"
-msgstr ""
-
-#: ../tools/Settings.cs:346
+#: ../tools/Settings.cs:363
 msgid "Reload configuration"
 msgstr "טוען הגדרות מחדש"
 
-#: ../tools/Settings.cs:347
+#: ../tools/Settings.cs:364
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -914,134 +927,263 @@ msgstr ""
 "קובץ ההגדרות שונה על ידי יישום אחר. האם אתה מעוניין לזרוק את הערכים שמוצגים "
 "כעת ולהעלות את ההגדרות מהכונן?"
 
-#: ../tools/Settings.cs:485
+#: ../tools/Settings.cs:498
 msgid "Select Path"
 msgstr "נתיב חיפוש"
 
-#: ../tools/Settings.cs:504
+#: ../tools/Settings.cs:517
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 
-#: ../tools/Settings.cs:507
+#: ../tools/Settings.cs:520
 msgid ""
 "The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
 msgstr ""
 
-#: ../tools/Settings.cs:518
+#: ../tools/Settings.cs:531
 msgid "Path not added"
 msgstr "נתיב לא התווסף"
 
-#: ../tools/Settings.cs:527
+#: ../tools/Settings.cs:540
 msgid "Remove obsolete paths"
 msgstr "הסרת נתיבים ישנים"
 
-#: ../tools/Settings.cs:528
+#: ../tools/Settings.cs:541
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
 msgstr ""
 
-#: ../tools/Settings.cs:554
+#: ../tools/Settings.cs:567
 msgid "Remove path"
 msgstr "הסרת נתיב"
 
-#: ../tools/Settings.cs:555
+#: ../tools/Settings.cs:568
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
 msgstr ""
 
-#: ../tools/Settings.cs:584
+#: ../tools/Settings.cs:597
 msgid "Remove item"
 msgstr "הסרת פריט"
 
-#: ../tools/Settings.cs:585
+#: ../tools/Settings.cs:598
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
 msgstr ""
 
-#: ../tools/Settings.cs:632
+#: ../tools/Settings.cs:645
 msgid "Remote host already present in the list."
 msgstr ""
 
-#: ../tools/Settings.cs:642
-msgid "Netbeagle Node not added"
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
 msgstr ""
 
-#: ../tools/Settings.cs:657
+#: ../tools/Settings.cs:670
 msgid "Remove host"
-msgstr ""
+msgstr "הסר מארח"
 
-#: ../tools/Settings.cs:658
+#: ../tools/Settings.cs:671
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr ""
 
-#: ../tools/Settings.cs:717 ../tools/Settings.cs:806 ../tools/Settings.cs:887
-#: ../tools/Settings.cs:992 ../tools/Settings.cs:1636
+#: ../tools/Settings.cs:769 ../tools/Settings.cs:858 ../tools/Settings.cs:939
+#: ../tools/Settings.cs:1044 ../tools/Settings.cs:1766
 msgid "Name"
 msgstr "שם"
 
-#: ../tools/Settings.cs:800
+#: ../tools/Settings.cs:852
 msgid "Type"
 msgstr "סוג"
 
-#: ../tools/Settings.cs:853
+#: ../tools/Settings.cs:905
 msgid "Path:"
 msgstr "נתיב:"
 
-#: ../tools/Settings.cs:856
+#: ../tools/Settings.cs:908
 msgid "Pattern:"
 msgstr "תבנית:"
 
-#: ../tools/Settings.cs:859
+#: ../tools/Settings.cs:911
 msgid "Mail folder:"
 msgstr "תיקיית דואר:"
 
-#: ../tools/Settings.cs:894
+#: ../tools/Settings.cs:946
 msgid "Address"
 msgstr "כתובת"
 
-#: ../tools/Settings.cs:1239
+#: ../tools/Settings.cs:1291
 msgid "Select Folder"
 msgstr "בחירת תיקייה"
 
-#: ../tools/Settings.cs:1265 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1317 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "נ_תיב:"
 
-#: ../tools/Settings.cs:1270
+#: ../tools/Settings.cs:1322
 msgid "M_ail folder:"
 msgstr "תיקיית ד_ואר:"
 
-#: ../tools/Settings.cs:1275
+#: ../tools/Settings.cs:1327
 msgid "P_attern:"
 msgstr "תבני_ת:"
 
-#: ../tools/Settings.cs:1299
+#: ../tools/Settings.cs:1351
 msgid "Error adding path"
 msgstr "שגיאה בהוספת הנתיב"
 
-#: ../tools/Settings.cs:1300
+#: ../tools/Settings.cs:1352
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
 msgstr ""
 
-#: ../tools/Settings.cs:1341
-#, fuzzy, csharp-format
+#: ../tools/Settings.cs:1390
+#, csharp-format
 msgid "Connecting to {0}"
-msgstr "שיחות עם {0}"
+msgstr "התחבר אל {0}"
 
-#: ../tools/Settings.cs:1637
+#: ../tools/Settings.cs:1726
+msgid "Evolution's mail."
+msgstr "דואר של Evolution"
+
+#: ../tools/Settings.cs:1727
+msgid "Evolution's address book, memos and tasks."
+msgstr ""
+
+#: ../tools/Settings.cs:1728
+msgid "Thunderbird's email."
+msgstr "דוא\"ל של Thunderbird."
+
+#: ../tools/Settings.cs:1729
+msgid "RSS feeds from Akregator."
+msgstr ""
+
+#: ../tools/Settings.cs:1730
+msgid "RSS feeds from Blam."
+msgstr ""
+
+#: ../tools/Settings.cs:1731
+msgid "Files and folders on the local file system."
+msgstr ""
+
+#: ../tools/Settings.cs:1732
+msgid "Mail messages from KMail."
+msgstr "הודעות דואר מ-KMail."
+
+#: ../tools/Settings.cs:1733
+msgid "Notes from KNotes."
+msgstr ""
+
+#: ../tools/Settings.cs:1734
+msgid "Agenda from KOrganizer."
+msgstr ""
+
+#: ../tools/Settings.cs:1735
+msgid "Contacts from KAddressBook."
+msgstr ""
+
+#: ../tools/Settings.cs:1736
+msgid "Konqueror's bookmarks."
+msgstr "סימניות של .Konqueror"
+
+#: ../tools/Settings.cs:1737
+msgid "Konqueror's history."
+msgstr ""
+
+#: ../tools/Settings.cs:1738
+msgid "IMs and chats from Konversation."
+msgstr "מסרים מיידים ושיחות מ-Konversation."
+
+#: ../tools/Settings.cs:1739
+msgid "IMs and chats from Kopete"
+msgstr "מסרים מיידים ושיחות מ-Kopete"
+
+#: ../tools/Settings.cs:1740
+msgid "Mind-maps from Labyrinth."
+msgstr ""
+
+#: ../tools/Settings.cs:1741
+msgid "RSS feeds from Liferea."
+msgstr ""
+
+#: ../tools/Settings.cs:1742
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr ""
+
+#: ../tools/Settings.cs:1743
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr ""
+
+#: ../tools/Settings.cs:1744
+msgid "Opera's bookmarks and browsing history."
+msgstr ""
+
+#: ../tools/Settings.cs:1745
+msgid "IMs and chats from Pidgin."
+msgstr "מסרים מיידים ושיחות מ-Pidgin."
+
+#: ../tools/Settings.cs:1746
+msgid "Notes from Tomboy."
+msgstr "פתקיות של Tomboy"
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1748
+msgid "(System) Applications"
+msgstr "(מערכת) יישומים"
+
+#: ../tools/Settings.cs:1749
+msgid "(System) Help files"
+msgstr "(מערכת (קבצי עזרה)"
+
+#: ../tools/Settings.cs:1750
+msgid "(System) Manual pages"
+msgstr ""
+
+#: ../tools/Settings.cs:1751
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr ""
+
+#: ../tools/Settings.cs:1752
 #, fuzzy
+msgid "(System) Mono documentation"
+msgstr "תיעוד"
+
+#: ../tools/Settings.cs:1753
+msgid "(System) Files from Windows' partition"
+msgstr ""
+
+#: ../tools/Settings.cs:1767
 msgid "Description"
-msgstr "תיאור:"
+msgstr "תיאור"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "הגדרת חיפוש בשולחן עבודה"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr ""
+
+#: ../tools/keygrabber.py:54
+msgid "Grab key combination"
+msgstr ""
+
+#: ../tools/keygrabber.py:140
+msgid "Please press the new key combination"
+msgstr ""
+
+#: ../tools/keygrabber.py:189
+msgid "Disabled"
+msgstr "כבוי"
 
 #: ../tools/settings.glade.h:1
 msgid ":"
-msgstr ""
+msgstr ":"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
@@ -1060,85 +1202,85 @@ msgid "<b>General</b>"
 msgstr "<b>כללי</b>"
 
 #: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
 msgstr "‏<b>רשת</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:8
 msgid "<b>Privacy</b>"
 msgstr "<b>פרטיות</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:9
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>בחירת תיקיית דואר</b>"
 
-#: ../tools/settings.glade.h:9
-msgid "<b>User Interface</b>"
-msgstr ""
-
 #: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>מנשק משתמש</b>"
+
+#: ../tools/settings.glade.h:11
 msgid "<i>Changes will take effect only after daemon restart.</i>"
 msgstr ""
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "<i>This setting does not apply while on battery power.</i>"
 msgstr ""
 
-#: ../tools/settings.glade.h:12
-msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
-msgstr ""
-
 #: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">נדרשת סיסמה.</span>"
+
+#: ../tools/settings.glade.h:14
 msgid "Add Remote Host"
 msgstr ""
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
 msgid "Add a static host"
 msgstr ""
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:16
 msgid "Add any additional paths to be included for indexing."
 msgstr ""
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:17
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
 msgstr ""
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:19
 msgid "Allow external access to local search services (EXPERIMENTAL)"
 msgstr ""
-
-#: ../tools/settings.glade.h:19
-msgid "Alt"
-msgstr "Alt"
 
 #: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr ""
 
 #: ../tools/settings.glade.h:21
-msgid "Backends"
-msgstr ""
+msgid "Change"
+msgstr "שנה"
 
 #: ../tools/settings.glade.h:22
-msgid "Ctrl"
-msgstr "Ctrl"
+msgid "Data sources"
+msgstr "מקורות מידע"
 
 #: ../tools/settings.glade.h:23
-msgid "Display the search window by pressing:"
+msgid "Display the search window by pressing"
 msgstr ""
 
 #: ../tools/settings.glade.h:24
-msgid "Enable web interface for local search service"
+msgid "Enable the data sources that you want to index and search."
 msgstr ""
 
 #: ../tools/settings.glade.h:25
-msgid "Enable/Disable backends from the indexing and searching process."
+msgid "Enable web interface for local search service"
 msgstr ""
 
 #: ../tools/settings.glade.h:26
@@ -1177,16 +1319,16 @@ msgid "Indexing"
 msgstr ""
 
 #: ../tools/settings.glade.h:35
-msgid "Networking"
-msgstr "‏רשת"
+msgid "Network options"
+msgstr "אפשרויות רשת"
 
 #: ../tools/settings.glade.h:37
 msgid "Password for {0}"
-msgstr ""
+msgstr "סיסמה עבור {0}"
 
 #: ../tools/settings.glade.h:38
 msgid "Password:"
-msgstr ""
+msgstr "סיסמה:"
 
 #: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
@@ -1205,9 +1347,8 @@ msgid "Search Preferences"
 msgstr "העדפות חיפוש"
 
 #: ../tools/settings.glade.h:43
-#, fuzzy
 msgid "Searching"
-msgstr "בטל חיפוש"
+msgstr "מחפש"
 
 #: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
@@ -1229,7 +1370,7 @@ msgstr "אפשר ל-Beagle לרוץ כמשתמש על"
 
 #: ../tools/settings.glade.h:48
 msgid "_Browse..."
-msgstr ""
+msgstr "_עיון..."
 
 #: ../tools/settings.glade.h:49
 msgid "_Choose from currently available hosts"
@@ -1241,7 +1382,7 @@ msgstr "נתיב _תיקייה"
 
 #: ../tools/settings.glade.h:51
 msgid "_Hostname:"
-msgstr ""
+msgstr "שם _מארח:"
 
 #: ../tools/settings.glade.h:52
 msgid "_Mail folder"
@@ -1249,393 +1390,121 @@ msgstr "תיקיית _דואר"
 
 #: ../tools/settings.glade.h:53
 msgid "_Password:"
-msgstr ""
+msgstr "_סיסמה:"
 
 #: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr ""
 
-#: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search"
-msgstr ""
+#~ msgid ""
+#~ "You can change the scope of your search using the \"Search\" menu. A "
+#~ "broader search scope might produce more results."
+#~ msgstr ""
+#~ "ניתן לשנות את הקף החיפוש בעזרת התפריט \"חיפוש\". יתכן שחיפוש בעל הקף רחב "
+#~ "יותר יפיק עוד תוצאות."
 
-#: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Search & Indexing"
-msgstr ""
+#~ msgid "File Name:"
+#~ msgstr "שם קובץ:"
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
-msgid "On This Computer"
-msgstr "על מחשב זה"
+#~ msgid "audio"
+#~ msgstr "קול"
 
-#: ../Util/F-Spot/Exif.cs:248
-msgid "Image Directory"
-msgstr "ספריית תמונות"
+#~ msgid "video"
+#~ msgstr "וידאו"
 
-#: ../Util/F-Spot/Exif.cs:250
-msgid "Thumbnail Directory"
-msgstr "ספריית תמונות ממוזערות"
+#~ msgid "media"
+#~ msgstr "מדיה"
 
-#: ../Util/F-Spot/Exif.cs:252
-msgid "Exif Directory"
-msgstr "ספריית Exif"
-
-#: ../Util/F-Spot/Exif.cs:254
-msgid "GPS Directory"
-msgstr "ספריית GPS"
-
-#: ../Util/F-Spot/Exif.cs:256
-msgid "InterOperability Directory"
-msgstr ""
-
-#: ../Util/F-Spot/Exif.cs:258
-msgid "Unknown Directory"
-msgstr "ספרייה לא ידועה"
-
-#: ../Util/F-Spot/IptcFile.cs:175
-msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:177
-msgid "OSI Destination routing information"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:179
-msgid "IPTC file format"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:181
-msgid "Identifies the provider and product"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:183
-msgid "A unique number identifying the envelope"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:185
-msgid "A unique number"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:187
-msgid ""
-"The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:189
-msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:191
-msgid ""
-"The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:193
-msgid "The character set designation"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:195
-msgid "External globally unique object identifier"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:200
-msgid "Abstract Relationship Method (ARM) identifier"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:202
-msgid "Abstract Relationship Method (ARM) version number."
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:205
-msgid "Number identifying the IIM version this application record uses"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:207
-msgid "Object type reference"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:212
-msgid "Object attribute reference"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:218 ../Util/F-Spot/IptcFile.cs:222
-msgid "Object name"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:220
-msgid "Status of the objectdata according to the provider"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:224
-msgid "Location within a city or area where the object originates"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:227
-msgid "Name of the city the content is focussing on"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:230
-msgid "Copyright information for"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:233
-msgid "Full name of the country of the focus of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:236
-msgid ""
-"Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:239
-msgid "Creator of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:242
-msgid "Provider of the object"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:245
-msgid "The title of the author or creator"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:248
-msgid ""
-"The person involved in writing, editing or correcting the object data or "
-"caption/abstract"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:252
-msgid "Headline of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:255
-msgid ""
-"Instructions from the creator to the receiver not covered by other fields"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:258
-msgid "Intellectual genre of the object"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:271
 #, fuzzy
-msgid "Unknown IIM DataSet"
-msgstr "ספרייה לא ידועה"
+#~ msgid ""
+#~ "conversation\n"
+#~ "conversations"
+#~ msgstr "שיחות ב־{0}"
 
-#: ../Util/F-Spot/MetadataStore.cs:46
+#~ msgid "A_pplications"
+#~ msgstr "_יישומים"
+
+#~ msgid "_Contacts"
+#~ msgstr "_אנשי קשר"
+
+#~ msgid "Search contacts"
+#~ msgstr "חיפוש אנשי קשר"
+
+#~ msgid "Ca_lendar events"
+#~ msgstr "איר_ועי יומן"
+
+#~ msgid "Search calendar events"
+#~ msgstr "חיפוש אירועי יומן"
+
+#~ msgid "_Documents"
+#~ msgstr "_מסמכים"
+
+#~ msgid "Search documents"
+#~ msgstr "חיפוש מסמכים"
+
+#~ msgid "Conve_rsations"
+#~ msgstr "שיחות"
+
+#~ msgid "Search E-Mail and Instant Messaging logs"
+#~ msgstr "חפש דוא\"ל וביומני שיחות"
+
+#~ msgid "_Images"
+#~ msgstr "_תמונות"
+
+#~ msgid "Search images"
+#~ msgstr "חיפוש תמונות"
+
+#~ msgid "Search sound and video files"
+#~ msgstr "חפש קול ווידאו"
+
+#~ msgid "_Folders"
+#~ msgstr "תיקיות_"
+
 #, fuzzy
-msgid "Creator"
-msgstr "נקה"
+#~ msgid "Search for folder names"
+#~ msgstr "חפש מושגים:"
 
-#: ../Util/F-Spot/MetadataStore.cs:47
 #, fuzzy
-msgid "Title"
-msgstr "כותרת:"
+#~ msgid "Search news feeds"
+#~ msgstr "חפש מושגים:"
 
-#: ../Util/F-Spot/MetadataStore.cs:48
-msgid "Copyright"
-msgstr ""
+#~ msgid "Ctrl"
+#~ msgstr "Ctrl"
 
-#: ../Util/F-Spot/MetadataStore.cs:49
-msgid "Subject and Keywords"
-msgstr ""
+#~ msgid "Image Directory"
+#~ msgstr "ספריית תמונות"
 
-#: ../Util/F-Spot/MetadataStore.cs:50
-msgid "Compression"
-msgstr ""
+#~ msgid "Thumbnail Directory"
+#~ msgstr "ספריית תמונות ממוזערות"
 
-#: ../Util/F-Spot/MetadataStore.cs:52
+#~ msgid "Exif Directory"
+#~ msgstr "ספריית Exif"
+
+#~ msgid "GPS Directory"
+#~ msgstr "ספריית GPS"
+
+#~ msgid "Unknown Directory"
+#~ msgstr "ספרייה לא ידועה"
+
 #, fuzzy
-msgid "Planar Configuration"
-msgstr "טוען הגדרות מחדש"
+#~ msgid "Unknown IIM DataSet"
+#~ msgstr "ספרייה לא ידועה"
 
-#: ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "אוריינטציה"
-
-#: ../Util/F-Spot/MetadataStore.cs:56
-msgid "Photometric Interpretation"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:58
-msgid "Resolution Unit"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:60
-msgid "Exposure Program"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:62
-msgid "Metering Mode"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:64
-msgid "Exposure Mode"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:66
-msgid "Custom Rendered"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:68
 #, fuzzy
-msgid "Components Configuration"
-msgstr "טוען הגדרות מחדש"
+#~ msgid "Creator"
+#~ msgstr "נקה"
 
-#: ../Util/F-Spot/MetadataStore.cs:70
-msgid "Light Source"
-msgstr ""
+#, fuzzy
+#~ msgid "Title"
+#~ msgstr "כותרת:"
 
-#: ../Util/F-Spot/MetadataStore.cs:72
-msgid "Sensing Method"
-msgstr ""
+#, fuzzy
+#~ msgid "Planar Configuration"
+#~ msgstr "טוען הגדרות מחדש"
 
-#: ../Util/F-Spot/MetadataStore.cs:74
-msgid "Color Space"
-msgstr ""
+#~ msgid "Orientation"
+#~ msgstr "אוריינטציה"
 
-#: ../Util/F-Spot/MetadataStore.cs:76
-msgid "White Balance"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:78
-msgid "Focal Plane Resolution Unit"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:80
-msgid "File Source Type"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:82
-msgid "Scene Capture Type"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:84
-msgid "Gain Control"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:86
-msgid "Contrast"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:88
-msgid "Saturation"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:90
-msgid "Sharpness"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:92
-msgid "Scene Type"
-msgstr ""
-
-#. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:121
-msgid "MMM d"
-msgstr "MMM d"
-
-#. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:124
-msgid "MMM d, yyyy"
-msgstr "MMM d, yyyy"
-
-#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:127
-msgid "h:mm tt"
-msgstr "h:mm tt"
-
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:133
-#, csharp-format
-msgid "{0}, {1}"
-msgstr "{0}, {1}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:150
-#, csharp-format
-msgid "Today, {0}"
-msgstr "היום, {0}"
-
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:153
-#, csharp-format
-msgid "Yesterday, {0}"
-msgstr "אתמול, {0}"
-
-#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:158
-#, fuzzy, csharp-format
-msgid "{0} day ago, {1}"
-msgid_plural "{0} days ago, {1}"
-msgstr[0] "לפני {0} ימים, {1}"
-msgstr[1] "לפני {0} ימים, {1}"
-
-#. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:164
-msgid "MMMM d, h:mm tt"
-msgstr "MMMM d, h:mm tt"
-
-#. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:169
-msgid "MMMM d yyyy, h:mm tt"
-msgstr "MMMM d yyyy, h:mm tt"
-
-#: ../Util/StringFu.cs:179
-#, csharp-format
-msgid "{0} hour"
-msgid_plural "{0} hours"
-msgstr[0] "שעה"
-msgstr[1] "{0} שעות"
-
-#: ../Util/StringFu.cs:186
-#, csharp-format
-msgid "{0} minute"
-msgid_plural "{0} minutes"
-msgstr[0] "דקה"
-msgstr[1] "{0} דקות"
-
-#. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:220
-#, fuzzy, csharp-format
-msgid "{0} byte"
-msgid_plural "{0} bytes"
-msgstr[0] "{0} בתים"
-msgstr[1] "{0} בתים"
-
-#. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:224
-#, csharp-format
-msgid "{0:0.0} KB"
-msgstr "{0:0.0} KB"
-
-#. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:227
-#, csharp-format
-msgid "{0:0.0} MB"
-msgstr "{0:0.0} MB"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#, fuzzy
+#~ msgid "Components Configuration"
+#~ msgstr "טוען הגדרות מחדש"
