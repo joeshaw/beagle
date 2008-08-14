@@ -179,12 +179,14 @@ namespace Beagle.Search {
 			}
 		}
 
-		private void OnCategoryToggle (ScopeType catScope)
+		private void OnCategoryToggle (ScopeType category_scope)
 		{
 			// we're not using the set function cause we directly
 			// close/open the expander in Category.cs
-			scope = scope ^ catScope;
-			CategoryToggled (catScope);
+			scope = scope ^ category_scope;
+			
+			if (CategoryToggled != null)
+				CategoryToggled (category_scope);
 		}
 	}
 }
