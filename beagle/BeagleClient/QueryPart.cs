@@ -161,7 +161,7 @@ namespace Beagle {
 			set { start_date = value; }
 		}
 
-		[XmlAttribute ("StartDate")]
+		[XmlElement ("StartDate")]
 		public string StartDateAsString {
 			get { return StringFu.DateTimeToString (start_date); }
 			set { start_date = StringFu.StringToDateTime (value); }
@@ -173,7 +173,7 @@ namespace Beagle {
 			set { end_date = value; }
 		}
 
-		[XmlAttribute ("EndDate")]
+		[XmlElement ("EndDate")]
 		public string EndDateAsLocal {
 			get { return StringFu.DateTimeToString (end_date); }
 			set { end_date = StringFu.StringToDateTime (value); }
