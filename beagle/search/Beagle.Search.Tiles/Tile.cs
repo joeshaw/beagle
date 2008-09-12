@@ -348,14 +348,14 @@ namespace Beagle.Search.Tiles {
 #else
 			MimeApplication app;
 			app = Mime.GetDefaultApplication (mimetype);
-			bool expect_uris = app.SupportsUris ();
-			path = hit.Path;
-
 			if (app == null) {
 				Console.WriteLine ("Can't open MimeType '{0}'", mimetype);
 				return;
 			}
 			
+			bool expect_uris = app.SupportsUris ();
+			path = hit.Path;
+
 			GLib.List list = new GLib.List ((IntPtr) 0);
 			list.Append (expect_uris ? uri : path);
 
