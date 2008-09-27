@@ -27,6 +27,7 @@ namespace Beagle.Search.Tray
 				
 		public event EventHandler Clicked;
 		public SearchDelegate Search;
+		public event EventHandler Quit;
 
 		public TrayIcon ()
 		{
@@ -124,7 +125,8 @@ namespace Beagle.Search.Tray
 
 		private void OnQuit (object sender, EventArgs args)
 		{
-			Application.Quit ();
+			if (Quit != null)
+				Quit (sender, args);
 		}
 
 		private void OnClear (object sender, EventArgs args) 

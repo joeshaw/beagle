@@ -21,7 +21,7 @@ namespace Beagle.Search {
 		// The reference count is only valid when
 		// we don't run in icon mode.
 
-		private uint ref_count = 0;
+		private int ref_count = 0;
 
 		private bool icon_enabled = false;
 		private bool docs_enabled = false;
@@ -42,29 +42,15 @@ namespace Beagle.Search {
 				tray = new TrayIcon ();
 				tray.Clicked += OnTrayActivated;
 				tray.Search += OnTraySearch;
+				tray.Quit += OnTrayQuit;
 
 				Config config = Conf.Get (Conf.Names.BeagleSearchConfig);
+				keybinder = new XKeybinder ();
+				SetKeyBindings (config);
 
-				string tip_text = Catalog.GetString ("Desktop Search");
-				string binding = config.GetOption ("KeyBinding", null);
-
-				if (String.IsNullOrEmpty (binding)) {
-					// Move old preference value to new
-					bool binding_ctrl = config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
-					bool binding_alt = config.GetOption (Conf.Names.KeyBinding_Alt, false);
-					string binding_key = config.GetOption (Conf.Names.KeyBinding_Key, "F12");
-					KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
-
-					binding = show_binding.ToString ();
-				}
-
-				if (!String.IsNullOrEmpty (binding)) {
-					tip_text += String.Format (" ({0})", binding);
-					keybinder = new XKeybinder ();
-					keybinder.Bind (binding, OnTrayActivated);
-				}
-
-				tray.TooltipText = tip_text;
+				Inotify.Start ();
+				Conf.WatchForUpdates();
+				Conf.Subscribe (Conf.Names.BeagleSearchConfig, OnConfigurationChanged);
 			}
 		}
 
@@ -87,10 +73,49 @@ namespace Beagle.Search {
 			}
 		}
 
+		private void SetKeyBindings (Config config)
+		{
+			string tip_text = Catalog.GetString ("Desktop Search");
+			string binding = config.GetOption ("KeyBinding", null);
+			Console.WriteLine ("new binding {0}", binding);
+
+			if (String.IsNullOrEmpty (binding)) {
+				// Move old preference value to new
+				bool binding_ctrl = config.GetOption (Conf.Names.KeyBinding_Ctrl, false);
+				bool binding_alt = config.GetOption (Conf.Names.KeyBinding_Alt, false);
+				string binding_key = config.GetOption (Conf.Names.KeyBinding_Key, "F12");
+				KeyBinding show_binding = new KeyBinding (binding_key, binding_ctrl, binding_alt);
+
+				binding = show_binding.ToString ();
+			}
+
+			if (!String.IsNullOrEmpty (binding)) {
+				tip_text += String.Format (" ({0})", binding);
+				keybinder.UnbindAll ();
+				keybinder.Bind (binding, OnTrayActivated);
+			}
+
+			tray.TooltipText = tip_text;
+		}
+
 		private void OnWindowDeleteEvent (object o, Gtk.DeleteEventArgs args)
 		{
-			if (--ref_count < 1)
-				Gtk.Application.Quit ();
+			Quit ();
+		}
+
+		private void OnTrayQuit (object o, EventArgs args)
+		{
+			Quit ();
+		}
+
+		private void Quit ()
+		{
+			Console.WriteLine (ref_count);
+			if (--ref_count >= 1)
+				return;
+
+			Inotify.Stop ();
+			Gtk.Application.Quit ();
 		}
 
 		private void OnTrayActivated (object o, EventArgs args)
@@ -118,6 +143,11 @@ namespace Beagle.Search {
 			// icon menu.
 
 			tray.AddSearch (query);
+		}
+
+		private void OnConfigurationChanged (Config config)
+		{
+			SetKeyBindings (config);
 		}
 
 		public bool IconEnabled {
