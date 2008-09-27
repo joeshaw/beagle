@@ -12,8 +12,6 @@ BEAGLED_GLUE_SOURCES =		\
 
 if ENABLE_INOTIFY
 EXTRA_GLUE_SOURCES +=		\
-	inotify.h		\
-	inotify-syscalls.h	\
 	inotify-glue.c
 endif
 
@@ -114,8 +112,6 @@ endif
 
 COND_SOURCES = 			\
 	wv1-glue.c		\
-	inotify.h		\
-	inotify-syscalls.h	\
 	inotify-glue.c
 
 EXTRA_DIST =			\

@@ -106,11 +106,9 @@ AC_SUBST(NDESK_DBUS_GLIB_LIBS)
 case "$target" in
   *-*-linux*)
     os=linux
-	os_has_inotify=yes
     ;;
   *-*-freebsd*)
     os=freebsd
-	os_has_inotify=no
     ;;
   *)
     AC_MSG_ERROR([Unrecognised target OS: $target])
@@ -306,7 +304,9 @@ AC_ARG_ENABLE([inotify],
 	 enable_inotify=$enableval,
 	 enable_inotify=auto)
 
-if test "x$os_has_inotify" = "xno"; then
+AC_CHECK_HEADERS(sys/inotify.h)
+
+if test "x$ac_cv_header_sys_inotify_h" = "xno"; then
 
 	dnl error out if user has explicitly requested inotify
 	if test "x$enable_inotify" = "xyes"; then

@@ -36,9 +36,7 @@
 #include <sys/ioctl.h>
 #include <sys/poll.h>
 #include <sys/types.h>
-
-#include "inotify.h"
-#include "inotify-syscalls.h"
+#include <sys/inotify.h>
 
 #define PROCFS_PREFIX           "/proc/sys/fs/inotify"
 
@@ -97,7 +95,7 @@ inotify_glue_init (void)
 
 
 int
-inotify_glue_watch (int fd, const char *filename, __u32 mask)
+inotify_glue_watch (int fd, const char *filename, uint32_t mask)
 {
 	int wd;
 
@@ -110,7 +108,7 @@ inotify_glue_watch (int fd, const char *filename, __u32 mask)
 
 
 int
-inotify_glue_ignore (int fd, __u32 wd)
+inotify_glue_ignore (int fd, uint32_t wd)
 {
 	int ret;
 
