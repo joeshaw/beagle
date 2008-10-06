@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-16 23:08+0200\n"
-"PO-Revision-Date: 2008-08-14 21:52+0100\n"
-"Last-Translator: Adrian Guniš <andygun@seznam.cz>\n"
+"POT-Creation-Date: 2008-10-06 02:12+0200\n"
+"PO-Revision-Date: 2008-10-06 02:09+0200\n"
+"Last-Translator: Petr Kovar <pknbe@volny.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -188,23 +188,21 @@ msgstr "Počet aktuálně zindexovaných položek:"
 
 #: ../search/Beagle.Search.Pages/IndexInfo.cs:45
 msgid "<i>NOTE: The search service is still indexing new data.</i>"
-msgstr "<i>POZNÁMKA: Vyhledávací služba ještě indexuje nová data.</i>"
+msgstr "<i>POZNÁMKA: Vyhledávací služba právě indexuje nová data.</i>"
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Nebylo nic nalezeno."
 
+# Nebylo by lepší "Dotazu na \"{0}\" neodpovídají žádné soubory ve vašem počítači."
 #: ../search/Beagle.Search.Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr ""
-"Hledali jste  \"{0}\", ale na vašem počítači nebyly nalezeny žádné "
-"odpovídající soubory."
+msgstr "Dotazu na \"{0}\" neodpovídají žádné soubory ve vašem počítači."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid "You can select \"Find in: All\" to search everywhere."
-msgstr ""
-"Chcete-li prohledávat všechna umístění, můžete zvolit \"Prohledat: Vše\"."
+msgstr "Chcete-li prohledat všechna data, můžete zvolit \"Prohledat: Vše\"."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -218,8 +216,8 @@ msgid ""
 "If you are searching for GMail emails, select \"Global\" Search Domain using "
 "the \"Search\" menu."
 msgstr ""
-"Pokud hledáte e-maily GMail, zvolte Hledat domény \"Globální\" z nabídky "
-"\"Vyhledávání\"."
+"Pokud hledáte e-maily GMail, zvolte Prohledávat domény \"Globální\" z "
+"nabídky \"Vyhledávání\"."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -275,13 +273,14 @@ msgstr ""
 msgid "Search service not running"
 msgstr "Vyhledávací služba neběží"
 
+# Původní překlad se mi nezdá - nemělo by zde být "Zdá se, že vyhledávací služba neběží. Můžete ji spustit kliknutím na tlačítko níže."
 #: ../search/Beagle.Search.Pages/StartDaemon.cs:19
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
 msgstr ""
-"Nelze zobrazit vyhledávací službu, protože právě běží. Můžete ji spustit "
-"kliknutím na tlačítko níže."
+"Zdá se, že vyhledávací služba neběží. Můžete ji spustit kliknutím na "
+"tlačítko níže."
 
 #: ../search/Beagle.Search.Pages/StartDaemon.cs:22
 msgid "Start search service"
@@ -429,12 +428,12 @@ msgstr "Odpojený"
 
 #: ../search/Beagle.Search.Tiles/IMLog.cs:132
 msgid "Available"
-msgstr "Dostupný"
+msgstr "Přítomen"
 
 #. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
 #: ../search/Beagle.Search.Tiles/Image.cs:39
 msgid "Set as Wallpaper"
-msgstr "Použít jako pozadí"
+msgstr "Nastavit jako tapetu"
 
 #: ../search/Beagle.Search.Tiles/Image.cs:84
 #: ../search/Beagle.Search.Tiles/Note.cs:75
@@ -645,25 +644,25 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Přistoupeno:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Vyhledávání"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "Žádná nedávná hledání"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Nedávná hledání"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Vymazat"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Ukončit"
 
@@ -757,7 +756,7 @@ msgstr "Ve vašem okolí jsou počítače, na kterých běží Beagle"
 
 #: ../search/Beagle.Search/SearchWindow.cs:486
 msgid "You can select to search other computers from the \"Search\" menu."
-msgstr "Můžete vybrat hledání jiných počítačů z nabídky \"Vyhledávání\"."
+msgstr "Hledání jiných počítačů můžete vybrat z nabídky \"Vyhledávání\"."
 
 #: ../search/Beagle.Search/SearchWindow.cs:518
 msgid "Search service started"
@@ -777,7 +776,7 @@ msgstr "Selhalo zastavování služby"
 
 #: ../search/Beagle.Search/SearchWindow.cs:546
 msgid "Service was not running!"
-msgstr "Služba nebyla spuštěna!"
+msgstr "Služba neběžela!"
 
 #: ../search/Beagle.Search/SearchWindow.cs:560
 msgid "Search service stopped"
@@ -799,14 +798,15 @@ msgstr ""
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
-msgstr[0] "Zobrazuje se {0} výsledek"
-msgstr[1] "Zobrazují se všechny {0} výsledky"
-msgstr[2] "Zobrazuje se všech {0} výsledků"
+msgstr[0] "Nalezen {0} výsledek"
+msgstr[1] "Nalezeny {0} výsledky"
+msgstr[2] "Nalezeno {0} výsledků"
 
 #: ../search/Beagle.Search/SearchWindow.cs:628
 #, csharp-format
 msgid "Too many matches. Showing latest {0} of total {1}"
-msgstr "Příliš mnoho výsledků. Zobrazuje se posledních {0} z celkem {1}"
+msgstr ""
+"Příliš mnoho výsledků. Zobrazí se pouze {0} nejnovějších z celkových {1}"
 
 #: ../search/Beagle.Search/UIManager.cs:53
 msgid "Close Desktop Search"
@@ -823,7 +823,7 @@ msgstr "_Vyhledávání"
 
 #: ../search/Beagle.Search/UIManager.cs:68
 msgid "Search _Domains"
-msgstr "Hledat _domény"
+msgstr "Prohledávat _domény"
 
 #: ../search/Beagle.Search/UIManager.cs:71
 msgid "_Actions"
@@ -899,7 +899,7 @@ msgstr "Hledat v osobních datech na tomto počítači"
 
 #: ../search/Beagle.Search/UIManager.cs:147
 msgid "_System"
-msgstr "_Systém"
+msgstr "_Systémové"
 
 #: ../search/Beagle.Search/UIManager.cs:149
 msgid "Search in system data on this computer"
@@ -1095,7 +1095,7 @@ msgstr "E-maily z Evolutionu."
 
 #: ../tools/Settings.cs:1732
 msgid "Evolution's address book, memos and tasks."
-msgstr "Adresář, poznámky a úlohy z Evolutionu."
+msgstr "Adresář, poznámky a úkoly z Evolutionu."
 
 #: ../tools/Settings.cs:1733
 msgid "Thunderbird's email."
@@ -1167,7 +1167,7 @@ msgstr "Záložky a historie prohlížení z Opery."
 
 #: ../tools/Settings.cs:1750
 msgid "IMs and chats from Pidgin."
-msgstr "Rychlé zprávy a komunikace z Pidgina."
+msgstr "Rychlé zprávy a konverzace z Pidgina."
 
 #: ../tools/Settings.cs:1751
 msgid "Notes from Tomboy."
@@ -1188,8 +1188,7 @@ msgstr "(Systém) Manuálové stránky"
 
 #: ../tools/Settings.cs:1756
 msgid "(System) Supplementary search results using 'locate' command"
-msgstr ""
-"(Systém) Dodatečné výsledky vyhledávání používající 'lokalizované' příkazy"
+msgstr "(Systém) Dodatečné výsledky vyhledávání za použití příkazu 'locate'"
 
 #: ../tools/Settings.cs:1757
 msgid "(System) Mono documentation"
@@ -1249,7 +1248,7 @@ msgstr "<b>Místní a systémové zdroje</b>"
 
 #: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
-msgstr "<b>Síťování</b>"
+msgstr "<b>Sítě</b>"
 
 #: ../tools/settings.glade.h:8
 msgid "<b>Privacy</b>"
@@ -1308,7 +1307,7 @@ msgstr ""
 
 #: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
-msgstr "Automaticky _spustit hledání, jakmile uživatel přestane psát"
+msgstr "Automaticky spus_tit hledání, jakmile uživatel přestane psát"
 
 #: ../tools/settings.glade.h:21
 msgid "Change"
@@ -1368,7 +1367,7 @@ msgstr "Indexace"
 
 #: ../tools/settings.glade.h:35
 msgid "Network options"
-msgstr "Možnosti síťování"
+msgstr "Možnosti sítě"
 
 #: ../tools/settings.glade.h:37
 msgid "Password for {0}"
@@ -1388,7 +1387,7 @@ msgstr "Vyberte prosím poštovní složku, kterou chcete vyjmout z indexace. "
 
 #: ../tools/settings.glade.h:41
 msgid "Require a password to search this computer remotely"
-msgstr "Pro vzdálené prohledávání tohoto počítače je požadováno heslo"
+msgstr "Požadovat heslo v případě vzdáleného prohledávání tohoto počítače"
 
 #: ../tools/settings.glade.h:42
 msgid "Search Preferences"
@@ -1432,7 +1431,7 @@ msgstr "_Cesta ke složce"
 
 #: ../tools/settings.glade.h:51
 msgid "_Hostname:"
-msgstr "Název _hostitele:"
+msgstr "_Název hostitele:"
 
 #: ../tools/settings.glade.h:52
 msgid "_Mail folder"
