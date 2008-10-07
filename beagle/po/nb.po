@@ -3,15 +3,15 @@
 # Copyright (C) 2005-2006, Novell Inc.
 # Terance Edward Sola <terance@lyse.net>, 2005.
 # Øivind Hoel <oivind.hoel@gmail.com>, 2006
-# Kjartan Maraas <kmaraas@gnome.org>, 2006,2007.
+# Kjartan Maraas <kmaraas@gnome.org>, 2006-2008.
 #
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle 0.2.16\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-09 16:29+0200\n"
-"PO-Revision-Date: 2008-07-09 16:33+0200\n"
+"POT-Creation-Date: 2008-10-07 17:59+0200\n"
+"PO-Revision-Date: 2008-10-07 18:01+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -198,13 +198,8 @@ msgstr ""
 "Ditt søk etter \"{0}\" samsvarte ikke med noen filer på din datamaskin."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:24
-#, fuzzy
-msgid ""
-"You can change the scope of your search using the \"Find in\" list. A "
-"broader search scope might produce more results."
+msgid "You can select \"Find in: All\" to search everywhere."
 msgstr ""
-"Du kan endre omfanget av søket ved å bruke menyen «Søk». Et større omfang kan "
-"gi flere resultater."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -241,7 +236,13 @@ msgstr ""
 "Ved søk etter en frase må du legge til sitattegn. F.eks <b>\"There be dragons"
 "\"</b>"
 
-#: ../search/Beagle.Search.Pages/QuickTips.cs:19
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid ""
+"Specify the extension to search among files with that extension. ex: <b>bean "
+"soup .html</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
 #: ../search/Beagle.Search/UIManager.cs:106
 msgid "Quick Tips"
 msgstr "Nyttige tips"
@@ -388,7 +389,7 @@ msgstr[1] "Inneholder {0} elementer"
 msgid "IM Conversation"
 msgstr "IM-samtale"
 
-#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:33
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Navn:"
 
@@ -623,25 +624,25 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Aksessert:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Skrivebordssøk"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "Ingen nylige søk"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Nylige søk"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Tøm"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Avslutt"
 
@@ -659,7 +660,7 @@ msgstr "{0}-{1} av {2}"
 
 #: ../search/Beagle.Search/Driver.cs:135
 msgid "Session D-Bus not accessible"
-msgstr ""
+msgstr "Sesjonens D-Bus er ikke tilgjengelig"
 
 #: ../search/Beagle.Search/Driver.cs:136
 msgid ""
@@ -722,48 +723,48 @@ msgstr "Skriv inn søkeord"
 msgid "Start searching"
 msgstr "Start søk"
 
-#: ../search/Beagle.Search/SearchWindow.cs:253
+#: ../search/Beagle.Search/SearchWindow.cs:254
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Skrivebordssøk: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:481
+#: ../search/Beagle.Search/SearchWindow.cs:485
 msgid "There are computers near you running Beagle"
 msgstr "Det finnes datamaskiner i nærheten som kjører Beagle"
 
-#: ../search/Beagle.Search/SearchWindow.cs:482
+#: ../search/Beagle.Search/SearchWindow.cs:486
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Du kan velge å søke på andre datamaskiner fra «Søk»-menyen."
 
-#: ../search/Beagle.Search/SearchWindow.cs:514
+#: ../search/Beagle.Search/SearchWindow.cs:518
 msgid "Search service started"
 msgstr "Søketjenesten startet"
 
-#: ../search/Beagle.Search/SearchWindow.cs:525
+#: ../search/Beagle.Search/SearchWindow.cs:529
 msgid "Starting service failed"
 msgstr "Start av søketjenesten feilet"
 
-#: ../search/Beagle.Search/SearchWindow.cs:526
+#: ../search/Beagle.Search/SearchWindow.cs:530
 msgid "Service is already running!"
 msgstr "Søketjenesten kjører allerede!"
 
-#: ../search/Beagle.Search/SearchWindow.cs:541
+#: ../search/Beagle.Search/SearchWindow.cs:545
 msgid "Stopping service failed"
 msgstr "Feil ved stopp av tjenesten"
 
-#: ../search/Beagle.Search/SearchWindow.cs:542
+#: ../search/Beagle.Search/SearchWindow.cs:546
 msgid "Service was not running!"
 msgstr "Søketjenesten kjørte ikke!"
 
-#: ../search/Beagle.Search/SearchWindow.cs:556
+#: ../search/Beagle.Search/SearchWindow.cs:560
 msgid "Search service stopped"
 msgstr "Søketjenesten er stoppet"
 
-#: ../search/Beagle.Search/SearchWindow.cs:595
+#: ../search/Beagle.Search/SearchWindow.cs:599
 msgid "Your data is being indexed"
 msgstr "Dine data indekseres nå"
 
-#: ../search/Beagle.Search/SearchWindow.cs:596
+#: ../search/Beagle.Search/SearchWindow.cs:600
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -771,18 +772,17 @@ msgstr ""
 "Søketjenesten holder på å indeksere dine data. Søkeresultater kan være "
 "ufullstendige inntil indeksering er fullført."
 
-#: ../search/Beagle.Search/SearchWindow.cs:622
+#: ../search/Beagle.Search/SearchWindow.cs:626
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Viser {0} treff"
 msgstr[1] "Viser alle {0} treff"
 
-#. .
-#: ../search/Beagle.Search/SearchWindow.cs:625
+#: ../search/Beagle.Search/SearchWindow.cs:628
 #, csharp-format
 msgid "Too many matches. Showing latest {0} of total {1}"
-msgstr ""
+msgstr "For mange treff. Viser siste {0} av totalt {1}"
 
 #: ../search/Beagle.Search/UIManager.cs:53
 msgid "Close Desktop Search"
@@ -1008,52 +1008,52 @@ msgstr "Fjern vert"
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "Er du sikker på at du vil fjerne denne verten fra listen?"
 
-#: ../tools/Settings.cs:769 ../tools/Settings.cs:858 ../tools/Settings.cs:939
-#: ../tools/Settings.cs:1044 ../tools/Settings.cs:1766
+#: ../tools/Settings.cs:774 ../tools/Settings.cs:863 ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049 ../tools/Settings.cs:1771
 msgid "Name"
 msgstr "Navn"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:857
 msgid "Type"
 msgstr "Type"
 
-#: ../tools/Settings.cs:905
+#: ../tools/Settings.cs:910
 msgid "Path:"
 msgstr "Sti:"
 
-#: ../tools/Settings.cs:908
+#: ../tools/Settings.cs:913
 msgid "Pattern:"
 msgstr "Mønster:"
 
-#: ../tools/Settings.cs:911
+#: ../tools/Settings.cs:916
 msgid "Mail folder:"
 msgstr "E-postmappe:"
 
-#: ../tools/Settings.cs:946
+#: ../tools/Settings.cs:951
 msgid "Address"
 msgstr "Adresse"
 
-#: ../tools/Settings.cs:1291
+#: ../tools/Settings.cs:1296
 msgid "Select Folder"
 msgstr "Velg mappe"
 
-#: ../tools/Settings.cs:1317 ../tools/settings.glade.h:35
+#: ../tools/Settings.cs:1322 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Sti:"
 
-#: ../tools/Settings.cs:1322
+#: ../tools/Settings.cs:1327
 msgid "M_ail folder:"
 msgstr "E-postm_appe:"
 
-#: ../tools/Settings.cs:1327
+#: ../tools/Settings.cs:1332
 msgid "P_attern:"
 msgstr "Mø_nster:"
 
-#: ../tools/Settings.cs:1351
+#: ../tools/Settings.cs:1356
 msgid "Error adding path"
 msgstr "Feil ved tilføying av sti"
 
-#: ../tools/Settings.cs:1352
+#: ../tools/Settings.cs:1357
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1061,121 +1061,121 @@ msgstr ""
 "Stien ble ikke funnet og kan derfor ikke legges til listen over stier som "
 "skal bli ekskluderes fra indeksering."
 
-#: ../tools/Settings.cs:1390
+#: ../tools/Settings.cs:1395
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Kobler til {0}"
 
-#: ../tools/Settings.cs:1726
+#: ../tools/Settings.cs:1731
 msgid "Evolution's mail."
 msgstr "E-post fra Evolution."
 
-#: ../tools/Settings.cs:1727
+#: ../tools/Settings.cs:1732
 msgid "Evolution's address book, memos and tasks."
 msgstr "Adressebok, notater og oppgaver i Evolution."
 
-#: ../tools/Settings.cs:1728
+#: ../tools/Settings.cs:1733
 msgid "Thunderbird's email."
 msgstr "E-post fra Thunderbird."
 
-#: ../tools/Settings.cs:1729
+#: ../tools/Settings.cs:1734
 msgid "RSS feeds from Akregator."
-msgstr ""
+msgstr "RSS-strømmer fra Akregator."
 
-#: ../tools/Settings.cs:1730
+#: ../tools/Settings.cs:1735
 msgid "RSS feeds from Blam."
-msgstr ""
+msgstr "RSS-strømmer fra Blam."
 
-#: ../tools/Settings.cs:1731
+#: ../tools/Settings.cs:1736
 msgid "Files and folders on the local file system."
 msgstr "Filer og mapper på det lokale filsystemet."
 
-#: ../tools/Settings.cs:1732
+#: ../tools/Settings.cs:1737
 msgid "Mail messages from KMail."
 msgstr "E-post fra KMail."
 
-#: ../tools/Settings.cs:1733
-msgid "Notes from KNotes."
-msgstr ""
-
-#: ../tools/Settings.cs:1734
-msgid "Agenda from KOrganizer."
-msgstr ""
-
-#: ../tools/Settings.cs:1735
-msgid "Contacts from KAddressBook."
-msgstr ""
-
-#: ../tools/Settings.cs:1736
-msgid "Konqueror's bookmarks."
-msgstr ""
-
-#: ../tools/Settings.cs:1737
-msgid "Konqueror's history."
-msgstr ""
-
 #: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "Notater fra KNotes."
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr "Agenda fra KOrganizer."
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "Kontakter fra KAddressBook."
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Bokmerker fra Konqueror."
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Historikk fra Konqueror."
+
+#: ../tools/Settings.cs:1743
 msgid "IMs and chats from Konversation."
 msgstr ""
 
-#: ../tools/Settings.cs:1739
+#: ../tools/Settings.cs:1744
 msgid "IMs and chats from Kopete"
 msgstr ""
 
-#: ../tools/Settings.cs:1740
+#: ../tools/Settings.cs:1745
 msgid "Mind-maps from Labyrinth."
 msgstr ""
 
-#: ../tools/Settings.cs:1741
+#: ../tools/Settings.cs:1746
 msgid "RSS feeds from Liferea."
 msgstr ""
 
-#: ../tools/Settings.cs:1742
+#: ../tools/Settings.cs:1747
 msgid "Nautilus' metadata (emblems, notes, etc.)"
 msgstr ""
 
-#: ../tools/Settings.cs:1743
+#: ../tools/Settings.cs:1748
 msgid "Search other search services in the network (EXPERIMENTAL)"
 msgstr ""
 
-#: ../tools/Settings.cs:1744
+#: ../tools/Settings.cs:1749
 msgid "Opera's bookmarks and browsing history."
 msgstr ""
 
-#: ../tools/Settings.cs:1745
+#: ../tools/Settings.cs:1750
 msgid "IMs and chats from Pidgin."
 msgstr ""
 
-#: ../tools/Settings.cs:1746
+#: ../tools/Settings.cs:1751
 msgid "Notes from Tomboy."
-msgstr ""
+msgstr "Notater fra Tomboy."
 
 #. System-wide indexes
-#: ../tools/Settings.cs:1748
+#: ../tools/Settings.cs:1753
 msgid "(System) Applications"
 msgstr "(System) Programmer"
 
-#: ../tools/Settings.cs:1749
+#: ../tools/Settings.cs:1754
 msgid "(System) Help files"
 msgstr "(System) Hjelpfiler"
 
-#: ../tools/Settings.cs:1750
+#: ../tools/Settings.cs:1755
 msgid "(System) Manual pages"
 msgstr "(System) Manualsider"
 
-#: ../tools/Settings.cs:1751
+#: ../tools/Settings.cs:1756
 msgid "(System) Supplementary search results using 'locate' command"
 msgstr ""
 
-#: ../tools/Settings.cs:1752
+#: ../tools/Settings.cs:1757
 msgid "(System) Mono documentation"
 msgstr ""
 
-#: ../tools/Settings.cs:1753
+#: ../tools/Settings.cs:1758
 msgid "(System) Files from Windows' partition"
 msgstr "(System) Filer på Windows-partisjon"
 
-#: ../tools/Settings.cs:1767
+#: ../tools/Settings.cs:1772
 msgid "Description"
 msgstr "Beskrivelse"
 
@@ -1187,15 +1187,15 @@ msgstr "Konfigurer søk for skrivebordet"
 msgid "Search & Indexing"
 msgstr "Søk og indeksering"
 
-#: ../tools/keygrabber.py:54
+#: ../tools/keygrabber.py:56
 msgid "Grab key combination"
 msgstr ""
 
-#: ../tools/keygrabber.py:140
+#: ../tools/keygrabber.py:143
 msgid "Please press the new key combination"
 msgstr ""
 
-#: ../tools/keygrabber.py:189
+#: ../tools/keygrabber.py:192
 msgid "Disabled"
 msgstr "Deaktivert"
 
@@ -1220,51 +1220,55 @@ msgid "<b>General</b>"
 msgstr "<b>Generelt</b>"
 
 #: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>Lokale- og systemressurser</b>"
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
 msgstr "<b>Nettverk</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:8
 msgid "<b>Privacy</b>"
 msgstr "<b>Personvern</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:9
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Velg e-postmappe</b>"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
 msgid "<b>User Interface</b>"
 msgstr "<b>Brukergrensesnitt</b>"
 
-#: ../tools/settings.glade.h:10
+#: ../tools/settings.glade.h:11
 msgid "<i>Changes will take effect only after daemon restart.</i>"
 msgstr ""
 "<i>Endringene vil tre i kraft etter at tjenesten er startet på nytt.</i>"
 
-#: ../tools/settings.glade.h:11
+#: ../tools/settings.glade.h:12
 msgid "<i>This setting does not apply while on battery power.</i>"
 msgstr "<i>Denne innstillingen gjelder ikke når du kjører på batteristrøm.</i>"
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:13
 msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Passord kreves.</span>"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:14
 msgid "Add Remote Host"
 msgstr "Legg til ekstern vert"
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:15
 msgid "Add a static host"
 msgstr "Legg til en statisk vert"
 
-#: ../tools/settings.glade.h:15
+#: ../tools/settings.glade.h:16
 msgid "Add any additional paths to be included for indexing."
 msgstr "Legg til ytterligere stier som skal bli inkludert for indeksering."
 
-#: ../tools/settings.glade.h:16
+#: ../tools/settings.glade.h:17
 msgid "Add any remote search-enabled hosts you wish to network with."
 msgstr ""
 
-#: ../tools/settings.glade.h:17
+#: ../tools/settings.glade.h:18
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -1272,105 +1276,105 @@ msgstr ""
 "Tilpass hvilke typer treff som skal bli vist og i hvilken rekkefølge de skal "
 "bli presentert når gruppert etter type."
 
-#: ../tools/settings.glade.h:18
+#: ../tools/settings.glade.h:19
 msgid "Allow external access to local search services (EXPERIMENTAL)"
 msgstr ""
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
 msgstr "S_tart søk automatisk etter at bruker har sluttet å skrive"
-
-#: ../tools/settings.glade.h:20
-msgid "Backends"
-msgstr "Motorer"
 
 #: ../tools/settings.glade.h:21
 msgid "Change"
 msgstr "Endre"
 
 #: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Datakilder"
+
+#: ../tools/settings.glade.h:23
 msgid "Display the search window by pressing"
 msgstr "Vis søkevinduet ved å trykke"
 
-#: ../tools/settings.glade.h:23
-msgid "Enable web interface for local search service"
-msgstr ""
-
 #: ../tools/settings.glade.h:24
-msgid "Enable/Disable backends from the indexing and searching process."
+msgid "Enable the data sources that you want to index and search."
 msgstr ""
 
 #: ../tools/settings.glade.h:25
+msgid "Enable web interface for local search service"
+msgstr ""
+
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "Eksluder ressurs"
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "Filnavn_mønster"
 
-#: ../tools/settings.glade.h:27
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "I_ndekser min hjemmemappe"
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:29
 msgid ""
 "In order for you to perform Beagle searches on this computer, you must enter "
 "a password."
 msgstr ""
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:30
 msgid "Index data while on _battery power"
 msgstr "Indekser data mens du kjører på _batteristrøm"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:31
 msgid "Index more aggressively while the s_creensaver is activated"
 msgstr ""
 
-#: ../tools/settings.glade.h:31
+#: ../tools/settings.glade.h:32
 msgid "Index name:"
 msgstr "Navn på indeks:"
 
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "Indeksering"
 
-#: ../tools/settings.glade.h:34
-msgid "Networking"
-msgstr "Nettverk"
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Nettverksalternativer"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:37
 msgid "Password for {0}"
 msgstr "Passord for {0}"
 
-#: ../tools/settings.glade.h:37
+#: ../tools/settings.glade.h:38
 msgid "Password:"
 msgstr "Passord:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
 msgstr "Velg en ressurs som skal ekskluderes fra indeksering."
 
-#: ../tools/settings.glade.h:39
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr "Velg e-postmappen som skal ekskluderes fra indeksering."
 
-#: ../tools/settings.glade.h:40
+#: ../tools/settings.glade.h:41
 msgid "Require a password to search this computer remotely"
 msgstr "Krev passord for eksterne søk på denne datamaskinen"
 
-#: ../tools/settings.glade.h:41
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "Brukervalg for søk"
 
-#: ../tools/settings.glade.h:42
+#: ../tools/settings.glade.h:43
 msgid "Searching"
 msgstr "Søker"
 
-#: ../tools/settings.glade.h:43
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "Velg e-postmappe"
 
-#: ../tools/settings.glade.h:44
+#: ../tools/settings.glade.h:45
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1378,39 +1382,38 @@ msgstr ""
 "Angi ressurser som f.eks. mapper, filnavnmønster, e-postmapper eller type "
 "objekter du vil ekskludere fra indeksering."
 
-#: ../tools/settings.glade.h:45
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "Type:"
 
-#: ../tools/settings.glade.h:46
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
 msgstr "L_a Beagle kjøre som root"
 
-#: ../tools/settings.glade.h:47
+#: ../tools/settings.glade.h:48
 msgid "_Browse..."
 msgstr "_Bla gjennom..."
 
-#: ../tools/settings.glade.h:48
+#: ../tools/settings.glade.h:49
 msgid "_Choose from currently available hosts"
 msgstr "_Velg fra tilgjengelige verter"
 
-#: ../tools/settings.glade.h:49
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "_Mappesti"
 
-#: ../tools/settings.glade.h:50
+#: ../tools/settings.glade.h:51
 msgid "_Hostname:"
 msgstr "_Vertsnavn:"
 
-#: ../tools/settings.glade.h:51
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "E-post_mappe"
 
-#: ../tools/settings.glade.h:52
+#: ../tools/settings.glade.h:53
 msgid "_Password:"
 msgstr "_Passord"
 
-#: ../tools/settings.glade.h:53
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "_Start søke- og indekseringstjenesten automatisk "
-
