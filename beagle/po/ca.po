@@ -194,7 +194,7 @@ msgstr "Cap fitxer de l'ordinador no conté la cerca «{0}»"
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid "You can select \"Find in: All\" to search everywhere."
-msgstr "Podeu seleccionar «C_erca a: Tots» per cercar a tots els llocs"
+msgstr "Podeu seleccionar «Cerca a: Tots» per cercar a tots els llocs."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -209,7 +209,7 @@ msgid ""
 "If you are searching for GMail emails, select \"Global\" Search Domain using "
 "the \"Search\" menu."
 msgstr ""
-"Si esteu cercant missatges del GMail, seleccioneu «Global» en el domini de cerca utilitzant el menú «Cerca»."
+"Si esteu cercant correus electrònics del GMail, seleccioneu «Global» en el domini de cerca utilitzant el menú «Cerca»."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -1075,7 +1075,7 @@ msgstr "Correu de l'Evolution."
 
 #: ../tools/Settings.cs:1732
 msgid "Evolution's address book, memos and tasks."
-msgstr "Adreces d'interès, llistes d'anotacions i tasques l'Evolution."
+msgstr "Adreces d'interès, llistes d'anotacions i tasques de l'Evolution."
 
 #: ../tools/Settings.cs:1733
 msgid "Thunderbird's email."
@@ -1083,11 +1083,11 @@ msgstr "Correu electrònic del Thunderbird."
 
 #: ../tools/Settings.cs:1734
 msgid "RSS feeds from Akregator."
-msgstr "Fonts RSS de l'Akregator."
+msgstr "Canals RSS de l'Akregator."
 
 #: ../tools/Settings.cs:1735
 msgid "RSS feeds from Blam."
-msgstr "Fonts RSS del Blam."
+msgstr "Canals RSS del Blam."
 
 #: ../tools/Settings.cs:1736
 msgid "Files and folders on the local file system."
@@ -1131,7 +1131,7 @@ msgstr "Mapes mentals del Labyrinth."
 
 #: ../tools/Settings.cs:1746
 msgid "RSS feeds from Liferea."
-msgstr "Fonts RSS del Lifearea."
+msgstr "Canals RSS del Lifearea."
 
 # N.T.: Emblems ho traduïm per distintius al Nautilus
 #: ../tools/Settings.cs:1747
@@ -1144,7 +1144,7 @@ msgstr "Cerca a altres serveis de cerca a la xarxa (experimental)"
 
 #: ../tools/Settings.cs:1749
 msgid "Opera's bookmarks and browsing history."
-msgstr "Adreces d'interès i historial de navegació de l'Opera"
+msgstr "Adreces d'interès i historial de navegació de l'Opera."
 
 #: ../tools/Settings.cs:1750
 msgid "IMs and chats from Pidgin."
@@ -1225,7 +1225,7 @@ msgstr "<b>General</b>"
 
 #: ../tools/settings.glade.h:6
 msgid "<b>Local and System sources</b>"
-msgstr "<b>Local i recursos del sistema</b>"
+msgstr "<b>Recursos locals i del sistema</b>"
 
 #: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
