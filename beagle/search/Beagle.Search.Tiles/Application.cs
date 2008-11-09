@@ -17,13 +17,13 @@ namespace Beagle.Search.Tiles {
 			AddSupportedFlavor (new HitFlavor (null, null, "application/x-desktop"));
 		}
 
-		[DllImport ("libgnome-desktop-2.so.2")]
+		[DllImport ("libgnome-desktop-2")]
 		static extern IntPtr gnome_desktop_item_new_from_uri (string uri, int flags, IntPtr error);
 
-		[DllImport ("libgnome-desktop-2.so.2")]
+		[DllImport ("libgnome-desktop-2")]
 		static extern string gnome_desktop_item_get_string (IntPtr ditem, string attr);
 
-		[DllImport ("libgnome-desktop-2.so.2")]
+		[DllImport ("libgnome-desktop-2")]
 		static extern void gnome_desktop_item_unref (IntPtr ditem);
 
 		IntPtr ditem;
@@ -157,7 +157,7 @@ namespace Beagle.Search.Tiles {
 				base.LoadIcon (image, size);
 		}
 
-		[DllImport ("libgnome-desktop-2.so.2")]
+		[DllImport ("libgnome-desktop-2")]
 		static extern int gnome_desktop_item_launch (IntPtr ditem, IntPtr file_list, int flags, IntPtr error);
 
 		public override void Open ()

@@ -104,7 +104,7 @@ ASSEMBLIES =				\
 	-r:Mono.Posix			\
 	-r:Mono.Cairo
 
-pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb
+pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(ASSEMBLY).config
 
 BIN_WRAPPERS = beagle-search
 
