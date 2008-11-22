@@ -69,18 +69,23 @@ namespace Beagle.Filters {
 				Error ();
 				return;
 			}
+			
+			string line;
 
-			if (reader.ReadLine () != "[Desktop Entry]") {
-				Logger.Log.Error ("Could not filter file: No desktop entry");
-				reader.Close ();
+			// FIXME: Use GKeyFile to parse .desktop files (which are like .ini files)
+			// Find the [Desktop Entry] group
+			while ((line = reader.ReadLine ()) != null)
+				if (line == "[Desktop Entry]") break;
+
+			if (line == null) {
+				Logger.Log.Error ("Could not filter: No group [Desktop Entry]");
 				Error ();
 				return;
 			}
-			
+
 			// desktop files must have a name
 			bool have_name = false;
 			
-			String line;
 			while ((line = reader.ReadLine ()) != null)  {
 				string [] sline = line.Split ('=');
 				if (sline.Length != 2)
