@@ -292,6 +292,10 @@ namespace Beagle.Search {
 							 "Jakub Steiner <jimmac@novell.com>",
 							 "Lukas Lipka <lukaslipka@gmail.com>",
 					    };
+
+			string translators = Catalog.GetString ("translator-credits");
+			if (translators == "translator-credits") // not translated
+				translators = null;
 			
 #pragma warning disable 612 // don't warn that Gnome.About is deprecated
 			Gnome.About about = new Gnome.About ("Beagle Search",
