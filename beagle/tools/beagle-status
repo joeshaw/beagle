@@ -9,4 +9,11 @@ else
     CMD="beagle-info"
 fi
 
-watch -n 5 $CMD --status
+while true; do
+    clear
+    echo -n "beagle-status at "
+    date
+    $CMD --status
+    sleep 5
+done
+
