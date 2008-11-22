@@ -49,7 +49,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 		public KopeteQueryable () : base ("KopeteIndex")
 		{
-			config_dir = Path.Combine (PathFinder.HomeDir, ".kde/share/apps/kopete");
+			config_dir = Path.Combine (KdeUtils.KDEUserDir, "share/apps/kopete");
 			log_dir = Path.Combine (config_dir, "logs");
 		}
 

@@ -108,6 +108,46 @@ namespace Beagle.Util {
 			return null;
 		}
 
+		private static string kde3_user_dir = Path.Combine (PathFinder.HomeDir, ".kde");
+		public static string KDE3UserDir {
+			get { return kde3_user_dir; }
+		}
+
+		private static string kde4_user_dir = String.Empty; // default initial value
+		public static string KDE4UserDir {
+			get {
+				if (kde4_user_dir != String.Empty)
+					return kde4_user_dir;
+
+				// first check if the KDE_SESSION_VERSION is set and is equal to 4
+				string env = Environment.GetEnvironmentVariable ("KDE_SESSION_VERSION");
+				// if the environment variable is set, ~/.kde4 is the kde4 directory; always.
+				if (env == "4")
+					kde4_user_dir = Path.Combine (PathFinder.HomeDir, ".kde4");
+				else
+					kde4_user_dir = null;
+
+				return kde4_user_dir;
+			}
+		}
+
+		public static string KDEUserDir {
+			get {
+				if (KDE4UserDir != null)
+					return KDE4UserDir;
+
+				// If not sure running kde4, check if the .kde4 directory was created while beagle was running
+				string kde4_dir = Path.Combine (PathFinder.HomeDir, ".kde4");
+				if (Directory.Exists (kde4_dir)) {
+					kde4_user_dir = kde4_dir; // if the kde4 directory is found, cache is for future
+					return kde4_user_dir;
+				}
+
+				// else use the kde3 directory
+				return KDE3UserDir;
+			}
+		}
+
 		public static string ReadPasswordKDEWallet (string folder, string username)
 		{
 			if (String.IsNullOrEmpty (folder) || String.IsNullOrEmpty (username))
