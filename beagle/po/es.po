@@ -11,9 +11,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-14 19:52+0000\n"
-"PO-Revision-Date: 2008-07-20 14:29+0200\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=beagle&amp;component=general\n"
+"POT-Creation-Date: 2008-11-22 19:57+0000\n"
+"PO-Revision-Date: 2008-11-23 12:24+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -230,13 +231,15 @@ msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr "Para buscar términos opcionales, use OR. ej: <b>Jorge or Esteban</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Para excluir términos de búsqueda, use el símbolo menos como prefijo, como "
 "<b>-gatos</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Cuando busque una frase, añada comillas. Ej: <b>\"En un lugar de La Mancha"
 "\"</b>"
@@ -631,25 +634,25 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Accedido:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Búsquedas de Escritorio"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "No se encontraron búsquedas recientes"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Búsquedas recientes"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Limpiar"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Salir"
 
@@ -670,7 +673,8 @@ msgid "Session D-Bus not accessible"
 msgstr "La sesión de D-Bus no está accesible"
 
 #: ../search/Beagle.Search/Driver.cs:136
-msgid "Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgid ""
+"Cannot run with parameter '--icon' when session D-Bus is not accessible."
 msgstr ""
 "No se puede ejecutar con el parámetro «--icon» cuando la sesión D-Bus no está "
 "accesible."
@@ -731,48 +735,48 @@ msgstr "Teclee los términos de búsqueda"
 msgid "Start searching"
 msgstr "Empezar a buscar"
 
-#: ../search/Beagle.Search/SearchWindow.cs:253
+#: ../search/Beagle.Search/SearchWindow.cs:254
 #, csharp-format
 msgid "Desktop Search: {0}"
 msgstr "Búsquedas de Escritorio: {0}"
 
-#: ../search/Beagle.Search/SearchWindow.cs:484
+#: ../search/Beagle.Search/SearchWindow.cs:485
 msgid "There are computers near you running Beagle"
 msgstr "Existen equipos cerca del suyo que están ejecutando Beagle"
 
-#: ../search/Beagle.Search/SearchWindow.cs:485
+#: ../search/Beagle.Search/SearchWindow.cs:486
 msgid "You can select to search other computers from the \"Search\" menu."
 msgstr "Puede seleccionar buscar en otros equipos en el menú «Buscar»."
 
-#: ../search/Beagle.Search/SearchWindow.cs:517
+#: ../search/Beagle.Search/SearchWindow.cs:518
 msgid "Search service started"
 msgstr "Servicio de búsqueda iniciado"
 
-#: ../search/Beagle.Search/SearchWindow.cs:528
+#: ../search/Beagle.Search/SearchWindow.cs:529
 msgid "Starting service failed"
 msgstr "Falló la inicialización del servicio"
 
-#: ../search/Beagle.Search/SearchWindow.cs:529
+#: ../search/Beagle.Search/SearchWindow.cs:530
 msgid "Service is already running!"
 msgstr "El servicio ya está en ejecución"
 
-#: ../search/Beagle.Search/SearchWindow.cs:544
+#: ../search/Beagle.Search/SearchWindow.cs:545
 msgid "Stopping service failed"
 msgstr "Falló al parar el servicio"
 
-#: ../search/Beagle.Search/SearchWindow.cs:545
+#: ../search/Beagle.Search/SearchWindow.cs:546
 msgid "Service was not running!"
 msgstr "El servicio no está en ejecución"
 
-#: ../search/Beagle.Search/SearchWindow.cs:559
+#: ../search/Beagle.Search/SearchWindow.cs:560
 msgid "Search service stopped"
 msgstr "Servicio de búsqueda detenido"
 
-#: ../search/Beagle.Search/SearchWindow.cs:598
+#: ../search/Beagle.Search/SearchWindow.cs:599
 msgid "Your data is being indexed"
 msgstr "Se están indexando sus datos"
 
-#: ../search/Beagle.Search/SearchWindow.cs:599
+#: ../search/Beagle.Search/SearchWindow.cs:600
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
@@ -780,14 +784,14 @@ msgstr ""
 "El servicio de búsqueda está indexando sus datos. Los resultados de búsqueda "
 "podrían estar incompletos hasta que el indexado haya terminado."
 
-#: ../search/Beagle.Search/SearchWindow.cs:625
+#: ../search/Beagle.Search/SearchWindow.cs:626
 #, csharp-format
 msgid "Showing {0} match"
 msgid_plural "Showing all {0} matches"
 msgstr[0] "Mostrando {0} coincidencia"
 msgstr[1] "Mostrando {0} coincidencias"
 
-#: ../search/Beagle.Search/SearchWindow.cs:627
+#: ../search/Beagle.Search/SearchWindow.cs:628
 #, csharp-format
 msgid "Too many matches. Showing latest {0} of total {1}"
 msgstr "Demasiadas coincidencias. Mostrando las últimas {0} de un total de {1}"
@@ -913,6 +917,10 @@ msgstr "Mostrar detalles"
 msgid "Couldn't launch web browser"
 msgstr "No se puede lanzar el navegador web"
 
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2008"
+
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
 msgstr "Búsqueda"
@@ -949,7 +957,8 @@ msgstr "Seleccione una ruta"
 
 #: ../tools/Settings.cs:517
 msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
+msgstr ""
+"La ruta seleccionada ya está seleccionada para la indexación y no se añadió."
 
 #: ../tools/Settings.cs:520
 msgid ""
@@ -1016,52 +1025,52 @@ msgstr "Quitar equipo"
 msgid "Are you sure you wish to remove this host from the list?"
 msgstr "¿Seguro que quiere eliminar este equipo de la lista?"
 
-#: ../tools/Settings.cs:769 ../tools/Settings.cs:858 ../tools/Settings.cs:939
-#: ../tools/Settings.cs:1044 ../tools/Settings.cs:1766
+#: ../tools/Settings.cs:774 ../tools/Settings.cs:863 ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049 ../tools/Settings.cs:1771
 msgid "Name"
 msgstr "Nombre"
 
-#: ../tools/Settings.cs:852
+#: ../tools/Settings.cs:857
 msgid "Type"
 msgstr "Tipo"
 
-#: ../tools/Settings.cs:905
+#: ../tools/Settings.cs:910
 msgid "Path:"
 msgstr "Ruta:"
 
-#: ../tools/Settings.cs:908
+#: ../tools/Settings.cs:913
 msgid "Pattern:"
 msgstr "Patrón:"
 
-#: ../tools/Settings.cs:911
+#: ../tools/Settings.cs:916
 msgid "Mail folder:"
 msgstr "Carpeta de correo:"
 
-#: ../tools/Settings.cs:946
+#: ../tools/Settings.cs:951
 msgid "Address"
 msgstr "Dirección"
 
-#: ../tools/Settings.cs:1291
+#: ../tools/Settings.cs:1296
 msgid "Select Folder"
 msgstr "Seleccione la carpeta"
 
-#: ../tools/Settings.cs:1317 ../tools/settings.glade.h:36
+#: ../tools/Settings.cs:1322 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "_Ruta:"
 
-#: ../tools/Settings.cs:1322
+#: ../tools/Settings.cs:1327
 msgid "M_ail folder:"
 msgstr "_Carpeta de correo:"
 
-#: ../tools/Settings.cs:1327
+#: ../tools/Settings.cs:1332
 msgid "P_attern:"
 msgstr "_Patrón:"
 
-#: ../tools/Settings.cs:1351
+#: ../tools/Settings.cs:1356
 msgid "Error adding path"
 msgstr "Se produjo un error al añadir la ruta"
 
-#: ../tools/Settings.cs:1352
+#: ../tools/Settings.cs:1357
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -1069,121 +1078,122 @@ msgstr ""
 "La ruta especificada no se pudo encontrar y por lo tanto se añadió a la "
 "lista de recursos excluidos de la indexación."
 
-#: ../tools/Settings.cs:1390
+#: ../tools/Settings.cs:1395
 #, csharp-format
 msgid "Connecting to {0}"
 msgstr "Conectándose a {0}"
 
-#: ../tools/Settings.cs:1726
+#: ../tools/Settings.cs:1731
 msgid "Evolution's mail."
 msgstr "Correo-e de Evolution."
 
-#: ../tools/Settings.cs:1727
+#: ../tools/Settings.cs:1732
 msgid "Evolution's address book, memos and tasks."
 msgstr "Libreta de direcciones, notas y tareas de Evolution."
 
-#: ../tools/Settings.cs:1728
+#: ../tools/Settings.cs:1733
 msgid "Thunderbird's email."
 msgstr "Correo-e de Thunderbird."
 
-#: ../tools/Settings.cs:1729
+#: ../tools/Settings.cs:1734
 msgid "RSS feeds from Akregator."
 msgstr "Fuentes RSS de Akregator."
 
-#: ../tools/Settings.cs:1730
+#: ../tools/Settings.cs:1735
 msgid "RSS feeds from Blam."
 msgstr "Fuentes RSS de Blam."
 
-#: ../tools/Settings.cs:1731
+#: ../tools/Settings.cs:1736
 msgid "Files and folders on the local file system."
 msgstr "Archivos y carpetas en el sistema de archivos local."
 
-#: ../tools/Settings.cs:1732
+#: ../tools/Settings.cs:1737
 msgid "Mail messages from KMail."
 msgstr "Mensajes de correo de KMail."
 
-#: ../tools/Settings.cs:1733
+#: ../tools/Settings.cs:1738
 msgid "Notes from KNotes."
 msgstr "Notas de KNotes."
 
-#: ../tools/Settings.cs:1734
+#: ../tools/Settings.cs:1739
 msgid "Agenda from KOrganizer."
 msgstr "Agenda de KOrganizer."
 
-#: ../tools/Settings.cs:1735
+#: ../tools/Settings.cs:1740
 msgid "Contacts from KAddressBook."
 msgstr "Contactos de KAdressBook."
 
-#: ../tools/Settings.cs:1736
+#: ../tools/Settings.cs:1741
 msgid "Konqueror's bookmarks."
 msgstr "Marcadores de Konqueror."
 
-#: ../tools/Settings.cs:1737
+#: ../tools/Settings.cs:1742
 msgid "Konqueror's history."
 msgstr "Histórico de Konqueror."
 
-#: ../tools/Settings.cs:1738
+#: ../tools/Settings.cs:1743
 msgid "IMs and chats from Konversation."
 msgstr "Mensajes instantáneos y chats de Konversation."
 
-#: ../tools/Settings.cs:1739
+#: ../tools/Settings.cs:1744
 msgid "IMs and chats from Kopete"
 msgstr "Mensajes instantáneos y chats de Kopete."
 
-#: ../tools/Settings.cs:1740
+#: ../tools/Settings.cs:1745
 msgid "Mind-maps from Labyrinth."
 msgstr "Mapas mentales de Labyrinth."
 
-#: ../tools/Settings.cs:1741
+#: ../tools/Settings.cs:1746
 msgid "RSS feeds from Liferea."
 msgstr "Fuentes RSS de Liferea."
 
-#: ../tools/Settings.cs:1742
+#: ../tools/Settings.cs:1747
 msgid "Nautilus' metadata (emblems, notes, etc.)"
 msgstr "Metadatos de Nautilus (emblemas, notas, etc.)"
 
-#: ../tools/Settings.cs:1743
+#: ../tools/Settings.cs:1748
 msgid "Search other search services in the network (EXPERIMENTAL)"
 msgstr "Buscar en otros servicios de la red (EXPÊRIMENTAL)"
 
-#: ../tools/Settings.cs:1744
+#: ../tools/Settings.cs:1749
 msgid "Opera's bookmarks and browsing history."
 msgstr "Marcadores e histórico de Opera."
 
-#: ../tools/Settings.cs:1745
+#: ../tools/Settings.cs:1750
 msgid "IMs and chats from Pidgin."
 msgstr "Mensajes instantáneos y chats de Pidgin."
 
-#: ../tools/Settings.cs:1746
+#: ../tools/Settings.cs:1751
 msgid "Notes from Tomboy."
 msgstr "Notas de Tomboy."
 
 #. System-wide indexes
-#: ../tools/Settings.cs:1748
+#: ../tools/Settings.cs:1753
 msgid "(System) Applications"
 msgstr "(Sistema) aplicaciones"
 
-#: ../tools/Settings.cs:1749
+#: ../tools/Settings.cs:1754
 msgid "(System) Help files"
 msgstr "(Sistema) archivos de ayuda"
 
-#: ../tools/Settings.cs:1750
+#: ../tools/Settings.cs:1755
 msgid "(System) Manual pages"
 msgstr "(Sistema) páginas del manual"
 
-#: ../tools/Settings.cs:1751
+#: ../tools/Settings.cs:1756
 msgid "(System) Supplementary search results using 'locate' command"
-msgstr "(Sistema) resultados de la búsqueda complementaria usando el comando «locate»"
+msgstr ""
+"(Sistema) resultados de la búsqueda complementaria usando el comando «locate»"
 
-#: ../tools/Settings.cs:1752
+#: ../tools/Settings.cs:1757
 msgid "(System) Mono documentation"
 msgstr "(Sistema) documentación de Mono"
 
-#: ../tools/Settings.cs:1753
+#: ../tools/Settings.cs:1758
 msgid "(System) Files from Windows' partition"
 msgstr "(Sistema) archivos de la partición Windows"
 
-#: ../tools/Settings.cs:1767
+#: ../tools/Settings.cs:1772
 msgid "Description"
 msgstr "Descripción"
 
@@ -1195,15 +1205,15 @@ msgstr "Configurar búsqueda de escritorio"
 msgid "Search & Indexing"
 msgstr "Búsqueda e indexación"
 
-#: ../tools/keygrabber.py:54
+#: ../tools/keygrabber.py:56
 msgid "Grab key combination"
 msgstr "Obtener combinación de teclas"
 
-#: ../tools/keygrabber.py:140
+#: ../tools/keygrabber.py:143
 msgid "Please press the new key combination"
 msgstr "Pulse la nueva combinación de teclas"
 
-#: ../tools/keygrabber.py:189
+#: ../tools/keygrabber.py:192
 msgid "Disabled"
 msgstr "Desactivado"
 
@@ -1249,11 +1259,13 @@ msgstr "<b>Interfaz de usuario</b>"
 
 #: ../tools/settings.glade.h:11
 msgid "<i>Changes will take effect only after daemon restart.</i>"
-msgstr "<i>Los cambios tendrán efecto sólo después de reiniciar el demonio.</i>"
+msgstr ""
+"<i>Los cambios tendrán efecto sólo después de reiniciar el demonio.</i>"
 
 #: ../tools/settings.glade.h:12
 msgid "<i>This setting does not apply while on battery power.</i>"
-msgstr "<i>Este ajuste no se aplica cuando se esté funcionando con la batería.</i>"
+msgstr ""
+"<i>Este ajuste no se aplica cuando se esté funcionando con la batería.</i>"
 
 #: ../tools/settings.glade.h:13
 msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
@@ -1287,7 +1299,8 @@ msgstr ""
 
 #: ../tools/settings.glade.h:19
 msgid "Allow external access to local search services (EXPERIMENTAL)"
-msgstr "Permitir acceso externo a los servicios de búsqueda locales (EXPERIMENTAL)"
+msgstr ""
+"Permitir acceso externo a los servicios de búsqueda locales (EXPERIMENTAL)"
 
 #: ../tools/settings.glade.h:20
 msgid "Automatically s_tart searching after the user has stopped typing"
@@ -1430,4 +1443,3 @@ msgstr "_Contraseña:"
 #: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "_Iniciar los servicios de búsqueda e indexación automáticamente"
-
