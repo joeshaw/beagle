@@ -19,6 +19,9 @@ JAR_FILES =					\
 	locale/en-US/beagle.dtd			\
 	locale/en-US/strings.properties		\
 	locale/en-US/contents.rdf		\
+	locale/sv-SE/beagle.dtd			\
+	locale/sv-SE/strings.properties		\
+	locale/sv-SE/contents.rdf		\
 	skin/classic/overlay.css		\
 	skin/classic/beagle.png			\
 	skin/classic/beagle-disabled.png	\

@@ -46,6 +46,10 @@ XPI_FILES = 			\
 	chrome/locale/en-US/beagle.dtd		\
 	chrome/locale/en-US/beagle.properties	\
 	\
+	chrome/locale/sv-SE/contents.rdf	\
+	chrome/locale/sv-SE/beagle.dtd		\
+	chrome/locale/sv-SE/beagle.properties	\
+	\
 	chrome/locale/zh-CN/contents.rdf	\
 	chrome/locale/zh-CN/beagle.dtd		\
 	chrome/locale/zh-CN/beagle.properties	\
