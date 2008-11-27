@@ -1097,6 +1097,12 @@ namespace Beagle.Util {
 
 		internal void ReportCancelledTask (string description)
 		{
+			// The number of cancelled tasks will be low,
+			// so there is no harm in checking for duplicates
+			// by doing a linear search.
+			if (cancelled_tasks.Contains (description))
+				return;
+
 			cancelled_tasks.Add (description);
 		}
 
@@ -1107,9 +1113,9 @@ namespace Beagle.Util {
 		public SchedulerInformation GetCurrentStatus ()
 		{
 		    SchedulerInformation current_status = new SchedulerInformation ();
-			
+
 			lock (big_lock) {
-				
+
 				ArrayList blocked_tasks = new ArrayList ();
 				ArrayList future_tasks = new ArrayList ();
 				ArrayList pending_tasks = new ArrayList ();
