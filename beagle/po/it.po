@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the beagle package.
 # Luca Ferretti <elle.uca@libero.it>, 2006.
 # Gianvito Cavasoli <janvitus@ubuntu-it.org>, 2007-2008.
-#
-#
+# 
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle 0.3.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-29 23:00+0200\n"
-"PO-Revision-Date: 2008-07-28 18:27+0200\n"
+"POT-Creation-Date: 2008-12-04 20:40+0100\n"
+"PO-Revision-Date: 2008-11-26 12:20+0100\n"
 "Last-Translator: Gianvito Cavasoli <janvitus@ubuntu-it.org>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -68,7 +68,7 @@ msgstr "d MMM yyyy"
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
 #: ../Util/StringFu.cs:136
 msgid "h:mm tt"
-msgstr "H.mm"
+msgstr "HH:mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
 #: ../Util/StringFu.cs:142
@@ -102,12 +102,12 @@ msgstr[1] "{0} giorni fa, {1}"
 #. Translators: Example output: January 3, 3:45 PM
 #: ../Util/StringFu.cs:173
 msgid "MMMM d, h:mm tt"
-msgstr "d MMMM, H.mm"
+msgstr "d MMMM, HH:mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
 #: ../Util/StringFu.cs:178
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d MMMM yyyy, H.mm"
+msgstr "d MMMM yyyy, HH:mm"
 
 #: ../Util/StringFu.cs:188
 #, csharp-format
@@ -197,12 +197,12 @@ msgstr "Non è stato trovato alcun risultato."
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
 msgstr ""
-"La ricerca di \"{0}\" non ha prodotto alcun risultato nei file sul computer "
-"in uso."
+"La ricerca di «{0}» non ha prodotto alcun risultato nei file sul computer in "
+"uso."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid "You can select \"Find in: All\" to search everywhere."
-msgstr "Selezionare \"Trova in: Tutti\" per cercare ovunque."
+msgstr "Selezionare «Trova in: Tutto» per cercare ovunque."
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -217,8 +217,8 @@ msgid ""
 "If you are searching for GMail emails, select \"Global\" Search Domain using "
 "the \"Search\" menu."
 msgstr ""
-"Se si vuole cercare nelle email di GMail, selezionare \"Globale\" nel menu "
-"\"Cerca\" in Cerca nei domini."
+"Se si vuole cercare nelle email di GMail, selezionare «Globale» nel menu "
+"«Cerca» in Cerca nei domini."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -229,30 +229,29 @@ msgstr ""
 #: ../search/Beagle.Search.Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr ""
-"Per cercare termini opzionali, usare OR. Esempio <b>pandora OR boccadorata</"
-"b>"
+"Per cercare termini opzionali, usare OR. Esempio: <b>Pandora OR Hipazia</b>."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:12
 msgid ""
 "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Per escludere dalla ricerca dei termini, anteporre a questi il segno meno. "
-"Esempio: <b>rasputin -cash</b>"
+"Esempio: <b>-rasputin</b>."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:13
 msgid ""
 "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
-"Per cercare una frase esatta, usare le virgolette. Esempio <b>\"la casa "
-"dorata di samarcanda\"</b>"
+"Per cercare una frase esatta, usare le virgolette. Esempio: <b>\"la casa "
+"dorata di samarcanda\"</b>."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:14
 msgid ""
 "Specify the extension to search among files with that extension. ex: <b>bean "
 "soup .html</b>"
 msgstr ""
-"Specificare l'estensione di ricerca tra i file con questa estensione. "
-"Esempio: <b>hugo pratt .html</b>"
+"Specificare l'estensione per cercare tra i file con questa estensione. "
+"Esempio: <b>tiro fisso .html</b>."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:20
 #: ../search/Beagle.Search/UIManager.cs:106
@@ -636,25 +635,25 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "Ultimo accesso:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Ricerca desktop"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "Nessuna ricerca recente"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Ricerche recenti"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Pulisci"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Esci"
 
@@ -678,7 +677,7 @@ msgstr "La sessione di D-Bus non è accessibile"
 msgid ""
 "Cannot run with parameter '--icon' when session D-Bus is not accessible."
 msgstr ""
-"Non è possibile avviare con il parametro '--icon' quando una sessione D-Bus "
+"Non è possibile avviare con il parametro «--icon» quando una sessione D-Bus "
 "non è accessibile."
 
 #: ../search/Beagle.Search/NotificationArea.cs:63
@@ -690,7 +689,7 @@ msgstr "Nascondi"
 #.
 #: ../search/Beagle.Search/SearchWindow.cs:81
 msgid "All"
-msgstr "Tutti"
+msgstr "Tutto"
 
 #. Default search scope. Should be at the first
 #: ../search/Beagle.Search/SearchWindow.cs:82
@@ -748,8 +747,7 @@ msgstr "Ci sono computer nelle vicinanze che stanno eseguendo Beagle"
 
 #: ../search/Beagle.Search/SearchWindow.cs:486
 msgid "You can select to search other computers from the \"Search\" menu."
-msgstr ""
-"Si possono selezionare altri computer in cui cercare dal menù \"Cerca\"."
+msgstr "Si possono selezionare altri computer in cui cercare dal menù «Cerca»."
 
 #: ../search/Beagle.Search/SearchWindow.cs:518
 msgid "Search service started"
@@ -921,6 +919,10 @@ msgstr "Mostra dettagli"
 msgid "Couldn't launch web browser"
 msgstr "Impossibile avviare il browser web"
 
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "Gianvito Cavasoli <janvitus@ubuntu-it.org>"
+
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
 msgstr "Ricerca"
@@ -931,7 +933,7 @@ msgstr "Ricerca dati nel proprio desktop"
 
 #: ../tools/Settings.cs:57
 msgid "An error occurred"
-msgstr "É occorso un errore"
+msgstr "È occorso un errore"
 
 #: ../tools/Settings.cs:233 ../tools/Settings.cs:711
 #, csharp-format
@@ -1172,27 +1174,28 @@ msgstr "Note da Tomboy"
 #. System-wide indexes
 #: ../tools/Settings.cs:1753
 msgid "(System) Applications"
-msgstr "(System) Applicazioni"
+msgstr "(Sistema) Applicazioni"
 
 #: ../tools/Settings.cs:1754
 msgid "(System) Help files"
-msgstr "(System) File di aiuto"
+msgstr "(Sistema) File di aiuto"
 
 #: ../tools/Settings.cs:1755
 msgid "(System) Manual pages"
-msgstr "(System) Pagine di manuale"
+msgstr "(Sistema) Pagine di manuale"
 
 #: ../tools/Settings.cs:1756
 msgid "(System) Supplementary search results using 'locate' command"
-msgstr "(System) Risultati di ricerca supplementare usando il comando 'locate'"
+msgstr ""
+"(Sistema) Risultati di ricerca supplementare usando il comando 'locate'"
 
 #: ../tools/Settings.cs:1757
 msgid "(System) Mono documentation"
-msgstr "(System) Documentazione di Mono"
+msgstr "(Sistema) Documentazione di Mono"
 
 #: ../tools/Settings.cs:1758
 msgid "(System) Files from Windows' partition"
-msgstr "(System) File dalle partizioni di Windows"
+msgstr "(Sistema) File dalle partizioni di Windows"
 
 #: ../tools/Settings.cs:1772
 msgid "Description"
