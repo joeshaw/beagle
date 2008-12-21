@@ -40,7 +40,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 	[QueryableFlavor (Name="Files", Domain=QueryDomain.Local | QueryDomain.Neighborhood, RequireInotify=false)]
 	public class FileSystemQueryable : LuceneQueryable {
 
-		static internal bool Debug = false;
+		static internal bool Debug = Beagle.Util.Debug.Enabled ("FSQ");
 
 		// History:
 		// 1: Initially set to force a reindex due to NameIndex changes.
@@ -84,9 +84,6 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public FileSystemQueryable () : base ("FileSystemIndex", MINOR_VERSION)
 		{
-			if (! Debug)
-				Debug = (Environment.GetEnvironmentVariable ("BEAGLE_DEBUG_FSQ") != null);
-
 			// Set up our event backend
 			if (Inotify.Enabled) {
                                 Logger.Log.Debug ("Starting Inotify FSQ file event backend");

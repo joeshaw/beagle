@@ -50,7 +50,7 @@ namespace Beagle.Daemon {
 			}
 		}
 
-		private static bool Debug = false;
+		private static bool Debug = Beagle.Util.Debug.Enabled ("LuceneBitArray");
 
 		private LNS.IndexSearcher searcher;
 		private BitArrayHitCollector collector;

@@ -330,7 +330,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				GetText (document, "FolderFile"), 
 				GetText (document, "MessageKey")));
 		}
-		
+
 		private GMime.Message GetGMimeMessage (string file, int offset, int size)
 		{
 			GMime.Message msg = null;
@@ -401,9 +401,9 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			indexable.AddProperty (Property.NewKeyword ("fixme:folder", GetText (document, "Folder")));
 			indexable.AddProperty (Property.NewUnsearched ("ParentUri", GetText (document, "FolderFile")));
 			indexable.AddProperty (Property.NewUnsearched ("fixme:uri", GetText (document, "Uri")));
-			
+
 			message.Dispose ();
-			
+
 			return indexable;
 		}
 		

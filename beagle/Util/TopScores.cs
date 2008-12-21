@@ -31,7 +31,7 @@ namespace Beagle.Util {
 
 	public class TopScores {
 
-		private bool Debug = false;
+		private static bool Debug = Beagle.Util.Debug.Enabled ("TopScores");
 
 		private struct Node {
 			public long Score;

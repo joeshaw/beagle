@@ -39,7 +39,7 @@ namespace Beagle.Daemon {
 
 	public class Filter {
 
-		static private bool Debug = false;
+		static private bool Debug = Beagle.Util.Debug.Enabled ("Filter");
 
 		// Number of characters Filters should return in each DoPull()
 		// Optimization hint. -1 means unlimited.

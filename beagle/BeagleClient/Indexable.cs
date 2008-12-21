@@ -53,7 +53,7 @@ namespace Beagle {
 
 	public class Indexable : Versioned, IComparable {
 
-		static private bool Debug = false;
+		static private bool Debug = Beagle.Util.Debug.Enabled ("Indexable");
 
 		// This is the type of indexing operation represented by
 		// this Indexable object.  We default to Add, for historical

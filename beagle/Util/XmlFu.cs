@@ -34,7 +34,7 @@ namespace Beagle.Util {
 
 	public class XmlFu {
 
-		public static bool Debug = false;
+		public static bool Debug = Beagle.Util.Debug.Enabled ("XmlFu");
 
 		public static void SerializeUtf8 (XmlSerializer serializer, Stream stream, object o)
 		{

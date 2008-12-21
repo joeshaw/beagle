@@ -32,7 +32,7 @@ namespace Beagle.Daemon {
 
 	public class FileAttributesStore : IDisposable {
 		
-		private static bool Debug = false;
+		private static bool Debug = Beagle.Util.Debug.Enabled ("FileAttributesStore");
 
 		private IFileAttributesStore ifas;
 

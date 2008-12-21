@@ -49,7 +49,7 @@ namespace Beagle.Filters {
 			ApplicationExtension = 0xff
 		}
 
-		static public bool Debug = false;
+		static public bool Debug = Beagle.Util.Debug.Enabled ("FilterGif");
 
 		public FilterGif ()
 		{

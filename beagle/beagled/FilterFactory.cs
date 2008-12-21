@@ -40,7 +40,7 @@ namespace Beagle.Daemon {
 
 	public class FilterFactory {
 
-		static private bool Debug = false;
+		static private bool Debug = Beagle.Util.Debug.Enabled ("FilterFactory");
 
 		class FilterCache {
 			private int version = 1;

@@ -63,6 +63,7 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/camel.cs              	\
 	$(srcdir)/Config.cs			\
 	$(srcdir)/DateTimeUtil.cs		\
+	$(srcdir)/Debug.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/DigikamTags.cs		\
 	$(srcdir)/DirectoryWalker.cs		\

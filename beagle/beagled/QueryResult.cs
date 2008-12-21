@@ -27,7 +27,7 @@
 
 using System;
 using System.Collections;
-using System.Diagnostics;
+using Debug = System.Diagnostics.Debug;
 using System.Threading;
 using Beagle.Util;
 
