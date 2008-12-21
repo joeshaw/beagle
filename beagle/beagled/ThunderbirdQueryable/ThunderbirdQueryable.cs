@@ -57,22 +57,26 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			overriden_toindex = Environment.GetEnvironmentVariable ("TOINDEX_DIR");
 			
 			GMime.Global.Init ();
-			
-			Inotify.Subscribe (IndexDirectory, 
-				OnInotifyEvent, 
-				Inotify.EventType.Create | 
-				Inotify.EventType.Delete |
-				Inotify.EventType.DeleteSelf);
 		}
 		
 		public override void Start ()
 		{
 			base.Start ();
+
+			// delay everything till the backend is actually started
+			Inotify.Subscribe (IndexDirectory, 
+				OnInotifyEvent, 
+				Inotify.EventType.Create | 
+				Inotify.EventType.Delete |
+				Inotify.EventType.DeleteSelf);
 			ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 		}
 		
 		private void StartWorker ()
 		{
+			if (indexer != null)
+				return; // already started
+
 			Logger.Log.Debug ("Starting Thunderbird backend");
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
@@ -406,7 +410,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 
 			return indexable;
 		}
-		
+
 		// ReadLine in stream requires the more "fancy" line ending "\r\n", which we do't have. So we use this
 		// implementation instead.
 		private static string ReadEncodingLine (System.IO.Stream stream)
@@ -423,7 +427,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 					byte[] tmp = new byte [str.Length + (int) 0.5 * str.Length];
 					Array.Copy (str, 0, tmp, 0, str.Length);
 				}
-				
+
 				str [pos++] = (byte) c;
 				c = stream.ReadByte ();
 			}
