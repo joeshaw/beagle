@@ -148,6 +148,19 @@ namespace Beagle.Util {
                         return path;
                 }
 
+		// Windows (and hence .Net File.Delete) requires write
+		// permission on a file to delete it. This is different from
+		// the POSIX behaviour and works against our readonly
+		// tmp files.
+		public static void PosixDelete (string path)
+		{
+			int ret = Mono.Unix.Native.Syscall.unlink (path);
+		    	if (ret == -1)
+				throw new System.IO.IOException (String.Format (
+					    "Delete failed for {0}: {1}",
+					    path,
+					    Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ())));
+		}
 	}
 
 	public class NoSpaceException : Exception {

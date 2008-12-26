@@ -260,13 +260,7 @@ namespace Lucene.Net.Store
 		
 		public override void  Release()
 		{
-			int fd = Mono.Unix.Native.Syscall.unlink (
-		    	    	lockFile.FullName);
-		    	if (fd == -1)
-				throw new System.IO.IOException (
-					"Could not release lock file: "
-					+ Mono.Unix.Native.Stdlib.strerror (Mono.Unix.Native.Stdlib.GetLastError ()
-				));
+			Beagle.Util.FileSystem.PosixDelete (lockFile.FullName);
 
 			if (System.IO.File.Exists(lockFile.FullName)) {
 				Beagle.Util.Logger.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
