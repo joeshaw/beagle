@@ -1,7 +1,7 @@
 #ifndef __SEARCH_ENTRY_H__
 #define __SEARCH_ENTRY_H__
 
-#include <gtk/gtkentry.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS
 
