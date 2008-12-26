@@ -52,7 +52,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		//    offset the change in LuceneCommon.cs
 		// 6: Store beagle:FileType property denoting type of file like document, source, music etc.
 		// 7: Store filesize as fixme:filesize
-		const int MINOR_VERSION = 7;
+		// 8: Force re-index since now files whose EA gets removed wont get stored multiple times.
+		const int MINOR_VERSION = 8;
 
 		private object big_lock = new object ();
 
