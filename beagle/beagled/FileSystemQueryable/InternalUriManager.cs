@@ -338,7 +338,17 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			cached_uid_by_path.Remove (path);
 		}
 
-		internal Guid ReadOrCreateNewId (string path)
+		internal Guid ReadOrCreateNewId (DirectoryModel dir, string name)
+		{
+			Guid old_guid = NameAndParentToId (name, dir);
+
+			if (old_guid != Guid.Empty)
+				return old_guid;
+
+			return CreateNewId (Path.Combine (dir.FullName, name));
+		}
+
+		internal Guid CreateNewId (string path)
 		{
 			if (cached_uid_by_path.Contains (path))
 				return (Guid) cached_uid_by_path [path];

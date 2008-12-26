@@ -1093,7 +1093,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (attr == null) {
 				if (Debug)
 					Logger.Log.Debug ("*** Index it: File has no attributes");
-				id = uid_manager.ReadOrCreateNewId (path);
+				id = uid_manager.ReadOrCreateNewId (dir, name);
 				return RequiredAction.Index;
 			}
 
@@ -1165,7 +1165,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				if (path != last_known_path) {
 					if (Debug)
 						Logger.Log.Debug ("*** Name has also changed, assigning new unique id");
-					id = uid_manager.ReadOrCreateNewId (path);
+					id = uid_manager.CreateNewId (path);
 				}
 				
 				return RequiredAction.Index;
