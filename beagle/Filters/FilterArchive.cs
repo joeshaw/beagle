@@ -227,12 +227,17 @@ namespace Beagle.Filters {
 				return null;
 
 			string filename = FileSystem.GetTempFileName (extension);
-			FileStream file_stream = File.OpenWrite (filename);
+			FileStream file_stream = new FileStream (filename, FileMode.OpenOrCreate, FileAccess.Write, FileShare.ReadWrite); // FileShare.ReadWrite needed for setting the mtime
+
+			// When we dump the contents of an indexable into a file, we
+			// expect to use it again soon.
+			FileAdvise.PreLoad (file_stream);
 
 			//Log.Debug ("Storing archive contents in {0}", filename);
-			
-			Mono.Unix.Native.Syscall.chmod (filename, (Mono.Unix.Native.FilePermissions) 384); // 384 is 0600
-			
+
+			File.SetLastWriteTimeUtc (filename, mtime); // change this before making read-only
+			Mono.Unix.Native.Syscall.chmod (filename, Mono.Unix.Native.FilePermissions.S_IRUSR);
+
 			BufferedStream buffered_stream = new BufferedStream (file_stream);
 
 			byte [] buffer = new byte [8192];
@@ -286,13 +291,9 @@ namespace Beagle.Filters {
 			buffered_stream.Close ();
 
 			if (skip_file) {
-				File.Delete (filename);
+				FileSystem.PosixDelete (filename);
 				return null;
 			}
-
-			File.SetLastWriteTimeUtc (filename, mtime);
-
-			Mono.Unix.Native.Syscall.chmod (filename, (Mono.Unix.Native.FilePermissions) 256); // 256 is 0400
 
 			return filename;
 		}
