@@ -224,10 +224,20 @@ namespace Beagle.Daemon {
 				Logger.Log.Debug ("Launching helper process");
 
 				SafeProcess p = new SafeProcess ();
+				string[] args = new string [3];
+				args [0] = helper_path;
+
 				if (BeagleDaemon.DisableTextCache)
-					p.Arguments = new string [] { helper_path, "--disable-text-cache" };
+					args [1] = "--disable-text-cache";
 				else
-					p.Arguments = new string [] { helper_path };
+					args [1] = String.Empty;
+
+				if (Log.Level == LogLevel.Debug)
+					args [2] = "--debug";
+				else
+					args [2] = String.Empty;
+
+				p.Arguments = args;
 				p.RedirectStandardOutput = false;
 				p.RedirectStandardError = false;
 				p.Start ();
