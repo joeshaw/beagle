@@ -233,7 +233,7 @@ _beagle_connect_timeout (const char *path, GError **err)
 				"Unable to connect to Beagle daemon");
 			return -1;
 		} else {
-			tv.tv_sec = 10; /* 5 seconds should be enough for a unix socket */
+			tv.tv_sec = 10; /* 10 seconds should be enough for a unix socket */
 			tv.tv_usec = 0;
 
 			FD_ZERO (&select_set);

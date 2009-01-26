@@ -40,6 +40,13 @@ query = beagle.Query()
 for i in sys.argv[1:]:
 	query.add_text(i)
 
+bts1 = beagle.beagle_timestamp_new_from_string ("20080701000000")
+bts2 = beagle.beagle_timestamp_new_from_string ("20080801000000")
+part_date = beagle.QueryPartDate ()
+part_date.set_start_date (bts1)
+part_date.set_end_date (bts2)
+query.add_part(part_date)
+
 query.connect("hits-added", hits_added_cb)
 query.connect("finished", finished_cb, main_loop)
 client.send_request_async(query)
