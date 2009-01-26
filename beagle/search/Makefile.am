@@ -151,6 +151,7 @@ EXTRA_DIST =			\
 	$(man_MANS)		\
 	$(desktop_DATA).in	\
 	$(autostart_DATA)	\
+	$(ASSEMBLY).config	\
 	beagle-search.in	\
 	beagle-search.desktop.in.in
 

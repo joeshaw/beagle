@@ -1,3 +1,65 @@
+Version 0.3.9
+January 26 2008
+
+* Fix a problem of undeleted tmpfiles when running under mono-2.
+
+* Fix build problems with Gnome.Vfs.MimeApplication
+
+* Fixes #543635. Handle quoted queries like artist:abcd"1234 578".
+
+* Ignore non-http URLs in the firefox extension - fixes the ugly javascript error popup.
+
+* Fixes #547641 - don't crash while minimizing search groups.
+
+* Fixes #549549 - don't crash while opening a mimetype without associated application.
+
+* Fixes #546871 - synchronize serialization with libbeagle.
+
+* Fixes #551898 - make sure hotkey changes via beagle-settings is immediately picked up by beagle-search.
+
+* Fixes #553159 - use system sys/inotify.h.
+
+* Fixes #561429 - add support for Kopete KDE4.
+
+* Fixes #556002 - make beagle-status FreeBSD compatible.
+
+* Fixes #560812 - add translator-credit tab in the About dialog.
+
+* Fixes #544607 - deal with .desktop files which have empty lines before the [Desktop Entry] group.
+
+* Do now show duplicate tasks in the list of cancelled tasks.
+
+* Use BEAGLE_DEBUG environment variable to enable/disable debug at runtime for specific classes.
+
+* Fixes #564460 - clean up GLib and GTK+ includes.
+
+Translations:
+  - Japanese (Takeshi AIHANA)
+  - Swedish (Daniel Nylander)
+  - Spanish (Jorge Gonzalez)
+  - Italian (Gianvito Cavasoli)
+  - Arabic (Khaled Hosny)
+  - Hebrew (Rosseta)
+  - Polish (Wadim Dziedzic)
+  - Czech (Adrian Gunis (Fixes #537846))
+  - Basque (Inaki Larranaga Murgoitio)
+  - Gujrati (Ankitkumar Patel)
+  - Brazilian Portuguese (Djavan Fagundes, Leonardo Ferreira Fontenelle)
+  - Traditional Chinese Taiwan (Chao-Hsiung Liao)
+  - Traditional Chinese Hong Kong (Chao-Hsiung Liao)
+  - Hungarian (Gabor Kelemen)
+  - Finnish (Ilkka Tuohela)
+  - Norwegian bokmål (Kjartan Maraas)
+  - Catalan (Jordi Mas)
+  - Italian (Gianvito Cavasoli)
+
+Contributors to this release: Debajyoti Bera, Lukas Lipka, Adrian Bunk, Tal Benavidor.
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_9/beagle/ChangeLog?view=markup
+
+-------------------------------------------------------------------------------
+
 Version 0.3.8
 July 15 2008
 

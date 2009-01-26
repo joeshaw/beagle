@@ -1,4 +1,469 @@
 ------------------------------------------------------------------------
+r4899 | dbera | 2008-12-27 12:15:07 -0500 (Sat, 27 Dec 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterArchive.cs
+
+Do some more tmp file permission fixing - this time in FilterArchive.
+
+------------------------------------------------------------------------
+r4898 | dbera | 2008-12-26 19:25:25 -0500 (Fri, 26 Dec 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/IndexHelper/IndexHelper.cs
+   M /trunk/beagle/beagled/RemoteIndexer.cs
+
+Automatically turn on debugging in IndexHelper if debugging is enabled in BeagleDaemon.
+
+------------------------------------------------------------------------
+r4897 | dbera | 2008-12-26 18:55:22 -0500 (Fri, 26 Dec 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Indexable.cs
+   M /trunk/beagle/Util/FileSystem.cs
+   M /trunk/beagle/beagled/Lucene.Net/Store/SimpleFSLockFactory.cs
+   M /trunk/beagle/beagled/TextCache.cs
+
+File.Delete requires write permission on the file! This is different than the POSIX behaviour and this bug was fixed in mono recently. As a result, with mono-2, beagle tmpfiles could not be deleted.
+Workaround this problem by using the Mono.Unix Unlink syscall.
+While there, replace the hardcoded chmod permission values by the proper enum.
+
+------------------------------------------------------------------------
+r4896 | dbera | 2008-12-25 20:38:05 -0500 (Thu, 25 Dec 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+
+Force re-crawling by the Files backend.
+
+------------------------------------------------------------------------
+r4895 | dbera | 2008-12-25 20:28:37 -0500 (Thu, 25 Dec 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/glue/eggaccelerators.h
+   M /trunk/beagle/glue/search-entry.h
+   M /trunk/beagle/glue/tomboykeybinder.c
+   M /trunk/beagle/glue/tomboykeybinder.h
+
+Clean up GLib and GTK+ includes. Patch from #564460.
+
+------------------------------------------------------------------------
+r4894 | dbera | 2008-12-25 20:21:28 -0500 (Thu, 25 Dec 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/InternalUriManager.cs
+
+Fix a long standing bug.
+While beagled is not running, if the EA of a file gets removed (e.g. due to some editors which do not copy the EA), then during next crawling beagle will add another document for the same file. As a result, the lucene index will have two documents for the same physical file. This will cause problems if the number of matches is more than the max-hits, fewer than max-hits matches will be returned (both the documents will match the query but both will resolve to the same physical file).
+Ideally, while generating a new Id, one should check using the directory and the name if there is already an entry in the index for this file. This will slow down indexing during initial crawling but this is the right thing to do.
+
+------------------------------------------------------------------------
+r4893 | pmkovar | 2008-12-23 17:50:29 -0500 (Tue, 23 Dec 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/cs.po
+
+2008-12-23  Petr Kovar  <pknbe@volny.cz>
+
+	* cs.po: Updated Czech translation by Adrian Gunis
+	(bug #537846).
+
+------------------------------------------------------------------------
+r4892 | dbera | 2008-12-21 13:39:52 -0500 (Sun, 21 Dec 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/ThunderbirdQueryable/ThunderbirdQueryable.cs
+
+Prevent the thunderbird indexer from starting twice.
+
+------------------------------------------------------------------------
+r4891 | dbera | 2008-12-20 20:40:03 -0500 (Sat, 20 Dec 2008) | 2 lines
+Changed paths:
+   A /trunk/beagle/Util/Debug.cs
+
+Of course, add the new file needed for all the previous BEAGLE_DEBUG changes.
+
+------------------------------------------------------------------------
+r4890 | dbera | 2008-12-20 20:38:34 -0500 (Sat, 20 Dec 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/Indexable.cs
+   M /trunk/beagle/Filters/FilterGif.cs
+   M /trunk/beagle/Filters/FilterTotem.cs
+   M /trunk/beagle/Util/Makefile.am
+   M /trunk/beagle/Util/Scheduler.cs
+   M /trunk/beagle/Util/TopScores.cs
+   M /trunk/beagle/Util/XmlFu.cs
+   M /trunk/beagle/beagled/FileAttributesStore.cs
+   M /trunk/beagle/beagled/FileSystemQueryable/FileSystemQueryable.cs
+   M /trunk/beagle/beagled/Filter.cs
+   M /trunk/beagle/beagled/FilterFactory.cs
+   M /trunk/beagle/beagled/LuceneBitArray.cs
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/beagled/QueryResult.cs
+   M /trunk/beagle/beagled/Shutdown.cs
+   M /trunk/beagle/beagled/ThunderbirdQueryable/ThunderbirdQueryable.cs
+
+Replace all the hardcoded Debug=true/false by a user supplied BEAGLE_DEBUG environment variable. User can set this variable to a comma-separated list of names and the internal debug for those classnames will be turned on.
+* The user still needs to know which value to use for the env var - so its still meant for debugging only.
+* However, now any user can turn on class specific debugging by just setting the env var - this should make debugging easier.
+
+------------------------------------------------------------------------
+r4889 | leonardof | 2008-12-06 08:19:49 -0500 (Sat, 06 Dec 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2008-12-06  Leonardo Ferreira Fontenelle  <leonardof@gnome.org>
+
+	* pt_BR.po: Updated Brazilian Portuguese translation.
+
+------------------------------------------------------------------------
+r4888 | lferrett | 2008-12-04 14:41:52 -0500 (Thu, 04 Dec 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/it.po
+
+2008-12-04  Luca Ferretti  <elle.uca@libero.it>
+
+	* it.po: Updated Italian translation by Gianvito Cavasoli.
+------------------------------------------------------------------------
+r4887 | dbera | 2008-11-26 23:13:41 -0500 (Wed, 26 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/Util/Scheduler.cs
+
+Do not add duplicate tasks to the list of cancelled tasks.
+
+------------------------------------------------------------------------
+r4886 | dnylande | 2008-11-24 08:00:13 -0500 (Mon, 24 Nov 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/Makefile.am
+   A /trunk/beagle/firefox-extension/chrome/locale/sv-SE
+   A /trunk/beagle/firefox-extension/chrome/locale/sv-SE/beagle.dtd
+   A /trunk/beagle/firefox-extension/chrome/locale/sv-SE/beagle.properties
+   A /trunk/beagle/firefox-extension/chrome/locale/sv-SE/contents.rdf
+   M /trunk/beagle/firefox-extension/chrome.manifest
+   M /trunk/beagle/thunderbird-extension/Makefile.am
+   M /trunk/beagle/thunderbird-extension/chrome.manifest
+   A /trunk/beagle/thunderbird-extension/locale/sv-SE
+   A /trunk/beagle/thunderbird-extension/locale/sv-SE/beagle.dtd
+   A /trunk/beagle/thunderbird-extension/locale/sv-SE/contents.rdf
+   A /trunk/beagle/thunderbird-extension/locale/sv-SE/strings.properties
+
+Adding Swedish translations for extensions
+
+
+------------------------------------------------------------------------
+r4885 | dnylande | 2008-11-23 11:19:31 -0500 (Sun, 23 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Updated Swedish translation
+------------------------------------------------------------------------
+r4884 | jorgegonz | 2008-11-23 06:26:45 -0500 (Sun, 23 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4883 | dbera | 2008-11-22 15:27:25 -0500 (Sat, 22 Nov 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/Filters/FilterDesktop.cs
+
+.desktop files can have empty lines before the [Desktop Entry] group. Deal with such files. Fixes #544607.
+Actually, .desktop file format is pretty flexible - our parser will reject most of the uncommon but valid files. The best solution is to rewrite it using GKeyFiles.
+
+------------------------------------------------------------------------
+r4882 | dbera | 2008-11-22 14:56:59 -0500 (Sat, 22 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/UIManager.cs
+
+Add translator-credit tab in the About dialog. Fixes #560812. Include a clumsy workaround to deal with untranslated translator-credits string.
+
+------------------------------------------------------------------------
+r4881 | dbera | 2008-11-22 14:32:31 -0500 (Sat, 22 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/tools/beagle-status
+
+Path to bash was hardcoded in beagle-status. I thought it is easier to just use "/usr/bin/env bash" that do a whole lot of sed-magic.
+
+------------------------------------------------------------------------
+r4880 | dbera | 2008-11-22 14:29:36 -0500 (Sat, 22 Nov 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/tools/beagle-status
+
+Use a custom while loop instead of the 'watch' command in beagle-status. Fixes #556002. Apparently, in FreeBSD Linux's watch(1) does not exists, and FreeBSD has a watch(8) command to "snoop on another tty line".
+
+
+------------------------------------------------------------------------
+r4879 | dbera | 2008-11-22 14:09:32 -0500 (Sat, 22 Nov 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/Util/KdeUtils.cs
+   M /trunk/beagle/beagled/KopeteQueryable/KopeteQueryable.cs
+
+Adapt to KDE4. If the environment variable KDE_SESSION_VERSION=4 at startup, always assume KDE4 is running and look in ~/.kde4. Otherwise, if ~/.kde4 exists, return it; else return ~/.kde. ~/.kde4 is checked everytime if the evn variable is not set; this is to handle cases like KDE4 is not running but some kde4 application is started while beagle is running.
+
+Make Kopete backend work with KDE4 also. Fixes #561429.
+
+
+------------------------------------------------------------------------
+r4877 | dbera | 2008-11-09 12:41:52 -0500 (Sun, 09 Nov 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Application.cs
+   A /trunk/beagle/search/Beagle.Search.exe.config
+   M /trunk/beagle/search/Makefile.am
+
+Remove hardcoded library name from the source and move it to config file - this will make it easier to patch if the soname changes.
+
+------------------------------------------------------------------------
+r4876 | jmas | 2008-11-05 11:47:44 -0500 (Wed, 05 Nov 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ca.po
+
+Small fixes to Catalan translation
+------------------------------------------------------------------------
+r4875 | jmas | 2008-11-02 07:36:27 -0500 (Sun, 02 Nov 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ca.po
+
+2008-10-02  Jordi Mas <jmas@softcatala.org>
+
+	* ca.po: Updated Catalan translation.
+
+
+------------------------------------------------------------------------
+r4869 | kmaraas | 2008-10-07 12:02:16 -0400 (Tue, 07 Oct 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/nb.po
+
+2008-10-07  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* nb.po: Updated Norwegian bokmål translation.
+
+2008-10-06  Petr Kovar  <pknbe@volny.cz>
+------------------------------------------------------------------------
+r4868 | pmkovar | 2008-10-05 20:12:18 -0400 (Sun, 05 Oct 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/cs.po
+
+2008-10-06  Petr Kovar  <pknbe@volny.cz>
+
+	* cs.po: Updated Czech translation by Adrian Gunis
+	(bug #537846 again).
+
+------------------------------------------------------------------------
+r4867 | ituohela | 2008-10-04 15:42:17 -0400 (Sat, 04 Oct 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/fi.po
+
+Added Finnish translation
+------------------------------------------------------------------------
+r4866 | kelemeng | 2008-09-28 16:40:21 -0400 (Sun, 28 Sep 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/hu.po
+
+2008-09-28  Gabor Kelemen  <kelemeng@gnome.hu>
+
+	* hu.po: Translation updated.
+------------------------------------------------------------------------
+r4865 | chliao | 2008-09-28 09:47:45 -0400 (Sun, 28 Sep 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/zh_HK.po
+   M /trunk/beagle/po/zh_TW.po
+
+0.3.8
+
+------------------------------------------------------------------------
+r4864 | dbera | 2008-09-27 16:48:29 -0400 (Sat, 27 Sep 2008) | 2 lines
+Changed paths:
+   D /trunk/beagle/glue/inotify-syscalls.h
+   D /trunk/beagle/glue/inotify.h
+
+From last commit, delete the removed files.
+
+------------------------------------------------------------------------
+r4863 | dbera | 2008-09-27 16:45:51 -0400 (Sat, 27 Sep 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/configure.in
+   M /trunk/beagle/glue/Makefile.am
+   M /trunk/beagle/glue/inotify-glue.c
+   M /trunk/beagle/glue/inotify-syscalls.h
+   M /trunk/beagle/glue/inotify.h
+
+Use sys/inotify.h (in glibc since 2.4) instead of our local copy. Patch from Adrian Bunk. Fixes #553159.
+
+------------------------------------------------------------------------
+r4862 | dbera | 2008-09-27 16:34:38 -0400 (Sat, 27 Sep 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/Search.cs
+   M /trunk/beagle/search/Beagle.Search.Tray/TrayIcon.cs
+
+Fixes #551898. Make sure hotkey changes via beagle-settings is immediately picked up by beagle-search.
+
+------------------------------------------------------------------------
+r4861 | dbera | 2008-09-12 17:13:01 -0400 (Fri, 12 Sep 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/BeagleClient/QueryPart.cs
+
+For some reason the Elements were changed to Attributes during serialization. This broke libbeagle. Revert the change. This should hopefully fix #546871
+
+------------------------------------------------------------------------
+r4860 | dbera | 2008-09-12 16:38:54 -0400 (Fri, 12 Sep 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+
+Check if there is an association application for a mimetype before using it. Should fix #549549.
+
+------------------------------------------------------------------------
+r4859 | leonardof | 2008-09-06 18:15:45 -0400 (Sat, 06 Sep 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pt_BR.po
+
+2008-09-06  Leonardo Ferreira Fontenelle  <leonardof@gnome.org>
+
+	* pt_BR.po: Brazilian Portuguese translation updated by Djavan
+	Fagundes.
+
+------------------------------------------------------------------------
+r4858 | ankitp | 2008-09-04 09:37:44 -0400 (Thu, 04 Sep 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/LINGUAS
+   A /trunk/beagle/po/gu.po
+
+Added translations done by CDAC after review
+------------------------------------------------------------------------
+r4857 | dooteo | 2008-08-27 11:16:22 -0400 (Wed, 27 Aug 2008) | 5 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/eu.po
+
+2008-08-27  Inaki Larranaga Murgoitio  <dooteo@euskalgnu.org>
+
+	* eu.po: Updated Basque translation.
+
+
+------------------------------------------------------------------------
+r4856 | pmkovar | 2008-08-16 17:09:36 -0400 (Sat, 16 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/cs.po
+
+cs.po: Updated Czech translation by Adrian Gunis (bug #537846 again).
+------------------------------------------------------------------------
+r4855 | llipka | 2008-08-13 22:02:21 -0400 (Wed, 13 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search/GroupView.cs
+
+NRE fixed. Bug #547641
+------------------------------------------------------------------------
+r4854 | tomaszd | 2008-08-13 20:53:00 -0400 (Wed, 13 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pl.po
+
+Updated Polish translation
+------------------------------------------------------------------------
+r4853 | wadimd | 2008-08-11 17:40:20 -0400 (Mon, 11 Aug 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/pl.po
+
+2008-08-11  Wadim Dziedzic  <wdziedzic@aviary.pl>
+
+	* pl.po: Updated Polish translation
+------------------------------------------------------------------------
+r4852 | yairhr | 2008-08-04 04:32:04 -0400 (Mon, 04 Aug 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/he.po
+
+updated hebrew translation
+------------------------------------------------------------------------
+r4850 | djihed | 2008-07-31 06:23:24 -0400 (Thu, 31 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ar.po
+
+Updated Arabic Translation by Khaled Hosny. 
+------------------------------------------------------------------------
+r4849 | algol | 2008-07-29 17:02:01 -0400 (Tue, 29 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/it.po
+
+Updated Italian translation.
+
+------------------------------------------------------------------------
+r4847 | dbera | 2008-07-23 11:22:53 -0400 (Wed, 23 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/firefox-extension/chrome/content/beagleOverlay.js
+
+Revert the special javascript:// ignoring patch in r4803; instead simply disable indexing any page which is not http[s]://.
+
+------------------------------------------------------------------------
+r4846 | jorgegonz | 2008-07-20 10:11:43 -0400 (Sun, 20 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/es.po
+
+Updated Spanish translation
+
+------------------------------------------------------------------------
+r4845 | dbera | 2008-07-19 10:41:10 -0400 (Sat, 19 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/PropertyKeywordFu.cs
+   M /trunk/beagle/beagled/QueryStringParser.cs
+
+Fixes #543635. Handle quoted queries like artist:abcd"1234 578" or even better example keyword:fixme:folder="my inbox".
+
+------------------------------------------------------------------------
+r4844 | dbera | 2008-07-18 07:38:14 -0400 (Fri, 18 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/beagled/webinterface/default.js
+   M /trunk/beagle/beagled/webinterface/hitresult.xsl
+
+Add a hook to change the click handler for hit Uris. Do nothing for now. Could be used in future or by users to add custom handlers. Pass both mimetype and Uri since these two should have enough information on how to open the hit.
+
+------------------------------------------------------------------------
+r4843 | dnylande | 2008-07-15 11:50:17 -0400 (Tue, 15 Jul 2008) | 1 line
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/sv.po
+
+sv.po: Updated Swedish translation
+------------------------------------------------------------------------
+r4842 | dbera | 2008-07-15 11:04:04 -0400 (Tue, 15 Jul 2008) | 2 lines
+Changed paths:
+   M /trunk/beagle/search/Beagle.Search.Tiles/Tile.cs
+
+Fix a typo that was mysteriously left behind during my 2 week testing. Fix the Gnome.Vfs.MimeApplication build problem.
+
+------------------------------------------------------------------------
+r4841 | aihana | 2008-07-15 10:36:19 -0400 (Tue, 15 Jul 2008) | 4 lines
+Changed paths:
+   M /trunk/beagle/po/ChangeLog
+   M /trunk/beagle/po/ja.po
+
+2008-07-15  Takeshi AIHANA <takeshi.aihana@gmail.com>
+
+        * ja.po: Updated Japanese translation.
+
+------------------------------------------------------------------------
+r4835 | dbera | 2008-07-14 20:34:59 -0400 (Mon, 14 Jul 2008) | 3 lines
+Changed paths:
+   M /trunk/beagle/ChangeLog
+   M /trunk/beagle/NEWS
+   M /trunk/beagle/beagled/LuceneQueryingDriver.cs
+   M /trunk/beagle/configure.in
+
+Commit a change I missed in LuceneQueryingDriver (since we are calling hit_filter earlier no need to call it again before sending).
+Update ChangeLog and NEWS for 0.3.8.
+
+------------------------------------------------------------------------
 r4834 | dbera | 2008-07-14 19:49:49 -0400 (Mon, 14 Jul 2008) | 2 lines
 Changed paths:
    M /trunk/beagle/search/Beagle.Search/SearchWindow.cs
