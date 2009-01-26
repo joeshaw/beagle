@@ -1,4 +1,43 @@
 ------------------------------------------------------------------------
+r4848 | arunsr | 2008-07-25 04:04:17 -0400 (Fri, 25 Jul 2008) | 3 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-private.h
+   M /trunk/libbeagle/beagle/beagle-util.c
+   M /trunk/libbeagle/beagle/beagle-util.h
+
+Fix some function prototypes so we don't get warnings with -Wstrict-prototypes
+(useful for clients that include our headers and generate these warnings)
+
+------------------------------------------------------------------------
+r4747 | dbera | 2008-05-06 09:09:51 -0400 (Tue, 06 May 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/beagle/beagle-request.c
+
+* beagle-request.c: Reduce the number of connetion attempts to 10. Closes #531684. We still a need a few connection attempts because if beagled is under a heavy query load, sometimes its stack fills up and it refused further connection.
+
+------------------------------------------------------------------------
+r4689 | dbera | 2008-04-13 00:03:46 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/wrappers/python/Makefile.am
+
+Missed the __init__.py.in file.
+
+------------------------------------------------------------------------
+r4688 | dbera | 2008-04-13 00:02:23 -0400 (Sun, 13 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/wrappers/python/Makefile.am
+   A /trunk/libbeagle/wrappers/python/__init__.py.in
+
+Add version information to the python bindings: beagle.__version__ for package and beagle.__lib_version__ for library version.
+
+------------------------------------------------------------------------
+r4676 | dbera | 2008-04-08 11:43:49 -0400 (Tue, 08 Apr 2008) | 2 lines
+Changed paths:
+   M /trunk/libbeagle/configure.in
+
+Up version for brown bag rls 0.3.5.1 to fix the documentation bug (#526870).
+
+------------------------------------------------------------------------
 r4668 | arunsr | 2008-04-07 14:17:53 +0000 (Mon, 07 Apr 2008) | 2 lines
 Changed paths:
    M /trunk/libbeagle/configure.in

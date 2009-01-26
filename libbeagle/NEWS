@@ -1,3 +1,19 @@
+Version 0.3.9
+26 January 2009
+
+* Add version information to the python bindings: beagle.__version__ for package and beagle.__lib_version__ for library version.
+
+* Reduce the number of connetion attempts to 10. Closes #531684.
+
+* Remove warnings with -Wstrict-prototypes.
+
+Contributors to this release: Debajyoti Bera, Arun Raghavan
+
+Full set of changes:
+http://svn.gnome.org/viewvc/beagle/tags/BEAGLE_0_3_9/libbeagle/ChangeLog?view=markup
+
+------------------------------------------
+
 Version 0.3.5
 7 April 2008
 
