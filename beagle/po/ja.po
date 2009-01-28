@@ -1,14 +1,14 @@
 # beagle ja.po.
-# Copyright (C) 2005-2008 Free Software Foundation, Inc.
+# Copyright (C) 2005-2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the beagle package.
-# Takeshi AIHANA <takeshi.aihana@gmail.com>, 2005-2008.
+# Takeshi AIHANA <takeshi.aihana@gmail.com>, 2005-2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle trunk\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-07-15 23:28+0900\n"
-"PO-Revision-Date: 2008-07-15 23:27+0900\n"
+"POT-Creation-Date: 2009-01-28 23:33+0900\n"
+"PO-Revision-Date: 2009-01-28 22:44+0900\n"
 "Last-Translator: Takeshi AIHANA <takeshi.aihana@gmail.com>\n"
 "Language-Team: Japanese <takeshi.aihana@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -628,25 +628,25 @@ msgstr "URL:"
 msgid "Accessed:"
 msgstr "アクセスした日付:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "デスクトップの検索"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "最近検索したエントリはありません"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "最近検索したエントリ"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "エントリのクリア"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "終了"
 
@@ -910,6 +910,10 @@ msgstr "詳細を表示する"
 #: ../search/Beagle.Search/UIManager.cs:276
 msgid "Couldn't launch web browser"
 msgstr "ウェブ・ブラウザを起動できませんでした"
+
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "相花 毅 <takeshi.aihana@gmail.com>"
 
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
