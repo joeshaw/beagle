@@ -78,6 +78,9 @@ namespace Beagle.Search.Tiles {
 			if (ditem == IntPtr.Zero)
 				return null;
 
+			if (hit ["fixme:NoDisplay"] == "true")
+				return null;
+
 			string notshow = gnome_desktop_item_get_string (ditem, "NotShowIn");
 			if (notshow != null && notshow.IndexOf ("GNOME") != -1)
 				return null;

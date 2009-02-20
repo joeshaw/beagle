@@ -43,7 +43,8 @@ namespace Beagle.Filters {
 		{
 			// 1: Added Categories field
 			// 2: Added Type field
-			SetVersion (2);
+			// 3: Added NoDisplay field
+			SetVersion (3);
 			SetFileType ("application");
 		}
 
@@ -91,7 +92,7 @@ namespace Beagle.Filters {
 				if (sline.Length != 2)
 					continue;
 				
-				if (sline [0].Equals ("Icon") || sline [0].Equals ("Exec")) {
+				if (sline [0].Equals ("Icon") || sline [0].Equals ("Exec") || sline [0].Equals ("NoDisplay")) {
 					AddProperty (Property.NewUnsearched ("fixme:" + sline [0], sline [1]));
 				} else if (sline [0].StartsWith ("Name")) {
 					if (sline [0] == "Name")
