@@ -42,7 +42,6 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search.Tiles/Application.cs		\
 	$(srcdir)/Beagle.Search.Tiles/ArchivedFile.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Audio.cs			\
-	$(srcdir)/Beagle.Search.Tiles/CApplet.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Calendar.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Contact.cs		\
 	$(srcdir)/Beagle.Search.Tiles/Docbook.cs		\

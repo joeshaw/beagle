@@ -37,7 +37,6 @@ using Beagle.Search.Tiles;
 	 typeof (ArchivedFileActivator),
 	 typeof (AudioActivator),
 	 typeof (CalendarActivator),
-	 typeof (CAppletActivator),
 	 typeof (ContactActivator),
 	 typeof (DocbookActivator),
 	 typeof (FileActivator),
