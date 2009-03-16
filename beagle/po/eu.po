@@ -5,19 +5,19 @@
 #
 # Mikel Pascual Aldabaldetreku <mikel.paskual@gmail.com>, 2006.
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2007.
-# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2008.
+# Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>, 2008, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-08-27 16:48+0200\n"
-"PO-Revision-Date: 2008-08-27 17:18+0200\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=beagle&amp;component=general\n"
+"POT-Creation-Date: 2008-11-22 19:57+0000\n"
+"PO-Revision-Date: 2009-03-16 19:45+0100\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
@@ -631,25 +631,25 @@ msgstr "URLa:"
 msgid "Accessed:"
 msgstr "Sarbidetuta:"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:33
-#: ../search/Beagle.Search/Search.cs:48
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
 #: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Mahaigaineko bilaketa"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:69
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "Azken bilaketarik ez"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:74
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Azken bilaketak"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:94
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Garbitu"
 
-#: ../search/Beagle.Search.Tray/TrayIcon.cs:102
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Irten"
 
@@ -671,7 +671,9 @@ msgstr "Saioaren D-Bus ez dago erabilgarri"
 
 #: ../search/Beagle.Search/Driver.cs:136
 msgid "Cannot run with parameter '--icon' when session D-Bus is not accessible."
-msgstr "Ezin da --icon' parametroarekin exekutatu saioaren 'D-Bus'-a ez dagoenean erabilgarri"
+msgstr ""
+"Ezin da --icon' parametroarekin exekutatu saioaren 'D-Bus'-a ez dagoenean "
+"erabilgarri"
 
 #: ../search/Beagle.Search/NotificationArea.cs:63
 msgid "Hide"
@@ -910,6 +912,10 @@ msgstr "Erakutsi xehetasunak"
 #: ../search/Beagle.Search/UIManager.cs:276
 msgid "Couldn't launch web browser"
 msgstr "Ezin izan da web arakatzailea abiarazi"
+
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>"
 
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
