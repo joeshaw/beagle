@@ -3,18 +3,18 @@
 # Francisco Javier F. Serrador <serrador@tecknolabs.com>, 2006.
 # Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
 # Jorge González <jorge.gonzalez.gonzalez@hispalinux.es>, 2007.
-# Jorge González <jorgegonz@svn.gnome.org>, 2007, 2008.
 # translation of es.po to
 # Traducción española de beagle.
 # Copyright (C) 2005 The GNOME Foundation
 # This file is distributed under the same license as the beagle package.
+# Jorge González <jorgegonz@svn.gnome.org>, 2007, 200, 2009.
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle.HEAD\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=beagle&amp;component=general\n"
-"POT-Creation-Date: 2008-11-22 19:57+0000\n"
-"PO-Revision-Date: 2008-11-23 12:24+0100\n"
+"POT-Creation-Date: 2008-11-23 11:26+0000\n"
+"PO-Revision-Date: 2009-04-12 17:09+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -843,7 +843,7 @@ msgstr "Información indexada"
 
 #: ../search/Beagle.Search/UIManager.cs:97
 msgid "_Contents"
-msgstr "_Índice"
+msgstr "Índ_ice"
 
 #: ../search/Beagle.Search/UIManager.cs:99
 msgid "Help - Table of Contents"
@@ -919,7 +919,7 @@ msgstr "No se puede lanzar el navegador web"
 
 #: ../search/Beagle.Search/UIManager.cs:296
 msgid "translator-credits"
-msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2008"
+msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2009"
 
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
