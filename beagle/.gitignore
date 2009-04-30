@@ -1,0 +1,35 @@
+*~
+
+Makefile
+Makefile.in
+
+# C# code
+*.dll
+*.exe
+*.mdb
+
+# C code
+*.la
+*.lo
+*.o
+.deps/
+.libs/
+
+# autotools
+aclocal.m4
+autom4te.cache/
+config.*
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+mkinstalldirs
+stamp-h1
+
+# intltool
+intltool-extract.in
+intltool-merge.in
+intltool-update.in
+.intltool-merge-cache
