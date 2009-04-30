@@ -2,9 +2,12 @@
 ### Welcome to Beagle's configure.in.  We hope you enjoy your stay.
 ###
 
-AC_INIT(beagled/BeagleDaemon.cs)
+AC_INIT(src/beagled/BeagleDaemon.cs)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(beagle, 0.3.9)
+
+DISTCHECK_CONFIGURE_FLAGS="--disable-epiphany-extension-install --enable-docs"
+AC_SUBST(DISTCHECK_CONFIGURE_FLAGS)
 
 ########################################################################
 
@@ -634,27 +637,30 @@ dnl ----------------------------------------------
 
 AC_OUTPUT([
 Makefile
-Util/Makefile
-glue/Makefile
-BeagleClient/Makefile
-beagled/Makefile
-Filters/Makefile
-tools/Makefile
-tools/beagle-settings.desktop.in
-search/icons/Makefile
-search/beagle-search.desktop.in
-search/Makefile
-ImLogViewer/Makefile
-epiphany-extension/Makefile
-firefox-extension/Makefile
-thunderbird-extension/Makefile
+src/Makefile
+src/Util/Makefile
+src/glue/Makefile
+src/BeagleClient/Makefile
+src/beagled/Makefile
+src/Filters/Makefile
+src/tools/Makefile
+src/tools/beagle-settings.desktop.in
+src/search/icons/Makefile
+src/search/beagle-search.desktop.in
+src/search/Makefile
+src/ImLogViewer/Makefile
+src/epiphany-extension/Makefile
+src/firefox-extension/Makefile
+src/thunderbird-extension/Makefile
+src/RDFAdapter/Makefile
 doc/Makefile
 doc/api/Makefile
-RDFAdapter/Makefile
 conf-data/Makefile
-beagle-0.0.pc
-beagle-daemon.pc
-beagle-ui-0.0.pc
+data/Makefile
+data/pkg-config/Makefile
+data/pkg-config/beagle-0.0.pc
+data/pkg-config/beagle-daemon.pc
+data/pkg-config/beagle-ui-0.0.pc
 beagle.spec
 po/Makefile.in
 ])

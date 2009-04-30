@@ -1,0 +1,31 @@
+SUBDIRS =
+
+SUBDIRS +=                      \
+        Util                    \
+        glue                    \
+        BeagleClient            \
+        beagled                 \
+        Filters
+
+if ENABLE_GUI
+SUBDIRS +=                      \
+        search                  \
+        ImLogViewer
+endif
+
+SUBDIRS +=                      \
+        firefox-extension       \
+        tools
+
+if ENABLE_EPIPHANY_EXTENSION
+SUBDIRS += epiphany-extension
+endif
+
+if ENABLE_THUNDERBIRD
+SUBDIRS += thunderbird-extension
+endif
+
+if ENABLE_RDF_ADAPTER
+SUBDIRS += RDFAdapter
+endif
+

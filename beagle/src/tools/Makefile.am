@@ -105,7 +105,7 @@ SETTINGS_TARGET    = Settings.exe
 SETTINGS_WRAPPER   = beagle-settings
 SETTINGS_CSFLAGS   = 
 SETTINGS_CSFILES   = $(srcdir)/Settings.cs
-SETTINGS_RESOURCES = $(srcdir)/settings.glade $(top_srcdir)/beagled/beagled-autostart.desktop $(top_srcdir)/search/beagle-search-autostart.desktop
+SETTINGS_RESOURCES = $(srcdir)/settings.glade $(top_srcdir)/src/beagled/beagled-autostart.desktop $(top_srcdir)/src/search/beagle-search-autostart.desktop
 SETTINGS_RESOURCES_BUILD = $(foreach res,$(SETTINGS_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
 SETTINGS_ASSEMBLIES = $(BEAGLE_UI_LIBS) -r:../Util/UiUtil.dll
 
