@@ -58,7 +58,7 @@ namespace Beagle.Filters {
 			try {
 				reader = new StreamReader (file.FullName);
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Could not open '{0}':", file.FullName);
+				Log.Error (e, "Could not open '{0}':", file.FullName);
 				Error ();
 				return;
 			}
@@ -79,7 +79,7 @@ namespace Beagle.Filters {
 				if (line == "[Desktop Entry]") break;
 
 			if (line == null) {
-				Logger.Log.Error ("Could not filter: No group [Desktop Entry]");
+				Log.Error ("Could not filter: No group [Desktop Entry]");
 				Error ();
 				return;
 			}
@@ -116,7 +116,7 @@ namespace Beagle.Filters {
 			if (have_name) {
 				Finished ();
 			} else {
-				Logger.Log.Error ("Could not filter: No name in desktop entry");
+				Log.Error ("Could not filter: No name in desktop entry");
 				Error ();
 			}
 		}

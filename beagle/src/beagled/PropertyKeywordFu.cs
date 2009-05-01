@@ -82,7 +82,7 @@ namespace Beagle.Daemon {
 						mapping_override [mapping.Keyword] = true;
 					}
 				} catch (XmlException e) {
-					Logger.Log.Error (e, "Unable to parse global query-mapping.xml");
+					Log.Error (e, "Unable to parse global query-mapping.xml");
 				}
 			}
 
@@ -103,7 +103,7 @@ namespace Beagle.Daemon {
 						PropertyKeywordFu.RegisterMapping (mapping);
 					}
 				} catch (XmlException e) {
-					Logger.Log.Error (e, "Unable to parse local query-mapping.xml");
+					Log.Error (e, "Unable to parse local query-mapping.xml");
 				}
 			}
 		}

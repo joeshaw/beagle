@@ -102,8 +102,8 @@ namespace Beagle.Util {
 				try {
 					start ();
 				} catch (Exception ex) {
-					Logger.Log.Warn ("Caught exception in ThreadPond worker");
-					Logger.Log.Warn (ex);
+					Log.Warn ("Caught exception in ThreadPond worker");
+					Log.Warn (ex);
 				}
 			}
 		}

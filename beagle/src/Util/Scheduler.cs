@@ -295,7 +295,7 @@ namespace Beagle.Util {
 			{
 				if (! cancelled) {
 					if (Debug)
-						Logger.Log.Debug ("Starting task {0}", Tag);
+						Log.Debug ("Starting task {0}", Tag);
 					child_task_group = null;
 					Reschedule = false;
 					TouchAllTaskGroups ();
@@ -307,7 +307,7 @@ namespace Beagle.Util {
 						DoTaskReal ();
 					} catch (Exception ex) {
 						misfires ++;
-						Logger.Log.Warn (ex,
+						Log.Warn (ex,
 								 "Caught exception in DoTaskReal\n" +
 								 "        Tag: {0}\n" +
 								 "    Creator: {1}\n" +
@@ -326,7 +326,7 @@ namespace Beagle.Util {
 					}
 					sw.Stop ();
 					if (Debug)
-						Logger.Log.Debug ("Finished task {0} in {1}", Tag, sw);
+						Log.Debug ("Finished task {0} in {1}", Tag, sw);
 
 					if (cancelled) {
 						return;
@@ -356,7 +356,7 @@ namespace Beagle.Util {
 				try {
 					DoCleanup ();
 				} catch (Exception ex) {
-					Logger.Log.Warn (ex, "Caught exception cleaning up task '{0}'", Tag);
+					Log.Warn (ex, "Caught exception cleaning up task '{0}'", Tag);
 				} finally {
 					Reschedule = false;
 					scheduler = null;
@@ -524,7 +524,7 @@ namespace Beagle.Util {
 						try {
 							pre_hook ();
 						} catch (Exception ex) {
-							Logger.Log.Warn (ex, "Caught exception in pre_hook of task group '{0}'", Name);
+							Log.Warn (ex, "Caught exception in pre_hook of task group '{0}'", Name);
 						}
 					}
 					touched = true;
@@ -545,7 +545,7 @@ namespace Beagle.Util {
 						try {
 							post_hook ();
 						} catch (Exception ex) {
-							Logger.Log.Warn (ex, "Caught exception in post_hook of task group '{0}'", Name);
+							Log.Warn (ex, "Caught exception in post_hook of task group '{0}'", Name);
 						}
 					}
 					finished = true;
@@ -638,9 +638,9 @@ namespace Beagle.Util {
 					return;
 
 				if (Debug) {
-					Logger.Log.Debug ("Adding task {0}", task.Tag);
+					Log.Debug ("Adding task {0}", task.Tag);
 					if (task.Description != null)
-						Logger.Log.Debug ("  Desc: {0}", task.Description);
+						Log.Debug ("  Desc: {0}", task.Description);
 				}
 
 				if (task.Priority == Priority.Shutdown)
@@ -1055,7 +1055,7 @@ namespace Beagle.Util {
 					try {
 						pre_hook ();
 					} catch (Exception ex) {
-						Logger.Log.Error (ex, "Caught exception in pre_hook '{0}'", pre_hook);
+						Log.Error (ex, "Caught exception in pre_hook '{0}'", pre_hook);
 					}
 				}
 				foreach (Task task in to_be_executed) {
@@ -1067,7 +1067,7 @@ namespace Beagle.Util {
 					try {
 						post_hook ();
 					} catch (Exception ex) {
-						Logger.Log.Error (ex, "Caught exception in post_hook '{0}'", post_hook);
+						Log.Error (ex, "Caught exception in post_hook '{0}'", post_hook);
 					}
 				}
 
@@ -1085,7 +1085,7 @@ namespace Beagle.Util {
 				task.Cleanup ();
 
 			if (Debug)
-				Logger.Log.Debug ("Scheduler.Worker finished");
+				Log.Debug ("Scheduler.Worker finished");
 		}
 		
 		//////////////////////////////////////////////////////////////////////////////

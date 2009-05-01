@@ -81,8 +81,8 @@ namespace Beagle.Filters
 					}
 				}
 			} catch (System.Xml.XmlException e) {
-				Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
-				Logger.Log.Debug (e);
+				Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
+				Log.Debug (e);
 				Error ();
 				return;
 			}

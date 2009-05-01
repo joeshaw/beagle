@@ -53,7 +53,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		public override bool OpenClient ()
 		{
 			if (!this.source.IsLocal ()) {
-				Logger.Log.Debug ("Skipping remote calendar {0}", this.source.Uri);
+				Log.Debug ("Skipping remote calendar {0}", this.source.Uri);
 				return false;
 			}
 
@@ -61,7 +61,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				this.cal = new Cal (this.source, cal_source_type);
 				this.cal.Open (true);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Unable to open calendar {0}:", this.source.Uri);
+				Log.Warn (e, "Unable to open calendar {0}:", this.source.Uri);
 				return false;
 			}
 
@@ -84,7 +84,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		{
 			CalComponent[] event_list = this.cal.GetItems ("#t");
 
-			Logger.Log.Debug ("Calendar has {0} items", event_list.Length);
+			Log.Debug ("Calendar has {0} items", event_list.Length);
 
 			foreach (CalComponent cc in event_list)
 				AddCalComponent (cc);
@@ -95,16 +95,16 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			CalComponent[] added, changed;
 			string[] removed;
 
-			Logger.Log.Debug ("Getting calendar changes for {0}", this.source.Uri);
+			Log.Debug ("Getting calendar changes for {0}", this.source.Uri);
 
 			try { 
 				this.cal.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
+				Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
 				return;
 			}
 
-			Logger.Log.Debug ("Calendar {0}: {1} added, {2} changed, {3} removed",
+			Log.Debug ("Calendar {0}: {1} added, {2} changed, {3} removed",
 					  this.cal.Uri, added.Length, changed.Length, removed.Length);
 
 			foreach (CalComponent cc in added)
@@ -120,7 +120,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public override void Remove ()
 		{
-			Logger.Log.Debug ("Removing calendar source {0}", this.source.Uid);
+			Log.Debug ("Removing calendar source {0}", this.source.Uid);
 
 			Property prop = Property.NewUnsearched ("fixme:source_uid", this.source.Uid);
 			this.queryable.RemovePropertyIndexable (prop);

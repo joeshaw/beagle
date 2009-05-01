@@ -67,7 +67,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				((Inotify.Watch) watch_handle).Unsubscribe ();
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Caught exception while doing ForgetWatch");
+				Log.Error (ex, "Caught exception while doing ForgetWatch");
 				return false;
 			}
 			return true;
@@ -107,13 +107,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					type |= Inotify.EventType.Create;
 				else
 					type |= Inotify.EventType.CloseWrite;
-				Logger.Log.Debug ("Synthesizing event on unpaired MoveTo", type);
+				Log.Debug ("Synthesizing event on unpaired MoveTo", type);
 			}
 
 			// An unmatched MovedFrom is like a delete
 			if ((type & Inotify.EventType.MovedFrom) != 0) {
 				type |= Inotify.EventType.Delete;
-				Logger.Log.Debug ("Synthesizing event on unpaired MoveFrom", type);
+				Log.Debug ("Synthesizing event on unpaired MoveFrom", type);
 			}
 
 			if ((type & Inotify.EventType.Delete) != 0) {
@@ -138,7 +138,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			if ((type & Inotify.EventType.QueueOverflow) != 0) {
-				Logger.Log.Warn ("Inotify queue overflowed: file system is in an unknown state");
+				Log.Warn ("Inotify queue overflowed: file system is in an unknown state");
 				queryable.HandleOverflowEvent ();
 				return;
 			}

@@ -79,7 +79,7 @@ namespace Beagle.Daemon {
 			try {
 				iqueryable.DoQuery (query, result, change_data);
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception calling DoQuery on '{0}'", Name);
+				Log.Warn (ex, "Caught exception calling DoQuery on '{0}'", Name);
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace Beagle.Daemon {
 			try {
 				return iqueryable.DoCountMatchQuery (query);
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception calling DoCountMatchQuery on '{0}'", Name);
+				Log.Warn (ex, "Caught exception calling DoCountMatchQuery on '{0}'", Name);
 				return 0;
 			}
 		}
@@ -114,7 +114,7 @@ namespace Beagle.Daemon {
 			try {
 				return iqueryable.GetSnippet (query_terms, hit, full_text, ctx_length, snp_length);
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception calling DoQuery on '{0}'", Name);
+				Log.Warn (ex, "Caught exception calling DoQuery on '{0}'", Name);
 			}
 			
 			return null;

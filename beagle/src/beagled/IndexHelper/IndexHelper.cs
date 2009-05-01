@@ -70,7 +70,7 @@ namespace Beagle.IndexHelper {
 			try {
 				DoMain (args);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
+				Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
 				Environment.Exit (1);
 			}
 		}
@@ -154,7 +154,7 @@ namespace Beagle.IndexHelper {
 				server.Start ();
 				server_has_been_started = true;
 			} catch (InvalidOperationException ex) {
-				Logger.Log.Error (ex, "Couldn't start server.  Exiting immediately.");
+				Log.Error (ex, "Couldn't start server.  Exiting immediately.");
 			}
 
 			if (server_has_been_started) {
@@ -207,7 +207,7 @@ namespace Beagle.IndexHelper {
 				double idle_time;
 				idle_time = (DateTime.Now - last_activity).TotalMinutes;
 				if (idle_time > max_idle_time && RemoteIndexerExecutor.Count > 0) {
-					Logger.Log.Debug ("No activity for {0:0.0} minutes, shutting down", idle_time);
+					Log.Debug ("No activity for {0:0.0} minutes, shutting down", idle_time);
 					Shutdown.BeginShutdown ();
 					return;
 				}
@@ -216,7 +216,7 @@ namespace Beagle.IndexHelper {
 				int vmrss = SystemInformation.VmRss;
 				double size = vmrss / (double) vmrss_original;
 				if (last_vmrss != 0 && vmrss != last_vmrss) {
-					Logger.Log.Debug ("Helper Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
+					Log.Debug ("Helper Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
 							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
 
 					double increase = vmrss / (double) last_vmrss;
@@ -231,12 +231,12 @@ namespace Beagle.IndexHelper {
 				if (size > threshold
 				    || (max_request_count > 0 && RemoteIndexerExecutor.Count > max_request_count)) {
 					if (RemoteIndexerExecutor.Count > 0) {
-						Logger.Log.Debug ("Process too big, shutting down!");
+						Log.Debug ("Process too big, shutting down!");
 						Shutdown.BeginShutdown ();
 						return;
 					} else {
 						// Paranoia: don't shut down if we haven't done anything yet
-						Logger.Log.Debug ("Deferring shutdown until we've actually done something.");
+						Log.Debug ("Deferring shutdown until we've actually done something.");
 						Thread.Sleep (1000);
 					}
 				} else {
@@ -250,8 +250,8 @@ namespace Beagle.IndexHelper {
 			string storage_dir = PathFinder.GetRemoteStorageDir (false);
 
 			if (storage_dir == null) {
-				Logger.Log.Debug ("The daemon doesn't appear to have started");
-				Logger.Log.Debug ("Shutting down helper.");
+				Log.Debug ("The daemon doesn't appear to have started");
+				Log.Debug ("Shutting down helper.");
 				Shutdown.BeginShutdown ();
 				return;
 			}
@@ -271,14 +271,14 @@ namespace Beagle.IndexHelper {
 					socket_list.Add (socket);
 					SNS.Socket.Select (socket_list, null, null, 1000000); // 1000000 microseconds = 1 second
 					if (socket_list.Count != 0) {
-						Logger.Log.Debug ("The daemon appears to have gone away.");
-						Logger.Log.Debug ("Shutting down helper.");
+						Log.Debug ("The daemon appears to have gone away.");
+						Log.Debug ("Shutting down helper.");
 						Shutdown.BeginShutdown ();
 					}
 				}
 			} catch (SNS.SocketException) {
-				Logger.Log.Debug ("Caught a SocketException while trying to monitor the daemon");
-				Logger.Log.Debug ("Shutting down");
+				Log.Debug ("Caught a SocketException while trying to monitor the daemon");
+				Log.Debug ("Shutting down");
 				Shutdown.BeginShutdown ();
 			}
 		}
@@ -350,7 +350,7 @@ namespace Beagle.IndexHelper {
 			    (Mono.Unix.Native.Signum) signal == Mono.Unix.Native.Signum.SIGUSR2)
 				return;
 
-			Logger.Log.Debug ("Initiating shutdown in response to signal.");
+			Log.Debug ("Initiating shutdown in response to signal.");
 			Shutdown.BeginShutdown ();
 		}
 

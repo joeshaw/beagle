@@ -59,7 +59,7 @@ namespace Beagle.Daemon.EmpathyQueryable {
 				return;
 			}
 
-			Logger.Log.Info ("Starting Empathy log backend");
+			Log.Info ("Starting Empathy log backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -79,7 +79,7 @@ namespace Beagle.Daemon.EmpathyQueryable {
 
 			stopwatch.Stop ();
 
-			Logger.Log.Info ("Empathy log backend worker thread done in {0}", stopwatch); 
+			Log.Info ("Empathy log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 

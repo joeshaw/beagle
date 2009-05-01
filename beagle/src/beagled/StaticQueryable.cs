@@ -50,13 +50,13 @@ namespace Beagle.Daemon {
 
 		public StaticQueryable (string index_name, string index_path, bool read_only_mode) : base (index_path, read_only_mode)
 		{
-			Logger.Log.Debug ("Initializing static queryable: {0}", index_path);
+			Log.Debug ("Initializing static queryable: {0}", index_path);
 
 			if (Directory.Exists (Path.Combine (index_path, "TextCache"))) {
 				try {
 					text_cache = new TextCache (index_path, true);
 				} catch (UnauthorizedAccessException) {
-					Logger.Log.Warn ("Unable to purge static queryable text cache in {0}.  Will run without it.", index_path);
+					Log.Warn ("Unable to purge static queryable text cache in {0}.  Will run without it.", index_path);
 				}
 			}
 		}
@@ -72,10 +72,10 @@ namespace Beagle.Daemon {
 			try {
 				static_queryable = new StaticQueryable (index_dir.Name, index_dir.FullName, true);
 			} catch (InvalidOperationException) {
-				Logger.Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
+				Log.Warn ("Unable to create read-only index (likely due to index version mismatch): {0}", index_dir.FullName);
 				return null;
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
+				Log.Error (e, "Caught exception while instantiating static queryable: {0}", index_dir.Name);
 				return null;
 			}
 
@@ -184,7 +184,7 @@ namespace Beagle.Daemon {
 				string actual_path = ((j == -1) ? uri.LocalPath : uri.LocalPath.Substring (0, j));
 				return File.Exists (actual_path) || Directory.Exists (actual_path);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
+				Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
 				return false;
 			}
 		}

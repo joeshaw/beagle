@@ -186,7 +186,7 @@ namespace Beagle.Util {
 				foreach (XmlNode buddy in accounts.SelectNodes ("//contact[not(@name)]/buddy"))
 					AddBuddy (buddy);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Caught exception while trying to parse Gaim contact list:");
+				Log.Error (ex, "Caught exception while trying to parse Gaim contact list:");
 			}
 		}
 
@@ -319,7 +319,7 @@ namespace Beagle.Util {
 				foreach (XmlNode contact in accounts.SelectNodes ("//meta-contact"))
 					AddContact (contact);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Ignoring malformed Kopete contact list:");
+				Log.Error (ex, "Ignoring malformed Kopete contact list:");
 			}
 		}
 

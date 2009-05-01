@@ -77,7 +77,7 @@ namespace Beagle.Filters {
 			try {
 				file = TagLib.File.Create (new StreamAbstraction (Stream), GetTaglibMimeType (), TagLib.ReadStyle.Average);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Exception filtering video");
+				Log.Warn (e, "Exception filtering video");
 				Finished();
 				return;
 			}

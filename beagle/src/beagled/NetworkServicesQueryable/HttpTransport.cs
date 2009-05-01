@@ -48,13 +48,13 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 	
 		public HttpTransport (string url)
 		{
-			Logger.Log.Debug ("HttpClient: Created client for {0}", url);
+			Util.Log.Debug ("HttpClient: Created client for {0}", url);
 			this.url = url; 
 		}
 		
 		protected override void SendRequest (RequestMessage request)
 		{
-			Logger.Log.Debug ("Sending request to {0}", url);
+			Util.Log.Debug ("Sending request to {0}", url);
 
 			http_request = (HttpWebRequest) System.Net.WebRequest.Create (url);
 			http_request.Method = "POST";
@@ -70,7 +70,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			// FIXME: Should we close the stream ?
 			stream.Close ();
 				
-			Logger.Log.Debug ("HttpClient: Sent request");
+			Util.Log.Debug ("HttpClient: Sent request");
 		}
 
 		public override ResponseMessage Send (RequestMessage request)
@@ -109,7 +109,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 #if ENABLE_XML_DUMP
 			StreamReader dump_reader = new StreamReader (this.BufferStream);
-			Logger.Log.Debug ("Received response:\n{0}\n", dump_reader.ReadToEnd ());
+			Log.Debug ("Received response:\n{0}\n", dump_reader.ReadToEnd ());
 			this.BufferStream.Seek (0, SeekOrigin.Begin);
 #endif
 
@@ -156,7 +156,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 				stream.BeginRead (network_data, 0, network_data.Length,
 						  new AsyncCallback (ReadCallback), stream);
 			} catch (IOException) {
-				Logger.Log.Debug ("Caught IOException in BeginRead");
+				Util.Log.Debug ("Caught IOException in BeginRead");
 				Close ();
 			}
 			
@@ -174,10 +174,10 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 				try { 
 					bytes_read = stream.EndRead (result);
 				} catch (SocketException) {
-					Logger.Log.Debug ("Caught SocketException in ReadCallback");
+					Util.Log.Debug ("Caught SocketException in ReadCallback");
 					Close ();
 				} catch (IOException) {
-					Logger.Log.Debug ("Caught IOException in ReadCallback");
+					Util.Log.Debug ("Caught IOException in ReadCallback");
 					Close ();
 				}
 				
@@ -223,8 +223,8 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 					BeginRead ();
 				
 			} catch (Exception e) {
-				Logger.Log.Error ("Got an exception while trying to read data:");
-				Logger.Log.Error (e);
+				Util.Log.Error ("Got an exception while trying to read data:");
+				Util.Log.Error (e);
 				
 				ResponseMessage resp = new ErrorResponse (e);
 				InvokeAsyncResponseEvent (resp);
@@ -281,7 +281,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 
 #if ENABLE_XML_DUMP
 					StreamReader r = new StreamReader (deserialize_stream);
-					Logger.Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
+					Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
 					deserialize_stream.Seek (0, SeekOrigin.Begin);
 #endif
 					ResponseMessage resp;

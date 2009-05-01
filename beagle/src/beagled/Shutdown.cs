@@ -61,7 +61,7 @@ namespace Beagle.Daemon {
 				workers_names[o] = name;
 
 				if (Debug)
-					Logger.Log.Debug ("worker added: name={0} refcount={1}", name, refcount);
+					Log.Debug ("worker added: name={0} refcount={1}", name, refcount);
 			}
 			return true;
 		}
@@ -75,7 +75,7 @@ namespace Beagle.Daemon {
 		{
 			lock (shutdownLock) {
 				if (!workers.Contains (o)) {
-					Logger.Log.Warn ("extra WorkerFinished called for {0}", o);
+					Log.Warn ("extra WorkerFinished called for {0}", o);
 					return;
 				}
 
@@ -83,12 +83,12 @@ namespace Beagle.Daemon {
 				--refcount;
 				if (refcount == 0) {
 					if (Debug)
-						Logger.Log.Debug ("worker removed: name={0}", workers_names[o]);
+						Log.Debug ("worker removed: name={0}", workers_names[o]);
 					workers.Remove (o);
 					workers_names.Remove (o);
 				} else {
 					if (Debug)
-						Logger.Log.Debug ("worker finished: name={0} refcount={1}", workers_names[o], refcount);
+						Log.Debug ("worker finished: name={0} refcount={1}", workers_names[o], refcount);
 					workers[o] = refcount;
 				}
 
@@ -130,7 +130,7 @@ namespace Beagle.Daemon {
 				try {
 					ShutdownEvent ();
 				} catch (Exception ex) {
-					Logger.Log.Warn (ex, "Caught unhandled exception during shutdown event");
+					Log.Warn (ex, "Caught unhandled exception during shutdown event");
 				}
 			}
 
@@ -139,17 +139,17 @@ namespace Beagle.Daemon {
 			lock (shutdownLock) { 
 				while (workers.Count > 0) {
 					++count;
-					Logger.Log.Debug ("({0}) Waiting for {1} worker{2}...",
+					Log.Debug ("({0}) Waiting for {1} worker{2}...",
 							  count,
 							  workers.Count,
 							  workers.Count > 1 ? "s" : "");					
 					foreach (object o in workers.Keys) 
-						Logger.Log.Debug ("waiting for {0}", workers_names[o]);
+						Log.Debug ("waiting for {0}", workers_names[o]);
 					Monitor.Wait (shutdownLock);
 				}
 			}
 
-			Logger.Log.Info ("All workers have finished.  Exiting main loop.");
+			Log.Info ("All workers have finished.  Exiting main loop.");
 			main_loop.Quit ();
 
 #if MONO_1_9

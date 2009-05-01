@@ -80,14 +80,14 @@ namespace Beagle.Daemon
 
 				foreach (FileInfo info in DirectoryWalker.GetFileInfos (index_dir)) {
 					if (Array.IndexOf (allowed_files, info.Name) == -1) {
-						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", index_dir, info.FullName);
+						Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", index_dir, info.FullName);
 						Environment.Exit (1);
 					}
 				}
 
 				foreach (DirectoryInfo info in DirectoryWalker.GetDirectoryInfos (index_dir)) {
 					if (Array.IndexOf (allowed_dirs, info.Name) == -1) {
-						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", index_dir, info.FullName);
+						Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", index_dir, info.FullName);
 						Environment.Exit (1);
 					}
 				}

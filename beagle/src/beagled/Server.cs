@@ -45,10 +45,10 @@ namespace Beagle.Daemon {
 
 		public void RegisterHit (Hit hit)
 		{
-			//Logger.Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
+			//Log.Debug ("httpitemhandler: registering {0}", hit.Uri);
 
 			if (hit.Uri == null) {
-				Logger.Log.Debug ("httpitemhandler: cannot register hits with no URIs");
+				Log.Debug ("httpitemhandler: cannot register hits with no URIs");
 				return;
 			}
 
@@ -67,12 +67,12 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			//Logger.Log.Debug ("httpitemhandler: requested: {0}", path);
+			//Log.Debug ("httpitemhandler: requested: {0}", path);
 			context.Response.ContentType = requested.MimeType;
 
 			// FIXME: We can only handle files for now
 			/*if (requested ["Type"] != "File") {
-			  Logger.Log.Debug ("httpitemhandler: can only serve files");
+			  Log.Debug ("httpitemhandler: can only serve files");
 			  return;
 			}*/
 			
@@ -118,7 +118,7 @@ namespace Beagle.Daemon {
 
 		public override void HandleConnection ()
 		{
-			//Logger.Log.Debug ("HTTP Server: Serving request for {0}", context.Request.Url);
+			//Log.Debug ("HTTP Server: Serving request for {0}", context.Request.Url);
 			
 			// Query request: read content and forward to base.HandleConnection for processing
 			context.Response.KeepAlive = true;
@@ -161,7 +161,7 @@ namespace Beagle.Daemon {
 					// Reset the unsightly ThreadAbortException
 					Thread.ResetAbort ();
 
-					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
+					Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
 					this.thread = null;
 					Server.MarkHandlerAsKilled (this);
 					Shutdown.WorkerFinished (context.Request.InputStream);
@@ -179,7 +179,7 @@ namespace Beagle.Daemon {
 				}
 			} while (bytes_read > 0 && end_index == -1);
 			
-			//Logger.Log.Debug ("HTTP Server: Handling received request message");
+			//Log.Debug ("HTTP Server: Handling received request message");
 			
                         // The 0xff bytes from a remote beagled comes in a separate http request
                         // and causes havoc by creating empty messages. HTTP streams do not behave
@@ -300,7 +300,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (r) {
-				//Logger.Log.Debug ("httpserver: Sent response = " + response.ToString ());
+				//Log.Debug ("httpserver: Sent response = " + response.ToString ());
 				//add end-of-document
 				context.Response.OutputStream.WriteByte (0xff);
 				context.Response.OutputStream.Flush ();
@@ -342,7 +342,7 @@ namespace Beagle.Daemon {
 					this.client.GetStream().WriteByte (0xff);
 					this.client.GetStream().Flush ();
 				} catch (IOException e) {
-					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
 					result = false;
 				}
 			}
@@ -393,7 +393,7 @@ namespace Beagle.Daemon {
 					// Reset the unsightly ThreadAbortException
 					Thread.ResetAbort ();
 
-					Logger.Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
+					Log.Debug ("Bailing out of HandleConnection -- shutdown requested");
 					this.thread = null;
 					Server.MarkHandlerAsKilled (this);
 					Shutdown.WorkerFinished (network_data);
@@ -544,7 +544,7 @@ namespace Beagle.Daemon {
 					XmlFu.SerializeUtf8 (resp_serializer, mem_stream, new ResponseWrapper (response));
 					mem_stream.Seek (0, SeekOrigin.Begin);
 					StreamReader r = new StreamReader (mem_stream);
-					Logger.Log.Debug ("Sending response:\n{0}\n", r.ReadToEnd ());
+					Log.Debug ("Sending response:\n{0}\n", r.ReadToEnd ());
 					mem_stream.Seek (0, SeekOrigin.Begin);
 					mem_stream.WriteTo (stream);
 					mem_stream.Close ();
@@ -552,7 +552,7 @@ namespace Beagle.Daemon {
 					XmlFu.SerializeUtf8 (resp_serializer, stream, new ResponseWrapper (response));
 #endif
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
+					Log.Debug (e, "Caught an exception sending {0}.  Shutting down socket.", response.GetType ());
 					return false;
 				}
 
@@ -574,7 +574,7 @@ namespace Beagle.Daemon {
 
 		protected void OnAsyncResponse (ResponseMessage response)
 		{
-			//Logger.Log.Debug ("Sending response of type {0}", response.GetType ());
+			//Log.Debug ("Sending response of type {0}", response.GetType ());
 			if (!SendResponse (response))
 				Close ();
 		}
@@ -595,7 +595,7 @@ namespace Beagle.Daemon {
 			
 #if ENABLE_XML_DUMP
 			StreamReader r = new StreamReader (buffer_stream);
-			Logger.Log.Debug ("Received request:\n{0}\n", r.ReadToEnd ());
+			Log.Debug ("Received request:\n{0}\n", r.ReadToEnd ());
 			buffer_stream.Seek (0, SeekOrigin.Begin);
 #endif
 
@@ -656,7 +656,7 @@ namespace Beagle.Daemon {
 				resp = new ErrorResponse ("No response available, but keepalive is not set");
 
 			if (resp != null) {
-				//Logger.Log.Debug ("Sending response of type {0}", resp.GetType ());
+				//Log.Debug ("Sending response of type {0}", resp.GetType ());
 				if (!this.SendResponse (resp))
 					force_close_connection = true;
 			}
@@ -774,7 +774,7 @@ namespace Beagle.Daemon {
 		{
 			lock (live_handlers) {
 				foreach (ConnectionHandler handler in live_handlers.Values) {
-					Logger.Log.Debug ("CancelIfBlocking {0}", handler);
+					Log.Debug ("CancelIfBlocking {0}", handler);
 					handler.CancelIfBlocking ();
 				}
 			}
@@ -820,7 +820,7 @@ namespace Beagle.Daemon {
 
 			Shutdown.WorkerFinished (this);
 
-			Logger.Log.Debug ("Server '{0}' shut down", this.socket_path);
+			Log.Debug ("Server '{0}' shut down", this.socket_path);
 		}
 
 		private void HttpRun ()
@@ -863,7 +863,7 @@ namespace Beagle.Daemon {
 					if (! this.running ||
 					    (! this.enable_network_svc && ! this.webinterface))
 						break;
-					Logger.Log.Warn (e, "HTTP Server: Exception while getting context:");
+					Log.Warn (e, "HTTP Server: Exception while getting context:");
 				}
 
 				if (context == null)
@@ -919,7 +919,7 @@ namespace Beagle.Daemon {
 						guid = new Guid (g);
 					} catch (FormatException) {
 						// FIXME: return HTTP error
-						Logger.Log.Debug ("HTTP Server: Invalid query guid '{0}'", g);
+						Log.Debug ("HTTP Server: Invalid query guid '{0}'", g);
 						context.Response.Close ();
 						continue;
 					}
@@ -928,7 +928,7 @@ namespace Beagle.Daemon {
 						path = uri.Query.Remove (0,1);
 					} else {
 						// FIXME: return HTTP error
-						Logger.Log.Debug ("HTTP Server: Empty query string in item request");
+						Log.Debug ("HTTP Server: Empty query string in item request");
 						context.Response.Close ();
 						continue;
 					}
@@ -938,10 +938,10 @@ namespace Beagle.Daemon {
 					
 					if (handler == null) {
 						// FIXME: return HTTP error
-						Logger.Log.Debug ("HTTP Server: Query ({0}) does not exist", g);
+						Log.Debug ("HTTP Server: Query ({0}) does not exist", g);
 						context.Response.Close ();
 					} else {
-						Logger.Log.Debug ("HTTP Server: Asked for item '{0}' on query '{1}'", path, g);
+						Log.Debug ("HTTP Server: Asked for item '{0}' on query '{1}'", path, g);
 						handler.HandleRequest (context, item_uri);
 					}
 				}
@@ -949,7 +949,7 @@ namespace Beagle.Daemon {
 				
 
 			Shutdown.WorkerFinished (http_listener);
-			Logger.Log.Info ("HTTP Server: '{0}' shut down...", prefix);
+			Log.Info ("HTTP Server: '{0}' shut down...", prefix);
 			http_listener = null;
 		}
 
@@ -1104,7 +1104,7 @@ namespace Beagle.Daemon {
 				Attribute attr = Attribute.GetCustomAttribute (t, typeof (RequestMessageAttribute));
 
 				if (attr == null) {
-					Logger.Log.Warn ("No handler attribute for executor {0}", t);
+					Log.Warn ("No handler attribute for executor {0}", t);
 					continue;
 				}
 

@@ -46,7 +46,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 		public override bool OpenClient ()
 		{
 			if (!this.source.IsLocal ()) {
-				Logger.Log.Debug ("Skipping remote addressbook {0}", this.source.Uri);
+				Log.Debug ("Skipping remote addressbook {0}", this.source.Uri);
 				return false;
 			}
 
@@ -54,7 +54,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				this.book = new Book (this.source);
 				this.book.Open (true);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Unable to open addressbook {0}:", this.source.Uri);
+				Log.Warn (e, "Unable to open addressbook {0}:", this.source.Uri);
 				return false;
 			}
 
@@ -92,16 +92,16 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			Contact[] added, changed;
 			string[] removed;
 
-			Logger.Log.Debug ("Getting addressbook changes for {0}", this.source.Uri);
+			Log.Debug ("Getting addressbook changes for {0}", this.source.Uri);
 
 			try {
 				this.book.GetChanges ("beagle-" + this.fingerprint, out added, out changed, out removed);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
+				Log.Warn (e, "Unable to get changes for {0}:", this.source.Uri);
 				return;
 			}
 
-			Logger.Log.Debug ("Addressbook {0}: {1} added, {2} changed, {3} removed",
+			Log.Debug ("Addressbook {0}: {1} added, {2} changed, {3} removed",
 					  this.book.Uri, added.Length, changed.Length, removed.Length);
 
 			foreach (Contact contact in added)
@@ -116,7 +116,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		public override void Remove ()
 		{
-			Logger.Log.Debug ("Removing addressbook source {0}", this.source.Uid);
+			Log.Debug ("Removing addressbook source {0}", this.source.Uid);
 
 			Property prop = Property.NewUnsearched ("fixme:source_uid", this.source.Uid);
 			this.queryable.RemovePropertyIndexable (prop);
@@ -171,7 +171,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			// Immediate mode
 			priority = Scheduler.Priority.Immediate;
 
-			Logger.Log.Debug ("Sequence complete!");
+			Log.Debug ("Sequence complete!");
 		}
 
 		/////////////////////////////////////
@@ -235,7 +235,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 							    CultureInfo.InvariantCulture,
 							    DateTimeStyles.None);
 			} catch (FormatException) {
-				Logger.Log.Warn ("Unable to parse last revision string: {0}", date_str);
+				Log.Warn ("Unable to parse last revision string: {0}", date_str);
 				return DateTime.MinValue;
 			}
 		}

@@ -129,8 +129,8 @@ namespace Beagle.Filters {
 						}
 					}
 				} catch (System.Xml.XmlException e) {
-					Logger.Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
-					Logger.Log.Debug (e);
+					Log.Error ("Fatal error parsing xml file {0}", FileInfo.FullName);
+					Log.Debug (e);
 					Error ();
 					return;
 				}
@@ -197,13 +197,13 @@ namespace Beagle.Filters {
 					}
 				} catch (System.Xml.XmlException e) {
 					if (reader.ReadState == ReadState.Error) {
-						Logger.Log.Error ("Fatal error parsing embedded RDF {0}", FileInfo.FullName);
-						Logger.Log.Debug (e);
+						Log.Error ("Fatal error parsing embedded RDF {0}", FileInfo.FullName);
+						Log.Debug (e);
 						Error ();
 						return;
 					} else {
-						Logger.Log.Debug ("Non-Fatal error parsing embedded RDF {0}", FileInfo.FullName);
-						Logger.Log.Debug (e.Message);
+						Log.Debug ("Non-Fatal error parsing embedded RDF {0}", FileInfo.FullName);
+						Log.Debug (e.Message);
 					}
 				}
 			}

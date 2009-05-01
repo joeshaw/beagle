@@ -62,7 +62,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				history_enumerator = history.GetEnumerator ();
 				
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Failed to list cache objects in {0}", 
+				Log.Error (e, "Failed to list cache objects in {0}", 
 					Path.Combine (cache_dir, "dcache4.url"));
 			}
 		}

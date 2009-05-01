@@ -233,7 +233,7 @@ namespace Beagle.Daemon.OperaQueryable {
 						} catch (IOException) {
 							break;
 						} catch(Exception e) { 
-							Beagle.Util.Logger.Log.Error(e);
+							Beagle.Util.Log.Error(e);
 						}
 						filepos += length;
 					}

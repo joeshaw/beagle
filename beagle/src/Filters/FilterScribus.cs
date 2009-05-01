@@ -120,8 +120,8 @@ namespace Beagle.Filters {
 
 				Finished ();
 			} catch (System.Xml.XmlException e) {
-				Logger.Log.Error ("Error parsing xml file {0}", FileInfo.FullName);
-				Logger.Log.Debug (e);
+				Log.Error ("Error parsing xml file {0}", FileInfo.FullName);
+				Log.Debug (e);
 				Error ();
 			}
 		}

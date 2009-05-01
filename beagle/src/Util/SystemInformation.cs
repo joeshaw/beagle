@@ -210,7 +210,7 @@ namespace Beagle.Util {
 			int vm_size = VmSize;
 			int vm_rss = VmRss;
 
-			Logger.Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2} ({3} colls)",
+			Log.Debug ("Memory usage: VmSize={0:.0} MB, VmRSS={1:.0} MB,  GC.GetTotalMemory={2} ({3} colls)",
 					  vm_size/1024.0, vm_rss/1024.0, GC.GetTotalMemory (false), GC.CollectionCount (2));
 		}
 
@@ -365,7 +365,7 @@ namespace Beagle.Util {
 #if OS_LINUX
 			if (prctl (PR_SET_NAME, Encoding.ASCII.GetBytes (name + '\0'), 
 				   IntPtr.Zero, IntPtr.Zero, IntPtr.Zero) < 0) {
-				Logger.Log.Warn ("Couldn't set process name to '{0}': {1}", name,
+				Log.Warn ("Couldn't set process name to '{0}': {1}", name,
 						 Mono.Unix.Native.Stdlib.GetLastError ());
 			}
 #elif OS_FREEBSD

@@ -94,7 +94,7 @@ namespace Beagle.Filters {
 				AddFSpotInformation (this.FileInfo.FullName);
 				AddDigikamInformation (this.FileInfo.FullName);
 			} catch (Exception ex) {
-				Logger.Log.Error ("Exception trying to retrieve FSpot/Digikam information:" + ex);
+				Log.Error ("Exception trying to retrieve FSpot/Digikam information:" + ex);
 			}
 
 

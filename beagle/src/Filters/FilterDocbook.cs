@@ -218,7 +218,7 @@ namespace Beagle.Filters
 				return;
 			}
 
-			Logger.Log.Debug ("Parsed docbook file in {0}", watch);
+			Log.Debug ("Parsed docbook file in {0}", watch);
 
 			Finished ();
 		}

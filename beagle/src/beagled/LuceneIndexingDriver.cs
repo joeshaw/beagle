@@ -211,7 +211,7 @@ namespace Beagle.Daemon {
 				}
 
 				// Now remove (non-remove indexables will be re-added in next block)
-				Logger.Log.Debug ("-{0}", indexable.DisplayUri);
+				Log.Debug ("-{0}", indexable.DisplayUri);
 				
 				int num_delete = 0;
 
@@ -304,7 +304,7 @@ namespace Beagle.Daemon {
 
 				if (indexable.Type == IndexableType.PropertyChange) {
 
-					Logger.Log.Debug ("+{0} (props only)", indexable.DisplayUri);
+					Log.Debug ("+{0} (props only)", indexable.DisplayUri);
 
 					r = new IndexerAddedReceipt (indexable.Id);
 					r.PropertyChangesOnly = true;
@@ -371,14 +371,14 @@ namespace Beagle.Daemon {
 
 			if (request.OptimizeIndex) {
 				Stopwatch watch = new Stopwatch ();
-				Logger.Log.Debug ("Optimizing {0}", IndexName);
+				Log.Debug ("Optimizing {0}", IndexName);
 				watch.Start ();
 				primary_writer.Optimize ();
 				if (secondary_writer == null)
 					secondary_writer = new IndexWriter (SecondaryStore, IndexingAnalyzer, false);
 				secondary_writer.Optimize ();
 				watch.Stop ();
-				Logger.Log.Debug ("{0} optimized in {1}", IndexName, watch);
+				Log.Debug ("{0} optimized in {1}", IndexName, watch);
 			}
 
 			// Step #4. Close our writers and return the events to
@@ -644,7 +644,7 @@ namespace Beagle.Daemon {
 				// and try again -- that way it will at least end up in the index,
 				// even if we don't manage to extract the fulltext.
 
-				Logger.Log.Debug (ex, "First attempt to index {0} failed", indexable.DisplayUri);
+				Log.Debug (ex, "First attempt to index {0} failed", indexable.DisplayUri);
 					
 				indexable.NoContent = true;
 						
@@ -652,7 +652,7 @@ namespace Beagle.Daemon {
 					BuildDocuments (indexable, out primary_doc, out secondary_doc);
 					primary_writer.AddDocument (primary_doc);
 				} catch (Exception ex2) {
-					Logger.Log.Debug (ex2, "Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
+					Log.Debug (ex2, "Second attempt to index {0} failed, giving up...", indexable.DisplayUri);
 				}
 			}
 

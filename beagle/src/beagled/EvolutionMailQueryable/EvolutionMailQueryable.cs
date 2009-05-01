@@ -75,7 +75,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 		private void StartWorker ()
 		{
-			Logger.Log.Info ("Starting Evolution mail backend");
+			Log.Info ("Starting Evolution mail backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -83,17 +83,17 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			// Check that we have data to index
 			if ((! Directory.Exists (this.local_path)) && (! Directory.Exists (this.imap_path))) {
 				// No mails present, repoll every minute
-				Logger.Log.Warn ("Evolution mail store not found, watching for it.");
+				Log.Warn ("Evolution mail store not found, watching for it.");
 				GLib.Timeout.Add (60000, new GLib.TimeoutHandler (CheckForMailData));
 				return;
 			}
 
-			Logger.Log.Debug ("Starting mail crawl");
+			Log.Debug ("Starting mail crawl");
 			crawler = new MailCrawler (this.local_path, this.imap_path, this.imap4_path);
 			crawler.MboxAddedEvent += IndexMbox;
 			crawler.SummaryAddedEvent += IndexSummary;
 			crawler.Crawl ();
-			Logger.Log.Debug ("Mail crawl finished");
+			Log.Debug ("Mail crawl finished");
 
 			// If we don't have inotify, we have to poll the file system.  Ugh.
 			if (! Inotify.Enabled) {
@@ -104,7 +104,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			}
 
 			stopwatch.Stop ();
-			Logger.Log.Info ("Evolution mail driver worker thread done in {0}",
+			Log.Info ("Evolution mail driver worker thread done in {0}",
 					 stopwatch);
 		}
 
@@ -134,11 +134,11 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			// If there's already a task running for this folder,
 			// don't interrupt it.
 			if (ThisScheduler.ContainsByTag (summaryInfo.FullName)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", summaryInfo.FullName);
+				Log.Debug ("Not adding task for already running task: {0}", summaryInfo.FullName);
 				return;
 			}
 
-			Logger.Log.Debug ("Will index summary {0}", summaryInfo.FullName);
+			Log.Debug ("Will index summary {0}", summaryInfo.FullName);
 			EvolutionMailIndexableGeneratorImap generator = new EvolutionMailIndexableGeneratorImap (this, summaryInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator);
@@ -153,11 +153,11 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			// If there's already a task running for this mbox,
 			// don't interrupt it.
 			if (ThisScheduler.ContainsByTag (mboxInfo.FullName)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", mboxInfo.FullName);
+				Log.Debug ("Not adding task for already running task: {0}", mboxInfo.FullName);
 				return;
 			}
 
-			Logger.Log.Debug ("Will index mbox {0}", mboxInfo.FullName);
+			Log.Debug ("Will index mbox {0}", mboxInfo.FullName);
 			EvolutionMailIndexableGeneratorMbox generator = new EvolutionMailIndexableGeneratorMbox (this, mboxInfo);
 			Scheduler.Task task;
 			task = NewAddTask (generator);

@@ -123,7 +123,7 @@ namespace Beagle.Daemon.BlamQueryable {
 		private void Index ()
 		{
 			if (ThisScheduler.ContainsByTag ("Blam")) {
-				Logger.Log.Debug ("Not adding task for already running Blam task");
+				Log.Debug ("Not adding task for already running Blam task");
 				return;
 			}
 
@@ -179,7 +179,7 @@ namespace Beagle.Daemon.BlamQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Opening blam collection file: {0}", feed_file);
+				Log.Debug ("Opening blam collection file: {0}", feed_file);
 				reader = new XmlTextReader (feed_file);
 				reader.WhitespaceHandling = WhitespaceHandling.None;
 				
@@ -191,7 +191,7 @@ namespace Beagle.Daemon.BlamQueryable {
 				channel_name = null;
 				channel_url = null;
 			} catch (XmlException ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing feed file:");
+				Log.Warn (ex, "Caught exception parsing feed file:");
 				is_valid_file = false;
 				reader.Close ();
 			}
@@ -258,7 +258,7 @@ namespace Beagle.Daemon.BlamQueryable {
 			reader.Read ();
 
 			Uri uri = new Uri (String.Format ("feed:{0};item={1}", channel_url, id));
-			Logger.Log.Debug ("BlamQ: Indexing [" + channel_name + "] " + title);
+			Log.Debug ("BlamQ: Indexing [" + channel_name + "] " + title);
 			
 			Indexable indexable = new Indexable (uri);
 			indexable.ParentUri = UriFu.PathToFileUri (feed_file);

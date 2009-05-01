@@ -107,9 +107,9 @@ namespace Beagle {
 				try { 
 					bytes_read = stream.EndRead (ar);
 				} catch (SocketException) {
-					Logger.Log.Debug ("Caught SocketException in ReadCallback");
+					Util.Log.Debug ("Caught SocketException in ReadCallback");
 				} catch (IOException) {
-					Logger.Log.Debug ("Caught IOException in ReadCallback");
+					Util.Log.Debug ("Caught IOException in ReadCallback");
 				}
 
 				// Connection hung up, we're through
@@ -145,7 +145,7 @@ namespace Beagle {
 				if (!this.IsClosed)
 					BeginRead ();
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Got an exception while trying to read data:");
+				Util.Log.Error (e, "Got an exception while trying to read data:");
 			}
 		}
 
@@ -203,7 +203,7 @@ namespace Beagle {
 
 #if ENABLE_XML_DUMP
 					StreamReader r = new StreamReader (deserialize_stream);
-					Logger.Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
+					Log.Debug ("Received response:\n{0}\n", r.ReadToEnd ());
 					deserialize_stream.Seek (0, SeekOrigin.Begin);
 #endif
 
@@ -252,7 +252,7 @@ namespace Beagle {
 			do {
 				bytes_read = stream.Read (this.network_data, 0, 4096);
 
-				//Logger.Log.Debug ("Read {0} bytes", bytes_read);
+				//Log.Debug ("Read {0} bytes", bytes_read);
 
 				if (bytes_read > 0) {
 					// 0xff signifies end of message
@@ -276,7 +276,7 @@ namespace Beagle {
 
 #if ENABLE_XML_DUMP
 			StreamReader dump_reader = new StreamReader (this.BufferStream);
-			Logger.Log.Debug ("Received response:\n{0}\n", dump_reader.ReadToEnd ());
+			Log.Debug ("Received response:\n{0}\n", dump_reader.ReadToEnd ());
 			this.BufferStream.Seek (0, SeekOrigin.Begin);
 #endif
 			

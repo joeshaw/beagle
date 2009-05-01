@@ -65,7 +65,7 @@ namespace Beagle.Daemon {
 
 		public static bool StartServer ()
 		{
-			Logger.Log.Debug ("Starting messaging server");
+			Log.Debug ("Starting messaging server");
 
 			try {
 				server = new Server ("socket", false, Conf.Networking.GetOption (Conf.Names.ServiceEnabled, false));
@@ -83,7 +83,7 @@ namespace Beagle.Daemon {
 
 			do {
 				ShutdownRequest request = new ShutdownRequest ();
-				Logger.Log.Info ("Sending Shutdown");
+				Log.Info ("Sending Shutdown");
 				request.Send ();
 				// Give it a second to shut down the messaging server
 				Thread.Sleep (1000);
@@ -132,7 +132,7 @@ namespace Beagle.Daemon {
 					MaybeSendSigprof (vm_rss, GC.GetTotalMemory (false));
 
 				if (vm_rss > 300 * 1024) {
-					Logger.Log.Debug ("VmRss too large --- shutting down");
+					Log.Debug ("VmRss too large --- shutting down");
 					Shutdown.BeginShutdown ();
 				}
 
@@ -180,7 +180,7 @@ namespace Beagle.Daemon {
 			// Fire up our server
 			if (! StartServer ()) {
 				if (! arg_replace) {
-					Logger.Log.Error ("Could not set up the listener for beagle requests.  "
+					Log.Error ("Could not set up the listener for beagle requests.  "
 							  + "There is probably another beagled instance running.  "
 							  + "Use --replace to replace the running service");
 					Environment.Exit (1);
@@ -203,7 +203,7 @@ namespace Beagle.Daemon {
 				IndexSynchronization.Initialize ();
 
 			// Start the query driver.
-			Logger.Log.Debug ("Starting QueryDriver");
+			Log.Debug ("Starting QueryDriver");
 			QueryDriver.Start ();
 
 			// Start our battery monitor so we can shut down the
@@ -215,7 +215,7 @@ namespace Beagle.Daemon {
 			// Start the Global Scheduler thread
 			if (! arg_disable_scheduler) {
 				if (! initially_on_battery) {
-					Logger.Log.Debug ("Starting Scheduler thread");
+					Log.Debug ("Starting Scheduler thread");
 					Scheduler.Global.Start ();
 				} else {
 					Log.Debug ("Beagle started on battery, not starting scheduler thread");
@@ -237,13 +237,13 @@ namespace Beagle.Daemon {
 
 			stopwatch.Stop ();
 
-			Logger.Log.Debug ("Daemon initialization finished after {0}", stopwatch);
+			Log.Debug ("Daemon initialization finished after {0}", stopwatch);
 
 			SystemInformation.LogMemoryUsage (); 
 
 			if (arg_indexing_test_mode) {
 				Thread.Sleep (1000); // Ugly paranoia: wait a second for the backends to settle.
-				Logger.Log.Debug ("Running in indexing test mode");
+				Log.Debug ("Running in indexing test mode");
 				Scheduler.Global.EmptyQueueEvent += OnEmptySchedulerQueue;
 				Scheduler.Global.Add (null); // pulse the scheduler
 			}
@@ -253,7 +253,7 @@ namespace Beagle.Daemon {
 
 		private static void OnEmptySchedulerQueue ()
 		{
-			Logger.Log.Debug ("Scheduler queue is empty: terminating immediately");
+			Log.Debug ("Scheduler queue is empty: terminating immediately");
 			Shutdown.BeginShutdown ();
 			Environment.Exit (0); // Ugly work-around: We need to call Exit here to avoid deadlocking.
 		}
@@ -263,7 +263,7 @@ namespace Beagle.Daemon {
 			try {
 				DoMain (args);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
+				Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
 				Environment.Exit (1);
 			}
 		}
@@ -463,7 +463,7 @@ namespace Beagle.Daemon {
 					   Environment.CommandLine != null ? Environment.CommandLine : "(null)");
 
 			if (! ExtendedAttribute.Supported) {
-				Logger.Log.Warn ("Extended attributes are not supported on this filesystem. " +
+				Log.Warn ("Extended attributes are not supported on this filesystem. " +
 						 "Performance will suffer as a result.");
 			}
 
@@ -490,9 +490,9 @@ namespace Beagle.Daemon {
 			g_type_init ();
 			
 			if (SystemInformation.XssInit ())
-				Logger.Log.Debug ("Established a connection to the X server");
+				Log.Debug ("Established a connection to the X server");
 			else
-				Logger.Log.Debug ("Unable to establish a connection to the X server");
+				Log.Debug ("Unable to establish a connection to the X server");
 			XSetIOErrorHandler (BeagleXIOErrorHandler);
 
 			// Lower our CPU priority
@@ -544,12 +544,12 @@ namespace Beagle.Daemon {
 
 		private static int BeagleXIOErrorHandler (IntPtr display)
 		{
-			Logger.Log.Debug ("Lost our connection to the X server!  Trying to shut down gracefully");
+			Log.Debug ("Lost our connection to the X server!  Trying to shut down gracefully");
 
 			if (! Shutdown.ShutdownRequested)
 				Shutdown.BeginShutdown ();
 
-			Logger.Log.Debug ("Xlib is forcing us to exit!");
+			Log.Debug ("Xlib is forcing us to exit!");
 
 			ExceptionHandlingThread.SpewLiveThreads ();
 	
@@ -601,7 +601,7 @@ namespace Beagle.Daemon {
 
 		private static void HandleSignal (int signal)
 		{
-			Logger.Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
+			Log.Debug ("Handling signal {0} ({1})", signal, (Mono.Unix.Native.Signum) signal);
 
 			// Pass the signals to the helper too.
 			GLib.Idle.Add (new GLib.IdleHandler (delegate ()
@@ -623,7 +623,7 @@ namespace Beagle.Daemon {
 				return;
 			}
 
-			Logger.Log.Debug ("Initiating shutdown in response to signal.");
+			Log.Debug ("Initiating shutdown in response to signal.");
 			Shutdown.BeginShutdown ();
 		}
 
@@ -691,7 +691,7 @@ namespace Beagle.Daemon {
 				string target;
 				target = Path.Combine (PathFinder.HomeDir, "_HARDER_" + file.Name);
 
-				Logger.Log.Debug ("ETDH: Copying {0}", file.Name);
+				Log.Debug ("ETDH: Copying {0}", file.Name);
 				file.CopyTo (target, true);
 				
 				lock (exercise_files)

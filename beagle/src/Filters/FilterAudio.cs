@@ -97,7 +97,7 @@ namespace Beagle.Filters {
 			try {
 				file = TagLib.File.Create (new StreamAbstraction (Stream), GetTaglibMimeType (), TagLib.ReadStyle.Average);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Exception filtering music");
+				Log.Warn (e, "Exception filtering music");
 				Finished();
 				return;
 			}

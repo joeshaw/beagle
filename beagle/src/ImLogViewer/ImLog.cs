@@ -171,7 +171,7 @@ namespace ImLogViewer {
 					throw new FormatException ();
 				}
 			} catch {
-				Logger.Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
+				Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
 				StartTime = DateTime.Now;
 			}
 
@@ -270,8 +270,8 @@ namespace ImLogViewer {
 				try {
 					ProcessLine (line);
 				} catch (Exception e) {
-					Logger.Log.Warn ("Could not parse line in '{0}'", File.FullName);
-					Logger.Log.Warn (e);
+					Log.Warn ("Could not parse line in '{0}'", File.FullName);
+					Log.Warn (e);
 				}
 			}
 		}
@@ -306,7 +306,7 @@ namespace ImLogViewer {
 				SpeakingTo = filename.Substring (0, filename.LastIndexOf ('_'));
 			else
 				SpeakingTo = filename;
-			Logger.Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo + ", protocol is " + Protocol);
+			Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo + ", protocol is " + Protocol);
 			Load ();
 		}
 		
@@ -363,7 +363,7 @@ namespace ImLogViewer {
 										date_format,
 										null);
 					} catch {
-						Logger.Log.Error ("Couldn't parse Kopete timestamp: {0}", timestamp);
+						Log.Error ("Couldn't parse Kopete timestamp: {0}", timestamp);
 						break;
 					}
 					
@@ -400,7 +400,7 @@ namespace ImLogViewer {
 
 			SpeakingTo = Path.GetFileNameWithoutExtension (file.Name);
 
-			Logger.Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo);
+			Log.Debug ("Speakingto for " + file.Name + " is " + SpeakingTo);
 			Load ();
 		}
 		

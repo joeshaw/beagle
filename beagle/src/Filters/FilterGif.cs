@@ -68,7 +68,7 @@ namespace Beagle.Filters {
 				Stream.Read (data, 0, data.Length);
 
 				if (data [0] != 'G' || data [1] != 'I' || data [2] != 'F') {
-					Logger.Log.Debug ("File is not a GIF file!");
+					Log.Debug ("File is not a GIF file!");
 					Error ();
 					return;
 				}
@@ -98,7 +98,7 @@ namespace Beagle.Filters {
 					ct_size = (int) (3 * Math.Pow(2, (data[10] & 0x07) + 1));
 
 					if (Debug)
-						Logger.Log.Debug ("ct_size: " + ct_size);
+						Log.Debug ("ct_size: " + ct_size);
 
 					Stream.Seek (ct_size, SeekOrigin.Current);
 				}
@@ -111,7 +111,7 @@ namespace Beagle.Filters {
 							num_frames++;
 
 							if (Debug)
-								Logger.Log.Debug ("Start of Image Block : " + Stream.Position);
+								Log.Debug ("Start of Image Block : " + Stream.Position);
 
 							Stream.Seek (8, SeekOrigin.Current);
 							b = Stream.ReadByte ();
@@ -122,8 +122,8 @@ namespace Beagle.Filters {
 								ct_size = (int) (3 * Math.Pow(2, (b & 0x07) + 1));
 								
 								if (Debug) {
-									Logger.Log.Debug ("-- Image Block has local color table");
-									Logger.Log.Debug ("ct_size: " + ct_size);
+									Log.Debug ("-- Image Block has local color table");
+									Log.Debug ("ct_size: " + ct_size);
 								}
 
 								Stream.Seek (ct_size, SeekOrigin.Current);
@@ -132,10 +132,10 @@ namespace Beagle.Filters {
 							Stream.ReadByte ();
 							while ((b = Stream.ReadByte ()) != 0x0) {
 								if (Debug)
-									Logger.Log.Debug ("-- Image Data Block size: " + b + " pos: " + Stream.Position);
+									Log.Debug ("-- Image Data Block size: " + b + " pos: " + Stream.Position);
 
 								if (b == -1) {
-									Logger.Log.Warn ("Invalid Data Block size");
+									Log.Warn ("Invalid Data Block size");
 									Error ();
 									return;
 								}
@@ -144,33 +144,33 @@ namespace Beagle.Filters {
 							}
 
 							if (Debug)
-								Logger.Log.Debug ("-- Image Block end: " + Stream.Position);
+								Log.Debug ("-- Image Block end: " + Stream.Position);
 							break;
 
 						case GifBytes.BlockIntroducer:
 							if (Debug)
-								Logger.Log.Debug ("Start of Extension : " + Stream.Position);
+								Log.Debug ("Start of Extension : " + Stream.Position);
 							break;
 
 						case GifBytes.GraphicControlExtension:
 							if (Debug)
-								Logger.Log.Debug ("-- Graphic Control Extension : " + Stream.Position);
+								Log.Debug ("-- Graphic Control Extension : " + Stream.Position);
 
 							Stream.Seek (6, SeekOrigin.Current);
 							break;
 
 						case GifBytes.PlaintextExtension:
 							if (Debug)
-								Logger.Log.Debug ("Plaintext Extension: " + Stream.Position);
+								Log.Debug ("Plaintext Extension: " + Stream.Position);
 
 							Stream.Seek (13, SeekOrigin.Current);
 
 							while ((b = Stream.ReadByte ()) != 0x0) {
 								if (Debug)
-									Logger.Log.Debug ("-- Plaintext Data Block size: " + b + " pos: " + Stream.Position);
+									Log.Debug ("-- Plaintext Data Block size: " + b + " pos: " + Stream.Position);
 
 								if (b == -1) {
-									Logger.Log.Warn ("Invalid Plaintext Data Block size!");
+									Log.Warn ("Invalid Plaintext Data Block size!");
 									Error ();
 									return;
 								}
@@ -183,23 +183,23 @@ namespace Beagle.Filters {
 								AppendText (new string (cbuffer));
 
 								if (Debug)
-									Logger.Log.Debug ("-- Plaintext Data: " + new string(cbuffer));
+									Log.Debug ("-- Plaintext Data: " + new string(cbuffer));
 							}
 
 							if (Debug)
-								Logger.Log.Debug ("-- Plaintext Extension End: " + Stream.Position);
+								Log.Debug ("-- Plaintext Extension End: " + Stream.Position);
 							break;
 
 						case GifBytes.CommentExtension:
 							if (Debug)
-								Logger.Log.Debug ("Comment Extension: " + Stream.Position);
+								Log.Debug ("Comment Extension: " + Stream.Position);
 
 							while ((b = Stream.ReadByte ()) != 0x0) {
 								if (Debug)
-									Logger.Log.Debug ("-- Comment Data Block size: " + b + " pos: " + Stream.Position);
+									Log.Debug ("-- Comment Data Block size: " + b + " pos: " + Stream.Position);
 
 								if (b == -1) {
-									Logger.Log.Warn ("Invalid Comment Data Block size!");
+									Log.Warn ("Invalid Comment Data Block size!");
 									Error ();
 									return;
 								}
@@ -213,16 +213,16 @@ namespace Beagle.Filters {
 								AppendText (new string (cbuffer));
 
 								if (Debug)
-									Logger.Log.Debug ("-- Comment Data: " + new string(cbuffer));
+									Log.Debug ("-- Comment Data: " + new string(cbuffer));
 							}
 
 							if (Debug)
-								Logger.Log.Debug ("-- Comment Extension End: " + Stream.Position);
+								Log.Debug ("-- Comment Extension End: " + Stream.Position);
 							break;
 
 						case GifBytes.ApplicationExtension:
 							if (Debug)
-								Logger.Log.Debug ("Application Extension: " + Stream.Position);
+								Log.Debug ("Application Extension: " + Stream.Position);
 
 							Stream.ReadByte ();
 
@@ -235,7 +235,7 @@ namespace Beagle.Filters {
 
 							if (application == "NETSCAPE2.0") {
 								if (Debug)
-									Logger.Log.Debug ("-- Application: 'NETSCAPE2.0'>");
+									Log.Debug ("-- Application: 'NETSCAPE2.0'>");
 
 								Stream.ReadByte ();
 								Stream.ReadByte ();
@@ -252,10 +252,10 @@ namespace Beagle.Filters {
 								//unknown extension...
 								while ((b = Stream.ReadByte ()) != 0x0) {
 									if (Debug)
-										Logger.Log.Debug ("-- Application Data Block size: " + b + " pos: " + Stream.Position);
+										Log.Debug ("-- Application Data Block size: " + b + " pos: " + Stream.Position);
 
 									if (b == -1) {
-										Logger.Log.Warn ("Invalid Application Data Block size!");
+										Log.Warn ("Invalid Application Data Block size!");
 										Error ();
 										return;
 									}
@@ -265,7 +265,7 @@ namespace Beagle.Filters {
 							}
 
 							if (Debug)
-								Logger.Log.Debug ("-- Application Extension End: " + Stream.Position);
+								Log.Debug ("-- Application Extension End: " + Stream.Position);
 							break;
 
 						default:
@@ -274,11 +274,11 @@ namespace Beagle.Filters {
 				}
 
 				if (Debug && gb == GifBytes.Trailer)
-					Logger.Log.Debug ("Trailer marker: " + Stream.Position);
+					Log.Debug ("Trailer marker: " + Stream.Position);
 
 				// We got zero frames, this isn't actually a valid GIF file.
 				if (num_frames == 0) {
-					Logger.Log.Debug ("File doesn't contain any GIF frames");
+					Log.Debug ("File doesn't contain any GIF frames");
 					Error ();
 					return;
 				}
@@ -286,7 +286,7 @@ namespace Beagle.Filters {
 				AddProperty (Beagle.Property.NewUnsearched ("gif:numframes", num_frames));
 			} catch (Exception e) {
 				if (Debug)
-					Logger.Log.Debug ("-- Exception: {0} - {1}", Stream.Position, e);
+					Log.Debug ("-- Exception: {0} - {1}", Stream.Position, e);
 				Error ();
 			}
 		}

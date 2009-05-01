@@ -117,7 +117,7 @@ namespace Beagle.Util {
 		static Inotify ()
 		{
 			if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_INOTIFY") != null) {
-				Logger.Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
+				Log.Debug ("BEAGLE_DISABLE_INOTIFY is set");
 				return;
 			}
 
@@ -127,7 +127,7 @@ namespace Beagle.Util {
 			try {
 				inotify_fd = inotify_glue_init ();
 			} catch (EntryPointNotFoundException) {
-				Logger.Log.Info ("Inotify not available on system.");
+				Log.Info ("Inotify not available on system.");
 				return;
 			}
 
@@ -141,7 +141,7 @@ namespace Beagle.Util {
 				else
 					error_message = Mono.Unix.UnixMarshal.GetErrorDescription (errno);
 
-				Logger.Log.Warn ("Could not initialize inotify: {0}", error_message);
+				Log.Warn ("Could not initialize inotify: {0}", error_message);
 			} else {
 				try {
 					FileStream fs = new FileStream ("/proc/sys/fs/inotify/max_user_watches", FileMode.Open, FileAccess.Read);
@@ -503,7 +503,7 @@ namespace Beagle.Util {
 			if (! Enabled)
 				return;
 
-			Logger.Log.Debug("Starting Inotify threads");
+			Log.Debug("Starting Inotify threads");
 
 			lock (event_queue) {
 				if (shutdown_requested || snarf_thread != null)
@@ -596,7 +596,7 @@ namespace Beagle.Util {
 				}
 
 				if (saw_overflow)
-					Logger.Log.Warn ("Inotify queue overflow!");
+					Log.Warn ("Inotify queue overflow!");
 
 				lock (event_queue) {
 					event_queue.AddRange (new_events);
@@ -630,7 +630,7 @@ namespace Beagle.Util {
 
 				WatchInfo start = watched_by_path [srcpath] as WatchInfo;	// not the same as src!
 				if (start == null) {
-					Logger.Log.Warn ("Lookup failed for {0}", srcpath);
+					Log.Warn ("Lookup failed for {0}", srcpath);
 					return;
 				}
 
@@ -643,7 +643,7 @@ namespace Beagle.Util {
 					WatchInfo target = queue.Dequeue () as WatchInfo;
 					for (int i = 0; i < target.Children.Count; i++) {
 						WatchInfo child = target.Children[i] as WatchInfo;
-						Logger.Log.Debug ("Moving watch on {0} from {1} to {2}", child.Path, srcpath, dstpath);
+						Log.Debug ("Moving watch on {0} from {1} to {2}", child.Path, srcpath, dstpath);
 						string name = Path.Combine (dstpath, child.Path.Substring (srcpath.Length + 1));
 						MoveWatch (child, name);
 						queue.Enqueue (child);
@@ -686,7 +686,7 @@ namespace Beagle.Util {
 					if (watch.Callback != null && (watch.Mask & mask) != 0)
 						watch.Callback (watch, watched.Path, filename, srcpath, mask);
 				} catch (Exception e) {
-					Logger.Log.Error (e, "Caught exception executing Inotify callbacks");
+					Log.Error (e, "Caught exception executing Inotify callbacks");
 				}
 		}
 

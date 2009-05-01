@@ -82,8 +82,8 @@ namespace Beagle.Daemon {
 				return attr;
 
 			} catch (Exception e) {
-				//Logger.Log.Debug ("Caught exception reading EAs from {0}", path);
-				//Logger.Log.Debug (e);
+				//Log.Debug ("Caught exception reading EAs from {0}", path);
+				//Log.Debug (e);
 				// FIXME: Do something smarter with the exception.
 				return null;
 			}
@@ -118,10 +118,10 @@ namespace Beagle.Daemon {
 				// An IOException here probably means that we don't have the right
 				// permissions to set the EAs.  We just fail silently and return false rather
 				// than spewing a bunch of scary exceptions.
-				//Logger.Log.Debug (e);
+				//Log.Debug (e);
 				return false;
 			} catch (Exception e) {
-				//Logger.Log.Debug (e, "Caught exception writing EAs to {0}", attr.Path);
+				//Log.Debug (e, "Caught exception writing EAs to {0}", attr.Path);
 				// FIXME: Do something smarter with the exception.
 				return false;
 			}

@@ -40,8 +40,6 @@ namespace Beagle.Daemon.KNotesQueryable {
 	[QueryableFlavor (Name="KNotes", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class KNotesQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("KNotesQueryable");
-
 		private string knotes_dir;
 		private string knotes_file;
 		private Hashtable last_modified_table;
@@ -145,7 +143,7 @@ namespace Beagle.Daemon.KNotesQueryable {
 		private void Index ()
 		{
 			if (ThisScheduler.ContainsByTag ("KNotes")) {
-				Logger.Log.Debug ("Not adding task for already running KNotes task");
+				Log.Debug ("Not adding task for already running KNotes task");
 				return;
 			}
 
@@ -181,7 +179,7 @@ namespace Beagle.Daemon.KNotesQueryable {
 		private void RemoveNote (string uid)
 		{
 			Uri uri = new Uri (String.Format ("knotes:///{0}", uid));
-			Logger.Log.Debug ("Removing note {0}", uri);
+			Log.Debug ("Removing note {0}", uri);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
 			task.SubPriority = 0;
@@ -243,7 +241,7 @@ namespace Beagle.Daemon.KNotesQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Checking if {0} is a valid KNotes file.", knotes_file);
+				Log.Debug ("Checking if {0} is a valid KNotes file.", knotes_file);
 				/** KNotes file notes.ics should start with
 BEGIN:VCALENDAR
 PRODID:-//K Desktop Environment//NONSGML libkcal 3.5//EN
@@ -259,7 +257,7 @@ VERSION:2.0
 					return;
 				}
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing knotes file:");
+				Log.Warn (ex, "Caught exception parsing knotes file:");
 				is_valid_file = false;
 				reader.Close ();
 			}

@@ -364,9 +364,9 @@ namespace Beagle.Filters {
 			} catch (Exception e) {
 				metaReader.Close ();
 				Finished ();
-				Logger.Log.Error ("Exception occurred while reading meta-data from {0}",
+				Log.Error ("Exception occurred while reading meta-data from {0}",
 						 FileInfo.FullName);
-				Logger.Log.Debug (e);
+				Log.Debug (e);
 			}
 		}
 
@@ -384,9 +384,9 @@ namespace Beagle.Filters {
 			} catch (Exception e) {
 				reader.Close ();
 				Finished ();
-				Logger.Log.Error ("Exception occurred while reading contents from {0}",
+				Log.Error ("Exception occurred while reading contents from {0}",
 						  FileInfo.FullName);
-				Logger.Log.Debug (e);
+				Log.Debug (e);
 			}
 		}
 	}

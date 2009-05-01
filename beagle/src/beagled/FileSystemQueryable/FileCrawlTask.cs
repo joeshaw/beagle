@@ -66,7 +66,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		private void PostCrawlHook ()
 		{
-			Logger.Log.Debug ("Done crawling '{0}'", current_dir.FullName);
+			Log.Debug ("Done crawling '{0}'", current_dir.FullName);
 
 			queryable.DoneCrawlingOneDirectory (current_dir);
 
@@ -103,7 +103,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			}
 
 			if (FileSystemQueryable.Debug) {
-				Logger.Log.Debug ("Starting crawl of '{0}'", current_dir.FullName);
+				Log.Debug ("Starting crawl of '{0}'", current_dir.FullName);
 				
 				if (current_dir.State == DirectoryState.PossiblyClean)
 					Log.Debug ("It looks as though we've crawled '{0}' before", current_dir.FullName);
@@ -114,7 +114,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				current_generator = new DirectoryIndexableGenerator (queryable, current_dir);
 			} catch (DirectoryNotFoundException ex) {
-				Logger.Log.Debug ("Couldn't crawl '{0}'", current_dir.FullName);
+				Log.Debug ("Couldn't crawl '{0}'", current_dir.FullName);
 
 				// FIXME: If our attempt to crawl the directory fails, just
 				// mark it as uncrawlable and move on.  This isn't optimal behavior,

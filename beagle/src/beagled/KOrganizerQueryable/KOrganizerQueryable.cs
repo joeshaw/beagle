@@ -41,8 +41,6 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 	[QueryableFlavor (Name="KOrganizer", Domain=QueryDomain.Local, RequireInotify=false)]
 	public class KOrganizerQueryable : LuceneFileQueryable {
 
-		private static Logger log = Logger.Get ("KOrganizerQueryable");
-
 		private string korganizer_dir;
 		private string korganizer_file;
 		private Hashtable last_modified_table;
@@ -146,7 +144,7 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 		private void Index ()
 		{
 			if (ThisScheduler.ContainsByTag ("KOrganizer")) {
-				Logger.Log.Debug ("Not adding task for already running KOrganizer task");
+				Log.Debug ("Not adding task for already running KOrganizer task");
 				return;
 			}
 
@@ -182,7 +180,7 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 		private void RemoveEntry (string uid)
 		{
 			Uri uri = new Uri (String.Format ("korganizer:///{0}", uid));
-			Logger.Log.Debug ("Removing entry {0}", uri);
+			Log.Debug ("Removing entry {0}", uri);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
 			task.SubPriority = 0;
@@ -244,7 +242,7 @@ namespace Beagle.Daemon.KOrganizerQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Checking if {0} is a valid KOrganizer file.", korganizer_file);
+				Log.Debug ("Checking if {0} is a valid KOrganizer file.", korganizer_file);
 				/** KOrganizer file std.ics should start with something like
 BEGIN:VCALENDAR
 PRODID:-//K Desktop Environment//NONSGML
@@ -260,7 +258,7 @@ VERSION:2.0
 					return;
 				}
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing KOrganizer file:");
+				Log.Warn (ex, "Caught exception parsing KOrganizer file:");
 				is_valid_file = false;
 				reader.Close ();
 			}

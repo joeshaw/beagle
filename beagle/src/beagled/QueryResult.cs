@@ -189,12 +189,12 @@ namespace Beagle.Daemon {
 				try {
 					worker.DoWork ();
 				} catch (Exception e) {
-					Logger.Log.Error (e, "QueryWorker '{0}' threw an exception", worker);
+					Log.Error (e, "QueryWorker '{0}' threw an exception", worker);
 				}
 				try {
 					result.WorkerFinished (worker);
 				} catch (Exception e) {
-					Logger.Log.Error ("QueryResult threw an exception while calling WorkerFinished for '{0}'",
+					Log.Error ("QueryResult threw an exception while calling WorkerFinished for '{0}'",
 							  worker);
 				}
 			}
@@ -266,13 +266,13 @@ namespace Beagle.Daemon {
 				DateTime now = DateTime.Now;
 
 				//DateTime then = (DateTime) per_worker_started_time [o];
-				//Logger.Log.Debug ("{0} finished in {1:0.00}s", o, (now - then).TotalSeconds);
+				//Log.Debug ("{0} finished in {1:0.00}s", o, (now - then).TotalSeconds);
 
 				per_worker_started_time.Remove (o);
 
 				if (workers == 0) {
 					finished_time = now;
-					//Logger.Log.Debug ("Last worker finished {0:0.00}s after start",
+					//Log.Debug ("Last worker finished {0:0.00}s after start",
 					//(finished_time - started_time).TotalSeconds);
 					if (FinishedEvent != null)
 						FinishedEvent (this);

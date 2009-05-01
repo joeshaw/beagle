@@ -160,7 +160,7 @@ namespace Beagle.Daemon {
 			try {
 				ShutdownHook ();
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception in shutdown hook");
+				Log.Warn (ex, "Caught exception in shutdown hook");
 			}
 		}
 
@@ -931,7 +931,7 @@ namespace Beagle.Daemon {
 						// Map from internal->external Uris in the PostAddHook
 						notification_uri = PostAddHook (indexable, r);
 					} catch (Exception ex) {
-						Logger.Log.Warn (ex, "Caught exception in PostAddHook '{0}' '{1}' '{2}'",
+						Log.Warn (ex, "Caught exception in PostAddHook '{0}' '{1}' '{2}'",
 								 indexable.Uri, r.FilterName, r.FilterVersion);
 					}
 
@@ -957,7 +957,7 @@ namespace Beagle.Daemon {
 					try {
 						notification_uri = PostRemoveHook (indexable, r.NumRemoved);
 					} catch (Exception ex) {
-						Logger.Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
+						Log.Warn (ex, "Caught exception in PostRemoveHook '{0}'",
 								 indexable.Uri);
 					}
 

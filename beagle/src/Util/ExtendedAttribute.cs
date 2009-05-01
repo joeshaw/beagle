@@ -159,7 +159,7 @@ namespace Beagle.Util {
 					return ea_supported;
 
 				if (Environment.GetEnvironmentVariable ("BEAGLE_DISABLE_XATTR") != null) {
-					Logger.Log.Debug ("BEAGLE_DISABLE_XATTR is set");
+					Log.Debug ("BEAGLE_DISABLE_XATTR is set");
 					ea_supported = false;
 					ea_support_tested = true;
 					return false;

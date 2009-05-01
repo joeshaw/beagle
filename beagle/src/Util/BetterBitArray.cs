@@ -497,7 +497,7 @@ namespace Beagle.Util {
 					if (Get (i))
 						++paranoid_check;
 				if (paranoid_check  != _cached_true_count)
-					Logger.Log.Error ("TrueCount mismatch: {0} vs {1}", _cached_true_count, paranoid_check);
+					Log.Error ("TrueCount mismatch: {0} vs {1}", _cached_true_count, paranoid_check);
 				
 				return _cached_true_count;
 			}

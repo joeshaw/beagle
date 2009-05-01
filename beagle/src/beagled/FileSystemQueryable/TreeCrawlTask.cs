@@ -101,7 +101,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (dir.IsAttached) {
 				if (FileSystemQueryable.Debug)
-					Logger.Log.Debug ("Scanning '{0}' for subdirectories", dir.FullName);
+					Log.Debug ("Scanning '{0}' for subdirectories", dir.FullName);
 
 				try {
 					foreach (string name in DirectoryWalker.GetDirectoryNames (dir.FullName)) {
@@ -111,7 +111,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 							handler (dir, name);
 					}
 				} catch (DirectoryNotFoundException ex) {
-					Logger.Log.Debug ("Couldn't scan '{0}' for subdirectories", dir.FullName);
+					Log.Debug ("Couldn't scan '{0}' for subdirectories", dir.FullName);
 				}
 			}
 

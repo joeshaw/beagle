@@ -56,7 +56,7 @@ namespace Beagle.Daemon {
 
 		static public void Initialize ()
 		{
-			Logger.Log.Debug ("Initializing index synchronization");
+			Log.Debug ("Initializing index synchronization");
 
 			if (! Directory.Exists (remote_index_dir))
 				Directory.CreateDirectory (remote_index_dir);
@@ -92,14 +92,14 @@ namespace Beagle.Daemon {
 			watch.Start ();
 
 			lock (synchronization_lock) {
-				Logger.Log.Debug ("Synchronizing... (target={0})", target);
+				Log.Debug ("Synchronizing... (target={0})", target);
 
 				DirectoryInfo source_directory, target_directory;
 				source_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? remote_index_dir : local_index_dir);
 				target_directory = new DirectoryInfo ((target == SynchronizationTarget.Local) ? local_index_dir : remote_index_dir);
 				
 				if (SynchronizeDirectory (source_directory, target_directory))
-					Logger.Log.Debug ("Synchronized successfully in {0}", watch);
+					Log.Debug ("Synchronized successfully in {0}", watch);
 			}
 		}
 		
@@ -110,7 +110,7 @@ namespace Beagle.Daemon {
 			try {
 				Synchronize (SynchronizationTarget.Remote);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Caught exception while synchronizing");
+				Log.Error (ex, "Caught exception while synchronizing");
 			}
 
                         task.Reschedule = true;
@@ -123,10 +123,10 @@ namespace Beagle.Daemon {
 				Synchronize (SynchronizationTarget.Remote);
 
 				// FIXME: This may not be safe to do here
-				Logger.Log.Debug ("Purging locally synchronized indexes");
+				Log.Debug ("Purging locally synchronized indexes");
 				Directory.Delete (local_index_dir, true);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Caught exception while doing shutdown synchronization");
+				Log.Error (ex, "Caught exception while doing shutdown synchronization");
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace Beagle.Daemon {
 				
 				target_directory_trash.Delete (true);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Caught error while synchronizing directory");
+				Log.Error (ex, "Caught error while synchronizing directory");
 				return false;
 			}
 

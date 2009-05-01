@@ -122,7 +122,7 @@ namespace Beagle.Daemon {
 			try {
 				connection = Open (db_filename);
 			} catch (ApplicationException) {
-				Logger.Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", db_filename);
+				Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", db_filename);
 				create_new_db = true;
 			}
 
@@ -139,11 +139,11 @@ namespace Beagle.Daemon {
 				try {
 					reader = SqliteUtils.ExecuteReaderOrWait (command);
 				} catch (ApplicationException ex) {
-					Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
+					Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", db_filename);
 					create_new_db = true;
 				} catch (SqliteException ex) {
 					// When the table name changed from 0.2.18 -> 0.3.0.
-					Logger.Log.Warn ("Sqlite error: {0}. Purging textcache.", ex.Message);
+					Log.Warn ("Sqlite error: {0}. Purging textcache.", ex.Message);
 					create_new_db = true;
 				}
 

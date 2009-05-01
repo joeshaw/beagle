@@ -130,7 +130,7 @@ namespace Beagle.Util {
 								skip_file = true;
 
 						} catch (Exception ex) {
-							Logger.Log.Debug (ex, "Caught exception in file_filter");
+							Log.Debug (ex, "Caught exception in file_filter");
 
 							// If we have a filter that fails on a file,
 							// it is probably safest to skip that file.

@@ -364,7 +364,7 @@ namespace Beagle.Filters {
 					if (hot_nodes.Count > 0)
 						is_hot = (bool) hot_nodes.Pop ();
 					else
-						Logger.Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", 
+						Log.Debug ("FilterOpenOffice: hot_nodes underflow in {0}", 
 								  reader.Name);
 					if (hot_container_nodes.Count > 0) {
 						string hot_container_tag = (string) hot_container_nodes.Peek ();
@@ -503,7 +503,7 @@ namespace Beagle.Filters {
 				//	odtFormat = true;
 
 			} catch (Exception) {
-				Logger.Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.", 
+				Log.Error ("Unable to open {0}.  Probably an invalid OpenOffice document.", 
 						  info.FullName);
 				Finished ();
 			}
@@ -518,7 +518,7 @@ namespace Beagle.Filters {
 					XmlReader reader = new XmlTextReader (meta_stream);
 					ExtractMetadata (reader);
 				} else {
-					Logger.Log.Error ("No meta.xml!");
+					Log.Error ("No meta.xml!");
 				}
 				entry = zip.GetEntry ("content.xml");
 				if (entry != null) {
@@ -526,7 +526,7 @@ namespace Beagle.Filters {
 					XmlReader reader = new XmlTextReader (contents_stream);
 					ExtractSlideCount (reader);
 				} else {
-					Logger.Log.Error ("No content.xml!");
+					Log.Error ("No content.xml!");
 				}
 			}
 		}

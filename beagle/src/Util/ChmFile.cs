@@ -566,7 +566,7 @@ namespace Beagle.Util {
 					
 					
 					//Console.WriteLine("Parsing....{0}",ui.path);
-					///Logger.Log.Debug("CHMFile: Parsing {0}....",ui.path);
+					///Log.Debug("CHMFile: Parsing {0}....",ui.path);
 					Parse( new StringReader(ChmFileToString(ui).Trim()) );
 					
 					

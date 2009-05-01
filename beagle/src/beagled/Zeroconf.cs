@@ -50,7 +50,7 @@ namespace Beagle.Daemon.Network {
                 
                 public Zeroconf ()
 		{
-			Logger.Log.Debug ("Zeroconf: Service started...");
+			Log.Debug ("Zeroconf: Service started...");
 
 			LoadConfiguration (null);
                         Conf.Subscribe (Conf.Names.NetworkingConfig, new Conf.ConfigUpdateHandler (OnConfigurationChanged));
@@ -59,7 +59,7 @@ namespace Beagle.Daemon.Network {
 
                 public void Dispose ()
                 {
-			Logger.Log.Debug ("Zeroconf: Service stopped...");
+			Log.Debug ("Zeroconf: Service stopped...");
 
 			if (entry_group != null) {
 				entry_group.Dispose ();
@@ -95,7 +95,7 @@ namespace Beagle.Daemon.Network {
 				} else
 					Unpublish ();
                                 
-                                Logger.Log.Info ("Zeroconf: Index sharing is {0}", enabled ? "enabled" : "disabled");
+                                Log.Info ("Zeroconf: Index sharing is {0}", enabled ? "enabled" : "disabled");
                         }
 
                         // Handle index name changes
@@ -134,7 +134,7 @@ namespace Beagle.Daemon.Network {
                                         throw;
                                 }
                         } catch (Exception e) {
-                                Logger.Log.Error (e, "Zeroconf: Failed to publish service - '{0}'", name);
+                                Log.Error (e, "Zeroconf: Failed to publish service - '{0}'", name);
                                 // FIXME: Shutdown or unpublish the service
 			}
                 }
@@ -160,7 +160,7 @@ namespace Beagle.Daemon.Network {
 
                 private void HandleCollision ()
                 {
-                        Logger.Log.Info ("Zeroconf: Service name collision - '{0}'", name);
+                        Log.Info ("Zeroconf: Service name collision - '{0}'", name);
 
                         Unpublish ();
                         collisions++;
@@ -169,7 +169,7 @@ namespace Beagle.Daemon.Network {
                 
                 private void OnEntryGroupStateChanged (object sender, EntryGroupStateArgs args)
                 {
-                        Logger.Log.Debug ("Zeroconf: Service state changed: {0}", args.State);
+                        Log.Debug ("Zeroconf: Service state changed: {0}", args.State);
 
                         if (args.State == EntryGroupState.Collision)
                                 HandleCollision ();

@@ -131,7 +131,7 @@ namespace Beagle.Daemon {
 			if (has_letter && has_digit && has_punctuation && text.Length > 10)
 				return true;
 
-			//Logger.Log.Debug ("BeagleNoiseFilter accepted '{0}'", text);
+			//Log.Debug ("BeagleNoiseFilter accepted '{0}'", text);
 			return false;
 				
 		}

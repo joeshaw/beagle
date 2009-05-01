@@ -93,14 +93,14 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				if (subitem == "summary") {
 					// IMAP summary
 					if (SummaryAddedEvent != null && File.Exists (full_path)) {
-						Logger.Log.Info ("Reindexing updated IMAP summary: {0}", full_path);
+						Log.Info ("Reindexing updated IMAP summary: {0}", full_path);
 						SummaryAddedEvent (new FileInfo (full_path), true);
 					}
 				} else if (Path.GetExtension (full_path) == ".ev-summary") {
 					// mbox summary
 					string mbox_file = Path.ChangeExtension (full_path, null);
 					if (MboxAddedEvent != null && File.Exists (mbox_file)) {
-						Logger.Log.Info ("Reindexing updated mbox: {0}", mbox_file);
+						Log.Info ("Reindexing updated mbox: {0}", mbox_file);
 						MboxAddedEvent (new FileInfo (mbox_file), true);
 					}
 				}
@@ -133,7 +133,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 				Stopwatch watch = new Stopwatch ();
 				if (Debug)
-					Logger.Log.Debug ("Starting watch on {0}", dir);
+					Log.Debug ("Starting watch on {0}", dir);
 				watch.Start ();
 				foreach (string path in DirectoryWalker.GetItems (dir, new DirectoryWalker.FileFilter (IsSummary))) {
 					if (Shutdown.ShutdownRequested)
@@ -154,7 +154,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				}
 				watch.Stop ();
 				if (Debug)
-					Logger.Log.Debug ("Crawled {0} in {1}", dir, watch);
+					Log.Debug ("Crawled {0} in {1}", dir, watch);
 			}
 		}
 

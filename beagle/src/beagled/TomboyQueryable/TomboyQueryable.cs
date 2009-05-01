@@ -88,7 +88,7 @@ namespace Beagle.Daemon.TomboyQueryable {
 
 			ThisScheduler.Add (task);
 
-			Logger.Log.Info ("Tomboy backend started");
+			Log.Info ("Tomboy backend started");
 		}
 
 		private bool CheckForExistence ()

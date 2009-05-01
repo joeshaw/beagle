@@ -62,7 +62,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 				return;
 			}
 
-			Logger.Log.Info ("Starting Kopete log backend");
+			Log.Info ("Starting Kopete log backend");
 
 			Stopwatch stopwatch = new Stopwatch ();
 			stopwatch.Start ();
@@ -82,7 +82,7 @@ namespace Beagle.Daemon.KopeteQueryable {
 
 			stopwatch.Stop ();
 
-			Logger.Log.Info ("Kopete log backend worker thread done in {0}", stopwatch); 
+			Log.Info ("Kopete log backend worker thread done in {0}", stopwatch); 
 		}
 		
 		public override void Start () 

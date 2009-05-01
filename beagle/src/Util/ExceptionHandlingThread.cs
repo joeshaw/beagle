@@ -58,9 +58,9 @@ namespace Beagle.Util {
 			try {
 				this.method ();
 			} catch (ThreadAbortException e) {
-				Logger.Log.Debug ("Thread aborted: {0}\n{1}\n", this.thread.Name, e.StackTrace);
+				Log.Debug ("Thread aborted: {0}\n{1}\n", this.thread.Name, e.StackTrace);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "Exception caught in {2} while executing {0}:{1}",
+				Log.Warn (e, "Exception caught in {2} while executing {0}:{1}",
 						 this.method.Target, this.method.Method, this.thread.Name);
 			}
 
@@ -95,13 +95,13 @@ namespace Beagle.Util {
 
 			lock (live_threads) {
 				foreach (Thread t in live_threads) {
-					Logger.Log.Debug ("Live ExceptionHandlingThread: {0}", t.Name);
+					Log.Debug ("Live ExceptionHandlingThread: {0}", t.Name);
 					have_live_thread = true;
 				}
 			}
 
 			if (! have_live_thread)
-				Logger.Log.Debug ("No live ExceptionHandlingThreads!");
+				Log.Debug ("No live ExceptionHandlingThreads!");
 		}
 
 		public static void AbortThreads ()
@@ -113,7 +113,7 @@ namespace Beagle.Util {
 				cancel_threads = (ArrayList) live_threads.Clone ();
 
 			foreach (Thread t in cancel_threads) {
-				Logger.Log.Debug ("Aborting thread: {0}", t.Name);
+				Log.Debug ("Aborting thread: {0}", t.Name);
 				t.Abort ();
 			}
 		}

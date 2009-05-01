@@ -84,11 +84,11 @@ namespace Beagle.Filters {
 
 			} catch (InvalidOperationException ex) {
 				// Something wrong with the XML
-				Logger.Log.Error (ex, "Unable to parse {0}", path);
+				Log.Error (ex, "Unable to parse {0}", path);
 
 			} catch (XmlException ex) {
 				// Something else wrong with the XML
-				Logger.Log.Error (ex, "Unable to parse {0}", path);
+				Log.Error (ex, "Unable to parse {0}", path);
 			}
 
 			// This should be higher than the versions of the shipped filters
@@ -156,7 +156,7 @@ namespace Beagle.Filters {
 			ExternalFilterInfo efi = GetFilterInfo (this.Extension, this.MimeType);
 
 			if (efi == null) {
-				Logger.Log.Warn ("Unable to find a match for extension {0}, mime type {1} when one should have matched", this.Extension, this.MimeType);
+				Log.Warn ("Unable to find a match for extension {0}, mime type {1} when one should have matched", this.Extension, this.MimeType);
 				Error ();
 			}
 

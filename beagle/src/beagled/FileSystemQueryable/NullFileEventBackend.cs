@@ -35,7 +35,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public object CreateWatch (string path)
 		{
 			if (Debug)
-				Logger.Log.Debug ("NullFileEventBackend: Asked to watch {0}", path);
+				Log.Debug ("NullFileEventBackend: Asked to watch {0}", path);
 
 			return null;
 		}
@@ -43,7 +43,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public bool ForgetWatch (object watch_object)
 		{
 			if (Debug)
-				Logger.Log.Debug ("NullFileEventBackend: Asked to forget {0}", watch_object);
+				Log.Debug ("NullFileEventBackend: Asked to forget {0}", watch_object);
 
 			return false;
 		}

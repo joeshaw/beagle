@@ -102,7 +102,7 @@ namespace Beagle.Util
 							       this);
 				bindings.Add (binding);
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Error Adding global keybinding:");
+				Log.Error (e, "Error Adding global keybinding:");
 			}
 		}
 
@@ -112,7 +112,7 @@ namespace Beagle.Util
 				bindings.Clear ();
 				base.UnbindAll ();
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Error Removing global keybinding:");
+				Log.Error (e, "Error Removing global keybinding:");
 			}
 		}
 
@@ -136,7 +136,7 @@ namespace Beagle.Util
 				try {
 					key_sequence = (string) parent.client.Get (gconf_path);
 				} catch {
-					Logger.Log.Warn ("GConf key '{0}' does not exist, using default.", 
+					Log.Warn ("GConf key '{0}' does not exist, using default.", 
 							 gconf_path);
 				}
 
@@ -150,7 +150,7 @@ namespace Beagle.Util
 			void BindingChanged (object sender, GConf.NotifyEventArgs args)
 			{
 				if (args.Key == gconf_path) {
-					Logger.Log.Debug ("Binding for '{0}' changed to '{1}'!",
+					Log.Debug ("Binding for '{0}' changed to '{1}'!",
 							  gconf_path,
 							  args.Value);
 
@@ -168,7 +168,7 @@ namespace Beagle.Util
 				    key_sequence == "disabled")
 					return;
 
-				Logger.Log.Debug ("Binding key '{0}' for '{1}'",
+				Log.Debug ("Binding key '{0}' for '{1}'",
 						  key_sequence,
 						  gconf_path);
 
@@ -180,7 +180,7 @@ namespace Beagle.Util
 				if (key_sequence == null)
 					return;
 
-				Logger.Log.Debug ("Unbinding key '{0}' for '{1}'",
+				Log.Debug ("Unbinding key '{0}' for '{1}'",
 						  key_sequence,
 						  gconf_path);
 

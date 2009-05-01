@@ -90,13 +90,13 @@ namespace Beagle.Filters {
 			if (sum_stream != null)
 				Msole.MetadataRead (sum_stream, sumMeta);
 			else
-				Logger.Log.Warn ("SummaryInformationStream not found in {0}", FileName);
+				Log.Warn ("SummaryInformationStream not found in {0}", FileName);
 
 			docSumMeta = new DocMetaData ();
 			if (doc_stream != null)
 				Msole.MetadataRead (doc_stream, docSumMeta);
 			else
-				Logger.Log.Warn ("DocumentSummaryInformationStream not found in {0}", FileName);
+				Log.Warn ("DocumentSummaryInformationStream not found in {0}", FileName);
 
 			if (sumMeta != null) {
 				prop = sumMeta.Lookup ("dc:title");
@@ -171,7 +171,7 @@ namespace Beagle.Filters {
 
 				PullMetaData (sum_stream, doc_stream);
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Exception occurred duing DoPullProperties.");
+				Log.Error (e, "Exception occurred duing DoPullProperties.");
 				Error ();
 			} finally {
 				if (sum_stream != null)

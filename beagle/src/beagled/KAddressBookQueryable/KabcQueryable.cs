@@ -147,7 +147,7 @@ namespace Beagle.Daemon.KabcQueryable {
 		private void Index ()
 		{
 			if (ThisScheduler.ContainsByTag ("KAddressBook")) {
-				Logger.Log.Debug ("Not adding task for already running Kabc task");
+				Log.Debug ("Not adding task for already running Kabc task");
 				return;
 			}
 
@@ -181,7 +181,7 @@ namespace Beagle.Daemon.KabcQueryable {
 		private void RemoveContact (string uid)
 		{
 			Uri uri = new Uri (String.Format ("kabc:///{0}", uid));
-			Logger.Log.Debug ("Removing contact {0}", uri);
+			Log.Debug ("Removing contact {0}", uri);
 			Scheduler.Task task = NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
 			task.SubPriority = 0;
@@ -249,7 +249,7 @@ namespace Beagle.Daemon.KabcQueryable {
 				return;
 			}
 			try {
-				Logger.Log.Debug ("Checking if {0} is a valid Kabc file.", kabc_file);
+				Log.Debug ("Checking if {0} is a valid Kabc file.", kabc_file);
 				reader = new StreamReader (kabc_file);
 			} catch (Exception ex) {
 				is_valid_file = false;

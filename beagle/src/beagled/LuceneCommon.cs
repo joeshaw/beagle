@@ -274,8 +274,8 @@ namespace Beagle.Daemon {
 
 			if (current_major_version != MAJOR_VERSION
 			    || (minor_version >= 0 && current_minor_version != minor_version)) {
-				Logger.Log.Debug ("Version mismatch in {0}", index_name);
-				Logger.Log.Debug ("Index has version {0}.{1}, expected {2}.{3}",
+				Log.Debug ("Version mismatch in {0}", index_name);
+				Log.Debug ("Index has version {0}.{1}, expected {2}.{3}",
 						  current_major_version, current_minor_version,
 						  MAJOR_VERSION, minor_version);
 				return false;
@@ -289,7 +289,7 @@ namespace Beagle.Daemon {
 
 			foreach (FileInfo info in lock_dir_info.GetFiles ()) {
 				if (IsDanglingLock (info)) {
-					Logger.Log.Warn ("Found a dangling index lock on {0}.", info.FullName);
+					Log.Warn ("Found a dangling index lock on {0}.", info.FullName);
 					dangling_lock = true;
 				}
 			}
@@ -406,7 +406,7 @@ namespace Beagle.Daemon {
 
 			// Purge any existing directories.
 			if (Directory.Exists (top_dir)) {
-				Logger.Log.Debug ("Purging {0}", top_dir);
+				Log.Debug ("Purging {0}", top_dir);
 				Directory.Delete (top_dir, true);
 			}
 
@@ -978,12 +978,12 @@ namespace Beagle.Daemon {
 			uri_f = new Field ("Uri", UriFu.UriToEscapedString (prop_only_indexable.Uri), Field.Store.YES, Field.Index.NO_NORMS);
 			new_doc.Add (uri_f);
 
-			Logger.Log.Debug ("Rewriting {0}", prop_only_indexable.DisplayUri);
+			Log.Debug ("Rewriting {0}", prop_only_indexable.DisplayUri);
 
 			if (prop_only_indexable.ParentUri != null) {
 				uri_f = new Field ("ParentUri", UriFu.UriToEscapedString (prop_only_indexable.ParentUri), Field.Store.YES, Field.Index.NO_NORMS);
 				new_doc.Add (uri_f);
-				Logger.Log.Debug ("Parent Uri {0}", prop_only_indexable.ParentUri);
+				Log.Debug ("Parent Uri {0}", prop_only_indexable.ParentUri);
 			}
 
 			// Add the new properties to the new document.  To
@@ -1002,7 +1002,7 @@ namespace Beagle.Daemon {
 				}
 
 				AddPropertyToDocument (prop, new_doc);
-				Logger.Log.Debug ("New prop '{0}' = '{1}'", prop.Key, prop.Value);
+				Log.Debug ("New prop '{0}' = '{1}'", prop.Key, prop.Value);
 			}
 
 			// Copy the other properties from the old document to the
@@ -1013,7 +1013,7 @@ namespace Beagle.Daemon {
 					Property prop;
 					prop = GetPropertyFromDocument (f, old_secondary_doc, false);
 					if (prop != null && ! seen_props.Contains (prop.Key)) {
-						Logger.Log.Debug ("Old prop '{0}' = '{1}'", prop.Key, prop.Value);
+						Log.Debug ("Old prop '{0}' = '{1}'", prop.Key, prop.Value);
 						AddPropertyToDocument (prop, new_doc);
 					}
 				}
@@ -1459,9 +1459,9 @@ namespace Beagle.Daemon {
 			drhf.EndDate = part.EndDate;
 			hit_filter = new HitFilter (drhf.HitFilter);
 
-			Logger.Log.Debug ("Building new date range query");
-			Logger.Log.Debug ("Start: {0}", part.StartDate);
-			Logger.Log.Debug ("End: {0}", part.EndDate);
+			Log.Debug ("Building new date range query");
+			Log.Debug ("Start: {0}", part.StartDate);
+			Log.Debug ("End: {0}", part.EndDate);
 
 			int y1, m1, d1, y2, m2, d2;
 			y1 = part.StartDate.Year;

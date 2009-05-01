@@ -92,7 +92,7 @@ namespace Beagle.Util {
 							reader.Close ();
 						}
 					} catch (ApplicationException) {
-						Logger.Log.Warn ("Unable to open F-Spot database: no sqlite3 database found");
+						Log.Warn ("Unable to open F-Spot database: no sqlite3 database found");
 						connection = null;
 					}
 

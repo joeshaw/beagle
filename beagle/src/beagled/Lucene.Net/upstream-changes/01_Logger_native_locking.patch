@@ -132,7 +132,7 @@ Index: Store/SimpleFSLockFactory.cs
 +				));
 +
 +			if (System.IO.File.Exists(lockFile.FullName)) {
-+				Beagle.Util.Logger.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
++				Beagle.Util.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
  			}
 -			else
 -				tmpBool = false;

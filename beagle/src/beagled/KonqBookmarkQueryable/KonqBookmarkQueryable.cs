@@ -282,7 +282,7 @@ namespace Beagle.Daemon.KBookmarkQueryable {
 				// move to <xbel> node
 				reader.ReadStartElement ("xbel");
 			} catch (XmlException ex) {
-				Logger.Log.Warn (ex, "Caught exception parsing bookmark file:");
+				Log.Warn (ex, "Caught exception parsing bookmark file:");
 				is_valid_file = false;
 				reader.Close ();
 			}

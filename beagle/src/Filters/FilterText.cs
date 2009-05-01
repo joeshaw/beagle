@@ -59,7 +59,7 @@ namespace Beagle.Filters {
 			// data files, or other bits of not-particularly-human-readable junk
 			// that will tend to clog up our indexes.
 			if (file.Length > LENGTH_CUTOFF) {
-				Beagle.Util.Logger.Log.Debug ("{0} is too large to filter!", file.FullName);
+				Beagle.Util.Log.Debug ("{0} is too large to filter!", file.FullName);
 				Error ();
 				return;
 			}

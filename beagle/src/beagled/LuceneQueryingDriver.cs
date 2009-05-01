@@ -344,7 +344,7 @@ namespace Beagle.Daemon {
 			_object = query.Object;
 
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Starting low-level queries '{1}' : '{4}:{2}' = '{3}'", IndexName, subject, predicate, _object, pred_type);
+				Log.Debug ("###### {0}: Starting low-level queries '{1}' : '{4}:{2}' = '{3}'", IndexName, subject, predicate, _object, pred_type);
 
 			// ******** 8 cases **********
 
@@ -561,7 +561,7 @@ namespace Beagle.Daemon {
 
 			d.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Low-level queries finished in {1} and returned {2} matches", IndexName, d, primary_matches.TrueCount);
+				Log.Debug ("###### {0}: Low-level queries finished in {1} and returned {2} matches", IndexName, d, primary_matches.TrueCount);
 
 			e.Start ();
 
@@ -692,7 +692,7 @@ namespace Beagle.Daemon {
 				Log.Debug ("###### {0}:   Reader cleanup {1,6} ({2:0.0}%)", IndexName, f, 100 * f.ElapsedTime / total.ElapsedTime);
 				Log.Debug ("###### {0}:            TOTAL {1,6}", IndexName, total);
 
-				Logger.Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
+				Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
 			}
 
 			return hits;
@@ -767,7 +767,7 @@ namespace Beagle.Daemon {
 		public int DoCountMatchQuery (Query query, QueryPartHook query_part_hook)
 		{
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+				Log.Debug ("###### {0}: Starting low-level queries", IndexName);
 
 			Stopwatch total;
 			total = new Stopwatch ();
@@ -840,7 +840,7 @@ namespace Beagle.Daemon {
 
 			total.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
+				Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
 
 			return result;
 		}
@@ -854,7 +854,7 @@ namespace Beagle.Daemon {
 				     HitFilter           hit_filter)
 		{
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Starting low-level queries", IndexName);
+				Log.Debug ("###### {0}: Starting low-level queries", IndexName);
 
 			Stopwatch total, a, b, c, d, e, f;
 
@@ -957,7 +957,7 @@ namespace Beagle.Daemon {
 
 			d.Stop ();
 			if (Debug)
-				Logger.Log.Debug ("###### {0}: Low-level queries finished in {1}", IndexName, d);
+				Log.Debug ("###### {0}: Low-level queries finished in {1}", IndexName, d);
 
 			e.Start ();
 			// Only generate results if we got some matches
@@ -999,7 +999,7 @@ namespace Beagle.Daemon {
 				Log.Debug ("###### {0}:   Reader cleanup {1,6} ({2:0.0}%)", IndexName, f, 100 * f.ElapsedTime / total.ElapsedTime);
 				Log.Debug ("###### {0}:            TOTAL {1,6}", IndexName, total);
 
-				Logger.Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
+				Log.Debug ("###### {0}: Total query run in {1}", IndexName, total);
 			}
 
 		}
@@ -1206,15 +1206,15 @@ namespace Beagle.Daemon {
 			int num_hits;
 
 			if (Debug)
-				Logger.Log.Debug (">>> {0}: Initially handed {1} matches", index_name, primary_matches.TrueCount);
+				Log.Debug (">>> {0}: Initially handed {1} matches", index_name, primary_matches.TrueCount);
 
 			if (primary_matches.TrueCount <= max_results) {
 				if (Debug)
-					Logger.Log.Debug (">>> {0}: Initial count is within our limit of {1}", index_name, max_results);
+					Log.Debug (">>> {0}: Initial count is within our limit of {1}", index_name, max_results);
 				num_hits = primary_matches.TrueCount;
 			} else {
 				if (Debug)
-					Logger.Log.Debug (">>> {0}: Number of hits is capped at {1}", index_name, max_results);
+					Log.Debug (">>> {0}: Number of hits is capped at {1}", index_name, max_results);
 				num_hits = max_results;
 			}
 
@@ -1293,13 +1293,13 @@ namespace Beagle.Daemon {
 			total.Stop ();
 
 			if (Debug) {
-				Logger.Log.Debug (">>> {0}: GenerateQueryResults time statistics:", index_name);
-				//Logger.Log.Debug (">>> {0}:   Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
-				//Logger.Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
-				//Logger.Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:     Scored hits {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:    Results sent {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
-				Logger.Log.Debug (">>> {0}:           TOTAL {1,6}", index_name, total);
+				Log.Debug (">>> {0}: GenerateQueryResults time statistics:", index_name);
+				//Log.Debug (">>> {0}:   Short circuit {1,6} ({2:0.0}%)", index_name, a == null ? "N/A" : a.ToString (), a == null ? 0.0 : 100 * a.ElapsedTime / total.ElapsedTime);
+				//Log.Debug (">>> {0}:     Create docs {1,6} ({2:0.0}%)", index_name, b, 100 * b.ElapsedTime / total.ElapsedTime);
+				//Log.Debug (">>> {0}:    Hit assembly {1,6} ({2:0.0}%)", index_name, c, 100 * c.ElapsedTime / total.ElapsedTime);
+				Log.Debug (">>> {0}:     Scored hits {1,6} ({2:0.0}%)", index_name, d, 100 * d.ElapsedTime / total.ElapsedTime);
+				Log.Debug (">>> {0}:    Results sent {1,6} ({2:0.0}%)", index_name, e, 100 * e.ElapsedTime / total.ElapsedTime);
+				Log.Debug (">>> {0}:           TOTAL {1,6}", index_name, total);
 			}
 		}
 
@@ -1459,7 +1459,7 @@ namespace Beagle.Daemon {
 
 				timestamp_str = doc.Get ("Timestamp");
 				if (timestamp_str == null) {
-					Logger.Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
+					Log.Warn ("No timestamp on {0}!", GetUriFromDocument (doc));
 				} else {
 					timestamp_num = Int64.Parse (doc.Get ("Timestamp"));
 					if (top_docs != null && ! top_docs.WillAccept (timestamp_num))

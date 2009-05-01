@@ -88,7 +88,7 @@ namespace Beagle.Daemon {
 				try {
 					connection = Open (directory);
 				} catch (ApplicationException) {
-					Logger.Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", GetDbPath (directory));
+					Log.Warn ("Likely sqlite database version mismatch trying to open {0}.  Purging.", GetDbPath (directory));
 					create_new_db = true;
 				}
 
@@ -106,7 +106,7 @@ namespace Beagle.Daemon {
 					try {
 						reader = SqliteUtils.ExecuteReaderOrWait (command);
 					} catch (Exception ex) {
-						Logger.Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", GetDbPath (directory));
+						Log.Warn ("Likely sqlite database version mismatch trying to read from {0}.  Purging.", GetDbPath (directory));
 						create_new_db = true;
 					}
 					if (reader != null && ! create_new_db) {
@@ -180,7 +180,7 @@ namespace Beagle.Daemon {
 
 				DateTime dt2 = DateTime.Now;
 
-				Logger.Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
+				Log.Debug ("Loaded {0} records from {1} in {2:0.000}s", 
 						 count, GetDbPath (directory), (dt2 - dt1).TotalSeconds);
 			}
 			ReadCommand = new SqliteCommand (this.connection);
@@ -373,7 +373,7 @@ namespace Beagle.Daemon {
 		{
 			lock (connection) {
 				if (transaction_count > 0) {
-					Logger.Log.Debug ("Flushing requested -- committing sqlite transaction");
+					Log.Debug ("Flushing requested -- committing sqlite transaction");
 					SqliteUtils.DoNonQuery (connection, "COMMIT");
 					transaction_count = 0;
 				}

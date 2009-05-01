@@ -64,7 +64,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			if (this.source_list == null) {
 				// FIXME: We may want to watch for the creation
 				// of the sources GConf key
-				Logger.Log.Info ("No sources found at {0}", gconf_key);
+				Log.Info ("No sources found at {0}", gconf_key);
 				return;
 			}
 

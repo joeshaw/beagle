@@ -87,10 +87,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		{
 			// Set up our event backend
 			if (Inotify.Enabled) {
-                                Logger.Log.Debug ("Starting Inotify FSQ file event backend");
+                                Log.Debug ("Starting Inotify FSQ file event backend");
                                 event_backend = new InotifyBackend ();
                         } else {
-                                Logger.Log.Debug ("Creating null FSQ file event backend");
+                                Log.Debug ("Creating null FSQ file event backend");
 				event_backend = new NullFileEventBackend ();
                         }
 
@@ -458,7 +458,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		private void ExpireDirectoryPath (string expired_path, Guid unique_id)
 		{
 			if (Debug) 
-				Logger.Log.Debug ("Expired '{0}'", expired_path);
+				Log.Debug ("Expired '{0}'", expired_path);
 
 			lock (dir_models_by_path)
 				dir_models_by_path.Remove (expired_path);
@@ -480,10 +480,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
 
 			if (Debug)
-				Logger.Log.Debug ("Adding directory '{0}'", path, name);
+				Log.Debug ("Adding directory '{0}'", path, name);
 
 			if (! Directory.Exists (path)) {
-				Logger.Log.Error ("Can't add directory: '{0}' does not exist", path);
+				Log.Error ("Can't add directory: '{0}' does not exist", path);
 				return;
 			}
 
@@ -505,7 +505,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				string last_known_name;
 				last_known_name = UniqueIdToDirectoryName (attr.UniqueId);
 				if (last_known_name != path) {
-					Logger.Log.Debug ("'{0}' now seems to be called '{1}'", last_known_name, path);
+					Log.Debug ("'{0}' now seems to be called '{1}'", last_known_name, path);
 					needs_indexing = true;
 				}
 			}
@@ -517,7 +517,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			bool is_walkable;
 			is_walkable = DirectoryWalker.IsWalkable (path);
 			if (! is_walkable)
-				Logger.Log.Debug ("Can't walk '{0}'", path);
+				Log.Debug ("Can't walk '{0}'", path);
 			
 			if (needs_indexing)
 				ScheduleDirectory (name, parent, attr, is_walkable);
@@ -528,10 +528,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public void AddRoot (string path)
 		{
 			path = StringFu.SanitizePath (path);
-			Logger.Log.Debug ("Adding root: {0}", path);
+			Log.Debug ("Adding root: {0}", path);
 
 			if (roots_by_path.Contains (path)) {
-				Logger.Log.Error ("Trying to add an existing root: {0}", path);
+				Log.Error ("Trying to add an existing root: {0}", path);
 				return;
 			}
 
@@ -549,10 +549,10 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void RemoveRoot (string path)
 		{
-			Logger.Log.Debug ("Removing root: {0}", path);
+			Log.Debug ("Removing root: {0}", path);
 
 			if (! roots_by_path.Contains (path)) {
-				Logger.Log.Error ("Trying to remove a non-existing root: {0}", path);
+				Log.Error ("Trying to remove a non-existing root: {0}", path);
 				return;
 			}
 				
@@ -561,7 +561,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			dir = GetDirectoryModelByPath (path);
 
 			if (dir == null) {
-				Logger.Log.Error ("Could not find directory-model for root: {0}", path);
+				Log.Error ("Could not find directory-model for root: {0}", path);
 				return;
 			}
 
@@ -611,7 +611,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			path = (parent == null) ? name : Path.Combine (parent.FullName, name);
 
 			if (Debug)
-				Logger.Log.Debug ("Registered directory '{0}' ({1})", path, attr.UniqueId);
+				Log.Debug ("Registered directory '{0}' ({1})", path, attr.UniqueId);
 
 			DateTime mtime = Directory.GetLastWriteTimeUtc (path);
 
@@ -629,14 +629,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			if (mtime > attr.LastWriteTime) {
 				dir.State = DirectoryState.Dirty;
 				if (Debug)
-					Logger.Log.Debug ("'{0}' is dirty", path);
+					Log.Debug ("'{0}' is dirty", path);
 			}
 
 			if (Debug) {
 				if (dir.IsRoot)
-					Logger.Log.Debug ("Created model '{0}'", dir.FullName);
+					Log.Debug ("Created model '{0}'", dir.FullName);
 				else
-					Logger.Log.Debug ("Created model '{0}' with parent '{1}'", dir.FullName, dir.Parent.FullName);
+					Log.Debug ("Created model '{0}' with parent '{1}'", dir.FullName, dir.Parent.FullName);
 			}
 
 			// Add any roots we create to the list of roots
@@ -713,7 +713,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 					    string new_name)
 		{
 			if (dir == null) {
-				Logger.Log.Warn ("Couldn't find DirectoryModel for directory moving to '{0}' in '{1}', so it was hopefully never there.",
+				Log.Warn ("Couldn't find DirectoryModel for directory moving to '{0}' in '{1}', so it was hopefully never there.",
 						 new_name, new_parent.FullName);
 				AddDirectory (new_parent, new_name);
 				return;
@@ -845,12 +845,12 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				path_is_registered = false;
 
 				if (dir == null) {
-					Logger.Log.Debug ("Unable to get directory-model for path: {0}", path);
+					Log.Debug ("Unable to get directory-model for path: {0}", path);
 					return;
 				}
 			}
 			
-			Logger.Log.Debug ("Re-crawling {0}", dir.FullName);
+			Log.Debug ("Re-crawling {0}", dir.FullName);
 			
 			if (tree_crawl_task.Add (dir))
 				ThisScheduler.Add (tree_crawl_task);
@@ -864,7 +864,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 		public void RecrawlEverything ()
 		{
-			Logger.Log.Debug ("Re-crawling all directories");
+			Log.Debug ("Re-crawling all directories");
 			
 			foreach (DirectoryModel root in roots)
 				Recrawl_Recursive (root, DirectoryState.PossiblyClean);
@@ -1069,7 +1069,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			attr = FileAttributesStore.Read (path);
 
 			if (Debug)
-				Logger.Log.Debug ("*** What should we do with {0}?", path);
+				Log.Debug ("*** What should we do with {0}?", path);
 
 			if (filter.Ignore (dir, name, false)) {
 				// If there are attributes on the file, we must have indexed
@@ -1077,11 +1077,11 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// any file attributes from it.
 				if (attr != null) {
 					if (Debug)
-						Logger.Log.Debug ("*** Forget it: File is ignored but has attributes");
+						Log.Debug ("*** Forget it: File is ignored but has attributes");
 					return RequiredAction.Forget;
 				}
 				if (Debug)
-					Logger.Log.Debug ("*** Do nothing: File is ignored");
+					Log.Debug ("*** Do nothing: File is ignored");
 				return RequiredAction.None;
 			}
 
@@ -1093,7 +1093,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// to try to handle it better.
 			if (attr == null) {
 				if (Debug)
-					Logger.Log.Debug ("*** Index it: File has no attributes");
+					Log.Debug ("*** Index it: File has no attributes");
 				id = uid_manager.ReadOrCreateNewId (dir, name);
 				return RequiredAction.Index;
 			}
@@ -1112,7 +1112,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// RegisterFile() decided this file should have a new id.
 				if (id != attr.UniqueId) {
 					if (Debug)
-						Logger.Log.Debug ("*** Index it: File has a different id in attribute");
+						Log.Debug ("*** Index it: File has a different id in attribute");
 					return RequiredAction.Index;
 				}
 			}
@@ -1132,7 +1132,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				if (current_filter_version > attr.FilterVersion) {
 					if (Debug)
-						Logger.Log.Debug ("*** Index it: Newer filter version found for filter {0}", attr.FilterName);
+						Log.Debug ("*** Index it: Newer filter version found for filter {0}", attr.FilterName);
 					return RequiredAction.Index;
 				}
 			}
@@ -1141,7 +1141,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			try {
 				Mono.Unix.Native.Syscall.stat (path, out stat);
 			} catch (Exception ex) {
-				Logger.Log.Debug (ex, "Caught exception stat-ing {0}", path);
+				Log.Debug (ex, "Caught exception stat-ing {0}", path);
 				return RequiredAction.None;
 			}
 
@@ -1151,7 +1151,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (attr.LastWriteTime != last_write_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** Index it: MTime has changed ({0} vs {1})",
+					Log.Debug ("*** Index it: MTime has changed ({0} vs {1})",
 						DateTimeUtil.ToString (attr.LastWriteTime),
 						DateTimeUtil.ToString (last_write_time));
 				
@@ -1165,7 +1165,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				last_known_path = UniqueIdToFullPath (id);
 				if (path != last_known_path) {
 					if (Debug)
-						Logger.Log.Debug ("*** Name has also changed, assigning new unique id");
+						Log.Debug ("*** Name has also changed, assigning new unique id");
 					id = uid_manager.CreateNewId (path);
 				}
 				
@@ -1180,7 +1180,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			// ctime will be at some point in the past.
 			if (attr.LastAttrTime < last_attr_time) {
 				if (Debug)
-					Logger.Log.Debug ("*** CTime is newer, checking last known path ({0} vs {1})",
+					Log.Debug ("*** CTime is newer, checking last known path ({0} vs {1})",
 						DateTimeUtil.ToString (attr.LastAttrTime),
 						DateTimeUtil.ToString (last_attr_time));
 
@@ -1188,7 +1188,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				if (last_known_path == null) {
 					if (Debug)
-						Logger.Log.Debug ("*** Index it: CTime has changed, but can't determine last known path");
+						Log.Debug ("*** Index it: CTime has changed, but can't determine last known path");
 					return RequiredAction.Index;
 				}
 
@@ -1197,14 +1197,14 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				// the file has been renamed.
 				if (path != last_known_path) {
 					if (Debug)
-						Logger.Log.Debug ("*** Rename it: CTime and path has changed");
+						Log.Debug ("*** Rename it: CTime and path has changed");
 					return RequiredAction.Rename;
 				}
 			}
 			
 			// We don't have to do anything, which is always preferable.
 			if (Debug)
-				Logger.Log.Debug ("*** Do nothing");
+				Log.Debug ("*** Do nothing");
 			return RequiredAction.None;	
 		}
 
@@ -1561,7 +1561,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 				if (last_known_path != null) {
 					remapped_uri = UriFu.PathToFileUri (last_known_path);
-					Logger.Log.Debug ("Last known path is {0}", last_known_path);
+					Log.Debug ("Last known path is {0}", last_known_path);
 
 					// This rename is now in the index, so we no
 					// longer need to keep track of the uid in memory.
@@ -1674,7 +1674,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			
 				path = ToFullPath (name, parent_id);
 				if (path == null)
-					Logger.Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
+					Log.Debug ("Couldn't find path of file with name '{0}' and parent '{1}'",
 							  name, GuidFu.ToShortString (parent_id));
 			}
 
@@ -1878,7 +1878,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			LoadConfiguration ();
 
-			Logger.Log.Debug ("Done starting FileSystemQueryable");
+			Log.Debug ("Done starting FileSystemQueryable");
 		}
 
 		//////////////////////////////////////////////////////////////////////////
@@ -1917,7 +1917,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 			DirectoryModel dir;
 			dir = GetDirectoryModelByPath (directory_name);
 			if (dir == null) {
-				Logger.Log.Warn ("HandleAddEvent failed: Couldn't find DirectoryModel for '{0}'", directory_name);
+				Log.Warn ("HandleAddEvent failed: Couldn't find DirectoryModel for '{0}'", directory_name);
 				return;
 			}
 

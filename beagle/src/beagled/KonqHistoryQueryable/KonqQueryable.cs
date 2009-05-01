@@ -165,7 +165,7 @@ namespace Beagle.Daemon.KonqQueryable {
 		/////////////////////////////////////////////////
 		
 		private Indexable FileToIndexable (string path, bool crawling) {
-			//Logger.Log.Debug ("KonqQ: Trying to index " + path);
+			//Log.Debug ("KonqQ: Trying to index " + path);
 
 			Stream stream;
 			try {
@@ -197,17 +197,17 @@ namespace Beagle.Daemon.KonqQueryable {
 									  out revision);
 			
 				if (!is_ok || url == String.Empty) {
-					//Logger.Log.Debug ("KonqQ: Skipping non-html file " + path + " of type=" + mimetype);
+					//Log.Debug ("KonqQ: Skipping non-html file " + path + " of type=" + mimetype);
 					// finding out if a cache file should be indexed is expensive
 					// so, soon after we run the test, write lastwritetime attribute
 					FileAttributesStore.AttachLastWriteTime (path, DateTime.UtcNow);
 					return null; // we wont index bad files and non-html files
 				}
 
-				//Logger.Log.Debug ("KonqQ: Indexing {0} = {1},{2},{3},{4},{5}", path, url, creation_date, mimetype, charset, revision);
+				//Log.Debug ("KonqQ: Indexing {0} = {1},{2},{3},{4},{5}", path, url, creation_date, mimetype, charset, revision);
 				Uri uri = new Uri (url, true);
 				if (uri.Scheme == Uri.UriSchemeHttps) {
-					Logger.Log.Error ("Indexing secure https:// URIs is not secure!");
+					Log.Error ("Indexing secure https:// URIs is not secure!");
 					return null;
 				}
 
@@ -249,13 +249,13 @@ namespace Beagle.Daemon.KonqQueryable {
 			do {
 				while (file_enumerator == null || ! file_enumerator.MoveNext ()) {
 					if (! directory_enumerator.MoveNext ()) {
-						Logger.Log.Debug ("KonqQ: Crawling done");
+						Log.Debug ("KonqQ: Crawling done");
 						file_enumerator = null;
 						current_file = null;
 						return false;
 					}
 					DirectoryInfo current_dir = (DirectoryInfo)directory_enumerator.Current;
-					//Logger.Log.Debug ("Trying dir:" + current_dir.Name);
+					//Log.Debug ("Trying dir:" + current_dir.Name);
 					// start watching for new files and get the list of current files
 					// kind of race here - might get duplicate files
 					if (Inotify.Enabled)
@@ -265,7 +265,7 @@ namespace Beagle.Daemon.KonqQueryable {
 				}
 				current_file = (FileInfo) file_enumerator.Current;
 				//if (!IsUpToDate (current_file.FullName))
-				//	Logger.Log.Debug (current_file.FullName + " is not upto date");
+				//	Log.Debug (current_file.FullName + " is not upto date");
 				// KDE4 cache contains _freq files which are non-cache files
 			} while (current_file.FullName.EndsWith ("_freq") || IsUpToDate (current_file.FullName));
 

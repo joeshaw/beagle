@@ -160,12 +160,12 @@ namespace Beagle.Daemon {
 						continue;
 
 					if (flavor.RequireInotify && ! Inotify.Enabled) {
-						Logger.Log.Warn ("Can't start backend '{0}' without inotify", flavor.Name);
+						Log.Warn ("Can't start backend '{0}' without inotify", flavor.Name);
 						continue;
 					}
 
 					if (flavor.RequireExtendedAttributes && ! ExtendedAttribute.Supported) {
-						Logger.Log.Warn ("Can't start backend '{0}' without extended attributes", flavor.Name);
+						Log.Warn ("Can't start backend '{0}' without extended attributes", flavor.Name);
 						continue;
 					}
 
@@ -173,7 +173,7 @@ namespace Beagle.Daemon {
 					try {
 						iq = Activator.CreateInstance (type) as IQueryable;
 					} catch (Exception e) {
-						Logger.Log.Error (e, "Caught exception while instantiating {0} backend", flavor.Name);
+						Log.Error (e, "Caught exception while instantiating {0} backend", flavor.Name);
 					}
 
 					if (iq != null) {
@@ -184,7 +184,7 @@ namespace Beagle.Daemon {
 					}
 				}
 			}
-			Logger.Log.Debug ("Found {0} backends in {1}", count, assembly.Location);
+			Log.Debug ("Found {0} backends in {1}", count, assembly.Location);
 		}
 
 		////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ namespace Beagle.Daemon {
 			if (!Directory.Exists (PathFinder.SystemIndexesDir))
 				return;
 			
-			Logger.Log.Info ("Loading system static indexes.");
+			Log.Info ("Loading system static indexes.");
 
 			int count = 0;
 
@@ -212,7 +212,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			Logger.Log.Info ("Found {0} system-wide indexes.", count);
+			Log.Info ("Found {0} system-wide indexes.", count);
 		}
 
 		// Scans configuration for user-specified index paths 
@@ -222,7 +222,7 @@ namespace Beagle.Daemon {
 			int count = 0;
 
 			if (UseQueryable ("static")) {
-				Logger.Log.Info ("Loading user-configured static indexes.");
+				Log.Info ("Loading user-configured static indexes.");
 				List<string[]> values = Conf.Daemon.GetListOptionValues (Conf.Names.StaticQueryables);
 				if (values != null) {
 					foreach (string[] path in values)
@@ -245,7 +245,7 @@ namespace Beagle.Daemon {
 				}
 			}
 
-			Logger.Log.Info ("Found {0} user-configured static indexes..", count);
+			Log.Info ("Found {0} user-configured static indexes..", count);
 
 			static_queryables = null;
 		}
@@ -293,14 +293,14 @@ namespace Beagle.Daemon {
 			if (indexing_delay == 0 || Environment.GetEnvironmentVariable ("BEAGLE_EXERCISE_THE_DOG") != null)
 				StartQueryables ();
 			else {
-				Logger.Log.Debug ("Waiting {0} seconds before starting queryables", indexing_delay);
+				Log.Debug ("Waiting {0} seconds before starting queryables", indexing_delay);
 				GLib.Timeout.Add ((uint) indexing_delay * 1000, new GLib.TimeoutHandler (StartQueryables));
 			}
 		}
 
 		static private bool StartQueryables ()
 		{
-			Logger.Log.Debug ("Starting queryables");
+			Log.Debug ("Starting queryables");
 
 			ArrayList started_queryables = new ArrayList ();
 			ArrayList delayed_queryables = new ArrayList ();
@@ -322,7 +322,7 @@ namespace Beagle.Daemon {
 					if (! ready_to_start)
 						continue;
 
-					Logger.Log.Info ("Starting backend: '{0}'", q.Name);
+					Log.Info ("Starting backend: '{0}'", q.Name);
 					q.Start ();
 
 					started_queryables.Add (q.Name);
@@ -452,7 +452,7 @@ namespace Beagle.Daemon {
 					result.AttachWorker (qc);
 				}
 			} catch (Exception ex) {
-				Logger.Log.Warn (ex, "Caught exception calling DoOneQuery on '{0}'", queryable.Name);
+				Log.Warn (ex, "Caught exception calling DoOneQuery on '{0}'", queryable.Name);
 			}
 		}
 

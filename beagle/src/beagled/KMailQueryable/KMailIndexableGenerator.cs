@@ -223,7 +223,7 @@ namespace Beagle.Daemon.KMailQueryable {
 
 		public bool IsUpToDate (string path)
 		{
-			//Logger.Log.Info (path + " is uptodate:" + indexer.Queryable.FileAttributesStore.IsUpToDate (path));
+			//Log.Info (path + " is uptodate:" + indexer.Queryable.FileAttributesStore.IsUpToDate (path));
 			return indexer.Queryable.FileAttributesStore.IsUpToDate (path);
 		}
 
@@ -233,12 +233,12 @@ namespace Beagle.Daemon.KMailQueryable {
 		public bool HasNextIndexable ()
 		{	
 			if (mbox_fd < 0) {
-				Logger.Log.Debug ("Opening mbox {0}", mbox_file);
+				Log.Debug ("Opening mbox {0}", mbox_file);
 
 				try {
 					KMailQueryable.InitializeGMime ();
 				} catch (Exception e) {
-					Logger.Log.Warn (e, "Caught exception trying to initalize gmime:");
+					Log.Warn (e, "Caught exception trying to initalize gmime:");
 					return false;
 				}
 
@@ -246,7 +246,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				try {
 					mbox_fd = Mono.Unix.Native.Syscall.open (mbox_file, Mono.Unix.Native.OpenFlags.O_RDONLY);
 				} catch (System.IO.FileNotFoundException e) {
-					Logger.Log.Warn ("mbox " + mbox_file + " deleted while indexing.");
+					Log.Warn ("mbox " + mbox_file + " deleted while indexing.");
 					return false;
 				}
 				mbox_stream = new GMime.StreamFs (mbox_fd);
@@ -272,7 +272,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				mbox_parser.Dispose ();
 				mbox_parser = null;
 				
-				Logger.Log.Debug ("{0}: Finished indexing {1} messages", folder_name, indexed_count);
+				Log.Debug ("{0}: Finished indexing {1} messages", folder_name, indexed_count);
 				return false;
 			} else
 				return true;
@@ -284,7 +284,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			try {
 				message = mbox_parser.ConstructMessage ();
 			} catch (System.IO.FileNotFoundException e) {
-				Logger.Log.Warn ("mbox " + mbox_file + " deleted while parsing.");
+				Log.Warn ("mbox " + mbox_file + " deleted while parsing.");
 				return null;
 			}
 

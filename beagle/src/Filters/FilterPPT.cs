@@ -532,12 +532,12 @@ namespace Beagle.Filters {
 					
 					stream.Dispose ();
 				} else {
-					Logger.Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
+					Log.Error ("Ole stream not found in {0}.  Content extraction skipped.", FileName);
 				}
 
 				Finished ();
 			} catch (Exception e) {
-				Logger.Log.Error ("Exception {0} occurred during DoPull.", e.Message);
+				Log.Error ("Exception {0} occurred during DoPull.", e.Message);
 				Error ();
 			}
 		}
@@ -581,7 +581,7 @@ namespace Beagle.Filters {
 
 			} catch (Exception) {
 				
-				Logger.Log.Error ("Unable to open OleFile stream of "+info.FullName);
+				Log.Error ("Unable to open OleFile stream of "+info.FullName);
 				Error ();
 			}
 		}

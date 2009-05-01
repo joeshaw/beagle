@@ -77,13 +77,13 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			if (indexer != null)
 				return; // already started
 
-			Logger.Log.Debug ("Starting Thunderbird backend");
+			Log.Debug ("Starting Thunderbird backend");
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			
 			string toindex_dir = ToIndexDirectory;
 			if (!Directory.Exists (toindex_dir)) {
-				Logger.Log.Debug ("No Thunderbird data to index in {0}", toindex_dir);
+				Log.Debug ("No Thunderbird data to index in {0}", toindex_dir);
 				return;
 			}
 			
@@ -91,7 +91,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			indexer.Start ();
 			
 			watch.Stop ();
-			Logger.Log.Debug ("Thunderbird backend done in {0}s", watch.ElapsedTime);
+			Log.Debug ("Thunderbird backend done in {0}s", watch.ElapsedTime);
 		}
 		
 		private void OnInotifyEvent (
@@ -123,7 +123,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			if ((type & Inotify.EventType.Create) != 0)
 				ExceptionHandlingThread.Start (new ThreadStart (StartWorker));
 			else if ((type & Inotify.EventType.Delete) != 0) 
-				Logger.Log.Debug ("Stopping the Thunderbird indexing process; ToIndex disappeared");
+				Log.Debug ("Stopping the Thunderbird indexing process; ToIndex disappeared");
 		}
 		
 		// This is the directory where all metafiles goes
@@ -183,7 +183,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		public void RemoveFolder (string folderFile)
 		{
 			if (queryable.ThisScheduler.ContainsByTag (folderFile)) {
-				Logger.Log.Debug ("Not adding task for already running {0}", folderFile);
+				Log.Debug ("Not adding task for already running {0}", folderFile);
 				return;
 			}
 			
@@ -235,7 +235,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 		
 		public ThunderbirdIndexableGenerator (ThunderbirdIndexer indexer, string path)
 		{
-			Logger.Log.Debug ("New Thunderbird indexable generator launched for {0}", path);
+			Log.Debug ("New Thunderbird indexable generator launched for {0}", path);
 			
 			this.indexer = indexer;
 			this.path = path;
@@ -292,7 +292,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 					
 					return document;
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Failed to parse file {0}", filename);
+					Log.Debug (e, "Failed to parse file {0}", filename);
 				}
 			}
 			current_obj++;
@@ -386,7 +386,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 						size = Convert.ToInt32 (GetText (document, "OfflineSize"));
 					message = GetGMimeMessage (GetText (document, "FolderFile"), offset, size);
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Failed to parse GMime message");
+					Log.Debug (e, "Failed to parse GMime message");
 				}
 			}
 
@@ -521,7 +521,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 						size = Convert.ToInt32 (GetText (document, "MessageSize"));
 					reader = GetRssBody (GetText (document, "FolderFile"), offset, size, out encoding_str);
 				} catch (Exception e) {
-					Logger.Log.Debug (e, "Failed to parse RSS body");
+					Log.Debug (e, "Failed to parse RSS body");
 				}
 			}
 			
@@ -618,7 +618,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				try {
 					File.Delete (filename);
 				} catch (Exception e) {
-					Logger.Log.Warn (e, "Failed to remove metafile: {0}", filename);
+					Log.Warn (e, "Failed to remove metafile: {0}", filename);
 				}
 			}
 		}

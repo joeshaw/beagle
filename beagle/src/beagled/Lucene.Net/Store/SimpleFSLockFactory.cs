@@ -263,7 +263,7 @@ namespace Lucene.Net.Store
 			Beagle.Util.FileSystem.PosixDelete (lockFile.FullName);
 
 			if (System.IO.File.Exists(lockFile.FullName)) {
-				Beagle.Util.Logger.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
+				Beagle.Util.Log.Warn ("Release didnt delete lockfile {0}.", lockFile.FullName);
 			}
 		}
 		
@@ -281,19 +281,18 @@ namespace Lucene.Net.Store
 		{
 			return "SimpleFSLock@" + lockFile.FullName;
 		}
-		
-		static public Beagle.Util.Logger Logger = null;
-		//static public Beagle.Util.Logger Logger = Beagle.Util.Logger.Log;
+
+		static public bool log = false;
 		static public void Log (string format, params object[] args)
 		{
-			if (Logger != null)
-				Logger.Debug (format, args);
+			if (log)
+				Beagle.Util.Log.Debug (format, args);
 		}
 
 		static public void Log (Exception e)
 		{
-			if (Logger != null)
-				Logger.Debug (e);
+			if (log)
+				Beagle.Util.Log.Debug (e);
 		}
 		
 	}

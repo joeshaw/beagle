@@ -83,7 +83,7 @@ namespace Beagle.Filters {
 					throw new FormatException ();
 				}
 			} catch {
-				Logger.Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
+				Log.Warn ("Could not parse date/time from filename '{0}'", file.Name);
 				start_time = file.CreationTime;
 			}
 
@@ -137,8 +137,8 @@ namespace Beagle.Filters {
 				try {
 					text = ProcessLine (line);
 				} catch (Exception e) {
-					Logger.Log.Error ("Could not parse line in: '{0}'", FileInfo.FullName);
-					Logger.Log.Error (e);
+					Log.Error ("Could not parse line in: '{0}'", FileInfo.FullName);
+					Log.Error (e);
 				}
 
 				if (!String.IsNullOrEmpty (text)) {

@@ -65,7 +65,7 @@ namespace Beagle.Daemon.OperaQueryable {
 		public void Crawl ()
 		{
 			if (cache_dirs.Count < 1) {
-				Logger.Log.Info ("No Opera history to index!");
+				Log.Info ("No Opera history to index!");
 				return;
 			}
 			
@@ -85,7 +85,7 @@ namespace Beagle.Daemon.OperaQueryable {
 		private void AddTask (IIndexableGenerator generator, string tag)
 		{
 			if (queryable.ThisScheduler.ContainsByTag (tag)) {
-				Logger.Log.Info ("Not adding already running task: {0}", tag);
+				Log.Info ("Not adding already running task: {0}", tag);
 				return;
 			}
 			

@@ -212,12 +212,12 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			}
 
 			if (this.mbox_fd < 0) {
-				Logger.Log.Debug ("Opening mbox {0}", this.mbox_info.Name);
+				Log.Debug ("Opening mbox {0}", this.mbox_info.Name);
 
 				try {
 					InitializeGMime ();
 				} catch (Exception e) {
-					Logger.Log.Warn (e, "Caught exception trying to initalize gmime:");
+					Log.Warn (e, "Caught exception trying to initalize gmime:");
 					return false;
 				}
 
@@ -248,7 +248,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				this.mbox_parser.Dispose ();
 				this.mbox_parser = null;
 				
-				Logger.Log.Debug ("{0}: Finished indexing {1} messages", this.folder_name, this.indexed_count);
+				Log.Debug ("{0}: Finished indexing {1} messages", this.folder_name, this.indexed_count);
 
 				if (offset >= 0)
 					this.MboxLastOffset = offset;
@@ -279,7 +279,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 				string x_evolution = message.GetHeader ("X-Evolution");
 				if (x_evolution == null || x_evolution == "") {
-					Logger.Log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
+					Log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
 							 this.folder_name, this.mbox_parser.FromOffset);
 					return null;
 				}
@@ -296,7 +296,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				Indexable indexable = this.GMimeMessageToIndexable (uid, message, flags);
 
 				if (Debug) {
-					Logger.Log.Debug ("Constructed message {0} with uid {1}, flags {2}.  Indexable {3} null",
+					Log.Debug ("Constructed message {0} with uid {1}, flags {2}.  Indexable {3} null",
 							  this.count, uid, flags, indexable == null ? "" : "not");
 				}
 				
@@ -404,7 +404,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				this.progress_percent = 100.0 * offset / this.file_size;
 			}
 
-			Logger.Log.Debug ("{0}: indexed {1} messages{2}",
+			Log.Debug ("{0}: indexed {1} messages{2}",
 					  this.folder_name, this.indexed_count, progress);
 		}
 
@@ -482,8 +482,8 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			try {
 				accounts = (ICollection) GConfThreadHelper.Get ("/apps/evolution/mail/accounts");
 			} catch (Exception ex) {
-				Logger.Log.Warn ("Caught exception in Setup(): " + ex.Message);
-				Logger.Log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
+				Log.Warn ("Caught exception in Setup(): " + ex.Message);
+				Log.Warn ("There are no configured evolution accounts, ignoring {0}", this.imap_name);
 				return false;
 			}
 
@@ -551,7 +551,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			}
 
 			if (this.account_name == null) {
-				Logger.Log.Info ("Unable to determine account name for {0}", this.imap_name);
+				Log.Info ("Unable to determine account name for {0}", this.imap_name);
 				return false;
 			}
 
@@ -581,7 +581,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 			if (this.tracker == null) {
 				if (this.queryable.FileAttributesStore.IsUpToDate (this.CrawlFile.FullName)) {
-					Logger.Log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
+					Log.Debug ("{0}: summary has not been updated; crawl unncessary", this.folder_name);
 					this.queryable.RemoveGenerator (this);
 					return false;
 				}
@@ -597,7 +597,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 					else
 						this.summary = B_U_Camel.Summary.LoadImap4Summary (this.summary_info.FullName);
 				} catch (Exception e) {
-					Logger.Log.Warn (e, "Unable to index {0}:", this.folder_name);
+					Log.Warn (e, "Unable to index {0}:", this.folder_name);
 					this.queryable.RemoveGenerator (this);
 					return false;
 				}
@@ -625,7 +625,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 							  100.0 * this.count / this.summary.header.count);
 			}
 
-			Logger.Log.Debug ("{0}: Finished indexing {1} messages {2}, {3} messages deleted", this.folder_name, this.indexed_count, progress, this.delete_count);
+			Log.Debug ("{0}: Finished indexing {1} messages {2}, {3} messages deleted", this.folder_name, this.indexed_count, progress, this.delete_count);
 
 			this.tracker.Close ();
 			this.tracker = null;
@@ -665,7 +665,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			++this.count;
 
 			if (Debug) {
-				Logger.Log.Debug ("Constructed message {0} with uid {1}, flags {2}.",
+				Log.Debug ("Constructed message {0} with uid {1}, flags {2}.",
 						  this.count, mi.uid, mi.flags);
 			}
 
@@ -689,7 +689,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				indexable = this.CamelMessageToIndexable (mi, msg_file);
 
 				if (Debug)
-					Logger.Log.Debug ("Unseen message, indexable {0} null", indexable == null ? "" : "not");
+					Log.Debug ("Unseen message, indexable {0} null", indexable == null ? "" : "not");
 
 				if (indexable != null)
 					++this.indexed_count;
@@ -704,12 +704,12 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				indexable.AddProperty (flag_prop);
 
 				if (Debug)
-					Logger.Log.Debug ("Previously seen message, flags changed: {0} -> {1}", flags, mi.flags);
+					Log.Debug ("Previously seen message, flags changed: {0} -> {1}", flags, mi.flags);
 
 				++this.indexed_count;
 			} else {
 				if (Debug)
-					Logger.Log.Debug ("Previously seen message, unchanged.");
+					Log.Debug ("Previously seen message, unchanged.");
 			}
 
 			this.tracker.Update (mi.uid, mi.flags);
@@ -848,7 +848,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 
 				}
 				
-				Logger.Log.Debug ("{0}: indexed {1} messages{2}",
+				Log.Debug ("{0}: indexed {1} messages{2}",
 						  this.folder_name, this.indexed_count, progress);
 			}
 			

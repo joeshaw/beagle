@@ -77,7 +77,7 @@ namespace Beagle.Util {
 				return assemblies;
 
 			if (! Directory.Exists (dir)) {
-				Logger.Log.Debug ("'{0}' is not a directory: Nothing loaded from here", dir);
+				Log.Debug ("'{0}' is not a directory: Nothing loaded from here", dir);
 				return assemblies;
 			}
 			

@@ -80,7 +80,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			if (Inotify.Enabled)
 				Inotify.Subscribe (index_path, OnInotifyEvent, Inotify.EventType.CloseWrite);
 
-			Logger.Log.Info ("Setting up an initial crawl of the IndexingService directory");
+			Log.Info ("Setting up an initial crawl of the IndexingService directory");
 
 			IndexableGenerator generator = new IndexableGenerator (GetIndexables (index_path));
 			Scheduler.Task task = NewAddTask (generator);
@@ -123,7 +123,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			try {
 				uri = new Uri (line);
 			} catch (Exception e) {
-				Logger.Log.Warn (e, "IndexingService: Unable to parse URI in {0}:", meta_file.FullName);
+				Log.Warn (e, "IndexingService: Unable to parse URI in {0}:", meta_file.FullName);
 				meta_stream.Close ();
 				return null;
 			}
@@ -137,7 +137,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			// Second line is the hit type
 			line = reader.ReadLine ();
 			if (line == null) {
-				Logger.Log.Warn ("IndexingService: EOF reached trying to read hit type from {0}",
+				Log.Warn ("IndexingService: EOF reached trying to read hit type from {0}",
 						 meta_file.FullName);
 				meta_stream.Close ();
 				return null;
@@ -147,7 +147,7 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 			// Third line is the mime type
 			line = reader.ReadLine ();
 			if (line == null) {
-				Logger.Log.Warn ("IndexingService: EOF reached trying to read mime type from {0}",
+				Log.Warn ("IndexingService: EOF reached trying to read mime type from {0}",
 						 meta_file.FullName);
 				meta_stream.Close ();
 				return null;
@@ -164,14 +164,14 @@ namespace Beagle.Daemon.IndexingServiceQueryable {
 					if (line[0] == 'k')
 						keyword = true;
 					else if (line[0] != 't') {
-						Logger.Log.Warn ("IndexingService: Unknown property type: '{0}'", line[0]);
+						Log.Warn ("IndexingService: Unknown property type: '{0}'", line[0]);
 						continue;
 					}
 
 					int i = line.IndexOf ('=');
 
 					if (i == -1) {
-						Logger.Log.Warn ("IndexingService: Unknown property line: '{0}'", line);
+						Log.Warn ("IndexingService: Unknown property line: '{0}'", line);
 						continue;
 					}
 					

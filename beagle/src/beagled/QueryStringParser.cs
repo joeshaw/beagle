@@ -184,14 +184,14 @@ namespace Beagle.Daemon {
 				query_part.Type = PropertyType.Keyword;
 				query_part.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 				
-				Logger.Log.Debug ("Extension query: {0}", query_part.Value);
+				Log.Debug ("Extension query: {0}", query_part.Value);
 				
 				return query_part; 
 			}
 
 			if (key == String.Empty) {
 
-				Logger.Log.Debug ("Parsed query '{0}' as text_query", text);
+				Log.Debug ("Parsed query '{0}' as text_query", text);
 
 				return StringToQueryPart (text, IsProhibited);
 			}
@@ -243,7 +243,7 @@ namespace Beagle.Daemon {
 				part.Value = text.Substring (pos + 1);
 				part.Type = PropertyType.Text;
 				part.Logic = (IsProhibited ?      QueryPartLogic.Prohibited : QueryPartLogic.Required);
-				Logger.Log.Debug ("Parsed query '"	    + query + 
+				Log.Debug ("Parsed query '"	    + query + 
 						  "' as prop query:key="    + part.Key +
 						  ", value="		    + part.Value +
 						  " and property type="	    + part.Type);
@@ -261,7 +261,7 @@ namespace Beagle.Daemon {
 				part.Value = text.Substring (pos + 1);
 				part.Type = PropertyType.Keyword;
 				part.Logic = (IsProhibited ?      QueryPartLogic.Prohibited : QueryPartLogic.Required);
-				Logger.Log.Debug ("Parsed query '"	    + query + 
+				Log.Debug ("Parsed query '"	    + query + 
 						  "' as prop query:key="    + part.Key +
 						  ", value="		    + part.Value +
 						  " and property type="	    + part.Type);
@@ -283,7 +283,7 @@ namespace Beagle.Daemon {
 
 			if (!is_present) {
 
-				Logger.Log.Warn ("Could not find property, parsed query '{0}' as text_query", query);
+				Log.Warn ("Could not find property, parsed query '{0}' as text_query", query);
 
 				return StringToQueryPart (query, IsProhibited);
 			}
@@ -295,7 +295,7 @@ namespace Beagle.Daemon {
 				query_part_prop.Type = prop_type [0];
 				query_part_prop.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 
-				Logger.Log.Debug ("Parsed query '"	    + query + 
+				Log.Debug ("Parsed query '"	    + query + 
 						  "' as prop query:key="    + query_part_prop.Key +
 						  ", value="		    + query_part_prop.Value +
 						  " and property type="	    + query_part_prop.Type);
@@ -310,7 +310,7 @@ namespace Beagle.Daemon {
 			QueryPart_Or query_part_or = new QueryPart_Or ();
 			query_part_or.Logic = (IsProhibited ? QueryPartLogic.Prohibited : QueryPartLogic.Required);
 
-			Logger.Log.Debug ("Parsed query '{0}' as OR of {1} queries:", query, num);
+			Log.Debug ("Parsed query '{0}' as OR of {1} queries:", query, num);
 
 			for (int i = 0; i < num; ++i) {
 				QueryPart_Property query_part_prop = new QueryPart_Property ();

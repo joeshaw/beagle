@@ -98,8 +98,8 @@ namespace Beagle.Filters {
 			try {
 				WalkContentNodes (xmlReader);
 			} catch (Exception e) {
-				Logger.Log.Debug ("Exception occurred while indexing {0}.", FileInfo.FullName);
-				Logger.Log.Debug (e);
+				Log.Debug ("Exception occurred while indexing {0}.", FileInfo.FullName);
+				Log.Debug (e);
 			}
 
 			pout.Close ();

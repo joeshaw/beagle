@@ -79,7 +79,7 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 
 		private void StartWorker ()
 		{
-			Logger.Log.Info ("Scanning EDS sources (Addressbook, Calendars, Memos, ...)");
+			Log.Info ("Scanning EDS sources (Addressbook, Calendars, Memos, ...)");
 
 			Stopwatch timer = new Stopwatch ();
 			timer.Start ();
@@ -89,14 +89,14 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 			try {
 				ConnectToEDS ();
 			} catch (Exception e) {
-				Logger.Log.Error (e, "Unable to start EvolutionDataServer backend");
+				Log.Error (e, "Unable to start EvolutionDataServer backend");
 			} finally {
 				IsIndexing = false;
 			}
 
 			timer.Stop ();
 
-			Logger.Log.Info ("Scanned EDS sources in {0}", timer);
+			Log.Info ("Scanned EDS sources in {0}", timer);
 		}
 
 		private void ConnectToEDS ()
@@ -117,10 +117,10 @@ namespace Beagle.Daemon.EvolutionDataServerQueryable {
 				new SourcesHandler ("/apps/evolution/tasks/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Todo);
 				new SourcesHandler ("/apps/evolution/memos/sources", typeof (CalContainer), this, Driver.Fingerprint, CalSourceType.Journal);
 			} catch (DllNotFoundException ex) {
-				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
+				Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
 				return;
 			} catch (EntryPointNotFoundException ex) {
-				Logger.Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
+				Log.Error (ex, "Unable to start EvolutionDataServer backend: Unable to find or open libraries:");			
 				return;
 			}		       
 		}

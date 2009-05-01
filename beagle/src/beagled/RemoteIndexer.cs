@@ -54,7 +54,7 @@ namespace Beagle.Daemon {
 			helper_path = Path.GetFullPath (Path.Combine (bihp, "beagled-index-helper"));
 			if (! File.Exists (helper_path))
 				throw new Exception ("Could not find " + helper_path);
-			Logger.Log.Debug ("Found index helper at {0}", helper_path);
+			Log.Debug ("Found index helper at {0}", helper_path);
 		}
 
 		static public IIndexer NewRemoteIndexer (string name, int minor_version)
@@ -92,7 +92,7 @@ namespace Beagle.Daemon {
 			response = SendRequest (remote_request);
 
 			if (response == null) {
-				Logger.Log.Error ("Something terrible happened --- Flush failed");
+				Log.Error ("Something terrible happened --- Flush failed");
 				request.Cleanup ();
 				return null;
 			}
@@ -115,7 +115,7 @@ namespace Beagle.Daemon {
 				if (response != null)
 					last_item_count = response.ItemCount;
 				else
-					Logger.Log.Error ("Something terrible happened --- GetItemCount failed");
+					Log.Error ("Something terrible happened --- GetItemCount failed");
 			}
 
 			return last_item_count;
@@ -141,21 +141,21 @@ namespace Beagle.Daemon {
 
 				bool need_helper = false;
 
-				//Logger.Log.Debug ("Sending request!");
+				//Log.Debug ("Sending request!");
 				try {
 					response = request.Send () as RemoteIndexerResponse;
-					//Logger.Log.Debug ("Done sending request");
+					//Log.Debug ("Done sending request");
 				} catch (ResponseMessageException ex) {
-					Logger.Log.Debug ("Caught ResponseMessageException: {0}", ex.Message);
+					Log.Debug ("Caught ResponseMessageException: {0}", ex.Message);
 
 					if (ex.InnerException is System.Net.Sockets.SocketException) {
-						Logger.Log.Debug ("InnerException is SocketException -- we probably need to launch a helper");
+						Log.Debug ("InnerException is SocketException -- we probably need to launch a helper");
 						need_helper = true;
 					} else if (ex.InnerException is IOException) {
-						Logger.Log.Debug ("InnerException is IOException -- we probably need to launch a helper");
+						Log.Debug ("InnerException is IOException -- we probably need to launch a helper");
 						need_helper = true;
 					} else {
-						Logger.Log.Debug (ex, "Unexpected exception from IndexHelper. Giving up sending this request.");
+						Log.Debug (ex, "Unexpected exception from IndexHelper. Giving up sending this request.");
 						return null;
 					}
 				}
@@ -176,7 +176,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (response == null && exception_count >= 5)
-				Logger.Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
+				Log.Error ("Exception limit exceeded trying to activate a helper.  Giving up on indexing!");
 
 			return response;
 		}
@@ -221,7 +221,7 @@ namespace Beagle.Daemon {
 				if (CheckHelper ())
 					return;
 				
-				Logger.Log.Debug ("Launching helper process");
+				Log.Debug ("Launching helper process");
 
 				SafeProcess p = new SafeProcess ();
 				string[] args = new string [3];
@@ -242,7 +242,7 @@ namespace Beagle.Daemon {
 				p.RedirectStandardError = false;
 				p.Start ();
 
-				Logger.Log.Debug ("IndexHelper PID is {0}", p.Id);
+				Log.Debug ("IndexHelper PID is {0}", p.Id);
 
 				// Poll the helper's socket.  Wait up to a minute
 				// (500 ms * 120 times) for the helper to be ready
@@ -263,7 +263,7 @@ namespace Beagle.Daemon {
 				if (! found_helper)
 					throw new Exception (String.Format ("Couldn't launch helper process {0}", p.Id));
 
-				Logger.Log.Debug ("Found IndexHelper ({0}) in {1}", p.Id, watch);
+				Log.Debug ("Found IndexHelper ({0}) in {1}", p.Id, watch);
 				helper_pid = p.Id;
 			}
 		}

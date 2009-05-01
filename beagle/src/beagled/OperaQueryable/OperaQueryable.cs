@@ -57,7 +57,7 @@ namespace Beagle.Daemon.OperaQueryable {
 				return;
 			}
 			
-			Logger.Log.Info ("Starting Opera history backend");
+			Log.Info ("Starting Opera history backend");
 			Stopwatch watch = new Stopwatch ();
 			watch.Start ();
 			
@@ -67,7 +67,7 @@ namespace Beagle.Daemon.OperaQueryable {
 			//State = QueryableState.Idle;
 			
 			watch.Stop ();
-			Logger.Log.Info ("Opera history backend done in {0}s", watch.ElapsedTime);
+			Log.Info ("Opera history backend done in {0}s", watch.ElapsedTime);
 		}
 		
 		private bool CheckForExistence ()

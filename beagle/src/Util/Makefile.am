@@ -84,7 +84,6 @@ UTIL_CSFILES = 			        	\
 	$(srcdir)/KonqHistoryUtil.cs		\
 	$(srcdir)/LineReader.cs			\
 	$(srcdir)/Log.cs			\
-	$(srcdir)/Logger.cs             	\
 	$(srcdir)/MultiReader.cs        	\
 	$(srcdir)/NautilusTools.cs      	\
 	$(srcdir)/NetworkService.cs		\

@@ -55,7 +55,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Adding ExcludePattern '{0}'", value);
+				Log.Debug ("FileNameFilter: Adding ExcludePattern '{0}'", value);
 
 			exclude_patterns.Add (value);
 		}
@@ -66,7 +66,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Removing ExcludePattern '{0}'", value);
+				Log.Debug ("FileNameFilter: Removing ExcludePattern '{0}'", value);
 
 			exclude_patterns.Remove (value);
 		}
@@ -77,7 +77,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Adding ExcludeDir '{0}'", value);
+				Log.Debug ("FileNameFilter: Adding ExcludeDir '{0}'", value);
 
 			exclude_paths.Add (value);
 			queryable.RemoveDirectory (value);
@@ -89,7 +89,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return;
 
 			if (Debug)
-				Logger.Log.Debug ("FileNameFilter: Removing ExcludeDir '{0}'", value);
+				Log.Debug ("FileNameFilter: Removing ExcludeDir '{0}'", value);
 
 			exclude_paths.Remove (value);
 			// Make sure we re-crawl the paths we used to ignored but
@@ -228,13 +228,13 @@ namespace Beagle.Daemon.FileSystemQueryable {
 		public bool Ignore (DirectoryModel parent, string name, bool is_directory) 
 		{
 			if (Debug)
-				Logger.Log.Debug ("*** Ignore Check (parent={0}, name={1}, is_directory={2})", (parent != null) ? parent.FullName : null, name, is_directory);
+				Log.Debug ("*** Ignore Check (parent={0}, name={1}, is_directory={2})", (parent != null) ? parent.FullName : null, name, is_directory);
 
 			// If parent is null, we have a root. But it might not be
 			// active anymore so we need to check if it's still in the list.
 			if (parent == null && queryable.Roots.Contains (name)) {
 				if (Debug)
-					Logger.Log.Debug ("*** Ignore Check Passed");
+					Log.Debug ("*** Ignore Check Passed");
 				return false;
 			}
 			
@@ -259,7 +259,7 @@ namespace Beagle.Daemon.FileSystemQueryable {
 
 			if (parent == null) {
 				if (Debug)
-					Logger.Log.Debug ("*** Parent is null (name={0}, is_directory={1}", name, is_directory);
+					Log.Debug ("*** Parent is null (name={0}, is_directory={1}", name, is_directory);
 				return false;
 			}
 

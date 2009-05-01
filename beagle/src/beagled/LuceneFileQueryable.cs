@@ -175,7 +175,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (! FileAttributesStore.Write (attr))
-				Logger.Log.Warn ("Couldn't write attributes for {0}", info.Path);
+				Log.Warn ("Couldn't write attributes for {0}", info.Path);
 
 			return indexable.Uri;
 		}
@@ -201,7 +201,7 @@ namespace Beagle.Daemon {
 			try {
 				return FileSystem.Exists (uri.LocalPath);
 			} catch (Exception e) {
-				Logger.Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
+				Log.Warn ("Exception executing HitIsValid on {0}", uri.LocalPath);
 				return false;
 			}
 		}

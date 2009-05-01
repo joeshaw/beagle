@@ -275,7 +275,7 @@ namespace Beagle.Daemon {
 			FileAttributes attr = ReadOrCreate (path);
 			attr.LastWriteTime = mtime;
 			if (! Write (attr))
-				Logger.Log.Warn ("Couldn't store file attributes for {0}", path);
+				Log.Warn ("Couldn't store file attributes for {0}", path);
 		}
 	}
 }

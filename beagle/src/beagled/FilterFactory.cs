@@ -116,7 +116,7 @@ namespace Beagle.Daemon {
 			ReflectionFu.ScanEnvironmentForAssemblies ("BEAGLE_FILTER_PATH", PathFinder.FilterDir,
 								   delegate (Assembly a) {
 									   int n = ScanAssemblyForFilters (a, filter_cache);
-									   Logger.Log.Debug ("Loaded {0} filter{1} from {2}",
+									   Log.Debug ("Loaded {0} filter{1} from {2}",
 											     n, n == 1 ? "" : "s", a.Location);
 								   });
 
@@ -157,7 +157,7 @@ namespace Beagle.Daemon {
 					FilterFlavor flav = (FilterFlavor) entry.Key;
 					Filter filter = (Filter) entry.Value;
 					
-					Logger.Log.Debug ("Found matching filter: {0}, Weight: {1}", filter, flav.Weight);
+					Log.Debug ("Found matching filter: {0}, Weight: {1}", filter, flav.Weight);
 				}
 			}
 
@@ -287,14 +287,14 @@ namespace Beagle.Daemon {
 			// We don't know how to filter this, so there is nothing else to do.
 			if (filters.Count == 0) {
 				if (! indexable.NoContent)
-					Logger.Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.DisplayUri, path, indexable.MimeType);
+					Log.Debug ("No filter for {0} ({1}) [{2}]", indexable.DisplayUri, path, indexable.MimeType);
 
 				return false;
 			}
 
 			foreach (Filter candidate_filter in filters) {
 				if (Debug)
-					Logger.Log.Debug ("Testing filter: {0}", candidate_filter);
+					Log.Debug ("Testing filter: {0}", candidate_filter);
 				
 				// Hook up the snippet writer.
 				if (candidate_filter.SnippetMode && text_cache != null) {
@@ -334,7 +334,7 @@ namespace Beagle.Daemon {
 #endif
 
 					if (Debug)
-						Logger.Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);
+						Log.Debug ("Successfully filtered {0} with {1}", path, candidate_filter);
 
 					filter = candidate_filter;
 					return true;
@@ -345,7 +345,7 @@ namespace Beagle.Daemon {
 			}
 
 			if (Debug)
-				Logger.Log.Debug ("None of the matching filters could process the file: {0}", path);
+				Log.Debug ("None of the matching filters could process the file: {0}", path);
 
 			return false;
 		}
@@ -376,7 +376,7 @@ namespace Beagle.Daemon {
 				try {
 					filter = (Filter) Activator.CreateInstance (t);
 				} catch (Exception ex) {
-					Logger.Log.Error (ex, "Caught exception while instantiating {0}", t);
+					Log.Error (ex, "Caught exception while instantiating {0}", t);
 				}
 
 				if (filter == null)

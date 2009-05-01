@@ -118,7 +118,7 @@ namespace Beagle.Daemon
 			try {
 				DoMain (args);
 			} catch (Exception ex) {
-				Logger.Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
+				Log.Error (ex, "Unhandled exception thrown.  Exiting immediately.");
 				Environment.Exit (1);
 			}
 		}
@@ -248,7 +248,7 @@ namespace Beagle.Daemon
 			/////////////////////////////////////////////////////////
 				
 			if (arg_output == null) {
-				Logger.Log.Error ("--target must be specified");
+				Log.Error ("--target must be specified");
 				Environment.Exit (1);
 			}
 
@@ -258,20 +258,20 @@ namespace Beagle.Daemon
 
 			foreach (FileSystemInfo info in pending_directories) {
 				if (Path.GetFullPath (arg_output) == info.FullName) {
-					Logger.Log.Error ("Target directory cannot be one of the source paths.");
+					Log.Error ("Target directory cannot be one of the source paths.");
 					Environment.Exit (1);
 				}
 			}
 
 			foreach (FileSystemInfo info in pending_files) {
 				if (Path.GetFullPath (arg_output) == info.FullName) {
-					Logger.Log.Error ("Target directory cannot be one of the source paths.");
+					Log.Error ("Target directory cannot be one of the source paths.");
 					Environment.Exit (1);
 				}
 			}
 			
 			if (!Directory.Exists (Path.GetDirectoryName (arg_output))) {
-				Logger.Log.Error ("Index directory not available for construction: {0}", arg_output);
+				Log.Error ("Index directory not available for construction: {0}", arg_output);
 				Environment.Exit (1);
 			}
 
@@ -282,14 +282,14 @@ namespace Beagle.Daemon
 
 				foreach (FileInfo info in DirectoryWalker.GetFileInfos (arg_output)) {
 					if (Array.IndexOf (allowed_files, info.Name) == -1) {
-						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", arg_output, info.FullName);
+						Log.Error ("{0} doesn't look safe to delete: non-Beagle file {1} was found", arg_output, info.FullName);
 						Environment.Exit (1);
 					}
 				}
 
 				foreach (DirectoryInfo info in DirectoryWalker.GetDirectoryInfos (arg_output)) {
 					if (Array.IndexOf (allowed_dirs, info.Name) == -1) {
-						Logger.Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", arg_output, info.FullName);
+						Log.Error ("{0} doesn't look safe to delete: non-Beagle directory {1} was found", arg_output, info.FullName);
 						Environment.Exit (1);
 					}
 				}
@@ -449,7 +449,7 @@ namespace Beagle.Daemon
 				monitor_thread.Join ();
 
 			watch.Stop ();
-			Logger.Log.Debug ("Elapsed time {0}.", watch);
+			Log.Debug ("Elapsed time {0}.", watch);
 
 			// Write this after indexing is done. This is because, if creating a new index,
 			// LuceneIndexingDriver.Create() is called which purges the entire directory.
@@ -474,7 +474,7 @@ namespace Beagle.Daemon
 			}
 
 			if (restart) {
-				Logger.Log.Debug ("Restarting beagle-build-index");
+				Log.Debug ("Restarting beagle-build-index");
 				Process p = new Process ();
 				p.StartInfo.UseShellExecute = false;
 				// FIXME: Maybe this isn't the right way to do things?  It should be ok,
@@ -491,15 +491,15 @@ namespace Beagle.Daemon
 		
 		static void IndexWorker ()
 		{
-			Logger.Log.Debug ("Starting IndexWorker");
+			Log.Debug ("Starting IndexWorker");
 
 			try {
 				DoIndexing ();
 			} catch (Exception e) {
-				Logger.Log.Debug ("Encountered exception while indexing: {0}", e);
+				Log.Debug ("Encountered exception while indexing: {0}", e);
 			}
 
-			Logger.Log.Debug ("IndexWorker Done");
+			Log.Debug ("IndexWorker Done");
 			indexing = false;
 		}
 
@@ -539,7 +539,7 @@ namespace Beagle.Daemon
 				count_dirs++;
 			}
 
-			Logger.Log.Debug ("Scanned {0} files and directories in {1} directories", count_dirs + count_files, count_dirs);
+			Log.Debug ("Scanned {0} files and directories in {1} directories", count_dirs + count_files, count_dirs);
 
 			if (Shutdown.ShutdownRequested) {
 				backing_fa_store.Flush ();
@@ -549,7 +549,7 @@ namespace Beagle.Daemon
 			// Time to remove deleted directories from the index and attributes store
 			while (modified_directories.Count > 0) {
 				DirectoryInfo subdir = (DirectoryInfo) modified_directories.Dequeue ();
-				Logger.Log.Debug ("Checking {0} for deleted files and directories", subdir.FullName);
+				Log.Debug ("Checking {0} for deleted files and directories", subdir.FullName);
 
 				// Get a list of all documents from lucene index with ParentDirUriPropKey set as that of subdir
 				ICollection all_dirent = GetAllItemsInDirectory (subdir);
@@ -585,7 +585,7 @@ namespace Beagle.Daemon
 			if (Shutdown.ShutdownRequested)
 				return;
 
-			Logger.Log.Debug ("Optimizing index");
+			Log.Debug ("Optimizing index");
 			driver.OptimizeNow ();
 		}
 		
@@ -617,9 +617,9 @@ namespace Beagle.Daemon
 					break;
 
 				if (reschedule)
-					Logger.Log.Debug ("Continuing indexing indexer generated indexables");
+					Log.Debug ("Continuing indexing indexer generated indexables");
 				else
-					Logger.Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
+					Log.Debug ("Flushing driver, {0} items in queue", pending_request.Count);
 
 				reschedule = FlushIndexer (driver);
 
@@ -665,7 +665,7 @@ namespace Beagle.Daemon
 					Indexable indexable = flushed_request.RetrieveRequestIndexable (r);
 
 					if (indexable == null) {
-						Logger.Log.Debug ("Should not happen! Previously requested indexable with id #{0} has eloped!", r.Id);
+						Log.Debug ("Should not happen! Previously requested indexable with id #{0} has eloped!", r.Id);
 						continue;
 					}
 
@@ -696,7 +696,7 @@ namespace Beagle.Daemon
 					}
 
 					string path = indexable.Uri.LocalPath;
-					Logger.Log.Debug ("Removing: '{0}'", path);
+					Log.Debug ("Removing: '{0}'", path);
 					fa_store.Drop (path);
 
 				} else if (raw_r is IndexerIndexablesReceipt) {
@@ -876,7 +876,7 @@ namespace Beagle.Daemon
 			// Instead of taking the painfull way of using BeagleAnalyzer, lets just add the prefix manually
 			// LuceneCommon thinks exposing secret property type encoding is bad, I think so too... except for now
 			string key = "prop:k:" + Property.ParentDirUriPropKey;
-			//Logger.Log.Debug ("Querying for {0}={1}", parent_uri_str, key);
+			//Log.Debug ("Querying for {0}={1}", parent_uri_str, key);
 			LNS.Query query = new LNS.TermQuery (new Term (key, parent_uri_str));
 
 			// do the search
@@ -914,7 +914,7 @@ namespace Beagle.Daemon
 			}
 
 			LuceneCommon.ReleaseSearcher (searcher);
-			//Logger.Log.Debug ("Found {0} items in {1}", match_list.Count, dir.FullName);
+			//Log.Debug ("Found {0} items in {1}", match_list.Count, dir.FullName);
 
 			return match_list;
 		}
@@ -936,7 +936,7 @@ namespace Beagle.Daemon
 				break;
 			}
 
-			//Logger.Log.Debug ("Found: " + path + " (" + is_dir + ")");
+			//Log.Debug ("Found: " + path + " (" + is_dir + ")");
 			return new Dirent (path, is_dir);
 		}
 
@@ -955,11 +955,11 @@ namespace Beagle.Daemon
 				int vmrss = SystemInformation.VmRss;
 				double size = vmrss / (double) vmrss_original;
 				if (vmrss != last_vmrss)
-					Logger.Log.Debug ("Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
+					Log.Debug ("Size: VmRSS={0:0.0} MB, size={1:0.00}, {2:0.0}%",
 							  vmrss/1024.0, size, 100.0 * (size - 1) / (threshold - 1));
 				last_vmrss = vmrss;
 				if (size > threshold) {
-					Logger.Log.Debug ("Process too big, shutting down!");
+					Log.Debug ("Process too big, shutting down!");
 					restart = true;
 					Shutdown.ShutdownRequested = true;
 					return;
@@ -992,7 +992,7 @@ namespace Beagle.Daemon
 			if (signal < 0)
 				return;
 
-			Logger.Log.Debug ("Shutdown Requested");
+			Log.Debug ("Shutdown Requested");
 			Shutdown.ShutdownRequested = true;
 		}
 

@@ -243,7 +243,7 @@ namespace Beagle.Daemon {
 		public bool AppendText (string str)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendText (\"{0}\")", str);
+				Log.Debug ("AppendText (\"{0}\")", str);
 
 			return AppendText (str, IsHot ? str : null);
 		}
@@ -269,7 +269,7 @@ namespace Beagle.Daemon {
 		public bool AppendText (string str, string strHot)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendText (\"{0}, {1}\")", str, strHot);
+				Log.Debug ("AppendText (\"{0}, {1}\")", str, strHot);
 
 			if (IsFrozen)
 				return true;
@@ -315,7 +315,7 @@ namespace Beagle.Daemon {
 		public bool AppendWord (string word)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendWord (\"{0}\")", word);
+				Log.Debug ("AppendWord (\"{0}\")", word);
 
 			return AppendWords (word, false);
 		}
@@ -332,7 +332,7 @@ namespace Beagle.Daemon {
 		public bool AppendLine (string line)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendLine (\"{0}\")", line);
+				Log.Debug ("AppendLine (\"{0}\")", line);
 
 			return AppendWords (line, true);
 		}
@@ -387,7 +387,7 @@ namespace Beagle.Daemon {
 		public bool AppendChars (char[] buffer, int index, int count)
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendChars ()");
+				Log.Debug ("AppendChars ()");
 
 			ReallyAddText (buffer, index, count);
 
@@ -408,7 +408,7 @@ namespace Beagle.Daemon {
 		public bool AppendWhiteSpace ()
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendWhiteSpace ()");
+				Log.Debug ("AppendWhiteSpace ()");
 
 			if (last_was_structural_break)
 				return true;
@@ -434,7 +434,7 @@ namespace Beagle.Daemon {
 		public bool AppendStructuralBreak ()
 		{
 			if (Debug)
-				Logger.Log.Debug ("AppendStructuralBreak ()");
+				Log.Debug ("AppendStructuralBreak ()");
 
 			if (last_was_structural_break)
 				return true;
@@ -604,7 +604,7 @@ namespace Beagle.Daemon {
                         FileStream file_stream = File.OpenWrite (tempFile);
 
 			if (Debug)
-				Logger.Log.Debug ("Storing text in tempFile {0}", tempFile);
+				Log.Debug ("Storing text in tempFile {0}", tempFile);
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
@@ -639,7 +639,7 @@ namespace Beagle.Daemon {
                         FileStream file_stream = File.OpenWrite (tempFile);
 			
 			if (Debug)
-				Logger.Log.Debug ("Storing stream in tempFile {0}", tempFile);
+				Log.Debug ("Storing stream in tempFile {0}", tempFile);
 
                         // When we dump the contents of a reader into a file, we
                         // expect to use it again soon.
@@ -879,7 +879,7 @@ namespace Beagle.Daemon {
 			try {
 				pulled = PullFromArray (array, sb, is_hot);
 			} catch (Exception ex) {
-				Logger.Log.Debug (ex, "Caught exception while pulling text in filter '{0}'", Name);
+				Log.Debug (ex, "Caught exception while pulling text in filter '{0}'", Name);
 			}
 
 			return pulled;

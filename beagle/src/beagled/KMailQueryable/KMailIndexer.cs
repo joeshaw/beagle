@@ -260,7 +260,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			while (pending.Count > 0) {
 
 				string dir = (string) pending.Dequeue ();
-				Logger.Log.Debug ("Searching for mbox and maildirs in " + dir);
+				Log.Debug ("Searching for mbox and maildirs in " + dir);
 
 				foreach (FileInfo fi in DirectoryWalker.GetFileInfos (dir)) {
 					if (!fi.Name.EndsWith (".index"))
@@ -301,7 +301,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			ArrayList _mbox_files = new ArrayList (mbox_files);
 			
 			if (queryable.ThisScheduler.ContainsByTag (mail_root)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", mail_root);
+				Log.Debug ("Not adding task for already running task: {0}", mail_root);
 				return;
 			} else {
 				KMaildirIndexableGenerator generator = new KMaildirIndexableGenerator (this, _mail_directories);
@@ -340,11 +340,11 @@ namespace Beagle.Daemon.KMailQueryable {
 		public void IndexMbox (string mbox_file, bool initial_scan)
 		{
 			if (queryable.ThisScheduler.ContainsByTag (mbox_file)) {
-				Logger.Log.Debug ("Not adding task for already running task: {0}", mbox_file);
+				Log.Debug ("Not adding task for already running task: {0}", mbox_file);
 				return;
 			}
 
-			//Logger.Log.Debug ("Creating task to index mbox {0}", mbox_file);
+			//Log.Debug ("Creating task to index mbox {0}", mbox_file);
 			KMailMboxIndexableGenerator generator = new KMailMboxIndexableGenerator (this, mbox_file, initial_scan);
 			AddIIndexableTask (generator, mbox_file);
 		}
@@ -354,7 +354,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		private void RemoveMail (string file)
 		{
-			Logger.Log.Debug ("Removing mail:" + file);
+			Log.Debug ("Removing mail:" + file);
 			Uri uri = UriFu.PathToFileUri (file);
 			Scheduler.Task task = queryable.NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -367,7 +367,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		public Indexable MaildirMessageToIndexable (string filename, bool crawl)
 		{
-			//Logger.Log.Debug ("+ indexing maildir mail:" + filename);
+			//Log.Debug ("+ indexing maildir mail:" + filename);
 			String folder = GetFolderMaildir(filename);
 			Uri file_uri = UriFu.PathToFileUri (filename);
 
@@ -391,7 +391,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		public Indexable MessageToIndexable (string file_name, System.Uri uri, GMime.Message message, string folder_name)
 		{
-			//Logger.Log.Debug ("Indexing " + uri + " in folder " + folder_name);
+			//Log.Debug ("Indexing " + uri + " in folder " + folder_name);
 			Indexable indexable = new Indexable (uri);
 			// set parent uri to the filename so that when an mbox file
 			// is deleted, all the messages in that file can be deleted
@@ -459,7 +459,7 @@ namespace Beagle.Daemon.KMailQueryable {
 		 */
 		public void RemoveMbox (string file)
 		{
-			Logger.Log.Debug ("Removing mbox:" + file);
+			Log.Debug ("Removing mbox:" + file);
 			Uri uri = UriFu.PathToFileUri (file);
 			Scheduler.Task task = queryable.NewRemoveTask (uri);
 			task.Priority = Scheduler.Priority.Immediate;
@@ -486,7 +486,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			string possibleMaildir = (Directory.GetParent (dirPath)).FullName;
 			if (lastGoodDirPath == possibleMaildir)
 				return true;
-			Logger.Log.Debug ("checking if " + possibleMaildir + " is a maildir ?");
+			Log.Debug ("checking if " + possibleMaildir + " is a maildir ?");
 			if (mail_directories.Contains (possibleMaildir)) {
 				lastGoodDirPath = possibleMaildir;
 				return true;

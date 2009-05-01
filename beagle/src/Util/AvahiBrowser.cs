@@ -122,7 +122,7 @@ namespace Beagle.Util
 
                 private void OnServiceTimeout (object o, EventArgs args)
                 {
-                        Logger.Log.Info ("Failed to resolve service.");
+                        Log.Info ("Failed to resolve service.");
 			((ServiceResolver)o).Dispose ();
                 }
 

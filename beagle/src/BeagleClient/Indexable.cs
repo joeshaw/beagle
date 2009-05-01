@@ -323,7 +323,7 @@ namespace Beagle {
 			if (DeleteContent) {
 				if (contentUri != null) {
 					if (Debug)
-						Logger.Log.Debug ("Cleaning up {0} ({1})", contentUri.LocalPath, Uri);
+						Log.Debug ("Cleaning up {0} ({1})", contentUri.LocalPath, Uri);
 
 					try {
 						FileSystem.PosixDelete (contentUri.LocalPath);
@@ -336,7 +336,7 @@ namespace Beagle {
 
 				if (hotContentUri != null) {
 					if (Debug)
-						Logger.Log.Debug ("Cleaning up {0} ({1})", hotContentUri.LocalPath, Uri);
+						Log.Debug ("Cleaning up {0} ({1})", hotContentUri.LocalPath, Uri);
 
 					try {
 						FileSystem.PosixDelete (hotContentUri.LocalPath);
@@ -695,14 +695,14 @@ namespace Beagle {
 				ContentUri = TextReaderToTempFileUri (textReader);
 
 				if (Debug)
-					Logger.Log.Debug ("Storing text content from {0} in {1}", Uri, ContentUri);
+					Log.Debug ("Storing text content from {0} in {1}", Uri, ContentUri);
 
 				DeleteContent = true;
 			} else if (binary_stream != null) {
 				ContentUri = BinaryStreamToTempFileUri (binary_stream);
 
 				if (Debug)
-					Logger.Log.Debug ("Storing binary content from {0} in {1}", Uri, ContentUri);
+					Log.Debug ("Storing binary content from {0} in {1}", Uri, ContentUri);
 
 				DeleteContent = true;
 			}
@@ -711,7 +711,7 @@ namespace Beagle {
 				HotContentUri = TextReaderToTempFileUri (hotTextReader);
 
 				if (Debug)
-					Logger.Log.Debug ("Storing hot content from {0} in {1}", Uri, HotContentUri);
+					Log.Debug ("Storing hot content from {0} in {1}", Uri, HotContentUri);
 
 				DeleteContent = true;
 			}

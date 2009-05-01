@@ -355,7 +355,7 @@ namespace Beagle.Filters {
 			
 			if (!Char.IsLetter (ch) && ctrl_word_type.Types != TeXControlWordType.Type.EscSeq &&
 			  ctrl_word_type.Types != TeXControlWordType.Type.Skip) {
-				Logger.Log.Error ("Unhandled symbol: {0}, {1}", ch, ctrl_word_type.Types);
+				Log.Error ("Unhandled symbol: {0}, {1}", ch, ctrl_word_type.Types);
 				return ErrorCodes.ERROR_TEX_UNHANDLED_SYMBOL;
 			}
 			*/
@@ -427,7 +427,7 @@ namespace Beagle.Filters {
 			ec = TeXParse ();
 
 			if (ec != ErrorCodes.ERROR_TEX_OK)
-				Logger.Log.Error ("{0}", ec);
+				Log.Error ("{0}", ec);
 			Finished ();
 		}
 
