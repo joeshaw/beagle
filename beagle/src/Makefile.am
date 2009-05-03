@@ -29,3 +29,5 @@ if ENABLE_RDF_ADAPTER
 SUBDIRS += RDFAdapter
 endif
 
+SUBDIRS += Beagle.Util
+

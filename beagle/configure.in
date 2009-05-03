@@ -633,6 +633,8 @@ fi
 
 AC_SUBST(BEAGLE_DEFINES)
 
+AM_CONDITIONAL(ENABLE_TESTS, false)
+
 dnl ----------------------------------------------
 
 AC_OUTPUT([
@@ -653,6 +655,7 @@ src/epiphany-extension/Makefile
 src/firefox-extension/Makefile
 src/thunderbird-extension/Makefile
 src/RDFAdapter/Makefile
+src/Beagle.Util/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
