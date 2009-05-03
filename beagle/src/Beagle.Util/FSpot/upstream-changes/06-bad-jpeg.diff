@@ -1,0 +1,34 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Protect against bad jpeg files and files with exif dates in non-conformant syntax.
+
+Index: Imaging/Exif.cs
+===================================================================
+--- Imaging/Exif.cs	(revision 4696)
++++ Imaging/Exif.cs	(working copy)
+@@ -247,8 +247,12 @@
+ 			string delimiters = " :";
+ 			string[] dt_data = dt.Split ( delimiters.ToCharArray(), 6 );
+ 			DateTime result;
++			try {
+ 			result = new DateTime (Int32.Parse(dt_data[0]), Int32.Parse(dt_data[1]), Int32.Parse(dt_data[2]),
+ 					       Int32.Parse(dt_data[3]), Int32.Parse(dt_data[4]), Int32.Parse(dt_data[5]));
++			} catch (FormatException) {
++				result = DateTime.MinValue;
++			}
+ 			
+ 			return result;
+ 		}	
+Index: Imaging/JpegHeader.cs
+===================================================================
+--- Imaging/JpegHeader.cs	(revision 4701)
++++ Imaging/JpegHeader.cs	(working copy)
+@@ -501,7 +501,7 @@
+ 		bool at_image = false;
+ 
+ 		Marker marker = Marker.Load (stream);
+-		if (marker.Type != JpegMarker.Soi)
++		if (marker == null || marker.Type != JpegMarker.Soi)
+ 			throw new System.Exception ("This doesn't appear to be a jpeg stream");
+ 		
+ 		this.Markers.Add (marker);

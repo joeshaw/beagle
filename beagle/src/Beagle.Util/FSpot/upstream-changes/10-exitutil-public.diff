@@ -1,0 +1,17 @@
+Make this class public. Needed by our filters.
+
+From: D Bera
+
+Index: Imaging/Exif.cs
+===================================================================
+--- Imaging/Exif.cs	(revision 4704)
++++ Imaging/Exif.cs	(working copy)
+@@ -156,7 +156,7 @@
+ 		Count
+ 	}
+ 	
+-	internal class ExifUtil {
++	public class ExifUtil {
+ 		
+ 		[DllImport ("libexif.dll")]
+ 		static extern IntPtr exif_tag_get_name (Tag tag);

@@ -1,0 +1,464 @@
+Initial diff against F-Spot r3823.
+
+diff -u -r ../../../FSpot/Imaging/Ciff.cs ./Imaging/Ciff.cs
+--- ../../../FSpot/Imaging/Ciff.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/Ciff.cs	2008-04-13 13:52:26.000000000 -0400
+@@ -454,6 +454,7 @@
+ 				return DCRawFile.RawPixbufStream (uri);
+ 		}
+ 
++#if false
+ 		public override Gdk.Pixbuf Load (int width, int height)
+ 		{
+ 			Gdk.Pixbuf full = this.Load ();
+@@ -461,7 +462,7 @@
+ 			full.Dispose ();
+ 			return scaled;
+ 		}
+-
++#endif
+ 		public void Dump ()
+ 		{
+ 			Root.Dump ();
+diff -u -r ../../../FSpot/Imaging/DCRawFile.cs ./Imaging/DCRawFile.cs
+--- ../../../FSpot/Imaging/DCRawFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/DCRawFile.cs	2008-04-13 14:17:22.000000000 -0400
+@@ -89,14 +89,18 @@
+ 
+ 		internal static System.IO.Stream RawPixbufStream (Uri location)
+ 		{
++#if false
+ 			string path = location.LocalPath;
+ 			string [] args = new string [] { dcraw_command, "-h", "-w", "-c", "-t", "0", path };
+ 			
+ 			InternalProcess proc = new InternalProcess (System.IO.Path.GetDirectoryName (path), args);
+ 			proc.StandardInput.Close ();
+ 			return proc.StandardOutput;
++#else
++			return null;
++#endif
+ 		}
+-		
++	
+ 		public static System.IO.Stream RawPixbufStreamOld (string path)
+ 		{
+ 			// FIXME this filename quoting is super lame
+@@ -110,6 +114,7 @@
+ 			return new Pipe (process, process.StandardOutput.BaseStream);
+ 		}
+ 		
++#if false
+ 		public static Gdk.Pixbuf Load (string path, string args)
+ 		{
+ 			// FIXME this filename quoting is super lame
+@@ -125,5 +130,6 @@
+ 				return PixbufUtils.LoadFromStream (process.StandardOutput.BaseStream);
+ 			}
+ 		}
++#endif
+ 	}
+ }
+diff -u -r ../../../FSpot/Imaging/ImageFile.cs ./Imaging/ImageFile.cs
+--- ../../../FSpot/Imaging/ImageFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/ImageFile.cs	2008-04-13 14:11:44.000000000 -0400
+@@ -1,6 +1,6 @@
+ using System;
+ using System.IO;
+-using FSpot.Utils;
++using UriUtils = Beagle.Util.UriFu;
+ 
+ namespace FSpot {
+ 	public class ImageFormatException : ApplicationException {
+@@ -30,10 +30,12 @@
+ 			// FIXME, this seems like the sane thing to do, but vfs streams seem to 
+ 			// actually be faster and they need more testing.
+ 			//if (vfs.IsLocal)
+-			//	return File.OpenRead (uri.LocalPath);
++			return File.OpenRead (uri.LocalPath);
+ 
++#if false
+ 			System.Console.WriteLine ("open uri = {0}", uri.ToString ());
+ 			return new Gnome.Vfs.VfsStream (uri.ToString (), FileMode.Open);
++#endif
+ 		}
+ 
+ 		public virtual Stream PixbufStream ()
+@@ -81,6 +83,7 @@
+ 			get { return null; }
+ 		}
+ 		
++#if false
+ 		public virtual void Save (Gdk.Pixbuf pixbuf, System.IO.Stream stream)
+ 		{
+ 			throw new NotImplementedException ();
+@@ -122,21 +125,23 @@
+ 				return aspect.Load (stream, Orientation);
+ 			}	
+ 		}
+-	
++#endif
+ 		public virtual PixbufOrientation GetOrientation () 
+ 		{
+ 			return PixbufOrientation.TopLeft;
+ 		}
+-		
++#if false		
+ 		// FIXME this need to have an intent just like the loading stuff.
+ 		public virtual Cms.Profile GetProfile ()
+ 		{
+ 			return null;
+ 		}
+-		
++#endif	
+ 		public virtual System.DateTime Date 
+ 		{
+ 			get {
++				return System.IO.File.GetCreationTimeUtc (uri.LocalPath);
++#if false
+ 				// FIXME mono uses the file change time (ctime) incorrectly
+ 				// as the creation time so we try to work around that slightly
+ 				Gnome.Vfs.FileInfo info = new Gnome.Vfs.FileInfo (uri.ToString ());
+@@ -148,6 +153,7 @@
+ 					return create;
+ 				else 
+ 					return write;
++#endif
+ 			}
+ 		}
+ 
+diff -u -r ../../../FSpot/Imaging/JpegFile.cs ./Imaging/JpegFile.cs
+--- ../../../FSpot/Imaging/JpegFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/JpegFile.cs	2008-04-13 14:20:17.000000000 -0400
+@@ -10,7 +10,9 @@
+ 
+ namespace FSpot {
+ 	public interface IThumbnailContainer {
++#if false
+ 		Gdk.Pixbuf GetEmbeddedThumbnail ();
++#endif
+ 	}
+ 
+ 	public class JpegFile : ImageFile, IThumbnailContainer, SemWeb.StatementSource {
+@@ -62,11 +64,12 @@
+ 			Header.Select (sink);
+ 		}
+ 
++#if false
+ 		public override Cms.Profile GetProfile ()
+ 		{
+ 			return Header.GetProfile ();
+ 		}
+-
++#endif
+ 		public override string Description {
+ 			get {
+ #if USE_TIFF
+@@ -117,7 +120,7 @@
+ 		private void UpdateMeta ()
+ 		{
+ 			Exif.ExifContent image_content = this.ExifData.GetContents (Exif.Ifd.Zero);
+-			image_content.GetEntry (Exif.Tag.Software).SetData (FSpot.Defines.PACKAGE + " version " + FSpot.Defines.VERSION);
++			image_content.GetEntry (Exif.Tag.Software).SetData ("F-Spot" + " version " + "r3823");
+ 
+ 			// set the write time in the datetime tag
+ 			image_content.GetEntry (Exif.Tag.DateTime).Reset ();
+@@ -138,6 +141,7 @@
+ 			// Console.WriteLine ("saved");
+ 		}
+ 		
++#if false
+ 		public void SaveMetaData (string path)
+ 		{
+ 			UpdateMeta ();
+@@ -183,6 +187,7 @@
+ 			// now update the exif data
+ 			ExifData.Data = thumb_data;
+ 		}
++#endif
+ 
+ 		public void SetDimensions (int width, int height)
+ 		{
+@@ -208,6 +213,7 @@
+ 			image_content.GetEntry (Exif.Tag.PixelYDimension).SetData ((uint)height);
+ 		}
+ 
++#if false
+ 		public override void Save (Gdk.Pixbuf pixbuf, System.IO.Stream stream)
+ 		{
+ 
+@@ -246,7 +252,7 @@
+ 			}
+ 			return null;
+ 		}
+-		
++#endif	
+ 		public Exif.ExifData ExifData {
+ 			get {
+ 				if (exif_data == null) {
+diff -u -r ../../../FSpot/Imaging/JpegHeader.cs ./Imaging/JpegHeader.cs
+--- ../../../FSpot/Imaging/JpegHeader.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/JpegHeader.cs	2008-04-13 14:37:22.000000000 -0400
+@@ -294,6 +294,7 @@
+ 		return FindMarker (new Signature (id, name));
+ 	}
+ 
++#if false
+ 	public Cms.Profile GetProfile ()
+ 	{
+ 		Marker m = FindMarker (IccProfileSignature);
+@@ -311,7 +312,7 @@
+ 		
+ 		return null;
+ 	}
+-	
++#endif
+ 	public FSpot.Tiff.Header GetExifHeader ()
+ 	{
+ 		string name = ExifSignature.Name;
+diff -u -r ../../../FSpot/Imaging/MrwFile.cs ./Imaging/MrwFile.cs
+--- ../../../FSpot/Imaging/MrwFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/MrwFile.cs	2008-04-13 13:53:37.000000000 -0400
+@@ -217,6 +217,7 @@
+ 			return DCRawFile.RawPixbufStream (uri);
+ 		}
+ 		
++#if false
+ 		public override Gdk.Pixbuf Load ()
+ 		{
+ 			using (System.IO.Stream stream = Open ()) {
+@@ -228,7 +229,7 @@
+ 		{
+ 			return PixbufUtils.ScaleToMaxSize (this.Load (), width, height);
+ 		}
+-
++#endif
+ 		protected void LoadBlocks () 
+ 		{
+ 			using (System.IO.Stream file = Open ()) {
+diff -u -r ../../../FSpot/Imaging/PngFile.cs ./Imaging/PngFile.cs
+--- ../../../FSpot/Imaging/PngFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/PngFile.cs	2008-04-13 14:21:09.000000000 -0400
+@@ -1,6 +1,5 @@
+ using ICSharpCode.SharpZipLib.Zip.Compression;
+ using SemWeb;
+-using Cms;
+ using System.IO;
+ using FSpot.Xmp;
+ using System.Collections;
+@@ -428,7 +427,7 @@
+ 				this.Time = System.DateTime.Now;
+ 			}
+ 		}
+-
++#if false
+ 		public class StandardRgbChunk : Chunk {
+ 			public StandardRgbChunk (string name, byte [] data) : base (name, data) {}
+ 			
+@@ -438,7 +437,7 @@
+ 				}
+ 			}
+ 		}
+-
++#endif
+ 		public class GammaChunk : Chunk {
+ 			public GammaChunk (string name, byte [] data) : base (name, data) {}
+ 			private const int divisor = 100000;
+@@ -688,7 +687,9 @@
+ 				name_table ["cHRM"] = typeof (ColorChunk);
+ 				name_table ["pHYs"] = typeof (PhysChunk);
+ 				name_table ["gAMA"] = typeof (GammaChunk);
++#if false
+ 				name_table ["sRGB"] = typeof (StandardRgbChunk);
++#endif
+ 			}
+ 			
+ 			protected Chunk ()
+@@ -850,6 +851,7 @@
+ 			}
+ 		}
+ 
++#if false
+ 		public class ScanlineDecoder {
+ 			int width;
+ 			int height;
+@@ -1166,7 +1168,7 @@
+ 			}
+ 			return pixbuf;
+ 		}
+-
++#endif
+ 		private static byte [] magic = new byte [] { 137, 80, 78, 71, 13, 10, 26, 10 };
+ 
+ 				
+@@ -1271,6 +1273,7 @@
+ 			Header.Save (stream);
+ 		}
+ 
++#if false
+ 		public void Save (string path)
+ 		{
+ 			string  temp_path = path + ".tmp.png";
+@@ -1357,7 +1360,7 @@
+ 			
+ 			return null;
+ 		}
+-
++#endif
+ 		public override string Description {
+ 			get {
+ 				string description = Header.LookupText ("Description");
+diff -u -r ../../../FSpot/Imaging/PnmFile.cs ./Imaging/PnmFile.cs
+--- ../../../FSpot/Imaging/PnmFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/PnmFile.cs	2008-04-13 13:34:17.000000000 -0400
+@@ -1,4 +1,3 @@
+-using FSpot.Imaging;
+ using SemWeb;
+ using System;
+ using System.IO;
+@@ -117,6 +116,7 @@
+ 			return data;
+ 		}
+ 
++#if false
+ 		static Gdk.Pixbuf LoadRGB16 (Stream stream, int width, int height)
+ 		{
+ 			Gdk.Pixbuf pixbuf = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, 8, width, height);
+@@ -280,6 +280,7 @@
+ 				throw new System.Exception (System.String.Format ("unknown pnm type {0}", header.Magic));
+ 			}			
+ 		}
++#endif
+ 	}
+ 
+ #if ENABLE_NUNIT
+diff -u -r ../../../FSpot/Imaging/RafFile.cs ./Imaging/RafFile.cs
+--- ../../../FSpot/Imaging/RafFile.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/RafFile.cs	2008-04-13 13:53:16.000000000 -0400
+@@ -69,6 +69,7 @@
+ 				return DCRawFile.RawPixbufStream (uri);
+ 		}
+  
++#if false
+ 		public override Gdk.Pixbuf Load ()
+ 		{
+ 			return new Gdk.Pixbuf (PixbufStream ());
+@@ -82,7 +83,7 @@
+ 			full.Dispose ();
+ 			return scaled;
+ 		}
+-
++#endif
+ 		public void Select (SemWeb.StatementSink sink)
+ 		{
+ 			byte [] data = GetEmbeddedJpeg ();
+diff -u -r ../../../FSpot/Imaging/Tiff.cs ./Imaging/Tiff.cs
+--- ../../../FSpot/Imaging/Tiff.cs	2008-04-13 13:25:54.000000000 -0400
++++ ./Imaging/Tiff.cs	2008-04-13 13:55:18.000000000 -0400
+@@ -1318,6 +1318,7 @@
+ 			return new DirectoryEntry (input, start, header_endian);
+ 		}
+ 		
++#if false
+ 		public Cms.Profile GetProfile ()
+ 		{
+ 			Cms.ColorCIExyY whitepoint = new Cms.ColorCIExyY (0, 0, 0);
+@@ -1404,6 +1405,7 @@
+ 				
+ 			return new Cms.Profile (whitepoint, primaries, transfer);
+ 		}
++#endif
+ 
+ 		public void Dump (string name) 
+ 		{
+@@ -1581,6 +1583,7 @@
+ 		}
+ 
+ 
++#if false
+ 		public Gdk.Pixbuf LoadPixbuf (System.IO.Stream stream) 
+ 		{
+ 			Gdk.Pixbuf dest = new Gdk.Pixbuf (Gdk.Colorspace.Rgb, false, width, height);
+@@ -1595,6 +1598,7 @@
+ 				}
+ 			}
+ 		}
++#endif
+ 	}
+ #endif
+ 
+@@ -2104,6 +2108,7 @@
+ 			return file;
+ 		}
+ 
++#if false
+ 		public Gdk.Pixbuf LoadJpegInterchangeFormat (ImageDirectory directory)
+ 		{
+ 			uint offset = directory.Lookup (TagId.JPEGInterchangeFormat).ValueAsLong [0];
+@@ -2130,6 +2135,7 @@
+ 				return result; 
+ 			}
+ 		}
++#endif
+ 	}
+ 
+ 	public class DngFile : TiffFile {
+@@ -2260,6 +2266,7 @@
+ 			} while (i < sub.Directory.Length);
+ 		}
+ 
++#if false
+ 		public Gdk.Pixbuf GetEmbeddedThumbnail ()
+ 		{
+ 			using (System.IO.Stream stream = Open ()) {
+@@ -2277,6 +2284,7 @@
+ 				return DCRawFile.RawPixbufStream (uri);
+ 			}
+ 		}
++#endif
+ 	}
+ 		
+ 
+@@ -2296,13 +2304,14 @@
+ 		}
+ 		*/
+ 
++#if false
+ 		public Gdk.Pixbuf GetEmbeddedThumbnail ()
+ 		{
+ 			ImageDirectory directory;
+ 			directory = Header.Directory.NextDirectory;
+ 			return TransformAndDispose (LoadJpegInterchangeFormat (directory));
+ 		}
+-
++#endif
+ 
+ 		public override System.IO.Stream PixbufStream ()
+ 		{
+diff -u -r ../../../FSpot/PixbufUtils.cs ./PixbufUtils.cs
+--- ../../../FSpot/PixbufUtils.cs	2008-04-13 13:45:27.000000000 -0400
++++ ./PixbufUtils.cs	2008-04-13 13:50:20.000000000 -0400
+@@ -1,10 +1,8 @@
+-using Gdk;
+ using System.Collections;
+ using System.Runtime.InteropServices;
+ using System;
+ using System.IO;
+ using FSpot;
+-using FSpot.Utils;
+ 
+ /**
+   1        2       3      4         5            6           7          8
+@@ -57,6 +55,7 @@
+ 		return orientation;
+ 	}
+ 
++#if false
+ 	static Pixbuf error_pixbuf = null;
+ 	public static Pixbuf ErrorPixbuf {
+ 		get {
+@@ -941,4 +940,5 @@
+ 		return gtksharp_object_get_ref_count (obj.Handle);
+ 	}
+ #endif
++#endif
+ }

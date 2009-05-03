@@ -1,0 +1,50 @@
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Extract Iptc header from Jpeg files. There could be (and should be) a better way
+to do this using some Semweb sink.
+
+Index: Imaging/JpegHeader.cs
+===================================================================
+--- Imaging/JpegHeader.cs	(revision 4698)
++++ Imaging/JpegHeader.cs	(working copy)
+@@ -371,6 +371,26 @@
+ 		}
+ 	}
+ 
++	public FSpot.Iptc.IptcFile GetIptc ()
++	{
++		string name = PhotoshopSignature.Name;
++		JpegHeader.Marker marker = FindMarker (PhotoshopSignature);
++		if (marker != null) {
++			int len = name.Length;
++			using (System.IO.Stream bimstream = new System.IO.MemoryStream (marker.Data, len,
++											marker.Data.Length - len, false)) {
++
++				FSpot.Bim.BimFile bim = new FSpot.Bim.BimFile (bimstream);
++				// FIXME: What about EntryType.XMP ?
++				FSpot.Bim.Entry iptc_entry = bim.FindEntry (FSpot.Bim.EntryType.IPTCNAA);
++				System.IO.Stream iptcstream = new System.IO.MemoryStream (iptc_entry.Data);
++				FSpot.Iptc.IptcFile iptc = new FSpot.Iptc.IptcFile (iptcstream);
++				return iptc;
++			}
++		}
++		return null;
++	}
++
+ 	public Exif.ExifData Exif {
+ 		get {
+ 			Marker m = FindMarker (ExifSignature);
+Index: Imaging/IptcFile.cs
+===================================================================
+--- Imaging/IptcFile.cs	(revision 4696)
++++ Imaging/IptcFile.cs	(working copy)
+@@ -346,6 +346,9 @@
+ 	public class IptcFile : SemWeb.StatementSource
+ 	{
+ 		System.Collections.ArrayList sets = new System.Collections.ArrayList ();
++		public System.Collections.ArrayList Sets {
++			get { return sets; }
++		}
+ 
+                 // False seems a safe default
+                 public bool Distinct {
