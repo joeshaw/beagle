@@ -236,7 +236,6 @@ $(UI_UTIL_TARGET): $(UI_UTIL_CSFILES) $(UTIL_TARGET)
 INOTIFY_TEST_CSFILES =				\
 	$(srcdir)/Inotify.cs			\
 	$(srcdir)/Log.cs			\
-	$(srcdir)/Logger.cs			\
 	$(srcdir)/DelayedTextWriter.cs		\
 	$(srcdir)/TeeTextWriter.cs		\
 	$(srcdir)/DirectoryWalker.cs		\
