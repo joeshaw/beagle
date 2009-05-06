@@ -31,4 +31,6 @@ endif
 
 SUBDIRS += \
 	Beagle.Util		\
-	Beagle.Util.Gui
+	Beagle.Util.Gui		\
+	Beagle
+
