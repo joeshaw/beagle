@@ -2,9 +2,10 @@
 ### Welcome to Beagle's configure.in.  We hope you enjoy your stay.
 ###
 
-AC_INIT(src/beagled/BeagleDaemon.cs)
+AC_INIT(beagle, 0.3.9)
+AC_CONFIG_SRCDIR([src/beagled/BeagleDaemon.cs])
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(beagle, 0.3.9)
+AM_INIT_AUTOMAKE([tar-ustar -Wno-portability])
 
 DISTCHECK_CONFIGURE_FLAGS="--disable-epiphany-extension-install --enable-docs"
 AC_SUBST(DISTCHECK_CONFIGURE_FLAGS)
