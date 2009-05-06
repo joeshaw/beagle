@@ -101,6 +101,20 @@ SOURCES = \
 	Hal/VolumeCrypto.cs			\
 	FSpot/BitConverter.cs
 
+# if ENABLE_RDF_ADAPTER:
+# CSFILES += SemWeb/Euler.cs
+# CSFLAGS += -define:DOTNET2
+#
+# if ENABLE_THUNDERBIRD:
+# CSFILES += Thunderbird.cs
+#
+# if ENABLE_AVAHI:
+# CSFILES += AvahiBrowser.cs
+# ASSEMBLIES += $(AVAHI_SHARP_LIBS)
+#
+# if HAS_LIBCHM:
+# CSFILES += ChmFile.cs
+
 include $(top_srcdir)/build/build.mk
 
 SOURCES_BUILD += $(EXTSTR)
