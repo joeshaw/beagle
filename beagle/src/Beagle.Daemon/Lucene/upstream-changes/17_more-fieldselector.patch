@@ -1,0 +1,157 @@
+Index: Search/IndexSearcher.cs
+===================================================================
+--- Search/IndexSearcher.cs	(revision 4576)
++++ Search/IndexSearcher.cs	(working copy)
+@@ -21,6 +21,7 @@
+ using Document = Lucene.Net.Documents.Document;
+ using IndexReader = Lucene.Net.Index.IndexReader;
+ using Term = Lucene.Net.Index.Term;
++using FieldSelector = Lucene.Net.Documents.FieldSelector;
+ 
+ namespace Lucene.Net.Search
+ {
+@@ -126,6 +127,11 @@
+ 			return reader.Document(i);
+ 		}
+ 		
++		public override Document Doc(int i, FieldSelector fieldSelector)
++		{
++			return reader.Document(i, fieldSelector);
++		}
++		
+ 		// inherit javadoc
+ 		public override int MaxDoc()
+ 		{
+@@ -185,4 +191,4 @@
+ 			return weight.Explain(reader, doc);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/Searcher.cs
+===================================================================
+--- Search/Searcher.cs	(revision 4576)
++++ Search/Searcher.cs	(working copy)
+@@ -19,6 +19,7 @@
+ 
+ using Term = Lucene.Net.Index.Term;
+ using Document = Lucene.Net.Documents.Document;
++using FieldSelector = Lucene.Net.Documents.FieldSelector;
+ 
+ namespace Lucene.Net.Search
+ {
+@@ -208,9 +209,10 @@
+ 		abstract public int MaxDoc();
+ 		abstract public TopDocs Search(Weight weight, Filter filter, int n);
+ 		abstract public Document Doc(int i);
++		abstract public Document Doc(int i, FieldSelector fieldSelector);
+ 		abstract public Query Rewrite(Query query);
+ 		abstract public Explanation Explain(Weight weight, int doc);
+ 		abstract public TopFieldDocs Search(Weight weight, Filter filter, int n, Sort sort);
+ 		/* End patch for GCJ bug #15411. */
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/Hits.cs
+===================================================================
+--- Search/Hits.cs	(revision 4576)
++++ Search/Hits.cs	(working copy)
+@@ -18,6 +18,7 @@
+ using System;
+ 
+ using Document = Lucene.Net.Documents.Document;
++using FieldSelector = Lucene.Net.Documents.FieldSelector;
+ 
+ namespace Lucene.Net.Search
+ {
+@@ -90,11 +91,17 @@
+ 			return length;
+ 		}
+ 		
++		public Document Doc(int n)
++		{
++			return Doc(n, null);
++		}
++		
+ 		/// <summary>Returns the stored fields of the n<sup>th</sup> document in this set.
+ 		/// <p>Documents are cached, so that repeated requests for the same element may
+-		/// return the same Document object. 
++		/// return the same Document object. If the fieldselector is changed, then the new
++		/// fields will not be loaded.
+ 		/// </summary>
+-		public Document Doc(int n)
++		public Document Doc(int n, FieldSelector fieldSelector)
+ 		{
+ 			HitDoc hitDoc = HitDoc(n);
+ 			
+@@ -111,12 +118,15 @@
+ 			
+ 			if (hitDoc.doc == null)
+ 			{
+-				hitDoc.doc = searcher.Doc(hitDoc.id); // cache miss: read document
++				if (fieldSelector == null)
++					hitDoc.doc = searcher.Doc(hitDoc.id); // cache miss: read document
++				else
++					hitDoc.doc = searcher.Doc(hitDoc.id, fieldSelector); // cache miss: read document
+ 			}
+ 			
+ 			return hitDoc.doc;
+ 		}
+-		
++
+ 		/// <summary>Returns the score for the nth document in this set. </summary>
+ 		public float Score(int n)
+ 		{
+@@ -222,4 +232,4 @@
+ 			id = i;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Search/MultiSearcher.cs
+===================================================================
+--- Search/MultiSearcher.cs	(revision 4576)
++++ Search/MultiSearcher.cs	(working copy)
+@@ -19,6 +19,7 @@
+ 
+ using Document = Lucene.Net.Documents.Document;
+ using Term = Lucene.Net.Index.Term;
++using FieldSelector = Lucene.Net.Documents.FieldSelector;
+ 
+ namespace Lucene.Net.Search
+ {
+@@ -121,6 +122,11 @@
+ 				throw new System.NotSupportedException();
+ 			}
+ 			
++			public override Document Doc(int i, FieldSelector fieldSelector)
++			{
++				throw new System.NotSupportedException();
++			}
++			
+ 			public override Explanation Explain(Weight weight, int doc)
+ 			{
+ 				throw new System.NotSupportedException();
+@@ -195,7 +201,12 @@
+ 			return searchables[i].Doc(n - starts[i]); // dispatch to searcher
+ 		}
+ 		
++		public override Document Doc(int n, FieldSelector fieldSelector)
++		{
++			throw new System.NotSupportedException();
++		}
+ 		
++		
+ 		/// <summary>Returns index of the searcher for document <code>n</code> in the array
+ 		/// used to construct this searcher. 
+ 		/// </summary>
+@@ -389,4 +400,4 @@
+ 			return rewrittenQuery.Weight(cacheSim);
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

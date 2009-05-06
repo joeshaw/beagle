@@ -1,0 +1,17 @@
+Use a larger value. Actually use the same value as the number of documents flushed to IndexHelper at a time (which is same as the number of documents BuildIndex flushes at a time).
+
+From: Debajyoti Bera <dbera.web@gmail.com>
+
+Index: Index/IndexWriter.cs
+===================================================================
+--- Index/IndexWriter.cs	(revision 4522)
++++ Index/IndexWriter.cs	(working copy)
+@@ -95,7 +95,7 @@
+ 		public const int DEFAULT_MERGE_FACTOR = 10;
+ 		
+ 		/// <summary> Default value is 10. Change using {@link #SetMaxBufferedDocs(int)}.</summary>
+-		public const int DEFAULT_MAX_BUFFERED_DOCS = 10;
++		public const int DEFAULT_MAX_BUFFERED_DOCS = 50;
+ 		
+ 		/// <summary> Default value is 1000. Change using
+ 		/// {@link #SetMaxBufferedDeleteTerms(int)}.

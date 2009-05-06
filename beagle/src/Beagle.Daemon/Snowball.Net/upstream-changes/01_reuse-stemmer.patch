@@ -1,0 +1,38 @@
+Reuse stemmers as much as possible.
+
+From: D Bera <dbera.web@gmail.com>
+
+Index: Lucene.Net/Analysis/Snowball/SnowballFilter.cs
+===================================================================
+--- Lucene.Net/Analysis/Snowball/SnowballFilter.cs	(revision 4503)
++++ Lucene.Net/Analysis/Snowball/SnowballFilter.cs	(working copy)
+@@ -60,7 +60,13 @@
+ 				throw new System.SystemException(e.ToString());
+ 			}
+ 		}
+-		
++
++		public SnowballFilter(TokenStream in_Renamed, SnowballProgram stemmer, System.Reflection.MethodInfo stemMethod) : base(in_Renamed)
++		{
++			this.stemmer = stemmer;
++			this.stemMethod = stemMethod;
++		}
++
+ 		/// <summary>Returns the next input Token, after being stemmed </summary>
+         public override Token Next()
+ 		{
+@@ -81,5 +87,12 @@
+ 			newToken.SetPositionIncrement(token.GetPositionIncrement());
+ 			return newToken;
+ 		}
++
++		public override void Close()
++		{
++			// In case stemmer was shared
++			stemmer.SetCurrent(String.Empty);
++			base.Close();
++		}
+ 	}
+-}
+\ No newline at end of file
++}

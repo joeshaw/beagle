@@ -660,6 +660,7 @@ src/Beagle.Util/Makefile
 src/Beagle.Util.Gui/Makefile
 src/Beagle/Makefile
 src/Beagle.Daemon.Plugins/Makefile
+src/Beagle.Daemon/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile

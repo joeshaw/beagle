@@ -33,6 +33,7 @@ SUBDIRS += \
 	Beagle.Util		\
 	Beagle.Util.Gui		\
 	Beagle			\
-	Beagle.Daemon.Plugins
+	Beagle.Daemon.Plugins	\
+	Beagle.Daemon
 
 

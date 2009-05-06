@@ -1,0 +1,24 @@
+From: Jon Trowbridge <trow@novell.com>
+
+Open the FileStream with FileShare.ReadWrite.
+
+Index: Store/FSDirectory.cs
+===================================================================
+--- Store/FSDirectory.cs	(revision 4506)
++++ Store/FSDirectory.cs	(working copy)
+@@ -494,7 +494,7 @@
+ 					try
+ 					{
+ 						in_Renamed = new System.IO.FileStream(old.FullName, System.IO.FileMode.Open, System.IO.FileAccess.Read);
+-						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create);
++						out_Renamed = new System.IO.FileStream(nu.FullName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.ReadWrite);
+ 						// see if the buffer needs to be initialized. Initialization is
+ 						// only done on-demand since many VM's will never run into the renameTo
+ 						// bug and hence shouldn't waste 1K of mem for no reason.
+@@ -849,4 +849,4 @@
+ 			return file.BaseStream.Length;
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}

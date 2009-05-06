@@ -1,0 +1,281 @@
+Remove a bunch of unnecessary FileInfo allocations which can be done using IO.Path or IO.File methods.
+Also some extra '+' were left from patch#12; remove them.
+
+From: D Bera <dbera.web@gmail.com>
+
+Index: QueryParser/ParseException.cs
+===================================================================
+--- QueryParser/ParseException.cs	(revision 4530)
++++ QueryParser/ParseException.cs	(working copy)
+@@ -161,7 +161,7 @@
+ 		public System.String[] tokenImage;
+ 		
+ 		/// <summary> The end of line string for this machine.</summary>
+-+		protected internal System.String eol = System.Environment.NewLine;
++		protected internal System.String eol = System.Environment.NewLine;
+ 		
+ 		/// <summary> Used to convert raw characters to their escaped version
+ 		/// when these raw version cannot be used as part of an ASCII
+Index: Store/NativeFSLockFactory.cs
+===================================================================
+--- Store/NativeFSLockFactory.cs	(revision 4529)
++++ Store/NativeFSLockFactory.cs	(working copy)
+@@ -196,21 +196,21 @@
+ 				{
+ 					lockName = lockPrefix + "-n-" + lockName;
+ 				}
+-				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
++				string lockFile = System.IO.Path.Combine(lockDir.FullName, lockName);
+ 				bool tmpBool2;
+-				if (System.IO.File.Exists(lockFile.FullName))
++				if (System.IO.File.Exists(lockFile))
+ 					tmpBool2 = true;
+ 				else
+-					tmpBool2 = System.IO.Directory.Exists(lockFile.FullName);
++					tmpBool2 = System.IO.Directory.Exists(lockFile);
+ 				bool tmpBool3;
+-				if (System.IO.File.Exists(lockFile.FullName))
++				if (System.IO.File.Exists(lockFile))
+ 				{
+-					System.IO.File.Delete(lockFile.FullName);
++					System.IO.File.Delete(lockFile);
+ 					tmpBool3 = true;
+ 				}
+-				else if (System.IO.Directory.Exists(lockFile.FullName))
++				else if (System.IO.Directory.Exists(lockFile))
+ 				{
+-					System.IO.Directory.Delete(lockFile.FullName);
++					System.IO.Directory.Delete(lockFile);
+ 					tmpBool3 = true;
+ 				}
+ 				else
+@@ -490,4 +490,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Store/SimpleFSLockFactory.cs
+===================================================================
+--- Store/SimpleFSLockFactory.cs	(revision 4529)
++++ Store/SimpleFSLockFactory.cs	(working copy)
+@@ -117,21 +117,21 @@
+ 				{
+ 					lockName = lockPrefix + "-" + lockName;
+ 				}
+-				System.IO.FileInfo lockFile = new System.IO.FileInfo(System.IO.Path.Combine(lockDir.FullName, lockName));
++				string lockFile = System.IO.Path.Combine(lockDir.FullName, lockName);
+ 				bool tmpBool2;
+-				if (System.IO.File.Exists(lockFile.FullName))
++				if (System.IO.File.Exists(lockFile))
+ 					tmpBool2 = true;
+ 				else
+-					tmpBool2 = System.IO.Directory.Exists(lockFile.FullName);
++					tmpBool2 = System.IO.Directory.Exists(lockFile);
+ 				bool tmpBool3;
+-				if (System.IO.File.Exists(lockFile.FullName))
++				if (System.IO.File.Exists(lockFile))
+ 				{
+-					System.IO.File.Delete(lockFile.FullName);
++					System.IO.File.Delete(lockFile);
+ 					tmpBool3 = true;
+ 				}
+-				else if (System.IO.Directory.Exists(lockFile.FullName))
++				else if (System.IO.Directory.Exists(lockFile))
+ 				{
+-					System.IO.Directory.Delete(lockFile.FullName);
++					System.IO.Directory.Delete(lockFile);
+ 					tmpBool3 = true;
+ 				}
+ 				else
+Index: Store/FSDirectory.cs
+===================================================================
+--- Store/FSDirectory.cs	(revision 4530)
++++ Store/FSDirectory.cs	(working copy)
+@@ -89,7 +89,7 @@
+ 		/// the <code>getDirectory</code> methods that take a
+ 		/// <code>lockFactory</code> (for example, {@link #GetDirectory(String, LockFactory)}).
+ 		/// </deprecated>
+-+		/// REMOVED - D Bera
++		/// REMOVED - D Bera
+ 		
+ 		/// <summary>The default class which implements filesystem-based directories. </summary>
+ 		private static System.Type IMPL;
+@@ -142,8 +142,6 @@
+ 		/// </returns>
+ 		public static FSDirectory GetDirectory(System.IO.FileInfo file, LockFactory lockFactory)
+ 		{
+-			file = new System.IO.FileInfo(file.FullName);
+-			
+ 			bool tmpBool;
+ 			if (System.IO.File.Exists(file.FullName))
+ 				tmpBool = true;
+@@ -263,16 +261,16 @@
+ 					throw new System.IO.IOException("Cannot read directory " + directory.FullName);
+ 				for (int i = 0; i < files.Length; i++)
+ 				{
+-					System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, files[i]));
++					string file = System.IO.Path.Combine(directory.FullName, files[i]);
+ 					bool tmpBool2;
+-					if (System.IO.File.Exists(file.FullName))
++					if (System.IO.File.Exists(file))
+ 					{
+-						System.IO.File.Delete(file.FullName);
++						System.IO.File.Delete(file);
+ 						tmpBool2 = true;
+ 					}
+-					else if (System.IO.Directory.Exists(file.FullName))
++					else if (System.IO.Directory.Exists(file))
+ 					{
+-						System.IO.Directory.Delete(file.FullName);
++						System.IO.Directory.Delete(file);
+ 						tmpBool2 = true;
+ 					}
+ 					else
+@@ -319,7 +317,6 @@
+ 					// default lockDir is our index directory:
+ 					lockFactory = new SimpleFSLockFactory(path);
+ 					doClearLockID = true;
+-					System.String lockClassName = SupportClass.AppSettings.Get("Lucene.Net.Store.FSDirectoryLockFactoryClass", "");
+ 				}
+ 			}
+ 			
+@@ -339,8 +336,7 @@
+             System.String[] files = SupportClass.FileSupport.GetLuceneIndexFiles(directory.FullName, IndexFileNameFilter.GetFilter());
+             for (int i = 0; i < files.Length; i++)
+             {
+-                System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
+-                files[i] = fi.Name;
++		files[i] = System.IO.Path.GetFileName(files[i]);
+             }
+ 			return files;
+ 		}
+@@ -348,34 +344,29 @@
+ 		/// <summary>Returns true iff a file with the given name exists. </summary>
+ 		public override bool FileExists(System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			bool tmpBool;
+-			if (System.IO.File.Exists(file.FullName))
+-				tmpBool = true;
+-			else
+-				tmpBool = System.IO.Directory.Exists(file.FullName);
+-			return tmpBool;
++			string file = System.IO.Path.Combine(directory.FullName, name);
++			return System.IO.File.Exists(file) || System.IO.Directory.Exists(file);
+ 		}
+ 		
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+ 		public override long FileModified(System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return (file.LastWriteTime.Ticks);
++			string file = System.IO.Path.Combine(directory.FullName, name);
++			return (System.IO.File.GetLastWriteTime(file).Ticks);
+ 		}
+ 		
+ 		/// <summary>Returns the time the named file was last modified. </summary>
+ 		public static long FileModified(System.IO.FileInfo directory, System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			return (file.LastWriteTime.Ticks);
++			string file = System.IO.Path.Combine(directory.FullName, name);
++			return (System.IO.File.GetLastWriteTime(file).Ticks);
+ 		}
+ 		
+ 		/// <summary>Set the modified time of an existing file to now. </summary>
+ 		public override void  TouchFile(System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
+-			file.LastWriteTime = System.DateTime.Now;
++			string file = System.IO.Path.Combine(directory.FullName, name);
++			System.IO.File.SetLastWriteTimeUtc(file, System.DateTime.UtcNow);
+ 		}
+ 		
+ 		/// <summary>Returns the length in bytes of a file in the directory. </summary>
+@@ -388,16 +379,16 @@
+ 		/// <summary>Removes an existing file in the directory. </summary>
+ 		public override void  DeleteFile(System.String name)
+ 		{
+-			System.IO.FileInfo file = new System.IO.FileInfo(System.IO.Path.Combine(directory.FullName, name));
++			string file = System.IO.Path.Combine(directory.FullName, name);
+ 			bool tmpBool;
+-			if (System.IO.File.Exists(file.FullName))
++			if (System.IO.File.Exists(file))
+ 			{
+-				System.IO.File.Delete(file.FullName);
++				System.IO.File.Delete(file);
+ 				tmpBool = true;
+ 			}
+-			else if (System.IO.Directory.Exists(file.FullName))
++			else if (System.IO.Directory.Exists(file))
+ 			{
+-				System.IO.Directory.Delete(file.FullName);
++				System.IO.Directory.Delete(file);
+ 				tmpBool = true;
+ 			}
+ 			else
+Index: Index/IndexReader.cs
+===================================================================
+--- Index/IndexReader.cs	(revision 4529)
++++ Index/IndexReader.cs	(working copy)
+@@ -392,7 +392,14 @@
+ 		/// </returns>
+ 		public static bool IndexExists(System.String directory)
+ 		{
+-			return IndexExists(new System.IO.FileInfo(directory));
++            if (System.IO.Directory.Exists(directory))
++            {
++                return SegmentInfos.GetCurrentSegmentGeneration(System.IO.Directory.GetFileSystemEntries(directory)) != - 1;
++            }
++            else
++            {
++                return false;
++            }
+ 		}
+ 		
+ 		/// <summary> Returns <code>true</code> if an index exists at the specified directory.
+@@ -960,9 +967,9 @@
+ 			
+ 			try
+ 			{
+-				System.IO.FileInfo file = new System.IO.FileInfo(filename);
+-				System.String dirname = new System.IO.FileInfo(file.FullName).DirectoryName;
+-				filename = file.Name;
++				string filepath = System.IO.Path.GetFullPath(filename);
++				System.String dirname = System.IO.Path.GetDirectoryName(filepath);
++				filename = System.IO.Path.GetFileName(filepath);
+ 				dir = FSDirectory.GetDirectory(dirname);
+ 				cfr = new CompoundFileReader(dir, filename);
+ 				
+@@ -1024,4 +1031,4 @@
+ 			}
+ 		}
+ 	}
+-}
+\ No newline at end of file
++}
+Index: Index/SegmentInfos.cs
+===================================================================
+--- Index/SegmentInfos.cs	(revision 4530)
++++ Index/SegmentInfos.cs	(working copy)
+@@ -149,7 +149,7 @@
+ 			int prefixLen = IndexFileNames.SEGMENTS.Length + 1;
+ 			for (int i = 0; i < files.Length; i++)
+ 			{
+-				System.String file = (new System.IO.FileInfo(files[i])).Name;
++				System.String file = System.IO.Path.GetFileName(files[i]);
+ 				if (file.StartsWith(IndexFileNames.SEGMENTS) && !file.Equals(IndexFileNames.SEGMENTS_GEN))
+ 				{
+ 					if (file.Equals(IndexFileNames.SEGMENTS))
+@@ -561,8 +561,7 @@
+ 							files = System.IO.Directory.GetFileSystemEntries(fileDirectory.FullName);
+                             for (int i = 0; i < files.Length; i++)
+                             {
+-                                System.IO.FileInfo fi = new System.IO.FileInfo(files[i]);
+-                                files[i] = fi.Name;
++                                files[i] = System.IO.Path.GetFileName (files[i]);
+                             }
+                         }
+ 						
