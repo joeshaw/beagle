@@ -56,6 +56,7 @@ SOURCES = \
 	Beagle.Util/Password.cs			\
 	Beagle.Util/PathFinder.cs		\
 	Beagle.Util/PullingReader.cs		\
+	Beagle.Util/QueryKeywordMapping.cs	\
 	Beagle.Util/ReflectionFu.cs		\
 	Beagle.Util/SafeProcess.cs		\
 	Beagle.Util/Scheduler.cs		\
