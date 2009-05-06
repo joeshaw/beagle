@@ -32,5 +32,7 @@ endif
 SUBDIRS += \
 	Beagle.Util		\
 	Beagle.Util.Gui		\
-	Beagle
+	Beagle			\
+	Beagle.Daemon.Plugins
+
 

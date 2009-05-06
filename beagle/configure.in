@@ -659,6 +659,7 @@ src/RDFAdapter/Makefile
 src/Beagle.Util/Makefile
 src/Beagle.Util.Gui/Makefile
 src/Beagle/Makefile
+src/Beagle.Daemon.Plugins/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
