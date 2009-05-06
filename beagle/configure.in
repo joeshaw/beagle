@@ -657,6 +657,7 @@ src/firefox-extension/Makefile
 src/thunderbird-extension/Makefile
 src/RDFAdapter/Makefile
 src/Beagle.Util/Makefile
+src/Beagle.Util.Gui/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
