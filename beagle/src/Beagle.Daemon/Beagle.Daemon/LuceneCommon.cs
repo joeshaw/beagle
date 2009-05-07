@@ -1280,8 +1280,8 @@ namespace Beagle.Daemon {
 		// Queries
 		//
 
-		static internal LNS.Query StringToQuery (string field_name,
-							string text,
+		static public LNS.Query StringToQuery (string field_name,
+			      				string text,
 							ArrayList term_list)
 		{
 			ArrayList tokens = new ArrayList ();

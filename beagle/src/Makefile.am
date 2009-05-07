@@ -34,6 +34,7 @@ SUBDIRS += \
 	Beagle.Util.Gui		\
 	Beagle			\
 	Beagle.Daemon.Plugins	\
-	Beagle.Daemon
+	Beagle.Daemon		\
+	Beagle.Daemon.Backend.FileSystem
 
 

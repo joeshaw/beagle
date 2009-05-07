@@ -1048,7 +1048,7 @@ namespace Beagle.Daemon {
 
 		//////////////////////////////////////////////////////////////////////////////////
 
-		virtual internal void DebugHook ()
+		virtual public void DebugHook ()
 		{
 		}
 	}
