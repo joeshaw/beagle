@@ -36,6 +36,7 @@ SUBDIRS += \
 	Beagle.Daemon.Plugins			\
 	Beagle.Daemon				\
 	Beagle.Daemon.Backend.FileSystem	\
-	Beagle.Daemon.Backend.Pidgin
+	Beagle.Daemon.Backend.Pidgin		\
+	Beagle.Daemon.Backend.Tomboy
 
 
