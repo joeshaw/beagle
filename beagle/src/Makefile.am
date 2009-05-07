@@ -38,6 +38,7 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.FileSystem	\
 	Beagle.Daemon.Backend.Pidgin		\
 	Beagle.Daemon.Backend.Tomboy		\
-	Beagle.Daemon.Backend.Labyrinth
+	Beagle.Daemon.Backend.Labyrinth		\
+	Beagle.Daemon.Backend.KMail
 
 
