@@ -677,6 +677,7 @@ src/Beagle.Daemon.Backend.KNotes/Makefile
 src/Beagle.Daemon.Backend.KAddressBook/Makefile
 src/Beagle.Daemon.Backend.KOrganizer/Makefile
 src/Beagle.Daemon.Backend.Konversation/Makefile
+src/Beagle.Daemon.Backend.IndexingService/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
