@@ -44,6 +44,7 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.Liferea		\
 	Beagle.Daemon.Backend.Akregator		\
 	Beagle.Daemon.Backend.KonquerorHistory	\
-	Beagle.Daemon.Backend.KonquerorBookmark
+	Beagle.Daemon.Backend.KonquerorBookmark	\
+	Beagle.Daemon.Backend.Kopete
 
 
