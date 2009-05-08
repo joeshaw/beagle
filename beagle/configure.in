@@ -668,6 +668,7 @@ src/Beagle.Daemon.Backend.Labyrinth/Makefile
 src/Beagle.Daemon.Backend.KMail/Makefile
 src/Beagle.Daemon.Backend.Blam/Makefile
 src/Beagle.Daemon.Backend.Liferea/Makefile
+src/Beagle.Daemon.Backend.Akregator/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
