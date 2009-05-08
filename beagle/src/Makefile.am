@@ -53,6 +53,8 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.Konversation	\
 	Beagle.Daemon.Backend.IndexingService	\
 	Beagle.Daemon.Backend.Opera		\
-	Beagle.Daemon.Backend.NautilusMetadata
+	Beagle.Daemon.Backend.NautilusMetadata	\
+	Beagle.Daemon.Backend.NetworkServices
+
 
 

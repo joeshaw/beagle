@@ -680,6 +680,7 @@ src/Beagle.Daemon.Backend.Konversation/Makefile
 src/Beagle.Daemon.Backend.IndexingService/Makefile
 src/Beagle.Daemon.Backend.Opera/Makefile
 src/Beagle.Daemon.Backend.NautilusMetadata/Makefile
+src/Beagle.Daemon.Backend.NetworkServices/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
