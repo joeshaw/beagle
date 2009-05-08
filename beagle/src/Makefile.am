@@ -46,6 +46,7 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.KonquerorHistory	\
 	Beagle.Daemon.Backend.KonquerorBookmark	\
 	Beagle.Daemon.Backend.Kopete		\
-	Beagle.Daemon.Backend.Empathy
+	Beagle.Daemon.Backend.Empathy		\
+	Beagle.Daemon.Backend.KNotes
 
 
