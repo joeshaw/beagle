@@ -670,6 +670,7 @@ src/Beagle.Daemon.Backend.Blam/Makefile
 src/Beagle.Daemon.Backend.Liferea/Makefile
 src/Beagle.Daemon.Backend.Akregator/Makefile
 src/Beagle.Daemon.Backend.KonquerorHistory/Makefile
+src/Beagle.Daemon.Backend.KonquerorBookmark/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
