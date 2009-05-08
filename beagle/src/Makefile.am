@@ -49,6 +49,7 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.Empathy		\
 	Beagle.Daemon.Backend.KNotes		\
 	Beagle.Daemon.Backend.KAddressBook	\
-	Beagle.Daemon.Backend.KOrganizer
+	Beagle.Daemon.Backend.KOrganizer	\
+	Beagle.Daemon.Backend.Konversation
 
 
