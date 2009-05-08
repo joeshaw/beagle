@@ -51,6 +51,7 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.KAddressBook	\
 	Beagle.Daemon.Backend.KOrganizer	\
 	Beagle.Daemon.Backend.Konversation	\
-	Beagle.Daemon.Backend.IndexingService
+	Beagle.Daemon.Backend.IndexingService	\
+	Beagle.Daemon.Backend.Opera
 
 
