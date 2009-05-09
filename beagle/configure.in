@@ -684,6 +684,7 @@ src/Beagle.Daemon.Backend.NetworkServices/Makefile
 src/Beagle.Daemon.Backend.Locate/Makefile
 src/Beagle.Daemon.Backend.EvolutionMail/Makefile
 src/Beagle.Daemon.Backend.EvolutionDataServer/Makefile
+src/Beagle.Daemon.Backend.Thunderbird/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile

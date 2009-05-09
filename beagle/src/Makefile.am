@@ -57,7 +57,8 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.NetworkServices		\
 	Beagle.Daemon.Backend.Locate			\
 	Beagle.Daemon.Backend.EvolutionMail		\
-	Beagle.Daemon.Backend.EvolutionDataServer
+	Beagle.Daemon.Backend.EvolutionDataServer	\
+	Beagle.Daemon.Backend.Thunderbird
 
 
 
