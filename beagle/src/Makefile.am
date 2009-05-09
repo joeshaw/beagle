@@ -55,7 +55,8 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.Opera		\
 	Beagle.Daemon.Backend.NautilusMetadata	\
 	Beagle.Daemon.Backend.NetworkServices	\
-	Beagle.Daemon.Backend.Locate
+	Beagle.Daemon.Backend.Locate		\
+	Beagle.Daemon.Backend.EvolutionMail
 
 
 
