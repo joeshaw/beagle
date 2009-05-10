@@ -1,0 +1,7 @@
+using System.Reflection;
+using System.Runtime.CompilerServices;
+
+[assembly: AssemblyVersion("@VERSION@")]
+[assembly: AssemblyTitle ("xemail-net")]
+[assembly: AssemblyDescription ("xemail-net - Imap Library")]
+[assembly: AssemblyCopyright ("Copyright (c) 2005-2006 Cyrille Colin")]

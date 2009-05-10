@@ -1,0 +1,37 @@
+Please consider this library are unstable so do not install it in the GAC,
+
+Warning : there's many changes in version 0.2 :
+Namespace change to System.Net.Imap
+Many classes change.
+
+Unix 
+--------
+to build and install :
+sh autogen.sh
+make
+and as root:
+make install
+
+to use it in a project : `pkg-config --libs xemail-net`
+
+Windows
+----------
+i wrote a build.bat but it's never been tested !
+Let me know if it works.
+I also add a MONO define FLAG to prevent MONO Requirement but this disble SSL support.
+
+
+To consult documentation :
+monodoc --edit doc
+
+all feedbacks are welcome :)
+
+
+Note : 
+
+for Ssl connection : all are accepted.
+
+License
+------------
+Licensed under LGPL.
+For details see http://sourceforge.net/projects/xemail-net
