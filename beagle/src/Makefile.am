@@ -60,7 +60,8 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.EvolutionDataServer	\
 	Beagle.Daemon.Backend.Thunderbird		\
 	Beagle.Daemon.Backend.Gmail			\
-	Beagle.Daemon.Core
+	Beagle.Daemon.Core				\
+	Beagle.Daemon.IndexHelper
 
 
 
