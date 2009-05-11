@@ -291,7 +291,13 @@ namespace Beagle.Util {
 								Names.DaemonConfig,
 								Names.NetworkingConfig}) {
 				string filename = (name + ".xml");
-				string global_file = Path.Combine (GlobalConfigDir, filename);
+				string global_file;
+				try {
+					global_file = Path.Combine (GlobalConfigDir, filename);
+				} catch {
+					return false;
+				}
+
 				if (! File.Exists (global_file))
 					return false;
 			}
