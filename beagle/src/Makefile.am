@@ -61,7 +61,8 @@ SUBDIRS += \
 	Beagle.Daemon.Backend.Thunderbird		\
 	Beagle.Daemon.Backend.Gmail			\
 	Beagle.Daemon.Core				\
-	Beagle.Daemon.IndexHelper
+	Beagle.Daemon.IndexHelper			\
+	Beagle.Tools.ExtractContent
 
 
 

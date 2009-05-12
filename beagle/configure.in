@@ -688,6 +688,7 @@ src/Beagle.Daemon.Backend.Thunderbird/Makefile
 src/Beagle.Daemon.Backend.Gmail/Makefile
 src/Beagle.Daemon.Core/Makefile
 src/Beagle.Daemon.IndexHelper/Makefile
+src/Beagle.Tools.ExtractContent/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile
