@@ -63,7 +63,8 @@ SUBDIRS += \
 	Beagle.Daemon.Core				\
 	Beagle.Daemon.IndexHelper			\
 	Beagle.Tools.ExtractContent			\
-	Beagle.Tools.DumpIndex
+	Beagle.Tools.DumpIndex				\
+	Beagle.Tools.MasterDelete
 
 
 
