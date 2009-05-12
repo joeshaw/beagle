@@ -693,6 +693,7 @@ src/Beagle.Tools.DumpIndex/Makefile
 src/Beagle.Tools.MasterDelete/Makefile
 src/Beagle.Tools.BuildIndex/Makefile
 src/Beagle.Tools.ManageIndex/Makefile
+src/Beagle.Tools.RemovableIndex/Makefile
 doc/Makefile
 doc/api/Makefile
 conf-data/Makefile

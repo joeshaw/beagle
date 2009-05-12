@@ -66,7 +66,8 @@ SUBDIRS += \
 	Beagle.Tools.DumpIndex				\
 	Beagle.Tools.MasterDelete			\
 	Beagle.Tools.BuildIndex				\
-	Beagle.Tools.ManageIndex
+	Beagle.Tools.ManageIndex			\
+	Beagle.Tools.RemovableIndex
 
 
 
