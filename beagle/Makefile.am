@@ -61,3 +61,19 @@ DISTCLEANFILES = 		\
 	intltool-merge		\
 	intltool-update		\
 	$(pkgconfig_DATA)
+
+MAINTAINERCLEANFILES =		\
+	aclocal.m4 		\
+	config.guess 		\
+	config.h.in 		\
+	config.sub 		\
+	configure		\
+	depcomp 		\
+	install-sh 		\
+	intltool-extract.in	\
+	intltool-merge.in	\
+	intltool-update.in	\
+	ltmain.sh 		\
+	missing 		\
+	mkinstalldirs		\
+	`find "$(srcdir)" -type f -name Makefile.in -print`
