@@ -4,4 +4,8 @@ EXTRA_DIST =		\
 	ISSUES
 
 MAINTAINERCLEANFILES =	\
-	Makefile.in
+	aclocal.m4	\
+	configure	\
+	install-sh	\
+	missing		\
+	`find "$(srcdir)" -type f -name Makefile.in -print`
