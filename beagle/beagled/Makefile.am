@@ -961,3 +961,5 @@ CLEANFILES = \
 	$(GOOGLE_BACKEND_TARGET)		\
 	$(GOOGLE_BACKEND_TARGET).mdb		\
 	$(WEBINTERFACE_INDEX_XML)
+
+-include $(top_srcdir)/git.mk

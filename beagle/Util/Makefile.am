@@ -296,3 +296,5 @@ CLEANFILES =			\
 	Inotify.exe		\
 	Inotify.exe.mdb
 
+
+-include $(top_srcdir)/git.mk

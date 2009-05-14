@@ -101,3 +101,5 @@ CLEANFILES = 				\
 	$(RDF_QUERY_TOOL_TARGET_MDB)	\
 	$(RDF_QUERY_TOOL_WRAPPER)	\
 	$(WRAPPERS)
+
+-include $(top_srcdir)/git.mk

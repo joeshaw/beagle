@@ -40,3 +40,5 @@ install-data-local: install-icons
 
 uninstall-local: uninstall-icons
 
+
+-include $(top_srcdir)/git.mk

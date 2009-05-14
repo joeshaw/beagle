@@ -56,3 +56,5 @@ dist-hook:
 		cp $(srcdir)/BeagleClient/$$i/*.xml $(distdir)/BeagleClient/$$i;	\
 	done
 
+
+-include $(top_srcdir)/git.mk

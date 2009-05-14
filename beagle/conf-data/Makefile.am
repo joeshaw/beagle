@@ -32,3 +32,5 @@ EXTRA_DIST =				\
 	$(CRAWL_RULES)			\
 	$(GLOBAL_CONFIG_FILES)		\
 	$(conf_DATA)
+
+-include $(top_srcdir)/git.mk

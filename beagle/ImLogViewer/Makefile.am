@@ -64,3 +64,5 @@ CLEANFILES =		\
 	$(TARGET).mdb	\
 	$(WRAPPER)	\
 	ImLogViewer.glade.h
+
+-include $(top_srcdir)/git.mk

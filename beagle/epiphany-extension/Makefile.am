@@ -23,3 +23,5 @@ endif
 EXTRA_DIST = $(extension_in_files) beagle.py.in
 
 CLEANFILES = $(extension_DATA)
+
+-include $(top_srcdir)/git.mk

@@ -160,3 +160,5 @@ CLEANFILES =			\
 	beagle-search		\
 	$(desktop_DATA)		\
 	$(desktop_h_files)
+
+-include $(top_srcdir)/git.mk

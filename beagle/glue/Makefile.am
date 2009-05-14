@@ -119,3 +119,5 @@ EXTRA_DIST =			\
 	search-entry-watermark.svg
 
 
+
+-include $(top_srcdir)/git.mk

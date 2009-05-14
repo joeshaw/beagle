@@ -52,3 +52,5 @@ EXTRA_DIST =					\
 CLEANFILES =					\
 	chrome/$(PROJECT).jar			\
 	$(PROJECT).xpi				
+
+-include $(top_srcdir)/git.mk

@@ -60,3 +60,5 @@ EXTRA_DIST =		\
 CLEANFILES =		\
 	$(TARGET)	\
 	$(TARGET).mdb
+
+-include $(top_srcdir)/git.mk

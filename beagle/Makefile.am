@@ -77,3 +77,5 @@ MAINTAINERCLEANFILES =		\
 	missing 		\
 	mkinstalldirs		\
 	`find "$(srcdir)" -type f -name Makefile.in -print`
+
+-include $(top_srcdir)/git.mk

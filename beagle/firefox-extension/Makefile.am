@@ -73,3 +73,5 @@ EXTRA_DIST =			\
 CLEANFILES =			\
 	$(PROJECT).xpi		\
 	$(INSTALL_RDF)
+
+-include $(top_srcdir)/git.mk

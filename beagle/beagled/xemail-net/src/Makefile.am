@@ -14,3 +14,5 @@ xemail_build_sources = $(addprefix $(srcdir)/, $(xemail_sources))
 
 xemail-net.dll: $(xemail_build_sources)
 	$(MCS) -target:library -out:$@ -d:MONO $(xemail_build_sources) $(DEPENDENCIES_LIBS)
+
+-include $(top_srcdir)/git.mk
