@@ -117,3 +117,5 @@ test_client_SOURCES = test-client.c
 test_client_LDADD = libbeagle.la
 
 
+
+-include $(top_srcdir)/git.mk

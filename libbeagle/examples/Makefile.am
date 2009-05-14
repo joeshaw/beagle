@@ -16,3 +16,5 @@ beagle_shutdown_SOURCES 	= beagle-shutdown.c
 beagle_info_SOURCES		= beagle-info.c
 beagle_external_indexer_SOURCES	= beagle-external-indexer.c
 
+
+-include $(top_srcdir)/git.mk

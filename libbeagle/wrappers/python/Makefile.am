@@ -42,3 +42,5 @@ beagle.c: beagle.defs beagle.override
 	&& cp gen-$*.c $*.c \
 	&& rm -f gen-$*.c
 
+
+-include $(top_srcdir)/git.mk
