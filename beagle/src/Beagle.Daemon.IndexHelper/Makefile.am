@@ -6,4 +6,6 @@ SOURCES = \
 	Beagle.Daemon.IndexHelper/IndexHelper.cs		\
 	Beagle.Daemon.IndexHelper/RemoteIndexerExecutor.cs
 
+WRAPPER = beagled-index-helper
+
 include $(top_srcdir)/build/build.mk

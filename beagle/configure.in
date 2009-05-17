@@ -703,6 +703,7 @@ src/Beagle.Daemon.Backend.Gmail/Makefile
 src/Beagle.Daemon.Core/Makefile
 src/Beagle.Daemon.Core/beagled
 src/Beagle.Daemon.IndexHelper/Makefile
+src/Beagle.Daemon.IndexHelper/beagled-index-helper
 src/Beagle.Tools.ExtractContent/Makefile
 src/Beagle.Tools.DumpIndex/Makefile
 src/Beagle.Tools.MasterDelete/Makefile
