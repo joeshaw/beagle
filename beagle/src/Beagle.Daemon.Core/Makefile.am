@@ -8,3 +8,6 @@ SOURCES = \
 	Beagle.Daemon.Core/RemoteIndexer.cs
 
 include $(top_srcdir)/build/build.mk
+
+EXTRA_BUNDLE = beagled
+bin_SCRIPTS = beagled
