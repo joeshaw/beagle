@@ -180,7 +180,7 @@ _beagle_connect_timeout (const char *path, GError **err)
 	long mode;
 	fd_set select_set;
 	struct timeval tv;
-	struct sockaddr_un sun;
+	struct sockaddr_un saddr_un;
 
 	sockfd = socket (AF_UNIX, SOCK_STREAM, 0);
 	if (sockfd < 0) {
@@ -204,9 +204,9 @@ _beagle_connect_timeout (const char *path, GError **err)
 		return -1;
 	}
 
-	bzero (&sun, sizeof (sun));
-	sun.sun_family = AF_UNIX;
-	snprintf (sun.sun_path, sizeof (sun.sun_path), path);
+	bzero (&saddr_un, sizeof (saddr_un));
+	saddr_un.sun_family = AF_UNIX;
+	strncpy (saddr_un.sun_path, path, sizeof (saddr_un.sun_path));
 
 	/* We retry on EGAIN or EINTR: since both of these mean the socket is active,
 	 * there is no harm in trying to retry a lot of times. A blocking socket would
@@ -217,7 +217,7 @@ _beagle_connect_timeout (const char *path, GError **err)
 #define MAX_RETRIES 10 /* 10 * 200 msec ~> 2 sec */
 
 	for (retries = 0; retries < MAX_RETRIES; ++ retries) {
-		if (connect (sockfd, (struct sockaddr *) &sun, sizeof (sun)) >= 0)
+		if (connect (sockfd, (struct sockaddr *) &saddr_un, sizeof (saddr_un)) >= 0)
 			break;
 
 		/* Else, connection un-successful */
