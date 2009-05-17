@@ -113,13 +113,6 @@ start_scheduler_information (BeagleParserContext *ctx, const char **attrs)
 }
 
 static void
-end_scheduler_information (BeagleParserContext *ctx)
-{
-	BeagleDaemonInformationResponse *response = BEAGLE_DAEMON_INFORMATION_RESPONSE (_beagle_parser_context_get_response (ctx));
-	BeagleDaemonInformationResponsePrivate *priv = BEAGLE_DAEMON_INFORMATION_RESPONSE_GET_PRIVATE (response);
-}
-
-static void
 end_pending_task (BeagleParserContext *ctx)
 {
 	BeagleDaemonInformationResponse *response = BEAGLE_DAEMON_INFORMATION_RESPONSE (_beagle_parser_context_get_response (ctx));

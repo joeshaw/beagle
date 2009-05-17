@@ -293,7 +293,6 @@ request_connect (BeagleRequest *request, const char *path, GError **err)
 {
 	BeagleRequestPrivate *priv;
 	int sockfd;
-	struct sockaddr_un sun;
 
 	priv = BEAGLE_REQUEST_GET_PRIVATE (request);
 

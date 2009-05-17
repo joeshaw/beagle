@@ -267,9 +267,6 @@ void _task_to_xml (GSList *task_list, const char *list_name, const char *list_it
 void
 _beagle_scheduler_information_to_xml (BeagleSchedulerInformation *sched_info, GString *data)
 {
-	char *tmp, *task;
-	GSList *iter;
-
 	g_string_append_printf (data, "<SchedulerInformation");
 
 	g_string_append_printf (data, " TotalTaskCount=\"%d\"", sched_info->total_task_count);

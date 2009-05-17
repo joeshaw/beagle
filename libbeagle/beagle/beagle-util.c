@@ -35,6 +35,7 @@
 #include <sys/un.h>
 
 #include "beagle-util.h"
+#include "beagle-private.h"
 
 GQuark
 beagle_error_quark (void)
@@ -155,7 +156,6 @@ beagle_util_daemon_is_running (void)
 {
 	gchar *socket_path;
 	int sockfd;
-	struct sockaddr_un sun;
 
 	socket_path = beagle_util_get_socket_path (NULL);
 
