@@ -13,6 +13,8 @@ RESOURCES_BUILD = $(foreach resource, $(RESOURCES_EXPANDED), \
 ASSEMBLY_EXTENSION = $(strip $(patsubst library, dll, $(TARGET)))
 ASSEMBLY_FILE = $(top_builddir)/bin/$(ASSEMBLY).$(ASSEMBLY_EXTENSION)
 
+WRAPPER_FILE = $(addprefix $(top_builddir)/bin/, $(WRAPPER))
+
 INSTALL_DIR_RESOLVED = $(firstword $(subst , $(DEFAULT_INSTALL_DIR), $(INSTALL_DIR)))
 
 if ENABLE_TESTS
@@ -25,12 +27,14 @@ DEP_LINK = $(shell echo "$(LINK)" | $(UNIQUE_FILTER_PIPE) | sed s,-r:,,g | grep 
 
 OUTPUT_FILES = \
 	$(ASSEMBLY_FILE) \
-	$(ASSEMBLY_FILE).mdb
+	$(ASSEMBLY_FILE).mdb \
+	$(WRAPPER_FILE)
 
 moduledir = $(INSTALL_DIR_RESOLVED)
-module_SCRIPTS = $(OUTPUT_FILES)
+module_SCRIPTS = $(ASSEMBLY_FILE) $(ASSEMBLY_FILE).mdb
+bin_SCRIPTS = $(WRAPPER_FILE)
 
-all: $(ASSEMBLY_FILE)
+all: $(ASSEMBLY_FILE) $(WRAPPER_FILE)
 
 run: 
 	@pushd $(top_builddir); \
@@ -68,7 +72,23 @@ $(ASSEMBLY_FILE): $(SOURCES_BUILD) $(RESOURCES_EXPANDED) $(DEP_LINK)
 		cp $(EXTRA_BUNDLE) $(top_builddir)/bin; \
 	fi;
 
-EXTRA_DIST = $(SOURCES_BUILD) $(RESOURCES_EXPANDED)
+$(WRAPPER_FILE): $(WRAPPER)
+	@mkdir -p $(top_builddir)/bin
+	@colors=no; \
+	case $$TERM in \
+		"xterm" | "rxvt" | "rxvt-unicode") \
+			test "x$$COLORTERM" != "x" && colors=yes ;; \
+		"xterm-color") colors=yes ;; \
+	esac; \
+	if [ "x$$colors" = "xyes" ]; then \
+		tty -s && true || { colors=no; true; } \
+	fi; \
+	test "x$$colors" = "xyes" && \
+		echo -e "\033[1mCopying $(notdir $@)...\033[0m" || \
+		echo "Copying $(notdir $@)...";
+	@$(INSTALL) -m 755 $(srcdir)/$(WRAPPER) $(top_builddir)/bin
+
+EXTRA_DIST = $(SOURCES_BUILD) $(RESOURCES_EXPANDED) $(WRAPPER)
 
 CLEANFILES = $(OUTPUT_FILES)
 DISTCLEANFILES = *.pidb

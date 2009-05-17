@@ -297,6 +297,7 @@ namespace Beagle.Daemon {
 
 				case "--mdb":
 				case "--mono-debug":
+				case "--uninstalled":
 					// Silently ignore these arguments: they get handled
 					// in the wrapper script.
 					break;

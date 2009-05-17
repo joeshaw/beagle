@@ -1,29 +1,48 @@
 #!@BASH@
 
-# This line will be automatically uncommented when you "make install"
-#installed=1
+installed=1
+monogrind=0
+heap_buddy=0
+heap_shot=0
+mono_debug=0
+mdb=0
 
-if [ -z $installed ] ; then
+BEAGLED_ARGS="$*"
+for i in $BEAGLED_ARGS; do
+    case "$i" in
+    --help | --list-backends | --fg | --foreground | --version ) fg_user=1 ;;
+    --bg | --background ) fg_user=0 ;;
+    --monogrind ) monogrind=1 ;;
+    --heap-buddy ) heap_buddy=1 ;;
+    --heap-shot ) heap_shot=1 ;;
+    --mdb ) mdb=1 ;;
+    --mono-debug ) mono_debug=1 ;;
+    --uninstalled ) installed=0 ;;
+    esac
+done
+
+if [ $installed -eq 0 ] ; then
     echo "*** Running uninstalled Beagle.Daemon.Core.exe ***"
+
+    bindir=@top_builddir@/bin
 
     # When we run uninstalled, run in the foreground by default.
     fg_default=1
 
-    TARGET_EXE="./Beagle.Daemon.Core.exe"
+    TARGET_EXE="$bindir/Beagle.Daemon.Core.exe"
 
     export _BEAGLED_INDEX_HELPER_PATH="."
-
-    export LD_LIBRARY_PATH="../src/glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    export LD_LIBRARY_PATH="@top_srcdir@/src/glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
     
-    export BEAGLE_FILTER_PATH=".${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
-    export BEAGLE_BACKEND_PATH=".${BEAGLE_BACKEND_PATH+:$BEAGLE_BACKEND_PATH}"
+    export BEAGLE_FILTER_PATH="$bindir${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
+    export BEAGLE_BACKEND_PATH="$bindir${BEAGLE_BACKEND_PATH+:$BEAGLE_BACKEND_PATH}"
 
     if [ -z $BEAGLE_WEBSERVER_DIR ] ; then
 	    export BEAGLE_WEBSERVER_DIR="./webinterface"
     fi
 
     if [ -z $BEAGLE_CONF_DIR ]; then
-	    export BEAGLE_CONF_DIR="../conf-data"
+	    export BEAGLE_CONF_DIR="@top_srcdir@/conf-data"
     fi
 
 else
@@ -34,33 +53,14 @@ else
     TARGET_EXE="@expanded_libdir@/@PACKAGE@/Beagle.Daemon.Core.exe"
 
     export _BEAGLED_INDEX_HELPER_PATH="@expanded_libdir@/@PACKAGE@"
-    export MONO_PATH="@expanded_libdir@/@PACKAGE@${MONO_PATH+:$MONO_PATH}"
     export LD_LIBRARY_PATH="@expanded_libdir@/@PACKAGE@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    export MONO_PATH="@expanded_libdir@/@PACKAGE@${MONO_PATH+:$MONO_PATH}"
 fi
 
 EVO_LIBDIR="@EVO_LIBDIR@"
 if [ -n "$EVO_LIBDIR" ]; then
     export LD_LIBRARY_PATH="$EVO_LIBDIR${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
 fi
-
-monogrind=0
-heap_buddy=0
-heap_shot=0
-mono_debug=0
-mdb=0
-
-BEAGLED_ARGS="$*"
-for i in $BEAGLED_ARGS; do
-    case "$i" in
-    --help | --list-backends | --fg | --foreground | --version) fg_user=1 ;;
-    --bg | --background ) fg_user=0 ;;
-    --monogrind ) monogrind=1 ;;
-    --heap-buddy ) heap_buddy=1 ;;
-    --heap-shot ) heap_shot=1 ;;
-    --mdb ) mdb=1 ;;
-    --mono-debug ) mono_debug=1 ;;
-    esac
-done
 
 # If the user didn't specify to run in fg/bg, then use the default
 if [ -z "$fg_user" ]; then

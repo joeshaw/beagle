@@ -7,7 +7,8 @@ SOURCES = \
 	Beagle.Daemon.Core/BeagleDaemon.cs	\
 	Beagle.Daemon.Core/RemoteIndexer.cs
 
+WRAPPER = beagled
+#bin_SCRIPTS = beagled
+
 include $(top_srcdir)/build/build.mk
 
-EXTRA_BUNDLE = beagled
-bin_SCRIPTS = beagled
