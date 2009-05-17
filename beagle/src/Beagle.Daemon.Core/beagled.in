@@ -31,7 +31,7 @@ if [ $installed -eq 0 ] ; then
 
     TARGET_EXE="$bindir/Beagle.Daemon.Core.exe"
 
-    export _BEAGLED_INDEX_HELPER_PATH="."
+    export _BEAGLED_INDEX_HELPER_PATH="$bindir"
     export LD_LIBRARY_PATH="@top_srcdir@/src/glue/.libs${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
     
     export BEAGLE_FILTER_PATH="$bindir${BEAGLE_FILTER_PATH+:$BEAGLE_FILTER_PATH}"
