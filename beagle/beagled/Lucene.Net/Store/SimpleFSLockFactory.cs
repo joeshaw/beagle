@@ -196,7 +196,8 @@ namespace Lucene.Net.Store
 				Mono.Unix.Native.OpenFlags.O_RDWR | 
 				Mono.Unix.Native.OpenFlags.O_CREAT |
 				Mono.Unix.Native.OpenFlags.O_EXCL,
-				Mono.Unix.Native.FilePermissions.S_IRUSR);
+				Mono.Unix.Native.FilePermissions.S_IRUSR |
+				Mono.Unix.Native.FilePermissions.S_IWUSR);
 		    if (fd == -1) {
 			    Mono.Unix.Native.Errno error = Mono.Unix.Native.Stdlib.GetLastError ();
 			    if (error == Mono.Unix.Native.Errno.ENOSPC)
