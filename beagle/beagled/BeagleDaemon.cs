@@ -452,11 +452,7 @@ namespace Beagle.Daemon {
 
 			MainLoopThread = Thread.CurrentThread;
 
-			// FIXME: We always turn on full debugging output!  We are still
-			// debugging this code, after all...
-			// arg_debug ? LogLevel.Debug : LogLevel.Warn
-			
-			Log.Initialize (PathFinder.LogDir, "Beagle", LogLevel.Debug, arg_fg);
+			Log.Initialize (PathFinder.LogDir, "Beagle", arg_debug ? LogLevel.Debug : LogLevel.Warn, arg_fg);
 			Log.Always ("Starting Beagle Daemon (version {0})", ExternalStringsHack.Version);
 			Log.Always ("Running on {0}", SystemInformation.MonoRuntimeVersion);
 			Log.Always ("Command Line: {0}",
