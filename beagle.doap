@@ -12,13 +12,14 @@
   <maintainer>
     <foaf:Person>
       <foaf:name>D Bera</foaf:name>
+      <foaf:mbox rdf:resource="mailto:dbera.web@gmail.com" />
       <gnome:userid>dbera</gnome:userid>
     </foaf:Person>
   </maintainer>
   <maintainer>
     <foaf:Person>
       <foaf:name>Joe Shaw</foaf:name>
-      <foaf:mbox rdf:resource="joe@joeshaw.org" />
+      <foaf:mbox rdf:resource="mailto:joe@joeshaw.org" />
       <gnome:userid>joeshaw</gnome:userid>
     </foaf:Person>
   </maintainer>
