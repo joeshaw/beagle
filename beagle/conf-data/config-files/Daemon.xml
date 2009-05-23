@@ -11,6 +11,9 @@
 	<Value>GMailSearch</Value>
 	<!-- Directly use locate; needed for exceptional uses only -->
 	<Value>Locate</Value>
+	<!-- Deprecated - backends are only for ancient versions -->
+	<Value>Akregator</Value>
+	<Value>Liferea</Value>
     </ListOption>
     <BoolOption Name="AllowStaticBackend" Description="Search static indexes">true</BoolOption>
     <BoolOption Name="IndexSynchronization" Description="Synchronize indexes locally if home directory is on a network device (eg. NFS/Samba)">true</BoolOption>
