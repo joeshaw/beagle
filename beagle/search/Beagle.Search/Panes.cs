@@ -92,6 +92,10 @@ namespace Beagle.Search {
 				Gtk.Widget focusChild = mainChild.FocusChild;
 				mainChild.FocusChild = null;
 				mainChild.FocusChild = focusChild;
+
+				GroupView gv = mainChild as GroupView;
+				if (gv != null)
+					gv.AdjustCategories (args.Allocation.Height);
 			}
 		}
 

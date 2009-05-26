@@ -25,6 +25,9 @@ namespace Beagle.Search {
 		private Gtk.SizeGroup tileSizeGroup;
 		private Gtk.Widget selection;
 
+		private int[] maxHeight;
+		private int[] displayHeight;
+
 		public event CategoryToggledDelegate CategoryToggled;
 		public event TileHandler TileSelected;
 
@@ -47,8 +50,68 @@ namespace Beagle.Search {
 
 				categories [info.Group] = box;
 			}
+
+			maxHeight = new int[Children.Length];
+			displayHeight = new int[Children.Length];
 		}
 		
+        public void AdjustCategories (int height)
+        {
+			Category last = null;
+			int visible = 0, totalHeight = height, childLen = Children.Length;
+			ulong mask = ~0UL;
+
+			for (int i = 0; i < childLen; i++) {
+				displayHeight[i] = maxHeight[i] = 0;
+				Category c = (Category) Children[i];
+				if (!c.Expanded || c.Count == 0) {
+					mask ^= 1UL << i;
+					continue;
+				}
+                
+				last = c;
+				visible++;
+				maxHeight[i] = c.GetPotentialDisplayHeight ();
+			}
+
+			if (visible == 0) {
+				return;
+			} else if (visible == 1) {
+				last.SetMaxDisplayHeight (height);
+				return;
+			}
+
+			// Split the available height among the visible categories
+			for (int active = visible; active > 0 && totalHeight > active;) {
+				int avg_height = totalHeight / active;
+
+				for (int i = 0; i < childLen; i++) {
+					if ((mask & 1UL << i) == 0)
+						continue;
+
+					int diff = maxHeight[i] - displayHeight[i];
+					if (diff <= avg_height) {
+						displayHeight[i] += diff;
+						totalHeight -= diff;
+						mask ^= 1UL << i;
+					} else {
+						displayHeight[i] += avg_height;
+						totalHeight -= avg_height;
+					}
+				}
+
+				for (int j = active = 0; j < childLen; j++)
+					if ((mask & 1UL << j) != 0)
+						active++;
+			}
+
+			// Tell each category how much height it has to work with
+			for (int i = 0; i < childLen; i++) {
+				Category c = (Category) Children[i];
+				c.SetMaxDisplayHeight (displayHeight[i]);
+			}
+		}
+
 		public void AddHit (Tile tile)
 		{
 			tile.Show ();

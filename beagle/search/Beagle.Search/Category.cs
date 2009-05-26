@@ -18,17 +18,14 @@ namespace Beagle.Search {
 
 	public abstract class Category : Container {
 
-		private SortedTileList tiles = null;
-		private int page = 0;
-
 		protected Gtk.HBox header;
+		private SortedTileList tiles;
 		private Gtk.Label position;
 		private Gtk.Button prev, next;
 		private Gtk.Expander headerExpander;
-		private int fewRows, manyRows, columns;
-		private int few, many;
 		private bool extended, expanded;
 		private ScopeType scope;
+		private int columns, tileIndex, tileHeight;
 
 		public Category (Tiles.TileGroupInfo info, int columns)
 		{
@@ -60,14 +57,9 @@ namespace Beagle.Search {
 			header.SizeRequested += HeaderSizeRequested;
 
 			tiles = new SortedTileList (Beagle.Search.SortType.Relevance);
-			page = 0;
-
-			fewRows = info.Rows;
-			manyRows = info.Rows * 2;
 			Columns = columns;
 
 			UpdateButtons ();
-			//headerExpander.Expanded = true;
 			Expanded = true;	
 		}
 
@@ -91,7 +83,7 @@ namespace Beagle.Search {
 				expanded = value;
 
 				if (expanded)
-					ShowTiles (false);
+					ShowTiles ();
 				else
 					HideTiles ();
 
@@ -103,12 +95,10 @@ namespace Beagle.Search {
 			get { return columns; }
 			set {
 				HideTiles ();
-
 				columns = value;
-				few = fewRows * columns;
-				many = manyRows * columns;
 
-				ShowTiles (true);
+				if (Expanded)
+					ShowTiles ();
 			}
 		}
 
@@ -127,14 +117,9 @@ namespace Beagle.Search {
 			args.Requisition = req;
 		}
 
-		void UpdateButtons ()
+		private void UpdateButtons ()
 		{
-			if (tiles.Count <= FirstVisible && page > 0) {
-				// The page we were viewing disappeared
-				page--;
-			}
-
-			prev.Sensitive = (page != 0);
+			prev.Sensitive = tileIndex != 0;
 			next.Sensitive = (tiles.Count > LastVisible + 1);
 
 			if (tiles.Count > 0) {
@@ -156,7 +141,7 @@ namespace Beagle.Search {
 			tiles.Add ((Tiles.Tile)widget);
 
 			if (Expanded)
-				ShowTiles (true);
+				ShowTiles ();
 		}
 
 		protected override void OnRemoved (Gtk.Widget widget)
@@ -168,41 +153,31 @@ namespace Beagle.Search {
 			tiles.Remove ((Tiles.Tile)widget);
 
 			if (Expanded)
-				ShowTiles (true);
+				ShowTiles ();
 		}
 
 		private Tiles.Tile lastTarget;
 		private bool hadFocus;
 
-		void HideTiles ()
+		private void HideTiles ()
 		{
 			lastTarget = null;
-			foreach (Tiles.Tile tile in VisibleTiles) {
+			foreach (Tiles.Tile tile in AllTiles) {
 				if (tile.HasFocus || lastTarget == null) {
 					lastTarget = tile;
 					hadFocus = tile.HasFocus;
 				}
 				tile.ChildVisible = false;
 			}
+
 			QueueResize ();
 		}
 
-		void ShowTiles (bool recenter)
+		private void ShowTiles ()
 		{
-			if (recenter && lastTarget != null) {
-				int index = tiles.IndexOf (lastTarget);
-				if (hadFocus || page > 0) {
-					if (index < few)
-						page = 0;
-					else if (extended)
-						page = index / (manyRows * columns);
-					else
-						page = ((index - few) / (manyRows * columns)) + 1;
-				}
-			}
-
 			foreach (Tiles.Tile tile in VisibleTiles) {
 				tile.ChildVisible = true;
+
 				if (tile == lastTarget && hadFocus && !tile.HasFocus)
 					tile.GrabFocus ();
 			}
@@ -211,33 +186,26 @@ namespace Beagle.Search {
 			QueueResize ();
 		}
 
-		private bool showingMany {
-			get {
-				// Show extra tiles on every page after the first, unless
-				// there are only two pages and the second one only has
-				// enough tiles to fit the "fewer" size.
-				return (page > 0 && tiles.Count > 2 * few) || extended;
-			}
-		}
-
-		void OnPrev (object obj, EventArgs args)
+		private void OnPrev (object obj, EventArgs args)
 		{
 			HideTiles ();
-			page--;
+			tileIndex = Math.Max (0, tileIndex - PageSize);
+			
 			if (!Expanded)
 				OnActivated (obj, args);
 			else
-				ShowTiles (false);
+				ShowTiles ();
 		}
 
-		void OnNext (object obj, EventArgs args)
+		private void OnNext (object obj, EventArgs args)
 		{
 			HideTiles ();
-			page++;
+			tileIndex = Math.Min (tiles.Count - 1, tileIndex + PageSize);
+			
 			if (!Expanded)
 				OnActivated (obj, args);
 			else
-				ShowTiles (false);
+				ShowTiles ();
 		}
 
 		protected void OnActivated (object obj, EventArgs args)
@@ -246,27 +214,56 @@ namespace Beagle.Search {
 			CategoryToggle (scope);
 		}
 
+		public void SetMaxDisplayHeight (int height)
+		{
+			if (tileHeight != height) {
+				tileHeight = height;
+				HideTiles ();
+
+				if (Expanded)
+					ShowTiles ();
+			}
+		}
+
+		public int GetPotentialDisplayHeight ()
+		{
+			if (tiles.Count == 0)
+				return 0;
+
+			Requisition headerReq = header.SizeRequest ();
+			Requisition tileReq = tiles[0].SizeRequest ();
+			return headerReq.Height + (tiles.Count / Columns) * tileReq.Height;
+		}
+		
 		public delegate void CategoryToggleDelegate (ScopeType scope);
 		public event CategoryToggleDelegate CategoryToggle;
 
 		protected int PageSize {
 			get {
-				return Math.Min (showingMany ? many : few, tiles.Count);
-			}
-		}
-
-		protected int FirstVisible {
-			get {
-				if (page == 0)
+				if (tiles.Count == 0)
 					return 0;
-				else if (extended)
-					return page * many;
-				else
-					return few + (page - 1) * many;
+
+				if (tileHeight == 0)
+					return Math.Min (2 * Columns, tiles.Count);
+
+				Requisition sizeReq = tiles[0].SizeRequest ();
+				int ps = Math.Min (tileHeight / sizeReq.Height * Columns, tiles.Count);
+				
+				// Display at least two rows if we have the hits for it.
+				if (ps < 2 * Columns)
+					ps = Math.Min (2 * Columns, tiles.Count);
+                
+				return ps;
 			}
 		}
 
-		protected int LastVisible {
+		private int FirstVisible {
+			get {
+				return tileIndex;
+			}
+		}
+
+		private int LastVisible {
 			get {
 				return Math.Min (FirstVisible + PageSize, tiles.Count) - 1;
 			}
@@ -337,7 +334,7 @@ namespace Beagle.Search {
 			set {
 				HideTiles ();
 				tiles.SortType = value;
-				ShowTiles (true);
+				ShowTiles ();
 			}
 		}
 
@@ -346,7 +343,7 @@ namespace Beagle.Search {
 			if (extended) {
 				HideTiles ();
 				this.extended = extended;
-				ShowTiles (false);
+				ShowTiles ();
 			}
 			if (focus && !Empty)
 				((Gtk.Widget)VisibleTiles[0]).GrabFocus ();
