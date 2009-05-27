@@ -214,9 +214,9 @@ $(UTIL_TARGET): $(UTIL_TARGET_FILES)
 
 UI_UTIL_CSFILES =				\
 	$(srcdir)/CompatFileChooser.cs		\
-	$(srcdir)/GnomeFu.cs              	\
 	$(srcdir)/GtkUtils.cs			\
 	$(srcdir)/HigMessageDialog.cs		\
+	$(srcdir)/WidgetFu.cs			\
 	$(srcdir)/XKeybinder.cs
 
 UI_UTIL_ASSEMBLIES =				\
