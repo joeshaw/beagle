@@ -6,7 +6,7 @@ namespace Beagle.Search.Pages {
 
 	public class Base : EventBox {
 
-		private static Gdk.Pixbuf arrow = WidgetFu.LoadThemeIcon ("go-next", 16);
+		private static Gdk.Pixbuf arrow = Beagle.Util.WidgetFu.LoadThemeIcon ("go-next", 16);
 
 		private Gtk.Table table;
 		private Gtk.Image header_icon;

@@ -36,7 +36,7 @@ namespace Beagle.Search.Tray
 			eventbox = new EventBox ();
 			eventbox.ButtonPressEvent += OnClick;
 
-			Gdk.Pixbuf pixbuf = WidgetFu.LoadThemeIcon ("system-search", 24);
+			Gdk.Pixbuf pixbuf = Beagle.Util.WidgetFu.LoadThemeIcon ("system-search", 24);
 			eventbox.Add (new Gtk.Image (pixbuf));
 			
 			notification_area.Add (eventbox);

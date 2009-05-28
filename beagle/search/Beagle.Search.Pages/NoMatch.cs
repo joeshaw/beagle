@@ -10,7 +10,7 @@ namespace Beagle.Search.Pages {
 
 		static NoMatch ()
 		{
-			icon = WidgetFu.LoadThemeIcon ("face-surprise", 48);
+			icon = Beagle.Util.WidgetFu.LoadThemeIcon ("face-surprise", 48);
 		}
 
 		public NoMatch (string query, bool suggest_scope)

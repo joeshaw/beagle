@@ -1,5 +1,6 @@
 using System;
 using Gtk;
+using Beagle.Util;
 
 namespace Beagle.Search.Tiles {
 

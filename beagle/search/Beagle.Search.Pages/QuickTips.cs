@@ -16,7 +16,7 @@ namespace Beagle.Search.Pages {
 
 		public QuickTips ()
 		{
-			HeaderIcon = WidgetFu.LoadThemeIcon ("dialog-information", 48);
+			HeaderIcon = Beagle.Util.WidgetFu.LoadThemeIcon ("dialog-information", 48);
 			Header = Catalog.GetString ("Quick Tips");
 			
 			foreach (string tip in tips)

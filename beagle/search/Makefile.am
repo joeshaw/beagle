@@ -87,8 +87,7 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search/SortedTileList.cs		\
 	$(srcdir)/Beagle.Search/Spinner.cs			\
 	$(srcdir)/Beagle.Search/TileCategory.cs			\
-	$(srcdir)/Beagle.Search/UIManager.cs			\
-	$(srcdir)/Beagle.Search/WidgetFu.cs
+	$(srcdir)/Beagle.Search/UIManager.cs
 
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\

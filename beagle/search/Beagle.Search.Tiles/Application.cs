@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Mono.Unix;
 
 using GConf;
+using Beagle.Util;
 
 namespace Beagle.Search.Tiles {
 

@@ -1,5 +1,6 @@
 using System;
 using Mono.Unix;
+using Beagle.Util;
 
 namespace Beagle.Search.Tiles {
 

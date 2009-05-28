@@ -23,7 +23,7 @@ namespace Beagle.Search.Pages {
 
 		public IndexInfo ()
 		{
-			HeaderIcon = WidgetFu.LoadThemeIcon ("dialog-information", 48);
+			HeaderIcon = Beagle.Util.WidgetFu.LoadThemeIcon ("dialog-information", 48);
 			Header = Catalog.GetString ("Index Information");
 
 			Gtk.Label description = new Gtk.Label ();
