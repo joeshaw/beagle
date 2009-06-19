@@ -1765,7 +1765,7 @@ namespace Beagle.Daemon {
 				// but this is required for the query API where the uri query
 				// can be part of a prohibited query or a boolean or query.
 				Term term;
-				term = new Term ("Uri", UriFu.UriToEscapedString (part.Uri));
+				term = new Term ("Uri", part.Uri.OriginalString);
 				if (term_list != null)
 					term_list.Add (term);
 				primary_query = new LNS.TermQuery (term);

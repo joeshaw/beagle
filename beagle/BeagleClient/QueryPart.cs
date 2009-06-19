@@ -273,6 +273,7 @@ namespace Beagle {
 	/* Get all indexed data about some uri. */
 	public class QueryPart_Uri : QueryPart {
 
+		// The Uri should be always escaped
 		private Uri uri;
 
 		public QueryPart_Uri ()

@@ -393,14 +393,13 @@ Usage: beagle-dump-index [options] [[file or URI to match] ...]
 					index_names.Add (arg.Remove (0, 8));
 				else {
 					Uri uri;
-					
+
 					try {
-						uri = UriFu.UserUritoEscapedUri (arg);
+						uris.Add (new Uri(arg, true));
 					} catch (UriFormatException) {
-						uri = UriFu.PathToFileUri (arg);
+						uris.Add(UriFu.PathToFileUri (arg));
 					}
 
-					uris.Add (uri);
 				}
 				break;
 			}

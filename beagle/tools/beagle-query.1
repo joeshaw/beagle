@@ -1,7 +1,7 @@
 .\" beagle-query(1) manpage
 .\"
 .\" Copyright (C) 2005 Novell, Inc.
-.\" Copyright (C) 2008 D Bera <dbera.web@gmail.com>
+.\" Copyright (C) 2009 D Bera <dbera.web@gmail.com>
 .\"
 .TH BEAGLE-QUERY "1" "July 2008" "beagle" "Linux User's Manual"
 .SH NAME
@@ -37,6 +37,10 @@ feeding new matching hits as the system gets aware of them.
 .B --stats-only
 Show only statistics on the number of search results and how long it took to
 get them, and not the results themselves.
+.TP
+.B  --raw-uri
+Display the actual (unescaped) uri used internally.
+Only use this form of the uri in uri queries.
 .SS Other options
 .TP
 .B --keywords

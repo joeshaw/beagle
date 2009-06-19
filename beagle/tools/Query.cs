@@ -59,6 +59,7 @@ public class QueryTool {
 	private static bool flood = false;
 	private static bool listener = false;
 	private static bool display_cached_text = false;
+	private static bool raw_uri = false;
 
 	private static void OnHitsAdded (HitsAddedResponse response)
 	{
@@ -82,10 +83,11 @@ public class QueryTool {
 		}
 
 		foreach (Hit hit in response.Hits) {
+			string uri = (raw_uri ?  hit.Uri.OriginalString : UriFu.EscapedUriToString (hit.Uri));
 			if (verbose)
-				Console.WriteLine ("  Uri: {0}", hit.Uri);
+				Console.WriteLine ("  Uri: {0}", uri);
 			else
-				Console.WriteLine (hit.Uri);
+				Console.WriteLine (uri);
 
 			if (verbose) {
 				SnippetRequest sreq = new SnippetRequest (query, hit);
@@ -180,6 +182,8 @@ public class QueryTool {
 			"              \t\tthe actual results.\n" +
 			"  --max-hits\t\tLimit number of search results per backend\n" +
 			"            \t\t(default 100)\n" +
+			"  --raw-uri\t\tDisplay the actual (unescaped) uri used internally.\n" +
+			"           \t\tOnly use this form of the uri in uri queries.\n" +
 			"\n" +
 			"  --domain <local|system|network|global|all> Specify query domain (default local + system)\n" +
 			"\n" +
@@ -277,6 +281,9 @@ public class QueryTool {
 			case "--listener":
 				listener = true;
 				keep_running = true;
+				break;
+			case "--raw-uri":
+				raw_uri = true;
 				break;
 			case "--keywords":
 				PropertyKeywordFu.ReadKeywordMappings ();

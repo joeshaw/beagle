@@ -2020,6 +2020,8 @@ namespace Beagle.Daemon.FileSystemQueryable {
 				return null;
 
 			Uri internal_uri = GuidFu.ToUri (attr.UniqueId);
+			if (! String.IsNullOrEmpty (external_uri.Fragment))
+			    internal_uri = UriFu.AddFragment (internal_uri, external_uri.Fragment, true);
 
 			return internal_uri;
 		}

@@ -125,12 +125,8 @@ namespace Beagle.Util {
 		// Basically hex-escape the path, query and the fragment
 		static public Uri UserUritoEscapedUri (string user_uri)
 		{
-			Uri uri;
-			try {
-				uri = new Uri (user_uri);
-			} catch {
-				return null;
-			}
+			// We hex escape explicitly later
+			Uri uri = new Uri (user_uri, true); // This is deprecated in .Net-2.0 - need new strategy to create custom Uris
 
 			UriBuilder new_uri = new UriBuilder ();
 			new_uri.Scheme = uri.Scheme;
@@ -155,6 +151,18 @@ namespace Beagle.Util {
 			new_uri.Fragment = StringFu.HexEscape (uri.Fragment);
 
 			return new_uri.Uri;
+		}
+
+		static public string EscapedUriToString (Uri uri)
+		{
+		    if (! uri.UserEscaped)
+			    return uri.AbsoluteUri;
+
+		    UriBuilder new_uri = new UriBuilder (uri);
+		    new_uri.Path = StringFu.HexUnescape (uri.AbsolutePath);
+		    if (! String.IsNullOrEmpty(new_uri.Fragment))
+			    new_uri.Fragment = StringFu.HexUnescape (uri.Fragment.Substring (1)); // remove leading '#'
+		    return new_uri.Uri.ToString();
 		}
 
 		//////////////////////////////////
