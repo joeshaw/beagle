@@ -4,7 +4,7 @@
  */
 
 // Initiate a new preference instance.
-var gPrefService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
+_prefService = Components.classes['@mozilla.org/preferences-service;1'].getService(Components.interfaces.nsIPrefBranch);
 
 var beaglePref = {
    
@@ -31,14 +31,14 @@ var beaglePref = {
     //functions used to get/set pref
     func_factory:{
         'get':{
-            'bool': Function.bind(gPrefService.getBoolPref,gPrefService),
-            'int': Function.bind(gPrefService.getIntPref,gPrefService),
-            'string' : Function.bind(gPrefService.getCharPref,gPrefService)
+            'bool': Function.bind(_prefService.getBoolPref,_prefService),
+            'int': Function.bind(_prefService.getIntPref,_prefService),
+            'string' : Function.bind(_prefService.getCharPref,_prefService)
         },
         'set':{
-            'bool': Function.bind(gPrefService.setBoolPref,gPrefService),
-            'int' : Function.bind(gPrefService.setIntPref,gPrefService),
-            'string' : Function.bind(gPrefService.setCharPref,gPrefService)
+            'bool': Function.bind(_prefService.setBoolPref,_prefService),
+            'int' : Function.bind(_prefService.setIntPref,_prefService),
+            'string' : Function.bind(_prefService.setCharPref,_prefService)
         }
     },
 
@@ -320,6 +320,6 @@ var beaglePref = {
             log("first run import error");
             log(ex);
         }
-    },
+    }
 }
 

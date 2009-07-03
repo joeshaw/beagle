@@ -221,7 +221,7 @@ function() {
   return help;
 });
 
-jslibDebug('*** load: '+JS_DIR_FILE+' OK');
+//jslibDebug('*** load: '+JS_DIR_FILE+' OK');
 
 } else {
     dump("JSLIB library not loaded:\n"                                  +

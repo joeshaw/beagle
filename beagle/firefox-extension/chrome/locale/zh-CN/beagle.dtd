@@ -31,9 +31,11 @@
 <!ENTITY beagle.run.context.menu.label              "Beagle">
 <!ENTITY beagle.run.index.link.label                "索引链接">
 <!ENTITY beagle.run.index.image.label               "索引图片">
-
 <!ENTITY beagle.index.link.start.label              "开始">
 <!ENTITY beagle.index.link.stop.label               "停止">
 
 <!ENTITY beagle.bookmark.index.modified.label       "索引更改过的书签">
 
+<!ENTITY beagle.sidebar.title "Beagle 搜索历史侧边栏">
+<!ENTITY beagle.sidebar.commandkey "B">
+<!ENTITY beagle.sidebar.modifierskey "shift 键">

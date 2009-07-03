@@ -758,7 +758,7 @@ function ()
   return help;
 })
 
-jslibDebug('*** load: '+JS_FILE_FILE+' OK');
+//jslibDebug('*** load: '+JS_FILE_FILE+' OK');
 
 } // END BLOCK JS_LIB_LOADED CHECK
 

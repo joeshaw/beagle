@@ -1,6 +1,6 @@
 
 PROJECT = beagle
-VERSION = 1.1.0
+VERSION = 1.1.2
 
 INSTALL_RDF = install.rdf
 INSTALL_RDF_IN = $(INSTALL_RDF).in
@@ -73,5 +73,3 @@ EXTRA_DIST =			\
 CLEANFILES =			\
 	$(PROJECT).xpi		\
 	$(INSTALL_RDF)
-
--include $(top_srcdir)/git.mk

@@ -173,7 +173,7 @@ get help() {
 
 }; //END CLASS 
 
-jslibDebug('*** load: '+JS_DIRUTILS_FILE+' OK');
+//jslibDebug('*** load: '+JS_DIRUTILS_FILE+' OK');
 
 } // END BLOCK JS_LIB_LOADED CHECK
 
