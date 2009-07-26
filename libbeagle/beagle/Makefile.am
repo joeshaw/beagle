@@ -79,7 +79,6 @@ libbeagleinclude_HEADERS = 			\
 	beagle-query-part-date.h		\
 	beagle-query-part-human.h		\
 	beagle-query-part-or.h			\
-	beagle-query-part-property.h		\
 	beagle-query-part-text.h		\
 	beagle-query-part-property.h		\
 	beagle-query-part-wildcard.h		\
