@@ -152,6 +152,8 @@ namespace Beagle.Search {
 
 			tiles.Remove ((Tiles.Tile)widget);
 
+			tileIndex = Math.Min( Math.Max( tiles.Count - 1, 0), tileIndex);
+
 			if (Expanded)
 				ShowTiles ();
 		}
