@@ -89,6 +89,9 @@ SOURCES =							\
 	$(srcdir)/Beagle.Search/TileCategory.cs			\
 	$(srcdir)/Beagle.Search/UIManager.cs
 
+SEARCH_RESOURCES = $(top_srcdir)/beagled/beagled-autostart.desktop
+SEARCH_RESOURCES_BUILD = $(foreach res,$(SEARCH_RESOURCES), $(addprefix -resource:,$(srcdir)/$(res)),$(notdir $(res)))
+
 LOCAL_ASSEMBLIES =			\
 	../Util/Util.dll		\
 	../Util/UiUtil.dll		\
@@ -106,8 +109,8 @@ pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(ASSEMBLY).config
 
 BIN_WRAPPERS = beagle-search
 
-$(ASSEMBLY): $(SOURCES) $(LOCAL_ASSEMBLIES)
-	$(CSC) -out:$@ $(CSFLAGS) $(SOURCES) $(ASSEMBLIES)
+$(ASSEMBLY): $(SOURCES) $(SEARCH_RESOURCES) $(LOCAL_ASSEMBLIES)
+	$(CSC) -out:$@ $(SEARCH_RESOURCES_BUILD) $(CSFLAGS) $(SOURCES) $(ASSEMBLIES)
 
 $(ASSEMBLY).mdb: $(ASSEMBLY)
 
@@ -146,6 +149,7 @@ uninstall-local:
 
 EXTRA_DIST =			\
 	$(SOURCES)		\
+	$(SEARCH_RESOURCES)	\
 	$(man_MANS)		\
 	$(desktop_DATA).in	\
 	$(autostart_DATA)	\

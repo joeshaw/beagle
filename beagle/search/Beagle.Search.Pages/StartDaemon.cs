@@ -1,6 +1,11 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+
 using Mono.Unix;
+using Mono.Unix.Native;
+
 using Gtk;
 
 namespace Beagle.Search.Pages {
@@ -10,6 +15,7 @@ namespace Beagle.Search.Pages {
 	public class StartDaemon : Base {
 
 		public event DaemonStarted DaemonStarted;
+		private Gtk.ToggleButton autostart_toggle;
 
 		public StartDaemon ()
 		{
@@ -24,11 +30,43 @@ namespace Beagle.Search.Pages {
 			button.Show ();
 
 			Append (button);
+
+			autostart_toggle = new Gtk.CheckButton (Catalog.GetString ("Automatically start service on login"));
+			autostart_toggle.Active = true;
+			autostart_toggle.Show ();
+
+			Append (autostart_toggle);
 		}
 
 		private void OnStartDaemon (object o, EventArgs args)
 		{
+			if (autostart_toggle.Active)
+				EnableAutostart ();
+
 			DoStartDaemon (DaemonStarted);
+		}
+
+		private void EnableAutostart ()
+		{
+			string local_autostart_dir = System.IO.Path.Combine (System.IO.Path.Combine (Environment.GetEnvironmentVariable ("HOME"), ".config"), "autostart");
+
+			if (! Directory.Exists (local_autostart_dir)) {
+				Directory.CreateDirectory (local_autostart_dir);
+				Syscall.chmod (local_autostart_dir, (FilePermissions) 448); // 448 == 0700
+			}
+
+			string beagled_file = System.IO.Path.Combine (local_autostart_dir, "beagled-autostart.desktop");
+
+			Assembly assembly = Assembly.GetExecutingAssembly ();
+
+			StreamReader reader = new StreamReader (assembly.GetManifestResourceStream ("beagled-autostart.desktop"));
+			StreamWriter writer = new StreamWriter (beagled_file);
+
+			string l;
+			while ((l = reader.ReadLine ()) != null)
+				writer.WriteLine (l);
+			reader.Close ();
+			writer.Close ();
 		}
 
 		internal static void DoStartDaemon (DaemonStarted DaemonStarted)
