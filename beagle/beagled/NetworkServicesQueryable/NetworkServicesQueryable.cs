@@ -38,6 +38,27 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 		}
 #endif
 
+                // Local:NetworkServices:Query() ---> Remote:backend:Query() ---> returns hits with hit:source=backend
+                // All SnippetRequests come to local, and should be rerouted to NetworkServices
+                // which will then go and fetch the snippets from remote backends.
+                // So, change the hit:source=NetworkServices and store original hit:source for later retrieving of snippets
+		public void TransformResponse (HitsAddedResponse response)
+		{
+			// Change the Hit source and add a property with the name of this remote node
+			foreach (Hit hit in response.Hits) {
+				//hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
+				hit.AddProperty (Property.NewKeyword ("beagle:OrigSource", hit ["beagle:Source"]));
+
+                                // Need to replace the existing beagle:Source property
+                                foreach (Property prop in hit.Properties) {
+                                        if (prop.Key == "beagle:Source") {
+                                                prop.Value = "NetworkServices";
+                                                break;
+                                        }
+                                }
+			}
+		}
+
 		public void DoQuery (Query query, IQueryResult result, IQueryableChangeData data)
 		{
 			// Get rid of the standard UnixTransport so that we can
@@ -54,6 +75,7 @@ namespace Beagle.Daemon.NetworkServicesQueryable {
 			Query.HitsAdded hits_added_handler;
 			hits_added_handler = delegate (HitsAddedResponse response) {
 								//Console.WriteLine ("Adding hits added response");
+                                                                TransformResponse(response);
 								result.Add (response.Hits, response.NumMatches);
 						};
 

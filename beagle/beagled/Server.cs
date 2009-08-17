@@ -267,19 +267,7 @@ namespace Beagle.Daemon {
 
 			// Change the Hit source and add a property with the name of this remote node
 			foreach (Hit hit in response.Hits) {
-				//hit.Uri = new System.Uri (context.Request.Url.ToString () + id.ToString ());
-				IList new_props = new Property [2];
-				new_props [0] = Property.NewKeyword ("beagle:OrigSource", hit ["beagle:Source"]);
-				new_props [1] = Property.NewKeyword ("beagle:NetworkNode", network_node);
-				hit.AddProperty (new_props);
-
-                                // Need to replace the existing beagle:Source property
-                                foreach (Property prop in hit.Properties) {
-                                        if (prop.Key == "beagle:Source") {
-                                                prop.Value = "NetworkServices";
-                                                break;
-                                        }
-                                }
+				hit.AddProperty (Property.NewKeyword ("beagle:NetworkNode", network_node));
 
 				//FIXME Retrieving the files for a remote hit is disabled for now
 				//item_handler.RegisterHit (hit);
