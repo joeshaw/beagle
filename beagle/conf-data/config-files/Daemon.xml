@@ -28,4 +28,5 @@
 	<Value>drafts</Value>
 	<Value>templates</Value>
     </ListOption>
+    <BoolOption Name="EnableEmailAttachmentSnippet" Description="Enable snippet for email attachments. This may significantly increase amount of disk space used">false</BoolOption>
 </BeagleConf>

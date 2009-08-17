@@ -119,6 +119,7 @@ namespace Beagle.Util {
 			public const string AllowRoot = "AllowRoot"; // default false
 			public const string IndexOnBattery = "IndexOnBattery"; // default false
 			public const string IndexFasterOnScreensaver = "IndexFasterOnScreensaver"; // default true
+			public const string EnableEmailAttachmentSnippet = "EnableEmailAttachmentSnippet"; // default false
 			// list (1 param)
 			public const string StaticQueryables = "StaticQueryables";
 			public const string DeniedBackends = "DeniedBackends";

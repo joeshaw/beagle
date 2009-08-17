@@ -42,6 +42,7 @@ namespace Beagle.Filters {
 
 		private static bool gmime_initialized = false;
 		private static bool gmime_broken = false;
+		private static bool snippet_attachment = false;
 
 		private GMime.Message message;
 		private PartHandler handler;
@@ -55,7 +56,9 @@ namespace Beagle.Filters {
 			// 3: Add standard file properties to attachments.
 			// 4: Store snippets
 			// 5: Store mailing list id as tokenized
-			SetVersion (5);
+			// 6: Store snippets for attachments - this is controlled separately
+			//    since attachments can often be huge and take up a lot of space.
+			SetVersion (6);
 
 			SnippetMode = true;
 			SetFileType ("mail");
@@ -81,6 +84,8 @@ namespace Beagle.Filters {
 							  1 /* Should be more than priority of text filter */);
 				AddSupportedFlavor (flavor);
 			}
+
+			snippet_attachment = Conf.Daemon.GetOption(Conf.Names.EnableEmailAttachmentSnippet, false);
 		}
 
 		protected override void DoOpen (FileInfo info)
@@ -454,7 +459,8 @@ namespace Beagle.Filters {
 							child.MimeType = mime_type;
 
 							// If this is the richest part we found for multipart emails, add its content to textcache
-							if (this.depth == 1 && this.count == 0)
+							if (snippet_attachment ||
+							    (this.depth == 1 && this.count == 0))
 								child.CacheContent = true;
 							else
 								child.CacheContent = false;
