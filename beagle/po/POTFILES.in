@@ -20,7 +20,6 @@ search/Beagle.Search.Tiles/ActionMenuItem.cs
 search/Beagle.Search.Tiles/Application.cs
 search/Beagle.Search.Tiles/ArchivedFile.cs
 search/Beagle.Search.Tiles/Audio.cs
-search/Beagle.Search.Tiles/CApplet.cs
 search/Beagle.Search.Tiles/Calendar.cs
 search/Beagle.Search.Tiles/Contact.cs
 search/Beagle.Search.Tiles/Docbook.cs
@@ -62,7 +61,6 @@ search/Beagle.Search/SortedTileList.cs
 search/Beagle.Search/Spinner.cs
 search/Beagle.Search/TileCategory.cs
 search/Beagle.Search/UIManager.cs
-search/Beagle.Search/WidgetFu.cs
 search/beagle-search.desktop.in.in
 tools/Config.cs
 tools/Settings.cs
