@@ -1,14 +1,14 @@
 # Swedish messages for beagle.
-# Copyright (C) 2005, 2006, 2007, 2008 Free Software Foundation, Inc.
-# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008.
+# Copyright (C) 2005, 2006, 2007, 2008, 2009 Free Software Foundation, Inc.
 # Fredrik Hedberg <fredrik@avafan.com>, 2005.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-23 17:18+0100\n"
-"PO-Revision-Date: 2008-11-23 17:19+0100\n"
+"POT-Creation-Date: 2009-08-20 22:40+0200\n"
+"PO-Revision-Date: 2009-08-20 22:40+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -243,17 +243,21 @@ msgstr "Beagle kan inte köras som root"
 msgid "For security reasons, Beagle cannot be run as root. You should restart as a regular user."
 msgstr "Av säkerhetsskäl kan Beagle inte köras som root.  Du bör starta om som en vanlig användare."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
 msgid "Search service not running"
 msgstr "Söktjänsten kör inte"
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
 msgid "The search service does not appear to be running. You can start it by clicking the button below."
 msgstr "Söktjänsten verkar inte vara igång. Du kan starta den genom att klicka på knappen nedan."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
 msgstr "Starta söktjänst"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "Starta automatiskt tjänsten vid inloggning"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
@@ -333,7 +337,7 @@ msgstr "E-post"
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Beagle.Search.Tiles/File.cs:38
-#: ../search/Beagle.Search.Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
 msgid "Move to Trash"
 msgstr "Flytta till papperskorg"
 
@@ -342,23 +346,23 @@ msgid "Find Documents From Same Author"
 msgstr "Hitta dokument från samma författare"
 
 #: ../search/Beagle.Search.Tiles/File.cs:170
-#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Senast redigerad:"
 
 #: ../search/Beagle.Search.Tiles/File.cs:175
-#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Fullständig sökväg:"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
 msgid "Empty"
 msgstr "Tom"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -629,14 +633,14 @@ msgstr "Töm"
 msgid "Quit"
 msgstr "Avsluta"
 
-#: ../search/Beagle.Search/Category.cs:142
+#: ../search/Beagle.Search/Category.cs:127
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} resultat"
 msgstr[1] "{0} resultat"
 
-#: ../search/Beagle.Search/Category.cs:144
+#: ../search/Beagle.Search/Category.cs:129
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} av {2}"
