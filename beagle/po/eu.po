@@ -9,15 +9,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eu\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=beagle&amp;component=general\n"
-"POT-Creation-Date: 2008-11-22 19:57+0000\n"
-"PO-Revision-Date: 2009-03-16 19:45+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-29 18:19+0200\n"
+"PO-Revision-Date: 2009-08-29 18:19+0200\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@euskalgnu.org>\n"
 "Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.4\n"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
@@ -266,11 +266,11 @@ msgstr ""
 "Beagle ezin da supererabiltzaile gisa exekutatu, segurtasun arrazoiak direla "
 "eta. Saioa erabiltzaile arrunt gisa hasi beharko zenuke."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
 msgid "Search service not running"
 msgstr "Bilaketa-zerbitzua ez da exekutatzen ari"
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
@@ -278,9 +278,13 @@ msgstr ""
 "Bilaketa-zerbitzua ez dirudi exekutatzen ari denik. Abiarazi dezakezu azpiko "
 "botoian klik eginez."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
 msgstr "Abiarazi bilaketa-zerbitzua"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "Abiarazi zerbitzua automatikoki saioa hastean"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
@@ -360,7 +364,7 @@ msgstr "Helb.elek."
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Beagle.Search.Tiles/File.cs:38
-#: ../search/Beagle.Search.Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
 msgid "Move to Trash"
 msgstr "Bota zakarrontzira"
 
@@ -369,23 +373,23 @@ msgid "Find Documents From Same Author"
 msgstr "Bilatu egile berdinaren dokumentuak"
 
 #: ../search/Beagle.Search.Tiles/File.cs:170
-#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Editatutako azkena:"
 
 #: ../search/Beagle.Search.Tiles/File.cs:175
-#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Bide-izen osoa:"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
 msgid "Empty"
 msgstr "Hutsik"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -653,14 +657,14 @@ msgstr "Garbitu"
 msgid "Quit"
 msgstr "Irten"
 
-#: ../search/Beagle.Search/Category.cs:142
+#: ../search/Beagle.Search/Category.cs:127
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "Emaitz {0}"
 msgstr[1] "{0} emaitz"
 
-#: ../search/Beagle.Search/Category.cs:144
+#: ../search/Beagle.Search/Category.cs:129
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} / {2}"
