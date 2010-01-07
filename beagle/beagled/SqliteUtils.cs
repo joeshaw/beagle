@@ -55,8 +55,13 @@ namespace Beagle.Util {
 					try {
 						ret = command.ExecuteNonQuery ();
 						break;
-					} catch (SqliteBusyException ex) {
-						Thread.Sleep (50);
+					} catch (SqliteException ex) {
+						if (ex.ErrorCode == SQLiteErrorCode.Busy) {
+							Thread.Sleep (50);
+						} else {
+							Log.Error (ex, "SQL that caused the exception: {0}", command_text);
+							throw;
+						}
 					} catch (Exception e) {
 						Log.Error (e, "SQL that caused the exception: {0}", command_text);
 						throw;
@@ -79,8 +84,13 @@ namespace Beagle.Util {
 				try {
 					ret = command.ExecuteNonQuery ();
 					break;
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
+				} catch (SqliteException ex) {
+					if (ex.ErrorCode == SQLiteErrorCode.Busy) {
+						Thread.Sleep (50);
+					} else {
+						Log.Error (ex, "SQL that caused the exception: {0}", command.CommandText);
+						throw;
+					}
 				} catch (Exception e) {
 					Log.Error ( e, "SQL that caused the exception: {0}", command.CommandText);
 					throw;
@@ -96,8 +106,12 @@ namespace Beagle.Util {
 			while (reader == null) {
 				try {
 					reader = command.ExecuteReader ();
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
+				} catch (SqliteException ex) {
+					if (ex.ErrorCode == SQLiteErrorCode.Busy) {
+						Thread.Sleep (50);
+					} else {
+						throw;
+					}
 				}
 			}
 			return reader;
@@ -108,8 +122,12 @@ namespace Beagle.Util {
 			while (true) {
 				try {
 					return reader.Read ();
-				} catch (SqliteBusyException ex) {
-					Thread.Sleep (50);
+				} catch (SqliteException ex) {
+					if (ex.ErrorCode == SQLiteErrorCode.Busy) {
+						Thread.Sleep (50);
+					} else {
+						throw;
+					}
 				}
 			}
 		}
