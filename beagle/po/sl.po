@@ -2,310 +2,24 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the beagle package.
 #
-# Matej Urbančič <matej.urban@gmail.com>, 2006, 2007.
+# Matej Urbančič <mateju@svn.gnome.org>, 2006 - 2009.
+# Andrej Žnidaršič <andrej.znidarsic@gmail.com>, 2010.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle HEAD\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-11-10 02:15+0100\n"
-"PO-Revision-Date: 2007-01-24 01:12+0100\n"
-"Last-Translator: Matej Urbančič <matej.urban@gmail.com>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=beagle&component=general\n"
+"POT-Creation-Date: 2010-01-25 19:11+0000\n"
+"PO-Revision-Date: 2010-02-17 10:38+0100\n"
+"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n%100==4 ? 3 : 0);\n"
-"X-Poedit-Language: Slovenian\n"
 "X-Poedit-Country: SLOVENIA\n"
+"X-Poedit-Language: Slovenian\n"
 "X-Poedit-SourceCharset: utf-8\n"
-
-#: ../glue/eggtrayicon.c:127
-#: ../Util/F-Spot/MetadataStore.cs:54
-msgid "Orientation"
-msgstr "Usmeritev"
-
-#: ../glue/eggtrayicon.c:128
-msgid "The orientation of the tray."
-msgstr "Usmerjenost pladnja."
-
-#: ../ContactViewer/ContactWindow.cs:74
-msgid "Open..."
-msgstr "Odpri ..."
-
-#: ../ContactViewer/ContactWindow.cs:76
-#: ../search/Tray/TrayIcon.cs:98
-msgid "Quit"
-msgstr "Zaključi"
-
-#: ../ContactViewer/ContactWindow.cs:79
-msgid "About"
-msgstr "O Programu"
-
-#: ../ContactViewer/ContactWindow.cs:95
-#: ../search/Tiles/Utils.cs:26
-msgid "Contacts"
-msgstr "Stiki"
-
-#: ../ContactViewer/ContactWindow.cs:100
-msgid "Display name"
-msgstr "Prikaži ime"
-
-#: ../ContactViewer/ContactWindow.cs:101
-msgid "Primary E-mail"
-msgstr "Osnovni elektronski naslov"
-
-#: ../ContactViewer/ContactWindow.cs:102
-msgid "Secondary E-mail"
-msgstr "Dodatni elektronski naslov"
-
-#: ../ContactViewer/ContactWindow.cs:103
-msgid "Nickname"
-msgstr "Vzdevek"
-
-#: ../ContactViewer/ContactWindow.cs:133
-#, csharp-format
-msgid ""
-"Unable to open mork database:\n"
-"\n"
-" {0}"
-msgstr ""
-"Ni mogoče odpreti mork podatkovne zbirke:\n"
-"\n"
-" {0}"
-
-#: ../ContactViewer/ContactWindow.cs:153
-msgid "The specified ID does not exist in this database!"
-msgstr "Izbran ID ne obstaja v podatkovni bazi!"
-
-#: ../ContactViewer/ContactWindow.cs:180
-#, csharp-format
-msgid "Added {0} contact"
-msgid_plural "Added {0} contacts"
-msgstr[0] "Dodanih {0} stikov"
-msgstr[1] "Dodan {0} stik"
-msgstr[2] "Dodana {0} stika"
-msgstr[3] "Dodani {0} stiki"
-
-#: ../ContactViewer/ContactWindow.cs:204
-#, csharp-format
-msgid "Viewing {0}"
-msgstr "Pregledovanje {0}"
-
-#: ../ContactViewer/ContactWindow.cs:244
-msgid "Select a mork database file"
-msgstr "Izberite datoteko mork podatkovne zbirke"
-
-#: ../ContactViewer/ContactWindow.cs:311
-msgid "Primary E-Mail:"
-msgstr "Osnovni elektronski naslov:"
-
-#: ../ContactViewer/ContactWindow.cs:315
-#: ../ContactViewer/contactviewer.glade.h:37
-msgid "Screen name:"
-msgstr "Ime na zaslonu:"
-
-#: ../ContactViewer/ContactWindow.cs:319
-msgid "Home phone:"
-msgstr "Domači telefon:"
-
-#: ../ContactViewer/ContactWindow.cs:323
-msgid "Mobile phone:"
-msgstr "Prenosni telefon:"
-
-#: ../ContactViewer/ContactWindow.cs:327
-msgid "Web page:"
-msgstr "Spletna stran:"
-
-#: ../ContactViewer/ContactWindow.cs:336
-msgid "Send E-Mail"
-msgstr "Pošlji e-pošto"
-
-#: ../ContactViewer/ContactWindow.cs:340
-msgid "Details..."
-msgstr "Podrobnosti ..."
-
-#: ../ContactViewer/ContactWindow.cs:368
-msgid "Could not find a valid E-mail address!"
-msgstr "Ne najdem veljavnega elektronskega naslova!"
-
-#: ../ContactViewer/contactviewer.glade.h:1
-msgid "<b>Custom fields</b>"
-msgstr "<b>Polja po meri</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:2
-msgid "<b>Home</b>"
-msgstr "<b>Domov</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:3
-msgid "<b>Internet</b>"
-msgstr "<b>Internet</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:4
-msgid "<b>Name</b>"
-msgstr "< b>Ime</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:5
-msgid "<b>Notes</b>"
-msgstr "<b>Opombe</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:6
-msgid "<b>Phones</b>"
-msgstr "<b>Telefoni</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:7
-msgid "<b>Work</b>"
-msgstr "<b>Služba</b>"
-
-#: ../ContactViewer/contactviewer.glade.h:8
-msgid "Additional E-Mail:"
-msgstr "Dodatni elektronski naslov:"
-
-#: ../ContactViewer/contactviewer.glade.h:9
-msgid "Address"
-msgstr "Naslov"
-
-#: ../ContactViewer/contactviewer.glade.h:10
-msgid "Address:"
-msgstr "Naslov:"
-
-#: ../ContactViewer/contactviewer.glade.h:11
-msgid "City:"
-msgstr "Mesto:"
-
-#: ../ContactViewer/contactviewer.glade.h:12
-msgid "Contact"
-msgstr "Stik"
-
-#: ../ContactViewer/contactviewer.glade.h:13
-msgid "Contact Viewer"
-msgstr "Pregledovalnik stikov"
-
-#: ../ContactViewer/contactviewer.glade.h:14
-msgid "Country:"
-msgstr "Država:"
-
-#: ../ContactViewer/contactviewer.glade.h:15
-msgid "Custom 1:"
-msgstr "Po meni 1:"
-
-#: ../ContactViewer/contactviewer.glade.h:16
-msgid "Custom 2:"
-msgstr "Po meni 2:"
-
-#: ../ContactViewer/contactviewer.glade.h:17
-msgid "Custom 3:"
-msgstr "Po meni 3:"
-
-#: ../ContactViewer/contactviewer.glade.h:18
-msgid "Custom 4:"
-msgstr "Po meni 4:"
-
-#: ../ContactViewer/contactviewer.glade.h:19
-msgid "Department:"
-msgstr "O_ddelek:"
-
-#: ../ContactViewer/contactviewer.glade.h:20
-msgid "Detailed view"
-msgstr "Podrobni pogled"
-
-#. This is Display name
-#: ../ContactViewer/contactviewer.glade.h:22
-msgid "Display:"
-msgstr "Prikaz:"
-
-#: ../ContactViewer/contactviewer.glade.h:23
-#: ../search/Tiles/Contact.cs:68
-msgid "E-Mail:"
-msgstr "e-Pošta:"
-
-#: ../ContactViewer/contactviewer.glade.h:24
-msgid "Fax:"
-msgstr "Faks:"
-
-#. This is First name
-#: ../ContactViewer/contactviewer.glade.h:26
-msgid "First:"
-msgstr "Prvi:"
-
-#. This is Home phone number
-#: ../ContactViewer/contactviewer.glade.h:28
-msgid "Home:"
-msgstr "Domači:"
-
-#. This is Last name
-#: ../ContactViewer/contactviewer.glade.h:30
-msgid "Last:"
-msgstr "Zadnji:"
-
-#: ../ContactViewer/contactviewer.glade.h:31
-msgid "Mobile:"
-msgstr "Prenosni telefon:"
-
-#: ../ContactViewer/contactviewer.glade.h:32
-msgid "Nickname:"
-msgstr "Vzdevek:"
-
-#: ../ContactViewer/contactviewer.glade.h:33
-msgid "Organization:"
-msgstr "Organizacija:"
-
-#: ../ContactViewer/contactviewer.glade.h:34
-msgid "Other"
-msgstr "Ostalo"
-
-#: ../ContactViewer/contactviewer.glade.h:35
-msgid "Pager:"
-msgstr "Pozivnik:"
-
-#: ../ContactViewer/contactviewer.glade.h:36
-msgid "Preferred format:"
-msgstr "Prednostna oblika:"
-
-#: ../ContactViewer/contactviewer.glade.h:38
-msgid "State/Province"
-msgstr "_Država/Provinca:"
-
-#: ../ContactViewer/contactviewer.glade.h:39
-msgid "State/Province:"
-msgstr "_Država/Provinca:"
-
-#: ../ContactViewer/contactviewer.glade.h:40
-#: ../search/Tiles/ArchivedFile.cs:76
-#: ../search/Tiles/Calendar.cs:51
-#: ../search/Tiles/File.cs:140
-#: ../search/Tiles/Note.cs:62
-#: ../search/Tiles/RSSFeed.cs:48
-#: ../search/Tiles/WebHistory.cs:53
-msgid "Title:"
-msgstr "Naslov:"
-
-#: ../ContactViewer/contactviewer.glade.h:41
-msgid ""
-"Unknown\n"
-"Plain text\n"
-"HTML"
-msgstr ""
-"Neznano\n"
-"Golo besedilo\n"
-"HTML"
-
-#: ../ContactViewer/contactviewer.glade.h:44
-msgid "Web Page:"
-msgstr "Spletna stran:"
-
-#. This is Work phone number
-#: ../ContactViewer/contactviewer.glade.h:46
-msgid "Work:"
-msgstr "Služba:"
-
-#: ../ContactViewer/contactviewer.glade.h:47
-msgid "ZIP/Postal Code"
-msgstr "_Poštna številka: "
-
-#: ../ContactViewer/contactviewer.glade.h:48
-msgid "ZIP/Postal Code:"
-msgstr "_Poštna številka: "
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -313,1388 +27,95 @@ msgstr "<b>Zgodovina pogovorov</b>"
 
 #: ../ImLogViewer/ImLogViewer.glade.h:2
 msgid "IM Viewer"
-msgstr "IM pregledovalnik"
+msgstr "Pregledovalnik trenutnega sporočanja"
 
-#: ../ImLogViewer/ImLogWindow.cs:106
-#: ../ImLogViewer/ImLogWindow.cs:118
+#: ../ImLogViewer/ImLogWindow.cs:108
+#: ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Pogovori v {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
-#, fuzzy, csharp-format
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
 msgid "Conversations in {0} ({1})"
-msgstr "Pogovori v {0}"
+msgstr "Pogovori v {0} ({1})"
 
-#: ../ImLogViewer/ImLogWindow.cs:125
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Pogovori z {0}"
-
-#: ../search/beagle-search.desktop.in.in.h:1
-#: ../tools/settings.glade.h:22
-msgid "Search"
-msgstr "Poišči"
-
-#: ../search/beagle-search.desktop.in.in.h:2
-msgid "Search for data on your desktop"
-msgstr "Poišči podatke na namizju"
-
-#: ../search/Category.cs:132
-#, csharp-format
-msgid "{0} result"
-msgid_plural "{0} results"
-msgstr[0] "{0} zadetkov"
-msgstr[1] "{0} zadetek"
-msgstr[2] "{0} zadetka"
-msgstr[3] "{0} zadetki"
-
-#: ../search/Category.cs:134
-#, csharp-format
-msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} od {2}"
-
-#: ../search/Pages/NoMatch.cs:19
-msgid "No results were found."
-msgstr "Ni zadetkov iskanja."
-
-#: ../search/Pages/NoMatch.cs:20
-#, csharp-format
-msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Iskanje \"{0}\" ni vrnilo zadetkov med datotekami na domačem računalniku."
-
-#: ../search/Pages/NoMatch.cs:24
-msgid "You can change the scope of your search using the \"Search\" menu. A broader search scope might produce more results."
-msgstr "Spreminjanje območja iskanja lahko nastavite preko \"Poišči\" menuja. Širše določeno območje lahko prikaže več zadetkov."
-
-#: ../search/Pages/NoMatch.cs:26
-msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
-msgstr "Priporočeno je preverjanje črkovanja iskalnega niza za prikaz čim bolj primernih zadetkov."
-
-#: ../search/Pages/QuickTips.cs:10
-msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Uporabite lahko iskanje velikih ali malih črk; iskanje upošteva velikost znakov."
-
-#: ../search/Pages/QuickTips.cs:11
-msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
-msgstr "Iskanje več besed omogoča OR izraz.  primer: <b>poper OR sol</b>"
-
-#: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
-msgstr "Za čiščenje iskalnega niza in izpuščanje besed, uporabite minus pred besedo; primer: <b>-sladkor</b>"
-
-#: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
-msgstr "Za iskanje fraz uporabite navednice; primer: <b>\"dodajte peteršilj\"</b>"
-
-#: ../search/Pages/QuickTips.cs:19
-#: ../search/UIManager.cs:92
-msgid "Quick Tips"
-msgstr "Hitri namigi"
-
-#: ../search/Pages/RootUser.cs:12
-msgid "Beagle cannot be run as root"
-msgstr "Programa Beagle ni mogoče zagnati kot skrbnik"
-
-#: ../search/Pages/RootUser.cs:13
-msgid "For security reasons, Beagle cannot be run as root.  You should restart as a regular user."
-msgstr "Iz varnostnih razlogov programa Beagle ni mogoče zagnati kot skrbnik. Zaženite program kot uporabnik."
-
-#: ../search/Pages/StartDaemon.cs:19
-msgid "Search service not running"
-msgstr "Storitev iskanja ni zagnana"
-
-#: ../search/Pages/StartDaemon.cs:21
-msgid "Start search service"
-msgstr "Zagon storitve iskanja"
-
-#: ../search/Search.cs:138
-#: ../search/Search.cs:254
-#: ../search/Tray/TrayIcon.cs:33
-msgid "Desktop Search"
-msgstr "Iskanje po namizju"
-
-#: ../search/Search.cs:157
-msgid "_Find:"
-msgstr "_Poišči:"
-
-#: ../search/Search.cs:178
-msgid "Find Now"
-msgstr "Po_išči takoj"
-
-#: ../search/Search.cs:237
-msgid "Type in search terms"
-msgstr "Vtipkajte iskane besede"
-
-#: ../search/Search.cs:238
-msgid "Start searching"
-msgstr "Začetek iskanja"
-
-#: ../search/Search.cs:273
-#, csharp-format
-msgid "Desktop Search: {0}"
-msgstr "Iskanje namizja: {0}"
-
-#: ../search/Search.cs:289
-#, fuzzy, csharp-format
-msgid "Showing {0} match"
-msgid_plural "Showing all {0} matches"
-msgstr[0] "Prikaz vseh {0} zadetkov"
-msgstr[1] "Prikaz vseh {0} zadetkov"
-msgstr[2] "Prikaz vseh {0} zadetkov"
-msgstr[3] "Prikaz vseh {0} zadetkov"
-
-#: ../search/Search.cs:291
-#, fuzzy, csharp-format
-msgid "Showing the top {0} of {1} total matches"
-msgid_plural "Showing the top {0} of {1} total matches"
-msgstr[0] "Prikaz zgornjih {0} od {1} zadetkov"
-msgstr[1] "Prikaz zgornjih {0} od {1} zadetkov"
-msgstr[2] "Prikaz zgornjih {0} od {1} zadetkov"
-msgstr[3] "Prikaz zgornjih {0} od {1} zadetkov"
-
-#: ../search/Search.cs:564
-msgid "Your data is being indexed"
-msgstr "Podatki se indeksirajo"
-
-#: ../search/Search.cs:565
-msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
-msgstr "Storitev iskanja indeksira podatke. Rezultati iskanja so lahko nepopolni, dokler indeksiranje ni končano."
-
-#: ../search/Tiles/ArchivedFile.cs:39
-#, csharp-format
-msgid "Inside archive {0}"
-msgstr "Znotraj arhiva {0}"
-
-#: ../search/Tiles/ArchivedFile.cs:77
-msgid "File Name:"
-msgstr "Ime datoteke:"
-
-#. Substring to move past the initial #
-#: ../search/Tiles/ArchivedFile.cs:78
-msgid "Inside File:"
-msgstr "Znotraj datoteke:"
-
-#: ../search/Tiles/ArchivedFile.cs:81
-#: ../search/Tiles/File.cs:144
-msgid "Author:"
-msgstr "Avtor:"
-
-#: ../search/Tiles/Calendar.cs:54
-msgid "Description:"
-msgstr "Opis:"
-
-#: ../search/Tiles/Calendar.cs:57
-msgid "Location:"
-msgstr "Kraj:"
-
-#: ../search/Tiles/Calendar.cs:61
-msgid "Attendees:"
-msgstr "Prisotni:"
-
-#: ../search/Tiles/Contact.cs:30
-msgid "Send Mail"
-msgstr "Poslana pošta"
-
-#: ../search/Tiles/Contact.cs:70
-msgid "Mobile Phone:"
-msgstr "Prenosni telefon"
-
-#: ../search/Tiles/Contact.cs:72
-msgid "Work Phone:"
-msgstr "_Delovni telefon:"
-
-#: ../search/Tiles/Contact.cs:74
-msgid "Home Phone:"
-msgstr "Domači telefon"
-
-#: ../search/Tiles/File.cs:34
-msgid "Reveal in Folder"
-msgstr "Prikaži v mapi"
-
-#: ../search/Tiles/File.cs:35
-msgid "E-Mail"
-msgstr "E-pošta"
-
-#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
-#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
-#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37
-#: ../search/Tiles/Folder.cs:38
-msgid "Move to Trash"
-msgstr "Prestavi v smeti"
-
-#: ../search/Tiles/File.cs:141
-#: ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:63
-msgid "Last Edited:"
-msgstr "Zadnjič urejeno:"
-
-#: ../search/Tiles/File.cs:146
-#: ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:84
-msgid "Full Path:"
-msgstr "Polna pot:"
-
-#: ../search/Tiles/Folder.cs:31
-msgid "Empty"
-msgstr "Prazno"
-
-#: ../search/Tiles/Folder.cs:33
-#, csharp-format
-msgid "Contains {0} Item"
-msgid_plural "Contains {0} Items"
-msgstr[0] "Vsebuje {0} predmetov"
-msgstr[1] "Vsebuje {0} predmet"
-msgstr[2] "Vsebuje {0} predmeta"
-msgstr[3] "Vsebuje {0} predmete"
-
-#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#: ../search/Tiles/Image.cs:39
-msgid "Set as Wallpaper"
-msgstr "Nastavi kot o_zadje"
-
-#: ../search/Tiles/Image.cs:81
-msgid "Tags:"
-msgstr "Oznake:"
-
-#: ../search/Tiles/Image.cs:83
-msgid "Modified:"
-msgstr "Spremenjeno:"
-
-#: ../search/Tiles/Image.cs:93
-msgid "Comment:"
-msgstr "Opomba:"
-
-#: ../search/Tiles/IMLog.cs:30
-msgid "IM Conversation"
-msgstr "IM pogovori"
-
-#: ../search/Tiles/IMLog.cs:92
-msgid "Name:"
-msgstr "Ime:"
-
-#: ../search/Tiles/IMLog.cs:93
-#: ../search/Tiles/MailMessage.cs:105
-msgid "Date Received:"
-msgstr "Sprejeto dne:"
-
-#: ../search/Tiles/IMLog.cs:97
-msgid "Status:"
-msgstr "Status:"
-
-#: ../search/Tiles/IMLog.cs:112
-msgid "Idle"
-msgstr "Nedejaven"
-
-#: ../search/Tiles/IMLog.cs:119
-msgid "Away"
-msgstr "Odsoten"
-
-#: ../search/Tiles/IMLog.cs:122
-msgid "Offline"
-msgstr "Nepovezan"
-
-#: ../search/Tiles/IMLog.cs:125
-msgid "Available"
-msgstr "N_a voljo"
-
-#: ../search/Tiles/MailAttachment.cs:45
-msgid "Mail attachment"
-msgstr "Priponka pošte"
-
-#: ../search/Tiles/MailMessage.cs:58
-msgid "(untitled)"
-msgstr "(brez naslova)"
-
-#: ../search/Tiles/MailMessage.cs:68
-msgid "Send in Mail"
-msgstr "Pošlji preko pošte"
-
-#: ../search/Tiles/MailMessage.cs:100
-msgid "Subject:"
-msgstr "Predmet:"
-
-#: ../search/Tiles/MailMessage.cs:102
-msgid "To:"
-msgstr "Za:"
-
-#: ../search/Tiles/MailMessage.cs:102
-msgid "From:"
-msgstr "Od:"
-
-#: ../search/Tiles/MailMessage.cs:105
-msgid "Date Sent:"
-msgstr "Poslano dne:"
-
-#: ../search/Tiles/MailMessage.cs:111
-msgid "Folder:"
-msgstr "Mapa:"
-
-#: ../search/Tiles/OpenWithMenu.cs:47
-msgid "Open With"
-msgstr "Odpri z"
-
-#: ../search/Tiles/Presentation.cs:33
-#, csharp-format
-msgid "{0} slide"
-msgid_plural "{0} slides"
-msgstr[0] "{0} diapozitivov"
-msgstr[1] "{0} diapozitiv"
-msgstr[2] "{0} diapozitiva"
-msgstr[3] "{0} diapozitivi"
-
-#: ../search/Tiles/RSSFeed.cs:49
-msgid "Site:"
-msgstr "Mesto:"
-
-#: ../search/Tiles/RSSFeed.cs:50
-msgid "Date Viewed:"
-msgstr "Datum pregleda:"
-
-#: ../search/Tiles/TextDocument.cs:37
-#, csharp-format
-msgid "{0} page"
-msgid_plural "{0} pages"
-msgstr[0] "{0} strani"
-msgstr[1] "{0} stran"
-msgstr[2] "{0} strani"
-msgstr[3] "{0} strani"
-
-#: ../search/Tiles/Tile.cs:179
-msgid "Open"
-msgstr "Odpri"
-
-#: ../search/Tiles/Utils.cs:24
-msgid "Applications"
-msgstr "Programi"
-
-#: ../search/Tiles/Utils.cs:28
-msgid "Calendar Events"
-msgstr "Dogodki koledarja"
-
-#: ../search/Tiles/Utils.cs:30
-msgid "Folders"
-msgstr "Mape"
-
-#: ../search/Tiles/Utils.cs:32
-msgid "Images"
-msgstr "Slike"
-
-#: ../search/Tiles/Utils.cs:34
-msgid "Audio"
-msgstr "Zvok"
-
-#: ../search/Tiles/Utils.cs:36
-msgid "Video"
-msgstr "Slika"
-
-#: ../search/Tiles/Utils.cs:38
-msgid "Documents"
-msgstr "Dokumenti"
-
-#: ../search/Tiles/Utils.cs:40
-msgid "Conversations"
-msgstr "Pogovori"
-
-#: ../search/Tiles/Utils.cs:42
-msgid "Websites"
-msgstr "Spletne strani"
-
-#: ../search/Tiles/Utils.cs:44
-msgid "News Feeds"
-msgstr "Viri novic"
-
-#: ../search/Tiles/Utils.cs:46
-msgid "Archives"
-msgstr "Arhivi"
-
-#: ../search/Tiles/Utils.cs:133
-#: ../search/Tiles/Utils.cs:215
-#: ../Util/StringFu.cs:106
-msgid "Yesterday"
-msgstr "Včeraj"
-
-#: ../search/Tiles/Utils.cs:135
-#: ../search/Tiles/Utils.cs:217
-#: ../Util/StringFu.cs:104
-msgid "Today"
-msgstr "Danes"
-
-#: ../search/Tiles/Utils.cs:137
-#: ../search/Tiles/Utils.cs:219
-msgid "Tomorrow"
-msgstr "Jutri"
-
-#: ../search/Tiles/Utils.cs:235
-#, csharp-format
-msgid "{0} week ago"
-msgid_plural "{0} weeks ago"
-msgstr[0] "pred {0} tedni"
-msgstr[1] "pred {0} tednom"
-msgstr[2] "pred {0} tedni"
-msgstr[3] "pred {0} tedni"
-
-#: ../search/Tiles/Utils.cs:237
-#, csharp-format
-msgid "In {0} week"
-msgid_plural "In {0} weeks"
-msgstr[0] "V {0} tednih"
-msgstr[1] "V {0} tednu"
-msgstr[2] "V {0} tednih"
-msgstr[3] "V {0} tednih"
-
-#. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:239
-#, csharp-format
-msgid "{0} month ago"
-msgid_plural "{0} months ago"
-msgstr[0] "pred {0} meseci"
-msgstr[1] "pred {0} mesecem"
-msgstr[2] "pred {0} meseci"
-msgstr[3] "pred {0} meseci"
-
-#: ../search/Tiles/Utils.cs:241
-#, csharp-format
-msgid "In {0} month"
-msgid_plural "In {0} months"
-msgstr[0] "V {0} mesecih"
-msgstr[1] "V {0} mesecu"
-msgstr[2] "V {0} mesecih"
-msgstr[3] "V {0} mesecih"
-
-#: ../search/Tiles/Utils.cs:243
-#, csharp-format
-msgid "{0} year ago"
-msgid_plural "{0} years ago"
-msgstr[0] "pred {0} leti"
-msgstr[1] "pred {0} letom"
-msgstr[2] "pred {0} leti"
-msgstr[3] "pred {0} leti"
-
-#: ../search/Tiles/Utils.cs:245
-#, csharp-format
-msgid "In {0} year"
-msgid_plural "In {0} years"
-msgstr[0] "V {0} letih"
-msgstr[1] "V {0} letu"
-msgstr[2] "V {0} letih"
-msgstr[3] "V {0} letih"
-
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "Nedoločeno trajanje"
-
-#: ../search/Tiles/WebHistory.cs:54
-msgid "URL:"
-msgstr "URL:"
-
-#: ../search/Tiles/WebHistory.cs:55
-msgid "Accessed:"
-msgstr "Dostopno:"
-
-#: ../search/Tray/TrayIcon.cs:69
-msgid "No Recent Searches"
-msgstr "Ni nedavnih iskanj"
-
-#: ../search/Tray/TrayIcon.cs:74
-msgid "Recent Searches"
-msgstr "Nedavna iskanja"
-
-#: ../search/Tray/TrayIcon.cs:90
-msgid "Clear"
-msgstr "Počisti"
-
-#. Translators: the strings in TypeFilter.cs are for when the user
-#. * wants to limit search results to a specific type. You don't need
-#. * to give an exact translation of the exact same set of English
-#. * words. Just provide a list of likely words the user might use
-#. * after the "type:" keyword to refer to each type of match.
-#.
-#: ../search/TypeFilter.cs:36
-msgid ""
-"file\n"
-"files"
-msgstr ""
-"datoteka\n"
-"datoteke"
-
-#: ../search/TypeFilter.cs:37
-msgid ""
-"mail\n"
-"email\n"
-"e-mail"
-msgstr ""
-"poštal\n"
-"elektronska pošta\n"
-"e-mail"
-
-#: ../search/TypeFilter.cs:38
-msgid ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"instant-message\n"
-"instant-messages\n"
-"chat\n"
-"chats"
-msgstr ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"trenutno sporočanje\n"
-"trenutna sporočila\n"
-"klepet\n"
-"klepeti"
-
-#: ../search/TypeFilter.cs:39
-msgid ""
-"presentation\n"
-"presentations\n"
-"slideshow\n"
-"slideshows\n"
-"slide\n"
-"slides"
-msgstr ""
-"predstavitev\n"
-"predstavitve\n"
-"diaprojekcija\n"
-"diaprojekcije\n"
-"diapozitiv\n"
-"diapozitivi"
-
-#: ../search/TypeFilter.cs:41
-msgid ""
-"application\n"
-"applications\n"
-"app\n"
-"apps"
-msgstr ""
-"aplikacija\n"
-"program\n"
-"programi\n"
-"prog"
-
-#: ../search/TypeFilter.cs:42
-msgid ""
-"contact\n"
-"contacts\n"
-"vcard\n"
-"vcards"
-msgstr ""
-"stik\n"
-"stiki\n"
-"vcard\n"
-"kontakt"
-
-#: ../search/TypeFilter.cs:43
-msgid ""
-"folder\n"
-"folders"
-msgstr ""
-"mapa\n"
-"mape"
-
-#: ../search/TypeFilter.cs:44
-msgid ""
-"image\n"
-"images\n"
-"img"
-msgstr ""
-"slika\n"
-"slike\n"
-"img"
-
-#: ../search/TypeFilter.cs:45
-msgid "audio"
-msgstr "zvok"
-
-#: ../search/TypeFilter.cs:46
-msgid "video"
-msgstr "slika"
-
-#: ../search/TypeFilter.cs:47
-msgid "media"
-msgstr "medija"
-
-#: ../search/TypeFilter.cs:48
-msgid ""
-"document\n"
-"documents\n"
-"office document\n"
-"office documents"
-msgstr ""
-"dokument\n"
-"dokumenti\n"
-"pisarna\n"
-"pisarniški dokumenti"
-
-#: ../search/TypeFilter.cs:49
-msgid ""
-"conversation\n"
-"conversations"
-msgstr ""
-"pogovor\n"
-"pogovori"
-
-#: ../search/TypeFilter.cs:50
-msgid ""
-"web\n"
-"www\n"
-"website\n"
-"websites"
-msgstr ""
-"splet\n"
-"www\n"
-"spletne strani\n"
-"medmrežje"
-
-#: ../search/TypeFilter.cs:51
-msgid ""
-"feed\n"
-"news\n"
-"blog\n"
-"rss"
-msgstr ""
-"vir\n"
-"novice\n"
-"blog\n"
-"rss"
-
-#: ../search/TypeFilter.cs:52
-msgid ""
-"archive\n"
-"archives"
-msgstr ""
-"arhiv\n"
-"arhivi"
-
-#: ../search/TypeFilter.cs:53
-msgid ""
-"person\n"
-"people"
-msgstr ""
-"oseba\n"
-"stiki"
-
-#: ../search/UIManager.cs:50
-msgid "Close Desktop Search"
-msgstr "Zapri namizno iskanje"
-
-#: ../search/UIManager.cs:55
-#: ../search/UIManager.cs:80
-msgid "Exit Desktop Search"
-msgstr "Izhod iskanja namizja"
-
-#: ../search/UIManager.cs:62
-msgid "_Search"
-msgstr "I_skanje"
-
-#: ../search/UIManager.cs:65
-msgid "Show _Categories"
-msgstr "Pokaži _Kategorije"
-
-#: ../search/UIManager.cs:68
-msgid "_Actions"
-msgstr "_Dejanja"
-
-#: ../search/UIManager.cs:71
-msgid "_View"
-msgstr "_Pogled"
-
-#: ../search/UIManager.cs:74
-msgid "_Help"
-msgstr "_Pomoč"
-
-#: ../search/UIManager.cs:83
-msgid "_Contents"
-msgstr "_Vsebina"
-
-#: ../search/UIManager.cs:85
-msgid "Help - Table of Contents"
-msgstr "Pomoč - vsebina"
-
-#: ../search/UIManager.cs:89
-msgid "About Desktop Search"
-msgstr "O iskalniku namizja"
-
-#: ../search/UIManager.cs:111
-msgid "_All"
-msgstr "_Vse"
-
-#: ../search/UIManager.cs:121
-msgid "_None"
-msgstr "_Brez"
-
-#: ../search/UIManager.cs:135
-msgid "A_pplications"
-msgstr "A_plikacije"
-
-#: ../search/UIManager.cs:137
-msgid "Search applications"
-msgstr "Iskanje aplikacij"
-
-#: ../search/UIManager.cs:141
-msgid "_Contacts"
-msgstr "_Stiki"
-
-#: ../search/UIManager.cs:143
-msgid "Search contacts"
-msgstr "Iskanje stikov"
-
-#: ../search/UIManager.cs:147
-msgid "Ca_lendar events"
-msgstr "Koledarski dogodki"
-
-#: ../search/UIManager.cs:149
-msgid "Search calendar events"
-msgstr "Iskanje dogodkov v koledarju"
-
-#: ../search/UIManager.cs:153
-msgid "_Documents"
-msgstr "_Dokumenti"
-
-#: ../search/UIManager.cs:155
-msgid "Search documents"
-msgstr "Iskanje dokumentov"
-
-#: ../search/UIManager.cs:159
-msgid "Conve_rsations"
-msgstr "Pogovo_ri"
-
-#: ../search/UIManager.cs:161
-msgid "Search E-Mail and Instant Messaging logs"
-msgstr "Iskanje pošte in dnevnikov trenutnega sporočanja"
-
-#: ../search/UIManager.cs:165
-msgid "_Images"
-msgstr "_Slike"
-
-#: ../search/UIManager.cs:167
-msgid "Search images"
-msgstr "Iskanje slik"
-
-#: ../search/UIManager.cs:171
-msgid "_Media"
-msgstr "_Medija"
-
-#: ../search/UIManager.cs:173
-msgid "Search sound and video files"
-msgstr "Iskanje zvočnih in slikovnih datotek"
-
-#: ../search/UIManager.cs:177
-msgid "_Folders"
-msgstr "_Mape"
-
-#: ../search/UIManager.cs:179
-msgid "Search for folder names"
-msgstr "Iskanje map"
-
-#: ../search/UIManager.cs:183
-msgid "_Websites"
-msgstr "_Spletne strani"
-
-#: ../search/UIManager.cs:185
-msgid "Search website history"
-msgstr "Iskanje zgodovine spletnih strani"
-
-#: ../search/UIManager.cs:189
-msgid "_News Feeds"
-msgstr "_Viri novic"
-
-#: ../search/UIManager.cs:191
-msgid "Search news feeds"
-msgstr "Iskanje virov novic"
-
-#: ../search/UIManager.cs:195
-msgid "A_rchives"
-msgstr "A_rhivi"
-
-#: ../search/UIManager.cs:197
-msgid "Search files in Archives"
-msgstr "Iskanje datotek v arhivih"
-
-#: ../search/UIManager.cs:205
-msgid "Sort by Date _Modified"
-msgstr "Razvrsti po datumu spreminjanja"
-
-#: ../search/UIManager.cs:206
-msgid "Sort the most-recently-modified matches first"
-msgstr "Razvrsti najprej najnovejše zadetke"
-
-#: ../search/UIManager.cs:209
-msgid "Sort by _Name"
-msgstr "Razvrsti po imenu"
-
-#: ../search/UIManager.cs:210
-msgid "Sort matches by name"
-msgstr "Razvrsti po imenu"
-
-#: ../search/UIManager.cs:213
-msgid "Sort by _Relevance"
-msgstr "Razvrsti po pomembnosti"
-
-#: ../search/UIManager.cs:214
-msgid "Sort the best matches first"
-msgstr "Razvrsti po pomembnosti"
-
-#: ../search/UIManager.cs:221
-msgid "Show Details"
-msgstr "Pokaži podrobnosti"
-
-#: ../search/UIManager.cs:354
-msgid "Couldn't launch web browser"
-msgstr "Ni mogoče zagnati brskalnika"
-
-#: ../tools/Settings.cs:166
-msgid "Reload configuration"
-msgstr "Ponovno naloži nastavitve"
-
-#: ../tools/Settings.cs:167
-msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
-msgstr "Nastavitveno datoteko je spremenila zunanja aplikacija. Želite zavreči trenutne nastavitve in ponovno naložiti vrednosti iz diska?"
-
-#: ../tools/Settings.cs:305
-msgid "Select Path"
-msgstr "Izbor poti"
-
-#: ../tools/Settings.cs:324
-msgid "The selected path is already selected for indexing and wasn't added."
-msgstr "Določena pot je že izbrana za indeksiranje."
-
-#: ../tools/Settings.cs:327
-msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
-msgstr "Določena pot ni dodana. Lista vsebuje predmete, ki že vključujejo pot in je že v postopku indeksiranja."
-
-#: ../tools/Settings.cs:338
-msgid "Path not added"
-msgstr "Pot ni dodana"
-
-#: ../tools/Settings.cs:347
-msgid "Remove obsolete paths"
-msgstr "Odstrani nerabljene poti"
-
-#: ../tools/Settings.cs:348
-msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
-msgstr "Dodajanje te poti bo odstranilo nekatere obstoječe nerabljene poti. Želite pot dodati?"
-
-#: ../tools/Settings.cs:374
-msgid "Remove path"
-msgstr "Odstrani pot"
-
-#: ../tools/Settings.cs:375
-msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
-msgstr "Zares želite odstraniti pot iz liste map vključenih za indeksiranje?"
-
-#: ../tools/Settings.cs:404
-msgid "Remove item"
-msgstr "Odstrani predmet"
-
-#: ../tools/Settings.cs:405
-msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
-msgstr "Zares želite odstraniti pot iz liste map izključenih iz indeksiranja?"
-
-#: ../tools/Settings.cs:455
-#: ../tools/Settings.cs:544
-#: ../tools/Settings.cs:631
-#: ../tools/Settings.cs:970
-msgid "Name"
-msgstr "Ime"
-
-#: ../tools/Settings.cs:538
-msgid "Type"
-msgstr "Vrsta"
-
-#: ../tools/Settings.cs:591
-msgid "Path:"
-msgstr "Pot:"
-
-#: ../tools/Settings.cs:594
-msgid "Pattern:"
-msgstr "Vzorec:"
-
-#: ../tools/Settings.cs:597
-msgid "Mail folder:"
-msgstr "Poštna mapa:"
-
-#: ../tools/Settings.cs:878
-msgid "Select Folder"
-msgstr "Izberi mapo"
-
-#: ../tools/Settings.cs:904
-#: ../tools/settings.glade.h:19
-msgid "P_ath:"
-msgstr "P_ot:"
-
-#: ../tools/Settings.cs:909
-msgid "M_ail folder:"
-msgstr "Poštna m_apa:"
-
-#: ../tools/Settings.cs:914
-msgid "P_attern:"
-msgstr "V_zorec:"
-
-#: ../tools/Settings.cs:938
-msgid "Error adding path"
-msgstr "Napaka pri dodajanju poti"
-
-#: ../tools/Settings.cs:939
-msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
-msgstr "Določene poti ni mogoče najti in ni dodana na listo virov izključenih iz indeksiranja."
-
-#: ../tools/Settings.cs:969
-msgid "Show"
-msgstr "Prikaži"
-
-#: ../tools/settings.glade.h:1
-msgid "<b>Administration</b>"
-msgstr "<b>Skrbništvo</b>"
-
-#: ../tools/settings.glade.h:2
-msgid "<b>Display</b>"
-msgstr "<b>Zaslon</b>"
-
-#: ../tools/settings.glade.h:3
-msgid "<b>Exclude Resource</b>"
-msgstr "<b>Izpusti vire</b>"
-
-#: ../tools/settings.glade.h:4
-msgid "<b>General</b>"
-msgstr "<b>Splošno</b>"
-
-#: ../tools/settings.glade.h:5
-msgid "<b>Privacy</b>"
-msgstr "<b>Zasebnost</b>"
-
-#: ../tools/settings.glade.h:6
-msgid "<b>Select Mail Folder</b>"
-msgstr "<b>Izbor poštne mape</b>"
-
-#: ../tools/settings.glade.h:7
-msgid "<b>User Interface</b>"
-msgstr "<b>Uporabniški vmesnik</b>"
-
-#: ../tools/settings.glade.h:8
-msgid "Add any additional paths to be included for indexing."
-msgstr "Dodajanje poti za vključevanje v indeksiranje."
-
-#: ../tools/settings.glade.h:9
-msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
-msgstr "Prilagajanje prikaza tipov zadetkov in vrstnega reda razvrščanja. "
-
-#: ../tools/settings.glade.h:10
-msgid "Alt"
-msgstr "Alt"
-
-#: ../tools/settings.glade.h:11
-msgid "Automatically s_tart searching after the user has stopped typing"
-msgstr "Samodejno prični z _iskanjem, ko uporabnik neha tipkati"
-
-#: ../tools/settings.glade.h:12
-msgid "Ctrl"
-msgstr "Ctrl"
-
-#: ../tools/settings.glade.h:13
-msgid "Display the search window by pressing:"
-msgstr "Prikaz iskalnega okna s tipko:"
-
-#: ../tools/settings.glade.h:14
-msgid "Exclude Resource"
-msgstr "Izpusti vir"
-
-#: ../tools/settings.glade.h:15
-msgid "Filename _pattern"
-msgstr "Vzorec imena datoteke"
-
-#: ../tools/settings.glade.h:16
-msgid "I_ndex my home directory"
-msgstr "I_ndeksiranje domače mape"
-
-#: ../tools/settings.glade.h:17
-msgid "Index data while on _battery power"
-msgstr "Indeksiraj ob delu z baterijo"
-
-#: ../tools/settings.glade.h:18
-msgid "Indexing"
-msgstr "Indeksiranje"
-
-#: ../tools/settings.glade.h:20
-msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Izbor vira izločenega iz indeksiranja."
-
-#: ../tools/settings.glade.h:21
-msgid "Please select the mail folder you wish to exclude from indexing. "
-msgstr "Izbor mape pošte, izločene iz indeksiranja."
-
-#: ../tools/settings.glade.h:23
-msgid "Search Preferences"
-msgstr "Nastavitve iskanja"
-
-#: ../tools/settings.glade.h:24
-msgid "Select Mail Folder"
-msgstr "Izbor mape pošte"
-
-#: ../tools/settings.glade.h:25
-msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
-msgstr "Določitev virov, kot so poti, vzorci, mapa pošte ali objekti, ki jih ne želite vključiti v indeksiranje."
-
-#: ../tools/settings.glade.h:26
-msgid "Type:"
-msgstr "Tip:"
-
-#: ../tools/settings.glade.h:27
-msgid "_Allow Beagle to be run as root"
-msgstr "_Omogoči zagon programa Beagle kot skrbnik"
-
-#: ../tools/settings.glade.h:28
-msgid "_Browse..."
-msgstr "_Prebrskaj ..."
-
-#: ../tools/settings.glade.h:29
-msgid "_Folder path"
-msgstr "_Pot mape"
-
-#: ../tools/settings.glade.h:30
-msgid "_Mail folder"
-msgstr "Poštna _mapa"
-
-#: ../tools/settings.glade.h:31
-msgid "_Start search & indexing services automatically "
-msgstr "_Samodejno zaženi iskanje in indeksiranje"
-
-#: ../tools/beagle-settings.desktop.in.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Nastavitve namiznega iskanja in indeksiranja"
-
-#: ../tools/beagle-settings.desktop.in.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Nastavitve iskanja in indeksiranja"
-
-#: ../tools/beagle-settings.desktop.in.in.h:3
-msgid "Search & Indexing"
-msgstr "Iskanje & indeksiranje"
 
 #: ../Util/Evolution.cs:45
 #: ../Util/Evolution.cs:163
 msgid "On This Computer"
 msgstr "Na tem računalniku"
 
-#: ../Util/F-Spot/Exif.cs:248
-msgid "Image Directory"
-msgstr "Mapa slik"
+#: ../Util/StringFu.cs:125
+#: ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Danes"
 
-#: ../Util/F-Spot/Exif.cs:250
-msgid "Thumbnail Directory"
-msgstr "mapa vzorcev slik"
-
-#: ../Util/F-Spot/Exif.cs:252
-msgid "Exif Directory"
-msgstr "Exif mapa"
-
-#: ../Util/F-Spot/Exif.cs:254
-msgid "GPS Directory"
-msgstr "GPS mapa"
-
-#: ../Util/F-Spot/Exif.cs:256
-msgid "InterOperability Directory"
-msgstr "Mapa InterOperability"
-
-#: ../Util/F-Spot/Exif.cs:258
-msgid "Unknown Directory"
-msgstr "Neznana mapa"
-
-#: ../Util/F-Spot/IptcFile.cs:175
-msgid "IPTC Information Interchange Model (IIM) Version number"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:177
-msgid "OSI Destination routing information"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:179
-#, fuzzy
-msgid "IPTC file format"
-msgstr "Prednostna oblika:"
-
-#: ../Util/F-Spot/IptcFile.cs:181
-msgid "Identifies the provider and product"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:183
-msgid "A unique number identifying the envelope"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:185
-msgid "A unique number"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:187
-msgid "The envelope handling priority between 1 (most urgent) and 9 (least urgent)"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:189
-msgid "The year month and day (CCYYMMDD) the service sent the material"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:191
-msgid "The hour minute and second the (HHMMSS+HHMM) the service sent the material"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:193
-msgid "The character set designation"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:195
-msgid "External globally unique object identifier"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:200
-msgid "Abstract Relationship Method (ARM) identifier"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:202
-msgid "Abstract Relationship Method (ARM) version number."
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:205
-msgid "Number identifying the IIM version this application record uses"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:207
-#, fuzzy
-msgid "Object type reference"
-msgstr "Nastavitve iskanja"
-
-#: ../Util/F-Spot/IptcFile.cs:212
-msgid "Object attribute reference"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:218
-#: ../Util/F-Spot/IptcFile.cs:222
-msgid "Object name"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:220
-msgid "Status of the objectdata according to the provider"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:224
-msgid "Location within a city or area where the object originates"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:227
-msgid "Name of the city the content is focussing on"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:230
-msgid "Copyright information for"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:233
-msgid "Full name of the country of the focus of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:236
-msgid "Two or three letter ISO3166 code of the country of the focus of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:239
-msgid "Creator of the content"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:242
-msgid "Provider of the object"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:245
-msgid "The title of the author or creator"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:248
-msgid "The person involved in writing, editing or correcting the object data or caption/abstract"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:252
-#, fuzzy
-msgid "Headline of the content"
-msgstr "Pomoč - vsebina"
-
-#: ../Util/F-Spot/IptcFile.cs:255
-msgid "Instructions from the creator to the receiver not covered by other fields"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:258
-msgid "Intellectual genre of the object"
-msgstr ""
-
-#: ../Util/F-Spot/IptcFile.cs:271
-#, fuzzy
-msgid "Unknown IIM DataSet"
-msgstr "Neznana mapa"
-
-#: ../Util/F-Spot/MetadataStore.cs:46
-#, fuzzy
-msgid "Creator"
-msgstr "Počisti"
-
-#: ../Util/F-Spot/MetadataStore.cs:47
-#, fuzzy
-msgid "Title"
-msgstr "Naslov:"
-
-#: ../Util/F-Spot/MetadataStore.cs:48
-msgid "Copyright"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:49
-msgid "Subject and Keywords"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:50
-msgid "Compression"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:52
-#, fuzzy
-msgid "Planar Configuration"
-msgstr "Ponovno naloži nastavitve"
-
-#: ../Util/F-Spot/MetadataStore.cs:56
-msgid "Photometric Interpretation"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:58
-msgid "Resolution Unit"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:60
-msgid "Exposure Program"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:62
-msgid "Metering Mode"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:64
-msgid "Exposure Mode"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:66
-msgid "Custom Rendered"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:68
-#, fuzzy
-msgid "Components Configuration"
-msgstr "Ponovno naloži nastavitve"
-
-#: ../Util/F-Spot/MetadataStore.cs:70
-msgid "Light Source"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:72
-msgid "Sensing Method"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:74
-msgid "Color Space"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:76
-msgid "White Balance"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:78
-msgid "Focal Plane Resolution Unit"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:80
-msgid "File Source Type"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:82
-msgid "Scene Capture Type"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:84
-msgid "Gain Control"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:86
-#, fuzzy
-msgid "Contrast"
-msgstr "Stik"
-
-#: ../Util/F-Spot/MetadataStore.cs:88
-msgid "Saturation"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:90
-msgid "Sharpness"
-msgstr ""
-
-#: ../Util/F-Spot/MetadataStore.cs:92
-msgid "Scene Type"
-msgstr ""
+#: ../Util/StringFu.cs:127
+#: ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Včeraj"
 
 #. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:109
+#: ../Util/StringFu.cs:130
 msgid "MMM d"
 msgstr "d. MMM"
 
 #. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:112
+#: ../Util/StringFu.cs:133
 msgid "MMM d, yyyy"
 msgstr "d. MMM. yyyy"
 
 #. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:115
+#: ../Util/StringFu.cs:136
 msgid "h:mm tt"
-msgstr "hh:mm"
+msgstr "hh.mm"
 
 #. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:121
+#: ../Util/StringFu.cs:142
 #, csharp-format
 msgid "{0}, {1}"
 msgstr "{0}, {1}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:138
+#: ../Util/StringFu.cs:159
 #, csharp-format
 msgid "Today, {0}"
 msgstr "Danes, {0}"
 
 #. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:141
+#: ../Util/StringFu.cs:162
 #, csharp-format
 msgid "Yesterday, {0}"
 msgstr "Včeraj, {0}"
 
 #. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:146
-#, fuzzy, csharp-format
+#: ../Util/StringFu.cs:167
+#, csharp-format
 msgid "{0} day ago, {1}"
 msgid_plural "{0} days ago, {1}"
 msgstr[0] "pred {0} dnevi, {1}"
-msgstr[1] "pred {0} dnevi, {1}"
-msgstr[2] "pred {0} dnevi, {1}"
+msgstr[1] "pred {0} dnevom, {1}"
+msgstr[2] "pred {0} dnevoma, {1}"
 msgstr[3] "pred {0} dnevi, {1}"
 
 #. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:152
+#: ../Util/StringFu.cs:173
 msgid "MMMM d, h:mm tt"
-msgstr "d. MMMM, hh:mm"
+msgstr "d. MMMM, hh.mm"
 
 #. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:157
+#: ../Util/StringFu.cs:178
 msgid "MMMM d yyyy, h:mm tt"
-msgstr "d. MMMM yyyy, hh:mm"
+msgstr "d. MMMM yyyy, hh.mm"
 
-#: ../Util/StringFu.cs:167
+#: ../Util/StringFu.cs:188
 #, csharp-format
 msgid "{0} hour"
 msgid_plural "{0} hours"
@@ -1703,7 +124,7 @@ msgstr[1] "{0} ura"
 msgstr[2] "{0} uri"
 msgstr[3] "{0} ure"
 
-#: ../Util/StringFu.cs:174
+#: ../Util/StringFu.cs:195
 #, csharp-format
 msgid "{0} minute"
 msgid_plural "{0} minutes"
@@ -1713,24 +134,1652 @@ msgstr[2] "{0} minuti"
 msgstr[3] "{0} minute"
 
 #. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:208
-#, fuzzy, csharp-format
+#: ../Util/StringFu.cs:229
+#, csharp-format
 msgid "{0} byte"
 msgid_plural "{0} bytes"
 msgstr[0] "{0} bajtov"
-msgstr[1] "{0} bajtov"
-msgstr[2] "{0} bajtov"
-msgstr[3] "{0} bajtov"
+msgstr[1] "{0} bajt"
+msgstr[2] "{0} bajta"
+msgstr[3] "{0} bajti"
 
 #. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:212
+#: ../Util/StringFu.cs:233
 #, csharp-format
 msgid "{0:0.0} KB"
 msgstr "{0:0.0} KB"
 
 #. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:215
+#: ../Util/StringFu.cs:236
 #, csharp-format
 msgid "{0:0.0} MB"
 msgstr "{0:0.0} MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle pripravlja kazalo iz %s"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle pripravlja kazalo povezave %s"
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr "Pripravi kazalo te strani"
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr "Pripravi kazalo povezave"
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "Ponovno naloži nastavitveno datoteko"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr "Samodejna priprava kazala"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr "Poziv ključnih besed ob pripravi kazala na zahtevo"
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr "Dodatne ključne besede za pripravo kazala"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "Podrobnosti kazala"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "Število predmetov iz katerih je trenutno pripravljeno kazalo:"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr "<i>OPOMBA: Storitev iskanja še vedno pripravlja kazalo iz novih podatkov.</i>"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+msgid "No results were found."
+msgstr "Ni zadetkov iskanja."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr "Iskanje \"{0}\" se ni skladalo z nobeno datoteko na računalniku."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr "Za iskanje povsod je potrebno izbrati \"Najdi v: Vse\"."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
+msgstr "Priporočeno je preverjanje črkovanja iskalnih besed za preprečevanje tipkarskih napak."
+
+# Glej komentar pri vrstici 900
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid "If you are searching for GMail emails, select \"Global\" Search Domain using the \"Search\" menu."
+msgstr "V primeru iskanja e-pošte GMail uporabite \"Spletno\" iskalno domeno z uporabo menija \"Poišči\"."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr "Uporabite lahko velike ali male črke; iskanje ne upošteva velikosti znakov."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr "Iskanje izbirnih besed omogoča izraz OR.  primer: <b>poper OR sol</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr "Za izključitev besed, pred besedo uporabite minus; primer: <b>-sladkor</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr "Za iskanje fraz uporabite navedke; primer: <b>\"dodajte peteršilj\"</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid "Specify the extension to search among files with that extension. ex: <b>bean soup .html</b>"
+msgstr "Za iskanje med datotekami z določeno pripono določite pripono; primer: <b>fižolova juha .html</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
+msgid "Quick Tips"
+msgstr "Hitri namigi"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr "Programa Beagle ni mogoče zagnati kot skrbnik"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid "For security reasons, Beagle cannot be run as root. You should restart as a regular user."
+msgstr "Iz varnostnih razlogov programa Beagle ni mogoče zagnati kot skrbnik. Zaženite program kot običajni uporabnik."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
+msgid "Search service not running"
+msgstr "Storitev iskanja ni zagnana"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
+msgid "The search service does not appear to be running. You can start it by clicking the button below."
+msgstr "Videti je, da storitev iskanja ne teče. Zagnati jo je mogoče s klikom na spodnji gumb."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
+msgid "Start search service"
+msgstr "Zagon storitve iskanja"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "Samodejno zaženi storitev ob prijavi"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
+msgstr "Znotraj arhiva {0}"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "Datoteka:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "Naslov:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+msgid "Inside File:"
+msgstr "Znotraj datoteke:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+msgid "Author:"
+msgstr "Avtor:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "Opis:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Čas:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "Mesto:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "Navzoči:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Pošlji pošto"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+msgid "E-Mail:"
+msgstr "e-Pošta:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+msgid "Mobile Phone:"
+msgstr "Mobilni telefon:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+msgid "Work Phone:"
+msgstr "Delovni telefon:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+msgid "Home Phone:"
+msgstr "Domači telefon:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+msgid "Reveal in Folder"
+msgstr "Pokaži v mapi"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+msgid "E-Mail"
+msgstr "e-pošta"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
+msgid "Move to Trash"
+msgstr "Prestavi v smeti"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Najdi dokumente istega avtorja"
+
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+msgid "Last Edited:"
+msgstr "Zadnjič urejeno:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+msgid "Full Path:"
+msgstr "Polna pot:"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
+msgid "Empty"
+msgstr "Prazno"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Vsebuje {0} predmetov"
+msgstr[1] "Vsebuje {0} predmet"
+msgstr[2] "Vsebuje {0} predmeta"
+msgstr[3] "Vsebuje {0} predmete"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+msgid "IM Conversation"
+msgstr "Pogovor trenutnega sporočanja"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99
+#: ../tools/settings.glade.h:34
+msgid "Name:"
+msgstr "Ime:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Received:"
+msgstr "Datum sprejema:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "Stanje:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "Nedejavno"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "Odsotno"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "Nepovezno"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "Na voljo"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Nastavi kot tapeto"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "Oznake:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Spremenjeno:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Opomba:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Priloga pošte"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Najdi sporočila od pošiljatelja"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(brez naslova)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Pošlji preko pošte"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "Predmet:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "Za:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "Od:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "Datum pošiljanja:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "Mapa:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Stran priročnika"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Odpri z"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} diapozitivov"
+msgstr[1] "{0} diapozitiv"
+msgstr[2] "{0} diapozitiva"
+msgstr[3] "{0} diapozitivi"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "Mesto:"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "Datum ogleda:"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Datum:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} strani"
+msgstr[1] "{0} stran"
+msgstr[2] "{0} strani"
+msgstr[3] "{0} strani"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
+msgid "Open"
+msgstr "Odpri"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
+msgid "Applications"
+msgstr "Programi"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
+msgid "Contacts"
+msgstr "Stiki"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
+msgid "Calendar Events"
+msgstr "Dogodki koledarja"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "Mape"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "Slike"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "Zvok"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "Videi"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
+msgid "Documents"
+msgstr "Dokumenti"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "Pogovori"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
+msgid "Websites"
+msgstr "Spletišča"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
+msgid "News Feeds"
+msgstr "Viri novic"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
+msgid "Archives"
+msgstr "Arhivi"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "Jutri"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "pred {0} tedni"
+msgstr[1] "pred {0} tednom"
+msgstr[2] "pred {0} tedni"
+msgstr[3] "pred {0} tedni"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "V {0} tednih"
+msgstr[1] "V {0} tednu"
+msgstr[2] "V {0} tednih"
+msgstr[3] "V {0} tednih"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "pred {0} meseci"
+msgstr[1] "pred {0} mesecem"
+msgstr[2] "pred {0} meseci"
+msgstr[3] "pred {0} meseci"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "V {0} mesecih"
+msgstr[1] "V {0} mesecu"
+msgstr[2] "V {0} mesecih"
+msgstr[3] "V {0} mesecih"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "pred {0} leti"
+msgstr[1] "pred {0} letom"
+msgstr[2] "pred {0} leti"
+msgstr[3] "pred {0} leti"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "V {0} letih"
+msgstr[1] "V {0} letu"
+msgstr[2] "V {0} letih"
+msgstr[3] "V {0} letih"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "Dostopno:"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:117
+msgid "Desktop Search"
+msgstr "Iskanje po namizju"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
+msgid "No Recent Searches"
+msgstr "Ni nedavnih iskanj"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
+msgid "Recent Searches"
+msgstr "Nedavna iskanja"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
+msgid "Clear"
+msgstr "Počisti"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
+msgid "Quit"
+msgstr "Končaj"
+
+#: ../search/Beagle.Search/Category.cs:127
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} zadetkov"
+msgstr[1] "{0} zadetek"
+msgstr[2] "{0} zadetka"
+msgstr[3] "{0} zadetki"
+
+#: ../search/Beagle.Search/Category.cs:129
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} od {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr "Seja D-Bus ni na voljo"
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid "Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr "Medtem ko seja D-Bus ni dostopna, programa ni mogoče pognati s parametrom '--icon'."
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Skrij"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "Vse"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "Moje datoteke"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "Slike"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "Večpredstavnostna datoteka"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "Izvorna koda"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "E-pošta"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "Dnevniki klepeta"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "Opombe"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "_Najdi v:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "Najdi sedaj"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr "Vtipkajte iskane besede"
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "Začetek iskanja"
+
+#: ../search/Beagle.Search/SearchWindow.cs:254
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Iskanje namizja: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "There are computers near you running Beagle"
+msgstr "Beagle teče na računalnikih blizu vas"
+
+#: ../search/Beagle.Search/SearchWindow.cs:486
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr "Iz menija \"Iskanje\" je mogoče izbrati iskanje drugih računalnikov."
+
+#: ../search/Beagle.Search/SearchWindow.cs:518
+msgid "Search service started"
+msgstr "Iskalna storitev je zagnana"
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Starting service failed"
+msgstr "Začenjanje storitve je spodletelo"
+
+#: ../search/Beagle.Search/SearchWindow.cs:530
+msgid "Service is already running!"
+msgstr "Storitev že teče!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Stopping service failed"
+msgstr "Zaustavljanje storitve je spodletelo"
+
+#: ../search/Beagle.Search/SearchWindow.cs:546
+msgid "Service was not running!"
+msgstr "Storitev ni bila zagnana!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:560
+msgid "Search service stopped"
+msgstr "Storitev iskanja je zaustavljena"
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid "Your data is being indexed"
+msgstr "Iz podatkov se pripravlja kazalo"
+
+#: ../search/Beagle.Search/SearchWindow.cs:600
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr "Storitev iskanja pripravlja kazalo iz vaših podatkov. Rezultati iskanja so lahko nepopolni, dokler priprava kazala ni končana."
+
+#: ../search/Beagle.Search/SearchWindow.cs:626
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Prikaz vseh {0} zadetkov"
+msgstr[1] "Prikaz {0} zadetka"
+msgstr[2] "Prikaz vseh {0} zadetkov"
+msgstr[3] "Prikaz vseh {0} zadetkov"
+
+#: ../search/Beagle.Search/SearchWindow.cs:628
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr "Preveč zadetkov. Prikaz zadnjih {0} od {1}"
+
+#: ../search/Beagle.Search/UIManager.cs:53
+msgid "Close Desktop Search"
+msgstr "Zapri iskanje namizja"
+
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
+msgid "Exit Desktop Search"
+msgstr "Izhod iz iskanja namizja"
+
+#: ../search/Beagle.Search/UIManager.cs:65
+msgid "_Search"
+msgstr "I_skanje"
+
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "Iskalne _domene"
+
+#: ../search/Beagle.Search/UIManager.cs:71
+msgid "_Actions"
+msgstr "_Dejanja"
+
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "_Pogled"
+
+#: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "_Možnosti storitve"
+
+#: ../search/Beagle.Search/UIManager.cs:80
+msgid "_Help"
+msgstr "Pomo_č"
+
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "Zaženi storitev"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "Zaustavi storitev"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr "Podrobnosti kazala"
+
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "_Vsebina"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "Pomoč - razpredelnica vsebine"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "O iskalniku namizja"
+
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr "Razvrsti po datumu _spreminjanja"
+
+#: ../search/Beagle.Search/UIManager.cs:126
+msgid "Sort the most-recently-modified matches first"
+msgstr "Najprej so prikazani najbolj nedavno spremenjeni zadetki"
+
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "Razvrsti po imenu"
+
+#: ../search/Beagle.Search/UIManager.cs:130
+msgid "Sort matches by name"
+msgstr "Razvrščanje zadetkov po imenu"
+
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "Razvrsti po _pomembnosti"
+
+#: ../search/Beagle.Search/UIManager.cs:134
+msgid "Sort the best matches first"
+msgstr "Najprej so prikazani najboljši zadetki"
+
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "_Krajevno"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr "Iskanje v osebnih podatkih na tem računalniku"
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "S_istem"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr "Iskanje v sistemskih podatkih na tem računalniku"
+
+# To se nanaša na spletne storitve (vrstica 904), zato sem izbral Spletno.
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr "_Spletno"
+
+#: ../search/Beagle.Search/UIManager.cs:155
+msgid "Search in internet services"
+msgstr "Iskanje v spletnih storitvah"
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr "_Sosedščina"
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr "Iskanje na računalnikih v bližini"
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "Pokaži podrobnosti"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "Ni mogoče zagnati spletnega brskalnika"
+
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr ""
+"Matej Urbančič\n"
+"Andrej Žnidaršič"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Poišči"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Iskanje podatkov na namizju"
+
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "Prišlo je do napake"
+
+#: ../tools/Settings.cs:233
+#: ../tools/Settings.cs:711
+#, csharp-format
+msgid "Display the search window by pressing {0}"
+msgstr "Prikaz iskalnega okna s pritiskom na {0}"
+
+#: ../tools/Settings.cs:363
+msgid "Reload configuration"
+msgstr "Ponovno naloži nastavitve"
+
+#: ../tools/Settings.cs:364
+msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
+msgstr "Nastavitveno datoteko je spremenil zunanji program. Ali želite zavreči trenutno prikazane vrednosti in ponovno naložiti nastavitve z diska?"
+
+#: ../tools/Settings.cs:498
+msgid "Select Path"
+msgstr "Izbor poti"
+
+#: ../tools/Settings.cs:517
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr "Izbrana pot je že izbrana za pripravo kazala in ni bila dodana."
+
+#: ../tools/Settings.cs:520
+msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
+msgstr "Izbrana pot ni dodana. Seznam vsebuje nadrejene predmete, zato so podatki že vključeni v pripravo kazala."
+
+#: ../tools/Settings.cs:531
+msgid "Path not added"
+msgstr "Pot ni dodana"
+
+#: ../tools/Settings.cs:540
+msgid "Remove obsolete paths"
+msgstr "Odstrani zastarele poti"
+
+#: ../tools/Settings.cs:541
+msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr "Dodajanje te poti bo nekatere obstoječe poti naredilo zastarele in jih odstranilo. Ali želite pot vseeno dodati?"
+
+#: ../tools/Settings.cs:567
+msgid "Remove path"
+msgstr "Odstrani pot"
+
+#: ../tools/Settings.cs:568
+msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+msgstr "Ali ste prepričani, da želite odstraniti pot iz seznama map vključenih za pripravo kazala?"
+
+#: ../tools/Settings.cs:597
+msgid "Remove item"
+msgstr "Odstrani predmet"
+
+#: ../tools/Settings.cs:598
+msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+msgstr "Ali ste prepričani, da želite odstraniti pot iz seznama map izključenih iz priprave kazala?"
+
+#: ../tools/Settings.cs:645
+msgid "Remote host already present in the list."
+msgstr "Oddaljeni gostitelj je že na seznamu."
+
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
+msgstr "Oddaljeni gostitelj beagle ni dodan"
+
+#: ../tools/Settings.cs:670
+msgid "Remove host"
+msgstr "Odstrani gostitelja"
+
+#: ../tools/Settings.cs:671
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr "Ali ste prepričani, da želite tega gostitelja odstraniti s seznama?"
+
+#: ../tools/Settings.cs:774
+#: ../tools/Settings.cs:863
+#: ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049
+#: ../tools/Settings.cs:1771
+msgid "Name"
+msgstr "Ime"
+
+#: ../tools/Settings.cs:857
+msgid "Type"
+msgstr "Vrsta"
+
+#: ../tools/Settings.cs:910
+msgid "Path:"
+msgstr "Pot:"
+
+#: ../tools/Settings.cs:913
+msgid "Pattern:"
+msgstr "Vzorec:"
+
+#: ../tools/Settings.cs:916
+msgid "Mail folder:"
+msgstr "Poštna mapa:"
+
+#: ../tools/Settings.cs:951
+msgid "Address"
+msgstr "Naslov"
+
+#: ../tools/Settings.cs:1296
+msgid "Select Folder"
+msgstr "Izbor mape"
+
+#: ../tools/Settings.cs:1322
+#: ../tools/settings.glade.h:36
+msgid "P_ath:"
+msgstr "P_ot:"
+
+#: ../tools/Settings.cs:1327
+msgid "M_ail folder:"
+msgstr "Poštna m_apa:"
+
+#: ../tools/Settings.cs:1332
+msgid "P_attern:"
+msgstr "V_zorec:"
+
+#: ../tools/Settings.cs:1356
+msgid "Error adding path"
+msgstr "Napaka med dodajanjem poti"
+
+#: ../tools/Settings.cs:1357
+msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
+msgstr "Določene poti ni mogoče najti in zato ni dodana na seznam virov izključenih iz priprave kazala."
+
+#: ../tools/Settings.cs:1395
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "Povezovanje z {0}"
+
+#: ../tools/Settings.cs:1731
+msgid "Evolution's mail."
+msgstr "Pošta Evolution."
+
+#: ../tools/Settings.cs:1732
+msgid "Evolution's address book, memos and tasks."
+msgstr "Imenik, zapiski in naloge Evolution."
+
+#: ../tools/Settings.cs:1733
+msgid "Thunderbird's email."
+msgstr "E-pošta Thunderbird."
+
+#: ../tools/Settings.cs:1734
+msgid "RSS feeds from Akregator."
+msgstr "Viri RSS iz Akregator."
+
+#: ../tools/Settings.cs:1735
+msgid "RSS feeds from Blam."
+msgstr "Viri RSS iz Blam."
+
+#: ../tools/Settings.cs:1736
+msgid "Files and folders on the local file system."
+msgstr "Datoteke in mape na krajevnem datotečnem sistemu."
+
+#: ../tools/Settings.cs:1737
+msgid "Mail messages from KMail."
+msgstr "Poštna sporočila iz KMail."
+
+#: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "Sporočilca iz KNotes."
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr "Dnevni red iz KOrganizer."
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "Stiki iz KAddressBook."
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Zaznamki Konquerorj-ja."
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Zgodovina Konqueror-ja."
+
+#: ../tools/Settings.cs:1743
+msgid "IMs and chats from Konversation."
+msgstr "Trenutna sporočila in klepeti iz Konversation."
+
+#: ../tools/Settings.cs:1744
+msgid "IMs and chats from Kopete"
+msgstr "Trenutna sporočila in klepeti iz Kopete"
+
+#: ../tools/Settings.cs:1745
+msgid "Mind-maps from Labyrinth."
+msgstr "Miselni zemljevidi iz Labyrinth."
+
+#: ../tools/Settings.cs:1746
+msgid "RSS feeds from Liferea."
+msgstr "Viri RSS iz Liferea."
+
+#: ../tools/Settings.cs:1747
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Metapodatki nautilusa (značke, sporočilca, itn.)"
+
+#: ../tools/Settings.cs:1748
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Iskanje drugih iskalnih storitev v omrežju (POSKUSNO)"
+
+#: ../tools/Settings.cs:1749
+msgid "Opera's bookmarks and browsing history."
+msgstr "Zaznamki in zgodovina brskanja Opera."
+
+#: ../tools/Settings.cs:1750
+msgid "IMs and chats from Pidgin."
+msgstr "Trenutna sporočila in klepeti iz Pidgina."
+
+#: ../tools/Settings.cs:1751
+msgid "Notes from Tomboy."
+msgstr "Sporočilca iz programa Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1753
+msgid "(System) Applications"
+msgstr "(Sistem) Programi"
+
+#: ../tools/Settings.cs:1754
+msgid "(System) Help files"
+msgstr "(Sistem) Datoteke pomoči"
+
+#: ../tools/Settings.cs:1755
+msgid "(System) Manual pages"
+msgstr "(Sistem) Strani priročnika"
+
+#: ../tools/Settings.cs:1756
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr "(Sistem) Dodatni rezultati iskanja z uporabo ukaza 'locate'"
+
+#: ../tools/Settings.cs:1757
+msgid "(System) Mono documentation"
+msgstr "(Sistem) Dokumentacija Mono"
+
+#: ../tools/Settings.cs:1758
+msgid "(System) Files from Windows' partition"
+msgstr "(Sistem) Datoteke z razdelka Windows"
+
+#: ../tools/Settings.cs:1772
+msgid "Description"
+msgstr "Opis"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Nastavitev namiznega iskanja"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Iskanje in priprava kazala"
+
+#: ../tools/keygrabber.py:56
+msgid "Grab key combination"
+msgstr "Zgrabi izbor tipk"
+
+#: ../tools/keygrabber.py:143
+msgid "Please press the new key combination"
+msgstr "Pritisnite novo kombinacijo tipk"
+
+#: ../tools/keygrabber.py:192
+msgid "Disabled"
+msgstr "Onemogočeno"
+
+#: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Skrbništvo</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Prikaz</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Izpusti vir</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>Splošno</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>Krajevni in sistemski viri</b>"
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Networking</b>"
+msgstr "<b>Omrežje</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Privacy</b>"
+msgstr "<b>Zasebnost</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Izbor poštne mape</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>Uporabniški vmesnik</b>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr "<i>Spremembe bodo imele učinek le po ponovnem zagonu ozadnejga programa.</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr "<i>Ta nastavitev ne velja med uporabo baterije.</i>"
+
+#: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Zahtevano je geslo.</span>"
+
+#: ../tools/settings.glade.h:14
+msgid "Add Remote Host"
+msgstr "Dodajanje oddaljenega gostitelja"
+
+#: ../tools/settings.glade.h:15
+msgid "Add a static host"
+msgstr "Dodajanje statičnega gostitelja"
+
+#: ../tools/settings.glade.h:16
+msgid "Add any additional paths to be included for indexing."
+msgstr "Dodajanje dodatnih poti za vključitev v pripravo kazala."
+
+#: ../tools/settings.glade.h:17
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr "Dodajanje katerihkoli oddaljenih gostiteljev z omogočenim iskanjem, s katerimi naj se ustvari omrežje"
+
+#: ../tools/settings.glade.h:18
+msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
+msgstr "Prilagajanje vrst rezultatov za prikaz in vrstnega reda prikaza ob izboru prikaza po vrsti. "
+
+#: ../tools/settings.glade.h:19
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr "Omogoči zunanji dostop do krajevnih storitev iskanja (POSKUSNO)"
+
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr "Samodejen pričetek _iskanja ko uporabnik neha tipkati"
+
+#: ../tools/settings.glade.h:21
+msgid "Change"
+msgstr "Spremeni"
+
+#: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Podatkovni viri"
+
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing"
+msgstr "Prikaz iskalnega okna s pritiskom"
+
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr "Omogoči podatkovne vire za pripravo kazala in iskanje."
+
+#: ../tools/settings.glade.h:25
+msgid "Enable web interface for local search service"
+msgstr "Omogoči spletni vmesnik za krajevno storitev iskanja"
+
+#: ../tools/settings.glade.h:26
+msgid "Exclude Resource"
+msgstr "Izključi vir"
+
+#: ../tools/settings.glade.h:27
+msgid "Filename _pattern"
+msgstr "_Vzorec imena datoteke"
+
+#: ../tools/settings.glade.h:28
+msgid "I_ndex my home directory"
+msgstr "Prip_rava kazala domače mape"
+
+#: ../tools/settings.glade.h:29
+msgid "In order for you to perform Beagle searches on this computer, you must enter a password."
+msgstr "Za izvajanje iskanj Beagle na tem računalniku, je potrebno vnesti geslo."
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "Pripravljaj kazalo ob delu z _baterijo"
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr "Bolj agresivna priprava kazala, ko je o_hranjevalnik zaslona dejaven"
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "Ime kazala:"
+
+#: ../tools/settings.glade.h:33
+msgid "Indexing"
+msgstr "Priprava kazala"
+
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Možnosti omrežja"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "Geslo za {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "Geslo:"
+
+#: ../tools/settings.glade.h:39
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr "Izbor vira za izključitev iz priprave kazala."
+
+#: ../tools/settings.glade.h:40
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr "Izbor mape pošte za izključitev iz priprave kazala."
+
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr "Zahtevaj geslo za oddaljeno iskanje tega računalnika"
+
+#: ../tools/settings.glade.h:42
+msgid "Search Preferences"
+msgstr "Možnosti iskanja"
+
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "Iskanje"
+
+#: ../tools/settings.glade.h:44
+msgid "Select Mail Folder"
+msgstr "Izbor mape pošte"
+
+#: ../tools/settings.glade.h:45
+msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
+msgstr "Določitev virov, kot so poti, vzorci, mapa pošte ali predmeti, ki jih želite izključiti v pripravo kazala."
+
+#: ../tools/settings.glade.h:46
+msgid "Type:"
+msgstr "Vrsta:"
+
+#: ../tools/settings.glade.h:47
+msgid "_Allow Beagle to be run as root"
+msgstr "_Omogoči zagon programa Beagle kot skrbnik"
+
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "_Prebrskaj ..."
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "_Izbor iz trenutno razpoložljivih gostiteljev"
+
+#: ../tools/settings.glade.h:50
+msgid "_Folder path"
+msgstr "_Pot mape"
+
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "_Ime gostitelja:"
+
+#: ../tools/settings.glade.h:52
+msgid "_Mail folder"
+msgstr "Poštna _mapa"
+
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_Geslo:"
+
+#: ../tools/settings.glade.h:54
+msgid "_Start search & indexing services automatically "
+msgstr "_Samodejno zaženi iskanje in pripravo kazala"
+
+#~ msgid "Orientation"
+#~ msgstr "Usmerjenost"
+#~ msgid "The orientation of the tray."
+#~ msgstr "Usmerjenost pladnja."
+#~ msgid "Open..."
+#~ msgstr "Odpri ..."
+#~ msgid "About"
+#~ msgstr "O Programu"
+#~ msgid "Display name"
+#~ msgstr "Pokaži ime"
+#~ msgid "Primary E-mail"
+#~ msgstr "Osnovni elektronski naslov"
+#~ msgid "Secondary E-mail"
+#~ msgstr "Dodatni elektronski naslov"
+#~ msgid "Nickname"
+#~ msgstr "Vzdevek"
+#~ msgid ""
+#~ "Unable to open mork database:\n"
+#~ "\n"
+#~ " {0}"
+#~ msgstr ""
+#~ "Ni mogoče odpreti mork podatkovne zbirke:\n"
+#~ "\n"
+#~ " {0}"
+#~ msgid "The specified ID does not exist in this database!"
+#~ msgstr "Izbran ID ne obstaja v podatkovni bazi!"
+#~ msgid "Added {0} contact"
+#~ msgid_plural "Added {0} contacts"
+#~ msgstr[0] "Dodanih {0} stikov"
+#~ msgstr[1] "Dodan {0} stik"
+#~ msgstr[2] "Dodana {0} stika"
+#~ msgstr[3] "Dodani {0} stiki"
+#~ msgid "Viewing {0}"
+#~ msgstr "Pregledovanje {0}"
+#~ msgid "Select a mork database file"
+#~ msgstr "Izberite datoteko mork podatkovne zbirke"
+#~ msgid "Primary E-Mail:"
+#~ msgstr "Osnovni elektronski naslov:"
+#~ msgid "Screen name:"
+#~ msgstr "Ime na zaslonu:"
+#~ msgid "Home phone:"
+#~ msgstr "Domači telefon:"
+#~ msgid "Mobile phone:"
+#~ msgstr "Prenosni telefon:"
+#~ msgid "Web page:"
+#~ msgstr "Spletna stran:"
+#~ msgid "Send E-Mail"
+#~ msgstr "Pošlji e-pošto"
+#~ msgid "Details..."
+#~ msgstr "Podrobnosti ..."
+#~ msgid "Could not find a valid E-mail address!"
+#~ msgstr "Ne najdem veljavnega elektronskega naslova!"
+#~ msgid "<b>Custom fields</b>"
+#~ msgstr "<b>Polja po meri</b>"
+#~ msgid "<b>Home</b>"
+#~ msgstr "<b>Domov</b>"
+#~ msgid "<b>Internet</b>"
+#~ msgstr "<b>splet</b>"
+#~ msgid "<b>Name</b>"
+#~ msgstr "< b>Ime</b>"
+#~ msgid "<b>Notes</b>"
+#~ msgstr "<b>Opombe</b>"
+#~ msgid "<b>Phones</b>"
+#~ msgstr "<b>Telefoni</b>"
+#~ msgid "Additional E-Mail:"
+#~ msgstr "Dodatni elektronski naslov:"
+#~ msgid "Address:"
+#~ msgstr "Naslov:"
+#~ msgid "City:"
+#~ msgstr "Mesto:"
+#~ msgid "Contact"
+#~ msgstr "Stik"
+#~ msgid "Contact Viewer"
+#~ msgstr "Pregledovalnik stikov"
+#~ msgid "Country:"
+#~ msgstr "Država:"
+#~ msgid "Custom 1:"
+#~ msgstr "Po meni 1:"
+#~ msgid "Custom 2:"
+#~ msgstr "Po meni 2:"
+#~ msgid "Custom 3:"
+#~ msgstr "Po meni 3:"
+#~ msgid "Custom 4:"
+#~ msgstr "Po meni 4:"
+#~ msgid "Department:"
+#~ msgstr "O_ddelek:"
+#~ msgid "Detailed view"
+#~ msgstr "Podrobni pogled"
+#~ msgid "Display:"
+#~ msgstr "Prikaz:"
+#~ msgid "Fax:"
+#~ msgstr "Faks:"
+#~ msgid "First:"
+#~ msgstr "Prvi:"
+#~ msgid "Last:"
+#~ msgstr "Zadnji:"
+#~ msgid "Mobile:"
+#~ msgstr "Prenosni telefon:"
+#~ msgid "Nickname:"
+#~ msgstr "Vzdevek:"
+#~ msgid "Organization:"
+#~ msgstr "Organizacija:"
+#~ msgid "Other"
+#~ msgstr "Ostalo"
+#~ msgid "Pager:"
+#~ msgstr "Pozivnik:"
+#~ msgid "Preferred format:"
+#~ msgstr "Prednostna oblika:"
+#~ msgid "State/Province"
+#~ msgstr "_Država/Provinca:"
+#~ msgid "State/Province:"
+#~ msgstr "_Država/Provinca:"
+#~ msgid ""
+#~ "Unknown\n"
+#~ "Plain text\n"
+#~ "HTML"
+#~ msgstr ""
+#~ "Neznano\n"
+#~ "Golo besedilo\n"
+#~ "HTML"
+#~ msgid "Web Page:"
+#~ msgstr "Spletna stran:"
+#~ msgid "Work:"
+#~ msgstr "Služba:"
+#~ msgid "ZIP/Postal Code"
+#~ msgstr "_Poštna številka: "
+#~ msgid "ZIP/Postal Code:"
+#~ msgstr "_Poštna številka: "
+#~ msgid ""
+#~ "You can change the scope of your search using the \"Search\" menu. A "
+#~ "broader search scope might produce more results."
+#~ msgstr ""
+#~ "Spreminjanje območja iskanja lahko nastavite preko \"Poišči\" menuja. "
+#~ "Širše določeno območje lahko prikaže več zadetkov."
+
+#, fuzzy
+#~ msgid "Showing the top {0} of {1} total matches"
+#~ msgid_plural "Showing the top {0} of {1} total matches"
+#~ msgstr[0] "Prikaz zgornjih {0} od {1} zadetkov"
+#~ msgstr[1] "Prikaz zgornjih {0} od {1} zadetkov"
+#~ msgstr[2] "Prikaz zgornjih {0} od {1} zadetkov"
+#~ msgstr[3] "Prikaz zgornjih {0} od {1} zadetkov"
+#~ msgid "File Name:"
+#~ msgstr "Ime datoteke:"
+#~ msgid "Unknown duration"
+#~ msgstr "Nedoločeno trajanje"
+#~ msgid ""
+#~ "file\n"
+#~ "files"
+#~ msgstr ""
+#~ "datoteka\n"
+#~ "datoteke"
+#~ msgid ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
+#~ msgstr ""
+#~ "poštal\n"
+#~ "elektronska pošta\n"
+#~ "e-mail"
+#~ msgid ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
+#~ msgstr ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "trenutno sporočanje\n"
+#~ "trenutna sporočila\n"
+#~ "klepet\n"
+#~ "klepeti"
+#~ msgid ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
+#~ msgstr ""
+#~ "predstavitev\n"
+#~ "predstavitve\n"
+#~ "diaprojekcija\n"
+#~ "diaprojekcije\n"
+#~ "diapozitiv\n"
+#~ "diapozitivi"
+#~ msgid ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
+#~ msgstr ""
+#~ "aplikacija\n"
+#~ "program\n"
+#~ "programi\n"
+#~ "prog"
+#~ msgid ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
+#~ msgstr ""
+#~ "stik\n"
+#~ "stiki\n"
+#~ "vcard\n"
+#~ "kontakt"
+#~ msgid ""
+#~ "folder\n"
+#~ "folders"
+#~ msgstr ""
+#~ "mapa\n"
+#~ "mape"
+#~ msgid ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+#~ msgstr ""
+#~ "slika\n"
+#~ "slike\n"
+#~ "img"
+#~ msgid "audio"
+#~ msgstr "zvok"
+#~ msgid "video"
+#~ msgstr "slika"
+#~ msgid "media"
+#~ msgstr "medija"
+#~ msgid ""
+#~ "document\n"
+#~ "documents\n"
+#~ "office document\n"
+#~ "office documents"
+#~ msgstr ""
+#~ "dokument\n"
+#~ "dokumenti\n"
+#~ "pisarna\n"
+#~ "pisarniški dokumenti"
+#~ msgid ""
+#~ "conversation\n"
+#~ "conversations"
+#~ msgstr ""
+#~ "pogovor\n"
+#~ "pogovori"
+#~ msgid ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
+#~ msgstr ""
+#~ "splet\n"
+#~ "www\n"
+#~ "spletne strani\n"
+#~ "medmrežje"
+#~ msgid ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
+#~ msgstr ""
+#~ "vir\n"
+#~ "novice\n"
+#~ "blog\n"
+#~ "rss"
+#~ msgid ""
+#~ "archive\n"
+#~ "archives"
+#~ msgstr ""
+#~ "arhiv\n"
+#~ "arhivi"
+#~ msgid ""
+#~ "person\n"
+#~ "people"
+#~ msgstr ""
+#~ "oseba\n"
+#~ "stiki"
+#~ msgid "Show _Categories"
+#~ msgstr "Pokaži _Kategorije"
+#~ msgid "A_pplications"
+#~ msgstr "A_plikacije"
+#~ msgid "_Contacts"
+#~ msgstr "_Stiki"
+#~ msgid "Search contacts"
+#~ msgstr "Iskanje stikov"
+#~ msgid "Ca_lendar events"
+#~ msgstr "Koledarski dogodki"
+#~ msgid "Search calendar events"
+#~ msgstr "Iskanje dogodkov v koledarju"
+#~ msgid "_Documents"
+#~ msgstr "_Dokumenti"
+#~ msgid "Search documents"
+#~ msgstr "Iskanje dokumentov"
+#~ msgid "Conve_rsations"
+#~ msgstr "Pogovo_ri"
+#~ msgid "Search E-Mail and Instant Messaging logs"
+#~ msgstr "Iskanje pošte in dnevnikov trenutnega sporočanja"
+#~ msgid "_Images"
+#~ msgstr "_Slike"
+#~ msgid "Search sound and video files"
+#~ msgstr "Iskanje zvočnih in slikovnih datotek"
+#~ msgid "_Folders"
+#~ msgstr "_Mape"
+#~ msgid "_Websites"
+#~ msgstr "_Spletne strani"
+#~ msgid "Search website history"
+#~ msgstr "Iskanje zgodovine spletnih strani"
+#~ msgid "_News Feeds"
+#~ msgstr "_Viri novic"
+#~ msgid "Search news feeds"
+#~ msgstr "Iskanje virov novic"
+#~ msgid "A_rchives"
+#~ msgstr "A_rhivi"
+#~ msgid "Show"
+#~ msgstr "Pokaži"
+#~ msgid "Alt"
+#~ msgstr "Alt"
+#~ msgid "Ctrl"
+#~ msgstr "Ctrl"
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Nastavitve namiznega iskanja in indeksiranja"
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Nastavitve iskanja in indeksiranja"
+#~ msgid "Image Directory"
+#~ msgstr "Mapa slik"
+#~ msgid "Thumbnail Directory"
+#~ msgstr "mapa vzorcev slik"
+#~ msgid "Exif Directory"
+#~ msgstr "Exif mapa"
+#~ msgid "GPS Directory"
+#~ msgstr "GPS mapa"
+#~ msgid "InterOperability Directory"
+#~ msgstr "Mapa InterOperability"
+#~ msgid "Unknown Directory"
+#~ msgstr "Neznana mapa"
+
+#, fuzzy
+#~ msgid "IPTC file format"
+#~ msgstr "Prednostna oblika:"
+
+#, fuzzy
+#~ msgid "Object type reference"
+#~ msgstr "Nastavitve iskanja"
+
+#, fuzzy
+#~ msgid "Headline of the content"
+#~ msgstr "Pomoč - vsebina"
+
+#, fuzzy
+#~ msgid "Unknown IIM DataSet"
+#~ msgstr "Neznana mapa"
+
+#, fuzzy
+#~ msgid "Creator"
+#~ msgstr "Počisti"
+
+#, fuzzy
+#~ msgid "Title"
+#~ msgstr "Naslov:"
+
+#, fuzzy
+#~ msgid "Planar Configuration"
+#~ msgstr "Ponovno naloži nastavitve"
+
+#, fuzzy
+#~ msgid "Components Configuration"
+#~ msgstr "Ponovno naloži nastavitve"
+
+#, fuzzy
+#~ msgid "Contrast"
+#~ msgstr "Stik"
 
