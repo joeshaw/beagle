@@ -1,14 +1,14 @@
 #
-# Copyright (C) 2005-2008 Jordi Mas i Hernàndez, jmas@softcatala.org
+# Copyright (C) 2005-2010 Jordi Mas i Hernàndez, jmas@softcatala.org
 # Traducció del Beagle al català
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-26 00:55+0530\n"
-"PO-Revision-Date: 2008-10-28 00:30+0530\n"
-"Last-Translator: <Jordi Mas> jmas@softcatala.org\n"
+"POT-Creation-Date: 2010-03-13 11:46+0100\n"
+"PO-Revision-Date: 2010-03-13 13:00+0100\n"
+"Last-Translator: Jordi Mas <jmas@softcatala.org>\n"
 "Language-Team: tradgnome@softcatala.net\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -209,7 +209,8 @@ msgid ""
 "If you are searching for GMail emails, select \"Global\" Search Domain using "
 "the \"Search\" menu."
 msgstr ""
-"Si esteu cercant correus electrònics del GMail, seleccioneu «Global» en el domini de cerca utilitzant el menú «Cerca»."
+"Si esteu cercant correus electrònics del GMail, seleccioneu «Global» en el "
+"domini de cerca utilitzant el menú «Cerca»."
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -239,7 +240,8 @@ msgid ""
 "Specify the extension to search among files with that extension. ex: <b>bean "
 "soup .html</b>"
 msgstr ""
-"Especifiqueu la extensió de cerca entre els fitxers amb aquesta extensió. Per exemple, <b>sopa d'all.html</b>"
+"Especifiqueu la extensió de cerca entre els fitxers amb aquesta extensió. "
+"Per exemple, <b>sopa d'all.html</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:20
 #: ../search/Beagle.Search/UIManager.cs:106
@@ -258,11 +260,11 @@ msgstr ""
 "Per raons de seguretat, el Beagle no es pot executar com a usuari primari. "
 "És recomanable reiniciar com a usuari normal."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
 msgid "Search service not running"
 msgstr "El servei de cerca no s'està executant"
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
@@ -270,9 +272,13 @@ msgstr ""
 "No sembla que el servei de cerca estigui funcionant. Podeu iniciar-lo fent "
 "clic al botó de baix."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
 msgstr "Inicia el servei de cerca"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "En entrar, inicia el servei automàticament"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
@@ -352,7 +358,7 @@ msgstr "Correu electrònic"
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Beagle.Search.Tiles/File.cs:38
-#: ../search/Beagle.Search.Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
 msgid "Move to Trash"
 msgstr "Mou a la paperera"
 
@@ -361,23 +367,23 @@ msgid "Find Documents From Same Author"
 msgstr "Cera documents del mateix autor"
 
 #: ../search/Beagle.Search.Tiles/File.cs:170
-#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Última edició:"
 
 #: ../search/Beagle.Search.Tiles/File.cs:175
-#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Camí complet:"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
 msgid "Empty"
 msgstr "Buit"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -648,14 +654,14 @@ msgstr "Neteja"
 msgid "Quit"
 msgstr "Surt"
 
-#: ../search/Beagle.Search/Category.cs:142
+#: ../search/Beagle.Search/Category.cs:127
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} resultat"
 msgstr[1] "{0} resultats"
 
-#: ../search/Beagle.Search/Category.cs:144
+#: ../search/Beagle.Search/Category.cs:129
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} de {2}"
@@ -668,7 +674,8 @@ msgstr "La sessió del D-Bus no és accessible"
 msgid ""
 "Cannot run with parameter '--icon' when session D-Bus is not accessible."
 msgstr ""
-"No es pot executar amb el paràmetre «--icon» quan la sessió D-Bus no és accessible."
+"No es pot executar amb el paràmetre «--icon» quan la sessió D-Bus no és "
+"accessible."
 
 #: ../search/Beagle.Search/NotificationArea.cs:63
 msgid "Hide"
@@ -820,7 +827,7 @@ msgstr "_Opcions del servei"
 msgid "_Help"
 msgstr "A_juda"
 
-#: ../search/Beagle.Search/UIManager.cs:
+#: ../search/Beagle.Search/UIManager.cs:88
 msgid "Start service"
 msgstr "Inicia el servei"
 
@@ -908,6 +915,10 @@ msgstr "Mostra els detalls"
 msgid "Couldn't launch web browser"
 msgstr "No s'ha pogut iniciar el navegador web"
 
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "Jordi Mas i Hernàndez <jmas@softcatala.org>"
+
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
 msgstr "Cerca"
@@ -921,7 +932,7 @@ msgid "An error occurred"
 msgstr "S'ha produït un error"
 
 #: ../tools/Settings.cs:233 ../tools/Settings.cs:711
-#,csharp-format
+#, csharp-format
 msgid "Display the search window by pressing {0}"
 msgstr "Mostra la finestra de cerca en prémer {0}"
 
