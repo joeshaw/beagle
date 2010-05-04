@@ -17,7 +17,7 @@ MONODOC_REQUIRED=1.2.4
 NDESK_DBUS_REQUIRED=0.5.2
 NDESK_DBUS_GLIB_REQUIRED=0.3.0
 GTK_SHARP_REQUIRED=2.10.0
-GMIME_SHARP_REQUIRED=2.2.0
+GMIME_SHARP_REQUIRED=2.3.5
 EVOLUTION_SHARP_REQUIRED=0.13.3
 GSF_SHARP_REQUIRED=0.6
 GTK_REQUIRED=2.10.0
@@ -223,7 +223,7 @@ if test "x$enable_gui" = "xyes"; then
 	glade-sharp-2.0 >= $GTK_SHARP_REQUIRED
 	gnome-sharp-2.0 >= $GTK_SHARP_REQUIRED
 	gnome-vfs-sharp-2.0 >= $GTK_SHARP_REQUIRED
-	gmime-sharp >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
 ])
 	AC_SUBST(BEAGLE_UI_LIBS)
 
@@ -270,7 +270,7 @@ PKG_CHECK_MODULES(EVO,
                   evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
 		  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
-                  gmime-sharp >= $GMIME_SHARP_REQUIRED,
+                  gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED,
                   have_evo_dependencies=yes, have_evo_dependencies=no)
 AC_SUBST(EVO_LIBS)
 
@@ -377,14 +377,14 @@ dnl ----------------------------------------------
 PKG_CHECK_MODULES(BEAGLED,
 [
 	shared-mime-info
-	gmime-sharp >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
 	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"
 AC_SUBST(BEAGLED_LIBS)
 
 GSF_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gsf-sharp`
-GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp`
+GMIME_SHARP_PREFIX=`$PKG_CONFIG --variable=prefix gmime-sharp-2.4`
 
 dnl ----------------------------------------------
 dnl Epiphany Extension

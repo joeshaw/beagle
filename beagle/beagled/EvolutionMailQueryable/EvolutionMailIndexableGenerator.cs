@@ -333,28 +333,46 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
                         indexable.AddProperty (Property.NewUnsearched ("fixme:folder", this.folder_name));
 
 			GMime.InternetAddressList addrs;
-
-			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
+			
+			if (this.folder_name == "Sent") {
+				addrs = message.GetRecipients (GMime.RecipientType.To);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+						
+						indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
-			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name == "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
+			
+			if (this.folder_name == "Sent") {
+				addrs = message.GetRecipients (GMime.RecipientType.Cc);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+						
+						indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
-			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (this.folder_name != "Sent"  && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", ia.Addr));
+			
+			if (this.folder_name != "Sent") {
+				addrs = GMime.InternetAddressList.Parse (message.Sender);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+						indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
+			
 			if (this.folder_name == "Sent")
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 
@@ -750,48 +768,54 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			}
 
 			GMime.InternetAddressList addrs;
-			addrs = GMime.InternetAddressList.ParseString (messageInfo.to);
+			addrs = GMime.InternetAddressList.Parse (messageInfo.to);
 			foreach (GMime.InternetAddress ia in addrs) {
+				GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+				
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group)
-						indexable.AddProperty (Property.New ("fixme:to_address", ia.Addr));
-
+					if (ia is GMime.InternetAddressMailbox)
+						indexable.AddProperty (Property.New ("fixme:to_address", mailbox.Address));
+					
 					indexable.AddProperty (Property.New ("fixme:to_name", ia.Name));
 				}
-
-				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
+				
+				if (this.folder_name == "Sent" && ia is GMime.InternetAddressMailbox)
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", mailbox.Address));
 			}
 			addrs.Dispose ();
 
-			addrs = GMime.InternetAddressList.ParseString (messageInfo.cc);
+			addrs = GMime.InternetAddressList.Parse (messageInfo.cc);
 			foreach (GMime.InternetAddress ia in addrs) {
+				GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+				
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group)
-						indexable.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-
+					if (ia is GMime.InternetAddressMailbox)
+						indexable.AddProperty (Property.New ("fixme:cc_address", mailbox.Address));
+					
 					indexable.AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				}
-
-				if (this.folder_name == "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", ia.Addr));
+				
+				if (this.folder_name == "Sent" && ia is GMime.InternetAddressMailbox)
+					indexable.AddProperty (Property.NewUnsearched ("fixme:sentTo", mailbox.Address));
 			}
 			addrs.Dispose ();
 
-			addrs = GMime.InternetAddressList.ParseString (messageInfo.from);
+			addrs = GMime.InternetAddressList.Parse (messageInfo.from);
 			foreach (GMime.InternetAddress ia in addrs) {
+				GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+				
 				if (!have_content) {
 					indexable.AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-					if (ia.AddressType != GMime.InternetAddressType.Group)
-						indexable.AddProperty (Property.New ("fixme:from_address", ia.Addr));
-
+					if (ia is GMime.InternetAddressMailbox)
+						indexable.AddProperty (Property.New ("fixme:from_address", mailbox.Address));
+					
 					indexable.AddProperty (Property.New ("fixme:from_name", ia.Name));
 				}
 
-				if (this.folder_name != "Sent" && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", ia.Addr));
+				if (this.folder_name != "Sent" && ia is GMime.InternetAddressMailbox)
+					indexable.AddProperty (Property.NewUnsearched ("fixme:gotFrom", mailbox.Address));
 			}
 			addrs.Dispose ();
 

@@ -86,7 +86,7 @@ namespace Beagle.Util {
 								try {
 									reader = command.ExecuteReader ();
 								} catch (SqliteException e) {
-									if (e.ErrorCode == SQLiteErrorCode.Busy) {
+									if (e.ErrorCode == SqliteErrorCode.Busy) {
 										Thread.Sleep (50);
 									} else {
 										throw;

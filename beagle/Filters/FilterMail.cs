@@ -131,7 +131,7 @@ namespace Beagle.Filters {
 
 			// Messages that are multipart/alternative shouldn't be considered as having
 			// attachments.  Unless of course they do.
-			if (mime_part is GMime.Multipart && mime_part.ContentType.Subtype.ToLower () != "alternative")
+			if (mime_part is GMime.Multipart && mime_part.ContentType.MediaSubtype.ToLower () != "alternative")
 				return true;
 
 			return false;
@@ -145,34 +145,43 @@ namespace Beagle.Filters {
 			AddProperty (Property.NewDate ("fixme:date", message.Date.ToUniversalTime ()));
 
 			GMime.InternetAddressList addrs;
-			addrs = this.message.GetRecipients (GMime.Message.RecipientType.To);
+			addrs = this.message.GetRecipients (GMime.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					AddProperty (Property.New ("fixme:to_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					AddProperty (Property.New ("fixme:to_address", mailbox.Address));
+				}
+				
 				AddProperty (Property.New ("fixme:to_name", ia.Name));
 				AddEmailLink (ia);
 			}
 			addrs.Dispose ();
 
-			addrs = this.message.GetRecipients (GMime.Message.RecipientType.Cc);
+			addrs = this.message.GetRecipients (GMime.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					AddProperty (Property.New ("fixme:cc_address", mailbox.Address));
+				}
+				
 				AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				AddEmailLink (ia);
 			}
 			addrs.Dispose ();
 
-			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (this.message.Sender));
+			addrs = GMime.InternetAddressList.Parse (this.message.Sender);
 			foreach (GMime.InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					AddProperty (Property.New ("fixme:from_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					AddProperty (Property.New ("fixme:from_address", mailbox.Address));
+				}
+				
 				AddProperty (Property.New ("fixme:from_name", ia.Name));
 				AddEmailLink (ia);
 			}
@@ -189,7 +198,7 @@ namespace Beagle.Filters {
 				AddProperty (Property.NewUnsearched ("fixme:msgid", GMime.Utils.DecodeMessageId (msgid)));
 
 			foreach (GMime.References refs in this.message.References)
-				AddProperty (Property.NewUnsearched ("fixme:reference", refs.Msgid));
+				AddProperty (Property.NewUnsearched ("fixme:reference", refs.MessageId));
 
 			string list_id = this.message.GetHeader ("List-Id");
 			if (list_id != null)
@@ -350,16 +359,15 @@ namespace Beagle.Filters {
 					}
 				} else if (mime_part is GMime.Multipart) {
 					GMime.Multipart multipart = (GMime.Multipart) mime_part;
-
-					int num_parts = multipart.Number;
+					int num_parts = multipart.Count;
 
 					// If the mimetype is multipart/alternative, we only want to index
 					// one part -- the richest one we can filter.
-					if (mime_part.ContentType.Subtype.ToLower () == "alternative") {
+					if (mime_part.ContentType.MediaSubtype.ToLower () == "alternative") {
 						// The richest formats are at the end, so work from there
 						// backward.
 						for (int i = num_parts - 1; i >= 0; i--) {
-							GMime.Object subpart = multipart.GetPart (i);
+							GMime.Object subpart = multipart[i];
 
 							if (IsMimeTypeHandled (subpart.ContentType.ToString ())) {
 								part = subpart;
@@ -375,7 +383,7 @@ namespace Beagle.Filters {
 					// the parts, treat them like a bunch of attachments.
 					if (part == null) {
 						for (int i = 0; i < num_parts; i++) {
-							using (GMime.Object subpart = multipart.GetPart (i))
+							using (GMime.Object subpart = multipart[i])
 								this.OnEachPart (subpart);
 						}
 					}
@@ -405,7 +413,7 @@ namespace Beagle.Filters {
 						} else if (mime_type == "text/html") {
 							no_child_needed = true;
 							html_part = true;
-							string enc = part.GetContentTypeParameter ("charset"); 
+							string enc = part.ContentType.GetParameter ("charset"); 
 							// DataWrapper.Stream is a very limited stream
 							// and does not allow Seek or Tell
 							// HtmlFilter requires Stream.Position=0.
@@ -479,7 +487,7 @@ namespace Beagle.Filters {
 							if (length != -1)
 								child.AddProperty (Property.NewUnsearched ("fixme:filesize", length));
 
-							if (part.ContentType.Type.ToLower () == "text")
+							if (part.ContentType.MediaType.ToLower () == "text")
 								child.SetTextReader (new StreamReader (stream));
 							else
 								child.SetBinaryStream (stream);

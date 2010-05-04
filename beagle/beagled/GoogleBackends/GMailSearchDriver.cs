@@ -322,38 +322,47 @@ namespace Beagle.Daemon.GoogleBackend {
 			hit.AddProperty (Property.NewDate ("fixme:date", message.Date.ToUniversalTime ()));
 
 			GMime.InternetAddressList addrs;
-			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
+			addrs = message.GetRecipients (GMime.RecipientType.To);
 			foreach (GMime.InternetAddress ia in addrs) {
 				hit.AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					hit.AddProperty (Property.New ("fixme:to_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					hit.AddProperty (Property.New ("fixme:to_address", mailbox.Address));
+				}
+				
 				hit.AddProperty (Property.New ("fixme:to_name", ia.Name));
 			}
 			addrs.Dispose ();
 
-			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
+			addrs = message.GetRecipients (GMime.RecipientType.Cc);
 			foreach (GMime.InternetAddress ia in addrs) {
 				hit.AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					hit.AddProperty (Property.New ("fixme:cc_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					hit.AddProperty (Property.New ("fixme:cc_address", mailbox.Address));
+				}
+				
 				hit.AddProperty (Property.New ("fixme:cc_name", ia.Name));
 			}
 			addrs.Dispose ();
 
-			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
+			addrs = GMime.InternetAddressList.Parse (message.Sender);
 			foreach (GMime.InternetAddress ia in addrs) {
 				hit.AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-				if (ia.AddressType != GMime.InternetAddressType.Group)
-					hit.AddProperty (Property.New ("fixme:from_address", ia.Addr));
-
+				if (ia is GMime.InternetAddressMailbox) {
+					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+					
+					hit.AddProperty (Property.New ("fixme:from_address", mailbox.Address));
+				}
+				
 				hit.AddProperty (Property.New ("fixme:from_name", ia.Name));
 			}
 			addrs.Dispose ();
 
 			foreach (GMime.References refs in message.References)
-				hit.AddProperty (Property.NewUnsearched ("fixme:reference", refs.Msgid));
+				hit.AddProperty (Property.NewUnsearched ("fixme:reference", refs.MessageId));
 
 			string list_id = message.GetHeader ("List-Id");
 			if (list_id != null)

@@ -407,28 +407,46 @@ namespace Beagle.Daemon.KMailQueryable {
                         indexable.AddProperty (Property.NewUnsearched ("fixme:folder", folder_name));
 
 			GMime.InternetAddressList addrs;
-
-			addrs = message.GetRecipients (GMime.Message.RecipientType.To);
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name == Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+			
+			if (folder_name == Queryable.SentMailFolderName) {
+				addrs = message.GetRecipients (GMime.RecipientType.To);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+						
+						indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
-			addrs = message.GetRecipients (GMime.Message.RecipientType.Cc);
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name == Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", ia.Addr));
+			
+			if (folder_name == Queryable.SentMailFolderName) {
+				addrs = message.GetRecipients (GMime.RecipientType.Cc);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+						
+						indexable.AddProperty (Property.NewKeyword ("fixme:sentTo", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
-			addrs = GMime.InternetAddressList.ParseString (GMime.Utils.HeaderDecodePhrase (message.Sender));
-			foreach (GMime.InternetAddress ia in addrs) {
-				if (folder_name != Queryable.SentMailFolderName && ia.AddressType != GMime.InternetAddressType.Group)
-					indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", ia.Addr));
+			
+			if (folder_name != Queryable.SentMailFolderName) {
+				addrs = GMime.InternetAddressList.Parse (message.Sender);
+				foreach (GMime.InternetAddress ia in addrs) {
+					if (ia is GMime.InternetAddressMailbox) {
+						GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
+						
+						indexable.AddProperty (Property.NewKeyword ("fixme:gotFrom", mailbox.Address));
+					}
+				}
+				
+				addrs.Dispose ();
 			}
-			addrs.Dispose ();
-
+			
 			if (folder_name == Queryable.SentMailFolderName)
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 			else {

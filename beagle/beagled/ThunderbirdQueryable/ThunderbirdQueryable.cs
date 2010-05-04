@@ -367,9 +367,14 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			message.Subject = Mime.HeaderDecodeText (GetText (document, "Subject"));
 			message.Sender = Mime.HeaderDecodePhrase (GetText (document, "Author"));
 			message.MessageId = GetText (document, "MessageId");
-			message.SetDate (DateTimeUtil.UnixToDateTimeUtc (Convert.ToInt64 (GetText (document, "Date"))), 0);
-			message.AddRecipientsFromString ("To", Mime.HeaderDecodePhrase (GetText (document, "Recipients")));
-
+			message.Date = DateTimeUtil.UnixToDateTimeUtc (Convert.ToInt64 (GetText (document, "Date")));
+			
+			string str = GetText (document, "Recipients");
+			GMime.InternetAddressList recipients = GMime.InternetAddressList.Parse (str);
+			foreach (GMime.InternetAddress ia in recipients)
+				message.To.Add (ia);
+			recipients.Dispose ();
+			
 			return message;
 		}
 		
@@ -434,7 +439,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			
 			// We _know_ that the stream comes from a StreamReader, which uses UTF8 by
 			// default. So we use that here when parsing our string.
-			return (str != null ? Encoding.UTF8.GetString (str, 0, pos) : string.Empty);
+			return (str != null ? System.Text.Encoding.UTF8.GetString (str, 0, pos) : string.Empty);
 		}
 		
 		// This spell "charset="
@@ -462,7 +467,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			// instead of UTF-8 in some cases and that will really mess things up.
 			byte[] buffer = null;
 			int c, header_length = 0, newlines = 0, charset_pos = 0;
-			Encoding enc = Encoding.UTF8;
+			System.Text.Encoding enc = System.Text.Encoding.UTF8;
 			try {
 				do {
 					c = stream.BaseStream.ReadByte ();
@@ -491,7 +496,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 				stream.BaseStream.Read (buffer, 0, buffer.Length);
 				
 				// We need to use correct encoding
-				enc = Encoding.GetEncoding (encoding_str);
+				enc = System.Text.Encoding.GetEncoding (encoding_str);
 			} catch {
 			} finally {
 				stream.Close ();
