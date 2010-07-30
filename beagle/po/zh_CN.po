@@ -2,17 +2,17 @@
 # Copyright (C) 2009 Free software Foundation, Inc.
 # This file is distributed under the same license as the beagle package.
 # Funda Wang <fundawang@linux.net.cn>, 2005.
-# Tao Wei <weitao1979@gmail.com>, 2009.
-#
+# Tao Wei <weitao1979@gmail.com>, 2009, 2010.
+# YunQiang Su <wzssyqa@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=beagle&component=general\n"
-"POT-Creation-Date: 2009-11-14 09:20+0000\n"
-"PO-Revision-Date: 2009-11-23 18:51+0100\n"
+"POT-Creation-Date: 2010-06-02 18:41+0000\n"
+"PO-Revision-Date: 2010-07-30 18:56+0800\n"
 "Last-Translator: Tao Wei <weitao1979@gmail.com>\n"
-"Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
+"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -176,11 +176,11 @@ msgstr "索引信息"
 
 #: ../search/Beagle.Search.Pages/IndexInfo.cs:30
 msgid "Number of items currently indexed:"
-msgstr ""
+msgstr "当前索引的项目数"
 
 #: ../search/Beagle.Search.Pages/IndexInfo.cs:45
 msgid "<i>NOTE: The search service is still indexing new data.</i>"
-msgstr ""
+msgstr "<i>注意：搜索服务仍在索引新数据。</i>"
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:19
 msgid "No results were found."
@@ -205,7 +205,7 @@ msgstr "您应当检查搜索单词的拼写，以确定是否无意间拼错了
 msgid ""
 "If you are searching for GMail emails, select \"Global\" Search Domain using "
 "the \"Search\" menu."
-msgstr ""
+msgstr "如果正在搜索 GMail 邮件，使用“搜索”菜单选择“全局”搜索域。"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:10
 msgid "You can use upper and lower case; search is case-insensitive."
@@ -229,7 +229,7 @@ msgstr "当搜索短语时，请加上引号，例如：<b>\"There be dragons\"<
 msgid ""
 "Specify the extension to search among files with that extension. ex: <b>bean "
 "soup .html</b>"
-msgstr ""
+msgstr "指定要搜索文件的后缀名，例如 <b>bean soup .html</b>"
 
 #: ../search/Beagle.Search.Pages/QuickTips.cs:20
 #: ../search/Beagle.Search/UIManager.cs:106
@@ -254,7 +254,7 @@ msgstr "搜索服务未运行"
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
-msgstr ""
+msgstr "搜索服务好像没有运行。您可以通过点击下面的按钮启动它。"
 
 #: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
@@ -348,7 +348,7 @@ msgstr "移至回收站"
 
 #: ../search/Beagle.Search.Tiles/File.cs:41
 msgid "Find Documents From Same Author"
-msgstr ""
+msgstr "搜索同一个作者的文档"
 
 #: ../search/Beagle.Search.Tiles/File.cs:170
 #: ../search/Beagle.Search.Tiles/Folder.cs:52
@@ -432,7 +432,7 @@ msgstr "电子邮件附件"
 #: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
 #: ../search/Beagle.Search.Tiles/MailMessage.cs:70
 msgid "Find Messages From Sender"
-msgstr ""
+msgstr "搜索来自同一个发送者的消息"
 
 #: ../search/Beagle.Search.Tiles/MailMessage.cs:58
 msgid "(untitled)"
@@ -467,9 +467,8 @@ msgid "Manual page"
 msgstr "手册页"
 
 #: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
-#, fuzzy
 msgid "Open With"
-msgstr "打开使用"
+msgstr "打开方式"
 
 #: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
@@ -640,12 +639,12 @@ msgstr "{0}-{1}，共{2}个"
 
 #: ../search/Beagle.Search/Driver.cs:135
 msgid "Session D-Bus not accessible"
-msgstr ""
+msgstr "会话 D-Bus 不可用"
 
 #: ../search/Beagle.Search/Driver.cs:136
 msgid ""
 "Cannot run with parameter '--icon' when session D-Bus is not accessible."
-msgstr ""
+msgstr "会话 D-Bus 不可用时不能使用“--icon”参数运行。"
 
 #: ../search/Beagle.Search/NotificationArea.cs:63
 msgid "Hide"
@@ -688,9 +687,8 @@ msgid "Notes"
 msgstr "便笺"
 
 #: ../search/Beagle.Search/SearchWindow.cs:138
-#, fuzzy
 msgid "_Find in:"
-msgstr "查找在(_F)："
+msgstr "查找，在(_F)："
 
 #: ../search/Beagle.Search/SearchWindow.cs:175
 msgid "Find Now"
@@ -711,11 +709,11 @@ msgstr "桌面搜索：{0}"
 
 #: ../search/Beagle.Search/SearchWindow.cs:485
 msgid "There are computers near you running Beagle"
-msgstr ""
+msgstr "在您运行 Beagle 的计算机周围还有计算机"
 
 #: ../search/Beagle.Search/SearchWindow.cs:486
 msgid "You can select to search other computers from the \"Search\" menu."
-msgstr ""
+msgstr "可以从“搜索”菜单中选择搜索其它计算机。"
 
 #: ../search/Beagle.Search/SearchWindow.cs:518
 msgid "Search service started"
@@ -749,7 +747,7 @@ msgstr "正在对您的数据进行索引"
 msgid ""
 "The search service is in the process of indexing your data.  Search results "
 "may be incomplete until indexing has finished."
-msgstr ""
+msgstr "搜索服务正在索引您的数据。索引完成之前搜索结果可能是不完整的。"
 
 #: ../search/Beagle.Search/SearchWindow.cs:626
 #, csharp-format
@@ -758,7 +756,7 @@ msgid_plural "Showing all {0} matches"
 msgstr[0] "显示 {0} 个匹配项"
 
 #: ../search/Beagle.Search/SearchWindow.cs:628
-#, fuzzy, csharp-format
+#, csharp-format
 msgid "Too many matches. Showing latest {0} of total {1}"
 msgstr "太多符合的。从全部 {1} 中显示最近的 {0}"
 
@@ -886,6 +884,9 @@ msgstr "无法调用 Web 浏览器"
 #: ../search/Beagle.Search/UIManager.cs:296
 msgid "translator-credits"
 msgstr ""
+"Funda Wang <fundawang@linux.net.cn>, 2005\n"
+"Tao Wei <weitao1979@gmail.com>, 2009, 2010\n"
+"YunQiang Su <wzssyqa@gmail.com>, 2010"
 
 #: ../search/beagle-search.desktop.in.in.h:1
 msgid "Search"
@@ -968,11 +969,11 @@ msgstr "您确定想要将此路径从要进行在索引时排除的目录列表
 
 #: ../tools/Settings.cs:645
 msgid "Remote host already present in the list."
-msgstr ""
+msgstr "远程主机已经在列表中。"
 
 #: ../tools/Settings.cs:655
 msgid "Remote beagle host not added"
-msgstr ""
+msgstr "远程 beagle 主机未添加"
 
 #: ../tools/Settings.cs:670
 msgid "Remove host"
@@ -1052,15 +1053,15 @@ msgstr "Thunderbird 的邮件。"
 
 #: ../tools/Settings.cs:1734
 msgid "RSS feeds from Akregator."
-msgstr ""
+msgstr "来自 Akregator 的 RSS 订阅。"
 
 #: ../tools/Settings.cs:1735
 msgid "RSS feeds from Blam."
-msgstr ""
+msgstr "来自 Blam 的 RSS 订阅。"
 
 #: ../tools/Settings.cs:1736
 msgid "Files and folders on the local file system."
-msgstr ""
+msgstr "本地文件系统上的文件和文件夹。"
 
 #: ../tools/Settings.cs:1737
 msgid "Mail messages from KMail."
@@ -1088,35 +1089,35 @@ msgstr "Konqueror 的历史。"
 
 #: ../tools/Settings.cs:1743
 msgid "IMs and chats from Konversation."
-msgstr ""
+msgstr "来自 Konversation 的即时通信和聊天。"
 
 #: ../tools/Settings.cs:1744
 msgid "IMs and chats from Kopete"
-msgstr ""
+msgstr "来自 Kopete 的即时通信和聊天"
 
 #: ../tools/Settings.cs:1745
 msgid "Mind-maps from Labyrinth."
-msgstr ""
+msgstr "来自 Labyrinth 的思维图。"
 
 #: ../tools/Settings.cs:1746
 msgid "RSS feeds from Liferea."
-msgstr ""
+msgstr "来自 Liferea 的 RSS 订阅。"
 
 #: ../tools/Settings.cs:1747
 msgid "Nautilus' metadata (emblems, notes, etc.)"
-msgstr ""
+msgstr "Nautilus 的元数据 (标记、注释等)"
 
 #: ../tools/Settings.cs:1748
 msgid "Search other search services in the network (EXPERIMENTAL)"
-msgstr ""
+msgstr "搜索网络上的其它搜索服务(实验性)"
 
 #: ../tools/Settings.cs:1749
 msgid "Opera's bookmarks and browsing history."
-msgstr ""
+msgstr "Opera 的书签和浏览历史。"
 
 #: ../tools/Settings.cs:1750
 msgid "IMs and chats from Pidgin."
-msgstr ""
+msgstr "来自 Pidgin 的即时通信和聊天。"
 
 #: ../tools/Settings.cs:1751
 msgid "Notes from Tomboy."
@@ -1137,7 +1138,7 @@ msgstr "(系统) 手册页"
 
 #: ../tools/Settings.cs:1756
 msgid "(System) Supplementary search results using 'locate' command"
-msgstr ""
+msgstr "(系统)使用“locate”命令的补充搜索结果"
 
 #: ../tools/Settings.cs:1757
 msgid "(System) Mono documentation"
