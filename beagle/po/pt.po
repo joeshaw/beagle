@@ -2,14 +2,14 @@
 # Copyright © 2007, 2009 beagle
 # This file is distributed under the same license as the beagle package.
 #
-# Filipe Gomes <filipefgomes@gmail.com>, 2007, 2009.
 #
+# Filipe Gomes <filipefgomes@gmail.com>, 2007, 2009, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: beagle\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-03-01 23:48+0000\n"
-"PO-Revision-Date: 2009-02-28 22:43+0000\n"
+"POT-Creation-Date: 2010-09-04 15:57+0100\n"
+"PO-Revision-Date: 2010-08-31 17:56+0100\n"
 "Last-Translator: Filipe Gomes <filipefgomes@gmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -265,11 +265,11 @@ msgstr ""
 "Por razões de segurança, o Beagle não pode ser executado como root. Deve "
 "reiniciar como um utilizador normal."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:17
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
 msgid "Search service not running"
 msgstr "O serviço de pesquisa não está em execução"
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
 msgid ""
 "The search service does not appear to be running. You can start it by "
 "clicking the button below."
@@ -277,9 +277,13 @@ msgstr ""
 "O serviço de pesquisa não parece estar a correr. Pode iniciá-lo clicando no "
 "botão em baixo."
 
-#: ../search/Beagle.Search.Pages/StartDaemon.cs:22
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
 msgstr "Iniciar serviço de pesquisa"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "Iniciar serviço _automaticamente ao iniciar sessão"
 
 #: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
 #, csharp-format
@@ -359,7 +363,7 @@ msgstr "E-Mail"
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
 #: ../search/Beagle.Search.Tiles/File.cs:38
-#: ../search/Beagle.Search.Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
 msgid "Move to Trash"
 msgstr "Mover para o Lixo"
 
@@ -368,23 +372,23 @@ msgid "Find Documents From Same Author"
 msgstr "Procurar Documentos Do Mesmo Autor"
 
 #: ../search/Beagle.Search.Tiles/File.cs:170
-#: ../search/Beagle.Search.Tiles/Folder.cs:51
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
 #: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Última Alteração:"
 
 #: ../search/Beagle.Search.Tiles/File.cs:175
-#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
 #: ../search/Beagle.Search.Tiles/Image.cs:87
 #: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Caminho completo:"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
 msgid "Empty"
 msgstr "Vazio"
 
-#: ../search/Beagle.Search.Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
@@ -652,14 +656,14 @@ msgstr "Limpar"
 msgid "Quit"
 msgstr "Sair"
 
-#: ../search/Beagle.Search/Category.cs:142
+#: ../search/Beagle.Search/Category.cs:127
 #, csharp-format
 msgid "{0} result"
 msgid_plural "{0} results"
 msgstr[0] "{0} resultado"
 msgstr[1] "{0} resultados"
 
-#: ../search/Beagle.Search/Category.cs:144
+#: ../search/Beagle.Search/Category.cs:129
 #, csharp-format
 msgid "{0}-{1} of {2}"
 msgstr "{0}-{1} de {2}"
