@@ -79,18 +79,18 @@ memory_usage (MonoObject *obj, GHashTable *visited)
         type = mono_class_get_type (klass);
 
         /* This is an array, so drill down into it */
-        if (type->type == MONO_TYPE_SZARRAY)
+        if (mono_type_get_type (type) == MONO_TYPE_SZARRAY)
                 total += memory_usage_array ((MonoArray *) obj, visited);
 
         while ((field = mono_class_get_fields (klass, &iter)) != NULL) {
                 MonoType *ftype = mono_field_get_type (field);
                 gpointer value;
 
-                if ((ftype->attrs & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA)) != 0)
+                if ((mono_field_get_flags (field) & (FIELD_ATTRIBUTE_STATIC | FIELD_ATTRIBUTE_HAS_FIELD_RVA)) != 0)
                         continue;
 
                 /* FIXME: There are probably other types we need to drill down into */
-                switch (ftype->type) {
+                switch (mono_type_get_type (ftype)) {
 
                 case MONO_TYPE_CLASS:
                 case MONO_TYPE_OBJECT:

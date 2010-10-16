@@ -59,11 +59,20 @@ if test "x$MCS" = "xno"; then
 	AC_MSG_ERROR([You need to install the Mono gmcs compiler])
 fi
 
-AC_MSG_CHECKING([for mono.pc])
-if test -z `$PKG_CONFIG --variable=prefix mono`; then
-  AC_MSG_ERROR([missing the mono.pc file, usually found in the mono-devel package])
+# mono-2.8 and higher uses mono-2.pc instead of mono.pc for cflags and libs
+AC_MSG_CHECKING([for mono-2.pc])
+if test -z `$PKG_CONFIG --variable=prefix mono-2`; then
+  AC_MSG_RESULT([not found])
+  AC_MSG_CHECKING([for mono.pc])
+  if test -z `$PKG_CONFIG --variable=prefix mono`; then
+    AC_MSG_ERROR([missing the mono.pc file, usually found in the mono-devel package])
+  else
+    AC_MSG_RESULT([found])
+    mono_pc=mono
+  fi
 else
   AC_MSG_RESULT([found])
+  mono_pc=mono-2
 fi
 
 BEAGLE_DEFINES=""
@@ -71,10 +80,10 @@ BEAGLE_DEFINES=""
 # check that we have the require version of mono
 
 # Temporary: check for mono-1.9
-PKG_CHECK_MODULES(MONO, mono >= 1.9, mono_1_9=yes, mono_1_9=no) 
+PKG_CHECK_MODULES(MONO, $mono_pc >= 1.9, mono_1_9=yes, mono_1_9=no)
 if test "x$mono_1_9" = "xno"; then
 	AC_MSG_RESULT([missing mono >= 1.9. Searching for mono >= 1.2.4])
-	PKG_CHECK_MODULES(MONO, mono >= $MONO_REQUIRED) 
+	PKG_CHECK_MODULES(MONO, $mono_pc >= $MONO_REQUIRED)
 else
 	AC_MSG_RESULT([found mono >= 1.9])
 	BEAGLE_DEFINES="$BEAGLE_DEFINES -define:MONO_1_9"
@@ -84,7 +93,7 @@ fi
 needed_dlls="Mono.Data.Sqlite Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
-  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])
@@ -195,7 +204,7 @@ AM_CONDITIONAL(ENABLE_GOOGLEBACKENDS, test "x$enable_google" = "xyes")
 if test "x$enable_google" = "xyes"; then
   i="System.Security"
   AC_MSG_CHECKING([for $i.dll (needed by Google backends)])
-  if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])
@@ -560,7 +569,7 @@ dnl I hope checking the presence of the qt-dotnet.dll should be enough
 if test "x$enable_qt" != "xno" -a "x$has_qyoto" = "xno"; then
 	i="qt-dotnet"
 	AC_MSG_CHECKING([for $i.dll])
-	if test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/2.0/$i.dll; then
+	if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
 		AC_MSG_ERROR([missing required mono DLL: $i.dll])
 	else
 		AC_MSG_RESULT([found])

@@ -141,7 +141,7 @@ namespace Beagle.Filters {
 			Resource rights_anon = null;
 			Resource title_anon = null;
 
-			foreach (Statement stmt in xmp.Store) {
+			foreach (Statement stmt in (IEnumerable)xmp.Store) {
 				if (stmt.Predicate == MetadataStore.Namespaces.Resolve ("dc:subject")) {
 					//Console.WriteLine ("found subject");
 					subject_anon = stmt.Object;
@@ -163,7 +163,7 @@ namespace Beagle.Filters {
 				}
 			}
 			
-			foreach (Statement stmt in xmp.Store) {
+			foreach (Statement stmt in (IEnumerable)xmp.Store) {
 				if (stmt.Subject == subject_anon && 
 				    stmt.Predicate != MetadataStore.Namespaces.Resolve ("rdf:type")) {
 					AddProperty (Beagle.Property.New ("dc:subject", ((Literal)stmt.Object).Value));
