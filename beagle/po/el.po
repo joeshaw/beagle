@@ -1,29 +1,22 @@
 # translation of el.po to Greek
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) 2005 THE PACKAGE'S COPYRIGHT HOLDER.
+# Kostas Papadimas <pkst@gnome.org>, 2005, 2006, 2010.
+# Γιώργος Στεφανάκης <george.stefanakis@gmail.com>, 2010.
 #
-# Kostas Papadimas <pkst@gnome.org>, 2005, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-27 11:02+0300\n"
-"PO-Revision-Date: 2006-05-27 11:04+0300\n"
-"Last-Translator: Kostas Papadimas <pkst@gnome.org>\n"
+"POT-Creation-Date: 2010-12-12 02:26+0200\n"
+"PO-Revision-Date: 2010-12-01 20:37+0200\n"
+"Last-Translator: Γιώργος Στεφανάκης <george.stefanakis@gmail.com>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);X-Generator: KBabel 1.11.2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: KBabel 1.11.2\n"
-
-#: ../glue/eggtrayicon.c:127
-msgid "Orientation"
-msgstr "Προσανατολισμός"
-
-#: ../glue/eggtrayicon.c:128
-msgid "The orientation of the tray."
-msgstr "Ο προσανατολισμός του συρταριού."
 
 #: ../ImLogViewer/ImLogViewer.glade.h:1
 msgid "<b>Conversations History</b>"
@@ -33,48 +26,185 @@ msgstr "<b>Ιστορικό συζητήσεων</b>"
 msgid "IM Viewer"
 msgstr "Εφαρμογή προβολής IM"
 
-#: ../ImLogViewer/ImLogWindow.cs:102
+#: ../ImLogViewer/ImLogWindow.cs:108 ../ImLogViewer/ImLogWindow.cs:120
 #, csharp-format
 msgid "Conversations in {0}"
 msgstr "Συζητήσεις σε {0}"
 
-#: ../ImLogViewer/ImLogWindow.cs:109
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Συζητήσεις σε {0} ({1})"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
 #, csharp-format
 msgid "Conversations with {0}"
 msgstr "Συζητήσεις με {0}"
 
-#: ../search/beagle-search.desktop.in.h:1 ../tools/settings.glade.h:27
-msgid "Search"
-msgstr "Αναζήτηση"
+#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
+msgid "On This Computer"
+msgstr "Σε αυτό τον υπολογιστή"
 
-#: ../search/beagle-search.desktop.in.h:2
-msgid "Search for data on your desktop"
-msgstr "Αναζήτηση για δεδομένα στην επιφάνεια εργασίας σας"
+#: ../Util/StringFu.cs:125 ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+msgid "Today"
+msgstr "Σήμερα"
 
-#: ../search/Category.cs:108
+#: ../Util/StringFu.cs:127 ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+msgid "Yesterday"
+msgstr "Χθές"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "MMM d"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+msgid "MMM d, yyyy"
+msgstr "MMM d, yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+msgid "h:mm tt"
+msgstr "h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
 #, csharp-format
-msgid "{0}-{1} of {2}"
-msgstr "{0}-{1} από {2}"
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
 
-#: ../search/Pages/NoMatch.cs:19
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, csharp-format
+msgid "Today, {0}"
+msgstr "Σήμερα, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Χθες, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} ημέρα πριν, {1}"
+msgstr[1] "{0} ημέρες πριν, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "MMMM d yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} ώρα"
+msgstr[1] "{0} ώρες"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} λεπτό"
+msgstr[1] "{0} λεπτά"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} byte"
+msgstr[1] "{0} bytes"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, csharp-format
+msgid "{0:0.0} KB"
+msgstr "{0:0.0} KB"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, csharp-format
+msgid "{0:0.0} MB"
+msgstr "{0:0.0} MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "Το beagle πραγματοποιεί ευρετηρίαση %s"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "Το beagle πραγματοποιεί ευρετηρίαση των συνδέσμων %s"
+
+#: ../epiphany-extension/beagle.py.in:232
+msgid "Index This Page"
+msgstr "Προσθήκη στο ευρετήριο αυτής της σελίδας"
+
+#: ../epiphany-extension/beagle.py.in:239
+msgid "Index Link"
+msgstr "Προσθήκη στο ευρετήριο αυτού του συνδέσμου"
+
+#: ../epiphany-extension/beagle.py.in:246
+msgid "Reload Config File"
+msgstr "Μεταφόρτωση αρχείου ρύθμισης"
+
+#: ../epiphany-extension/beagle.py.in:255
+msgid "Auto Index"
+msgstr "Αυτόματη ευρετηριοποίηση"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr "Έξτρα λέξεις κλειδιά για προσθήκη στο ευρετήριο"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+msgid "Index Information"
+msgstr "Πληροφορίες ευρετηρίου"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr "Αριθμός αντικειμένων που έχουν προστεθεί στο ευρετήριο:"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr ""
+"<i>ΣΗΜΕΙΩΣΗ: Η υπηρεσία αναζήτησης ακόμα προσθέτει στο ευρετήριο νέα "
+"δεδομένα.</i>"
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
 msgid "No results were found."
 msgstr "Δεν βρέθηκαν αποτελέσματα."
 
-#: ../search/Pages/NoMatch.cs:20
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
 #, csharp-format
 msgid "Your search for \"{0}\" did not match any files on your computer."
-msgstr "Η αναζήτηση σας για \"{0}\" δεν βρήκε αποτελέσματα στον υπολογιστή σας."
-
-#: ../search/Pages/NoMatch.cs:24
-msgid ""
-"You can change the scope of your search using the \"Search\" menu. A broader "
-"search scope might produce more results."
 msgstr ""
-"Μπορείτε να αλλάξετε το σκοπό της  αναζήτησης σας χρησιμοποιώντας το μενού "
-"\"Αναζήτηση\". Ένας γενικότερος στόχος αναζήτησης μπορεί να δώσει "
-"περισσότερα αποτελέσματα."
+"Η αναζήτηση σας για \"{0}\" δεν βρήκε αποτελέσματα στον υπολογιστή σας."
 
-#: ../search/Pages/NoMatch.cs:26
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr ""
+"Μπορείτε να επιλέξετε \"Εύρεση μέσα: Όλα\" για να πραγματοποιήσετε μια "
+"αναζήτηση παντού."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
 "You should check the spelling of your search words to see if you "
 "accidentally misspelled any words."
@@ -82,276 +212,390 @@ msgstr ""
 "Θα πρέπει να ελέγξετε την ορθογραφία των όρων για αν δείτε μήπως κατά λάθος "
 "γράψατε εσφαλμένα λέξεις."
 
-#: ../search/Pages/QuickTips.cs:10
-msgid "You can use upper and lower case; search is case-insensitive."
-msgstr "Μπορείτε να χρησιμοποιείτε κεφαλαία και μικρά. Η αναζήτηση δεν επηρεάζεται."
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid ""
+"If you are searching for GMail emails, select \"Global\" Search Domain using "
+"the \"Search\" menu."
+msgstr ""
+"Αν ψάχνετε για ηλεκτρονικά μηνύματα του Gmail, επιλέξτε \"Global\" αναζήτηση "
+"τομέα με την χρήση του μενού \"Αναζήτηση\"."
 
-#: ../search/Pages/QuickTips.cs:11
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+"Μπορείτε να χρησιμοποιείτε κεφαλαία και μικρά. Η αναζήτηση δεν επηρεάζεται."
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
 msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
 msgstr ""
 "Για αναζήτηση προαιρετικών όρων χρησιμοποιήστε το OR.  π.χ.: <b>George OR "
 "Ringo</b>"
 
-#: ../search/Pages/QuickTips.cs:12
-msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid ""
+"To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
 msgstr ""
 "Για να εξαιρέσετε όρους αναζήτησης, χρησιμοποιήστε το σύμβολό μείον μπροστά, "
 "π.χ. <b>-cats</b>"
 
-#: ../search/Pages/QuickTips.cs:13
-msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid ""
+"When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
 msgstr ""
 "Κατά την αναζήτηση μιας φράσης, να προστίθενται εισαγωγικά. π.χ <b>\"There "
 "be dragons\"</b>"
 
-#: ../search/Pages/QuickTips.cs:19 ../search/UIManager.cs:81
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid ""
+"Specify the extension to search among files with that extension. ex: <b>bean "
+"soup .html</b>"
+msgstr ""
+"Προσδιορίστε την κατάληξη προς αναζήτηση ανάμεσα στα αρχεία με την "
+"συγκεκριμένη κατάληξη. π.χ.: <b> bean soup.html</b>"
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
 msgid "Quick Tips"
 msgstr "Γρήγορες συμβουλές"
 
-#: ../search/Pages/RootUser.cs:12
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
 msgid "Beagle cannot be run as root"
 msgstr "Το Beagle δεν μπορεί να εκτελεστεί ως root"
 
-#: ../search/Pages/RootUser.cs:13
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
 msgid ""
-"For security reasons, Beagle cannot be run as root.  You should restart as a "
+"For security reasons, Beagle cannot be run as root. You should restart as a "
 "regular user."
 msgstr ""
-"Για λόγους ασφαλείας το Beagle δεν μπορεί να εκτελεστεί ως root. Θα πρέπει "
+"Για λόγους ασφαλείας, το Beagle δεν μπορεί να εκτελεστεί ως root. Θα πρέπει "
 "να το επανεκκινήσετε ως απλός χρήστης."
 
-#: ../search/Pages/StartDaemon.cs:19
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
 msgid "Search service not running"
 msgstr "Η υπηρεσία αναζήτησης δεν εκτελείται"
 
-#: ../search/Pages/StartDaemon.cs:21
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
+msgid ""
+"The search service does not appear to be running. You can start it by "
+"clicking the button below."
+msgstr ""
+"Η υπηρεσία αναζήτησης φαίνεται να μην τρέχει.  Μπορείτε να την εκκινήσετε "
+"κάνοντας κλικ στο παρακάτω κουμπί."
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
 msgid "Start search service"
 msgstr "Εκκίνηση υπηρεσίας αναζήτησης"
 
-#: ../search/Search.cs:149
-msgid "_Find:"
-msgstr "Εύ_ρεση:"
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr "Αυτόματη εκκίνηση της υπηρεσίας κατά την σύνδεση"
 
-#: ../search/Search.cs:163
-msgid "Find Now"
-msgstr "Εύρεση τώρα"
-
-#: ../search/Search.cs:209
-msgid "Type in search terms"
-msgstr "Πληκτρολογήστε κριτήρια αναζήτησης"
-
-#: ../search/Search.cs:210
-msgid "Start searching"
-msgstr "Έναρξη αναζήτησης"
-
-#: ../search/Tiles/Contact.cs:30
-msgid "Send Mail"
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, csharp-format
+msgid "Inside archive {0}"
 msgstr ""
 
-#: ../search/Tiles/Contact.cs:68
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+msgid "File:"
+msgstr "Αρχείο:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+msgid "Title:"
+msgstr "Τίτλος:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+msgid "Inside File:"
+msgstr "Μέσα στο Αρχείο:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+msgid "Author:"
+msgstr "Συγγραφέας:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+msgid "Description:"
+msgstr "Περιγραφή:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+msgid "Time:"
+msgstr "Ώρα:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+msgid "Location:"
+msgstr "Τοποθεσία:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+msgid "Attendees:"
+msgstr "Παρευρισκόμενοι: "
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+msgid "Send Mail"
+msgstr "Αποστολή μηνύματος"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
 msgid "E-Mail:"
 msgstr "E-Mail:"
 
-#: ../search/Tiles/Contact.cs:70
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
 msgid "Mobile Phone:"
 msgstr "Κινητό τηλέφωνο:"
 
-#: ../search/Tiles/Contact.cs:72
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
 msgid "Work Phone:"
 msgstr "Τηλέφωνο εργασίας:"
 
-#: ../search/Tiles/Contact.cs:74
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
 msgid "Home Phone:"
 msgstr "Τηλέφωνο οικίας:"
 
-#: ../search/Tiles/File.cs:34
+#: ../search/Beagle.Search.Tiles/File.cs:35
 msgid "Reveal in Folder"
 msgstr "Εμφάνιση στο φάκελο"
 
-#: ../search/Tiles/File.cs:35
+#: ../search/Beagle.Search.Tiles/File.cs:36
 msgid "E-Mail"
 msgstr "E-Mail"
 
 #. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
 #. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
 #. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
-#: ../search/Tiles/File.cs:37 ../search/Tiles/Folder.cs:38
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
 msgid "Move to Trash"
 msgstr "Μετακίνηση στα Απορρίμματα"
 
-#: ../search/Tiles/File.cs:124 ../search/Tiles/Note.cs:57
-#: ../search/Tiles/RSSFeed.cs:45 ../search/Tiles/WebHistory.cs:50
-msgid "Title:"
-msgstr "Τίτλος:"
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr "Εύρεση εγγράφων από τον ίδιο συγγραφέα"
 
-#: ../search/Tiles/File.cs:125 ../search/Tiles/Folder.cs:51
-#: ../search/Tiles/Note.cs:58
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Note.cs:71
 msgid "Last Edited:"
 msgstr "Τελευταία επεξεργασία:"
 
-#: ../search/Tiles/File.cs:128
-msgid "Author:"
-msgstr "Συγγραφέας:"
-
-#: ../search/Tiles/File.cs:130 ../search/Tiles/Folder.cs:52
-#: ../search/Tiles/Image.cs:79
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
 msgid "Full Path:"
 msgstr "Πλήρης διαδρομή:"
 
-#: ../search/Tiles/Folder.cs:31
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
 msgid "Empty"
 msgstr "Κενός"
 
-#: ../search/Tiles/Folder.cs:33
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
 #, csharp-format
 msgid "Contains {0} Item"
 msgid_plural "Contains {0} Items"
 msgstr[0] "Περιέχει {0}αντικείμενο"
 msgstr[1] "Περιέχει {0}αντικείμενα"
 
-#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
-#: ../search/Tiles/Image.cs:39
-msgid "Set as Wallpaper"
-msgstr "Ορισμός ως ταπετσαρία"
-
-#: ../search/Tiles/Image.cs:78
-msgid "Modified:"
-msgstr "Τροποποιήθηκε:"
-
-#: ../search/Tiles/IMLog.cs:30
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
 msgid "IM Conversation"
 msgstr "Συζήτηση IM"
 
-#: ../search/Tiles/IMLog.cs:81
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99 ../tools/settings.glade.h:34
 msgid "Name:"
 msgstr "Όνομα:"
 
-#: ../search/Tiles/IMLog.cs:82 ../search/Tiles/MailMessage.cs:92
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Received:"
 msgstr "Ημερομηνία λήψης:"
 
-#: ../search/Tiles/MailAttachment.cs:47
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+msgid "Status:"
+msgstr "Κατάσταση:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+msgid "Idle"
+msgstr "Αδρανή"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "Απουσιάζει"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "Αποσυνδεδεμένος"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "Διαθέσιμος"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Ορισμός ως ταπετσαρία"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "Ετικέτες:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Τροποποιήθηκε:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Σχόλιο:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
 msgid "Mail attachment"
 msgstr "Συνημμένο Email"
 
-#: ../search/Tiles/MailMessage.cs:55
-#, fuzzy
-msgid "Send in Mail"
-msgstr "Αποστολή Αλληλογραφίας"
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Εύρεση μηνυμάτων από τον αποστολέα"
 
-#: ../search/Tiles/MailMessage.cs:87
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(Χωρίς τίτλο)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+msgid "Send in Mail"
+msgstr "Αποστολή σε μορφή ηλεκτρονικού ταχυδρομείου"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
 msgid "Subject:"
 msgstr "θέμα:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "To:"
 msgstr "Προς:"
 
-#: ../search/Tiles/MailMessage.cs:89
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
 msgid "From:"
 msgstr "Από:"
 
-#: ../search/Tiles/MailMessage.cs:92
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
 msgid "Date Sent:"
 msgstr "Ημερομηνία αποστολής:"
 
-#: ../search/Tiles/Presentation.cs:33
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "Φάκελος:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Άνοιγμα με"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
 #, csharp-format
 msgid "{0} slide"
 msgid_plural "{0} slides"
 msgstr[0] "{0} διαφάνεια"
 msgstr[1] "{0} διαφάνειες"
 
-#: ../search/Tiles/RSSFeed.cs:46
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
 msgid "Site:"
 msgstr "Σελίδα:"
 
-#: ../search/Tiles/RSSFeed.cs:47
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
 msgid "Date Viewed:"
 msgstr "Ημερομηνία προβολής:"
 
-#: ../search/Tiles/TextDocument.cs:37
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Ημερομηνία:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
 #, csharp-format
 msgid "{0} page"
 msgid_plural "{0} pages"
 msgstr[0] "{0} σελίδα"
 msgstr[1] "{0} σελίδες"
 
-#: ../search/Tiles/Tile.cs:179
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
 msgid "Open"
 msgstr "Άνοιγμα"
 
-#: ../search/Tiles/Utils.cs:24
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
 msgid "Applications"
 msgstr "Εφαρμογές"
 
-#: ../search/Tiles/Utils.cs:26
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
 msgid "Contacts"
 msgstr "Επαφές"
 
-#: ../search/Tiles/Utils.cs:28
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
 msgid "Calendar Events"
 msgstr "Γεγονότα ημερολογίου"
 
-#: ../search/Tiles/Utils.cs:30
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
 msgid "Folders"
 msgstr "Φάκελοι"
 
-#: ../search/Tiles/Utils.cs:32
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
 msgid "Images"
 msgstr "Εικόνες"
 
-#: ../search/Tiles/Utils.cs:34
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
 msgid "Audio"
 msgstr "Ήχος"
 
-#: ../search/Tiles/Utils.cs:36
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
 msgid "Video"
 msgstr "Βίντεο"
 
-#: ../search/Tiles/Utils.cs:38
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
 msgid "Documents"
 msgstr "Έγγραφα"
 
-#: ../search/Tiles/Utils.cs:40
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
 msgid "Conversations"
 msgstr "Συζητήσεις"
 
-#: ../search/Tiles/Utils.cs:42
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
 msgid "Websites"
 msgstr "Ιστοσελίδες"
 
-#: ../search/Tiles/Utils.cs:44
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
 msgid "News Feeds"
 msgstr "Αρχεία ροής ειδήσεων"
 
-#: ../search/Tiles/Utils.cs:46
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
 msgid "Archives"
 msgstr "Αρχειοθήκες"
 
-#: ../search/Tiles/Utils.cs:100 ../search/Tiles/Utils.cs:146
-#: ../search/Tiles/Utils.cs:192 ../Util/StringFu.cs:77
-msgid "Today"
-msgstr "Σήμερα"
-
-#: ../search/Tiles/Utils.cs:102 ../search/Tiles/Utils.cs:148
-#: ../search/Tiles/Utils.cs:194 ../Util/StringFu.cs:79
-msgid "Yesterday"
-msgstr "Χθές"
-
-#: ../search/Tiles/Utils.cs:104 ../search/Tiles/Utils.cs:150
-#: ../search/Tiles/Utils.cs:196
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
 msgid "Tomorrow"
 msgstr "Αύριο"
 
-#: ../search/Tiles/Utils.cs:200
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
 #, csharp-format
 msgid "{0} week ago"
 msgid_plural "{0} weeks ago"
 msgstr[0] "{0} εβδομάδα πριν"
 msgstr[1] "{0} εβδομάδες πριν"
 
-#: ../search/Tiles/Utils.cs:202
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
 #, csharp-format
 msgid "In {0} week"
 msgid_plural "In {0} weeks"
@@ -359,369 +603,359 @@ msgstr[0] "Σε {0} εβδομάδα"
 msgstr[1] "Σε {0} εβδομάδες"
 
 #. Let's say a year and a half to stop saying months
-#: ../search/Tiles/Utils.cs:204
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
 #, csharp-format
 msgid "{0} month ago"
 msgid_plural "{0} months ago"
 msgstr[0] "{0} μήνα πριν"
 msgstr[1] "{0} μήνες πριν"
 
-#: ../search/Tiles/Utils.cs:206
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
 #, csharp-format
 msgid "In {0} month"
 msgid_plural "In {0} months"
 msgstr[0] "Σε {0} μήνα"
 msgstr[1] "Σε {0} μήνες"
 
-#: ../search/Tiles/Utils.cs:208
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
 #, csharp-format
 msgid "{0} year ago"
 msgid_plural "{0} years ago"
 msgstr[0] "{0} έτος πριν"
 msgstr[1] "{0} έτη πριν"
 
-#: ../search/Tiles/Utils.cs:210
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
 #, csharp-format
 msgid "In {0} year"
 msgid_plural "In {0} years"
 msgstr[0] "Σε {0} χρόνο"
 msgstr[1] "Σε {0} χρόνια"
 
-#. FIXME: We need filters for video in Beagle.
-#. They should land soon when entagged-sharp gets video support.
-#: ../search/Tiles/Video.cs:27
-msgid "Unknown duration"
-msgstr "Άγνωστή διάρκεια"
-
-#: ../search/Tiles/WebHistory.cs:51
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
 msgid "URL:"
 msgstr "URL:"
 
-#: ../search/Tiles/WebHistory.cs:52
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
 msgid "Accessed:"
 msgstr "Προσπελάστηκε:"
 
-#: ../search/Tray/TrayIcon.cs:32
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:117
 msgid "Desktop Search"
 msgstr "Αναζήτηση επιφάνειας εργασίας"
 
-#: ../search/Tray/TrayIcon.cs:57
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
 msgid "No Recent Searches"
 msgstr "Δεν υπάρχουν πρόσφατες αναζητήσεις"
 
-#: ../search/Tray/TrayIcon.cs:62
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
 msgid "Recent Searches"
 msgstr "Πρόσφατες αναζητήσεις"
 
-#: ../search/Tray/TrayIcon.cs:78
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
 msgid "Clear"
 msgstr "Εκκαθάριση"
 
-#: ../search/Tray/TrayIcon.cs:86
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
 msgid "Quit"
 msgstr "Έξοδος"
 
-#. Translators: the strings in TypeFilter.cs are for when the user
-#. * wants to limit search results to a specific type. You don't need
-#. * to give an exact translation of the exact same set of English
-#. * words. Just provide a list of likely words the user might use
-#. * after the "type:" keyword to refer to each type of match.
+#: ../search/Beagle.Search/Category.cs:127
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} αποτέλεσμα"
+msgstr[1] "{0} αποτελέσματα"
+
+#: ../search/Beagle.Search/Category.cs:129
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} από {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr "Η συνεδρία D-bus δεν είναι προσβάσιμη"
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid ""
+"Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr ""
+"Δεν μπορεί να πραγματοποιηθεί εκτέλεση με την παράμετρο '--icon' όταν η "
+"συνεδρία D-Bus δεν είναι προσβάσιμη."
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Απόκρυψη"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
 #.
-#: ../search/TypeFilter.cs:36
-msgid ""
-"file\n"
-"files"
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "Όλα"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "Τα αρχεία μου"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "Εικόνες"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "Πολυμέσα"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "Πηγαίος κώδικας"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "Ηλεκτρονικά μηνύματα"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "Καταγραφή συνομιλιών"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "Σημειώσεις"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "Εύ_ρεση μέσα:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "Εύρεση τώρα"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr "Πληκτρολογήστε κριτήρια αναζήτησης"
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "Έναρξη αναζήτησης"
+
+#: ../search/Beagle.Search/SearchWindow.cs:254
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Αναζήτηση επιφάνειας εργασίας:{0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "There are computers near you running Beagle"
+msgstr "Υπάρχουν υπολογιστές δίπλα σας που τρέχουν το Beagle"
+
+#: ../search/Beagle.Search/SearchWindow.cs:486
+msgid "You can select to search other computers from the \"Search\" menu."
 msgstr ""
-"αρχείο\n"
-"αρχεία"
+"Μπορείτε να επιλέξετε την αναζήτηση άλλων υπολογιστών από το μενού "
+"\"Αναζήτηση\"."
 
-#: ../search/TypeFilter.cs:37
+#: ../search/Beagle.Search/SearchWindow.cs:518
+msgid "Search service started"
+msgstr "Ξεκίνησε η υπηρεσία αναζήτησης"
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Starting service failed"
+msgstr "Αποτυχία εκκίνησης υπηρεσίας"
+
+#: ../search/Beagle.Search/SearchWindow.cs:530
+msgid "Service is already running!"
+msgstr "Η υπηρεσία εκτελείτε είδη!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Stopping service failed"
+msgstr "Αποτυχία τερματισμού υπηρεσίας"
+
+#: ../search/Beagle.Search/SearchWindow.cs:546
+msgid "Service was not running!"
+msgstr "Η υπηρεσία δεν εκτελούνταν!"
+
+#: ../search/Beagle.Search/SearchWindow.cs:560
+msgid "Search service stopped"
+msgstr "Η υπηρεσία αναζήτησης σταμάτησε"
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid "Your data is being indexed"
+msgstr "Τα δεδομένα σας προστίθενται στο ευρετήριο"
+
+#: ../search/Beagle.Search/SearchWindow.cs:600
 msgid ""
-"mail\n"
-"email\n"
-"e-mail"
+"The search service is in the process of indexing your data.  Search results "
+"may be incomplete until indexing has finished."
 msgstr ""
-"mail\n"
-"email\n"
-"e-mail"
+"Η υπηρεσία αναζήτησης εκτελεί δημιουργία ευρετηρίου για τα δεδομένα σας.  Τα "
+"αποτελέσματα της αναζήτησης μπορεί να μην είναι ολοκληρωμένα, έως ότου "
+"ολοκληρωθεί η προσθήκη των δεδομένων στο ευρετήριο."
 
-#: ../search/TypeFilter.cs:38
-msgid ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"instant-message\n"
-"instant-messages\n"
-"chat\n"
-"chats"
+#: ../search/Beagle.Search/SearchWindow.cs:626
+#, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Προβολή {0} που ταιριάζει"
+msgstr[1] "Προβολή {0} που ταιριάζουν"
+
+#: ../search/Beagle.Search/SearchWindow.cs:628
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
 msgstr ""
-"im\n"
-"ims\n"
-"instant message\n"
-"instant messages\n"
-"instant-message\n"
-"instant-messages\n"
-"chat\n"
-"chats"
+"Βρέθηκαν πολλά αποτελέσματα που ταιριάζουν.  Εμφάνιση των τελευταίων {0} από "
+"το σύνολο των {1}"
 
-#: ../search/TypeFilter.cs:39
-msgid ""
-"presentation\n"
-"presentations\n"
-"slideshow\n"
-"slideshows\n"
-"slide\n"
-"slides"
-msgstr ""
-"presentation\n"
-"presentations\n"
-"slideshow\n"
-"slideshows\n"
-"slide\n"
-"slides"
-
-#: ../search/TypeFilter.cs:41
-msgid ""
-"application\n"
-"applications\n"
-"app\n"
-"apps"
-msgstr ""
-"application\n"
-"applications\n"
-"app\n"
-"apps"
-
-#: ../search/TypeFilter.cs:42
-msgid ""
-"contact\n"
-"contacts\n"
-"vcard\n"
-"vcards"
-msgstr ""
-"contact\n"
-"contacts\n"
-"vcard\n"
-"vcards"
-
-#: ../search/TypeFilter.cs:43
-msgid ""
-"folder\n"
-"folders"
-msgstr ""
-"φάκελος\n"
-"φάκελοι"
-
-#: ../search/TypeFilter.cs:44
-msgid ""
-"image\n"
-"images\n"
-"img"
-msgstr ""
-"image\n"
-"images\n"
-"img"
-
-#: ../search/TypeFilter.cs:45
-msgid "audio"
-msgstr "ήχος"
-
-#: ../search/TypeFilter.cs:46
-msgid "video"
-msgstr "Βίντεο"
-
-#: ../search/TypeFilter.cs:47
-msgid "media"
-msgstr "πολυμέσα"
-
-#: ../search/TypeFilter.cs:48
-msgid ""
-"document\n"
-"documents\n"
-"office document\n"
-"office documents"
-msgstr ""
-"έγγραφο\n"
-"έγγραφα\n"
-"έγγραφο γραφείου\n"
-"έγγραφα γραφείου"
-
-#: ../search/TypeFilter.cs:49
-msgid ""
-"conversation\n"
-"conversations"
-msgstr ""
-"συζήτηση\n"
-"συζητήσεις"
-
-#: ../search/TypeFilter.cs:50
-msgid ""
-"web\n"
-"www\n"
-"website\n"
-"websites"
-msgstr ""
-"web\n"
-"www\n"
-"website\n"
-"websites"
-
-#: ../search/TypeFilter.cs:51
-msgid ""
-"feed\n"
-"news\n"
-"blog\n"
-"rss"
-msgstr ""
-"feed\n"
-"news\n"
-"blog\n"
-"rss"
-
-#: ../search/TypeFilter.cs:52
-msgid ""
-"archive\n"
-"archives"
-msgstr ""
-"archive\n"
-"archives"
-
-#: ../search/TypeFilter.cs:53
-msgid ""
-"person\n"
-"people"
-msgstr ""
-
-#: ../search/UIManager.cs:42
+#: ../search/Beagle.Search/UIManager.cs:53
 msgid "Close Desktop Search"
 msgstr "Κλείσιμο αναζήτησης"
 
-#: ../search/UIManager.cs:47 ../search/UIManager.cs:69
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
 msgid "Exit Desktop Search"
 msgstr "Έξοδος από την αναζήτηση"
 
-#: ../search/UIManager.cs:54
+#: ../search/Beagle.Search/UIManager.cs:65
 msgid "_Search"
 msgstr "_Αναζήτηση"
 
-#: ../search/UIManager.cs:57
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "Αναζήτηση _τομέων"
+
+#: ../search/Beagle.Search/UIManager.cs:71
 msgid "_Actions"
 msgstr "Ε_νέργειες"
 
-#: ../search/UIManager.cs:60
-msgid "Sor_t"
-msgstr "Τα_ξινόμηση"
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "_Προβολή"
 
-#: ../search/UIManager.cs:63
+#: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "_Επιλογές υπηρεσίας"
+
+#: ../search/Beagle.Search/UIManager.cs:80
 msgid "_Help"
 msgstr "_Βοήθεια"
 
-#: ../search/UIManager.cs:72
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "Εκκίνηση υπηρεσίας"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "Τερματισμός υπηρεσίας"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr "Πληροφορίες ευρετηρίου"
+
+#: ../search/Beagle.Search/UIManager.cs:97
 msgid "_Contents"
 msgstr "_Περιεχόμενα"
 
-#: ../search/UIManager.cs:74
+#: ../search/Beagle.Search/UIManager.cs:99
 msgid "Help - Table of Contents"
 msgstr "Βοήθεια - Πίνακας περιεχομένων"
 
-#: ../search/UIManager.cs:78
+#: ../search/Beagle.Search/UIManager.cs:103
 msgid "About Desktop Search"
 msgstr "Περί Beagle"
 
-#: ../search/UIManager.cs:100
-msgid "_Everywhere"
-msgstr "_Παντού"
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr "Ταξινόμηση κατά ημερομηνία _τροποποίησης"
 
-#: ../search/UIManager.cs:102
-msgid "Search everywhere"
-msgstr "Αναζήτηση παντού"
-
-#: ../search/UIManager.cs:105
-msgid "_Applications"
-msgstr "_Εφαρμογές:"
-
-#: ../search/UIManager.cs:107
-msgid "Search applications"
-msgstr "Αναζήτηση εφαρμογών"
-
-#: ../search/UIManager.cs:110
-msgid "_Contacts"
-msgstr "_Επαφές"
-
-#: ../search/UIManager.cs:112
-msgid "Search contacts"
-msgstr "Αναζήτηση επαφών"
-
-#: ../search/UIManager.cs:115
-msgid "Ca_lendar events"
-msgstr "Γε_γονότα ημερολογίου"
-
-#: ../search/UIManager.cs:117
-msgid "Search calendar events"
-msgstr "Αναζήτηση γεγονότων ημερολογίου"
-
-#: ../search/UIManager.cs:120
-msgid "_Documents"
-msgstr "_Έγγραφα"
-
-#: ../search/UIManager.cs:122
-msgid "Search documents"
-msgstr "Αναζήτηση εγγράφων"
-
-#: ../search/UIManager.cs:125
-msgid "Conve_rsations"
-msgstr "_Συζητήσεις"
-
-#: ../search/UIManager.cs:127
-msgid "Search E-Mail and Instant Messaging logs"
-msgstr "Αναζήτηση αρχείων καταγραφής E-Mail και Instant Messaging"
-
-#: ../search/UIManager.cs:130
-msgid "_Images"
-msgstr "Ε_ικόνες"
-
-#: ../search/UIManager.cs:132
-msgid "Search images"
-msgstr "Αναζήτηση εικόνων"
-
-#: ../search/UIManager.cs:135
-msgid "_Media"
-msgstr "_Πολυμέσα"
-
-#: ../search/UIManager.cs:137
-msgid "Search sound and video files"
-msgstr "Αναζήτηση αρχείων ήχου και βίντεο"
-
-#: ../search/UIManager.cs:144
-msgid "Date _Modified"
-msgstr "Ημερομηνία _τροποποίησης"
-
-#: ../search/UIManager.cs:145
+#: ../search/Beagle.Search/UIManager.cs:126
 msgid "Sort the most-recently-modified matches first"
 msgstr "Ταξινόμηση των πιο πρόσφατων ταιριασμάτων πρώτα"
 
-#: ../search/UIManager.cs:148
-msgid "_Name"
-msgstr "_Όνομα"
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "Ταξινόμηση κατά ό_νομα"
 
-#: ../search/UIManager.cs:149
+#: ../search/Beagle.Search/UIManager.cs:130
 msgid "Sort matches by name"
 msgstr "Ταξινόμηση αποτελεσμάτων κατά όνομα"
 
-#: ../search/UIManager.cs:152
-msgid "_Relevance"
-msgstr "_Σχετικότητα"
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "Ταξινόμηση κατά _Σχετικότητα"
 
-#: ../search/UIManager.cs:153
+#: ../search/Beagle.Search/UIManager.cs:134
 msgid "Sort the best matches first"
 msgstr "Ταξινόμηση των καλύτερων αποτελεσμάτων πρώτα"
 
-#: ../tools/Settings.cs:223
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "_Τοπικό"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr "Αναζήτηση στα προσωπικά δεδομένα σε αυτόν τον υπολογιστή"
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "_Σύστημα"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr "Αναζήτηση στα δεδομένα του συστήματος για αυτόν τον υπολογιστή"
+
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:155
+msgid "Search in internet services"
+msgstr "Αναζήτηση σε υπηρεσίες διαδικτύου"
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr "_Γειτονία"
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr "Αναζήτηση σε υπολογιστές που βρίσκονται κοντά μου"
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "Εμφάνιση Λεπτομερειών"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "Ο περιηγητής ιστοσελίδων δεν μπόρεσε να εκκινήση"
+
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr ""
+"Μεταφραστές\n"
+"Ελληνική μεταφραστική ομάδα GNOME\n"
+"Στεφανάκης Γιώργος (george.stefanakis@gmail.com)"
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Αναζήτηση"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr "Αναζήτηση για δεδομένα στην επιφάνεια εργασίας σας"
+
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "Παρουσιάστηκε σφάλμα"
+
+#: ../tools/Settings.cs:233 ../tools/Settings.cs:711
+#, csharp-format
+msgid "Display the search window by pressing {0}"
+msgstr "Εμφάνιση του παραθύρου αναζήτησης με το πάτημα του {0}"
+
+#: ../tools/Settings.cs:363
 msgid "Reload configuration"
 msgstr "Επαναφόρτωση ρύθμισης"
 
-#: ../tools/Settings.cs:224
+#: ../tools/Settings.cs:364
 msgid ""
 "The configuration file has been modified by another application. Do you wish "
 "to discard the currently displayed values and reload configuration from disk?"
@@ -729,33 +963,33 @@ msgstr ""
 "Το αρχείο ρυθμίσεων τροποποιήθηκε από μια άλλη εφαρμογή. Θέλετε να "
 "απορριφθούν οι τρέχουσες τιμές και να φορτωθεί η ρύθμιση από το δίσκο;"
 
-#: ../tools/Settings.cs:262
+#: ../tools/Settings.cs:498
 msgid "Select Path"
 msgstr "Επιλογή διαδρομής"
 
-#: ../tools/Settings.cs:281
+#: ../tools/Settings.cs:517
 msgid "The selected path is already selected for indexing and wasn't added."
 msgstr ""
 "Η επιλεγμένη διαδρομή έχει ήδη επιλεχθεί για καταλογοποίηση και δεν "
 "προστέθηκε"
 
-#: ../tools/Settings.cs:284
+#: ../tools/Settings.cs:520
 msgid ""
-"The selected path wasn't added. The list contains items that supercedes it "
+"The selected path wasn't added. The list contains items that supersedes it "
 "and the data is already being indexed."
 msgstr ""
-"Η επιλεγμένη διαδρομή δεν προστέθηκε. Η λίστα περιέχει αντικείμενο που "
-"υπερβαίνει τα δεδομένα που έχουν ήδη καταλογοποιηθεί."
+"Η επιλεγμένη διαδρομή δεν προστέθηκε. Η λίστα περιέχει αντικείμενα που την "
+"αναστέλουν και τα δεδομένα έχουν είδη προστεθεί στο ευρετήριο."
 
-#: ../tools/Settings.cs:295 ../tools/Settings.cs:487
+#: ../tools/Settings.cs:531
 msgid "Path not added"
 msgstr "Η σελίδα δεν προστέθηκε"
 
-#: ../tools/Settings.cs:304
+#: ../tools/Settings.cs:540
 msgid "Remove obsolete paths"
 msgstr "Αφαίρεση ξεπερασμένων διαδρομών"
 
-#: ../tools/Settings.cs:305
+#: ../tools/Settings.cs:541
 msgid ""
 "Adding this path will obsolete some of the existing include paths. This will "
 "result in the removal of the old obsolete paths. Do you still wish to add it?"
@@ -764,11 +998,11 @@ msgstr ""
 "υπάρχουσες διαδρομές.Αυτό θα έχει ως αποτέλεσμα την απομάκρυνση παλιών "
 "ξεπερασμένων διαδρομών. Θέλετε να την προσθέσετε;"
 
-#: ../tools/Settings.cs:331
+#: ../tools/Settings.cs:567
 msgid "Remove path"
 msgstr "Αφαίρεση διαδρομής"
 
-#: ../tools/Settings.cs:332
+#: ../tools/Settings.cs:568
 msgid ""
 "Are you sure you wish to remove this path from the list of directories to be "
 "included for indexing?"
@@ -776,11 +1010,11 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή τη διαδρομή από τη λίστα των "
 "καταλόγων που θα συμπεριληφθούν για καταλογοποίηση;"
 
-#: ../tools/Settings.cs:361
+#: ../tools/Settings.cs:597
 msgid "Remove item"
 msgstr "Αφαίρεση αντικειμένου"
 
-#: ../tools/Settings.cs:362
+#: ../tools/Settings.cs:598
 msgid ""
 "Are you sure you wish to remove this item from the list of data to be "
 "excluded from indexing?"
@@ -788,86 +1022,69 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το αντικείμενο από τη λίστα "
 "των δεδομένων που θα εξαιρεθούν από τη καταλογοποίηση;"
 
-#: ../tools/Settings.cs:405
-msgid "Invalid host entry"
-msgstr "Μη έγκυρη καταχώριση συστήματος"
-
-#: ../tools/Settings.cs:412
+#: ../tools/Settings.cs:645
 msgid "Remote host already present in the list."
 msgstr "Το απομακρυσμένο σύστημα είναι ήδη στη λίστα."
 
-#: ../tools/Settings.cs:421
-msgid "Netbeagle Node not added"
-msgstr "Δεν προστέθηκε Netbeagle Node"
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
+msgstr "Δεν προστέθηκε ο απομακρυσμένος υπολογιστής beagle"
 
-#: ../tools/Settings.cs:437
+#: ../tools/Settings.cs:670
 msgid "Remove host"
 msgstr "Απομάκρυνση συστήματος"
 
-#: ../tools/Settings.cs:438
+#: ../tools/Settings.cs:671
 msgid "Are you sure you wish to remove this host from the list?"
-msgstr "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
-
-#: ../tools/Settings.cs:459
-msgid "Select path"
-msgstr "Επιλογή διαδρομής"
-
-#: ../tools/Settings.cs:478
-msgid "The selected path is already configured for external access."
-msgstr "Η επιλεγμένη διαδρομή είναι ήδη ρυθμισμένη για εξωτερική πρόσβαση."
-
-#: ../tools/Settings.cs:502
-msgid "Remove public path"
-msgstr "Αφαίρεση κοινόχρηστης διαδρομής"
-
-#: ../tools/Settings.cs:503
-msgid "Are you sure you wish to remove this entry from the list of public paths?"
 msgstr ""
-"Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή την εγγραφή από τη λίστα "
-"κοινόχρηστων διαδρομών;"
+"Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτό το σύστημα από τη λίστα;"
 
-#: ../tools/Settings.cs:548 ../tools/Settings.cs:637 ../tools/Settings.cs:715
-#: ../tools/Settings.cs:791 ../tools/Settings.cs:1130
+#: ../tools/Settings.cs:774 ../tools/Settings.cs:863 ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049 ../tools/Settings.cs:1771
 msgid "Name"
 msgstr "Όνομα"
 
-#: ../tools/Settings.cs:631
+#: ../tools/Settings.cs:857
 msgid "Type"
 msgstr "Τύπος"
 
-#: ../tools/Settings.cs:684
+#: ../tools/Settings.cs:910
 msgid "Path:"
 msgstr "Διαδρομή:"
 
-#: ../tools/Settings.cs:687
+#: ../tools/Settings.cs:913
 msgid "Pattern:"
 msgstr "Μοτίβο:"
 
-#: ../tools/Settings.cs:690
+#: ../tools/Settings.cs:916
 msgid "Mail folder:"
 msgstr "Φάκελος αλληλογραφίας:"
 
-#: ../tools/Settings.cs:1038
+#: ../tools/Settings.cs:951
+msgid "Address"
+msgstr "Διεύθυνση"
+
+#: ../tools/Settings.cs:1296
 msgid "Select Folder"
 msgstr "Επιλογή φακέλου"
 
-#: ../tools/Settings.cs:1064 ../tools/settings.glade.h:24
+#: ../tools/Settings.cs:1322 ../tools/settings.glade.h:36
 msgid "P_ath:"
 msgstr "Δι_αδρομή:"
 
-#: ../tools/Settings.cs:1069
+#: ../tools/Settings.cs:1327
 msgid "M_ail folder:"
 msgstr "_Φάκελος αλληλογραφίας"
 
-#: ../tools/Settings.cs:1074
+#: ../tools/Settings.cs:1332
 msgid "P_attern:"
 msgstr "Μ_οτίβο:"
 
-#: ../tools/Settings.cs:1098
+#: ../tools/Settings.cs:1356
 msgid "Error adding path"
 msgstr "Σφάλμα προσθήκης διαδρομής"
 
-#: ../tools/Settings.cs:1099
+#: ../tools/Settings.cs:1357
 msgid ""
 "The specified path could not be found and therefore it could not be added to "
 "the list of resources excluded for indexing."
@@ -875,13 +1092,149 @@ msgstr ""
 "Δεν βρέθηκε η καθορισμένη διαδρομή και έτσι δεν μπορεί να προστεθεί στη "
 "λίστατων πόρων που έχουν εξαιρεθεί από τη καταλογοποίηση."
 
-#: ../tools/Settings.cs:1129
-msgid "Show"
-msgstr "Εμφάνιση"
+#: ../tools/Settings.cs:1395
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "Σύνδεση με {0}"
+
+#: ../tools/Settings.cs:1731
+msgid "Evolution's mail."
+msgstr "Ηλεκτρονικά μηνύματα του Evolution"
+
+#: ../tools/Settings.cs:1732
+msgid "Evolution's address book, memos and tasks."
+msgstr "Βιβλίο διευθύνσεων, σημειώσεων και εργασιών του Evolution"
+
+#: ../tools/Settings.cs:1733
+msgid "Thunderbird's email."
+msgstr "Ηλεκτρονικά μηνύματα του Thunderbird"
+
+#: ../tools/Settings.cs:1734
+msgid "RSS feeds from Akregator."
+msgstr "Ροές RSS από το Akregator."
+
+#: ../tools/Settings.cs:1735
+msgid "RSS feeds from Blam."
+msgstr "Ροές RSS από το Blam."
+
+#: ../tools/Settings.cs:1736
+msgid "Files and folders on the local file system."
+msgstr "Αρχεία και φάκελοι στο τοπικό σύστημα αρχείων."
+
+#: ../tools/Settings.cs:1737
+msgid "Mail messages from KMail."
+msgstr "Μηνύματα ηλεκτρονικού ταχυδρομείου από το KMail"
+
+#: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "Σημειώσεις από το Knotes"
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr "Ατζέντα από το KOrganizer."
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "Επαφές από το KAddressBook."
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Σελιδοδείκτες του Konqueror"
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Ιστορικού του Konqueror"
+
+#: ../tools/Settings.cs:1743
+msgid "IMs and chats from Konversation."
+msgstr "Απευθείας μηνύματα και συζητήσεις από το Konversation"
+
+#: ../tools/Settings.cs:1744
+msgid "IMs and chats from Kopete"
+msgstr "Απευθείας μηνύματα και συζητήσεις από το Kopete"
+
+#: ../tools/Settings.cs:1745
+msgid "Mind-maps from Labyrinth."
+msgstr "Διαγράμματα ιδεών από το Labyrinth"
+
+#: ../tools/Settings.cs:1746
+msgid "RSS feeds from Liferea."
+msgstr "Ροές δεδομένων από το Liferea."
+
+#: ../tools/Settings.cs:1747
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr "Μετά δεδομένα του Nautilus (εμβλήματα, σημειώσεις, κλπ.)"
+
+#: ../tools/Settings.cs:1748
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr "Αναζήτηση σε άλλες υπηρεσίες αναζήτησης στο δίκτυο (ΠΕΙΡΑΜΑΤΙΚΟ)"
+
+#: ../tools/Settings.cs:1749
+msgid "Opera's bookmarks and browsing history."
+msgstr "Σελιδοδείκτες και ιστορικό περιηγήσεων του Opera."
+
+#: ../tools/Settings.cs:1750
+msgid "IMs and chats from Pidgin."
+msgstr "Απευθείας μηνύματα και συζητήσεις από το Pidgin"
+
+#: ../tools/Settings.cs:1751
+msgid "Notes from Tomboy."
+msgstr "Σημειώσεις από το Tomboy"
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1753
+msgid "(System) Applications"
+msgstr "(Σύστημα) Εφαρμογές"
+
+#: ../tools/Settings.cs:1754
+msgid "(System) Help files"
+msgstr "(Σύστημα) Αρχεία βοήθειας"
+
+#: ../tools/Settings.cs:1755
+msgid "(System) Manual pages"
+msgstr ""
+
+#: ../tools/Settings.cs:1756
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr ""
+"(Σύστημα) Συμπληρωματικά αποτελέσματα αναζήτησης με την χρήση της εντολής "
+"\"locate\""
+
+#: ../tools/Settings.cs:1757
+msgid "(System) Mono documentation"
+msgstr ""
+
+#: ../tools/Settings.cs:1758
+msgid "(System) Files from Windows' partition"
+msgstr "(Σύστημα) Αρχεία από μια κατάτμηση των Windows"
+
+#: ../tools/Settings.cs:1772
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Ρυθμίστε την αναζήτηση της επιφάνειας εργασίας"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Αναζήτηση & Καταλογοποίηση"
+
+#: ../tools/keygrabber.py:56
+msgid "Grab key combination"
+msgstr ""
+
+#: ../tools/keygrabber.py:143
+msgid "Please press the new key combination"
+msgstr "Παρακαλώ πιέστε τον καινούργιο συνδυασμό πλήκτρων"
+
+#: ../tools/keygrabber.py:192
+msgid "Disabled"
+msgstr "Απενεργοποιημένο"
 
 #: ../tools/settings.glade.h:1
-msgid "<b>Add Remote Host</b>"
-msgstr "<b>Προσθήκη απομακρυσμένου συστήματος</b>"
+msgid ":"
+msgstr ":"
 
 #: ../tools/settings.glade.h:2
 msgid "<b>Administration</b>"
@@ -900,38 +1253,58 @@ msgid "<b>General</b>"
 msgstr "<b>Γενικά</b>"
 
 #: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr "<b>Τοπικοί πόροι και πόροι συστήματος</b>"
+
+#: ../tools/settings.glade.h:7
 msgid "<b>Networking</b>"
 msgstr "<b>Δικτύωση</b>"
 
-#: ../tools/settings.glade.h:7
+#: ../tools/settings.glade.h:8
 msgid "<b>Privacy</b>"
 msgstr "<b>Απόρρητο</b>"
 
-#: ../tools/settings.glade.h:8
+#: ../tools/settings.glade.h:9
 msgid "<b>Select Mail Folder</b>"
 msgstr "<b>Επιλογή φακέλου αλληλογραφίας</b>"
 
-#: ../tools/settings.glade.h:9
+#: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>Περιβάλλον χρήστη</b>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr ""
+"<i>Οι αλλαγές θα ενεργοποιηθούν μόνο μετά την επανεκκίνηση του δαίμονα.</i>"
+
+#: ../tools/settings.glade.h:12
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr ""
+"<i>Αυτές οι ρυθμίσεις δεν μπορούν να εφαρμοστούν όσο είστε σε τροφοδοσία από "
+"μπαταρία. </i>"
+
+#: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Απαιτείται κωδικός.</span>"
+
+#: ../tools/settings.glade.h:14
 msgid "Add Remote Host"
 msgstr "Προσθήκη απομακρυσμένου συστήματος"
 
-#: ../tools/settings.glade.h:10
-msgid ""
-"Add a remote search-enabled host you wish \n"
-"to network with."
+#: ../tools/settings.glade.h:15
+msgid "Add a static host"
 msgstr ""
-"Προσθήκη ενός απομακρυσμένου συστήματος με ενεργοποιημένη αναζήτηση \n"
-"με το οποίο θέλετε να δικτυωθείτε."
 
-#: ../tools/settings.glade.h:12
+#: ../tools/settings.glade.h:16
 msgid "Add any additional paths to be included for indexing."
 msgstr "Προσθήκη πρόσθετων διαδρομών για να συμπεριληφθούν στη καταλογοποίηση"
 
-#: ../tools/settings.glade.h:13
+#: ../tools/settings.glade.h:17
 msgid "Add any remote search-enabled hosts you wish to network with."
-msgstr "Προσθήκη απομακρυσμένων συστημάτων με δυνατότητα αναζήτησης για δικτύωση."
+msgstr ""
+"Προσθήκη απομακρυσμένων συστημάτων με δυνατότητα αναζήτησης για δικτύωση."
 
-#: ../tools/settings.glade.h:14
+#: ../tools/settings.glade.h:18
 msgid ""
 "Adjust which types of results should be visible, and in what order they "
 "should be presented when grouped by type."
@@ -939,61 +1312,117 @@ msgstr ""
 "Προσρμογή των τύπων των αποτελεσμάτων που θα είναι ορατά και της σειράς με "
 "την οποία θα παρουσιάζονται  όταν θα ομαδοποιούνται κατά τύπο."
 
-#: ../tools/settings.glade.h:15
-msgid "Allow _external access to local search services"
+#: ../tools/settings.glade.h:19
+#, fuzzy
+msgid "Allow external access to local search services (EXPERIMENTAL)"
 msgstr "Να επι_τρέπεται η εξωτερική πρόσβαση σε τοπικές υπηρεσίες αναζήτησης"
 
-#: ../tools/settings.glade.h:16
-msgid "Alt"
-msgstr "Alt"
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr ""
+"Αυτόματη _εκκίνηση αναζήτηση μετά την παύση πληκτρολόγησης από τον χρήστη"
 
-#: ../tools/settings.glade.h:17
-msgid "Ctrl"
-msgstr "Ctrl"
+#: ../tools/settings.glade.h:21
+msgid "Change"
+msgstr "Αλλαγή"
 
-#: ../tools/settings.glade.h:18
-msgid "Display the search window by pressing:"
-msgstr "Εμφάνιση του παραθύρου αναζήτησης με το πάτημα:"
+#: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Πηγή δεδομένων"
 
-#: ../tools/settings.glade.h:19
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing"
+msgstr "Εμφάνιση του παραθύρου αναζήτησης με το πάτημα"
+
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr ""
+
+#: ../tools/settings.glade.h:25
+#, fuzzy
+msgid "Enable web interface for local search service"
+msgstr "Να επι_τρέπεται η εξωτερική πρόσβαση σε τοπικές υπηρεσίες αναζήτησης"
+
+#: ../tools/settings.glade.h:26
 msgid "Exclude Resource"
 msgstr "Εξαίρεση πόρου"
 
-#: ../tools/settings.glade.h:20
+#: ../tools/settings.glade.h:27
 msgid "Filename _pattern"
 msgstr "Μοτί_βο ονόματος αρχείου"
 
-#: ../tools/settings.glade.h:21
+#: ../tools/settings.glade.h:28
 msgid "I_ndex my home directory"
 msgstr "Κατα_λογοποίηση του αρχικού μου κατάλογου"
 
-#: ../tools/settings.glade.h:22
+#: ../tools/settings.glade.h:29
+msgid ""
+"In order for you to perform Beagle searches on this computer, you must enter "
+"a password."
+msgstr ""
+"Για να μπορέσετε να εκτελέσετε αναζητήσεις με το Beagle στον υπολογιστή σας, "
+"πρέπει να εισάγετε των κωδικό σας."
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr "Αρχειοθέτηση δεδομένων όταν βρίσκεστε σε κατάσταση _μπαταρίας"
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr ""
+"Να γίνεται ποίο άγρια αρχειοθέτηση όταν η _προφύλαξη οθόνης είναι "
+"ενεργοποιημέμη"
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "Όνομα καταλόγου:"
+
+#: ../tools/settings.glade.h:33
 msgid "Indexing"
 msgstr "Καταλογοποίηση"
 
-#: ../tools/settings.glade.h:23
-msgid "Networking"
-msgstr "Δικτύωση"
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Επιλογές δικτύου"
 
-#: ../tools/settings.glade.h:25
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "Κωδικός για {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "Κωδικός:"
+
+#: ../tools/settings.glade.h:39
 msgid "Please select a resource you wish to exclude from indexing."
-msgstr "Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
+msgstr ""
+"Παρακαλώ επιλέξτε ένα πόρο που θέλετε να εξαιρέσετε από τη καταλογοποίηση."
 
-#: ../tools/settings.glade.h:26
+#: ../tools/settings.glade.h:40
 msgid "Please select the mail folder you wish to exclude from indexing. "
 msgstr ""
 "Παρακαλώ επιλέξτε το φάκελο αλληλογραφίας που θέλετε να αποκλείσετε από τη "
 "καταλογοποίηση "
 
-#: ../tools/settings.glade.h:28
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr ""
+"Απαιτείται κωδικός για την αναζήτηση σε αυτόν τον υπολογιστή, με "
+"απομακρυσμένο έλεγχο"
+
+#: ../tools/settings.glade.h:42
 msgid "Search Preferences"
 msgstr "Προτιμήσεις αναζήτησης"
 
-#: ../tools/settings.glade.h:29
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "Αναζήτηση"
+
+#: ../tools/settings.glade.h:44
 msgid "Select Mail Folder"
 msgstr "Επιλογή φακέλου αλληλογραφίας"
 
-#: ../tools/settings.glade.h:30
+#: ../tools/settings.glade.h:45
 msgid ""
 "Specify any resources, such as paths, patterns, mail folders or type of "
 "objects you wish to exclude from indexing."
@@ -1002,156 +1431,308 @@ msgstr ""
 "καταλογοποίηση. (όπως διαδρομές, μοτίβα, φακέλους αλληλογραφίας ή τύπους "
 "αντικειμένων)"
 
-#: ../tools/settings.glade.h:31
-msgid "Specify paths that should be available for external access."
-msgstr "Καθορίστε τις διαδρομές που θα είναι εξωτερικά προσβάσιμες."
-
-#: ../tools/settings.glade.h:32
+#: ../tools/settings.glade.h:46
 msgid "Type:"
 msgstr "Τύπος:"
 
-#: ../tools/settings.glade.h:33
-msgid "_Address:"
-msgstr "_Διεύθυνση:"
-
-#: ../tools/settings.glade.h:34
+#: ../tools/settings.glade.h:47
 msgid "_Allow Beagle to be run as root"
 msgstr "_Να επιτρέπεται στο Beagle να εκτελείται ως root"
 
-#: ../tools/settings.glade.h:35
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "_Περιήγηση…"
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr "_Επιλέξτε από τα διαθέσιμα συστήματα"
+
+#: ../tools/settings.glade.h:50
 msgid "_Folder path"
 msgstr "Διαδρομή _φακέλου"
 
-#: ../tools/settings.glade.h:36
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "_Όνομα συστήματος:"
+
+#: ../tools/settings.glade.h:52
 msgid "_Mail folder"
 msgstr "Φάκελος α_λληλογραφίας"
 
-#: ../tools/settings.glade.h:37
-msgid "_Maximum number of results displayed:"
-msgstr "_Μέγιστος αριθμός αποτελεσμάτων που θα εμφανίζονται:"
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_Κωδικός πρόσβασης:"
 
-#: ../tools/settings.glade.h:38
+#: ../tools/settings.glade.h:54
 msgid "_Start search & indexing services automatically "
 msgstr "Αυτόματη εκκίνηση υπηρεσιών αναζήτησης & καταλογοποίησης"
 
-#: ../tools/beagle-settings.desktop.in.h:1
-msgid "Configure Desktop Search & Indexing"
-msgstr "Ρύθμιση αναζήτησης & καταλογοποίησης"
+#~ msgid "Orientation"
+#~ msgstr "Προσανατολισμός"
 
-#: ../tools/beagle-settings.desktop.in.h:2
-msgid "Configure search & indexing properties"
-msgstr "Ρύθμιση ιδιοτήτων αναζήτησης & καταλογοποίησης"
+#~ msgid "The orientation of the tray."
+#~ msgstr "Ο προσανατολισμός του συρταριού."
 
-#: ../tools/beagle-settings.desktop.in.h:3
-msgid "Search & Indexing"
-msgstr "Αναζήτηση & Καταλογοποίηση"
+#~ msgid ""
+#~ "You can change the scope of your search using the \"Search\" menu. A "
+#~ "broader search scope might produce more results."
+#~ msgstr ""
+#~ "Μπορείτε να αλλάξετε το σκοπό της  αναζήτησης σας χρησιμοποιώντας το "
+#~ "μενού \"Αναζήτηση\". Ένας γενικότερος στόχος αναζήτησης μπορεί να δώσει "
+#~ "περισσότερα αποτελέσματα."
 
-#: ../Util/Evolution.cs:45 ../Util/Evolution.cs:163
-msgid "On This Computer"
-msgstr "Σε αυτό τον υπολογιστή"
+#~ msgid "Unknown duration"
+#~ msgstr "Άγνωστή διάρκεια"
 
-#: ../Util/ExifData.cs:226
-msgid "Image Directory"
-msgstr "Κατάλογος εικόνων"
+#~ msgid ""
+#~ "file\n"
+#~ "files"
+#~ msgstr ""
+#~ "αρχείο\n"
+#~ "αρχεία"
 
-#: ../Util/ExifData.cs:228
-msgid "Thumbnail Directory"
-msgstr "Κατάλογος μικρογραφιών"
+#~ msgid ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
+#~ msgstr ""
+#~ "mail\n"
+#~ "email\n"
+#~ "e-mail"
 
-#: ../Util/ExifData.cs:230
-msgid "Exif Directory"
-msgstr "Κατάλογος Exif"
+#~ msgid ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
+#~ msgstr ""
+#~ "im\n"
+#~ "ims\n"
+#~ "instant message\n"
+#~ "instant messages\n"
+#~ "instant-message\n"
+#~ "instant-messages\n"
+#~ "chat\n"
+#~ "chats"
 
-#: ../Util/ExifData.cs:232
-msgid "GPS Directory"
-msgstr "Κατάλογος GPS"
+#~ msgid ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
+#~ msgstr ""
+#~ "presentation\n"
+#~ "presentations\n"
+#~ "slideshow\n"
+#~ "slideshows\n"
+#~ "slide\n"
+#~ "slides"
 
-#: ../Util/ExifData.cs:234
-msgid "InterOperability Directory"
-msgstr "Κατάλογος InterOperability"
+#~ msgid ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
+#~ msgstr ""
+#~ "application\n"
+#~ "applications\n"
+#~ "app\n"
+#~ "apps"
 
-#: ../Util/ExifData.cs:236
-msgid "Unknown Directory"
-msgstr "Άγνωστος κατάλογος"
+#~ msgid ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
+#~ msgstr ""
+#~ "contact\n"
+#~ "contacts\n"
+#~ "vcard\n"
+#~ "vcards"
 
-#. Translators: Example output: Aug 9
-#: ../Util/StringFu.cs:82
-msgid "MMM d"
-msgstr "MMM d"
+#~ msgid ""
+#~ "folder\n"
+#~ "folders"
+#~ msgstr ""
+#~ "φάκελος\n"
+#~ "φάκελοι"
 
-#. Translators: Example output: Aug 9, 2000
-#: ../Util/StringFu.cs:85
-msgid "MMM d, yyyy"
-msgstr "MMM d, yyyy"
+#~ msgid ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
+#~ msgstr ""
+#~ "image\n"
+#~ "images\n"
+#~ "img"
 
-#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
-#: ../Util/StringFu.cs:88
-msgid "h:mm tt"
-msgstr "h:mm tt"
+#~ msgid "audio"
+#~ msgstr "ήχος"
 
-#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
-#: ../Util/StringFu.cs:94
-#, csharp-format
-msgid "{0}, {1}"
-msgstr "{0}, {1}"
+#~ msgid "video"
+#~ msgstr "Βίντεο"
 
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:111
-#, csharp-format
-msgid "Today, {0}"
-msgstr "Σήμερα, {0}"
+#~ msgid "media"
+#~ msgstr "πολυμέσα"
 
-#. To translators: {0} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:114
-#, csharp-format
-msgid "Yesterday, {0}"
-msgstr "Χθες, {0}"
+#~ msgid ""
+#~ "document\n"
+#~ "documents\n"
+#~ "office document\n"
+#~ "office documents"
+#~ msgstr ""
+#~ "έγγραφο\n"
+#~ "έγγραφα\n"
+#~ "έγγραφο γραφείου\n"
+#~ "έγγραφα γραφείου"
 
-#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
-#: ../Util/StringFu.cs:117
-#, csharp-format
-msgid "{0} days ago, {1}"
-msgstr "{0} ημέρες πριν, {1}"
+#~ msgid ""
+#~ "conversation\n"
+#~ "conversations"
+#~ msgstr ""
+#~ "συζήτηση\n"
+#~ "συζητήσεις"
 
-#. Translators: Example output: January 3, 3:45 PM
-#: ../Util/StringFu.cs:122
-msgid "MMMM d, h:mm tt"
-msgstr "MMMM d, h:mm tt"
+#~ msgid ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
+#~ msgstr ""
+#~ "web\n"
+#~ "www\n"
+#~ "website\n"
+#~ "websites"
 
-#. Translators: Example output: March 23 2001, 10:04 AM
-#: ../Util/StringFu.cs:127
-msgid "MMMM d yyyy, h:mm tt"
-msgstr "MMMM d yyyy, h:mm tt"
+#~ msgid ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
+#~ msgstr ""
+#~ "feed\n"
+#~ "news\n"
+#~ "blog\n"
+#~ "rss"
 
-#: ../Util/StringFu.cs:137
-#, csharp-format
-msgid "{0} hour"
-msgid_plural "{0} hours"
-msgstr[0] "{0} ώρα"
-msgstr[1] "{0} ώρες"
+#~ msgid ""
+#~ "archive\n"
+#~ "archives"
+#~ msgstr ""
+#~ "archive\n"
+#~ "archives"
 
-#: ../Util/StringFu.cs:144
-#, csharp-format
-msgid "{0} minute"
-msgid_plural "{0} minutes"
-msgstr[0] "{0} λεπτό"
-msgstr[1] "{0} λεπτά"
+#~ msgid "Sor_t"
+#~ msgstr "Τα_ξινόμηση"
 
-#. Translators: {0} is a file size in bytes
-#: ../Util/StringFu.cs:160
-#, csharp-format
-msgid "{0} bytes"
-msgstr "{0} bytes"
+#~ msgid "_Everywhere"
+#~ msgstr "_Παντού"
 
-#. Translators: {0} is a file size in kilobytes
-#: ../Util/StringFu.cs:164
-#, csharp-format
-msgid "{0:0.0} KB"
-msgstr "{0:0.0} KB"
+#~ msgid "Search everywhere"
+#~ msgstr "Αναζήτηση παντού"
 
-#. Translators: {0} is a file size in megabytes
-#: ../Util/StringFu.cs:167
-#, csharp-format
-msgid "{0:0.0} MB"
-msgstr "{0:0.0} MB"
+#~ msgid "_Applications"
+#~ msgstr "_Εφαρμογές:"
 
+#~ msgid "_Contacts"
+#~ msgstr "_Επαφές"
+
+#~ msgid "Search contacts"
+#~ msgstr "Αναζήτηση επαφών"
+
+#~ msgid "Ca_lendar events"
+#~ msgstr "Γε_γονότα ημερολογίου"
+
+#~ msgid "Search calendar events"
+#~ msgstr "Αναζήτηση γεγονότων ημερολογίου"
+
+#~ msgid "_Documents"
+#~ msgstr "_Έγγραφα"
+
+#~ msgid "Search documents"
+#~ msgstr "Αναζήτηση εγγράφων"
+
+#~ msgid "Conve_rsations"
+#~ msgstr "_Συζητήσεις"
+
+#~ msgid "Search E-Mail and Instant Messaging logs"
+#~ msgstr "Αναζήτηση αρχείων καταγραφής E-Mail και Instant Messaging"
+
+#~ msgid "_Images"
+#~ msgstr "Ε_ικόνες"
+
+#~ msgid "Search sound and video files"
+#~ msgstr "Αναζήτηση αρχείων ήχου και βίντεο"
+
+#~ msgid "_Name"
+#~ msgstr "_Όνομα"
+
+#~ msgid "Invalid host entry"
+#~ msgstr "Μη έγκυρη καταχώριση συστήματος"
+
+#~ msgid "Select path"
+#~ msgstr "Επιλογή διαδρομής"
+
+#~ msgid "The selected path is already configured for external access."
+#~ msgstr "Η επιλεγμένη διαδρομή είναι ήδη ρυθμισμένη για εξωτερική πρόσβαση."
+
+#~ msgid "Remove public path"
+#~ msgstr "Αφαίρεση κοινόχρηστης διαδρομής"
+
+#~ msgid ""
+#~ "Are you sure you wish to remove this entry from the list of public paths?"
+#~ msgstr ""
+#~ "Είστε σίγουροι ότι θέλετε να απομακρύνετε αυτή την εγγραφή από τη λίστα "
+#~ "κοινόχρηστων διαδρομών;"
+
+#~ msgid "Show"
+#~ msgstr "Εμφάνιση"
+
+#~ msgid "<b>Add Remote Host</b>"
+#~ msgstr "<b>Προσθήκη απομακρυσμένου συστήματος</b>"
+
+#~ msgid ""
+#~ "Add a remote search-enabled host you wish \n"
+#~ "to network with."
+#~ msgstr ""
+#~ "Προσθήκη ενός απομακρυσμένου συστήματος με ενεργοποιημένη αναζήτηση \n"
+#~ "με το οποίο θέλετε να δικτυωθείτε."
+
+#~ msgid "Ctrl"
+#~ msgstr "Ctrl"
+
+#~ msgid "Specify paths that should be available for external access."
+#~ msgstr "Καθορίστε τις διαδρομές που θα είναι εξωτερικά προσβάσιμες."
+
+#~ msgid "_Maximum number of results displayed:"
+#~ msgstr "_Μέγιστος αριθμός αποτελεσμάτων που θα εμφανίζονται:"
+
+#~ msgid "Configure Desktop Search & Indexing"
+#~ msgstr "Ρύθμιση αναζήτησης & καταλογοποίησης"
+
+#~ msgid "Configure search & indexing properties"
+#~ msgstr "Ρύθμιση ιδιοτήτων αναζήτησης & καταλογοποίησης"
+
+#~ msgid "Image Directory"
+#~ msgstr "Κατάλογος εικόνων"
+
+#~ msgid "Thumbnail Directory"
+#~ msgstr "Κατάλογος μικρογραφιών"
+
+#~ msgid "Exif Directory"
+#~ msgstr "Κατάλογος Exif"
+
+#~ msgid "GPS Directory"
+#~ msgstr "Κατάλογος GPS"
+
+#~ msgid "InterOperability Directory"
+#~ msgstr "Κατάλογος InterOperability"
+
+#~ msgid "Unknown Directory"
+#~ msgstr "Άγνωστος κατάλογος"
