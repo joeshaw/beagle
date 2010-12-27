@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: beagle master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=beagle&component=general\n"
-"POT-Creation-Date: 2010-06-02 18:41+0000\n"
-"PO-Revision-Date: 2010-07-30 18:56+0800\n"
+"POT-Creation-Date: 2010-09-04 14:58+0000\n"
+"PO-Revision-Date: 2010-10-14 14:43+0800\n"
 "Last-Translator: Tao Wei <weitao1979@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -193,7 +193,7 @@ msgstr "您对“{0}”的搜索不与计算机上的任何文件匹配。"
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:24
 msgid "You can select \"Find in: All\" to search everywhere."
-msgstr ""
+msgstr "您可以通过选择“查找位置：所有”来搜索所有位置。"
 
 #: ../search/Beagle.Search.Pages/NoMatch.cs:26
 msgid ""
@@ -655,7 +655,7 @@ msgstr "隐藏"
 #.
 #: ../search/Beagle.Search/SearchWindow.cs:81
 msgid "All"
-msgstr "全部"
+msgstr "所有"
 
 #. Default search scope. Should be at the first
 #: ../search/Beagle.Search/SearchWindow.cs:82
@@ -688,7 +688,7 @@ msgstr "便笺"
 
 #: ../search/Beagle.Search/SearchWindow.cs:138
 msgid "_Find in:"
-msgstr "查找，在(_F)："
+msgstr "查找位置(_F)："
 
 #: ../search/Beagle.Search/SearchWindow.cs:175
 msgid "Find Now"
@@ -1162,7 +1162,7 @@ msgstr "搜索和索引"
 
 #: ../tools/keygrabber.py:56
 msgid "Grab key combination"
-msgstr ""
+msgstr "捕获按键组合"
 
 #: ../tools/keygrabber.py:143
 msgid "Please press the new key combination"
