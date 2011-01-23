@@ -1,0 +1,1401 @@
+# Indonesian translation of beagle
+# Copyright (C) 2011 THE beagle'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the beagle package.
+# Andika Triwidada <andika@gmail.com>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: beagle master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=beagle&component=general\n"
+"POT-Creation-Date: 2010-12-27 07:57+0000\n"
+"PO-Revision-Date: 2011-01-23 15:35+0700\n"
+"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-Language: Indonesian\n"
+"X-Poedit-Country: INDONESIA\n"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:1
+#, fuzzy
+msgid "<b>Conversations History</b>"
+msgstr "Ri_wayat Sebelumnya"
+
+#: ../ImLogViewer/ImLogViewer.glade.h:2
+#, fuzzy
+msgid "IM Viewer"
+msgstr "Penampil Antarmuka"
+
+#: ../ImLogViewer/ImLogWindow.cs:108
+#: ../ImLogViewer/ImLogWindow.cs:120
+#, fuzzy, csharp-format
+msgid "Conversations in {0}"
+msgstr "Step Masuk"
+
+#: ../ImLogViewer/ImLogWindow.cs:111
+#, fuzzy, csharp-format
+msgid "Conversations in {0} ({1})"
+msgstr "Step Masuk"
+
+#: ../ImLogViewer/ImLogWindow.cs:127
+#, fuzzy, csharp-format
+msgid "Conversations with {0}"
+msgstr "_Buka Dengan"
+
+#: ../Util/Evolution.cs:45
+#: ../Util/Evolution.cs:163
+#, fuzzy
+msgid "On This Computer"
+msgstr "Di Komputer Ini"
+
+#: ../Util/StringFu.cs:125
+#: ../search/Beagle.Search.Tiles/Utils.cs:134
+#: ../search/Beagle.Search.Tiles/Utils.cs:216
+#, fuzzy
+msgid "Today"
+msgstr "Hari ini"
+
+#: ../Util/StringFu.cs:127
+#: ../search/Beagle.Search.Tiles/Utils.cs:132
+#: ../search/Beagle.Search.Tiles/Utils.cs:214
+#, fuzzy
+msgid "Yesterday"
+msgstr "Kemarin"
+
+#. Translators: Example output: Aug 9
+#: ../Util/StringFu.cs:130
+msgid "MMM d"
+msgstr "d MMM"
+
+#. Translators: Example output: Aug 9, 2000
+#: ../Util/StringFu.cs:133
+#, fuzzy
+msgid "MMM d, yyyy"
+msgstr "d MMMM yyyy"
+
+#. Translators: Example output: 11:05 AM  (note h = 12-hour time)
+#: ../Util/StringFu.cs:136
+#, fuzzy
+msgid "h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: {0} is a date (e.g. 'Today' or 'Apr 23'), {1} is the time
+#: ../Util/StringFu.cs:142
+#, csharp-format
+msgid "{0}, {1}"
+msgstr "{0}, {1}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:159
+#, fuzzy, csharp-format
+msgid "Today, {0}"
+msgstr "Hari ini, {0}"
+
+#. To translators: {0} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:162
+#, fuzzy, csharp-format
+msgid "Yesterday, {0}"
+msgstr "Kemarin, {0}"
+
+#. To translators: {0} is the number of days that have passed, {1} is the time of the day, eg. 13:45
+#: ../Util/StringFu.cs:167
+#, csharp-format
+msgid "{0} day ago, {1}"
+msgid_plural "{0} days ago, {1}"
+msgstr[0] "{0} hari lalu, {1}"
+
+#. Translators: Example output: January 3, 3:45 PM
+#: ../Util/StringFu.cs:173
+#, fuzzy
+msgid "MMMM d, h:mm tt"
+msgstr "MMMM d, h:mm tt"
+
+#. Translators: Example output: March 23 2001, 10:04 AM
+#: ../Util/StringFu.cs:178
+#, fuzzy
+msgid "MMMM d yyyy, h:mm tt"
+msgstr "d MMMM yyyy, h:mm tt"
+
+#: ../Util/StringFu.cs:188
+#, csharp-format
+msgid "{0} hour"
+msgid_plural "{0} hours"
+msgstr[0] "{0} jam"
+
+#: ../Util/StringFu.cs:195
+#, csharp-format
+msgid "{0} minute"
+msgid_plural "{0} minutes"
+msgstr[0] "{0} menit"
+
+#. Translators: {0} is a file size in bytes
+#: ../Util/StringFu.cs:229
+#, csharp-format
+msgid "{0} byte"
+msgid_plural "{0} bytes"
+msgstr[0] "{0} bita"
+
+#. Translators: {0} is a file size in kilobytes
+#: ../Util/StringFu.cs:233
+#, fuzzy, csharp-format
+msgid "{0:0.0} KB"
+msgstr "kB/s"
+
+#. Translators: {0} is a file size in megabytes
+#: ../Util/StringFu.cs:236
+#, fuzzy, csharp-format
+msgid "{0:0.0} MB"
+msgstr "MB"
+
+#: ../epiphany-extension/beagle.py.in:167
+#, python-format
+msgid "beagle is indexing %s"
+msgstr "beagle sedang mengindeks %s"
+
+#: ../epiphany-extension/beagle.py.in:187
+#, python-format
+msgid "beagle is indexing link %s"
+msgstr "beagle sedang mengindeks taut %s"
+
+#: ../epiphany-extension/beagle.py.in:232
+#, fuzzy
+msgid "Index This Page"
+msgstr "Cetak halaman ini?"
+
+#: ../epiphany-extension/beagle.py.in:239
+#, fuzzy
+msgid "Index Link"
+msgstr "Taut Terpilih"
+
+#: ../epiphany-extension/beagle.py.in:246
+#, fuzzy
+msgid "Reload Config File"
+msgstr "Muat ulang berkas kini"
+
+#: ../epiphany-extension/beagle.py.in:255
+#, fuzzy
+msgid "Auto Index"
+msgstr "Restore Indeks"
+
+#: ../epiphany-extension/beagle.py.in:262
+msgid "Prompt key words when index on demand"
+msgstr ""
+
+#: ../epiphany-extension/beagle.py.in:289
+msgid "Extra keywords to index"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:27
+#, fuzzy
+msgid "Index Information"
+msgstr "<b>Informasi Tabel</b>"
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:30
+msgid "Number of items currently indexed:"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/IndexInfo.cs:45
+msgid "<i>NOTE: The search service is still indexing new data.</i>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:19
+#, fuzzy
+msgid "No results were found."
+msgstr "Tak ditemukan hasil."
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:21
+#, csharp-format
+msgid "Your search for \"{0}\" did not match any files on your computer."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:24
+msgid "You can select \"Find in: All\" to search everywhere."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:26
+msgid "You should check the spelling of your search words to see if you accidentally misspelled any words."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/NoMatch.cs:28
+msgid "If you are searching for GMail emails, select \"Global\" Search Domain using the \"Search\" menu."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:10
+msgid "You can use upper and lower case; search is case-insensitive."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:11
+msgid "To search for optional terms, use OR.  ex: <b>George OR Ringo</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:12
+msgid "To exclude search terms, use the minus symbol in front, such as <b>-cats</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:13
+msgid "When searching for a phrase, add quotes. ex: <b>\"There be dragons\"</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:14
+msgid "Specify the extension to search among files with that extension. ex: <b>bean soup .html</b>"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/QuickTips.cs:20
+#: ../search/Beagle.Search/UIManager.cs:106
+#, fuzzy
+msgid "Quick Tips"
+msgstr "Tips startup"
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:12
+msgid "Beagle cannot be run as root"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/RootUser.cs:14
+msgid "For security reasons, Beagle cannot be run as root. You should restart as a regular user."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:23
+msgid "Search service not running"
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:25
+msgid "The search service does not appear to be running. You can start it by clicking the button below."
+msgstr ""
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:28
+#, fuzzy
+msgid "Start search service"
+msgstr "Lakukan pencarian secara otomatis"
+
+#: ../search/Beagle.Search.Pages/StartDaemon.cs:34
+msgid "Automatically start service on login"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:40
+#, fuzzy, csharp-format
+msgid "Inside archive {0}"
+msgstr "Mengarsipkan aksi"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:77
+#: ../search/Beagle.Search.Tiles/File.cs:164
+#, fuzzy
+msgid "File:"
+msgstr "Berkas:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:81
+#: ../search/Beagle.Search.Tiles/Calendar.cs:44
+#: ../search/Beagle.Search.Tiles/File.cs:168
+#: ../search/Beagle.Search.Tiles/Note.cs:70
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:59
+#: ../search/Beagle.Search.Tiles/Task.cs:41
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:59
+#, fuzzy
+msgid "Title:"
+msgstr "Judul:"
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:83
+#, fuzzy
+msgid "Inside File:"
+msgstr "Berkas terlampir."
+
+#: ../search/Beagle.Search.Tiles/ArchivedFile.cs:86
+#: ../search/Beagle.Search.Tiles/File.cs:173
+#, fuzzy
+msgid "Author:"
+msgstr "Penulis:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:47
+#: ../search/Beagle.Search.Tiles/Task.cs:44
+#, fuzzy
+msgid "Description:"
+msgstr "Keterangan:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:57
+#, fuzzy
+msgid "Time:"
+msgstr "Waktu:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:61
+#, fuzzy
+msgid "Location:"
+msgstr "Lokasi:"
+
+#: ../search/Beagle.Search.Tiles/Calendar.cs:65
+#, fuzzy
+msgid "Attendees:"
+msgstr "Peserta"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:30
+#, fuzzy
+msgid "Send Mail"
+msgstr "Kirim %s melalui surel"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:68
+#, fuzzy
+msgid "E-Mail:"
+msgstr "Surel"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:70
+#, fuzzy
+msgid "Mobile Phone:"
+msgstr "Telpon seluler"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:72
+#, fuzzy
+msgid "Work Phone:"
+msgstr "Telepon _kantor:"
+
+#: ../search/Beagle.Search.Tiles/Contact.cs:74
+#, fuzzy
+msgid "Home Phone:"
+msgstr "Telepon Rumah"
+
+#: ../search/Beagle.Search.Tiles/File.cs:35
+#, fuzzy
+msgid "Reveal in Folder"
+msgstr "Simpan dalam _folder:"
+
+#: ../search/Beagle.Search.Tiles/File.cs:36
+#, fuzzy
+msgid "E-Mail"
+msgstr "Surel"
+
+#. AddAction (new TileAction (Catalog.GetString ("Instant-Message"), InstantMessage));
+#. FIXME: s/"gtk-info"/Gtk.Stock.Info/ when we can depend on gtk# 2.8
+#. AddAction (new TileAction (Catalog.GetString ("Show Information"), "gtk-info", ShowInformation));
+#: ../search/Beagle.Search.Tiles/File.cs:38
+#: ../search/Beagle.Search.Tiles/Folder.cs:39
+#, fuzzy
+msgid "Move to Trash"
+msgstr "Buang ke Tong Sampah"
+
+#: ../search/Beagle.Search.Tiles/File.cs:41
+msgid "Find Documents From Same Author"
+msgstr ""
+
+#: ../search/Beagle.Search.Tiles/File.cs:170
+#: ../search/Beagle.Search.Tiles/Folder.cs:52
+#: ../search/Beagle.Search.Tiles/Note.cs:71
+#, fuzzy
+msgid "Last Edited:"
+msgstr "Nama belakang"
+
+#: ../search/Beagle.Search.Tiles/File.cs:175
+#: ../search/Beagle.Search.Tiles/Folder.cs:53
+#: ../search/Beagle.Search.Tiles/Image.cs:87
+#: ../search/Beagle.Search.Tiles/Video.cs:45
+#, fuzzy
+msgid "Full Path:"
+msgstr "Path Pertama:"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:32
+#, fuzzy
+msgid "Empty"
+msgstr "Kosong"
+
+#: ../search/Beagle.Search.Tiles/Folder.cs:34
+#, csharp-format
+msgid "Contains {0} Item"
+msgid_plural "Contains {0} Items"
+msgstr[0] "Memuat {0} Butir"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:30
+#, fuzzy
+msgid "IM Conversation"
+msgstr "Percakapan baru"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:99
+#: ../tools/settings.glade.h:34
+#, fuzzy
+msgid "Name:"
+msgstr "Nama:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:100
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+#, fuzzy
+msgid "Date Received:"
+msgstr "Tanggal diterima"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:104
+#, fuzzy
+msgid "Status:"
+msgstr "Status:"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:119
+#, fuzzy
+msgid "Idle"
+msgstr "Menganggur"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:126
+msgid "Away"
+msgstr "Pergi"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:129
+msgid "Offline"
+msgstr "Luring"
+
+#: ../search/Beagle.Search.Tiles/IMLog.cs:132
+msgid "Available"
+msgstr "Tersedia"
+
+#. AddAction (new TileAction (Catalog.GetString ("Add to Library"), Gtk.Stock.Add, AddToLibrary));
+#: ../search/Beagle.Search.Tiles/Image.cs:39
+msgid "Set as Wallpaper"
+msgstr "Jadikan Gambar Latar"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:84
+#: ../search/Beagle.Search.Tiles/Note.cs:75
+msgid "Tags:"
+msgstr "Tag:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:86
+#: ../search/Beagle.Search.Tiles/Video.cs:44
+msgid "Modified:"
+msgstr "Diubah:"
+
+#: ../search/Beagle.Search.Tiles/Image.cs:96
+msgid "Comment:"
+msgstr "Komentar:"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:45
+msgid "Mail attachment"
+msgstr "Lampiran surat"
+
+#: ../search/Beagle.Search.Tiles/MailAttachment.cs:48
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:70
+msgid "Find Messages From Sender"
+msgstr "Temukan Pesan Dari Pengirim"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:58
+msgid "(untitled)"
+msgstr "(tanpa judul)"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:68
+#, fuzzy
+msgid "Send in Mail"
+msgstr "Kirim %s melalui surel"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:103
+msgid "Subject:"
+msgstr "Tentang:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "To:"
+msgstr "Ke:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:105
+msgid "From:"
+msgstr "Dari:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:108
+msgid "Date Sent:"
+msgstr "Tanggal Dikirim:"
+
+#: ../search/Beagle.Search.Tiles/MailMessage.cs:114
+msgid "Folder:"
+msgstr "Folder:"
+
+#: ../search/Beagle.Search.Tiles/Manpage.cs:56
+msgid "Manual page"
+msgstr "Halaman manual"
+
+#: ../search/Beagle.Search.Tiles/OpenWithMenu.cs:47
+msgid "Open With"
+msgstr "Buka Dengan"
+
+#: ../search/Beagle.Search.Tiles/Presentation.cs:33
+#, csharp-format
+msgid "{0} slide"
+msgid_plural "{0} slides"
+msgstr[0] "{0} slide"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:60
+msgid "Site:"
+msgstr "Situs:"
+
+#: ../search/Beagle.Search.Tiles/RSSFeed.cs:61
+msgid "Date Viewed:"
+msgstr "Tanggal Ditilik:"
+
+#: ../search/Beagle.Search.Tiles/Task.cs:47
+msgid "Date:"
+msgstr "Tanggal:"
+
+#: ../search/Beagle.Search.Tiles/TextDocument.cs:38
+#, csharp-format
+msgid "{0} page"
+msgid_plural "{0} pages"
+msgstr[0] "{0} halaman"
+
+#. Add the default 'Open' menu item
+#: ../search/Beagle.Search.Tiles/Tile.cs:100
+msgid "Open"
+msgstr "Buka"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:25
+#: ../search/Beagle.Search/SearchWindow.cs:83
+msgid "Applications"
+msgstr "Aplikasi"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:27
+#: ../search/Beagle.Search/SearchWindow.cs:93
+msgid "Contacts"
+msgstr "Kontak"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:29
+#: ../search/Beagle.Search/SearchWindow.cs:95
+msgid "Calendar Events"
+msgstr "Acara Kalender"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:31
+msgid "Folders"
+msgstr "Folder"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:33
+msgid "Images"
+msgstr "Gambar"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:35
+msgid "Audio"
+msgstr "Suara"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:37
+msgid "Video"
+msgstr "Video"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:39
+#: ../search/Beagle.Search/SearchWindow.cs:84
+msgid "Documents"
+msgstr "Dokumen"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:41
+msgid "Conversations"
+msgstr "Percakapan"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:43
+#: ../search/Beagle.Search/SearchWindow.cs:91
+msgid "Websites"
+msgstr "Situs web"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:45
+#: ../search/Beagle.Search/SearchWindow.cs:90
+msgid "News Feeds"
+msgstr "Asupan Berita"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:47
+#: ../search/Beagle.Search/SearchWindow.cs:88
+msgid "Archives"
+msgstr "Arsip"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:136
+#: ../search/Beagle.Search.Tiles/Utils.cs:218
+msgid "Tomorrow"
+msgstr "Besok"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:234
+#, csharp-format
+msgid "{0} week ago"
+msgid_plural "{0} weeks ago"
+msgstr[0] "{0} minggu yang lalu"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:236
+#, csharp-format
+msgid "In {0} week"
+msgid_plural "In {0} weeks"
+msgstr[0] "Dalam {0} minggu"
+
+#. Let's say a year and a half to stop saying months
+#: ../search/Beagle.Search.Tiles/Utils.cs:238
+#, csharp-format
+msgid "{0} month ago"
+msgid_plural "{0} months ago"
+msgstr[0] "{0} bulan yang lalu"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:240
+#, csharp-format
+msgid "In {0} month"
+msgid_plural "In {0} months"
+msgstr[0] "Dalam {0} bulan"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:242
+#, csharp-format
+msgid "{0} year ago"
+msgid_plural "{0} years ago"
+msgstr[0] "{0} tahun yang lalu"
+
+#: ../search/Beagle.Search.Tiles/Utils.cs:244
+#, csharp-format
+msgid "In {0} year"
+msgid_plural "In {0} years"
+msgstr[0] "Dalam {0} tahun"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:60
+msgid "URL:"
+msgstr "URL:"
+
+#: ../search/Beagle.Search.Tiles/WebHistory.cs:61
+msgid "Accessed:"
+msgstr "Diakses:"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:34
+#: ../search/Beagle.Search/Search.cs:78
+#: ../search/Beagle.Search/SearchWindow.cs:117
+msgid "Desktop Search"
+msgstr "Pencarian Desktop"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:70
+msgid "No Recent Searches"
+msgstr "Tak Ada Pencarian Terkini"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:75
+msgid "Recent Searches"
+msgstr "Pencarian Terkini"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:95
+msgid "Clear"
+msgstr "Hapus"
+
+#: ../search/Beagle.Search.Tray/TrayIcon.cs:103
+msgid "Quit"
+msgstr "Keluar"
+
+#: ../search/Beagle.Search/Category.cs:127
+#, csharp-format
+msgid "{0} result"
+msgid_plural "{0} results"
+msgstr[0] "{0} hasil"
+
+#: ../search/Beagle.Search/Category.cs:129
+#, csharp-format
+msgid "{0}-{1} of {2}"
+msgstr "{0}-{1} dari {2}"
+
+#: ../search/Beagle.Search/Driver.cs:135
+msgid "Session D-Bus not accessible"
+msgstr "Sesi D-Bus tak dapat diakses"
+
+#: ../search/Beagle.Search/Driver.cs:136
+msgid "Cannot run with parameter '--icon' when session D-Bus is not accessible."
+msgstr ""
+
+#: ../search/Beagle.Search/NotificationArea.cs:63
+msgid "Hide"
+msgstr "Sembunyikan"
+
+#. Translators: This labels are used in a combo-box to allow
+#. * the user to select which kind of data he wants to search.
+#.
+#: ../search/Beagle.Search/SearchWindow.cs:81
+msgid "All"
+msgstr "Semua"
+
+#. Default search scope. Should be at the first
+#: ../search/Beagle.Search/SearchWindow.cs:82
+msgid "My Files"
+msgstr "Berkasku"
+
+#: ../search/Beagle.Search/SearchWindow.cs:85
+msgid "Pictures"
+msgstr "Gambar"
+
+#: ../search/Beagle.Search/SearchWindow.cs:86
+msgid "Media"
+msgstr "Media"
+
+#: ../search/Beagle.Search/SearchWindow.cs:87
+msgid "Source Code"
+msgstr "Kode Sumber"
+
+#: ../search/Beagle.Search/SearchWindow.cs:89
+msgid "Emails"
+msgstr "Surel"
+
+#: ../search/Beagle.Search/SearchWindow.cs:92
+msgid "Chat Logs"
+msgstr "Log Percakapan"
+
+#: ../search/Beagle.Search/SearchWindow.cs:94
+msgid "Notes"
+msgstr "Catatan"
+
+#: ../search/Beagle.Search/SearchWindow.cs:138
+msgid "_Find in:"
+msgstr "Cari _dalam:"
+
+#: ../search/Beagle.Search/SearchWindow.cs:175
+msgid "Find Now"
+msgstr "Cari Sekarang"
+
+#: ../search/Beagle.Search/SearchWindow.cs:237
+msgid "Type in search terms"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:238
+msgid "Start searching"
+msgstr "Memulai pencarian"
+
+#: ../search/Beagle.Search/SearchWindow.cs:254
+#, csharp-format
+msgid "Desktop Search: {0}"
+msgstr "Pencarian Desktop: {0}"
+
+#: ../search/Beagle.Search/SearchWindow.cs:485
+msgid "There are computers near you running Beagle"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:486
+msgid "You can select to search other computers from the \"Search\" menu."
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:518
+msgid "Search service started"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:529
+msgid "Starting service failed"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:530
+msgid "Service is already running!"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:545
+msgid "Stopping service failed"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:546
+msgid "Service was not running!"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:560
+msgid "Search service stopped"
+msgstr "Layanan pencarian dihentikan"
+
+#: ../search/Beagle.Search/SearchWindow.cs:599
+msgid "Your data is being indexed"
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:600
+msgid "The search service is in the process of indexing your data.  Search results may be incomplete until indexing has finished."
+msgstr ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:626
+#, fuzzy, csharp-format
+msgid "Showing {0} match"
+msgid_plural "Showing all {0} matches"
+msgstr[0] "Menampilkan %i - %i dari %i yang cocok"
+msgstr[1] ""
+
+#: ../search/Beagle.Search/SearchWindow.cs:628
+#, csharp-format
+msgid "Too many matches. Showing latest {0} of total {1}"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:53
+msgid "Close Desktop Search"
+msgstr "Tutup Pencarian Desktop"
+
+#: ../search/Beagle.Search/UIManager.cs:58
+#: ../search/Beagle.Search/UIManager.cs:85
+msgid "Exit Desktop Search"
+msgstr "Keluar Pencarian Desktop"
+
+#: ../search/Beagle.Search/UIManager.cs:65
+msgid "_Search"
+msgstr "_Cari"
+
+#: ../search/Beagle.Search/UIManager.cs:68
+msgid "Search _Domains"
+msgstr "Pencarian _Domain"
+
+#: ../search/Beagle.Search/UIManager.cs:71
+msgid "_Actions"
+msgstr "_Aksi"
+
+#: ../search/Beagle.Search/UIManager.cs:74
+msgid "_View"
+msgstr "_Tilikan"
+
+#: ../search/Beagle.Search/UIManager.cs:77
+msgid "Service _Options"
+msgstr "_Opsi Layanan"
+
+#: ../search/Beagle.Search/UIManager.cs:80
+msgid "_Help"
+msgstr "Ba_ntuan"
+
+#: ../search/Beagle.Search/UIManager.cs:88
+msgid "Start service"
+msgstr "Mulai layanan"
+
+#: ../search/Beagle.Search/UIManager.cs:91
+msgid "Stop service"
+msgstr "Hentikan layanan"
+
+#: ../search/Beagle.Search/UIManager.cs:94
+msgid "Index information"
+msgstr "Informasi indeks"
+
+#: ../search/Beagle.Search/UIManager.cs:97
+msgid "_Contents"
+msgstr "_Isi"
+
+#: ../search/Beagle.Search/UIManager.cs:99
+msgid "Help - Table of Contents"
+msgstr "Bantuan - Daftar Isi"
+
+#: ../search/Beagle.Search/UIManager.cs:103
+msgid "About Desktop Search"
+msgstr "Tentang Pencarian Desktop"
+
+#: ../search/Beagle.Search/UIManager.cs:125
+msgid "Sort by Date _Modified"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:126
+msgid "Sort the most-recently-modified matches first"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:129
+msgid "Sort by _Name"
+msgstr "Urutkan berdasarkan _Nama"
+
+#: ../search/Beagle.Search/UIManager.cs:130
+msgid "Sort matches by name"
+msgstr "Urutkan kecocokan berdasarkan nama"
+
+#: ../search/Beagle.Search/UIManager.cs:133
+msgid "Sort by _Relevance"
+msgstr "Urutkan menurut _Relevansi"
+
+#: ../search/Beagle.Search/UIManager.cs:134
+msgid "Sort the best matches first"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:141
+msgid "_Local"
+msgstr "_Lokal"
+
+#: ../search/Beagle.Search/UIManager.cs:143
+msgid "Search in personal data in this computer"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:147
+msgid "_System"
+msgstr "_Sistem"
+
+#: ../search/Beagle.Search/UIManager.cs:149
+msgid "Search in system data on this computer"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:153
+msgid "_Global"
+msgstr "_Global"
+
+#: ../search/Beagle.Search/UIManager.cs:155
+msgid "Search in internet services"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:159
+msgid "_Neighborhood"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:161
+msgid "Search on computers near me"
+msgstr ""
+
+#: ../search/Beagle.Search/UIManager.cs:169
+msgid "Show Details"
+msgstr "Tampilkan Rincian"
+
+#: ../search/Beagle.Search/UIManager.cs:276
+msgid "Couldn't launch web browser"
+msgstr "Tak bisa luncurkan peramban web."
+
+#: ../search/Beagle.Search/UIManager.cs:296
+msgid "translator-credits"
+msgstr "Andika Triwidada <andika@gmail.com>, 2011."
+
+#: ../search/beagle-search.desktop.in.in.h:1
+msgid "Search"
+msgstr "Cari"
+
+#: ../search/beagle-search.desktop.in.in.h:2
+msgid "Search for data on your desktop"
+msgstr ""
+
+#: ../tools/Settings.cs:57
+msgid "An error occurred"
+msgstr "Terjadi kesalahan"
+
+#: ../tools/Settings.cs:233
+#: ../tools/Settings.cs:711
+#, csharp-format
+msgid "Display the search window by pressing {0}"
+msgstr ""
+
+#: ../tools/Settings.cs:363
+msgid "Reload configuration"
+msgstr "Muat ulang konfigurasi"
+
+#: ../tools/Settings.cs:364
+msgid "The configuration file has been modified by another application. Do you wish to discard the currently displayed values and reload configuration from disk?"
+msgstr ""
+
+#: ../tools/Settings.cs:498
+msgid "Select Path"
+msgstr "Pilih path"
+
+#: ../tools/Settings.cs:517
+msgid "The selected path is already selected for indexing and wasn't added."
+msgstr ""
+
+#: ../tools/Settings.cs:520
+msgid "The selected path wasn't added. The list contains items that supersedes it and the data is already being indexed."
+msgstr ""
+
+#: ../tools/Settings.cs:531
+msgid "Path not added"
+msgstr "Path tak ditambahkan"
+
+#: ../tools/Settings.cs:540
+msgid "Remove obsolete paths"
+msgstr ""
+
+#: ../tools/Settings.cs:541
+msgid "Adding this path will obsolete some of the existing include paths. This will result in the removal of the old obsolete paths. Do you still wish to add it?"
+msgstr ""
+
+#: ../tools/Settings.cs:567
+msgid "Remove path"
+msgstr "Hapus path"
+
+#: ../tools/Settings.cs:568
+msgid "Are you sure you wish to remove this path from the list of directories to be included for indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:597
+msgid "Remove item"
+msgstr "Hapus butir"
+
+#: ../tools/Settings.cs:598
+msgid "Are you sure you wish to remove this item from the list of data to be excluded from indexing?"
+msgstr ""
+
+#: ../tools/Settings.cs:645
+msgid "Remote host already present in the list."
+msgstr ""
+
+#: ../tools/Settings.cs:655
+msgid "Remote beagle host not added"
+msgstr ""
+
+#: ../tools/Settings.cs:670
+msgid "Remove host"
+msgstr "Hapus host"
+
+#: ../tools/Settings.cs:671
+msgid "Are you sure you wish to remove this host from the list?"
+msgstr ""
+
+#: ../tools/Settings.cs:774
+#: ../tools/Settings.cs:863
+#: ../tools/Settings.cs:944
+#: ../tools/Settings.cs:1049
+#: ../tools/Settings.cs:1771
+msgid "Name"
+msgstr "Nama"
+
+#: ../tools/Settings.cs:857
+msgid "Type"
+msgstr "Tipe"
+
+#: ../tools/Settings.cs:910
+msgid "Path:"
+msgstr "Path:"
+
+#: ../tools/Settings.cs:913
+msgid "Pattern:"
+msgstr "Pola:"
+
+#: ../tools/Settings.cs:916
+msgid "Mail folder:"
+msgstr "Folder surat:"
+
+#: ../tools/Settings.cs:951
+msgid "Address"
+msgstr "Alamat"
+
+#: ../tools/Settings.cs:1296
+msgid "Select Folder"
+msgstr "Pilih Folder"
+
+#: ../tools/Settings.cs:1322
+#: ../tools/settings.glade.h:36
+msgid "P_ath:"
+msgstr ""
+
+#: ../tools/Settings.cs:1327
+msgid "M_ail folder:"
+msgstr "Folder sur_at:"
+
+#: ../tools/Settings.cs:1332
+msgid "P_attern:"
+msgstr ""
+
+#: ../tools/Settings.cs:1356
+msgid "Error adding path"
+msgstr "Galat saat menambahkan path"
+
+#: ../tools/Settings.cs:1357
+msgid "The specified path could not be found and therefore it could not be added to the list of resources excluded for indexing."
+msgstr ""
+
+#: ../tools/Settings.cs:1395
+#, csharp-format
+msgid "Connecting to {0}"
+msgstr "Menyambung ke {0}"
+
+#: ../tools/Settings.cs:1731
+msgid "Evolution's mail."
+msgstr "Surat Evolution."
+
+#: ../tools/Settings.cs:1732
+msgid "Evolution's address book, memos and tasks."
+msgstr ""
+
+#: ../tools/Settings.cs:1733
+msgid "Thunderbird's email."
+msgstr "Surel Thunderbird."
+
+#: ../tools/Settings.cs:1734
+msgid "RSS feeds from Akregator."
+msgstr ""
+
+#: ../tools/Settings.cs:1735
+msgid "RSS feeds from Blam."
+msgstr ""
+
+#: ../tools/Settings.cs:1736
+msgid "Files and folders on the local file system."
+msgstr ""
+
+#: ../tools/Settings.cs:1737
+msgid "Mail messages from KMail."
+msgstr ""
+
+#: ../tools/Settings.cs:1738
+msgid "Notes from KNotes."
+msgstr "Catatan dari KNotes."
+
+#: ../tools/Settings.cs:1739
+msgid "Agenda from KOrganizer."
+msgstr ""
+
+#: ../tools/Settings.cs:1740
+msgid "Contacts from KAddressBook."
+msgstr "Kontak dari KAddressBook."
+
+#: ../tools/Settings.cs:1741
+msgid "Konqueror's bookmarks."
+msgstr "Penanda taut Konqueror."
+
+#: ../tools/Settings.cs:1742
+msgid "Konqueror's history."
+msgstr "Riwayat Konqueror"
+
+#: ../tools/Settings.cs:1743
+msgid "IMs and chats from Konversation."
+msgstr ""
+
+#: ../tools/Settings.cs:1744
+msgid "IMs and chats from Kopete"
+msgstr ""
+
+#: ../tools/Settings.cs:1745
+msgid "Mind-maps from Labyrinth."
+msgstr ""
+
+#: ../tools/Settings.cs:1746
+msgid "RSS feeds from Liferea."
+msgstr ""
+
+#: ../tools/Settings.cs:1747
+msgid "Nautilus' metadata (emblems, notes, etc.)"
+msgstr ""
+
+#: ../tools/Settings.cs:1748
+msgid "Search other search services in the network (EXPERIMENTAL)"
+msgstr ""
+
+#: ../tools/Settings.cs:1749
+msgid "Opera's bookmarks and browsing history."
+msgstr ""
+
+#: ../tools/Settings.cs:1750
+msgid "IMs and chats from Pidgin."
+msgstr ""
+
+#: ../tools/Settings.cs:1751
+msgid "Notes from Tomboy."
+msgstr "Catatan dari Tomboy."
+
+#. System-wide indexes
+#: ../tools/Settings.cs:1753
+msgid "(System) Applications"
+msgstr "Aplikasi (sistem)"
+
+#: ../tools/Settings.cs:1754
+msgid "(System) Help files"
+msgstr ""
+
+#: ../tools/Settings.cs:1755
+msgid "(System) Manual pages"
+msgstr "Halaman manual (sistem)"
+
+#: ../tools/Settings.cs:1756
+msgid "(System) Supplementary search results using 'locate' command"
+msgstr ""
+
+#: ../tools/Settings.cs:1757
+msgid "(System) Mono documentation"
+msgstr ""
+
+#: ../tools/Settings.cs:1758
+msgid "(System) Files from Windows' partition"
+msgstr ""
+
+#: ../tools/Settings.cs:1772
+msgid "Description"
+msgstr "Deskripsi"
+
+#: ../tools/beagle-settings.desktop.in.in.h:1
+msgid "Configure Desktop Search"
+msgstr "Atur Pencarian Desktop"
+
+#: ../tools/beagle-settings.desktop.in.in.h:2
+msgid "Search & Indexing"
+msgstr "Pencarian & Pengindeksan"
+
+#: ../tools/keygrabber.py:56
+msgid "Grab key combination"
+msgstr ""
+
+#: ../tools/keygrabber.py:143
+msgid "Please press the new key combination"
+msgstr ""
+
+#: ../tools/keygrabber.py:192
+msgid "Disabled"
+msgstr "Dimatikan"
+
+#: ../tools/settings.glade.h:1
+msgid ":"
+msgstr ":"
+
+#: ../tools/settings.glade.h:2
+msgid "<b>Administration</b>"
+msgstr "<b>Administrasi</b>"
+
+#: ../tools/settings.glade.h:3
+msgid "<b>Display</b>"
+msgstr "<b>Tampilan</b>"
+
+#: ../tools/settings.glade.h:4
+msgid "<b>Exclude Resource</b>"
+msgstr "<b>Tak Sertakan Sumber Daya</b>"
+
+#: ../tools/settings.glade.h:5
+msgid "<b>General</b>"
+msgstr "<b>Umum</b>"
+
+#: ../tools/settings.glade.h:6
+msgid "<b>Local and System sources</b>"
+msgstr ""
+
+#: ../tools/settings.glade.h:7
+msgid "<b>Networking</b>"
+msgstr "<b>Jejaring</b>"
+
+#: ../tools/settings.glade.h:8
+msgid "<b>Privacy</b>"
+msgstr "<b>Privasi</b>"
+
+#: ../tools/settings.glade.h:9
+msgid "<b>Select Mail Folder</b>"
+msgstr "<b>Pilih Folder Surat</b>"
+
+#: ../tools/settings.glade.h:10
+msgid "<b>User Interface</b>"
+msgstr "<b>Antar Muka Pengguna</b>"
+
+#: ../tools/settings.glade.h:11
+msgid "<i>Changes will take effect only after daemon restart.</i>"
+msgstr ""
+
+#: ../tools/settings.glade.h:12
+msgid "<i>This setting does not apply while on battery power.</i>"
+msgstr ""
+
+#: ../tools/settings.glade.h:13
+msgid "<span weight=\"bold\" size=\"larger\">Password required.</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Diperlukan sandi.</span>"
+
+#: ../tools/settings.glade.h:14
+msgid "Add Remote Host"
+msgstr "Tambahkan Host Jauh"
+
+#: ../tools/settings.glade.h:15
+msgid "Add a static host"
+msgstr ""
+
+#: ../tools/settings.glade.h:16
+msgid "Add any additional paths to be included for indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:17
+msgid "Add any remote search-enabled hosts you wish to network with."
+msgstr ""
+
+#: ../tools/settings.glade.h:18
+msgid "Adjust which types of results should be visible, and in what order they should be presented when grouped by type."
+msgstr ""
+
+#: ../tools/settings.glade.h:19
+msgid "Allow external access to local search services (EXPERIMENTAL)"
+msgstr ""
+
+#: ../tools/settings.glade.h:20
+msgid "Automatically s_tart searching after the user has stopped typing"
+msgstr ""
+
+#: ../tools/settings.glade.h:21
+msgid "Change"
+msgstr "Ubah"
+
+#: ../tools/settings.glade.h:22
+msgid "Data sources"
+msgstr "Sumber data"
+
+#: ../tools/settings.glade.h:23
+msgid "Display the search window by pressing"
+msgstr ""
+
+#: ../tools/settings.glade.h:24
+msgid "Enable the data sources that you want to index and search."
+msgstr ""
+
+#: ../tools/settings.glade.h:25
+msgid "Enable web interface for local search service"
+msgstr ""
+
+#: ../tools/settings.glade.h:26
+msgid "Exclude Resource"
+msgstr "Tak Sertakan Sumber Daya"
+
+#: ../tools/settings.glade.h:27
+msgid "Filename _pattern"
+msgstr "_Pola nama berkas"
+
+#: ../tools/settings.glade.h:28
+msgid "I_ndex my home directory"
+msgstr ""
+
+#: ../tools/settings.glade.h:29
+msgid "In order for you to perform Beagle searches on this computer, you must enter a password."
+msgstr ""
+
+#: ../tools/settings.glade.h:30
+msgid "Index data while on _battery power"
+msgstr ""
+
+#: ../tools/settings.glade.h:31
+msgid "Index more aggressively while the s_creensaver is activated"
+msgstr ""
+
+#: ../tools/settings.glade.h:32
+msgid "Index name:"
+msgstr "Nama indeks:"
+
+#: ../tools/settings.glade.h:33
+msgid "Indexing"
+msgstr "Mengindeks"
+
+#: ../tools/settings.glade.h:35
+msgid "Network options"
+msgstr "Opsi jaringan"
+
+#: ../tools/settings.glade.h:37
+msgid "Password for {0}"
+msgstr "Kata sandi bagi {0}"
+
+#: ../tools/settings.glade.h:38
+msgid "Password:"
+msgstr "Kata sandi:"
+
+#: ../tools/settings.glade.h:39
+msgid "Please select a resource you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:40
+msgid "Please select the mail folder you wish to exclude from indexing. "
+msgstr ""
+
+#: ../tools/settings.glade.h:41
+msgid "Require a password to search this computer remotely"
+msgstr ""
+
+#: ../tools/settings.glade.h:42
+msgid "Search Preferences"
+msgstr "Preferensi Pencarian"
+
+#: ../tools/settings.glade.h:43
+msgid "Searching"
+msgstr "Mencari"
+
+#: ../tools/settings.glade.h:44
+msgid "Select Mail Folder"
+msgstr "Pilih Folder Surat"
+
+#: ../tools/settings.glade.h:45
+msgid "Specify any resources, such as paths, patterns, mail folders or type of objects you wish to exclude from indexing."
+msgstr ""
+
+#: ../tools/settings.glade.h:46
+msgid "Type:"
+msgstr "Tipe:"
+
+#: ../tools/settings.glade.h:47
+msgid "_Allow Beagle to be run as root"
+msgstr ""
+
+#: ../tools/settings.glade.h:48
+msgid "_Browse..."
+msgstr "Ram_ban..."
+
+#: ../tools/settings.glade.h:49
+msgid "_Choose from currently available hosts"
+msgstr ""
+
+#: ../tools/settings.glade.h:50
+msgid "_Folder path"
+msgstr "Path _folder"
+
+#: ../tools/settings.glade.h:51
+msgid "_Hostname:"
+msgstr "Nama _host:"
+
+#: ../tools/settings.glade.h:52
+msgid "_Mail folder"
+msgstr "_Folder surat"
+
+#: ../tools/settings.glade.h:53
+msgid "_Password:"
+msgstr "_Kata Sandi:"
+
+#: ../tools/settings.glade.h:54
+msgid "_Start search & indexing services automatically "
+msgstr ""
+
