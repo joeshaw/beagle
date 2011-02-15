@@ -462,9 +462,10 @@ namespace Beagle.Daemon {
 			int bytes_read = 0;
 
 			try {
-				bytes_read = this.client.GetStream ().EndRead (ar);
+				if (this.client != null)
+					bytes_read = this.client.GetStream ().EndRead (ar);
 			} catch (IOException e) {
-				if (! (e.InnerException is SocketException))
+				if (! (e.InnerException is SocketException) && e.Message != "Not connected")
 					throw e;
 			} catch (ObjectDisposedException) { }
 
